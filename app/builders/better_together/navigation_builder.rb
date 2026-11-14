@@ -682,12 +682,34 @@ module BetterTogether
                 permission_identifier: 'manage_platform'
               },
               {
+                identifier: 'billing-hosted-billing',
+                title_en: 'Hosted Billing',
+                slug_en: 'billing-hosted-billing',
+                position: 16,
+                item_type: 'link',
+                route_name: 'billing_hosted_billing_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
+              },
+              {
                 identifier: 'billing-events',
                 title_en: 'Payment events',
                 slug_en: 'billing-events',
-                position: 16,
+                position: 17,
                 item_type: 'link',
                 route_name: 'billing_events_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-hosted-platforms',
+                title_en: 'Hosted Platforms',
+                slug_en: 'billing-hosted-platforms',
+                position: 18,
+                item_type: 'link',
+                route_name: 'billing_hosted_platforms_url',
                 privacy: 'private',
                 visibility_strategy: 'permission',
                 permission_identifier: 'manage_platform'

@@ -59,7 +59,9 @@ module BetterTogether
       billing_agreement_requirements: 'billing_agreement_requirements_url',
       billing_promotions: 'billing_promotions_url',
       billing_credit_accounts: 'billing_credit_accounts_url',
-      billing_allowances: 'billing_allowances_url'
+      billing_allowances: 'billing_allowances_url',
+      billing_hosted_billing: 'billing_hosted_billing_url',
+      billing_hosted_platforms: 'billing_hosted_platforms_url'
     }
 
     # Items whose target only exists when a subsystem is switched on for the platform.
@@ -75,7 +77,9 @@ module BetterTogether
     end.merge(
       'billing_processor_settings_url' => ->(platform) { BetterTogether::Billing.configurable?(platform) }
     ).merge(
-      'billing_events_url' => ->(platform) { platform.host? && BetterTogether::Billing.configurable?(platform) }
+      'billing_events_url' => ->(platform) { platform.host? && BetterTogether::Billing.configurable?(platform) },
+      'billing_hosted_billing_url' => ->(platform) { BetterTogether::Billing::HostedBilling.page_available?(platform, host: false) },
+      'billing_hosted_platforms_url' => ->(platform) { BetterTogether::Billing::HostedBilling.page_available?(platform, host: true) }
     ).freeze
 
     belongs_to :navigation_area, touch: true

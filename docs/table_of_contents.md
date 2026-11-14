@@ -103,6 +103,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Data Encryption](billing/encryption.md) - What is encrypted at rest, the rules, and key rotation
 - [Billing Webhook Event Operations](billing/webhook_event_operations.md) - Runbook for failed and dead-lettered processor events: the operator page, rake tasks, sweeps, retry safety
 - [Hosted Billing Roadmap](billing/hosted_billing_roadmap.md) - What is in place for per-platform processors and community-managed plans, and what is left
+- [Hosted Billing Enablement](billing/hosted_billing_enablement.md) - The three host agreements, what each unlocks, the status page and suspension
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
 - [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture

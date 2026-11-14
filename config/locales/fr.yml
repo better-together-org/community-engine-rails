@@ -1148,6 +1148,60 @@ fr:
           processed: Traité
           replayed: Relancé
         table_caption: Événements de paiement et leur état
+      hosted_billing:
+        accept_button: Accepter pour cette plateforme
+        accepted: Accord accepté pour cette plateforme.
+        accepted_state: Accepté pour cette plateforme.
+        go_to_methods: Configurer vos modes de paiement
+        intro: "%{platform} est hébergée. Acceptez ci-dessous les accords de facturation
+          de l'hôte pour débloquer ce que chacun couvre. Rien n'est activé tant que
+          vous n'avez pas aussi configuré un mode de paiement."
+        merchant_not_yet: La facturation comme commerçant de référence n'est pas encore
+          disponible. Vous pouvez accepter cet accord à l'avance.
+        methods_locked: Acceptez l'accord de facturation de plateforme hébergée et
+          l'accord de facturation locale pour accepter espèces, chèques ou virements.
+        modes:
+          billing:
+            title: Accord de facturation de plateforme hébergée
+            unlocks: Nécessaire avant toute facturation sur cette plateforme, locale
+              ou à distance.
+          local:
+            title: Accord de facturation locale hébergée
+            unlocks: Permet à cette plateforme d'accepter espèces, chèques et virements.
+              L'hôte ne les suit pas, ne les garantit pas et n'en est pas responsable.
+          merchant:
+            title: Accord d'intégration comme commerçant
+            unlocks: Permet à l'hôte d'encaisser pour cette plateforme comme commerçant
+              de référence.
+        not_in_force: Pas encore disponible. L'hôte prépare encore cet accord.
+        refused:
+          accept_box: Cochez la case pour accepter l'accord.
+          needs_billing_first: Acceptez d'abord l'accord de facturation de plateforme
+            hébergée.
+          not_in_force: Cet accord n'est pas encore en vigueur.
+        suspended: L'hôte a suspendu la facturation de cette plateforme. Vos données
+          sont conservées. Contactez l'hôte pour la rétablir.
+        title: Facturation hébergée
+      hosted_platforms:
+        accepted: Accepté
+        actions: Actions
+        intro: Quelles plateformes hébergées ont accepté quels accords de facturation,
+          et si leur facturation est active. Suspendre met la facturation en pause
+          et conserve les données.
+        none: Aucune plateforme n'est encore hébergée ici.
+        not_accepted: Non accepté
+        platform: Plateforme
+        reason: Motif de la suspension
+        reason_required: Indiquez un motif pour suspendre la facturation.
+        resume: Rétablir
+        resumed: Facturation rétablie pour cette plateforme.
+        status: Facturation
+        status_off: Inactive
+        status_on: Active
+        status_suspended: Suspendue
+        suspend: Suspendre
+        suspended: Facturation suspendue pour cette plateforme.
+        title: Plateformes hébergées
       hub:
         access_count: 'Actifs : %{count}'
         access_heading: Ce à quoi vous avez accès
@@ -6401,6 +6455,7 @@ fr:
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
       blank: doit être rempli(e)
+      cannot_be_the_host: ne peut pas être la plateforme hôte
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
@@ -6414,6 +6469,8 @@ fr:
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       greater_than_refundable: dépasse ce qui peut encore être remboursé
+      hosted_local_billing_not_agreed: exige d'abord les accords de facturation locale
+        hébergée
       immutable_after_processor_link: ne peut plus être modifié une fois le plan lié
         à un prix du processeur
       in: doit être dans l'intervalle %{count}

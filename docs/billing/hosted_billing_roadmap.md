@@ -27,6 +27,8 @@ is deliberately left for later.
 - **Attributable webhooks.** Events carry `platform_id`; an adapter's `normalize_webhook`
   can return `platform_id:` or an `account_ref:` that core maps to a platform.
 
+The agreement gates for a hosted platform to bill at all, with local methods first, are built: see [hosted_billing_enablement.md](hosted_billing_enablement.md).
+
 ## Left for later
 
 | Capability | What it needs |

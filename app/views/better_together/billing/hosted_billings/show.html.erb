@@ -1,0 +1,63 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.hosted_billing.title') %>
+<% end %>
+
+<div id="billing-hosted-billing-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.hosted_billing.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.hosted_billing.intro', platform: billing_owner.name) %></p>
+
+  <% if BetterTogether::Billing::HostedBilling.suspended?(billing_owner) %>
+    <div id="billing-hosted-billing-suspended" class="alert alert-warning" role="alert">
+      <%= t('better_together.billing.hosted_billing.suspended') %>
+    </div>
+  <% end %>
+
+  <div id="billing-hosted-billing-modes" class="row g-4">
+    <% @modes.each do |mode| %>
+      <% agreement = @agreements[mode] %>
+      <% accepted = BetterTogether::Billing::HostedBilling.accepted?(billing_owner, mode) %>
+      <% in_force = BetterTogether::Billing::HostedBilling.in_force?(agreement) %>
+      <section id="billing-hosted-mode-<%= mode %>" class="col-lg-4" aria-labelledby="billing-hosted-mode-<%= mode %>-title">
+        <div class="card h-100">
+          <div class="card-header">
+            <h2 id="billing-hosted-mode-<%= mode %>-title" class="h6 mb-0"><%= t("better_together.billing.hosted_billing.modes.#{mode}.title") %></h2>
+          </div>
+          <div class="card-body">
+            <p class="small"><%= t("better_together.billing.hosted_billing.modes.#{mode}.unlocks") %></p>
+            <% if mode == :merchant %>
+              <p id="billing-hosted-merchant-unavailable" class="small text-body-secondary"><%= t('better_together.billing.hosted_billing.merchant_not_yet') %></p>
+            <% end %>
+
+            <% if accepted %>
+              <p id="billing-hosted-accepted-<%= mode %>" class="text-success mb-0"><%= t('better_together.billing.hosted_billing.accepted_state') %></p>
+            <% elsif !in_force %>
+              <p id="billing-hosted-draft-<%= mode %>" class="text-body-secondary mb-0"><%= t('better_together.billing.hosted_billing.not_in_force') %></p>
+            <% else %>
+              <%= link_to t('better_together.billing.checkout.view_agreement'), agreement_path(agreement, locale: I18n.locale),
+                          class: 'agreement-modal-link', role: 'button', id: "billing-agreement-view-#{agreement.identifier}",
+                          data: { agreement_identifier: agreement.identifier } %>
+              <%= form_with url: billing_hosted_billing_path(locale: I18n.locale), method: :post, id: "billing-hosted-accept-form-#{mode}", class: 'mt-2' do %>
+                <%= hidden_field_tag :mode, mode %>
+                <div class="form-check mb-2">
+                  <%= check_box_tag agreement_acceptance_param_name(agreement), '1', false, class: 'form-check-input agreement-checkbox', required: true,
+                                    data: { agreement_identifier: agreement.identifier }, aria: { disabled: 'true' },
+                                    id: "billing-agreement-accept-#{agreement.identifier}" %>
+                  <%= label_tag "billing-agreement-accept-#{agreement.identifier}", t('better_together.billing.checkout.accept', title: agreement.title), class: 'form-check-label' %>
+                </div>
+                <%= submit_tag t('better_together.billing.hosted_billing.accept_button'), id: "billing-hosted-accept-#{mode}", class: 'btn btn-primary btn-sm' %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </section>
+    <% end %>
+  </div>
+
+  <p id="billing-hosted-next-steps" class="mt-4">
+    <% if BetterTogether::Billing::HostedBilling.permits?(billing_owner, :local) %>
+      <%= link_to t('better_together.billing.hosted_billing.go_to_methods'), billing_processor_settings_path(locale: I18n.locale), id: 'billing-hosted-methods-link' %>
+    <% else %>
+      <span class="text-body-secondary"><%= t('better_together.billing.hosted_billing.methods_locked') %></span>
+    <% end %>
+  </p>
+</div>

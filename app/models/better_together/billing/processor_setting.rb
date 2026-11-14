@@ -50,6 +50,7 @@ module BetterTogether
       validate :settings_known
       validate :settings_short
       validate :ready_to_enable, if: :enabled?
+      validate :hosted_local_billing_agreed, if: :enabled?
 
       scope :enabled, -> { where(enabled: true) }
 
@@ -137,6 +138,13 @@ module BetterTogether
         errors.add(:acknowledge, :acknowledgement_required) unless acknowledged?
         adapter.settings_errors(settings).each { |field, code| errors.add(:settings, code, field:) }
         errors.add(:processor, :country_not_supported, country:) if unsupported_country?
+      end
+
+      # A hosted platform may switch a local method on only after both hosted billing agreements (the host is never gated).
+      def hosted_local_billing_agreed
+        return if platform.nil? || HostedBilling.permits?(platform, :local)
+
+        errors.add(:base, :hosted_local_billing_not_agreed)
       end
 
       def unsupported_country?

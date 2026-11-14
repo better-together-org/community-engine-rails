@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-13T00:06:00Z`.
+Generated from live Rails reflections at `2026-11-13T02:08:32Z`.
 
 ## Identity, access, and memberships
 
@@ -704,6 +704,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Activity | `better_together_activities` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`recipient_id` (uuid FK)<br>`trackable_id` (uuid FK)<br>`key` (string)<br>`owner_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?) | `PlatformScoped` | `platform` -> `Platform` (platform_network) |
 | AgentGrant | `better_together_agent_grants` | `community_id` (uuid FK)<br>`granted_by_id` (uuid FK)<br>`operator_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`robot_id` (uuid FK)<br>`scopes` (string) | PresenceValidator: robot, platform, operator | `BetterTogetherId`<br>`Seedable` | `robot` -> `Robot` (platform_network)<br>`platform` -> `Platform` (platform_network)<br>`operator` -> `Person` (identity_access)<br>`community` -> `Community` (platform_network)<br>`granted_by` -> `Person` (identity_access) |
 | Billing::DefaultAddress | `better_together_billing_default_addresses` | `address_id` (uuid FK)<br>`person_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`kind` (string) | PresenceValidator: platform (message=:required)<br>InclusionValidator: kind (in=["billing", "shipping"])<br>UniquenessValidator: kind (scope=[:platform_id, :person_id]) | `Billing::PlatformBound` | `platform` -> `Platform` (platform_network)<br>`person` -> `Person` (identity_access)<br>`address` -> `Address` (geography_and_places) |
+| Billing::HostedAccount | `better_together_billing_hosted_accounts` | `platform_id` (uuid FK)<br>`suspended_by_id` (uuid FK)<br>`status` (string)<br>`suspension_reason` (text)<br>`suspended_at` (datetime) | PresenceValidator: platform (message=:required)<br>InclusionValidator: status (in=["active", "suspended"])<br>UniquenessValidator: platform_id<br>PresenceValidator: suspension_reason (if=dynamic) | `Billing::PlatformBound` | `platform` -> `Platform` (platform_network)<br>`suspended_by` -> `Person` (identity_access) |
 | Billing::Notifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | Billing::Notifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | Billing::OrderDocument | `better_together_billing_order_documents` | `order_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`upload_id` (uuid FK)<br>`fingerprint` (string)<br>`kind` (string)<br>`locale` (string) | PresenceValidator: platform (message=:required)<br>PresenceValidator: order (message=:required)<br>PresenceValidator: upload (message=:required)<br>InclusionValidator: kind (in=["invoice", "receipt"])<br>PresenceValidator: fingerprint, time_zone, generated_at | `Billing::ParentBound`<br>`Billing::PlatformBound` | `platform` -> `Platform` (platform_network)<br>`order` -> `Billing::Order` (billing)<br>`upload` -> `Upload` (content_publishing) |
@@ -856,6 +857,8 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | ApplicationController | `ActionController::Base` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CatalogController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::EventsController | `BetterTogether::ApplicationController` | `Billing::Event` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::HostedBillingsController | `BetterTogether::ApplicationController` | `Billing::HostedBilling` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::HostedPlatformsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::HubsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::OrderDocumentsController | `BetterTogether::ApplicationController` | `Billing::OrderDocument` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::OrderPaymentsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |

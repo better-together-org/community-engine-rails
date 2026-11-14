@@ -433,6 +433,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_090000) do
     t.index ["subject_type", "subject_id"], name: "idx_bt_billing_events_subject"
   end
 
+  create_table "better_together_billing_hosted_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "suspended_at"
+    t.uuid "suspended_by_id"
+    t.text "suspension_reason"
+    t.index ["platform_id"], name: "idx_bt_billing_hosted_accounts_platform", unique: true
+  end
+
   create_table "better_together_billing_line_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -3541,6 +3553,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_090000) do
   add_foreign_key "better_together_billing_entitlements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_entitlements", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_subscription_platform"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_hosted_accounts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_line_items", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_line_items_order_platform"
   add_foreign_key "better_together_billing_line_items", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_line_items_tax_category_platform"
   add_foreign_key "better_together_billing_line_items", "better_together_platforms", column: "platform_id"

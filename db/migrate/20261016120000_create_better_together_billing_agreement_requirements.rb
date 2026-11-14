@@ -12,14 +12,19 @@
 #   (identifier, content digest; the title is a Mobility translation). The agreement can change or be re-accepted later;
 #   this row is the evidence of what applied to this purchase. The order is tied by a composite
 #   foreign key so the evidence is always on the order's own platform.
+# * A hosted account is one row per hosted platform that has dealt with the host about billing: whether
+#   the host has suspended its billing. What the platform accepted lives in the shared agreement
+#   acceptance records, not here.
 class CreateBetterTogetherBillingAgreementRequirements < ActiveRecord::Migration[7.2]
   def up
     create_requirements
     create_acceptances
+    create_hosted_accounts
   end
 
   def down
-    %i[better_together_billing_order_agreement_acceptances better_together_billing_agreement_requirements]
+    %i[better_together_billing_hosted_accounts better_together_billing_order_agreement_acceptances
+       better_together_billing_agreement_requirements]
       .each { |table| drop_table table if table_exists?(table) }
   end
 
@@ -68,5 +73,20 @@ class CreateBetterTogetherBillingAgreementRequirements < ActiveRecord::Migration
     add_foreign_key :better_together_billing_order_agreement_acceptances, :better_together_platforms, column: :platform_id
     add_foreign_key :better_together_billing_order_agreement_acceptances, :better_together_billing_orders,
                     column: %i[order_id platform_id], primary_key: %i[id platform_id], name: 'fk_bt_billing_order_acc_order_platform'
+  end
+
+  def create_hosted_accounts
+    return if table_exists?(:better_together_billing_hosted_accounts)
+
+    create_bt_table :billing_hosted_accounts do |t|
+      t.uuid :platform_id, null: false
+      t.string :status, null: false, default: 'active'
+      t.datetime :suspended_at
+      t.uuid :suspended_by_id
+      t.text :suspension_reason
+    end
+
+    add_index :better_together_billing_hosted_accounts, :platform_id, unique: true, name: 'idx_bt_billing_hosted_accounts_platform'
+    add_foreign_key :better_together_billing_hosted_accounts, :better_together_platforms, column: :platform_id
   end
 end
