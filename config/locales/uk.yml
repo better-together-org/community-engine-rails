@@ -401,6 +401,10 @@ uk:
         type: Тип
         valid_from: Дійсний з
         valid_until: Дійсний до
+      better_together/redirect:
+        from_path: Старий шлях
+        status: Відповідь
+        to_path: Новий шлях
       better_together/resource_permission:
         action: Дія
         identifier: Ідентифікатор
@@ -598,6 +602,12 @@ uk:
               must_be_true_for_share_domain: повинно бути правдою для домену поширення
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: має бути шляхом, що починається з похилої риски, або повною
+                адресою http чи https
+              redirect_loop: веде назад до себе через інші перенаправлення
         better_together/short_link:
           attributes:
             target_url:
@@ -622,6 +632,7 @@ uk:
       better_together/content/communities_block: Спільноти
       better_together/content/css: Користувацький CSS
       better_together/content/events_block: Події
+      better_together/content/file_download_block: Завантаження файлу
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
@@ -677,6 +688,7 @@ uk:
       better_together/platform_domain: Домен платформи
       better_together/platform_invitation: Запрошення платформи
       better_together/post: Публікація
+      better_together/redirect: Перенаправлення
       better_together/resource_permission: Дозвіл ресурсу
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
@@ -1184,6 +1196,13 @@ uk:
               scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
               title: Вибрати з бібліотеки
               view_uploads: Переглянути завантаження та статуси перевірки
+        file_download_block:
+          description_help: Короткий опис (необов'язково)
+          empty: Цей файл недоступний.
+          label_help: Текст посилання (необов'язково, за замовчуванням назва файлу)
+          meta: "%{type}, %{size}"
+          open_inline: Відкрити в браузері замість завантаження
+          select_prompt: Виберіть файл
         hero:
           editor:
             background: Тло
@@ -2127,6 +2146,13 @@ uk:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Закрити
+      counter: "{current} з {total}"
+      dialog_label: 'Галерея зображень: %{name}'
+      next: Наступне зображення
+      open_image: 'Відкрити зображення %{current} з %{total}: %{name}'
+      previous: Попереднє зображення
     infrastructure:
       locations: Locations
     invitations:
@@ -3807,6 +3833,77 @@ uk:
       nav:
         resource_permissions: Дозволи ресурсів
         roles: Ролі
+    redirects:
+      created: Перенаправлення успішно додано.
+      destroyed: Перенаправлення видалено.
+      edit:
+        subtitle: Перенаправлення для %{platform_name}
+        title: Редагування %{from_path}
+      form:
+        active_label: Активне
+        cancel: Скасувати
+        create_btn: Додати перенаправлення
+        from_path_hint: Адреса, яку використовували відвідувачі, починається з похилої
+          риски. Порівняння не враховує регістр, кінцеву риску та рядок запиту.
+        from_path_label: Старий шлях
+        note_label: Примітка
+        preserve_query_label: Зберігати рядок запиту під час перенаправлення
+        status_label: Відповідь
+        statuses:
+          s301: 301 Переміщено назавжди
+          s302: 302 Знайдено (тимчасово)
+          s307: 307 Тимчасове перенаправлення
+          s308: 308 Постійне перенаправлення
+          s410: 410 Видалено
+        to_path_hint: Шлях на цьому сайті, що починається з похилої риски, або повна
+          адреса http чи https. Залиште порожнім лише для 410 Видалено.
+        to_path_label: Новий шлях або URL
+        update_btn: Оновити перенаправлення
+      index:
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити це перенаправлення?
+        edit_btn: Редагувати
+        gone_label: Видалено (нової адреси немає)
+        header_actions: Дії
+        header_from: Старий шлях
+        header_hits: Відвідування
+        header_status: Стан
+        header_to: Новий шлях
+        import_btn: Імпортувати
+        inactive_label: неактивне
+        new_btn: Додати перенаправлення
+        no_redirects: Перенаправлень ще немає.
+        search_btn: Шукати
+        search_label: Пошук перенаправлень
+        search_placeholder: Пошук за старим шляхом
+        subtitle: Старі адреси, що спрямовують відвідувачів на нове місце на %{platform_name}
+        table_aria: Перенаправлення
+        title: Перенаправлення
+      new:
+        subtitle: Додати перенаправлення для %{platform_name}
+        title: Нове перенаправлення
+      new_import:
+        back: Назад до перенаправлень
+        import_btn: Імпортувати
+        import_confirm: Імпортувати ці перенаправлення?
+        preview_btn: Попередній перегляд
+        report_applied: Імпорт завершено
+        report_created: Створено
+        report_error_line: 'Рядок %{row} (%{path}): %{message}'
+        report_preview: Попередній перегляд (нічого не збережено)
+        report_skipped: Пропущено (вже існують)
+        report_unchanged: Без змін
+        report_updated: Оновлено
+        rows_hint: 'Напишіть старий шлях, новий шлях і необов’язковий код (301, 302,
+          307, 308 або 410) через коми. Рядки, що починаються з #, ігноруються. Спершу
+          зробіть попередній перегляд; нічого не зберігається, доки ви не виберете
+          Імпортувати.'
+        rows_label: Перенаправлення, по одному в рядку
+        subtitle: Додати багато перенаправлень до %{platform_name} одразу
+        title: Імпорт перенаправлень
+        upsert_label: Також оновити наявні перенаправлення
+      updated: Перенаправлення успішно оновлено.
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
@@ -5727,15 +5824,20 @@ uk:
       invalid_parameters: Недійсні параметри
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Обліковий запис та інструменти
     conversations: Conversations
+    footer_legal_navigation: Інформація про сайт
+    footer_navigation: Посилання внизу сторінки
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Головна
     my_profile: Мій профіль
     notifications_tooltip: Сповіщення
     search_tooltip: Пошук
     settings: Налаштування
     sign_in: Увійти
+    skip_to_content: Перейти до основного вмісту
     toggle_navigation: Переключити навігацію
     user_nav_tooltip: Меню облікового запису
   navigation:
@@ -5909,6 +6011,7 @@ uk:
         identity_providers: Постачальники входу
         platform_domains: Домени
         quota_grants: Гранти квоти
+        redirects: Перенаправлення
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
@@ -5949,6 +6052,7 @@ uk:
     continent: Континент
     country: Країна
     download_failed: Завантаження не вдалося
+    download_held: Цей файл ще перевіряється на безпеку. Спробуйте ще раз пізніше.
     invitation: Запрошення
     invitation_email: Електронна пошта запрошення
     member: Учасник
@@ -5973,6 +6077,7 @@ uk:
     confirm_destroy: Підтвердіть видалення
   search:
     button: Пошук
+    label: Пошук на сайті
     placeholder: Пошук...
   seed_catalog:
     geography:

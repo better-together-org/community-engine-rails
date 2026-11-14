@@ -37,16 +37,111 @@ module BetterTogether
     # Target lightness for derived dark backgrounds.
     DARK_BACKGROUND_LIGHTNESS = { 'page_bg' => 0.09, 'band' => 0.14, 'navbar_bg' => 0.12, 'footer_bg' => 0.06 }.freeze
 
-    # Built-in themes keyed by id (see config/platform_themes.yml).
+    THEME_ID_FORMAT = /\A[a-z][a-z0-9_]*\z/
+
+    # All selectable themes keyed by id: the built-ins (config/platform_themes.yml), then the host app's
+    # config/platform_themes.yml, then themes added with .register_theme. Host themes may not reuse a built-in id.
     def self.themes
-      @themes ||= YAML.load_file(THEMES_PATH).freeze
+      builtin_themes.merge(registered_themes).freeze
+    end
+
+    def self.builtin_themes
+      @builtin_themes ||= YAML.load_file(THEMES_PATH).freeze
+    end
+
+    def self.registered_themes
+      @registered_themes ||= {}
+    end
+
+    # Adds a theme for host apps and extension gems. tokens use the same keys as the built-ins; name and
+    # description are optional literals, otherwise better_together.platforms.theme.presets.<id>.* is used.
+    # dark: is an optional hand-tuned hash of dark colour tokens (plain keys, e.g. page_bg); when omitted,
+    # or for any colour it leaves out, dark tokens are derived from the light ones (see .derive_dark).
+    def self.register_theme(id, tokens, name: nil, description: nil, dark: nil)
+      id = id.to_s
+      clean = validated_theme_tokens(id, tokens)
+      clean = clean.merge('dark' => validated_dark_tokens(id, dark)) if dark.present?
+      theme_labels[id] = { name:, description: }.compact
+      registered_themes[id] = clean.freeze
+    end
+
+    def self.validated_theme_tokens(id, tokens)
+      raise ArgumentError, "invalid theme id #{id.inspect}" unless THEME_ID_FORMAT.match?(id)
+      raise ArgumentError, "theme id #{id.inspect} is a built-in theme" if builtin_themes.key?(id)
+
+      clean = sanitize(tokens).except('preset')
+      problem = theme_problem(clean)
+      raise ArgumentError, "theme #{id}: #{problem}" if problem
+
+      clean
+    end
+
+    def self.validated_dark_tokens(id, dark)
+      dark = dark.to_h.stringify_keys.transform_values { |v| v.to_s.strip.downcase }
+      problem = dark_problem(dark)
+      raise ArgumentError, "theme #{id}: #{problem}" if problem
+
+      dark
+    end
+
+    def self.dark_problem(dark)
+      unknown = dark.keys - COLOR_KEYS
+      return "unknown dark tokens #{unknown.join(', ')}" if unknown.any?
+
+      invalid = dark.reject { |_, v| HEX.match?(v) }.keys
+      "invalid dark #{invalid.join(', ')}" if invalid.any?
+    end
+
+    def self.theme_problem(clean)
+      invalid = errors_for(clean).map(&:first)
+      missing = COLOR_KEYS - clean.keys
+      return "invalid #{invalid.join(', ')}" if invalid.any?
+
+      "missing #{missing.join(', ')}" if missing.any?
+    end
+
+    # Loads a YAML file of themes (id => tokens, optional name/description keys), as the built-in file does.
+    def self.register_themes_from(path)
+      YAML.safe_load_file(path).each do |id, tokens|
+        tokens = tokens.dup
+        register_theme(id, tokens, name: tokens.delete('name'), description: tokens.delete('description'),
+                                   dark: tokens.delete('dark'))
+      end
+    end
+
+    def self.theme_labels
+      @theme_labels ||= {}
+    end
+
+    def self.theme_name(id)
+      theme_labels.dig(id.to_s, :name) ||
+        I18n.t("better_together.platforms.theme.presets.#{id}.name", default: id.to_s.humanize)
+    end
+
+    def self.theme_description(id)
+      theme_labels.dig(id.to_s, :description) ||
+        I18n.t("better_together.platforms.theme.presets.#{id}.description", default: '')
+    end
+
+    # Contrast pairs of a theme below their minimum, as [foreground, background, ratio]; use in host specs.
+    def self.contrast_failures(id)
+      tokens = themes.fetch(id.to_s)
+      CONTRAST_PAIRS.filter_map do |fg, bg, minimum|
+        ratio = contrast_ratio(tokens[fg], tokens[bg])
+        [fg, bg, ratio] if ratio.nil? || ratio < minimum
+      end
+    end
+
+    def self.reset_registered_themes!
+      @registered_themes = {}
+      @theme_labels = {}
     end
 
     # A built-in theme as form values: light tokens, font and radius plus its explicit dark_* tokens.
     def self.flat_theme(id)
       theme = themes.fetch(id)
       dark = (theme['dark'] || {}).transform_keys { |key| "dark_#{key}" }
-      theme.except('dark').merge(dark).merge('dark_source' => 'custom')
+      theme.except('dark').merge(dark).merge('dark_source' => dark.any? ? 'custom' : 'derive')
     end
 
     # Normalizes raw form or stored values to a hash with only known keys and non-blank values.

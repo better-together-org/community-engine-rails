@@ -186,4 +186,106 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
       expect(flat).not_to have_key('dark')
     end
   end
+
+  describe 'host-registered themes' do
+    let(:tokens) { described_class.builtin_themes['neutral'].merge('primary' => '#0b3d2e') }
+
+    after { described_class.reset_registered_themes! }
+
+    it 'adds a theme next to the built-ins and accepts it as a preset' do
+      described_class.register_theme('acme_forest', tokens, name: 'Acme forest')
+
+      expect(described_class.themes.keys).to include('neutral', 'acme_forest')
+      expect(described_class.invalid_value?('preset', 'acme_forest')).to be(false)
+      expect(described_class.theme_name('acme_forest')).to eq('Acme forest')
+    end
+
+    it 'falls back to a humanized name when no label or translation exists' do
+      described_class.register_theme('acme_forest', tokens)
+
+      expect(described_class.theme_name('acme_forest')).to eq('Acme forest')
+      expect(described_class.theme_description('acme_forest')).to eq('')
+    end
+
+    it 'rejects built-in ids, bad ids, invalid values and incomplete token sets' do
+      expect { described_class.register_theme('neutral', tokens) }.to raise_error(ArgumentError, /built-in/)
+      expect { described_class.register_theme('Bad Id', tokens) }.to raise_error(ArgumentError, /invalid theme id/)
+      expect { described_class.register_theme('x', tokens.merge('link' => 'red')) }.to raise_error(ArgumentError, /invalid link/)
+      expect { described_class.register_theme('x', tokens.except('band')) }.to raise_error(ArgumentError, /missing band/)
+    end
+
+    it 'reports contrast failures so host specs can enforce AA' do
+      described_class.register_theme('acme_pale', tokens.merge('link' => '#cccccc'))
+
+      expect(described_class.contrast_failures('acme_pale').map(&:first)).to include('link')
+      expect(described_class.contrast_failures('neutral')).to be_empty
+    end
+
+    it 'loads a YAML file of themes with optional name and description' do
+      file = Rails.root.join('tmp/host_themes_spec.yml')
+      file.dirname.mkpath
+      file.write({ 'acme_yaml' => tokens.merge('name' => 'Acme YAML', 'description' => 'From a file') }.to_yaml)
+
+      described_class.register_themes_from(file)
+
+      expect(described_class.theme_name('acme_yaml')).to eq('Acme YAML')
+      expect(described_class.themes['acme_yaml']).not_to have_key('name')
+    ensure
+      file&.delete if file&.exist?
+    end
+  end
+
+  describe 'dark mode for host-registered themes' do
+    let(:tokens) { described_class.builtin_themes['neutral'].except('dark').merge('primary' => '#0b3d2e', 'link' => '#0b3d2e') }
+    let(:dark) { { 'page_bg' => '#101a14', 'body_text' => '#e8f0ea' } }
+
+    after { described_class.reset_registered_themes! }
+
+    it 'derives AA dark tokens for a registered theme without explicit dark tokens' do
+      described_class.register_theme('acme_derived', tokens)
+      flat = described_class.flat_theme('acme_derived')
+      config = described_class.new(flat)
+
+      expect(flat['dark_source']).to eq('derive')
+      expect(config.dark_values.keys).to include('page_bg', 'body_text', 'link', 'primary')
+      expect(config.low_contrast_pairs_dark).to be_empty
+      expect(config.to_css).to include('[data-bs-theme="dark"]')
+    end
+
+    it 'derives AA dark tokens from the raw light tokens of a registered theme' do
+      described_class.register_theme('acme_derived', tokens)
+      derived = described_class.derive_dark(described_class.themes['acme_derived'].except('dark', 'font', 'radius'))
+
+      described_class::CONTRAST_PAIRS.each do |fg, bg, minimum|
+        expect(described_class.contrast_ratio(derived[fg], derived[bg])).to be >= minimum, "#{fg} on #{bg}"
+      end
+    end
+
+    it 'uses explicit dark tokens and derives the rest' do
+      described_class.register_theme('acme_dark', tokens, dark:)
+      flat = described_class.flat_theme('acme_dark')
+      config = described_class.new(flat)
+
+      expect(flat).to include('dark_source' => 'custom', 'dark_page_bg' => '#101a14')
+      expect(config.dark_values).to include('page_bg' => '#101a14', 'body_text' => '#e8f0ea')
+      expect(config.dark_values['link']).to be_present
+    end
+
+    it 'accepts a dark hash in the host YAML' do
+      file = Rails.root.join('tmp/host_themes_dark_spec.yml')
+      file.dirname.mkpath
+      file.write({ 'acme_yaml_dark' => tokens.merge('dark' => dark) }.to_yaml)
+
+      described_class.register_themes_from(file)
+
+      expect(described_class.themes['acme_yaml_dark']['dark']).to eq(dark)
+    ensure
+      file&.delete if file&.exist?
+    end
+
+    it 'rejects unknown or invalid dark tokens' do
+      expect { described_class.register_theme('x', tokens, dark: { 'nope' => '#000000' }) }.to raise_error(ArgumentError, /unknown dark/)
+      expect { described_class.register_theme('x', tokens, dark: { 'page_bg' => 'black' }) }.to raise_error(ArgumentError, /invalid dark/)
+    end
+  end
 end

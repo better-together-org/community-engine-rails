@@ -129,6 +129,12 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # Platform-scoped redirects answer before routing, so they win over the pages catch-all.
+    initializer 'better_together.redirect_middleware', after: 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/redirect_middleware').to_s
+      app.middleware.insert_after BetterTogether::PlatformContextMiddleware, BetterTogether::RedirectMiddleware
+    end
+
     # ActionDispatch::RemoteIp raises IpSpoofAttackError for malformed
     # X-Forwarded-For headers before Rack::Attack's scanner blocklists ever
     # run. Insert this guard immediately before RemoteIp so that traffic gets
@@ -260,6 +266,16 @@ module BetterTogether
         app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
         # Mirrors config/initializers/fast_mcp.rb, which mounts MCP from the same variable.
         app.config.mcp.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development? || Rails.env.test?).to_s == 'true'
+      end
+    end
+
+    # to_prepare re-runs after code reloads, so host themes survive the registry class being reloaded.
+    initializer 'better_together.host_platform_themes' do |app|
+      app.config.to_prepare do
+        path = Rails.root.join('config/platform_themes.yml')
+        if path.exist? && path != BetterTogether::PlatformThemeConfig::THEMES_PATH
+          BetterTogether::PlatformThemeConfig.register_themes_from(path)
+        end
       end
     end
 

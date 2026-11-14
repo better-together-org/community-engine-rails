@@ -129,6 +129,7 @@ module BetterTogether
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
                                            dependent: :destroy
     has_many :outgoing_platform_connections,
