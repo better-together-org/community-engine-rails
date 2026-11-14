@@ -2517,6 +2517,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
     t.string "region"
     t.string "access_key_id"
     t.string "secret_access_key"
+    t.string "health_status"
+    t.string "health_message"
+    t.datetime "health_checked_at"
     t.index ["platform_id"], name: "index_better_together_storage_configurations_on_platform_id"
     t.index ["service_type"], name: "index_better_together_storage_configurations_on_service_type"
   end

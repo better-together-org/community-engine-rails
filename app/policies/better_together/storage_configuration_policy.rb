@@ -35,6 +35,10 @@ module BetterTogether
       platform_manager?
     end
 
+    def test_connection?
+      platform_manager?
+    end
+
     private
 
     def target_platform

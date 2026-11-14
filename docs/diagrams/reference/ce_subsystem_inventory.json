@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T19:50:33Z",
+  "generated_at": "2026-11-14T20:21:19Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -5498,6 +5498,14 @@
             ],
             [
               "endpoint",
+              "string"
+            ],
+            [
+              "health_message",
+              "string"
+            ],
+            [
+              "health_status",
               "string"
             ],
             [
