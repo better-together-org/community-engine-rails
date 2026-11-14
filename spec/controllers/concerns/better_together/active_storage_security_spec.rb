@@ -112,6 +112,14 @@ module BetterTogether
           expect(controller).not_to receive(:head)
           controller.send(:verify_content_signature)
         end
+
+        it 'reports the failure to error reporting' do
+          allow(blob).to receive(:download_chunk).and_raise(StandardError, 'storage unavailable')
+          allow(BetterTogether).to receive(:report_error)
+          controller.send(:verify_content_signature)
+          expect(BetterTogether).to have_received(:report_error)
+            .with(an_instance_of(StandardError), context: hash_including(check: 'content_signature_sniff'))
+        end
       end
     end
 

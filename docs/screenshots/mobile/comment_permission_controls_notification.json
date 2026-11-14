@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#comment_added_notifier_notification_0ecd7b6c-2d09-4953-8d84-be50be9c4006",
+      "selector": "#comment_added_notifier_notification_cafe399a-d00b-4563-af2a-40b33aff3718",
       "title": "In-app notification for a new comment",
       "bullets": [
         "Delivered to the post's credited author(s) via agent_authors, not just its DB-row creator.",

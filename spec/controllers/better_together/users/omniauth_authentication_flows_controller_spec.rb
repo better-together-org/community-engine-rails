@@ -72,6 +72,8 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
   # rubocop:enable Metrics/MethodLength
 
   before do
+    # New hosted platforms default to invitation-only; these flows cover open OAuth sign-up.
+    platform.update!(requires_invitation: false)
     request.host = 'localhost'
     @request.env['devise.mapping'] = devise_mapping # rubocop:todo RSpec/InstanceVariable
   end

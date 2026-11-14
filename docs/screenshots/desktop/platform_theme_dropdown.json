@@ -1,0 +1,48 @@
+{
+  "name": "platform_theme_dropdown",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_theme_settings",
+  "flow": "platform_theme_dropdown",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_theme_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-theme-picker",
+      "title": "Theme picker",
+      "bullets": [
+        "Choose one of five accessible themes."
+      ],
+      "target": {
+        "x": 394.5,
+        "y": 350.0,
+        "width": 966.0,
+        "height": 153.0,
+        "right": 1360.5,
+        "bottom": 503.0,
+        "center_x": 877.5,
+        "center_y": 426.5
+      },
+      "avoid": {
+        "x": 394.5,
+        "y": 350.0,
+        "width": 966.0,
+        "height": 153.0,
+        "right": 1360.5,
+        "bottom": 503.0,
+        "center_x": 877.5,
+        "center_y": 426.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 687.5,
+        "y": 523.0,
+        "width": 380,
+        "height": 132,
+        "score": 954.0
+      }
+    }
+  ]
+}

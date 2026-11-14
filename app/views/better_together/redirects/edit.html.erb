@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= t('.title', from_path: @redirect.from_path) %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title', from_path: @redirect.from_path) %></h1>
+  <p class="text-muted"><%= t('.subtitle', platform_name: @platform.name) %></p>
+
+  <%= render 'form', redirect: @redirect %>
+</div>

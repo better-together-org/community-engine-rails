@@ -11,15 +11,8 @@ class SeedDefaultLocalPlatformCspImageOrigins < ActiveRecord::Migration[7.1]
 
     puts 'Seeding default map-tile CSP img_src origins onto local platforms missing them...'
 
-    load BetterTogether::Engine.root.join(
-      'lib', 'tasks', 'better_together', 'seed_platform_csp_img_src_defaults.rake'
-    )
-
-    begin
-      Rake::Task['better_together:seed:platform_csp_img_src_defaults'].invoke
-    rescue RuntimeError
-      Rake::Task['app:better_together:seed:platform_csp_img_src_defaults'].invoke
-    end
+    run_engine_rake_task('better_together:seed:platform_csp_img_src_defaults', file: 'seed_platform_csp_img_src_defaults.rake',
+                                                                               skip_when_empty: %i[better_together_platforms])
   end
 
   def down

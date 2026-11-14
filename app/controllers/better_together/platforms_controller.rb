@@ -5,7 +5,7 @@ module BetterTogether
     # #new builds an external platform and authorizes that itself; the inherited
     # check would authorize a blank internal Platform (create_platform) instead.
     skip_before_action :authorize_resource, only: :new
-    before_action :set_platform, only: %i[show edit update destroy available_people]
+    before_action :set_platform, only: %i[show edit update destroy available_people theme_dark]
     before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
 
@@ -28,6 +28,14 @@ module BetterTogether
       load_platform_connections if policy(::BetterTogether::PlatformConnection).index?
       load_safety_review_summary if show_safety_review?
       load_current_person_platform_memberships
+    end
+
+    # GET /platforms/:id/theme_dark?theme[primary]=...
+    # Dark tokens derived from the given light tokens, for the settings preview. Read only.
+    def theme_dark
+      authorize @platform, :update?
+      config = ::BetterTogether::PlatformThemeConfig.new(params.fetch(:theme, {}).permit(*::BetterTogether::PlatformThemeConfig::KEYS))
+      render json: { tokens: config.dark_values, low_contrast: config.low_contrast_pairs_dark.map(&:first) }
     end
 
     # GET /platforms/:id/available_people
@@ -137,18 +145,29 @@ module BetterTogether
 
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
-        slug host_url time_zone privacy
-      ]
+        slug host_url time_zone privacy logo remove_logo header_banner remove_header_banner favicon remove_favicon dark_logo remove_dark_logo
+      ] + [{ theme: BetterTogether::PlatformThemeConfig::KEYS }]
       css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
         BetterTogether::Content::Css.extra_permitted_attributes +
         BetterTogether::Content::Css.localized_attribute_list }]
 
-      params.require(:platform).permit(
+      permitted = params.require(:platform).permit(
         permitted_attributes,
         *settings_attributes,
         *locale_attributes,
-        *css_block_attrs
+        *css_block_attrs,
+        *BetterTogether::PlatformContentSlots.permitted_attributes
       )
+      restrict_quota_default_limits(permitted)
+    end
+
+    # Byte quotas may only be set to a listed decimal storage step (or the configured default).
+    def restrict_quota_default_limits(permitted)
+      return permitted unless permitted.key?(:quota_default_limits)
+
+      permitted[:quota_default_limits] =
+        BetterTogether::Quotas::Defaults.restrict_to_storage_steps(permitted[:quota_default_limits].to_h)
+      permitted
     end
 
     # Adds a policy check for the platform
@@ -179,10 +198,11 @@ module BetterTogether
       scalar_settings_attributes + csp_array_attributes
     end
 
-    def scalar_settings_attributes
+    def scalar_settings_attributes # rubocop:disable Metrics/MethodLength
       %i[
         requires_invitation
         allow_membership_requests
+        allow_user_themes
         contributors_display_visibility
         software_variant
         network_visibility
@@ -190,7 +210,9 @@ module BetterTogether
         federation_protocol
         oauth_issuer_url
       ] + [
-        { feature_gate_rollouts: {} }
+        { feature_gate_rollouts: {} },
+        { quota_default_limits: {} },
+        { integration_settings: {} }
       ]
     end
 

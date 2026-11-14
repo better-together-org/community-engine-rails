@@ -1,0 +1,51 @@
+# frozen_string_literal: true
+
+<% if module_name -%>
+module <%= module_name %>
+  # Authorization for <%= class_name %>. Tighten the rules before use.
+  class <%= class_name %>Policy < <%= policy_parent %>
+    def index?
+      user.present?
+    end
+
+    def show?
+      user.present?
+    end
+
+    def create?
+      permitted_to?('manage_platform')
+    end
+
+    def update?
+      permitted_to?('manage_platform')
+    end
+
+    def destroy?
+      permitted_to?('manage_platform')
+    end
+  end
+end
+<% else -%>
+# Authorization for <%= class_name %>. Tighten the rules before use.
+class <%= class_name %>Policy < <%= policy_parent %>
+  def index?
+    user.present?
+  end
+
+  def show?
+    user.present?
+  end
+
+  def create?
+    permitted_to?('manage_platform')
+  end
+
+  def update?
+    permitted_to?('manage_platform')
+  end
+
+  def destroy?
+    permitted_to?('manage_platform')
+  end
+end
+<% end -%>

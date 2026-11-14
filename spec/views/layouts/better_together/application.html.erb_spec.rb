@@ -26,6 +26,7 @@ RSpec.describe 'layouts/better_together/application' do
       request: double(original_url: 'http://test.host/current', user_agent: 'RSpec', path: '/current')
     )
     allow(view).to receive(:metrics_body_tag).and_yield
+    view.define_singleton_method(:render_platform_content_slot) { |*| '' }
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
     allow(view).to receive(:render).and_call_original
     allow(view).to receive(:render).with('layouts/better_together/custom_head_javascript').and_return('')

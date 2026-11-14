@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>">
+<html lang="<%= I18n.locale %>" <%= tag.attributes(html_color_mode_attributes) %>>
   <head>
     <meta charset="utf-8">
     <%= render_provider_head_tags %>
@@ -12,9 +12,11 @@
     <%= seo_meta_tags %>
     <%= canonical_link_tag %>
     <%= robots_meta_tag %>
+    <%= third_party_tracking_meta_tag %>
     <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
     <%= yield(:structured_data) if content_for?(:structured_data) %>
-    <meta name="color-scheme" content="light dark">
+    <%= color_scheme_meta_tag %>
+    <%= color_mode_head_script_tag %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= tag.meta name: "direct-upload-token", content: direct_upload_authorization_token %>
@@ -42,6 +44,10 @@
 
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
+
+    <%= platform_theme_style_tag %>
+    <%= user_theme_style_tag %>
+    <%= platform_favicon_tag %>
 
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
       <%= render partial: 'better_together/content/blocks/css', locals: { css: host_platform.css_block } if host_platform.css_block %>

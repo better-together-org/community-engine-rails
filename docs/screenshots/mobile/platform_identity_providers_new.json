@@ -1,0 +1,187 @@
+{
+  "name": "platform_identity_providers_new",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/identity_providers/new",
+  "title": "Add sign-in provider | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_identity_providers",
+  "flow": "platform_identity_providers_new",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_identity_providers_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_identity_provider_strategy",
+      "title": "Provider",
+      "bullets": [
+        "Choose from the providers the engine supports."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 235.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 273.390625,
+        "center_x": 242.5,
+        "center_y": 254.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 235.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 273.390625,
+        "center_x": 242.5,
+        "center_y": 254.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 293.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 983.609375
+      }
+    },
+    {
+      "selector": "#platform_identity_provider_client_secret",
+      "title": "Client secret",
+      "bullets": [
+        "Write-only. Leave blank on edit to keep the current secret."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 407.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 445.390625,
+        "center_x": 242.5,
+        "center_y": 426.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 407.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 445.390625,
+        "center_x": 242.5,
+        "center_y": 426.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 465.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 811.609375
+      }
+    },
+    {
+      "selector": "#platform_identity_provider_issuer",
+      "title": "Issuer URL",
+      "bullets": [
+        "OpenID Connect only: the https URL of the identity provider."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 629.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 667.390625,
+        "center_x": 242.5,
+        "center_y": 648.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 629.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 667.390625,
+        "center_x": 242.5,
+        "center_y": 648.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 687.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 589.609375
+      }
+    },
+    {
+      "selector": "#platform-identity-provider-domains",
+      "title": "Allowed domains",
+      "bullets": [
+        "Sign-in works only on the domains ticked here; there is no fallback to other domains."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1010.390625,
+        "width": 461.0,
+        "height": 129.0,
+        "right": 473.0,
+        "bottom": 1139.390625,
+        "center_x": 242.5,
+        "center_y": 1074.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1010.390625,
+        "width": 461.0,
+        "height": 129.0,
+        "right": 473.0,
+        "bottom": 1139.390625,
+        "center_x": 242.5,
+        "center_y": 1074.890625
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 210,
+        "score": 0
+      }
+    },
+    {
+      "selector": "#platform-identity-provider-submit-btn",
+      "title": "Add provider",
+      "bullets": [
+        "Saves the configuration for this platform."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1195.390625,
+        "width": 128.734375,
+        "height": 38.0,
+        "right": 140.734375,
+        "bottom": 1233.390625,
+        "center_x": 76.3671875,
+        "center_y": 1214.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1195.390625,
+        "width": 128.734375,
+        "height": 38.0,
+        "right": 140.734375,
+        "bottom": 1233.390625,
+        "center_x": 76.3671875,
+        "center_y": 1214.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 891.39,
+        "width": 270.0,
+        "height": 158
+      }
+    }
+  ]
+}

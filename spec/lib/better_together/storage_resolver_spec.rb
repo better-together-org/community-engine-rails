@@ -214,6 +214,12 @@ RSpec.describe BetterTogether::StorageResolver do # rubocop:todo RSpec/MultipleM
         expect(resolver.to_active_storage_config[:force_path_style]).to be(true)
       end
 
+      it 'only requires checksums when the S3 API demands them' do
+        config = resolver.to_active_storage_config
+        expect(config).to include(request_checksum_calculation: 'when_required',
+                                  response_checksum_validation: 'when_required')
+      end
+
       it 'includes the bucket' do
         expect(resolver.to_active_storage_config[:bucket]).to eq('test-bucket')
       end
@@ -229,6 +235,10 @@ RSpec.describe BetterTogether::StorageResolver do # rubocop:todo RSpec/MultipleM
 
       it 'does not set force_path_style' do
         expect(resolver.to_active_storage_config).not_to have_key(:force_path_style)
+      end
+
+      it 'keeps the SDK checksum defaults' do
+        expect(resolver.to_active_storage_config).not_to have_key(:response_checksum_validation)
       end
     end
 
