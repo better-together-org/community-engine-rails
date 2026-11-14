@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T02:41:41Z",
+  "generated_at": "2026-11-14T14:37:40Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3551,6 +3551,18 @@
           "source_subsystem": "content_publishing"
         },
         {
+          "from": "BetterTogether::Content::PlanCatalogBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Content::PlanButtonBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
           "from": "BetterTogether::Content::PeopleBlock",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
@@ -4040,6 +4052,18 @@
           "from": "BetterTogether::FeatureAccessGrant",
           "to": "BetterTogether::Person",
           "label": "granted_by_person (granted_by_person_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Person",
+          "label": "requester (requester_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Person",
+          "label": "decided_by (decided_by_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -7083,6 +7107,18 @@
           "source_subsystem": "content_publishing"
         },
         {
+          "from": "BetterTogether::Content::PlanCatalogBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Content::PlanButtonBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
           "from": "BetterTogether::Content::PeopleBlock",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -8019,6 +8055,18 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Billing::OrderDocument",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -8835,7 +8883,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::AlertBlock",
@@ -8977,7 +9025,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Block",
@@ -9118,6 +9166,8 @@
             "Content::MermaidDiagram",
             "Content::NavigationAreaBlock",
             "Content::PeopleBlock",
+            "Content::PlanButtonBlock",
+            "Content::PlanCatalogBlock",
             "Content::PostsBlock",
             "Content::QuoteBlock",
             "Content::RichText",
@@ -9142,6 +9192,8 @@
             "BetterTogether::Content::MermaidDiagram",
             "BetterTogether::Content::NavigationAreaBlock",
             "BetterTogether::Content::PeopleBlock",
+            "BetterTogether::Content::PlanButtonBlock",
+            "BetterTogether::Content::PlanCatalogBlock",
             "BetterTogether::Content::PostsBlock",
             "BetterTogether::Content::QuoteBlock",
             "BetterTogether::Content::RichText",
@@ -9149,7 +9201,7 @@
             "BetterTogether::Content::Template",
             "BetterTogether::Content::VideoBlock"
           ],
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::CallToActionBlock",
@@ -9296,7 +9348,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::ChecklistBlock",
@@ -9432,7 +9484,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::CommunitiesBlock",
@@ -9568,7 +9620,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Css",
@@ -9703,7 +9755,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::EventsBlock",
@@ -9839,7 +9891,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Hero",
@@ -10014,7 +10066,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Html",
@@ -10149,7 +10201,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::IframeBlock",
@@ -10286,7 +10338,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Image",
@@ -10432,7 +10484,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Link",
@@ -10628,7 +10680,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::MermaidDiagram",
@@ -10770,7 +10822,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::NavigationAreaBlock",
@@ -10906,7 +10958,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::PageBlock",
@@ -11095,7 +11147,269 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
+        },
+        {
+          "name": "BetterTogether::Content::PlanButtonBlock",
+          "label": "Content::PlanButtonBlock",
+          "source_path": "app/models/better_together/content/plan_button_block.rb",
+          "table_name": "better_together_content_blocks",
+          "columns": [
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "protected",
+              "boolean"
+            ],
+            [
+              "visible",
+              "boolean"
+            ],
+            [
+              "accessibility_attributes",
+              "jsonb"
+            ],
+            [
+              "content_area_settings",
+              "jsonb"
+            ],
+            [
+              "content_data",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])",
+            "InclusionValidator: visible (in=[true, false])",
+            "ContentTypeValidator: background_image_file (in=[\"image/jpeg\", \"image/png\", \"image/gif\", \"image/webp\", \"image/svg+xml\"])",
+            "SizeValidator: background_image_file (less_than=20971520, message=\"is too large\")",
+            "InclusionValidator: container_class (allow_blank=true, in=[\"container\", \"container-fluid\"], message=\"must be a valid Bootstrap container class (container, container-fluid) or none.\")"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "background_image_file_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "reports_received",
+              "as": "reportable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Content::BlockAttributes",
+            "BetterTogether::Creatable",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Reportable",
+            "BetterTogether::Seedable",
+            "BetterTogether::Translatable",
+            "BetterTogether::Visible"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 24
+        },
+        {
+          "name": "BetterTogether::Content::PlanCatalogBlock",
+          "label": "Content::PlanCatalogBlock",
+          "source_path": "app/models/better_together/content/plan_catalog_block.rb",
+          "table_name": "better_together_content_blocks",
+          "columns": [
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "protected",
+              "boolean"
+            ],
+            [
+              "visible",
+              "boolean"
+            ],
+            [
+              "accessibility_attributes",
+              "jsonb"
+            ],
+            [
+              "content_area_settings",
+              "jsonb"
+            ],
+            [
+              "content_data",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])",
+            "InclusionValidator: visible (in=[true, false])",
+            "ContentTypeValidator: background_image_file (in=[\"image/jpeg\", \"image/png\", \"image/gif\", \"image/webp\", \"image/svg+xml\"])",
+            "SizeValidator: background_image_file (less_than=20971520, message=\"is too large\")",
+            "InclusionValidator: container_class (allow_blank=true, in=[\"container\", \"container-fluid\"], message=\"must be a valid Bootstrap container class (container, container-fluid) or none.\")"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "background_image_file_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "reports_received",
+              "as": "reportable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "heading"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Content::BlockAttributes",
+            "BetterTogether::Creatable",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Reportable",
+            "BetterTogether::Seedable",
+            "BetterTogether::Translatable",
+            "BetterTogether::Visible"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::PlatformBlock",
@@ -11285,7 +11599,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::QuoteBlock",
@@ -11429,7 +11743,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::RichText",
@@ -11594,7 +11908,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::StatisticsBlock",
@@ -11736,7 +12050,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Template",
@@ -11863,7 +12177,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::VideoBlock",
@@ -11999,7 +12313,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Page",
@@ -12940,6 +13254,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13057,6 +13373,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13116,6 +13434,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13338,6 +13658,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13393,6 +13715,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13428,6 +13752,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13460,6 +13786,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13504,6 +13832,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13538,6 +13868,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13590,6 +13922,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13655,6 +13989,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13696,6 +14032,8 @@
             "Content::RichText",
             "Content::QuoteBlock",
             "Content::PostsBlock",
+            "Content::PlanCatalogBlock",
+            "Content::PlanButtonBlock",
             "Content::PeopleBlock",
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
@@ -13951,6 +14289,30 @@
         },
         {
           "from": "BetterTogether::Content::PeopleBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::PlanButtonBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::PlanButtonBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::PlanCatalogBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::PlanCatalogBlock",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -27887,6 +28249,14 @@
               "uuid FK"
             ],
             [
+              "pending_plan_id",
+              "uuid FK"
+            ],
+            [
+              "pending_plan_order_id",
+              "uuid FK"
+            ],
+            [
               "plan_id",
               "uuid FK"
             ],
@@ -27909,14 +28279,6 @@
             [
               "anchor_sequence",
               "integer"
-            ],
-            [
-              "unit_amount_cents",
-              "integer"
-            ],
-            [
-              "anchor_at",
-              "datetime"
             ]
           ],
           "validations": [
@@ -27947,6 +28309,18 @@
               "foreign_key": "plan_id",
               "target": "BetterTogether::Billing::Plan",
               "optional": false
+            },
+            {
+              "name": "pending_plan",
+              "foreign_key": "pending_plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": true
+            },
+            {
+              "name": "pending_plan_order",
+              "foreign_key": "pending_plan_order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": true
             }
           ],
           "polymorphic": [
@@ -28858,6 +29232,24 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Billing::Order",
+          "label": "order (order_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "plan (plan_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "add_on (add_on_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Billing::OrderDocument",
           "to": "BetterTogether::Billing::Order",
           "label": "order (order_id)",
@@ -29457,6 +29849,201 @@
               "target": "BetterTogether::Upload",
               "optional": false,
               "target_subsystem": "content_publishing"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PlanAddOn",
+          "label": "Billing::PlanAddOn",
+          "source_path": "app/models/better_together/billing/plan_add_on.rb",
+          "table_name": "better_together_billing_plan_add_ons",
+          "columns": [
+            [
+              "add_on_id",
+              "uuid FK"
+            ],
+            [
+              "plan_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "UniquenessValidator: add_on_id (scope=:plan_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            },
+            {
+              "name": "add_on",
+              "foreign_key": "add_on_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false,
+              "target_subsystem": "billing"
+            },
+            {
+              "name": "add_on",
+              "foreign_key": "add_on_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false,
+              "target_subsystem": "billing"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::RefundRequest",
+          "label": "Billing::RefundRequest",
+          "source_path": "app/models/better_together/billing/refund_request.rb",
+          "table_name": "better_together_billing_refund_requests",
+          "columns": [
+            [
+              "decided_by_id",
+              "uuid FK"
+            ],
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "requester_id",
+              "uuid FK"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "reason",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "decision_note",
+              "text"
+            ],
+            [
+              "details",
+              "text"
+            ],
+            [
+              "amount_cents",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "InclusionValidator: status (in=[\"pending\", \"approved\", \"partially_approved\", \"declined\", \"cancelled\"])",
+            "InclusionValidator: reason (in=[\"requested_by_buyer\", \"duplicate\", \"cancelled_event\", \"error\", \"other\"])",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "NumericalityValidator: amount_cents (allow_nil=true, only_integer=true, greater_than=0)",
+            "NumericalityValidator: approved_amount_cents (allow_nil=true, only_integer=true, greater_than=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false
+            },
+            {
+              "name": "requester",
+              "foreign_key": "requester_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "decided_by",
+              "foreign_key": "decided_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::EncryptedAttributes",
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false,
+              "target_subsystem": "billing"
+            },
+            {
+              "name": "requester",
+              "foreign_key": "requester_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "decided_by",
+              "foreign_key": "decided_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
             }
           ]
         },
@@ -36248,6 +36835,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::BillingAddressesController",
+          "label": "Billing::BillingAddressesController",
+          "source_path": "app/controllers/better_together/billing/billing_addresses_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::CatalogController",
           "label": "Billing::CatalogController",
           "source_path": "app/controllers/better_together/billing/catalog_controller.rb",
@@ -36322,6 +36923,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::NotificationPreferencesController",
+          "label": "Billing::NotificationPreferencesController",
+          "source_path": "app/controllers/better_together/billing/notification_preferences_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OrderDocumentsController",
           "label": "Billing::OrderDocumentsController",
           "source_path": "app/controllers/better_together/billing/order_documents_controller.rb",
@@ -36360,6 +36975,36 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::RefundRequestsController",
+          "label": "Billing::RefundRequestsController",
+          "source_path": "app/controllers/better_together/billing/refund_requests_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::RefundRequest"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SaleRefundRequestsController",
+          "label": "Billing::SaleRefundRequestsController",
+          "source_path": "app/controllers/better_together/billing/sale_refund_requests_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -37373,7 +38018,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::TaxRegistration",
-            "Billing::TaxLine"
+            "Billing::TaxLine",
+            "Billing::RefundRequest"
           ]
         },
         {
@@ -37392,14 +38038,18 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
-            "Billing::CatalogController"
+            "Billing::CatalogController",
+            "Billing::BillingAddressesController"
           ]
         },
         {
@@ -37409,6 +38059,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::TaxLine",
+            "Billing::RefundRequest",
+            "Billing::PlanAddOn",
             "Billing::OrderDocument"
           ]
         },
@@ -37432,6 +38084,8 @@
             "Billing::TaxRate",
             "Billing::TaxLine",
             "Billing::TaxCategory",
+            "Billing::RefundRequest",
+            "Billing::PlanAddOn",
             "Billing::OrderDocument",
             "Billing::HostedAccount",
             "Billing::DefaultAddress"
@@ -37444,6 +38098,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::TaxRegistration"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Subjectable",
+          "label": "Billing::Subjectable",
+          "capability": "Subjectable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::RefundRequest"
           ]
         },
         {
@@ -37642,14 +38305,18 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37719,14 +38386,18 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37796,14 +38467,18 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37884,14 +38559,18 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -38234,6 +38913,48 @@
           "to": "BetterTogether::Upload",
           "label": "upload (upload_id)",
           "target_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "add_on (add_on_id)",
+          "target_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "plan (plan_id)",
+          "target_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Billing::Order",
+          "label": "order (order_id)",
+          "target_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Person",
+          "label": "decided_by (decided_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Person",
+          "label": "requester (requester_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::Billing::TaxCategory",
