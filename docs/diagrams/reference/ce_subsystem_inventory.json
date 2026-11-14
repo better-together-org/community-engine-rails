@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T17:52:36Z",
+  "generated_at": "2026-11-14T14:28:59Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3870,6 +3870,30 @@
           "source_subsystem": "integrations_webhooks"
         },
         {
+          "from": "BetterTogether::TrustedDomainEvent",
+          "to": "BetterTogether::Person",
+          "label": "actor (actor_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::TrustedDomainEvent",
+          "to": "BetterTogether::Person",
+          "label": "subject (subject_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformTrustedDomain",
+          "to": "BetterTogether::Role",
+          "label": "role (role_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformTrustedDomain",
+          "to": "BetterTogether::Person",
+          "label": "created_by (created_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Person",
           "label": "operator (operator_id)",
@@ -7517,6 +7541,18 @@
         },
         {
           "from": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::TrustedDomainEvent",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformTrustedDomain",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -30192,6 +30228,112 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformTrustedDomain",
+          "label": "PlatformTrustedDomain",
+          "source_path": "app/models/better_together/platform_trusted_domain.rb",
+          "table_name": "better_together_platform_trusted_domains",
+          "columns": [
+            [
+              "created_by_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "role_id",
+              "uuid FK"
+            ],
+            [
+              "domain",
+              "string"
+            ],
+            [
+              "note",
+              "text"
+            ],
+            [
+              "enabled",
+              "boolean"
+            ],
+            [
+              "include_subdomains",
+              "boolean"
+            ],
+            [
+              "public_domain_confirmed",
+              "boolean"
+            ],
+            [
+              "role_ceiling_confirmed",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: domain",
+            "FormatValidator: domain (with=/\\A(?=.{1,253}\\z)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]\\z/, allow_blank=true)",
+            "UniquenessValidator: domain (scope=:platform_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "role",
+              "foreign_key": "role_id",
+              "target": "BetterTogether::Role",
+              "optional": false
+            },
+            {
+              "name": "created_by",
+              "foreign_key": "created_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "role",
+              "foreign_key": "role_id",
+              "target": "BetterTogether::Role",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "created_by",
+              "foreign_key": "created_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Quota",
           "label": "Quota",
           "source_path": "app/models/better_together/quota.rb",
@@ -31118,6 +31260,118 @@
               "target": "BetterTogether::Platform",
               "optional": true,
               "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::TrustedDomainEvent",
+          "label": "TrustedDomainEvent",
+          "source_path": "app/models/better_together/trusted_domain_event.rb",
+          "table_name": "better_together_trusted_domain_events",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "platform_trusted_domain_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "domain",
+              "string"
+            ],
+            [
+              "event_type",
+              "string"
+            ],
+            [
+              "role_identifier",
+              "string"
+            ],
+            [
+              "via",
+              "string"
+            ],
+            [
+              "details",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: event_type (in=[\"domain_added\", \"domain_updated\", \"domain_removed\", \"account_created\", \"membership_granted\", \"membership_request_approved\"])",
+            "InclusionValidator: via (allow_nil=true, in=[\"google_oauth\", \"password_registration\", \"membership_request\", \"steward\"])",
+            "PresenceValidator: domain"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "platform_trusted_domain",
+              "foreign_key": "platform_trusted_domain_id",
+              "target": "BetterTogether::PlatformTrustedDomain",
+              "optional": true
+            },
+            {
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
             }
           ]
         },
@@ -32959,6 +33213,8 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "TrustedDomainEvent",
+            "PlatformTrustedDomain",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -33596,6 +33852,8 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "TrustedDomainEvent",
+            "PlatformTrustedDomain",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -34037,6 +34295,24 @@
           "target_subsystem": "platform_network"
         },
         {
+          "from": "BetterTogether::PlatformTrustedDomain",
+          "to": "BetterTogether::Person",
+          "label": "created_by (created_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformTrustedDomain",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformTrustedDomain",
+          "to": "BetterTogether::Role",
+          "label": "role (role_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
           "from": "BetterTogether::Quota",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -34092,6 +34368,24 @@
         },
         {
           "from": "BetterTogether::SocialMediaAccount",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::TrustedDomainEvent",
+          "to": "BetterTogether::Person",
+          "label": "actor (actor_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::TrustedDomainEvent",
+          "to": "BetterTogether::Person",
+          "label": "subject (subject_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::TrustedDomainEvent",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

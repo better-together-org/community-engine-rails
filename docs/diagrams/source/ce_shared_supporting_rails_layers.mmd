@@ -575,6 +575,12 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformTrustedDomain["PlatformTrustedDomain"] {
+      <<Model>>
+      table: better_together_platform_trusted_domains
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
       table: better_together_quotas
@@ -616,6 +622,12 @@ classDiagram
       <<Model>>
       table: better_together_social_media_accounts
       concerns: BetterTogetherId, PlatformScoped, Privacy, PrivacyCeilingValidatable +1
+      weak refs: owner: seeds
+    }
+    class BetterTogether__TrustedDomainEvent["TrustedDomainEvent"] {
+      <<Model>>
+      table: better_together_trusted_domain_events
+      concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Weather__CurrentCondition["Weather::CurrentCondition"] {
@@ -821,6 +833,9 @@ classDiagram
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformDomain : platform_domain
+  BetterTogether__PlatformTrustedDomain --> BetterTogether__Platform : platform
+  BetterTogether__PlatformTrustedDomain --> BetterTogether__Role : role
+  BetterTogether__PlatformTrustedDomain --> BetterTogether__Person : created_by
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota
@@ -833,6 +848,10 @@ classDiagram
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform
   BetterTogether__SocialMediaAccount --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__TrustedDomainEvent --> BetterTogether__Platform : platform
+  BetterTogether__TrustedDomainEvent --> BetterTogether__PlatformTrustedDomain : platform_trusted_domain
+  BetterTogether__TrustedDomainEvent --> BetterTogether__Person : actor
+  BetterTogether__TrustedDomainEvent --> BetterTogether__Person : subject
   BetterTogether__Weather__CurrentCondition --> BetterTogether__Weather__Location : location
   BetterTogether__Weather__Forecast --> BetterTogether__Weather__Location : location
   BetterTogether__Weather__Location --> BetterTogether__Geography__Settlement : settlement
