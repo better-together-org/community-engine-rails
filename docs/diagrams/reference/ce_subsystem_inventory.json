@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T02:40:32Z",
+  "generated_at": "2026-11-14T02:04:48Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -5345,14 +5345,6 @@
               "string"
             ],
             [
-              "health_message",
-              "string"
-            ],
-            [
-              "health_status",
-              "string"
-            ],
-            [
               "name",
               "string"
             ],
@@ -7525,6 +7517,12 @@
         },
         {
           "from": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Redirect",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -30694,6 +30692,92 @@
           ]
         },
         {
+          "name": "BetterTogether::Redirect",
+          "label": "Redirect",
+          "source_path": "app/models/better_together/redirect.rb",
+          "table_name": "better_together_redirects",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "from_path",
+              "string"
+            ],
+            [
+              "source",
+              "string"
+            ],
+            [
+              "note",
+              "text"
+            ],
+            [
+              "to_path",
+              "text"
+            ],
+            [
+              "active",
+              "boolean"
+            ],
+            [
+              "preserve_query",
+              "boolean"
+            ],
+            [
+              "hit_count",
+              "integer"
+            ],
+            [
+              "status",
+              "integer"
+            ],
+            [
+              "last_hit_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: from_path",
+            "UniquenessValidator: from_path (scope=:platform_id, case_sensitive=false)",
+            "InclusionValidator: status (in=[301, 302, 307, 308, 410])",
+            "InclusionValidator: source (in=[\"manual\", \"import\", \"seed\", \"slug_history\"])",
+            "PresenceValidator: to_path (unless=:gone?)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::SafetyReportDigestNotifier",
           "label": "SafetyReportDigestNotifier",
           "source_path": "app/notifiers/better_together/safety_report_digest_notifier.rb",
@@ -32625,6 +32709,21 @@
           ]
         },
         {
+          "name": "BetterTogether::RedirectsController",
+          "label": "RedirectsController",
+          "source_path": "app/controllers/better_together/redirects_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Redirect"
+          ],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::ReportFollowupsController",
           "label": "ReportFollowupsController",
           "source_path": "app/controllers/better_together/report_followups_controller.rb",
@@ -32967,6 +33066,7 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "Redirect",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -33199,6 +33299,7 @@
             "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
+            "RedirectsController",
             "QuotaGrantsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
@@ -33267,6 +33368,7 @@
             "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
+            "RedirectsController",
             "QuotaGrantsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
@@ -33335,6 +33437,7 @@
             "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
+            "RedirectsController",
             "QuotaGrantsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
@@ -33414,6 +33517,7 @@
             "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
+            "RedirectsController",
             "QuotaGrantsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
@@ -33604,6 +33708,7 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "Redirect",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -34070,6 +34175,12 @@
         },
         {
           "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Redirect",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

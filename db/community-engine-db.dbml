@@ -2598,6 +2598,28 @@ Table "better_together_recurrences" {
   }
 }
 
+Table "better_together_redirects" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid [not null]
+  "from_path" varchar [not null]
+  "to_path" text
+  "status" integer [not null, default: 301]
+  "active" boolean [not null, default: true]
+  "preserve_query" boolean [not null, default: true]
+  "source" varchar [not null, default: 'manual']
+  "note" text
+  "hit_count" integer [not null, default: 0]
+  "last_hit_at" timestamp
+
+  indexes {
+    "platform_id, lower((from_path)::text)" [unique, name: "index_bt_redirects_on_platform_and_lower_from_path"]
+    "platform_id" [name: "index_bt_redirects_on_platform_id"]
+  }
+}
+
 Table "better_together_reports" {
   "id" uuid [pk]
   "lock_version" integer [not null, default: 0]
@@ -3837,6 +3859,8 @@ Ref: "better_together_quota_usages"."platform_id" > "better_together_platforms".
 Ref: "better_together_quota_usages"."quota_id" > "better_together_quotas"."id"
 
 Ref: "better_together_quotas"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_redirects"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_reports"."platform_id" > "better_together_platforms"."id"
 

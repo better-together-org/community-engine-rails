@@ -71,6 +71,7 @@
   <% end %>
 
   <%= render layout: @layout do %>
+    <%= render 'better_together/shared/breadcrumbs', trail: breadcrumb_trail_for(@page), current_url: @page.url %>
     <% if @page.template.present? && @content_blocks.size.zero? %>
       <%= render template: @page.template %>
     <% else %>

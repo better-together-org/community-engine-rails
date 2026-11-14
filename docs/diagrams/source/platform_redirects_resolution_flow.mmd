@@ -1,0 +1,13 @@
+flowchart TD
+  A[Request GET or HEAD] --> B[PlatformContextMiddleware sets Current.platform from the host]
+  B --> C[RedirectMiddleware]
+  C --> D{Path matches an active redirect for this platform?}
+  D -- yes --> E[301 302 307 308 with Location, or 410 Gone]
+  D -- no --> F[Rails router]
+  F --> G{Route found?}
+  G -- yes --> H[Controller loads the record by slug]
+  G -- no --> I[Pages catch-all]
+  I --> H
+  H --> J{Slug is a former FriendlyId slug?}
+  J -- yes --> K[301 to the current slug]
+  J -- no --> L[Render the page or 404]

@@ -131,6 +131,12 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # Platform-scoped redirects answer before routing, so they win over the pages catch-all.
+    initializer 'better_together.redirect_middleware', after: 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/redirect_middleware').to_s
+      app.middleware.insert_after BetterTogether::PlatformContextMiddleware, BetterTogether::RedirectMiddleware
+    end
+
     # ActionDispatch::RemoteIp raises IpSpoofAttackError for malformed
     # X-Forwarded-For headers before Rack::Attack's scanner blocklists ever
     # run. Insert this guard immediately before RemoteIp so that traffic gets
@@ -139,6 +145,34 @@ module BetterTogether
     initializer 'better_together.spoofed_forwarded_for_guard_middleware' do |app|
       require root.join('app/middleware/better_together/spoofed_forwarded_for_guard_middleware').to_s
       app.middleware.insert_before ActionDispatch::RemoteIp, BetterTogether::SpoofedForwardedForGuardMiddleware
+    end
+
+    # Production delivery: gzip text responses, strip HTML comments, long-cache
+    # fingerprinted assets. Each can be turned off with an environment variable.
+    DELIVERY_COMPRESSIBLE_TYPES = %w[
+      text/html text/css text/plain text/xml text/javascript application/javascript application/json
+      application/xml application/rss+xml application/atom+xml image/svg+xml
+    ].freeze
+
+    initializer 'better_together.delivery_middleware' do |app|
+      next unless Rails.env.production?
+
+      %w[html_comment_stripper immutable_asset_cache].each do |name|
+        require root.join("app/middleware/better_together/#{name}").to_s
+      end
+
+      unless ENV['BTS_DISABLE_RESPONSE_COMPRESSION'].present?
+        app.middleware.insert_before 0, Rack::Deflater, include: DELIVERY_COMPRESSIBLE_TYPES
+      end
+      app.middleware.use BetterTogether::HtmlCommentStripper unless ENV['BTS_DISABLE_HTML_COMMENT_STRIPPING'].present?
+      app.middleware.use BetterTogether::ImmutableAssetCache unless ENV['BTS_DISABLE_ASSET_CACHE_HEADERS'].present?
+    end
+
+    # Images below the fold should not block first paint. Hosts that set
+    # image_loading themselves keep their value; the navbar logo opts out.
+    initializer 'better_together.image_loading_default' do |app|
+      app.config.action_view.image_loading ||= 'lazy'
+      app.config.action_view.image_decoding ||= 'async'
     end
 
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —

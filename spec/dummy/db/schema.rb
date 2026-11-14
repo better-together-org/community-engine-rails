@@ -2157,6 +2157,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_120000) do
     t.index ["schedulable_type", "schedulable_id"], name: "index_recurrences_on_schedulable"
   end
 
+  create_table "better_together_redirects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "from_path", null: false
+    t.text "to_path"
+    t.integer "status", default: 301, null: false
+    t.boolean "active", default: true, null: false
+    t.boolean "preserve_query", default: true, null: false
+    t.string "source", default: "manual", null: false
+    t.text "note"
+    t.integer "hit_count", default: 0, null: false
+    t.datetime "last_hit_at"
+    t.index "platform_id, lower((from_path)::text)", name: "index_bt_redirects_on_platform_and_lower_from_path", unique: true
+    t.index ["platform_id"], name: "index_bt_redirects_on_platform_id"
+  end
+
   create_table "better_together_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -3013,6 +3031,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_120000) do
   add_foreign_key "better_together_quota_usages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_usages", "better_together_quotas", column: "quota_id"
   add_foreign_key "better_together_quotas", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_redirects", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_reports", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_resource_permissions", "better_together_platforms", column: "platform_id"

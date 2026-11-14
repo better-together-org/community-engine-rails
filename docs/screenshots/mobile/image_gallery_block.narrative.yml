@@ -1,0 +1,14 @@
+---
+title: Image gallery block
+audience:
+- visitor
+- editor
+journey_step: As a visitor, I browse a set of photos on a page.
+callouts:
+- :id: gallery
+  :title: Gallery
+  :description: The heading and image order come from the block. Each thumbnail opens
+    the viewer.
+accessibility_notes: Thumbnails are buttons with labels; the viewer is a dialog.
+slug: image_gallery_block
+device: mobile

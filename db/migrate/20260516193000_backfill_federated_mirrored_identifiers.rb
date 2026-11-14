@@ -4,6 +4,10 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
   NAMESPACE_SEPARATOR = '--'
 
   def up
+    return unless %i[better_together_posts better_together_pages better_together_events].any? do |table|
+      table_has_rows?(table)
+    end
+
     say_with_time migration_message(:title) do
       backfill(::BetterTogether::Post, content_type: 'post') +
         backfill(::BetterTogether::Page, content_type: 'page') +

@@ -5,8 +5,8 @@ class UpdateConversationTitleToEncrypted < ActiveRecord::Migration[7.1]
   def change
     reversible do |dir|
       dir.up do
-        load 'tasks/data_migration.rake'
-        Rake::Task['better_together:migrate_data:unencrypted_conv_titles'].invoke
+        run_engine_rake_task('better_together:migrate_data:unencrypted_conv_titles', file: 'tasks/data_migration.rake',
+                                                                                     skip_when_empty: %i[better_together_conversations])
       end
     end
   end
