@@ -12,13 +12,14 @@ module BetterTogether
       Reference = Data.define(:name, :types, :optional)
       Attachment = Data.define(:name, :many)
 
-      attr_reader :name, :model_name, :natural_key_columns, :within, :by_refs, :platform_column,
+      attr_reader :name, :model_name, :natural_key_columns, :natural_key_via_attribute, :within, :by_refs, :platform_column,
                   :writable_attributes, :translated_attributes, :references, :attachments,
                   :position_column, :depends_on, :hooks, :sti_column, :sti_allowed
 
       def initialize(name)
         @name = name.to_sym
         @natural_key_columns = [:identifier]
+        @natural_key_via_attribute = false
         @within = nil
         @by_refs = []
         @platform_column = :platform_id
@@ -36,12 +37,15 @@ module BetterTogether
 
       # Resolves the record a packet key stands for, scoped to the target platform.
       # `parent_refs` carries already-resolved records for `within:` and `by_refs:` types.
-      def find(platform:, key:, parent_refs: {})
+      # `attributes` supplies the match value for types whose natural key is an attribute (via_attribute),
+      # because their value (a URL path) cannot be a protocol key.
+      def find(platform:, key:, parent_refs: {}, attributes: nil)
         scope = platform_column && model.column_names.include?(platform_column.to_s) ? model.where(platform_column => platform.id) : model.all
         return find_by_refs(scope, parent_refs) if by_refs.any?
 
         scope = scope.where(within_column => parent_refs.fetch(within).id) if within
-        scope.find_by(natural_key_columns.first => key)
+        value = natural_key_via_attribute ? attributes&.dig(natural_key_columns.first.to_s) : key
+        value.nil? ? nil : scope.find_by(natural_key_columns.first => value)
       end
 
       def writable?(attribute)
@@ -94,8 +98,9 @@ module BetterTogether
           @definition.instance_variable_set(:@model_name, class_name)
         end
 
-        def natural_key(*columns, within: nil, by_refs: [])
+        def natural_key(*columns, within: nil, by_refs: [], via_attribute: false)
           @definition.instance_variable_set(:@natural_key_columns, columns)
+          @definition.instance_variable_set(:@natural_key_via_attribute, via_attribute)
           @definition.instance_variable_set(:@within, within)
           @definition.instance_variable_set(:@by_refs, Array(by_refs))
         end

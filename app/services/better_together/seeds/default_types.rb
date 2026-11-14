@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
+# rubocop:disable Metrics/ModuleLength, Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
 
 module BetterTogether
   module Seeds
@@ -11,6 +11,7 @@ module BetterTogether
         register_navigation
         register_files_and_events
         register_contacts
+        register_redirects
       end
 
       def self.register_content
@@ -23,7 +24,7 @@ module BetterTogether
         end
         Registry.register(:content_block) do
           model 'BetterTogether::Content::Block'
-          sti :type, allowed: -> { BetterTogether::Content::Block.descendants.map(&:name) }
+          sti :type, allowed: -> { BetterTogether::Seeds::DefaultTypes.content_block_types }
           attributes :privacy, :visible, :css_settings, :html_attributes, :content_data, :media_settings
           translated :content
           attachment :background_image_file
@@ -35,6 +36,13 @@ module BetterTogether
           reference :block, to: :content_block
           position :position
         end
+      end
+
+      # Block subclasses are autoloaded, so load them before asking for descendants (outside eager-load
+      # environments the list is otherwise empty).
+      def self.content_block_types
+        Rails.autoloaders.main.eager_load_dir(BetterTogether::Engine.root.join('app/models/better_together/content').to_s)
+        BetterTogether::Content::Block.descendants.map(&:name)
       end
 
       def self.register_navigation
@@ -100,8 +108,19 @@ module BetterTogether
         end
       end
 
-      private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts
+      # Redirects are matched on from_path (an attribute, since a URL path is not a valid packet key),
+      # unique per platform.
+      def self.register_redirects
+        Registry.register(:redirect) do
+          model 'BetterTogether::Redirect'
+          natural_key :from_path, via_attribute: true
+          attributes :from_path, *BetterTogether::Redirect::SEED_ATTRIBUTES
+        end
+      end
+
+      private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
+                           :register_redirects
     end
   end
 end
-# rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
+# rubocop:enable Metrics/ModuleLength, Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
