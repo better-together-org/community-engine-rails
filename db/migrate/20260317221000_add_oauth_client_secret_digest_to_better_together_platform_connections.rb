@@ -17,6 +17,8 @@ class AddOauthClientSecretDigestToBetterTogetherPlatformConnections < ActiveReco
                  :oauth_client_secret_digest, :string
     end
 
+    return unless table_has_rows?(:better_together_platform_connections)
+
     require 'bcrypt'
 
     # Backfill: generate BCrypt digests for all existing platform connections.

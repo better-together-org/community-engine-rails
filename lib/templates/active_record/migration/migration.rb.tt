@@ -1,0 +1,91 @@
+# frozen_string_literal: true
+
+<% pk_type = options[:primary_key_type].presence || Rails::Generators.options.dig(:active_record, :primary_key_type) -%>
+<% fk_type = pk_type ? ", type: :#{pk_type}" : '' -%>
+class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+<%- if migration_action == 'add' -%>
+  def up
+    return unless table_exists?(:<%= table_name %>)
+<% attributes.each do |attribute| -%>
+  <%- if attribute.reference? -%>
+
+    unless column_exists?(:<%= table_name %>, :<%= attribute.name %>_id)
+      add_reference :<%= table_name %>, :<%= attribute.name %><%= attribute.inject_options %><%= fk_type %>
+    end
+  <%- elsif attribute.token? -%>
+
+    unless column_exists?(:<%= table_name %>, :<%= attribute.name %>)
+      add_column :<%= table_name %>, :<%= attribute.name %>, :string<%= attribute.inject_options %>
+    end
+    unless index_exists?(:<%= table_name %>, :<%= attribute.index_name %>)
+      add_index :<%= table_name %>, :<%= attribute.index_name %><%= attribute.inject_index_options %>, unique: true
+    end
+  <%- elsif !attribute.virtual? -%>
+
+    unless column_exists?(:<%= table_name %>, :<%= attribute.name %>)
+      add_column :<%= table_name %>, :<%= attribute.name %>, :<%= attribute.type %><%= attribute.inject_options %>
+    end
+    <%- if attribute.has_index? -%>
+    unless index_exists?(:<%= table_name %>, :<%= attribute.index_name %>)
+      add_index :<%= table_name %>, :<%= attribute.index_name %><%= attribute.inject_index_options %>
+    end
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+  end
+
+  def down
+    return unless table_exists?(:<%= table_name %>)
+<% attributes.each do |attribute| -%>
+  <%- if attribute.reference? -%>
+
+    remove_reference :<%= table_name %>, :<%= attribute.name %>, index: true, foreign_key: true if column_exists?(:<%= table_name %>, :<%= attribute.name %>_id)
+  <%- elsif !attribute.virtual? -%>
+
+    remove_column :<%= table_name %>, :<%= attribute.name %> if column_exists?(:<%= table_name %>, :<%= attribute.name %>)
+  <%- end -%>
+<%- end -%>
+  end
+<%- elsif migration_action == 'join' -%>
+  def up
+    return if table_exists?(:<%= join_tables.sort.join('_') %>)
+
+    create_join_table :<%= join_tables.first %>, :<%= join_tables.second %> do |t|
+    <%- attributes.each do |attribute| -%>
+      <%- if attribute.reference? -%>
+      t.references :<%= attribute.name %><%= attribute.inject_options %><%= fk_type %>
+      <%- elsif !attribute.virtual? -%>
+      <%= '# ' unless attribute.has_index? -%>t.index <%= attribute.index_name %><%= attribute.inject_index_options %>
+      <%- end -%>
+    <%- end -%>
+    end
+  end
+
+  def down
+    drop_join_table :<%= join_tables.first %>, :<%= join_tables.second %> if table_exists?(:<%= join_tables.sort.join('_') %>)
+  end
+<%- else -%>
+  def up
+    return unless table_exists?(:<%= table_name %>)
+<% attributes.each do |attribute| -%>
+<%- if migration_action -%>
+  <%- if attribute.reference? -%>
+
+    if column_exists?(:<%= table_name %>, :<%= attribute.name %>_id)
+      remove_reference :<%= table_name %>, :<%= attribute.name %><%= attribute.inject_options %><%= fk_type %>
+    end
+  <%- else -%>
+
+    if column_exists?(:<%= table_name %>, :<%= attribute.name %>)
+      remove_column :<%= table_name %>, :<%= attribute.name %>, :<%= attribute.type %><%= attribute.inject_options %>
+    end
+  <%- end -%>
+<%- end -%>
+<%- end -%>
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration
+  end
+<%- end -%>
+end

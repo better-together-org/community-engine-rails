@@ -89,6 +89,8 @@ module BetterTogether
     validate :oauth_issuer_url_ssrf_safe
     validate :require_publishing_agreement_for_public_network_visibility
 
+    validate :integration_settings_valid
+
     after_initialize :set_default_requires_invitation, if: :new_record?
     after_commit :apply_quota_default_limits, on: :update, if: :saved_change_to_quota_default_limits?
     after_update :sync_host_community_privacy, if: -> { host? && saved_change_to_privacy? }
@@ -124,6 +126,7 @@ module BetterTogether
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
                                            dependent: :destroy
     has_many :outgoing_platform_connections,
@@ -242,6 +245,47 @@ module BetterTogether
       self.settings = settings.merge('quota_default_limits' => BetterTogether::Quotas::Defaults.sanitize_overrides(normalized))
     end
 
+    # Values for settings declared through BetterTogether.register_platform_setting, as
+    # { 'group' => { 'field' => value } }. Unregistered keys are never stored.
+    def integration_settings
+      raw = settings&.fetch('integrations', {})
+      raw.is_a?(Hash) ? raw.deep_stringify_keys : {}
+    end
+
+    def integration_settings=(value)
+      incoming = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value.to_h
+      merged = integration_settings
+      incoming.each do |group, fields|
+        next unless fields.respond_to?(:each_pair)
+
+        fields.each_pair { |field, raw| assign_integration_value(merged, "#{group}.#{field}", raw) }
+      end
+      self.settings = settings.merge('integrations' => merged)
+    end
+
+    # The effective value: the stored one, else the host-only environment fallback, else the default.
+    def integration_setting(key)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return unless definition
+
+      stored = integration_settings.dig(definition.group, definition.field)
+      return stored unless stored.nil? || stored == ''
+
+      env_value = integration_setting_env_value(definition)
+      env_value.nil? ? definition.default : env_value
+    end
+
+    # :platform, :env or :default, so the form can say where the value comes from.
+    def integration_setting_source(key)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return :default unless definition
+
+      stored = integration_settings.dig(definition.group, definition.field)
+      return :platform unless stored.nil? || stored == ''
+
+      integration_setting_env_value(definition).nil? ? :default : :env
+    end
+
     def feature_rollout_for(feature_key)
       registry_entry = BetterTogether::FeatureRegistry.find(feature_key)
       return 'off' unless registry_entry
@@ -303,6 +347,31 @@ module BetterTogether
       BetterTogether::SafeFederationUrlValidator
         .new(attributes: [:host_url])
         .validate_each(self, :host_url, host_url)
+    end
+
+    def assign_integration_value(target, key, raw)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return unless definition
+      # A blank secret field means "keep the stored secret".
+      return if definition.secret && raw.blank?
+
+      target[definition.group] = (target[definition.group] || {}).merge(definition.field => definition.cast(raw))
+    end
+
+    def integration_setting_env_value(definition)
+      return unless host? && definition.env_fallback.present?
+
+      ENV[definition.env_fallback].presence
+    end
+
+    def integration_settings_valid
+      integration_settings.each do |group, fields|
+        fields.each do |field, value|
+          definition = BetterTogether::PlatformSettingsRegistry.find("#{group}.#{field}")
+          message = definition&.error_for(value)
+          errors.add(:integration_settings, "#{definition.label || definition.key}: #{message}") if message
+        end
+      end
     end
 
     def oauth_issuer_url_ssrf_safe

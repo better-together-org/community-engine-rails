@@ -1,0 +1,1 @@
+<p><%%= t("<%= i18n_scope %>.<%= @action %>.body") %></p>
