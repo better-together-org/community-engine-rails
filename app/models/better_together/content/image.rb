@@ -43,6 +43,11 @@ module BetterTogether
         super + %i[media]
       end
 
+      # Human label for pickers: caption, then alt text, then the file name.
+      def picker_label
+        caption.presence || alt_text.presence || media.filename.to_s.presence || to_s
+      end
+
       def attachable_plain_text_representation(_caption = nil)
         caption.presence || '[Image]'
       end

@@ -3,10 +3,10 @@
 <footer id="app-footer" class="footer py-4">
   <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
 
-  <nav id="footer-pages-nav" class="navbar navbar-expand navbar-dark bt-underline-nav">
+  <nav id="footer-pages-nav" class="navbar navbar-expand navbar-dark bt-underline-nav" aria-label="<%= t('navbar.footer_navigation') %>">
     <div class="container flex-column">
       <!-- Toggler for mobile view -->
-      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="footerNavbarNavDropdown" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -20,7 +20,7 @@
       <% end %>
     </div>
   </nav>
-  <nav id="footer-platform-nav" class="navbar navbar-expand-lg">
+  <nav id="footer-platform-nav" class="navbar navbar-expand-lg" aria-label="<%= t('navbar.footer_legal_navigation') %>">
     <div class="container">
       <div class="col">
         <ul class="navbar-nav justify-content-between">

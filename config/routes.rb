@@ -8,6 +8,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Short link public redirect — no locale prefix keeps URLs short
   get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
 
+  # Stable locale-free file paths: /f/:id views the file, /f/:id/download forces a download
+  get '/f/:id', to: 'uploads#inline', as: :short_file
+  get '/f/:id/download', to: 'uploads#download', as: :short_file_download
+
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
 
@@ -355,6 +359,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         resources :platforms, only: %i[index show new create edit update] do
+          member { get :theme_dark }
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
@@ -391,7 +396,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # Routes accessible to Platform Managers OR Analytics Viewers
-        # rubocop:disable Metrics/BlockLength
+        # rubocop:disable-next Metrics/BlockLength
         authenticated :user, lambda { |u|
           u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
         } do
@@ -447,7 +452,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
-        # rubocop:enable Metrics/BlockLength
 
         # Only logged-in Platform Managers have access to these routes
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
@@ -517,9 +521,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
-                member do
-                  put :resend
-                end
+                put :resend, on: :member
               end
               resources :storage_configurations, except: %i[show] do
                 member do
@@ -527,7 +529,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
               resources :platform_domains, except: %i[show]
+              resources :redirects, except: %i[show] do
+                collection do
+                  get :import, action: :new_import
+                  post :import, action: :create_import
+                end
+              end
               resources :platform_identity_providers, except: %i[show], path: 'identity_providers'
+              resources :platform_trusted_domains, except: %i[show], path: 'trusted_domains'
             end
 
             resources :users
@@ -609,6 +618,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
+          get :inline
         end
       end
 

@@ -11,7 +11,7 @@
 require 'rails_helper'
 
 # The expectations run inside the capture block.
-# rubocop:disable RSpec/NoExpectationExample
+# rubocop:disable-next RSpec/NoExpectationExample
 RSpec.describe 'Documentation screenshots for the address geography fields',
                :docs_screenshot,
                :js,
@@ -96,4 +96,3 @@ RSpec.describe 'Documentation screenshots for the address geography fields',
     end
   end
 end
-# rubocop:enable RSpec/NoExpectationExample

@@ -4,7 +4,7 @@ module BetterTogether
   # Sends email notifications for page authorship changes
   class AuthorshipMailer < ApplicationMailer
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def authorship_changed_notification # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       @page = params[:page]
       @recipient = params[:recipient]
@@ -34,7 +34,6 @@ module BetterTogether
 
       mail(to: @recipient.email, subject:)
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
   end
 end

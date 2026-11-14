@@ -1,0 +1,14 @@
+---
+title: Image gallery lightbox
+audience:
+- visitor
+- developer
+journey_step: As a visitor, I view a photo at full size.
+callouts:
+- :id: viewer
+  :title: Lightbox viewer
+  :description: Opens from any thumbnail; arrow keys, swipe and buttons move between
+    images. Escape closes it and focus returns to the thumbnail.
+accessibility_notes: A labelled dialog with a polite live counter.
+slug: image_gallery_lightbox
+device: mobile

@@ -37,7 +37,7 @@ module BetterTogether
       end
 
       class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
-        # rubocop:todo Metrics/MethodLength
+        # rubocop:todo-next Metrics/MethodLength
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           return scope.none unless current_platform
 
@@ -48,10 +48,9 @@ module BetterTogether
           end
 
           # Standalone offers: not a response to another resource (no inbound ResponseLink)
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           standalone = platform_scoped.left_joins(:response_links_as_response)
                                       .where(better_together_joatu_response_links: { id: nil })
-          # rubocop:enable Layout/LineLength
 
           # Unauthenticated: public standalone offers only, no blocking to apply
           return standalone.where(privacy: 'public') unless user.present?
@@ -59,9 +58,8 @@ module BetterTogether
           agent_id = agent.id
 
           # Authenticated: public + community-privacy standalone offers visible to all platform members
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           community_visible = standalone.where(privacy: %w[public community])
-          # rubocop:enable Layout/LineLength
 
           # Offers owned by the agent (any privacy, including private)
           owned = platform_scoped.where(creator_id: agent_id)
@@ -83,15 +81,13 @@ module BetterTogether
 
           response_to_my_request = platform_scoped.joins(join_sources).where(requests[:creator_id].eq(agent_id))
 
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           result = platform_scoped.where(id: community_visible.select(:id))
                                   .or(platform_scoped.where(id: owned.select(:id)))
                                   .or(platform_scoped.where(id: response_to_my_request.select(:id)))
-          # rubocop:enable Layout/LineLength
 
           exclude_blocked_creators(result)
         end
-        # rubocop:enable Metrics/MethodLength
 
         private
 

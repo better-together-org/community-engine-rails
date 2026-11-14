@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/NoExpectationExample
+# rubocop:disable-next RSpec/NoExpectationExample
 RSpec.describe 'Documentation screenshots for built-in static pages', :docs_screenshot, :js, retry: 0, type: :feature do
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
@@ -103,7 +103,7 @@ RSpec.describe 'Documentation screenshots for built-in static pages', :docs_scre
 
   private
 
-  # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:todo-next Metrics/AbcSize, Metrics/MethodLength
   def capture_static_page(slug:, screenshot_name:, expected_text:)
     result = BetterTogether::CapybaraScreenshotEngine.capture(
       screenshot_name,
@@ -123,6 +123,4 @@ RSpec.describe 'Documentation screenshots for built-in static pages', :docs_scre
     expect(result[:desktop]).to include("/docs/screenshots/desktop/#{screenshot_name}.png")
     expect(result[:mobile]).to include("/docs/screenshots/mobile/#{screenshot_name}.png")
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
-# rubocop:enable RSpec/NoExpectationExample

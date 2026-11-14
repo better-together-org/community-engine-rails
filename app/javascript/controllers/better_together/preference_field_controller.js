@@ -107,6 +107,10 @@ export default class extends Controller {
     
     // Show success flash message
     this.showFlash('success', data.message || 'Preference saved successfully')
+    this.element.dispatchEvent(new CustomEvent('preference:saved', {
+      detail: { field: this.fieldNameValue, value: this.fieldTarget.value },
+      bubbles: true
+    }))
   }
 
   handleError(data) {

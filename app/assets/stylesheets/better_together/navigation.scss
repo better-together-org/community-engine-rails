@@ -238,3 +238,20 @@ table.nav-items-table tr.navigation_item_children > td > table {
     transform: translateX(-43%) !important;
   }
 }
+
+// Skip link: hidden until focused, then shown at the top left above the page chrome.
+.bt-skip-link:focus {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 2000;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 0.25rem;
+}
+
+main#main-content:focus {
+  outline: none;
+}

@@ -80,7 +80,7 @@ module BetterTogether
         end
       end
 
-      # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:todo-next Metrics/AbcSize, Metrics/MethodLength
       def build_posts(people:, categories:)
         cat = ->(identifier) { categories.find { |category| category.identifier == identifier } }
 
@@ -190,7 +190,6 @@ module BetterTogether
           )
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def demo_posts
         ::BetterTogether::Post.where(demo_identifier_match("#{DEMO_IDENTIFIER_PREFIX}-%"))

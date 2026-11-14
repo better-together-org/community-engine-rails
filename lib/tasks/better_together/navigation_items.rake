@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :navigation_items do
     desc 'Set privacy to public for existing visible navigation items'
@@ -133,4 +133,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

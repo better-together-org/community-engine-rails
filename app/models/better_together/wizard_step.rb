@@ -27,7 +27,7 @@ module BetterTogether
 
     private
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def unique_uncompleted_step_per_person # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return if completed
 
@@ -58,7 +58,6 @@ module BetterTogether
 
       errors.add(:base, I18n.t('errors.wizard.one_uncompleted'))
     end
-    # rubocop:enable Metrics/MethodLength
 
     def validate_step_completions
       return unless wizard.limited_completions?

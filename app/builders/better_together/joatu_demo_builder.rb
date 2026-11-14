@@ -25,7 +25,7 @@ module BetterTogether
       end
 
       # Cautious clean-up: only removes demo-tagged data created by this builder
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def clear_existing # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Agreements first due to FK
         ::BetterTogether::Joatu::Agreement
@@ -46,7 +46,6 @@ module BetterTogether
         demo_community&.destroy
         demo_people.delete_all
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -92,7 +91,7 @@ module BetterTogether
         end
       end
 
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def build_requests(people:, community:, addresses:) # rubocop:todo Metrics/MethodLength
         cat = ->(name) { find_category(name) }
 
@@ -142,9 +141,8 @@ module BetterTogether
           )
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def build_offers(people:, community:, addresses:) # rubocop:todo Metrics/MethodLength
         cat = ->(name) { find_category(name) }
 
@@ -194,9 +192,8 @@ module BetterTogether
           )
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def build_agreements(requests:, offers:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Try to pair similar categories for realism
         pair = lambda do |req_name_contains:, off_name_contains:, status: :pending, terms: nil, value: nil|
@@ -252,7 +249,6 @@ module BetterTogether
           value: 'n/a'
         )
       end
-      # rubocop:enable Metrics/MethodLength
 
       # -- Helpers --
 

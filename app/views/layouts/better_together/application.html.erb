@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>">
+<html lang="<%= I18n.locale %>" <%= tag.attributes(html_color_mode_attributes) %>>
   <head>
     <meta charset="utf-8">
     <%= render_provider_head_tags %>
@@ -12,9 +12,11 @@
     <%= seo_meta_tags %>
     <%= canonical_link_tag %>
     <%= robots_meta_tag %>
+    <%= third_party_tracking_meta_tag %>
     <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
     <%= yield(:structured_data) if content_for?(:structured_data) %>
-    <meta name="color-scheme" content="light dark">
+    <%= color_scheme_meta_tag %>
+    <%= color_mode_head_script_tag %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>
     <% if stimulus_debug_enabled? %>
@@ -46,6 +48,10 @@
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
+    <%= platform_theme_style_tag %>
+    <%= user_theme_style_tag %>
+    <%= platform_favicon_tag %>
+
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
       <%= render partial: 'better_together/content/blocks/css', locals: { css: host_platform.css_block } if host_platform.css_block %>
     <% end %>
@@ -53,14 +59,16 @@
     <%= javascript_importmap_tags %>
   </head>
   <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
+    <a class="visually-hidden-focusable bt-skip-link" id="skip-to-content" href="#main-content"><%= t('navbar.skip_to_content') %></a>
     <div class="wrapper">
+      <%= render_platform_content_slot(:header_above) %>
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
       <%= render 'layouts/better_together/flash_messages' %>
 
       <!-- Main Section -->
-      <main class="content">
+      <main id="main-content" class="content" tabindex="-1">
         <%= yield %>
       </main>
 
@@ -68,6 +76,7 @@
 
       <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
 
+      <%= render_platform_content_slot(:footer_above) %>
       <!-- Custom Footer from Host App -->
       <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 

@@ -81,7 +81,7 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
     end
     let!(:other_private_offer) { create(:better_together_joatu_offer, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'authenticated user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
@@ -112,9 +112,8 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
         expect(resolved).to include(public_offer)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
@@ -125,6 +124,5 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
         expect(resolved).not_to include(other_private_offer)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end

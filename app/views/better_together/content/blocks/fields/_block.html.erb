@@ -1,5 +1,7 @@
 <%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
 <%- temp_id = block.persisted? ? block.id : SecureRandom.uuid %>
+<%# minimal: true hides identifier, privacy and styling for blocks whose owner fixes them (platform content slots) %>
+<%- minimal = local_assigns[:minimal] %>
 
 <!-- Nested Block fields -->
 <div id="<%= dom_id(block, temp_id) %>" class="block-fields <%= dom_class(block) %>">
@@ -8,6 +10,7 @@
   <%= hidden_field_tag "#{scope}[type]", block.class.name %>
   <%= hidden_field_tag "#{scope}[creator_id]", current_person&.id %>
 
+  <% unless minimal %>
   <%# Identifier + Privacy: both columns are available on every block type %>
   <%- block_platform = block.try(:platform) %>
   <%- block_privacy_ceiling = max_allowed_privacy(platform: block_platform, community: nil) %>
@@ -48,6 +51,7 @@
   </div>
 
   <%= render partial: 'better_together/content/blocks/fields/shared/style', locals: { block:, scope:, temp_id: } unless block.general_styling_enabled == 'false' %>
+  <% end %>
 
   <!-- Render the block's specific fields -->
   <%= render partial: "better_together/content/blocks/fields/#{block.block_name}", locals: { block:, scope:, temp_id: } %>

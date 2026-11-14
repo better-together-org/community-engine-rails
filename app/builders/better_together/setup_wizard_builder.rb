@@ -4,7 +4,7 @@ module BetterTogether
   # A utility to automatically create seed data for default wizards (eg: setup wizard)
   class SetupWizardBuilder < Builder
     class << self
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def seed_data # rubocop:todo Metrics/MethodLength
         # byebug
 
@@ -48,7 +48,6 @@ module BetterTogether
           # Template and form_class can be set as needed
         )
       end
-      # rubocop:enable Metrics/MethodLength
 
       def clear_existing
         ::BetterTogether::WizardStep.delete_all
