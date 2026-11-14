@@ -56,4 +56,10 @@ RSpec.describe 'Billing tax registration DOM', type: :request do # rubocop:disab
 
     expect(Nokogiri::HTML(response.body).at_css('#billing-tax-registrations-link')).to be_present
   end
+
+  it 'connects every label to its field and names every control' do
+    get better_together.new_billing_tax_registration_path(locale:)
+
+    expect_labels_resolved(response.body, within: '#billing-tax-registration-form')
+  end
 end

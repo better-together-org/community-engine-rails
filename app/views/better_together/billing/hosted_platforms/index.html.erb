@@ -1,0 +1,65 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.hosted_platforms.title') %>
+<% end %>
+
+<div id="billing-hosted-platforms-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.hosted_platforms.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.hosted_platforms.intro') %></p>
+
+  <% if @platforms.empty? %>
+    <p id="billing-hosted-platforms-empty" class="text-body-secondary"><%= t('better_together.billing.hosted_platforms.none') %></p>
+  <% else %>
+    <div class="table-responsive">
+      <table id="billing-hosted-platforms-table" class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col"><%= t('better_together.billing.hosted_platforms.platform') %></th>
+            <% @agreements.each_key do |mode| %>
+              <th scope="col"><%= t("better_together.billing.hosted_billing.modes.#{mode}.title") %></th>
+            <% end %>
+            <th scope="col"><%= t('better_together.billing.hosted_platforms.status') %></th>
+            <th scope="col"><%= t('better_together.billing.hosted_platforms.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @platforms.each do |platform| %>
+            <tr id="<%= dom_id(platform, :hosted_billing) %>">
+              <th scope="row"><%= platform.name %></th>
+              <% @agreements.each_key do |mode| %>
+                <td id="<%= dom_id(platform, "hosted_#{mode}") %>">
+                  <% if BetterTogether::Billing::HostedBilling.accepted?(platform, mode) %>
+                    <span class="badge bg-success"><%= t('better_together.billing.hosted_platforms.accepted') %></span>
+                  <% else %>
+                    <span class="badge bg-secondary"><%= t('better_together.billing.hosted_platforms.not_accepted') %></span>
+                  <% end %>
+                </td>
+              <% end %>
+              <td id="<%= dom_id(platform, :hosted_status) %>">
+                <% if BetterTogether::Billing::HostedBilling.suspended?(platform) %>
+                  <span class="badge bg-danger"><%= t('better_together.billing.hosted_platforms.status_suspended') %></span>
+                  <span class="d-block small text-body-secondary"><%= platform.billing_hosted_account.suspension_reason %></span>
+                <% elsif BetterTogether::Billing.enabled?(platform) %>
+                  <span class="badge bg-success"><%= t('better_together.billing.hosted_platforms.status_on') %></span>
+                <% else %>
+                  <span class="badge bg-secondary"><%= t('better_together.billing.hosted_platforms.status_off') %></span>
+                <% end %>
+              </td>
+              <td>
+                <% if BetterTogether::Billing::HostedBilling.suspended?(platform) %>
+                  <%= button_to t('better_together.billing.hosted_platforms.resume'), resume_billing_hosted_platform_path(platform, locale: I18n.locale),
+                                method: :patch, id: dom_id(platform, :hosted_resume), class: 'btn btn-outline-success btn-sm' %>
+                <% else %>
+                  <%= form_with url: suspend_billing_hosted_platform_path(platform, locale: I18n.locale), method: :patch, id: dom_id(platform, :hosted_suspend_form), class: 'd-flex gap-2' do %>
+                    <%= text_field_tag :reason, nil, id: dom_id(platform, :hosted_suspend_reason), class: 'form-control form-control-sm', maxlength: 500, required: true,
+                                       'aria-label': t('better_together.billing.hosted_platforms.reason'), placeholder: t('better_together.billing.hosted_platforms.reason') %>
+                    <%= submit_tag t('better_together.billing.hosted_platforms.suspend'), id: dom_id(platform, :hosted_suspend), class: 'btn btn-outline-danger btn-sm' %>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

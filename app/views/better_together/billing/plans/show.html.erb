@@ -31,7 +31,7 @@
               <%= t("better_together.billing.plans.interval_#{@plan.billing_interval}") %>
             </dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount') %></dt>
             <dd id="<%= dom_id(@plan, :price) %>" class="col-sm-7">
               <%= billing_amount(@plan.amount_cents, @plan.currency) %>
             </dd>

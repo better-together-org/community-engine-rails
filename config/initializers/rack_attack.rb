@@ -154,6 +154,54 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/promotion_redemptions/?\z})
     end
 
+    # The signed-in person behind a billing request, read from the warden env. Per-person keys stop one
+    # account spreading writes over many addresses, and stop a shared address (NAT) from sharing one budget.
+    # Signed-out requests fall back to the address.
+    def self.billing_actor_key(req)
+      user = req.env['warden']&.user
+      user ? "user:#{user.id}" : "ip:#{req.ip}"
+    end
+
+    # One write route, throttled per address and per person: <name>/ip and <name>/user.
+    def self.billing_write_throttle(name, ip_limit:, user_limit:, period: 1.minute, &match)
+      throttle("billing/#{name}/ip", limit: ip_limit, period:) { |req| req.ip if match.call(req) }
+      throttle("billing/#{name}/user", limit: user_limit, period:) { |req| billing_actor_key(req) if match.call(req) }
+    end
+
+    # Placing an order reserves plan capacity and tells the seller, so a buyer looping on checkout is cheap to do and noisy.
+    billing_write_throttle('checkout', ip_limit: 20, user_limit: 10) do |req|
+      req.post? && req.path.match?(%r{/billing/checkout/?\z})
+    end
+
+    # A walk-up sale can email a typed address, so it is capped hard per address and per steward.
+    billing_write_throttle('walk_up_sales', ip_limit: 20, user_limit: 10) do |req|
+      req.post? && req.path.match?(%r{/billing/walk_up_sales?/?\z})
+    end
+
+    # A seller recording money given back for a sale.
+    billing_write_throttle('sale_refunds', ip_limit: 20, user_limit: 10) do |req|
+      req.post? && req.path.match?(%r{/billing/sales/[^/]+/refund/?\z})
+    end
+
+    # A seller confirming, refusing, clearing or bouncing a payment made outside the platform. Batches are normal
+    # at a till, so these limits are looser.
+    billing_write_throttle('offline_payment_actions', ip_limit: 60, user_limit: 30) do |req|
+      req.patch? && req.path.match?(%r{/billing/offline_payments/[^/]+/(receive|reject|clear|bounce)/?\z})
+    end
+
+    # Tax registration and agreement requirement writes are rare steward edits.
+    billing_write_throttle('tax_registrations', ip_limit: 20, user_limit: 10) do |req|
+      (req.post? || req.patch? || req.put?) && req.path.match?(%r{/billing/tax_registrations(/[^/]+)?/?\z})
+    end
+    billing_write_throttle('agreement_requirements', ip_limit: 20, user_limit: 10) do |req|
+      (req.post? || req.delete?) && req.path.match?(%r{/billing/agreement_requirements(/[^/]+)?/?\z})
+    end
+
+    # Syncing a plan calls the payment processor each time.
+    billing_write_throttle('plan_sync', ip_limit: 10, user_limit: 5) do |req|
+      req.post? && req.path.match?(%r{/billing/plans/[^/]+/sync/?\z})
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).

@@ -5,6 +5,7 @@ require 'rake'
 
 RSpec.describe 'better_together:billing rake tasks', type: :task do
   include_context 'with clean billing processors'
+  include_context 'with billing switched on'
 
   before do
     Rake.application&.clear

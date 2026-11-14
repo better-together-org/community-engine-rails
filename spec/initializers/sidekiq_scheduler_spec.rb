@@ -30,7 +30,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
         'better_together:event_reminder_scan_hourly',
         'better_together:billing:redact_expired_event_payloads_daily',
         'better_together:billing:dead_letter_stale_events_hourly',
-        'better_together:billing:prune_stale_pay_webhooks_daily'
+        'better_together:billing:prune_stale_pay_webhooks_daily',
+        'better_together:billing:enqueue_stuck_events_10min'
       )
     end
 
@@ -42,6 +43,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           ['20 4 * * *', 'BetterTogether::Billing::RedactExpiredEventPayloadsJob'],
         'better_together:billing:dead_letter_stale_events_hourly' =>
           ['15 * * * *', 'BetterTogether::Billing::DeadLetterStaleBillingEventsJob'],
+        'better_together:billing:enqueue_stuck_events_10min' =>
+          ['*/10 * * * *', 'BetterTogether::Billing::EnqueueStuckBillingEventsJob'],
         'better_together:billing:prune_stale_pay_webhooks_daily' =>
           ['40 4 * * *', 'BetterTogether::Billing::PruneStalePayWebhooksJob'],
         'better_together:billing:expire_offline_payments_hourly' =>
@@ -168,6 +171,32 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       it 'documents override capability' do
         expect(initializer_content).to include('enabled: false')
       end
+    end
+  end
+
+  describe 'billing jobs when billing is switched off' do
+    let(:registered) do
+      captured = nil
+      allow(Sidekiq).to receive(:server?).and_return(true)
+      without_partial_double_verification do
+        allow(Sidekiq::Scheduler).to receive(:reload_schedule!)
+        allow(Sidekiq).to receive(:schedule=) { |value| captured = value }
+      end
+      load initializer_path
+      captured
+    end
+
+    it 'registers no billing job and keeps the other jobs' do
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+      expect(registered.keys.grep(/\Abetter_together:billing:/)).to be_empty
+      expect(registered.keys).to include('better_together:event_reminder_scan_hourly')
+    end
+
+    it 'registers the billing jobs when the host switched billing on' do
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(true)
+
+      expect(registered.keys).to include('better_together:billing:expire_orders_hourly')
     end
   end
 

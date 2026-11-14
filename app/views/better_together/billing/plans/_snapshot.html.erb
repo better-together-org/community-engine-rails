@@ -12,7 +12,7 @@
         <p class="text-danger mb-0 billing-plan-snapshot-error"><%= t('better_together.billing.plans.snapshot_not_found') %></p>
       <% else %>
         <dl class="row mb-0">
-          <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents') %></dt>
+          <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount') %></dt>
           <dd class="col-sm-7"><%= billing_amount(snapshot.price.amount_cents, snapshot.price.currency) %> / <%= billing_interval_label(snapshot.price.interval) %></dd>
           <dt class="col-sm-5"><%= t('better_together.billing.plans.field_active') %></dt>
           <dd class="col-sm-7"><%= snapshot.price.active? ? t('better_together.billing.plans.status_active') : t('better_together.billing.plans.status_inactive') %></dd>

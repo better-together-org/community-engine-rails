@@ -359,6 +359,8 @@ export default class extends Controller {
       ...options
     });
 
+    this.repairAria(options);
+
     // Ensure SlimSelect reflects any pre-selected options rendered by the server
     // (useful when Turbo or server-side rendering supplies selected attributes)
     try {
@@ -544,7 +546,36 @@ export default class extends Controller {
     });
   }
 
+  // SlimSelect puts role=listbox on the panel that also holds the search input, and renders
+  // blank options with no name. Move the role to the list and label the list and blank rows.
+  repairAria(options) {
+    const content = this.slimSelect && this.slimSelect.render && this.slimSelect.render.content;
+    if (!content || !content.list) return;
+
+    const label = this.element.getAttribute('aria-label') || (options.settings && options.settings.ariaLabel) || 'Options';
+    const blank = (options.settings && options.settings.placeholderText) || 'None';
+    content.main.removeAttribute('role');
+    content.list.setAttribute('role', 'listbox');
+    content.list.setAttribute('aria-label', label);
+    const main = this.slimSelect.render.main && this.slimSelect.render.main.main;
+    if (main && content.list.id === '') {
+      content.list.id = `${content.main.dataset.id || 'ss'}-list`;
+      main.setAttribute('aria-controls', content.list.id);
+    }
+
+    const nameBlankOptions = () => {
+      content.list.querySelectorAll('[role="option"]').forEach((row) => {
+        if (!row.textContent.trim() && !row.hasAttribute('aria-label')) row.setAttribute('aria-label', blank);
+      });
+    };
+    nameBlankOptions();
+    if (this.ariaObserver) this.ariaObserver.disconnect();
+    this.ariaObserver = new MutationObserver(nameBlankOptions);
+    this.ariaObserver.observe(content.list, { childList: true, subtree: true });
+  }
+
   disconnect() {
+    if (this.ariaObserver) this.ariaObserver.disconnect();
     if (this.searchDebounceTimer) {
       clearTimeout(this.searchDebounceTimer);
     }

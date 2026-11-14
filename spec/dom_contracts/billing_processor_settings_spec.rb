@@ -71,4 +71,12 @@ RSpec.describe 'Billing processor settings DOM contract', :as_platform_manager, 
 
     expect_ids('billing-processor-acknowledged')
   end
+
+  it 'connects every label to its field and names every control', :aggregate_failures do
+    %w[cash cheque etransfer store_credit].each do |name|
+      get "/#{locale}/billing/processor_settings/#{name}/edit"
+
+      expect_labels_resolved(response.body, within: '#billing-processor-setting-form')
+    end
+  end
 end

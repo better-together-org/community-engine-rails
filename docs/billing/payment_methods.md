@@ -97,3 +97,7 @@ Table `better_together_billing_processor_settings` (see [billing_schema_erd.mmd]
 ## Not in this page
 
 Placing and paying an order, the claim / confirm / reject steps, expiry, reminders and the notifications are in the pages named at the top.
+
+## Sales in person: buyers typed by email
+
+A steward can attach a sale to an existing account only by picking a member from the buyer list. An email typed instead is handled without revealing whether an account exists: a member's email is refused (pick them from the list); an email nobody has makes a new member who is invited to the community; an email of an account that is not a member here makes a guest for that sale only (no login, no email saved, never the existing account, no invitation). Invitations are capped per steward per day by `BT_BILLING_WALK_UP_INVITATIONS_PER_DAY` (default 20), for new and guest buyers alike.

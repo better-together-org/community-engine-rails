@@ -22,6 +22,7 @@ Billing identity has no built-in defaults. Until the three required variables ar
 | `BT_BILLING_ENABLED` | yes | Master switch (`true` to enable) |
 | `BT_BILLING_DEFAULT_CURRENCY` | no | Preselects the currency when creating a plan |
 | `BT_BILLING_DEFAULT_COUNTRY` | by feature | Used when an owner has no country (merchant onboarding) |
+| `BT_BILLING_MAX_CREDIT_GRANT` | no | Largest single steward credit grant, in major units (default 1000); bad values fall back to the default |
 | `PAY_APPLICATION_NAME` | no | Defaults to `Community Engine` |
 
 `BetterTogether::Billing.enabled?(platform)` is true only when the flag is on, the identity is configured, and a registered processor has a **context** for that platform. Today only the host platform has one, so billing is off for every other platform. See [platform_isolation.md](platform_isolation.md).

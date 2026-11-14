@@ -29,6 +29,8 @@ class CreateBetterTogetherBillingOrderDocuments < ActiveRecord::Migration[7.2]
       t.string :kind, null: false
       t.string :fingerprint, null: false
       t.string :time_zone, null: false
+      # The language the PDF itself was written in; the order's document language can change after it was made.
+      t.string :locale
       t.datetime :generated_at, null: false
       t.datetime :superseded_at
     end

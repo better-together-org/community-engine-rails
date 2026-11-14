@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::WebhookSubscriptions do
   include_context 'with clean billing processors'
+  include_context 'with billing switched on'
 
   let(:delegator) { instance_double(Pay::Webhooks::Delegator, subscribe: nil) }
 
@@ -18,6 +19,15 @@ RSpec.describe BetterTogether::Billing::WebhookSubscriptions do
     2.times { described_class.subscribe_all! }
 
     expect(delegator).to have_received(:subscribe).with('fake.invoice.paid', an_instance_of(BetterTogether::Billing::WebhookDispatcher)).once
+  end
+
+  it 'subscribes nothing while the host has billing switched off' do
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new })
+    allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+    described_class.subscribe_all!
+
+    expect(delegator).not_to have_received(:subscribe)
   end
 
   it 'subscribes nothing when no processor is registered' do

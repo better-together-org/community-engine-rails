@@ -27,11 +27,11 @@
       <%= fields_for :billing_address, new_address do |address_form| %>
         <div class="row">
           <div class="col-md-8 mb-3">
-            <%= address_form.label :line1, t("#{scope}.line1"), class: 'form-label' %>
+            <%= address_form.label :line1, t("#{scope}.line1"), class: 'form-label', for: 'billing-checkout-address-line1' %>
             <%= address_form.text_field :line1, class: 'form-control', id: 'billing-checkout-address-line1', autocomplete: 'address-line1' %>
           </div>
           <div class="col-md-4 mb-3">
-            <%= address_form.label :postal_code, t("#{scope}.postal_code"), class: 'form-label' %>
+            <%= address_form.label :postal_code, t("#{scope}.postal_code"), class: 'form-label', for: 'billing-checkout-address-postal-code' %>
             <%= address_form.text_field :postal_code, class: 'form-control', id: 'billing-checkout-address-postal-code', autocomplete: 'postal-code' %>
           </div>
         </div>

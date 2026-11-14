@@ -12,8 +12,9 @@
 # Processor webhooks. Not localized and not behind sign-in: the processor calls
 # this endpoint, and Pay verifies the request signature.
 #
-# Mounted only when a processor gem is installed (Pay draws its webhook routes
-# only then, so without one there is nothing to receive). And only the webhook
+# Mounted only when the host switched billing on (BT_BILLING_ENABLED) and a processor gem is installed
+# (Pay draws its webhook routes only then, so without one there is nothing to receive). With billing
+# off the address is not mounted at all and answers 404. And only the webhook
 # endpoints are reachable: Pay's engine also serves GET /payments/:id, an
 # unauthenticated page that calls the processor API with the host's key for a
 # caller-supplied id. Community Engine's checkout is processor-hosted and does not
@@ -23,7 +24,8 @@
 # The constraint sees the path AFTER the mount point: a mounted app's `path_info` is
 # rewritten to the remainder before constraints run, so '/pay/webhooks/stripe' arrives
 # as '/webhooks/stripe'. Testing for '/pay/webhooks/' here would 404 every webhook.
-if [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
+if BetterTogether::Billing::Configuration.requested? &&
+   [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
   mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/webhooks/') }
 end
 
@@ -93,6 +95,15 @@ concern :billing_credit do
   end
 end
 
+# Host platform operators: webhook events that failed or were dead-lettered, and retrying them.
+concern :billing_events do
+  namespace :billing do
+    resources :events, only: %i[index show] do
+      post :replay, on: :member
+    end
+  end
+end
+
 # Subscriptions Community Engine renews: a payer's own, and the platform's subscribers for stewards.
 concern :billing_subscriptions do
   namespace :billing do
@@ -121,6 +132,20 @@ concern :billing_hub do
     # The public catalog sits under /billing/catalog so it cannot meet the /plans page route.
     get 'catalog', to: 'catalog#index', as: :catalog
     get 'catalog/:id', to: 'catalog#show', as: :catalog_plan
+  end
+end
+
+# Hosted billing enablement: a hosted platform's steward accepts the host's billing agreements (/billing/hosted_billing);
+# the host's steward sees every hosted platform and can suspend one (/billing/hosted_platforms).
+concern :billing_hosted do
+  namespace :billing do
+    resource :hosted_billing, only: %i[show create], controller: 'hosted_billings'
+    resources :hosted_platforms, only: :index do
+      member do
+        patch :suspend
+        patch :resume
+      end
+    end
   end
 end
 
@@ -185,6 +210,6 @@ end
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
     concerns :billing_hub, :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
-             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics
+             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics, :billing_events, :billing_hosted
   end
 end

@@ -65,4 +65,22 @@ RSpec.describe 'Billing tax reports DOM', type: :request do # rubocop:disable RS
       expect(page.at_css("label[for='billing-report-#{part}']")).to be_present, "label not tied to #billing-report-#{part}"
     end
   end
+
+  it 'offers exactly the paid and invoice bases, with real text', :aggregate_failures do
+    get better_together.new_metrics_billing_report_path(locale:)
+    options = Nokogiri::HTML(response.body).css('#billing-report-basis option')
+
+    expect(options.map { |o| o['value'] }).to eq(%w[paid invoice])
+    expect(options.map(&:text)).to eq(['Payment date', 'Invoice date'])
+  end
+
+  it 'keeps the invoice basis the manager chose', :aggregate_failures do
+    expect do
+      post better_together.metrics_billing_reports_path(locale:),
+           params: { metrics_billing_report: { file_format: 'csv', filters: { from_date: '2026-01-01', to_date: '2026-03-31',
+                                                                              owner: 'all', interval: 'month', basis: 'invoice' } } }
+    end.to change(BetterTogether::Metrics::BillingReport, :count).by(1)
+
+    expect(BetterTogether::Metrics::BillingReport.last.filters['basis']).to eq('invoice')
+  end
 end

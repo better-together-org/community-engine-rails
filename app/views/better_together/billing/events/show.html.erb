@@ -1,0 +1,56 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.events.show_title') %>
+<% end %>
+
+<div id="billing-event-page" class="container my-4">
+  <p class="mb-2">
+    <%= link_to t('better_together.billing.events.back'), billing_events_path(locale: I18n.locale), id: 'billing-event-back-link' %>
+  </p>
+  <h1 class="mb-2"><%= @event.event_type %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.events.show_intro') %></p>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <dl id="billing-event-details" class="row mb-0">
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_status') %></dt>
+        <dd class="col-sm-8"><%= billing_event_status_badge(@event) %></dd>
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_processor') %></dt>
+        <dd class="col-sm-8"><code><%= @event.processor %></code></dd>
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_event_id') %></dt>
+        <dd class="col-sm-8"><code><%= @event.event_id %></code></dd>
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_attempts') %></dt>
+        <dd class="col-sm-8"><%= @event.attempt_count %></dd>
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_replays') %></dt>
+        <dd class="col-sm-8"><%= @event.replay_count.to_i %></dd>
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_received') %></dt>
+        <dd class="col-sm-8"><%= l(@event.created_at, format: :long) %></dd>
+        <dt class="col-sm-4"><%= t('better_together.billing.events.field_last_attempt') %></dt>
+        <dd class="col-sm-8"><%= @event.last_attempted_at ? l(@event.last_attempted_at, format: :long) : t('better_together.billing.events.never') %></dd>
+        <% if @event.dead_lettered? %>
+          <dt class="col-sm-4"><%= t('better_together.billing.events.field_reason') %></dt>
+          <dd class="col-sm-8"><%= t("better_together.billing.events.reasons.#{@event.dead_letter_reason}", default: @event.dead_letter_reason.to_s) %></dd>
+        <% end %>
+        <% if @event.last_replayed_at %>
+          <dt class="col-sm-4"><%= t('better_together.billing.events.field_last_replayed') %></dt>
+          <dd class="col-sm-8"><%= l(@event.last_replayed_at, format: :long) %></dd>
+        <% end %>
+      </dl>
+    </div>
+  </div>
+
+  <section id="billing-event-replay" class="card" aria-labelledby="billing-event-replay-heading">
+    <div class="card-body">
+      <h2 id="billing-event-replay-heading" class="h5"><%= t('better_together.billing.events.replay_heading') %></h2>
+      <% if policy(@event).replay? && @event.problematic? && @event.replayable_payload? %>
+        <p><%= t('better_together.billing.events.replay_explainer') %></p>
+        <%= button_to t('better_together.billing.events.replay_button'), replay_billing_event_path(@event, locale: I18n.locale),
+                      method: :post, id: 'billing-event-replay-btn', class: 'btn btn-outline-danger',
+                      form: { id: 'billing-event-replay-form', data: { turbo_confirm: t('better_together.billing.events.replay_confirm') } } %>
+      <% elsif policy(@event).replay? && @event.problematic? %>
+        <p id="billing-event-replay-unavailable" class="mb-0 text-body-secondary"><%= t('better_together.billing.events.replay_unavailable') %></p>
+      <% else %>
+        <p id="billing-event-replay-not-needed" class="mb-0 text-body-secondary"><%= t('better_together.billing.events.replay_not_needed') %></p>
+      <% end %>
+    </div>
+  </section>
+</div>

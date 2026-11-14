@@ -111,6 +111,9 @@ module BetterTogether # :nodoc:
       fill_in 'user[password]', with: password
       click_button 'Sign In'
 
+      # Wait for the redirect away from the login page so the next visit carries the session.
+      expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
+
       # Memoize the signed-in email to avoid repeating sign-in steps in the same Capybara session
       @capybara_signed_in_user_email = email
     end

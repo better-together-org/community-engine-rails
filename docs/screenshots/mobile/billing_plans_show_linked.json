@@ -1,7 +1,7 @@
 {
   "name": "billing_plans_show_linked",
   "device": "mobile",
-  "url": "/en/billing/plans/e1cedfc9-84f7-4db5-a190-7b1806dd0a52",
+  "url": "/en/billing/plans/f2ea8277-7274-4d2b-bb29-2e2467782dbc",
   "title": "Hosted community | Billing Plans | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -54,21 +54,21 @@
         "x": 12.0,
         "y": 721.0,
         "width": 461.0,
-        "height": 21.0,
+        "height": 333.0,
         "right": 473.0,
-        "bottom": 742.0,
+        "bottom": 1054.0,
         "center_x": 242.5,
-        "center_y": 731.5
+        "center_y": 887.5
       },
       "avoid": {
         "x": 12.0,
         "y": 721.0,
         "width": 461.0,
-        "height": 21.0,
+        "height": 333.0,
         "right": 473.0,
-        "bottom": 742.0,
+        "bottom": 1054.0,
         "center_x": 242.5,
-        "center_y": 731.5
+        "center_y": 887.5
       },
       "placement": {
         "side": "right",

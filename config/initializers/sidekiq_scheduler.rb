@@ -44,6 +44,14 @@ if defined?(Sidekiq) && Sidekiq.server?
   # Load host app's schedule last (overrides engine/extension schedules for same job names)
   merge_schedule_file.call(Rails.root.join('config', 'sidekiq_scheduler.yml'), 'host app')
 
+  # Billing off means off: its recurring jobs are not registered unless the host switched billing on
+  # (BT_BILLING_ENABLED). A host that wants one anyway can still name it in its own schedule file.
+  unless BetterTogether::Billing::Configuration.requested?
+    host_schedule_file = Rails.root.join('config', 'sidekiq_scheduler.yml')
+    host_keys = host_schedule_file.exist? ? (YAML.load(host_schedule_file.read) || {}).keys : []
+    merged_schedule.reject! { |name, _| name.start_with?('better_together:billing:') && host_keys.exclude?(name) }
+  end
+
   # Set the merged schedule
   if merged_schedule.any?
     Sidekiq.schedule = merged_schedule

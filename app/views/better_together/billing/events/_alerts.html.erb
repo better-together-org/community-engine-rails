@@ -1,0 +1,48 @@
+<%# Adapted from the Stripe-era billing event alerts card; takes the summary from Event.operator_alert_summary. %>
+<section id="billing-events-alerts" class="card mb-4" aria-labelledby="billing-events-alerts-heading">
+  <div class="card-header">
+    <h2 id="billing-events-alerts-heading" class="h5 mb-0"><%= t('better_together.billing.events.alerts.heading') %></h2>
+  </div>
+  <div class="card-body">
+    <% if summary[:total_problematic_count].zero? && summary[:alerted_count].zero? %>
+      <p id="billing-events-alerts-clear" class="mb-0 text-body-secondary"><%= t('better_together.billing.events.alerts.none') %></p>
+    <% end %>
+
+    <% if summary[:dead_lettered_count].positive? %>
+      <div id="billing-events-alert-dead-lettered" class="alert alert-danger mb-3" role="alert">
+        <strong><%= t('better_together.billing.events.alerts.dead_lettered_heading') %></strong>
+        <div><%= t('better_together.billing.events.alerts.dead_lettered_body', count: summary[:dead_lettered_count]) %></div>
+      </div>
+    <% end %>
+
+    <% if summary[:repeated_failure_count].positive? %>
+      <div id="billing-events-alert-repeated" class="alert alert-danger mb-3" role="alert">
+        <strong><%= t('better_together.billing.events.alerts.repeated_heading') %></strong>
+        <div>
+          <%= t('better_together.billing.events.alerts.repeated_body', count: summary[:repeated_failure_count],
+                threshold: BetterTogether::Billing::Event::REPEATED_FAILURE_ATTEMPT_THRESHOLD) %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if summary[:unresolved_count].positive? %>
+      <div id="billing-events-alert-unresolved" class="alert alert-warning mb-3" role="alert">
+        <strong><%= t('better_together.billing.events.alerts.unresolved_heading') %></strong>
+        <div>
+          <%= t('better_together.billing.events.alerts.unresolved_body', count: summary[:unresolved_count],
+                hours: BetterTogether::Billing::Event::UNRESOLVED_ALERT_WINDOW / 1.hour) %>
+        </div>
+        <% if summary[:oldest_unresolved_at].present? %>
+          <div class="small">
+            <%= t('better_together.billing.events.alerts.oldest') %>
+            <strong><%= l(summary[:oldest_unresolved_at], format: :long) %></strong>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if summary[:alerted_count].positive? %>
+      <p id="billing-events-alert-alerted" class="mb-0"><%= t('better_together.billing.events.alerts.alerted_body', count: summary[:alerted_count]) %></p>
+    <% end %>
+  </div>
+</section>
