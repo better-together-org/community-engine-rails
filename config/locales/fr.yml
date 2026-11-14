@@ -629,6 +629,7 @@ fr:
       better_together/content/communities_block: Communautés
       better_together/content/css: CSS Personnalisé
       better_together/content/events_block: Événements
+      better_together/content/file_download_block: Téléchargement de fichier
       better_together/content/hero: Héros
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
@@ -1185,6 +1186,13 @@ fr:
                 ici.
               title: Choisir depuis la bibliothèque
               view_uploads: Voir les téléversements et leurs statuts de révision
+        file_download_block:
+          description_help: Brève description (facultatif)
+          empty: Ce fichier n'est pas disponible.
+          label_help: Texte du lien (facultatif, par défaut le nom du fichier)
+          meta: "%{type}, %{size}"
+          open_inline: Ouvrir dans le navigateur au lieu de télécharger
+          select_prompt: Sélectionner un fichier
         hero:
           editor:
             background: Arrière-plan
@@ -2109,6 +2117,13 @@ fr:
         no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
           demande pour voir des correspondances.
         suggested_matches: Correspondances suggérées
+    image_gallery:
+      close: Fermer
+      counter: "{current} sur {total}"
+      dialog_label: 'Galerie d''images : %{name}'
+      next: Image suivante
+      open_image: 'Ouvrir l''image %{current} sur %{total} : %{name}'
+      previous: Image précédente
     infrastructure:
       locations: Emplacements
     invitations:
@@ -5833,6 +5848,8 @@ fr:
     continent: Continent
     country: Pays
     download_failed: Échec du téléchargement
+    download_held: Ce fichier est encore en cours de vérification de sécurité. Veuillez
+      réessayer bientôt.
     invitation: Invitation
     invitation_email: E-mail d'invitation
     member: Membre

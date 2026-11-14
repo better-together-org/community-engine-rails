@@ -24,6 +24,10 @@ module BetterTogether
         record.attached?
     end
 
+    def inline?
+      download?
+    end
+
     # Filtering and sorting for files according to permissions and context
     class Scope < PlatformRecordPolicy::Scope
       def resolve
