@@ -236,14 +236,14 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                      content_for(:meta_description)
+                      meta_content_for(:meta_description)
                     elsif content_for?(:og_description)
-                      content_for(:og_description)
+                      meta_content_for(:og_description)
                     else
                       t('meta.default_description', platform_name: host_platform.name)
                     end
 
-      keywords = content_for?(:meta_keywords) ? content_for(:meta_keywords) : nil
+      keywords = content_for?(:meta_keywords) ? meta_content_for(:meta_keywords) : nil
 
       tags = []
       tags << tag.meta(name: 'description', content: description)
@@ -274,36 +274,77 @@ module BetterTogether
       safe_join(fragments, "\n")
     end
 
+    OG_TYPES = %w[website article profile book].freeze
+
+    # Reads a content_for value as single-line text. Views capture ERB blocks,
+    # so the raw value carries the indentation and newlines around the content.
+    def meta_content_for(name)
+      content_for(name).to_s.squish
+    end
+
+    # Open Graph type for the page. Views may set `content_for :og_type` to one
+    # of OG_TYPES; anything else falls back to "website".
+    def og_type
+      requested = content_for?(:og_type) ? meta_content_for(:og_type) : nil
+      OG_TYPES.include?(requested) ? requested : 'website'
+    end
+
+    # Absolute share-image URL: a view-provided image, else the host community logo.
+    def og_image_url
+      url = content_for?(:og_image) ? meta_content_for(:og_image) : host_community_logo_url
+      return url if url.blank? || url.start_with?('http://', 'https://')
+
+      "#{request.base_url}/#{url.delete_prefix('/')}"
+    end
+
+    # og:image plus width, height and alt when views provide them
+    # (`content_for :og_image_width`, `:og_image_height`, `:og_image_alt`).
+    def og_image_meta_tags(image_url)
+      tags = [tag.meta(property: 'og:image', content: image_url)]
+      { width: :og_image_width, height: :og_image_height, alt: :og_image_alt }.each do |suffix, key|
+        value = content_for?(key) ? meta_content_for(key) : nil
+        tags << tag.meta(property: "og:image:#{suffix}", content: value) if value.present?
+      end
+      tags
+    end
+
+    # Width and height recorded in an attachment blob's metadata, as the
+    # content_for-ready strings used by og_image_meta_tags.
+    def og_image_dimensions(attachment)
+      metadata = attachment.blob&.metadata || {}
+      { width: metadata['width'], height: metadata['height'] }.compact_blank.transform_values(&:to_s)
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-                   content_for(:og_title)
+                   meta_content_for(:og_title)
                  elsif content_for?(:page_title)
-                   t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
+                   t('og.page.title', title: meta_content_for(:page_title), platform_name: host_platform.name)
                  else
                    t('og.default_title', platform_name: host_platform.name)
                  end
 
       og_description = if content_for?(:og_description)
-                         content_for(:og_description)
+                         meta_content_for(:og_description)
                        else
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? canonicalize_url(content_for(:og_url)) : canonical_current_url
+      og_url = content_for?(:og_url) ? canonicalize_url(meta_content_for(:og_url)) : canonical_current_url
 
-      og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
+      og_image = og_image_url
 
       tags = []
       tags << tag.meta(property: 'og:title', content: og_title)
       tags << tag.meta(property: 'og:description', content: og_description)
       tags << tag.meta(property: 'og:url', content: og_url)
-      tags << tag.meta(property: 'og:image', content: og_image) if og_image.present?
+      tags.concat(og_image_meta_tags(og_image)) if og_image.present?
       tags << tag.meta(property: 'og:site_name', content: host_platform.name)
-      tags << tag.meta(property: 'og:type', content: 'website')
+      tags << tag.meta(property: 'og:type', content: og_type)
 
       safe_join(tags, "\n")
     end
@@ -316,7 +357,7 @@ module BetterTogether
     # the host and locale are ensured by prefixing with `base_url_with_locale`.
     def canonical_link_tag
       canonical_url = if content_for?(:canonical_url)
-                        explicit_or_canonical_url(content_for(:canonical_url))
+                        explicit_or_canonical_url(meta_content_for(:canonical_url))
                       else
                         canonical_current_url
                       end
@@ -403,11 +444,12 @@ module BetterTogether
     def canonicalize_url(url)
       return url if url.blank?
 
-      uri = URI.parse(url.to_s)
+      url = url.to_s.strip
+      uri = URI.parse(url)
       path = extract_canonical_path(uri, url)
       build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
     rescue URI::InvalidURIError
-      build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+      build_url_for_path(base_url_with_locale, normalize_relative_path(url))
     end
 
     def uri_query_string(uri)

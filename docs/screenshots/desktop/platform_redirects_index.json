@@ -1,0 +1,48 @@
+{
+  "name": "platform_redirects_index",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/redirects",
+  "title": "Redirects | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_redirects",
+  "flow": "redirects_index",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_redirects_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#redirects-table",
+      "title": "Redirects",
+      "bullets": [
+        "Old path, new path, response and visits."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 270.0,
+        "width": 1296.0,
+        "height": 185.0,
+        "right": 1368.0,
+        "bottom": 455.0,
+        "center_x": 720.0,
+        "center_y": 362.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 270.0,
+        "width": 1296.0,
+        "height": 185.0,
+        "right": 1368.0,
+        "bottom": 455.0,
+        "center_x": 720.0,
+        "center_y": 362.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 475.0,
+        "width": 380,
+        "height": 132,
+        "score": 1002.0
+      }
+    }
+  ]
+}

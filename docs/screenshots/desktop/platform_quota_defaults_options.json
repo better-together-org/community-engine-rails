@@ -10,38 +10,38 @@
   "source_spec": "./spec/docs_screenshots/better_together/platform_quota_defaults_spec.rb",
   "callouts": [
     {
-      "selector": "#quota_defaults_media_storage_platform_e42547af-0480-4b27-b5cf-874dcbee39ca legend",
+      "selector": "#quota_defaults_media_storage_platform_858b9dad-61ab-48a0-9862-78c0a58d0d61 legend",
       "title": "Storage sizes",
       "bullets": [
         "Only listed sizes can be chosen."
       ],
       "target": {
-        "x": 80.5,
-        "y": 681.59375,
-        "width": 1264.0,
+        "x": 410.5,
+        "y": 1269.0,
+        "width": 934.0,
         "height": 19.1875,
         "right": 1344.5,
-        "bottom": 700.78125,
-        "center_x": 712.5,
-        "center_y": 691.1875
+        "bottom": 1288.1875,
+        "center_x": 877.5,
+        "center_y": 1278.59375
       },
       "avoid": {
-        "x": 80.5,
-        "y": 681.59375,
-        "width": 1264.0,
+        "x": 410.5,
+        "y": 1269.0,
+        "width": 934.0,
         "height": 19.1875,
         "right": 1344.5,
-        "bottom": 700.78125,
-        "center_x": 712.5,
-        "center_y": 691.1875
+        "bottom": 1288.1875,
+        "center_x": 877.5,
+        "center_y": 1278.59375
       },
       "placement": {
-        "side": "below",
-        "x": 522.5,
-        "y": 720.78,
+        "side": "above",
+        "x": 687.5,
+        "y": 1117.0,
         "width": 380,
         "height": 132,
-        "score": 756.21875
+        "score": 1269.0
       }
     }
   ]

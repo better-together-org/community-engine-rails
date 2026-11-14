@@ -42,6 +42,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
     ) do
       capybara_login_as_platform_manager
       visit edit_platform_path(host_platform, locale:)
+      find('#platform-features-tab').click
 
       card = find("##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults)}")
       card.scroll_to(:center)
@@ -68,6 +69,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
     ) do
       capybara_login_as_platform_manager
       visit edit_platform_path(host_platform, locale:)
+      find('#platform-features-tab').click
 
       expect(page).to have_css('.ss-main', wait: 10)
       find("#{fieldset} .col-lg-4:first-child").scroll_to(:center)

@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe BetterTogether::Content::<%= class_base %> do
+  subject(:block) { build(:content_<%= block_name %>) }
+
+  it 'inherits from Content::Block and can be added to pages' do
+    expect(described_class.superclass).to eq(BetterTogether::Content::Block)
+    expect(described_class.content_addable?).to be(true)
+  end
+
+  it 'has a valid factory' do
+    expect(block).to be_valid
+  end
+
+  it 'permits every configured attribute' do
+    expect(described_class.extra_permitted_attributes).to include(*%i[<%= permitted_list %>])
+  end
+end
