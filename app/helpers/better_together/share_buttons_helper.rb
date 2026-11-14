@@ -122,7 +122,7 @@ module BetterTogether
 
     def share_icon(platform) # rubocop:todo Metrics/MethodLength
       # rubocop:disable Metrics/CyclomaticComplexity
-      content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
+      content_tag :div, class: 'fa-stack fa-2x', aria: { hidden: 'true' } do
         bg = content_tag :i, '', class: 'bg fas fa-circle fa-stack-2x'
 
         icon =

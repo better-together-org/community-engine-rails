@@ -3,16 +3,8 @@
 # Links existing addresses to their already-resolved geography records.
 class BackfillBetterTogetherAddressGeographyLinks < ActiveRecord::Migration[7.2]
   def up
-    # Loading again when the host already loaded the engine's tasks would run the action twice.
-    unless Rake::Task.task_defined?('better_together:geography:backfill_address_links')
-      load BetterTogether::Engine.root.join('lib', 'tasks', 'better_together', 'geography_backfill_address_links.rake')
-    end
-
-    begin
-      Rake::Task['better_together:geography:backfill_address_links'].invoke
-    rescue RuntimeError
-      Rake::Task['app:better_together:geography:backfill_address_links'].invoke
-    end
+    run_engine_rake_task('better_together:geography:backfill_address_links', file: 'geography_backfill_address_links.rake',
+                                                                             skip_when_empty: %i[better_together_addresses])
   end
 
   def down
