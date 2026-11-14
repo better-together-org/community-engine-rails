@@ -6,8 +6,38 @@ erDiagram
   EXT_PERSON ||--o{ AGENT_GRANTS : "operator / operator_id"
   EXT_COMMUNITY o|--o{ AGENT_GRANTS : "community / community_id"
   EXT_PERSON o|--o{ AGENT_GRANTS : "granted_by / granted_by_id"
+  EXT_PLATFORM ||--o{ BILLING_DEFAULT_ADDRESSES : "platform / platform_id"
+  EXT_PERSON ||--o{ BILLING_DEFAULT_ADDRESSES : "person / person_id"
+  EXT_ADDRESS ||--o{ BILLING_DEFAULT_ADDRESSES : "address / address_id"
+  EXT_PLATFORM ||--o{ BILLING_HOSTED_ACCOUNTS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_HOSTED_ACCOUNTS : "suspended_by / suspended_by_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXT_PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_ORDER_DOCUMENTS : "platform / platform_id"
+  EXT_BILLING_ORDER ||--o{ BILLING_ORDER_DOCUMENTS : "order / order_id"
+  EXT_UPLOAD ||--o{ BILLING_ORDER_DOCUMENTS : "upload / upload_id"
+  EXT_PLATFORM ||--o{ BILLING_PLAN_ADD_ONS : "platform / platform_id"
+  EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "plan / plan_id"
+  EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "add_on / add_on_id"
+  EXT_PLATFORM ||--o{ BILLING_REFUND_REQUESTS : "platform / platform_id"
+  EXT_BILLING_ORDER ||--o{ BILLING_REFUND_REQUESTS : "order / order_id"
+  EXT_PERSON ||--o{ BILLING_REFUND_REQUESTS : "requester / requester_id"
+  EXT_PERSON o|--o{ BILLING_REFUND_REQUESTS : "decided_by / decided_by_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_CATEGORIES : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_LINES : "platform / platform_id"
+  EXT_BILLING_ORDER ||--o{ BILLING_TAX_LINES : "order / order_id"
+  EXT_BILLING_LINE_ITEM ||--o{ BILLING_TAX_LINES : "line_item / line_item_id"
+  BILLING_TAX_RATES o|--o{ BILLING_TAX_LINES : "tax_rate / tax_rate_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_RATES : "platform / platform_id"
+  BILLING_TAX_ZONES ||--o{ BILLING_TAX_RATES : "tax_zone / tax_zone_id"
+  BILLING_TAX_CATEGORIES o|--o{ BILLING_TAX_RATES : "tax_category / tax_category_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_REGISTRATIONS : "platform / platform_id"
+  EXT_GEOGRAPHY_COUNTRY o|--o{ BILLING_TAX_REGISTRATIONS : "country / country_id"
+  EXT_GEOGRAPHY_STATE o|--o{ BILLING_TAX_REGISTRATIONS : "state / state_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_ZONES : "platform / platform_id"
+  EXT_GEOGRAPHY_COUNTRY ||--o{ BILLING_TAX_ZONES : "country / country_id"
+  EXT_GEOGRAPHY_STATE o|--o{ BILLING_TAX_ZONES : "state / state_id"
+  EXT_GEOGRAPHY_SETTLEMENT o|--o{ BILLING_TAX_ZONES : "settlement / settlement_id"
   EXT_PLATFORM o|--o{ CONTACT_DETAILS : "platform / platform_id"
   EXT_PLATFORM o|--o{ CONTENT_SECURITY_FINDINGS : "platform / platform_id"
   CONTENT_SECURITY_ITEMS ||--o{ CONTENT_SECURITY_FINDINGS : "item / item_id"
@@ -111,6 +141,21 @@ erDiagram
     revoked_at datetime
   }
 
+  BILLING_DEFAULT_ADDRESSES {
+    address_id uuid
+    person_id uuid
+    platform_id uuid
+    kind string
+  }
+
+  BILLING_HOSTED_ACCOUNTS {
+    platform_id uuid
+    suspended_by_id uuid
+    status string
+    suspension_reason text
+    suspended_at datetime
+  }
+
   NOTICED_EVENTS {
     record_id uuid
     record_type string
@@ -127,6 +172,85 @@ erDiagram
     type string
     read_at datetime
     seen_at datetime
+  }
+
+  BILLING_ORDER_DOCUMENTS {
+    order_id uuid
+    platform_id uuid
+    upload_id uuid
+    fingerprint string
+    kind string
+    locale string
+    time_zone string
+    generated_at datetime
+    superseded_at datetime
+  }
+
+  BILLING_PLAN_ADD_ONS {
+    add_on_id uuid
+    plan_id uuid
+    platform_id uuid
+  }
+
+  BILLING_REFUND_REQUESTS {
+    decided_by_id uuid
+    order_id uuid
+    platform_id uuid
+    requester_id uuid
+    currency string
+    reason string
+    status string
+    decision_note text
+    details text
+    amount_cents integer
+  }
+
+  BILLING_TAX_CATEGORIES {
+    platform_id uuid
+    identifier string
+    taxable boolean
+  }
+
+  BILLING_TAX_LINES {
+    line_item_id uuid
+    order_id uuid
+    platform_id uuid
+    tax_rate_id uuid
+    authority string
+    registration_number text
+    included boolean
+    amount_cents integer
+    rate decimal
+  }
+
+  BILLING_TAX_RATES {
+    platform_id uuid
+    tax_category_id uuid
+    tax_zone_id uuid
+    authority string
+    ends_at datetime
+    starts_at datetime
+    rate decimal
+  }
+
+  BILLING_TAX_REGISTRATIONS {
+    country_id uuid
+    platform_id uuid
+    seller_id uuid
+    state_id uuid
+    country_iso string
+    region_code string
+    seller_type string
+    status string
+    registration_number text
+    prices_include_tax boolean
+  }
+
+  BILLING_TAX_ZONES {
+    country_id uuid
+    platform_id uuid
+    settlement_id uuid
+    state_id uuid
   }
 
   COMMENT_CONFIGS {
@@ -540,6 +664,38 @@ erDiagram
     string export_ref
   }
 
+  EXT_ADDRESS {
+    string export_ref
+  }
+
+  EXT_BILLING_ORDER {
+    string export_ref
+  }
+
+  EXT_UPLOAD {
+    string export_ref
+  }
+
+  EXT_BILLING_PLAN {
+    string export_ref
+  }
+
+  EXT_BILLING_LINE_ITEM {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_COUNTRY {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_STATE {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_SETTLEMENT {
+    string export_ref
+  }
+
   EXT_SAFETY_CASE {
     string export_ref
   }
@@ -552,19 +708,11 @@ erDiagram
     string export_ref
   }
 
-  EXT_ADDRESS {
-    string export_ref
-  }
-
   EXT_PLATFORM_DOMAIN {
     string export_ref
   }
 
   EXT_ROLE {
-    string export_ref
-  }
-
-  EXT_GEOGRAPHY_SETTLEMENT {
     string export_ref
   }
 

@@ -1,0 +1,83 @@
+{
+  "name": "billing_processor_settings_store_credit",
+  "device": "mobile",
+  "url": "/en/billing/processor_settings/store_credit/edit",
+  "title": "Store credit | Payment methods | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_payment_methods",
+  "flow": "billing_processor_settings_store_credit",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_processor_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-processor-disclosure",
+      "title": "What credit is",
+      "bullets": [
+        "Credit is the platform's own money, is not cash, can expire, and refunds go back onto it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 415.390625,
+        "width": 476.0,
+        "height": 287.1875,
+        "right": 488.0,
+        "bottom": 702.578125,
+        "center_x": 250.0,
+        "center_y": 558.984375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 415.390625,
+        "width": 476.0,
+        "height": 287.1875,
+        "right": 488.0,
+        "bottom": 702.578125,
+        "center_x": 250.0,
+        "center_y": 558.984375
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 722.58,
+        "width": 270.0,
+        "height": 236,
+        "score": 554.421875
+      }
+    },
+    {
+      "selector": "#billing-processor-purposes",
+      "title": "What it may pay for",
+      "bullets": [
+        "Choose the kinds of purchase credit can pay for."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 238.390625,
+        "width": 442.0,
+        "height": 136.0,
+        "right": 471.0,
+        "bottom": 374.390625,
+        "center_x": 250.0,
+        "center_y": 306.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 238.390625,
+        "width": 442.0,
+        "height": 136.0,
+        "right": 471.0,
+        "bottom": 374.390625,
+        "center_x": 250.0,
+        "center_y": 306.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 115.0,
+        "y": 28.39,
+        "width": 270.0,
+        "height": 190,
+        "score": 238.390625
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "billing_agreement_reader_unlocked",
+  "device": "desktop",
+  "url": "/en/billing/checkout/new?plan_id=21ca87b0-fc38-42b0-aa44-26536b56f51c&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_agreement_reader",
+  "flow": "billing_agreement_reader_unlocked",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_agreement_reader_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-agreement-accept-one_time_purchase_agreement",
+      "title": "Unlocked and next in line",
+      "bullets": [
+        "Tab reaches the box; Space ticks it."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 928.375,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 97.5,
+        "bottom": 944.375,
+        "center_x": 89.5,
+        "center_y": 936.375
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 727.1875,
+        "width": 1296.0,
+        "height": 431.375,
+        "right": 1360.5,
+        "bottom": 1158.5625,
+        "center_x": 712.5,
+        "center_y": 942.875
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 543.19,
+        "width": 380,
+        "height": 164,
+        "score": 727.1875
+      }
+    }
+  ]
+}

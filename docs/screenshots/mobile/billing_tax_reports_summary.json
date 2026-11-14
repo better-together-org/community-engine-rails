@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_reports_summary",
+  "device": "mobile",
+  "url": "/en/host/metrics/reports",
+  "title": "Metrics Reports | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax_reports",
+  "flow": "billing_tax_reports_summary",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_reports_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-summary-cad-table",
+      "title": "The last 30 days",
+      "bullets": [
+        "Each currency is shown on its own.",
+        "Refunds are netted off."
+      ],
+      "target": {
+        "x": 57.0,
+        "y": 451.390625,
+        "width": 372.0,
+        "height": 354.0,
+        "right": 429.0,
+        "bottom": 805.390625,
+        "center_x": 243.0,
+        "center_y": 628.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 184
+      }
+    }
+  ]
+}

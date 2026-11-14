@@ -1,0 +1,78 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe BetterTogether::Billing::Notifications::Catalog do
+  it 'lists who hears about each kind' do
+    expect(described_class.audiences('order_placed')).to eq(%i[buyer seller])
+    expect(described_class.audiences(:payment_failed)).to eq(%i[buyer])
+    expect(described_class.audiences('settings_changed')).to eq(%i[operator])
+  end
+
+  it 'marks the kinds that must always get through' do
+    critical = described_class::KINDS.keys.select { |kind| described_class.critical?(kind) }
+
+    expect(critical).to contain_exactly('payment_failed', 'payment_action_required', 'dispute_opened', 'settings_changed',
+                                        'event_dead_lettered', 'plan_sync_failed', 'cheque_bounced', 'hold_expiring',
+                                        'refund_failed', 'payment_orphaned', 'payment_amount_mismatch', 'renewal_overdue', 'grace_ending')
+    expect(described_class.critical?('order_paid')).to be(false)
+  end
+
+  it 'tells the right side about a payment made outside the platform' do
+    expect(described_class.audiences('payment_claimed')).to eq(%i[seller])
+    expect(described_class.audiences('payment_confirmed')).to eq(%i[buyer])
+    expect(described_class.audiences('payment_rejected')).to eq(%i[buyer])
+    expect(described_class.audiences('cheque_bounced')).to eq(%i[buyer seller])
+    expect(described_class.audiences('confirmation_reminder')).to eq(%i[seller])
+    expect(described_class.audiences('hold_expiring')).to eq(%i[buyer])
+  end
+
+  it 'tells the holder, and only the holder, when store credit is given' do
+    expect(described_class.audiences('credit_granted')).to eq(%i[holder])
+    expect(described_class.critical?('credit_granted')).to be(false)
+  end
+
+  it 'has words, in every language, for every kind and audience' do
+    I18n.available_locales.each do |locale|
+      described_class::KINDS.each do |kind, details|
+        details[:audiences].each do |audience|
+          %i[title body].each do |part|
+            fallback = :"better_together.billing.notifications.#{kind}.#{part}"
+            text = I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}", locale:, default: [fallback, ''])
+            expect(text).to be_present, "no #{locale} #{part} for #{kind} (#{audience})"
+          end
+        end
+      end
+    end
+  end
+
+  it 'knows which kinds exist, and takes none that are not there' do
+    expect(described_class.kind?('refund_issued')).to be(true)
+    expect(described_class.kind?('stripe_invoice_paid')).to be(false)
+    expect(described_class.critical?('nonsense')).to be(false)
+  end
+
+  it 'covers what Pay\'s own mailers sent, as notifications of ours' do
+    pay_messages = %w[payment_succeeded refund_issued subscription_renewing payment_action_required payment_failed trial_ending trial_ended]
+
+    expect(described_class::KINDS.keys).to include(*pay_messages)
+  end
+
+  it 'has copy in every locale for every kind and audience' do
+    I18n.available_locales.each do |locale|
+      I18n.with_locale(locale) do
+        described_class::KINDS.each do |kind, config|
+          config[:audiences].each do |audience|
+            %w[title body].each do |part|
+              text = I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}",
+                            default: [:"better_together.billing.notifications.#{kind}.#{part}"], number: 'N', amount: 'A', method: 'M',
+                            platform: 'P', expires: 'E', plan: 'L', date: 'D', received: 'R', left: 'T')
+              expect(text).to be_a(String), "missing #{locale} #{kind}.#{audience}.#{part}"
+              expect(text).not_to include('translation missing')
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,52 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.entitlements.title') %>
+<% end %>
+
+<div id="billing-entitlements-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.entitlements.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.entitlements.intro') %></p>
+
+  <% if @entitlements.any? %>
+    <% @entitlements.each do |entitlement| %>
+      <section id="<%= dom_id(entitlement) %>" class="card mb-4" aria-labelledby="<%= dom_id(entitlement, :heading) %>">
+        <div class="card-header d-flex justify-content-between align-items-baseline">
+          <h2 id="<%= dom_id(entitlement, :heading) %>" class="h5 mb-0"><%= entitlement.plan.name %></h2>
+          <span><%= billing_entitlement_status_badge(entitlement) %></span>
+        </div>
+        <div class="card-body">
+          <p class="mb-2" id="<%= dom_id(entitlement, :for) %>">
+            <%= t('better_together.billing.entitlements.for', name: entitlement.beneficiary.try(:name)) %>
+          </p>
+          <% if entitlement.grace? && entitlement.grace_ends_at %>
+            <p class="text-warning-emphasis" id="<%= dom_id(entitlement, :grace) %>">
+              <%= t('better_together.billing.entitlements.grace_until', date: l(entitlement.grace_ends_at.to_date, format: :long)) %>
+            </p>
+          <% elsif entitlement.ends_at && entitlement.live? %>
+            <p id="<%= dom_id(entitlement, :ends) %>"><%= t('better_together.billing.entitlements.until', date: l(entitlement.ends_at.to_date, format: :long)) %></p>
+          <% end %>
+
+          <% allowances = entitlement.grants.applied.allowances.to_a %>
+          <% if allowances.any? %>
+            <h3 class="h6 mt-3"><%= t('better_together.billing.entitlements.allowances') %></h3>
+            <ul id="<%= dom_id(entitlement, :allowances) %>" class="list-unstyled">
+              <% allowances.each do |grant| %>
+                <% reading = @meters[[entitlement.id, grant.quota_type]] %>
+                <li id="<%= dom_id(grant) %>" class="mb-2">
+                  <div><%= grant.quota_type.humanize %></div>
+                  <% if reading && !reading.unlimited? %>
+                    <div class="progress" role="progressbar" aria-label="<%= grant.quota_type.humanize %>" aria-valuenow="<%= reading.percent %>" aria-valuemin="0" aria-valuemax="100">
+                      <div class="progress-bar" style="width: <%= reading.percent %>%"></div>
+                    </div>
+                  <% end %>
+                  <small class="text-body-secondary"><%= reading ? billing_meter_label(reading) : '' %></small>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  <% else %>
+    <p id="billing-entitlements-empty" class="text-body-secondary"><%= t('better_together.billing.entitlements.none') %></p>
+  <% end %>
+</div>

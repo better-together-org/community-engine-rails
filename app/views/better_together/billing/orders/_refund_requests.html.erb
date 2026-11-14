@@ -1,0 +1,40 @@
+<%# A buyer's refund requests on this order, and the way to ask for one. %>
+<% requests = order.refund_requests.newest_first.to_a %>
+<% can_ask = policy(order.refund_requests.new(requester: current_user.person)).create? %>
+<% if requests.any? || can_ask %>
+  <section id="billing-order-refund-requests" class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong><%= t('better_together.billing.refund_requests.heading') %></strong>
+      <% if can_ask %>
+        <%= link_to t('better_together.billing.refund_requests.ask_link'), new_billing_order_refund_request_path(order, locale: I18n.locale),
+                    id: 'billing-order-ask-refund-link', class: 'btn btn-outline-secondary btn-sm' %>
+      <% end %>
+    </div>
+    <% if requests.any? %>
+      <ul class="list-group list-group-flush">
+        <% requests.each do |request| %>
+          <li id="<%= dom_id(request) %>" class="list-group-item">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+              <span>
+                <%= t("better_together.billing.refund_requests.reasons.#{request.reason}") %>
+                <span class="text-body-secondary"><%= l(request.created_at.to_date, format: :long) %></span>
+              </span>
+              <span id="<%= dom_id(request, :status) %>" class="badge text-bg-secondary"><%= t("better_together.billing.refund_requests.statuses.#{request.status}") %></span>
+            </div>
+            <% if request.approved_amount_cents %>
+              <div id="<%= dom_id(request, :approved) %>"><%= t('better_together.billing.refund_requests.approved_amount', amount: billing_amount(request.approved_amount_cents, request.currency)) %></div>
+            <% end %>
+            <% if request.decision_note.present? %>
+              <blockquote id="<%= dom_id(request, :reply) %>" class="mb-0 mt-2 border-start ps-3"><%= request.decision_note %></blockquote>
+            <% end %>
+            <% if request.pending? %>
+              <%= button_to t('better_together.billing.refund_requests.withdraw'),
+                            cancel_billing_order_refund_request_path(order, request, locale: I18n.locale), method: :post,
+                            id: dom_id(request, :withdraw), class: 'btn btn-link btn-sm px-0' %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </section>
+<% end %>

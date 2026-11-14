@@ -3,6 +3,7 @@
 #   1. Ensure ActiveRecord schema and migration versions use 7.2, never 8.x
 #   2. Run rubocop -A on staged Ruby files and re-stage auto-corrections
 #   3. Run i18n-tasks health when locale/Ruby files are staged
+#   4. Regenerate the schema/subsystem/Mermaid diagrams when anything they derive from is staged, and stage the result
 #
 # Install: bin/install-git-hooks (or manually symlink to .git/hooks/pre-commit)
 
@@ -98,6 +99,29 @@ if [ -n "$staged_i18n" ]; then
   fi
 
   echo "pre-commit: ✓ i18n-tasks health clean."
+fi
+
+# ---------------------------------------------------------------------------
+# Diagrams: mirror the schema-diagrams and diagrams CI jobs, auto-correct by regenerating
+# ---------------------------------------------------------------------------
+# Regenerates when a staged file feeds a diagram: the schema, migrations, models, controllers, any .mmd source or the
+# generator scripts. Stale output is rewritten and staged into this commit. Skip with SKIP_DIAGRAMS=1.
+staged_diagram_inputs=$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '^(spec/dummy/db/schema\.rb|db/migrate/|app/(models|controllers)/|docs/diagrams/source/.*\.mmd|scripts/(export_schema_dbml|export_subsystem_diagrams|render_schema_diagram)|bin/(export_schema_diagrams|export_subsystem_diagrams|render_diagrams|check_diagrams))' \
+  || true)
+
+if [ -n "$staged_diagram_inputs" ] && [ "${SKIP_DIAGRAMS:-0}" != "1" ]; then
+  echo "pre-commit: Regenerating diagrams (SKIP_DIAGRAMS=1 to skip)…"
+  diagram_exit=0
+  "$(git rev-parse --show-toplevel)/bin/check_diagrams" --fix || diagram_exit=$?
+
+  if [ "$diagram_exit" -ne 0 ]; then
+    echo ""
+    echo "pre-commit: ✗ Diagram regeneration failed (see output above); a .mmd source may not render."
+    exit 1
+  fi
+
+  echo "pre-commit: ✓ Diagrams current."
 fi
 
 exit 0

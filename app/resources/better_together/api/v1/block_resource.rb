@@ -206,6 +206,8 @@ module BetterTogether
       MermaidDiagramResource      = BlockResource
       NavigationAreaBlockResource = BlockResource
       PeopleBlockResource         = BlockResource
+      PlanButtonBlockResource     = BlockResource
+      PlanCatalogBlockResource    = BlockResource
       PostsBlockResource          = BlockResource
       QuoteBlockResource          = BlockResource
       RichTextResource            = BlockResource

@@ -1,0 +1,83 @@
+{
+  "name": "billing_hub",
+  "device": "desktop",
+  "url": "/en/billing",
+  "title": "Billing and plans | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_hub",
+  "flow": "billing_hub",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-hub-plans",
+      "title": "Active plans",
+      "bullets": [
+        "Each plan with its renewal date and price; open one to cancel or resume it."
+      ],
+      "target": {
+        "x": 60.0,
+        "y": 232.0,
+        "width": 660.0,
+        "height": 147.0,
+        "right": 720.0,
+        "bottom": 379.0,
+        "center_x": 390.0,
+        "center_y": 305.5
+      },
+      "avoid": {
+        "x": 60.0,
+        "y": 232.0,
+        "width": 660.0,
+        "height": 147.0,
+        "right": 720.0,
+        "bottom": 379.0,
+        "center_x": 390.0,
+        "center_y": 305.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 200.0,
+        "y": 399.0,
+        "width": 380,
+        "height": 158,
+        "score": 1078.0
+      }
+    },
+    {
+      "selector": "#billing-hub-orders",
+      "title": "Recent orders",
+      "bullets": [
+        "The latest orders with their status; all orders and receipts are one link away."
+      ],
+      "target": {
+        "x": 720.0,
+        "y": 232.0,
+        "width": 660.0,
+        "height": 147.0,
+        "right": 1380.0,
+        "bottom": 379.0,
+        "center_x": 1050.0,
+        "center_y": 305.5
+      },
+      "avoid": {
+        "x": 720.0,
+        "y": 232.0,
+        "width": 660.0,
+        "height": 147.0,
+        "right": 1380.0,
+        "bottom": 379.0,
+        "center_x": 1050.0,
+        "center_y": 305.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 860.0,
+        "y": 399.0,
+        "width": 380,
+        "height": 158,
+        "score": 1078.0
+      }
+    }
+  ]
+}

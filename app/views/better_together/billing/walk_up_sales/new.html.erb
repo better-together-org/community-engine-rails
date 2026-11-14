@@ -1,0 +1,88 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.walk_up.title') %>
+<% end %>
+
+<div id="billing-walk-up-page" class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to t('better_together.billing.orders.sales_title'), billing_sales_path(locale: I18n.locale) %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= t('better_together.billing.walk_up.title') %></li>
+    </ol>
+  </nav>
+  <h1 class="mb-2"><%= t('better_together.billing.walk_up.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.walk_up.intro') %></p>
+
+  <% if @error %>
+    <div class="alert alert-danger" role="alert" id="billing-walk-up-error"><%= t("better_together.billing.walk_up.error_#{@error}") %></div>
+  <% end %>
+
+  <% if @plans.empty? || (@methods.empty? && @plans.none?(&:free?)) %>
+    <p id="billing-walk-up-unavailable" class="text-body-secondary"><%= t('better_together.billing.walk_up.unavailable') %></p>
+  <% else %>
+    <%= form_with url: billing_walk_up_sale_path(locale: I18n.locale), method: :post, id: 'billing-walk-up-form' do %>
+      <div class="mb-3">
+        <%= label_tag 'billing-walk-up-plan', t('better_together.billing.walk_up.plan_label'), class: 'form-label' %>
+        <%= select_tag :plan_id, options_for_select(@plans.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }, params[:plan_id]),
+                       id: 'billing-walk-up-plan', class: 'form-select' %>
+      </div>
+      <div class="mb-3">
+        <%= label_tag 'billing-walk-up-method', t('better_together.billing.walk_up.method_label'), class: 'form-label' %>
+        <%= select_tag :payment_method, options_for_select(@methods.map { |name| [billing_payment_method_label(name), name] }, params[:payment_method]),
+                       include_blank: @plans.any?(&:free?),
+                       id: 'billing-walk-up-method', class: 'form-select' %>
+      </div>
+      <div class="mb-3">
+        <%= label_tag 'billing-walk-up-buyer', t('better_together.billing.walk_up.buyer_label'), class: 'form-label' %>
+        <%= select_tag :buyer_id,
+                       options_for_select(@buyer ? [[@buyer.select_option_title, @buyer.id]] : [], @buyer&.id),
+                       id: 'billing-walk-up-buyer',
+                       class: 'form-select',
+                       include_blank: true,
+                       'aria-describedby': 'billing-walk-up-buyer-hint',
+                       data: {
+                         controller: 'better-together--slim-select',
+                         'better-together--slim-select-options-value': {
+                           ajax: { url: billing_people_path(locale: I18n.locale), fetch: true, delay: 300 },
+                           searchPlaceholder: t('better_together.billing.walk_up.buyer_placeholder'),
+                           searchHighlight: true,
+                           closeOnSelect: true,
+                           allowDeselect: true
+                         }.to_json
+                       } %>
+        <div id="billing-walk-up-buyer-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_hint') %></div>
+      </div>
+      <div class="mb-3">
+        <%= label_tag 'billing-walk-up-buyer-name', t('better_together.billing.walk_up.buyer_name_label'), class: 'form-label' %>
+        <%= text_field_tag :buyer_name, @entered&.dig('buyer_name'), id: 'billing-walk-up-buyer-name', class: 'form-control', autocomplete: 'off',
+                           'aria-describedby': 'billing-walk-up-buyer-name-hint' %>
+        <div id="billing-walk-up-buyer-name-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_name_hint') %></div>
+      </div>
+      <div class="mb-4">
+        <%= label_tag 'billing-walk-up-buyer-email', t('better_together.billing.walk_up.buyer_email_label'), class: 'form-label' %>
+        <%= email_field_tag :buyer_email, @entered&.dig('buyer_email'), id: 'billing-walk-up-buyer-email', class: 'form-control', required: true,
+                            autocomplete: 'off', 'aria-describedby': 'billing-walk-up-buyer-email-hint' %>
+        <div id="billing-walk-up-buyer-email-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_email_hint') %></div>
+      </div>
+      <fieldset id="billing-walk-up-address" class="mb-4">
+        <legend class="h6"><%= t('better_together.billing.walk_up.address_legend') %></legend>
+        <p id="billing-walk-up-address-hint" class="form-text mt-0"><%= t('better_together.billing.walk_up.address_hint') %></p>
+        <% %w[line1 line2 city_name state_province_name postal_code country_name].each do |field| %>
+          <div class="mb-2">
+            <%= label_tag "billing-walk-up-address-#{field.dasherize}", t("better_together.billing.walk_up.address_#{field}"), class: 'form-label' %>
+            <%= text_field_tag "billing_address[#{field}]", @entered&.dig('billing_address', field), id: "billing-walk-up-address-#{field.dasherize}",
+                               class: 'form-control', autocomplete: 'off' %>
+          </div>
+        <% end %>
+      </fieldset>
+      <div class="form-check mb-2">
+        <%= check_box_tag :agreements_accepted, '1', false, id: 'billing-walk-up-agreements', class: 'form-check-input', required: true %>
+        <%= label_tag 'billing-walk-up-agreements', t('better_together.billing.walk_up.agreements_label'), class: 'form-check-label' %>
+      </div>
+      <div class="form-check mb-3">
+        <%= check_box_tag :payment_received, '1', false, id: 'billing-walk-up-received', class: 'form-check-input' %>
+        <%= label_tag 'billing-walk-up-received', t('better_together.billing.walk_up.received_label'), class: 'form-check-label' %>
+      </div>
+      <%= submit_tag t('better_together.billing.walk_up.submit'), id: 'billing-walk-up-submit', class: 'btn btn-primary' %>
+    <% end %>
+  <% end %>
+</div>

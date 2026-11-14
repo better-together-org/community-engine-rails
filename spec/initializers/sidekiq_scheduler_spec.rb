@@ -27,8 +27,49 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       expect(schedule).to be_a(Hash)
       expect(schedule.keys).to include(
         'better_together:metrics:link_checker_weekly',
-        'better_together:event_reminder_scan_hourly'
+        'better_together:event_reminder_scan_hourly',
+        'better_together:billing:redact_expired_event_payloads_daily',
+        'better_together:billing:dead_letter_stale_events_hourly',
+        'better_together:billing:prune_stale_pay_webhooks_daily',
+        'better_together:billing:enqueue_stuck_events_10min'
       )
+    end
+
+    describe 'billing event maintenance jobs' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+
+      {
+        'better_together:billing:redact_expired_event_payloads_daily' =>
+          ['20 4 * * *', 'BetterTogether::Billing::RedactExpiredEventPayloadsJob'],
+        'better_together:billing:dead_letter_stale_events_hourly' =>
+          ['15 * * * *', 'BetterTogether::Billing::DeadLetterStaleBillingEventsJob'],
+        'better_together:billing:enqueue_stuck_events_10min' =>
+          ['*/10 * * * *', 'BetterTogether::Billing::EnqueueStuckBillingEventsJob'],
+        'better_together:billing:prune_stale_pay_webhooks_daily' =>
+          ['40 4 * * *', 'BetterTogether::Billing::PruneStalePayWebhooksJob'],
+        'better_together:billing:expire_offline_payments_hourly' =>
+          ['20 * * * *', 'BetterTogether::Billing::ExpireOfflinePaymentsJob'],
+        'better_together:billing:remind_offline_confirmations_daily' =>
+          ['15 14 * * *', 'BetterTogether::Billing::RemindOfflineConfirmationsJob'],
+        'better_together:billing:expire_quota_reservations_hourly' =>
+          ['35 * * * *', 'BetterTogether::Billing::ExpireQuotaReservationsJob'],
+        'better_together:billing:expire_credit_lots_daily' =>
+          ['50 4 * * *', 'BetterTogether::Billing::ExpireCreditLotsJob'],
+        'better_together:billing:generate_renewals_daily' =>
+          ['10 5 * * *', 'BetterTogether::Billing::GenerateRenewalsJob'],
+        'better_together:billing:advance_subscriptions_hourly' =>
+          ['25 * * * *', 'BetterTogether::Billing::AdvanceSubscriptionsJob'],
+        'better_together:billing:remind_renewals_daily' =>
+          ['30 14 * * *', 'BetterTogether::Billing::RemindRenewalsJob']
+      }.each do |key, (cron, job_class)|
+        # No queue key: the job class (queue_as :billing) decides, and the host's queue
+        # prefix applies; see spec/jobs/better_together/billing/application_job_spec.rb.
+        it "schedules #{key}" do
+          expect(schedule[key]).to include('cron' => cron, 'class' => job_class)
+          expect(schedule[key]).not_to have_key('queue')
+          expect(schedule[key]['description']).to be_present
+        end
+      end
     end
 
     describe 'link checker job configuration' do
@@ -133,6 +174,32 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
   end
 
+  describe 'billing jobs when billing is switched off' do
+    let(:registered) do
+      captured = nil
+      allow(Sidekiq).to receive(:server?).and_return(true)
+      without_partial_double_verification do
+        allow(Sidekiq::Scheduler).to receive(:reload_schedule!)
+        allow(Sidekiq).to receive(:schedule=) { |value| captured = value }
+      end
+      load initializer_path
+      captured
+    end
+
+    it 'registers no billing job and keeps the other jobs' do
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+      expect(registered.keys.grep(/\Abetter_together:billing:/)).to be_empty
+      expect(registered.keys).to include('better_together:event_reminder_scan_hourly')
+    end
+
+    it 'registers the billing jobs when the host switched billing on' do
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(true)
+
+      expect(registered.keys).to include('better_together:billing:expire_orders_hourly')
+    end
+  end
+
   describe 'host app override capability' do
     let(:host_schedule_path) { Rails.root.join('tmp', 'spec', "sidekiq_scheduler_#{SecureRandom.hex(6)}.yml") }
 
@@ -206,11 +273,21 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
   describe 'schedule readiness for execution', :skip_host_setup do
     let(:engine_schedule) { YAML.load(BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml').read) }
 
+    # Billing jobs name no `queue:` here on purpose: sidekiq-scheduler would set it
+    # literally and skip the host's queue_name_prefix, so the job class decides
+    # (BetterTogether::Billing::ApplicationJob, queue_as :billing). That is enforced in
+    # spec/jobs/better_together/billing/application_job_spec.rb.
+    let(:queue_named_schedule) do
+      engine_schedule.reject { |_name, config| config['class'].to_s.start_with?('BetterTogether::Billing::') }
+    end
+
     context 'job configuration completeness' do
       it 'all jobs have required fields for execution' do
         engine_schedule.each do |job_name, job_config|
           expect(job_config).to include('cron'), "Job #{job_name} missing cron schedule"
           expect(job_config).to include('class'), "Job #{job_name} missing class definition"
+        end
+        queue_named_schedule.each do |job_name, job_config|
           expect(job_config).to include('queue'), "Job #{job_name} missing queue definition"
         end
       end
@@ -243,7 +320,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
 
       it 'ensures queue names are valid' do
         valid_queues = %w[default metrics notifications events maintenance platform_sync weather]
-        engine_schedule.each do |job_name, job_config|
+        queue_named_schedule.each do |job_name, job_config|
           expect(valid_queues).to include(job_config['queue']),
                                   "Job #{job_name} uses invalid queue: #{job_config['queue']}"
         end

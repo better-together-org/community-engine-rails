@@ -558,6 +558,10 @@ en:
       messages:
         file_not_found: file does not exist
         invalid_file_type: must be a markdown file (.md or .markdown)
+        platform_owner_mismatch: must be the platform the owner belongs to
+        platform_parent_mismatch: must be the same platform as the customer or subscription
+          it belongs to
+        platform_readonly: cannot be changed once the record is created
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
@@ -666,6 +670,8 @@ en:
       better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
       better_together/content/people_block: People
+      better_together/content/plan_button_block: Plan Button
+      better_together/content/plan_catalog_block: Plan Catalog
       better_together/content/platform_block: Platform
       better_together/content/posts_block: Posts
       better_together/content/quote_block: Quote
@@ -842,7 +848,9 @@ en:
         acceptance_methods:
           agreement_review: agreement review
           api: API
+          checkout: Checkout
           legacy: legacy record
+          seller_assisted: Recorded by the seller
           sign_up: sign up
           system: system
         accepted_via: Accepted via %{method}
@@ -850,6 +858,7 @@ en:
         pending: pending
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: You have read to the end. You can now tick the box to accept.
       show:
         title: Agreement
       status:
@@ -921,6 +930,1405 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    billing:
+      addresses:
+        add: Add address
+        added: Address added.
+        default: Default
+        default_set: Default billing address updated.
+        intro: Tax on your orders is worked out from your billing address. Your default
+          is offered first at checkout.
+        list_title: Your addresses
+        make_default: Make default
+        new_title: Add an address
+        none: You have no billing address yet.
+        refused:
+          incomplete: Choose a country and a state or province so tax can be worked
+            out.
+          invalid: That address could not be saved. Check the fields and try again.
+          missing: Enter an address.
+          not_found: That address was not found.
+        title: Billing addresses
+      allowances:
+        enforcement: Enforcement
+        field_owner: Owner
+        field_quota: Quota
+        field_state: State
+        field_usage: Usage
+        intro: How strictly each quota is enforced, and who is using how much. Paid
+          plans raise a person’s or community’s limit; nothing already stored is ever
+          deleted.
+        mode: Mode
+        mode_hard: 'Hard: refuses new use past the limit'
+        mode_off: 'Off: not even counted'
+        mode_shadow: 'Shadow: counted, never refused'
+        mode_soft: 'Soft: counted, and warns when over'
+        none: No one has a paid allowance or is over a limit.
+        over: Over the limit
+        refused: That could not be saved.
+        saved: Enforcement saved.
+        title: Allowances and usage
+        usage: Paid allowances and anyone over their limit
+        within: Within the limit
+      catalog:
+        back: All plans
+        buy: Buy
+        details: What you get
+        free: Free
+        get_free: Get it free
+        intro: Choose a plan from %{platform}.
+        none: No plans are on offer right now.
+        price:
+          every_n_months: "%{price} every %{count} months"
+          every_n_years: "%{price} every %{count} years"
+          month: "%{price} a month"
+          once: "%{price} once"
+          year: "%{price} a year"
+        subscribe: Subscribe
+        title: Plans
+      checkout:
+        accept: I have read and accept %{title}
+        add_on_line: Add-on
+        add_ons_dropped: An extra you chose is no longer offered, so it was removed
+          from your order. Check the total before you continue.
+        add_ons_heading: Add to your order
+        add_ons_hint: Optional extras for this order. Update the order to add them.
+        add_ons_status:
+          one: Order updated. One extra selected. Total %{total}.
+          other: Order updated. %{count} extras selected. Total %{total}.
+          zero: Order updated. No extras selected. Total %{total}.
+        address:
+          choose: Billing address
+          hint: Tax is worked out from where you are billed, so choose your country
+            and state or province from the lists.
+          line1: Street address
+          make_default: Use this as my default billing address
+          new_heading: New billing address
+          new_option: A new address
+          postal_code: Postal code
+          title: Billing address
+        already_accepted: You have already accepted the current version.
+        continue: Continue
+        error_accept_all: Accept every agreement to continue.
+        error_address_incomplete: The billing address needs a country and a state
+          or province chosen from the lists.
+        error_address_invalid: The new billing address could not be saved. Check it
+          and try again.
+        error_address_missing: Choose a billing address.
+        error_address_not_found: That address is not one of yours. Choose another.
+        error_method_not_available: Choose one of the ways to pay that are available.
+        error_not_ready: 'This purchase cannot be completed yet: the terms for it
+          have not been set up. Please contact the people who run this platform.'
+        error_order_changed: The price or the extras on offer changed while you were
+          checking out. Nothing has been charged. Please review the total and place
+          the order again.
+        error_parts_too_large: The amounts you entered cover the whole price. Leave
+          some for the way chosen above, or choose it for the whole amount.
+        error_refused: Your order could not be placed. Nothing has been charged. Please
+          try again.
+        free: Free
+        get_free: Get it free
+        how_to_pay: How would you like to pay?
+        no_methods: There is no way to pay for this right now.
+        parts_heading: Pay part of it another way
+        parts_hint: Optional. Enter an amount beside any way of paying to pay that
+          much with it now. The way chosen above pays the rest.
+        place_order: Place order
+        placed: Your order has been placed.
+        renew_with: Renew with
+        renew_with_default: The way I pay the largest share
+        renew_with_hint: Each renewal invoice will be paid this way. You can add other
+          payments to any invoice.
+        review_intro: Read these before you place your order. You have to accept them
+          to continue.
+        review_title: Review and accept
+        subtotal: Subtotal
+        tax_note: Tax, if any, is worked out from your billing address and shown before
+          you confirm.
+        tax_note_new_address: Tax is worked out from the address you enter, and shown
+          on your order before you pay.
+        title: Get %{plan}
+        unavailable_currency_not_supported: Not available in this currency.
+        unavailable_insufficient_credit: You do not have enough store credit for this.
+        unavailable_not_enabled: Not available here right now.
+        unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        update_order: Update order
+        view_agreement: View the agreement
+      credit:
+        any_purpose: Anything the platform sells
+        balance_line: 'Balance: %{amount} (%{currency})'
+        deleted_holder: "(person deleted)"
+        field_amount: Given
+        field_balance: Balance
+        field_currency: Currency
+        field_expires: Expires
+        field_for: Can pay for
+        field_holder: Person
+        field_origin: Where it came from
+        field_remaining: Left
+        grant_amount: Amount
+        grant_confirm: Give %{amount} of store credit to %{person}?
+        grant_confirm_blank: Give store credit to %{person}?
+        grant_currency: Currency
+        grant_expires: Expires after (days)
+        grant_expires_hint: Leave empty for credit that does not expire.
+        grant_note: Note (optional)
+        grant_refused: That credit could not be given. Check the amount, and note
+          that you cannot give credit to yourself.
+        grant_submit: Give credit
+        grant_too_large: That credit is more than one grant may give. The most is
+          %{maximum}.
+        granted: Credit given.
+        history: History
+        history_caption: What has happened to this credit, newest first
+        intro: Credit you hold with %{platform}. It pays for what the platform itself
+          sells, in full, and some of it may expire.
+        kind_adjust: Adjusted
+        kind_expire: Expired
+        kind_forfeit: Forfeited
+        kind_grant: Credit added
+        kind_spend: Spent on an order
+        kind_spend_reversal: Returned after a refund
+        lookup_failed: There is no one on this platform with that id.
+        lookup_hint: Type at least two letters of a name or handle.
+        lookup_label: Person
+        lookup_placeholder: Search by name or handle
+        lookup_submit: Find
+        lots_caption: Credit you hold, soonest to expire first
+        never_expires: Does not expire
+        no_accounts: No one holds store credit yet.
+        none: You have no store credit.
+        origin_adjustment: Adjustment
+        origin_promotion: Promotion
+        origin_refund: Refund
+        origin_steward_grant: Given by a steward
+        steward_intro: 'Search for a person to see their credit and give them more.
+          Credit you give is the platform''s money: you cannot give it to yourself.'
+        steward_title: Store credit accounts
+        title: Store credit
+        usable: You can spend %{amount}
+      document:
+        generated: Generated
+        net_paid: Paid after refunds
+        questions: Questions about this order? Write to %{email}.
+        refunded: Refunded
+        tax_heading: Tax
+        title_invoice: Invoice
+        title_receipt: Receipt
+      entitlements:
+        allowances: Allowances
+        for: 'For: %{name}'
+        grace_until: Your payment is late. Everything keeps working until %{date};
+          pay before then to keep it.
+        intro: What you have because of a plan you pay for, and how much of each allowance
+          you have used.
+        meter: "%{used} of %{limit} used (%{percent}%)"
+        meter_unlimited: No limit
+        none: You have nothing from a plan yet.
+        status_active: Active
+        status_grace: Past due
+        status_lapsed: Ended
+        status_revoked: Refunded
+        title: My access
+        until: Runs until %{date}.
+      events:
+        alerts:
+          alerted_body: 'Events the processor reported for attention: %{count}.'
+          dead_lettered_body: 'Dead-lettered events: %{count}. They need a person
+            to look and retry.'
+          dead_lettered_heading: Some events were given up on.
+          heading: Payment event alerts
+          none: Nothing needs attention.
+          oldest: 'Oldest unresolved event:'
+          repeated_body: 'Events that failed %{threshold} or more times: %{count}.'
+          repeated_heading: Some events keep failing.
+          unresolved_body: 'Failed or dead-lettered events older than %{hours} hours:
+            %{count}.'
+          unresolved_heading: Some problems are not resolved.
+        back: Back to payment events
+        field_attempts: Attempts
+        field_event: Event
+        field_event_id: Processor event id
+        field_last_attempt: Last attempt
+        field_last_replayed: Last retried
+        field_processor: Processor
+        field_reason: Why it stopped
+        field_received: Received
+        field_replays: Retries by an operator
+        field_status: State
+        filter_label: Filter payment events by state
+        index_intro: Messages from the payment processor that could not be handled.
+          Look at what went wrong, then retry them once it is fixed.
+        index_title: Payment events
+        never: Not yet
+        none: There are no events in this state.
+        reasons:
+          retries_exhausted: It failed too many times.
+          stale_unresolved_drift: It was left unfinished for too long.
+        refused:
+          not_replayable: Only failed or dead-lettered events can be retried.
+          other: The event could not be retried.
+          payload_unavailable: The message of this event was already removed, so it
+            cannot be run again.
+          platform_not_configured: This platform no longer has that payment method
+            set up.
+          unsupported_processor: The payment method of this event is no longer installed.
+        replay_button: Retry event
+        replay_confirm: Retry this payment event now?
+        replay_explainer: 'Retrying runs the event again from the start. It is safe
+          to retry: an event that already went through is not applied a second time.'
+        replay_heading: Retry this event
+        replay_not_needed: This event does not need a retry.
+        replay_unavailable: This event cannot be retried because its message was already
+          removed or its payment method is no longer set up.
+        replayed: The event was queued to run again.
+        show_intro: What happened to this event. The message itself is stored encrypted
+          and is not shown here.
+        show_title: Payment event
+        states:
+          alerted: Reported
+          all: All
+          dead_lettered: Dead-lettered
+          failed: Failed
+          ignored: Ignored
+          pending: Waiting
+          problems: Needs attention
+          processed: Done
+          replayed: Retried
+        table_caption: Payment events and their state
+      hosted_billing:
+        accept_button: Accept for this platform
+        accepted: Agreement accepted for this platform.
+        accepted_state: Accepted for this platform.
+        go_to_methods: Set up your payment methods
+        intro: "%{platform} is hosted. Accept the host's billing agreements below
+          to unlock what each one covers. Nothing is switched on until you also set
+          up a payment method."
+        merchant_not_yet: Merchant of record billing is not available yet. You can
+          accept this agreement ahead of time.
+        methods_locked: Accept the hosted platform billing agreement and the hosted
+          local billing agreement to take cash, cheque or e-transfer payments.
+        modes:
+          billing:
+            title: Hosted platform billing agreement
+            unlocks: Needed before any billing on this platform, local or remote.
+          local:
+            title: Hosted local billing agreement
+            unlocks: Lets this platform take cash, cheque and e-transfer. The host
+              does not track, guarantee or hold liability for these.
+          merchant:
+            title: Merchant onboarding agreement
+            unlocks: Lets the host collect payments for this platform as merchant
+              of record.
+        not_in_force: Not available yet. The host is still preparing this agreement.
+        refused:
+          accept_box: Tick the box to accept the agreement.
+          needs_billing_first: Accept the hosted platform billing agreement first.
+          not_in_force: That agreement is not in force yet.
+        suspended: The host has suspended billing for this platform. Your data is
+          kept. Contact the host to have it restored.
+        title: Hosted billing
+      hosted_platforms:
+        accepted: Accepted
+        actions: Actions
+        intro: Which hosted platforms have accepted which billing agreements, and
+          whether their billing is on. Suspending pauses a platform's billing and
+          keeps its data.
+        none: No platforms are hosted here yet.
+        not_accepted: Not accepted
+        platform: Platform
+        reason: Reason for suspending
+        reason_required: Give a reason to suspend billing.
+        resume: Resume
+        resumed: Billing resumed for that platform.
+        status: Billing
+        status_off: 'Off'
+        status_on: 'On'
+        status_suspended: Suspended
+        suspend: Suspend
+        suspended: Billing suspended for that platform.
+        title: Hosted platforms
+      hosting_plan:
+        billing_link: 'Selling on this platform: billing set-up'
+        intro: The plan this platform is on with %{host}, and how much of it is used.
+        manage: 'The people who pay for this plan manage it with %{host}: they can
+          change plan, see invoices and ask for refunds there.'
+        none: This platform is not on a paid plan with %{host} yet.
+        price: Price
+        renews: Renews on
+        see_plans: See the plans
+        title: Plan and usage
+      hub:
+        access_count: 'Active: %{count}'
+        access_heading: What you have access to
+        add_on_buy: Add
+        add_ons_heading: Extras for your plans
+        add_ons_hint: One-time extras for plans you already have.
+        all_orders: All orders
+        all_plans: All plans
+        browse_plans: Browse plans
+        credit_heading: Store credit
+        credit_none: You have no store credit.
+        intro: Your plans, orders and credit on %{platform}.
+        orders_heading: Recent orders
+        orders_none: You have not placed any orders.
+        plans_heading: Active plans
+        plans_none: You have no active plans.
+        renews: Renews %{date}
+        settings_addresses: Billing addresses
+        settings_heading: Billing settings
+        settings_notifications: Billing notifications
+        title: Billing and plans
+        view_access: View my access
+        view_credit: View credit
+      notification_preferences:
+        always_hint: These need your attention, so they are always shown in the app
+          and emailed.
+        always_title: Always sent
+        email_hint: Receipts, renewal reminders, plan changes and refund decisions.
+          Turning this off does not stop the urgent notices below.
+        email_label: Email me billing notices
+        intro: Choose which billing notices are also sent to your email. They always
+          appear in the app.
+        kinds:
+          cheque_bounced: A cheque did not clear
+          grace_ending: Extra time to pay is ending
+          hold_expiring: An unpaid order is about to expire
+          payment_action_required: A payment needs your action
+          payment_failed: A payment failed
+          renewal_overdue: A renewal is overdue
+        save: Save
+        saved: Notification settings saved.
+        title: Billing notifications
+      notifications:
+        agreement_reacceptance_needed:
+          buyer:
+            body: The terms for your %{plan} subscription changed. Accept them to
+              receive your next renewal invoice.
+            title: Please review our updated terms
+        amount_with_tax: "%{amount} (includes %{tax} tax)"
+        cheque_bounced:
+          buyer:
+            body: The cheque for %{amount} did not clear, so the payment was reversed.
+              Please contact the seller.
+            title: A cheque for order %{number} did not clear
+          seller:
+            body: The cheque for %{amount} did not clear. The payment was reversed.
+            title: A cheque for order %{number} did not clear
+        cheque_cleared:
+          body: The cheque for %{amount} cleared. Thank you.
+          title: Your cheque for order %{number} cleared
+        cheque_received:
+          body: The seller has your cheque and will confirm once it clears.
+          title: Your cheque for order %{number} was received
+        confirmation_reminder:
+          body: A payment of %{amount} by %{method} is waiting. If you received it,
+            mark it received; if not, you can reject it.
+          title: Order %{number} is still waiting for you
+        credit_granted:
+          holder:
+            body: It is yours to spend on what %{platform} sells.
+            body_expiring: It is yours to spend on what %{platform} sells, until %{expires}.
+            title: You have %{amount} in store credit
+        dispute_opened:
+          body: A buyer disputed a payment for order %{number}. Please review it.
+          title: A payment was disputed
+        dispute_resolved:
+          body: The dispute for order %{number} has been resolved.
+          title: A payment dispute was resolved
+        entitlement_granted:
+          buyer:
+            body: What your %{plan} plan includes is ready to use. See it under My
+              access.
+            title: Your %{plan} access is active
+        entitlement_lapsed:
+          buyer:
+            body: What your %{plan} plan included has been taken away, and nothing
+              you made was deleted. Pay again to get it back.
+            title: Your %{plan} access has ended
+        event_dead_lettered:
+          body: A billing event could not be processed after several tries. Please
+            review it.
+          title: A billing event needs attention
+        grace_ending:
+          buyer:
+            body: Your extra time ends on %{date}. Pay your renewal before then to
+              keep your subscription.
+            title: Your %{plan} subscription is about to lapse
+        hold_expiring:
+          body: We are holding order %{number} for you, but the hold ends soon. Pay
+            %{amount} by %{method} before then, or the order will lapse.
+          title: Your hold on order %{number} ends soon
+        order_cancelled:
+          buyer:
+            body: Nothing was charged for it.
+            title: Order %{number} was cancelled
+          seller:
+            body: An order for %{amount} was cancelled before it was paid.
+            title: Order %{number} was cancelled
+        order_expired:
+          buyer:
+            body: It was not paid in time, so what it held has been released.
+            title: Order %{number} expired
+          seller:
+            body: An order for %{amount} was not paid in time and has lapsed.
+            title: Order %{number} expired
+        order_paid:
+          buyer:
+            body: Thank you. Your payment of %{amount} was received.
+            title: Order %{number} is paid
+          seller:
+            body: An order for %{amount} has been paid.
+            title: Order %{number} is paid
+        order_part_received:
+          buyer:
+            body: "%{received} of %{amount} was received. Pay the remaining %{left}
+              to complete it."
+            title: A payment was received on order %{number}
+          seller:
+            body: "%{received} of an order for %{amount} was received; %{left} is
+              still to pay."
+            title: Part payment on order %{number}
+        order_partial_stalled:
+          buyer:
+            body: It is partly paid and stays open. Pay the remaining %{left} whenever
+              you are ready.
+            title: Order %{number} is waiting for the rest
+          seller:
+            body: A part-paid order for %{amount} has stopped waiting on its unpaid
+              parts. Wait for the rest, or return the parts and cancel it.
+            title: Order %{number} is part paid
+        order_placed:
+          buyer:
+            body: We are holding it for you. Pay %{amount} to complete it.
+            title: Your order %{number} was placed
+          seller:
+            body: A new order for %{amount} is waiting for payment.
+            title: New order %{number}
+        payment_action_required:
+          body: Your bank needs you to confirm this payment before it can go through.
+          title: Action needed to pay for order %{number}
+        payment_amount_mismatch:
+          body: A payment for order %{number} was charged at a different amount than
+            the order total of %{amount}. Check the payment, the tax and the processor
+            before relying on it.
+          title: A payment amount differs from its order
+        payment_claimed:
+          body: The buyer says they sent %{amount} by %{method}. Check that you received
+            it, then mark it received.
+          title: Payment claimed for order %{number}
+        payment_confirmed:
+          body: The seller confirmed they received your %{method} payment of %{amount}.
+            Thank you.
+          title: Payment received for order %{number}
+        payment_failed:
+          body: The payment did not go through. Please check your payment details
+            and try again.
+          title: Your payment for order %{number} failed
+        payment_orphaned:
+          body: A payment of %{amount} was received for order %{number}, which was
+            already cancelled. It must be refunded; a refund has been recorded as
+            pending.
+          title: A payment arrived for a cancelled order
+        payment_place_gone:
+          buyer:
+            body: The order had expired and what it held is no longer available. The
+              seller will be in touch about your payment.
+            title: Your late payment for order %{number} could not be placed
+          seller:
+            body: The order had expired and what it held is no longer available, so
+              the payment was not recorded. If you were paid, give the money back.
+            title: A late payment could not be placed (order %{number})
+        payment_rejected:
+          body: The seller did not accept your %{method} payment, so the order was
+            cancelled. Contact the seller if you think this is a mistake.
+          title: Your payment for order %{number} was not accepted
+        payment_succeeded:
+          body: Your payment of %{amount} was received.
+          title: Receipt for order %{number}
+        plan_sync_failed:
+          body: Syncing a plan failed. Open the plan to retry.
+          title: A plan could not be sent to the payment processor
+        refund_failed:
+          body: The processor could not complete a refund for order %{number}. The
+            buyer is still owed the money; please check it.
+          title: A refund did not go through
+        refund_issued:
+          buyer:
+            body: A refund was issued for your order.
+            title: Refund for order %{number}
+          seller:
+            body: A refund was issued for an order.
+            title: Refund issued for order %{number}
+        refund_recorded:
+          body: The seller recorded a refund for your order.
+          title: Refund for order %{number}
+        refund_request_decided:
+          body: The seller answered your refund request. Open the order to read the
+            reply.
+          title: Your refund request for order %{number} was answered
+        refund_requested:
+          buyer:
+            body: Your refund request was sent to the seller.
+            title: Refund request for order %{number}
+          seller:
+            body: A buyer asked for a refund. Open the request to decide.
+            title: Refund requested for order %{number}
+        renewal_credit_insufficient:
+          buyer:
+            body: Your %{plan} renewal for %{amount} is paid from store credit and
+              you do not have enough. Add credit and we will try again each day.
+            title: Not enough store credit for your renewal
+        renewal_invoice_issued:
+          buyer:
+            body: Your %{plan} renewal for %{amount} is ready to pay. Your current
+              period ends on %{date}.
+            title: Renewal invoice %{number}
+        renewal_overdue:
+          buyer:
+            body: Your period ended and the renewal has not been paid. Everything
+              keeps working until %{date}; pay before then to stay subscribed.
+            title: Your %{plan} renewal is overdue
+          seller:
+            body: A subscriber’s renewal was not paid in time. It lapses on %{date}
+              unless it is paid or given more time.
+            title: A %{plan} subscription is overdue
+        renewal_reminder:
+          buyer:
+            body: Your %{plan} renewal for %{amount} is still unpaid. Your current
+              period ends on %{date}.
+            title: 'Reminder: renewal %{number} is unpaid'
+        settings_changed:
+          body: Someone changed how buyers pay (%{method}). If you did not expect
+            this, check it now.
+          title: A payment method was changed
+        subscription_canceled:
+          buyer:
+            body: Your subscription has been cancelled.
+            title: Your subscription was cancelled
+          seller:
+            body: A subscription has been cancelled.
+            title: A subscription was cancelled
+        subscription_renewing:
+          body: Your subscription will renew shortly. You can manage it from your
+            account.
+          title: Your subscription renews soon
+        trial_ended:
+          body: Your trial has ended.
+          title: Your trial has ended
+        trial_ending:
+          body: Your trial is about to end.
+          title: Your trial ends soon
+      offline_payments:
+        amount_to_pay: Pay %{amount}.
+        bounce_confirm: Mark this cheque as bounced? Anything it granted will be reversed.
+        buyer_says_sent: Buyer says sent
+        claim: I sent it
+        claim_again: Update my note
+        claim_hint: Telling the seller you sent it is optional. They can confirm your
+          payment either way.
+        claimed: The seller has been told you sent it.
+        claimed_note: You told the seller on %{date}.
+        clear_confirm: Mark the cheque for order %{number} from %{buyer} as cleared?
+          Its payment will be counted as received.
+        disclosure_cash_in_person: Cash is handed over in person. Keep a note of when
+          and to whom.
+        disclosure_cheque_clearing: A cheque can take days to clear and can bounce.
+          Access may start only once it clears.
+        disclosure_etransfer_canada: Interac e-Transfer needs a Canadian bank account
+          and is in Canadian dollars only.
+        disclosure_heading: 'Before you pay, please understand:'
+        disclosure_hold: We hold your order for %{hours} hours. If the seller has
+          not confirmed by then, it lapses.
+        disclosure_no_tracking: The platform cannot see, track or protect this payment,
+          and there is no automatic receipt, refund or dispute process.
+        disclosure_outside: You pay the seller directly, outside this platform.
+        disclosure_seller_confirms: Your order is paid only when the seller confirms
+          they received your payment.
+        done:
+          bounce: Marked bounced. What it granted has been reversed.
+          clear: Marked cleared.
+          receive: Marked received. The buyer has been told.
+          reject: Rejected. The order was cancelled and the buyer has been told.
+        fee_uncollected: 'Uncollected: the platform cannot take a fee on a payment
+          it never sees.'
+        field_buyer_reference: Buyer’s note
+        field_claimed: Buyer says they sent it
+        field_fee: Platform fee
+        field_in_person: Sold in person
+        heading: Pay by %{method}
+        hold_until: "(We are holding your order until %{date}.)"
+        in_person_note: The agreements were recorded as accepted in person with you.
+        instructions_heading: How to pay
+        mark_bounced: Mark bounced
+        mark_cheque_received: Mark cheque received
+        mark_cleared: Mark cleared
+        mark_received: Mark received
+        not_claimed: No (you can still confirm)
+        queue_empty: Nothing is waiting for you.
+        queue_intro: Payments made outside the platform. Mark one received when the
+          money reaches you, whether or not the buyer says they sent it.
+        queue_link: Payments waiting for you
+        queue_title: Payments waiting for you
+        receive_cheque_confirm: Mark the cheque for order %{number} from %{buyer}
+          as received (%{amount})? Mark it cleared once the bank has paid it.
+        receive_confirm: Mark order %{number} from %{buyer} as received (%{amount})?
+          The order will be settled and the buyer given access.
+        receive_hint: Mark this received when the money has reached you. You do not
+          need to wait for the buyer to say they sent it.
+        received_on_label: Date received (optional)
+        reference_label: A note for the seller (optional)
+        refused:
+          invalid: That could not be saved. Check what you entered.
+          not_allowed: That payment cannot be changed that way now.
+          place_gone: The order had expired and what it held is no longer available,
+            so nothing was recorded. If you were paid, give the money back.
+          refused: That could not be done.
+          self_confirmation: You cannot confirm a payment for your own purchase.
+          too_many_claims: That has been sent too many times.
+        reject: Not received, reject
+        reject_confirm: Reject the payment for order %{number} from %{buyer}? The
+          order will be cancelled and the buyer told.
+        reject_reason_label: If you did not receive it, say why (the buyer will see
+          this)
+        rejection_reason: 'The seller said: %{reason}'
+        seller_heading: "%{method} payment"
+        seller_reference_label: Your reference (optional)
+        status_awaiting: Waiting for payment
+        status_bounced: Cheque bounced
+        status_cancelled: Cancelled
+        status_claimed: Sent, waiting for the seller
+        status_cleared: Cheque cleared
+        status_confirmed: Confirmed
+        status_expired: Hold ran out
+        status_message_awaiting: Your order is being held while you pay. Follow the
+          instructions below; the seller will confirm when they have your payment.
+        status_message_bounced: Your cheque did not clear and the payment was reversed.
+          Please contact the seller.
+        status_message_cancelled: This order was cancelled.
+        status_message_claimed: You told the seller you sent it. The seller will confirm
+          when they have your payment.
+        status_message_cleared: Your cheque cleared. Thank you.
+        status_message_confirmed: The seller confirmed your payment. Thank you.
+        status_message_expired: 'The hold on your order ran out. If you already paid,
+          tell the seller below: they can still confirm your payment.'
+        status_message_received: The seller has your cheque and will confirm once
+          it clears.
+        status_message_rejected: The seller did not accept this payment, so the order
+          was cancelled.
+        status_received: Cheque received
+        status_rejected: Not accepted
+        too_many_claims: You have already told the seller several times. They will
+          confirm when they have your payment.
+      order_documents:
+        already_in_language: That order is already in that language.
+        regenerated: Invoice and receipt made again in %{language}.
+        unknown_locale: That language is not available.
+      order_payments:
+        added: The payment was added. Follow the instructions below to complete it.
+        paid: The payment was made.
+        refused: That payment could not be added. Check the amount and the way of
+          paying, and try again.
+      order_summary:
+        included: included in the price
+        registration: "%{labels}: %{number}"
+        registrations: Registration numbers
+        tax_on: "%{label} (%{rate}) on %{base}"
+        taxed: Taxed
+      orders:
+        accepted_by: Accepted by %{name} on %{date}
+        add_payment_amount: Amount (leave empty to pay the rest)
+        add_payment_btn: Add payment
+        add_payment_cap: up to %{amount}
+        add_payment_heading: Pay the rest or add a payment
+        add_payment_hint: "%{balance} is left to pay. Pay it all one way, or part
+          of it now and the rest another way."
+        add_payment_method: Pay by
+        agreements_heading: Agreements accepted
+        document_details: PDF, %{size}, generated %{date}
+        document_language: Document language
+        download_invoice: Download invoice
+        download_receipt: Download receipt
+        field_amount: Amount
+        field_balance: Left to pay
+        field_buyer: Buyer
+        field_expires: Pay by
+        field_item: Item
+        field_method: Method
+        field_number: Order
+        field_paid: Paid
+        field_placed: Placed
+        field_purpose: For
+        field_quantity: Quantity
+        field_refund_date: Date
+        field_status: Status
+        field_subtotal: Subtotal
+        field_tax: Tax
+        field_total: Total
+        filter_any: Any
+        filter_apply: Show
+        filter_clear: Clear filters
+        filter_status: Status
+        filter_year: Year
+        index_title: My orders
+        lines_heading: What was ordered
+        no_matching_orders: No orders match these filters.
+        no_orders: You have no orders yet.
+        no_payments: No payment has been made yet.
+        no_sales: There are no orders yet.
+        order_number: Order %{number}
+        pay_button: Pay now
+        pay_heading: Pay %{amount}
+        pay_hint: You will pay on the payment provider’s secure page and come back
+          here.
+        pay_processing: Your payment is being processed. We will tell you when it
+          is confirmed.
+        pay_unavailable: That payment cannot be started right now. Please try again
+          later.
+        payment_status_cancelled: Cancelled
+        payment_status_failed: Failed
+        payment_status_partially_refunded: Partly refunded
+        payment_status_pending: Pending
+        payment_status_processing: Processing
+        payment_status_refunded: Refunded
+        payment_status_succeeded: Received
+        payments_heading: Payments
+        placed_by: Placed by %{name}
+        purpose_exchange: Exchange
+        purpose_one_time: One-time purchase
+        purpose_subscription: Subscription or membership
+        purpose_ticket: Event tickets
+        refund_includes_tax: includes %{tax} tax
+        refund_status_failed: Failed
+        refund_status_pending: Pending
+        refund_status_recorded: Recorded by the seller
+        refund_status_succeeded: Refunded
+        refunded_total: Refunded %{amount}
+        refunds_caption: Money given back for order %{number}
+        refunds_heading: Refunds
+        regenerate_documents: Make again
+        return_paid: Thank you. Your payment was received.
+        return_pending: Thank you. We are confirming your payment and will tell you
+          when it is done.
+        sales_intro: Orders for what this platform sells, and where each payment stands.
+        sales_title: Sales
+        status_awaiting_payment: Awaiting payment
+        status_cancelled: Cancelled
+        status_draft: Draft
+        status_expired: Expired
+        status_paid: Paid
+        status_partially_paid: Partly paid
+        status_partially_refunded: Partly refunded
+        status_refunded: Refunded
+      plan_defaults:
+        community_beneficiary_label: Community access
+        hosted_beneficiary_label: Hosted access
+        one_time_participant_summary: One-time hosted contribution
+        personal_beneficiary_label: Personal access
+        recurring_participant_summary: Ongoing hosted access and stewardship support
+      plan_grants:
+        add: Add
+        add_feature: Access to a feature
+        add_quota: More of a quota
+        add_role: A role
+        added: Added to the plan.
+        amount_hint: In the quota’s own unit (bytes for storage, tokens for AI).
+        field_amount: Extra amount
+        field_community: Community (if a community)
+        field_feature: Feature
+        field_level: Access level
+        field_quota: Quota
+        field_role: Role
+        field_where: Where
+        intro: People who pay for this plan get these while it is paid. When it lapses,
+          only what the plan itself gave is taken away; roles and access someone already
+          had stay, and nothing they made is deleted.
+        none: This plan includes nothing yet.
+        place_a_community: A community
+        place_community: the community %{name}
+        place_platform: The platform
+        place_unknown: a community that no longer exists
+        refused: That could not be added. Check the choices; a role that can manage
+          things cannot be given by a plan.
+        remove: Remove
+        remove_confirm: Remove this from the plan? People who have it lose it unless
+          they already had it before.
+        removed: Removed from the plan.
+        role_hint: Only roles that cannot manage things are offered.
+        summary_feature: Access to %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} more of %{quota}"
+        summary_role: The role %{role} in %{where}
+        title: What this plan includes
+      plans:
+        actions_heading: Actions
+        add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
+          with, and whose holders may buy it on its own later. Leave all unticked
+          to offer it with every plan.
+        add_on_targets_legend: Plans this add-on extends
+        audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
+          it: a person who is any of the ticked kinds can see and buy it.'
+        audience_legend: Who may see and buy this plan
+        beneficiary_placeholder: Hosted access
+        benefits_placeholder: |-
+          Hosted community access
+          Ongoing stewardship support
+        change_price: Change price
+        create_submit: Create plan
+        created: Billing plan created successfully.
+        deactivate_confirm: Deactivate this plan? Existing subscribers are unaffected.
+        edit_title: Edit Billing Plan
+        field_accepted_payment_methods: Also accept
+        field_accepted_payment_methods_hint: Ways to pay outside a payment processor.
+          Each still has to be turned on for the seller before buyers can use it.
+        field_active: Active (visible to subscribers)
+        field_add_on: Add-on only
+        field_add_on_hint: Sold only as an extra on another plan's order, never on
+          its own. One-time, no included access.
+        field_amount: Amount
+        field_amount_hint: Type the price as you would write it, for example 45.00.
+          Currencies without cents, such as JPY and KRW, take whole numbers.
+        field_beneficiary_label: Beneficiary label
+        field_billing_interval: Billing interval
+        field_community_capacity_tier: Capacity tier
+        field_currency: Currency
+        field_description: Description
+        field_eligible_owner_types: Eligible for
+        field_grace_days: Extra days when unpaid
+        field_grace_days_hint: Everything keeps working this long after a period ends
+          unpaid. 0 means none. Content is never deleted.
+        field_hosted_access_level: Hosted access level
+        field_identifier: Identifier
+        field_identifier_hint: Unique machine-readable key. Cannot be changed after
+          creation.
+        field_interval_count: Billing period length
+        field_listed: Show in the public catalog
+        field_listed_hint: Lists this plan for anyone to see, with a button to buy
+          it. Leave unticked to sell it only by link.
+        field_name: Name
+        field_participant_benefits: Benefits
+        field_participant_benefits_hint: One benefit per line.
+        field_participant_summary: Participant summary
+        field_price: Existing price
+        field_price_hint: Choose a price that already exists in your payment processor
+          account. Its amount, currency, interval and product are copied from the
+          processor.
+        field_pricing_tier: Pricing tier
+        field_pricing_tier_hint: Solidarity tiers let smaller co-ops access the platform
+          at a reduced contribution.
+        field_processor: Processor
+        field_processor_hint: The online payment processor that holds this price.
+          Leave empty for a plan that is paid only by the methods below.
+        field_processor_price_id: Processor price ID
+        field_processor_price_id_hint: From your payment processor dashboard. Cannot
+          be changed after creation.
+        field_processor_product_id: Product
+        field_processor_product_id_hint: Choose an existing product, or leave empty
+          to create a new one in your payment processor.
+        field_renewal_lead_days: Invoice this many days ahead
+        field_renewal_lead_days_hint: How long before a period ends its renewal invoice
+          is made.
+        field_restricted_to_members: Members only
+        field_restricted_to_members_hint: Only people with an active membership plan.
+        field_restricted_to_subscribers: Subscribers only
+        field_restricted_to_subscribers_hint: Only people with an active subscription.
+        field_solidarity_description: Solidarity description
+        field_solidarity_description_hint: Shown to potential subscribers to explain
+          who this tier is for.
+        field_support_tier: Support tier
+        hosted_access_placeholder: Standard
+        identifier_placeholder: e.g. hosted_stewardship_monthly
+        index_title: Billing Plans
+        interval_month: Monthly
+        interval_one_time: One-time
+        interval_year: Yearly
+        locked_label: Set when the price was created
+        locked_note: "%{fields} can't be changed here: the payment processor fixes
+          them when the price is created. To use a different price, create a new one."
+        lookup_search: Search…
+        lookup_unavailable: Could not reach the payment processor. Try again in a
+          moment.
+        metadata_section_hint: Shown on billing pages and entitlement cards
+        metadata_section_title: Plan metadata
+        mode_create: Create in the payment processor
+        mode_heading: How do you want to add this plan?
+        mode_link: Link an existing price
+        new_plan: New plan
+        new_title: New Billing Plan
+        no_plans: No billing plans have been created yet.
+        owner_type_community: Community
+        owner_type_person: Person
+        payment_method_names:
+          cash: Cash
+          cheque: Cheque
+          etransfer: Interac e-Transfer
+          store_credit: Store credit
+        price_section_title: Price
+        pricing_tier_solidarity_medium: Solidarity — Medium
+        pricing_tier_solidarity_premium: Solidarity Premium
+        pricing_tier_solidarity_small: Solidarity — Small
+        pricing_tier_standard: Standard
+        processor_none: No online processor
+        product_none: Create a new product
+        renewal_section_hint: For subscribers paying by a method that is not a payment
+          processor. A processor renews its own subscriptions.
+        renewal_section_title: Renewals
+        retry_sync: Retry sync
+        select_required: Please choose a value.
+        show_title: Billing Plan
+        snapshot_drift: 'Different at the payment processor: %{fields}.'
+        snapshot_loading: Loading payment processor details…
+        snapshot_not_found: This price was not found at the payment processor.
+        snapshot_not_linked: This plan is not linked to a payment processor price
+          yet.
+        snapshot_title: Payment processor (%{processor})
+        snapshot_unavailable: Could not reach the payment processor.
+        solidarity_placeholder: e.g. For co-ops under $100k annual revenue
+        status_active: Active
+        status_inactive: Inactive
+        support_tier_placeholder: Community
+        sync_errors:
+          not_configured: Billing is not configured for this platform and processor.
+          processor_error: The payment processor did not accept this plan. Check the
+            details, then retry the sync.
+          processor_unavailable: The payment processor could not be reached. Use "Retry
+            sync" to try again.
+        sync_requested: Syncing with the payment processor has been requested.
+        sync_status_failed: Sync failed
+        sync_status_heading: Sync status
+        sync_status_pending: Sync pending
+        sync_status_synced: Synced
+        sync_unsupported: This payment processor does not support syncing plans.
+        toggle_activate: Activate
+        toggle_deactivate: Deactivate
+        update_submit: Update plan
+        updated: Billing plan updated successfully.
+      processor_settings:
+        acknowledge_label: I understand and accept these limits.
+        acknowledged_on: You accepted these limits on %{date}.
+        available_anywhere: Anywhere
+        available_only_in: Only in %{countries} (%{currencies})
+        disclosure_country: It works only in %{countries}, in %{currencies}.
+        disclosure_credit_expires: Each amount of credit can have its own expiry date;
+          credit that expires first is spent first.
+        disclosure_credit_not_cash: Credit is not cash. It cannot be withdrawn or
+          sent to anyone, and it pays an order in full or not at all.
+        disclosure_credit_platform_only: 'Credit is the platform''s own money: it
+          pays only for what the platform itself sells, never for a seller.'
+        disclosure_credit_refund: Refunds of an order paid with credit go back to
+          the buyer's credit, not to their bank.
+        disclosure_no_fee: No application fee can be collected on these payments.
+        disclosure_no_protection: The buyer has no chargeback or dispute protection,
+          and you carry the risk of a payment that never arrives.
+        disclosure_reconcile: You reconcile them by hand. There are no automatic receipts
+          or refunds.
+        disclosure_title: Before you turn this on
+        disclosure_untracked: The payment happens outside this platform. It cannot
+          be tracked, so you confirm each one yourself.
+        field_enabled: Accept this payment method
+        field_grant_on: Start access when the payment is
+        field_grant_on_hint: A cheque can bounce. Waiting until it clears is safer.
+        field_hold_hours: Hold an unpaid order for (hours)
+        field_hold_hours_hint: After this long without payment, the order expires
+          and what it held is released.
+        field_method: Method
+        field_purposes: Accept it for
+        field_status: Status
+        field_where: Where it works
+        fields:
+          cash:
+            instructions: Where and when to hand over the cash
+          cheque:
+            address: Where to send or drop off the cheque
+            instructions: Anything else buyers should know
+            payee_name: Make the cheque out to
+          etransfer:
+            instructions: Reference or other instructions
+            recipient_email: Send the e-transfer to this email
+            recipient_phone: or to this phone number
+        grant_on_cleared: cleared
+        grant_on_confirmed: confirmed
+        grant_on_received: received
+        how_to_pay: What buyers are told
+        how_to_pay_hint: Shown to a buyer only on their own order, after they accept
+          the terms. It is stored encrypted and never put in an email.
+        index_intro: Ways to be paid outside a payment processor. Each is installed
+          for every platform but works only after you turn it on.
+        index_title: Payment methods
+        purpose_exchange: Exchanges
+        purpose_one_time: One-time purchases
+        purpose_subscription: Subscriptions and memberships
+        purpose_ticket: Event tickets
+        saved: Payment method saved.
+        status_disabled: 'Off'
+        status_enabled: 'On'
+        status_not_set_up: Not set up
+      promotions:
+        activate: Switch on
+        always_open: Always
+        back_to_list: Back to promotions
+        code_hint: Letters and numbers, with or without dashes.
+        code_label: Have a promotion code?
+        create: Make the code
+        created_title: Your promotion code
+        created_warning: Copy this code now. It is shown only once and cannot be looked
+          up again.
+        credit_days_hint: Leave empty for credit that does not expire.
+        deactivate: Switch off
+        field_amount: Credit
+        field_credit_days: Credit lasts (days)
+        field_ends: Closes
+        field_max: Most people
+        field_name: Name
+        field_new_members: Only for people who have not paid for anything here yet
+        field_purposes: Credit can pay for
+        field_starts: Opens
+        field_status: Status
+        field_used: Used
+        field_window: Open
+        index_intro: A code gives store credit when someone redeems it. Codes are
+          shown once, when you make them, and cannot be looked up again.
+        index_title: Promotion codes
+        invalid: That code is not valid.
+        max_hint: Leave empty for no limit. Each person can use a code once.
+        name_hint: For your own records. People do not see it, only the amount.
+        new_promotion: New promotion
+        none: There are no promotions yet.
+        purposes_hint: Leave all unticked for anything the platform sells.
+        redeem: Redeem
+        redeemed: Code accepted. Your credit has been added.
+        status_ended: Ended
+        status_off: false
+        status_on: true
+        status_scheduled: Not open yet
+        status_used_up: Used up
+        switched: Promotion updated.
+        usage_of: "%{used} of %{max}"
+      readiness:
+        check_agreements: Purchase agreements are in force for %{purpose}.
+        check_configured: Billing is switched on and your organisation details are
+          set.
+        check_method_enabled: At least one payment method is turned on.
+        detail_no_agreement: No agreement is required for this kind of purchase yet.
+        detail_not_in_force: An agreement is still a draft or retired. Review its
+          text and set it to active.
+        done: 'Done:'
+        not_ready: Not ready
+        plant_agreements: Plant the draft purchase agreements
+        ready: Ready
+        title: Ready to sell?
+        todo: 'Still to do:'
+      refund_requests:
+        accept_policy: Read and accept the refund policy before sending your request.
+        all: All
+        already_decided: This request has already been decided.
+        already_pending: There is already a refund request waiting on this order.
+        amount_hint: Leave empty to ask for everything that can be given back.
+        amount_invalid: That amount is more than can still be given back, or is not
+          positive.
+        amount_label: Amount to ask for
+        approve: Approve and give back
+        approved_amount: 'Approved: %{amount}'
+        approved_hint: Leave empty to give back what was asked for (or everything
+          possible).
+        approved_label: Amount to give back
+        ask_link: Ask for a refund
+        asked: Asked for
+        decided: Decision saved. The buyer has been told.
+        decline: Decline
+        decline_needs_note: Explain why the request is declined so the buyer can read
+          it.
+        details_label: Anything the seller should know
+        everything: Everything possible
+        heading: Refund requests
+        new_intro: Tell the seller why you want money back. They review it and answer
+          you here. Only payments the seller handles themselves, such as cash, cheque,
+          e-Transfer or store credit, can be asked for this way.
+        new_title: Ask for a refund on order %{number}
+        none: There are no refund requests.
+        order_link: Order
+        policy_accept: I have read and accept the %{title}
+        policy_accepted: You have already accepted the current refund policy.
+        policy_view: Read the refund policy
+        queue_intro: Buyers asking for money back on what this platform sells. Open
+          one to approve it, approve part of it or decline it.
+        queue_link: Refund requests
+        queue_title: Refund requests
+        reason_label: Reason
+        reasons:
+          cancelled_event: The event was cancelled
+          duplicate: I paid twice
+          error: There was a mistake
+          other: Something else
+          requested_by_buyer: I changed my mind
+        refundable: Up to %{amount} can still be given back.
+        reply_hint: The buyer reads this. Required when you decline.
+        reply_label: Reply to the buyer
+        sent: Your refund request was sent. You will be told what the seller decides.
+        show_title: Refund request for order %{number}
+        statuses:
+          approved: Approved
+          cancelled: Withdrawn
+          declined: Declined
+          partially_approved: Partly approved
+          pending: Waiting
+        submit: Send request
+        withdraw: Withdraw request
+        withdrawn: Your refund request was withdrawn.
+      requirements:
+        add: Add
+        add_title: Add a requirement
+        any: Any
+        applies_to_everything: Everything the platform sells
+        created: Requirement added.
+        field_agreement: Agreement
+        field_applies_to: Applies to
+        field_mode: How it applies
+        field_payment_method: Payment method
+        field_purpose: Kind of purchase
+        index_intro: Choose the agreements a buyer must accept before they pay. Defaults
+          apply to everything; a plan or a payment method can add its own.
+        index_title: Purchase terms
+        mode_additional: Added to the defaults
+        mode_replaces_default: Replaces the defaults
+        none: No agreement is required yet. Nothing can be sold until there is one.
+        remove: Remove
+        removed: Requirement removed.
+        state_active: In force
+        state_draft: Draft
+        state_retired: Retired
+      sales:
+        cancel_btn: Cancel this order
+        cancel_confirm: Cancel this order? What it held will be released.
+        cancel_refused: The order cannot be cancelled while money is still against
+          it. Return each payment first.
+        cancelled: The order was cancelled and what it held was released.
+        credit_refund_confirm: Return %{amount} to the store credit of %{buyer} for
+          order %{number}? This cannot be undone.
+        credit_refund_heading: Return to store credit
+        credit_refund_hint: The buyer paid with store credit, so the money goes back
+          onto their credit balance at once. It cannot be paid out as cash.
+        credit_refund_submit: Return to credit
+        refund_amount_label: Amount given back (up to %{max}; blank for all)
+        refund_confirm: Record a refund of %{amount} for order %{number} to %{buyer}?
+          This cannot be undone.
+        refund_heading: Record a refund
+        refund_hint: The platform cannot move this money. Record it here once you
+          have given it back.
+        refund_reason_bounced: Cheque bounced
+        refund_reason_cancelled_event: Event cancelled
+        refund_reason_cancelled_order: Order cancelled
+        refund_reason_duplicate: Paid twice
+        refund_reason_error: Mistake
+        refund_reason_label: Reason
+        refund_reason_other: Other
+        refund_reason_requested_by_buyer: Buyer asked
+        refund_record: Record refund
+        refund_recorded: Refund recorded. The buyer has been told.
+        refund_refused: That refund could not be recorded. Check the amount.
+        refund_tax_hint: This order includes %{tax} of tax in %{total}. Each refund
+          carries its share of that tax, split from the net amount.
+        return_credit_btn: Return the credit payments
+        return_heading: Return payments
+        return_hint: This order is part paid and stays open for the buyer to pay the
+          remaining %{balance}. To cancel it instead, give back each payment, then
+          cancel.
+        return_kind_credit: returned to their store credit
+        return_kind_manual: you hand it back, then record it in the refund form
+        return_kind_processor: refund it at the payment processor
+        return_refused: The payments could not be returned. Check the order and try
+          again.
+        returned: The credit was given back to the buyer.
+      subscribers:
+        cancel_at_end: Cancel at the end of the period
+        cancel_now: Cancel now
+        cancel_now_confirm: End this subscription now? Nothing already paid is refunded.
+        cancelled: The subscription is cancelled.
+        extend: Give more time
+        extend_days: Give more days before it lapses
+        field_subscriber: Subscriber
+        filter_active: Active
+        filter_all: All
+        filter_ended: Ended
+        filter_lapsed: Lapsed
+        filter_overdue: Past due
+        filters: Filter subscribers
+        grace_extended: More time given.
+        index_intro: 'People whose subscriptions Community Engine renews. Their state
+          follows Pay: past due while an invoice is unpaid inside its extra time,
+          lapsed after.'
+        index_title: Subscribers
+        move_to_current_price: Move to the current price
+        none: No subscribers match.
+        price_line: Sold at %{price}. The plan costs %{current} today.
+        price_moved: The subscriber is on the current price from the next invoice.
+        refused: That could not be done for this subscription.
+        waive: Cover this period without payment
+        waive_confirm: Cover the next period without payment? Its invoice is cancelled.
+        waived: The period is covered.
+      subscriptions:
+        accept: Accept and continue
+        accept_all: Please accept every term shown.
+        cancel: Cancel at the end of this period
+        cancel_confirm: Cancel this subscription at the end of the period you have
+          paid for?
+        cancelled: Your subscription will end when the period you paid for ends.
+        cannot_resume: That subscription cannot be resumed.
+        field_grace: Extra time until
+        field_method: Paid by
+        field_period: Period
+        field_plan: Plan
+        field_price: Price
+        field_status: Status
+        field_through: Paid through
+        index_title: Subscriptions
+        invoice: Invoice %{number}
+        method_change_intro: Renewals are paid by %{method}. Choose another way for
+          later renewals. An invoice already made keeps its method.
+        method_change_label: Pay renewals by
+        method_change_none: There is no other way to pay renewals right now.
+        method_change_refused:
+          not_local: This subscription is renewed by its payment processor.
+          not_offered: That way of paying is not available for this plan.
+          unchanged: That is already the method renewals are paid by.
+        method_change_submit: Change method
+        method_change_title: Payment method
+        method_changed: Later renewals will be paid by the new method.
+        none: You have no subscriptions.
+        period_blocked: On hold
+        period_lapsed: Lapsed
+        period_needs_agreement: Needs you to accept the terms
+        period_paid: Paid
+        period_pending: Waiting for payment
+        period_waived: Covered
+        periods_caption: Each period of this subscription and its invoice
+        periods_title: Periods and invoices
+        plan_change_credit_note: Prorated difference for a plan change
+        plan_change_credited: You are on the new plan. %{amount} was added to your
+          store credit.
+        plan_change_done: You are on the new plan.
+        plan_change_intro: Pick another plan and when it changes. From your next period,
+          nothing changes until then. Now, the rest of this period is prorated.
+        plan_change_invoiced: Invoice made for %{amount}. Your plan changes when it
+          is paid.
+        plan_change_label: New plan
+        plan_change_none: There is no other plan you can move to right now.
+        plan_change_now_hint: A dearer plan is invoiced for the difference and changes
+          once that is paid. A cheaper plan changes at once and the difference comes
+          back as store credit.
+        plan_change_pending: You will move to %{plan} when your next period starts
+          (after %{date}).
+        plan_change_pending_invoice: Your move to %{plan} happens when its invoice
+          is paid.
+        plan_change_refused:
+          different_schedule: That plan bills on a different schedule or currency,
+            so you cannot move to it from here.
+          not_available: That plan is not available.
+          not_running: This subscription cannot change plan right now.
+          over_limit: You are using more than that plan allows. Free some space first,
+            then try again.
+          same_plan: You are already on that plan.
+        plan_change_saved: Saved. Your plan changes when the next period starts.
+        plan_change_submit: Change plan
+        plan_change_title: Change plan
+        plan_change_view_invoice: View the invoice
+        plan_change_when_legend: When should it change?
+        plan_change_when_next: From my next period (no charge now)
+        plan_change_when_now: Now (prorated for the rest of this period)
+        plan_change_withdraw: Keep my current plan
+        plan_change_withdrawn: Your plan change was cancelled.
+        resume: Keep my subscription
+        resumed: Your subscription will continue.
+        review_intro: The terms for this subscription changed. Accept them and we
+          will make your next renewal invoice.
+        review_title: Review and accept
+        state_active: Active
+        state_canceled: Ended
+        state_ending: Ends at the end of this period
+        state_past_due: Past due
+        state_unpaid: Lapsed
+        terms_accepted: Thank you. Your renewal invoice is ready.
+      tax_registrations:
+        created: Tax registration added.
+        edit_title: Edit tax registration
+        empty: No tax registrations yet. Without one, no tax is added to orders.
+        field_from: In force from
+        field_in_force: In force
+        field_number: Registration number
+        field_number_hint: Kept encrypted and never shown again.
+        field_place: Place
+        field_place_hint: Choose the country, and the province or state if you are
+          registered for one place only. These are the same places your tax zones
+          use.
+        field_prices: Prices
+        field_prices_hint: Leave on the country's usual way unless prices here are
+          set the other way.
+        field_status: Status
+        field_status_hint: Only "Registered" collects tax. The others record why none
+          is collected.
+        field_to: In force until
+        field_to_hint: Leave empty if the registration is ongoing, with no end date.
+        index_intro: Where this platform is registered to collect tax, and on what
+          terms. Orders are taxed by the registration for the buyer's place; with
+          none that collects, no tax is added.
+        index_title: Tax registrations
+        new_title: Add a tax registration
+        number_kept: Leave blank to keep the saved number
+        ongoing: Ongoing
+        prices:
+          added: Tax is added to prices
+          default: The country's usual way
+          included: Prices include tax
+        statuses:
+          exempt: Exempt, collects none
+          not_collecting: Not collecting
+          registered: Registered, collects tax
+          small_supplier_exempt: Small supplier, collects none
+        updated: Tax registration saved.
+      walk_up:
+        address_city_name: City
+        address_country_name: Country
+        address_hint: Kept with this order, and saved to the buyer if they have no
+          address yet. Give the street, city and country, or leave all empty.
+        address_legend: Billing address (optional)
+        address_line1: Street address
+        address_line2: Apartment, suite or unit
+        address_postal_code: Postal code
+        address_state_province_name: Province or state
+        agreements_label: The buyer has read and accepted the purchase agreements
+          with me, in person
+        buyer_email_hint: Payment notices for this sale are sent here.
+        buyer_email_label: Buyer email
+        buyer_hint: Pick someone already on this platform, or leave this empty and
+          give a name below to add them. Type at least two letters of a name or handle.
+        buyer_label: Buyer
+        buyer_name_hint: Needed only when no one is picked above. The buyer is recorded
+          for this sale, and may be invited to join the community.
+        buyer_name_label: Name (if the buyer is not on the platform yet)
+        buyer_placeholder: Search by name or handle
+        error_invitation_cap: You have invited as many new buyers today as is allowed.
+          Try again tomorrow, or pick the buyer from the member list.
+        error_member_email: That email belongs to a member of this platform. Choose
+          them from the member list instead.
+        error_refused: That sale could not be recorded. Check the buyer, the way of
+          paying and the agreements.
+        intro: Record a sale made face to face. The buyer does not need to do anything;
+          they are told afterwards.
+        method_label: How it is paid
+        new_link: New sale in person
+        placed: Sale recorded.
+        plan_label: What was sold
+        received_label: 'The money has already changed hands: mark it received'
+        submit: Record sale
+        title: Sale in person
+        unavailable: You need an active plan and a payment method outside the platform
+          that is switched on before you can record a sale in person.
+    billing_mailer:
+      notification:
+        greeting: Hello %{name},
+        safety: We never include payment details in an email. To pay or change anything,
+          sign in and open the link above.
+        support: Questions? Contact %{email}.
+        view: View it
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and
@@ -1281,6 +2689,17 @@ en:
           select_prompt: "— Select a navigation area —"
         people_block:
           empty: No people to display.
+        plan_button_block:
+          create_label: Create a new %{type} block for the page
+          displays:
+            button: Button only
+            card: Card with price
+          empty: Choose a plan for this block to offer.
+          plan_hint: Pick one of this platform's active plans.
+        plan_catalog_block:
+          create_label: Create a new %{type} block for the page
+          empty: No plans are on offer right now.
+          item_limit_hint: How many plans to show, up to 24.
         posts_block:
           empty: No posts to display.
         resource_block:
@@ -2532,6 +3951,13 @@ en:
         placeholder: Type your message...
         send: Send
     metrics:
+      billing_reports:
+        empty_description: Make a report to download sales, revenue, tax and refunds
+          for a month, quarter or year as a CSV file.
+        empty_title: No billing reports yet
+        filters_text: "%{from} to %{to}, by %{interval}"
+        new_title: New billing report
+        title: Billing reports
       errors:
         date_range_too_large: Date range cannot exceed 1 year
         invalid_date_range: Start date must be before end date
@@ -2543,11 +3969,23 @@ en:
           all_locales: All Locales
           all_types: All Content Types
           apply: Apply Filters
+          bases:
+            invoice: Invoice date
+            paid: Payment date
+          basis: Count a sale by
           communities: Communities
           content_type: Content Type
+          currency: Currency
           day_of_week: Day of Week
+          first_currency: The first currency with sales
           hour_of_day: Hour of Day
+          interval: By
+          intervals:
+            month: Month
+            quarter: Quarter
+            year: Year
           locale: Language
+          owner: Whose sales
           pages: Pages
           people: People
           reset: Reset Filters
@@ -2588,6 +4026,7 @@ en:
           export: Export
         axis_labels:
           accounts: Accounts
+          amount: Amount
           confirmations: Rate (%)
           date: Date
           downloads: Downloads
@@ -2598,16 +4037,66 @@ en:
           links: Links
           page: Page
           page_views: Page Views
+          period: Period
           platform: Platform
           search_queries: Searches
           shares: Shares
           source: Source
+          tax: Tax
           term: Term
           total_users: Total Users
           url: URL
+        billing:
+          amount: Amount
+          authorities:
+            gst_hst: GST/HST (CRA)
+            other: Other
+            pst: Provincial sales tax (PST)
+            qst: Quebec sales tax (QST)
+            rst: Retail sales tax (RST)
+            vat: VAT
+          authority_title: Tax owed by administrator
+          collected: Collected
+          collected_by:
+            facilitator: Collected by the platform for the seller
+            platform: Collected by the platform
+            seller: Collected by the seller
+          empty: No sales were paid in the last 30 days.
+          measures:
+            exempt: Exempt revenue
+            gross: Total paid for sales, with tax
+            net_revenue: Revenue after refunds, without tax
+            net_tax: Tax collected after refunds
+            non_taxable: Non-taxable revenue
+            refunded: Refunded, with tax
+            sales: Sales
+            tax_collected: Tax collected
+            taxable: Taxable revenue
+            zero_rated: Zero-rated revenue
+          no_region: No region
+          owed: Owed (net of refunds)
+          owner_all: All sellers and the platform
+          owner_platform: The platform only
+          payment_method: Way of paying
+          refunded: Refunded
+          region: Region
+          registration_number: Registration number
+          registrations: Registrations
+          summary_note: Sales count on the day they were paid, in the platform time
+            zone. Each currency is shown on its own.
+          summary_title: The last 30 days
+          tax: Tax
         charts:
           accounts_confirmed: Accounts Confirmed
           accounts_created: Accounts Created
+          billing_exempt: Exempt revenue
+          billing_non_taxable: Non-taxable revenue
+          billing_refunded: Refunded revenue
+          billing_revenue: Revenue, tax and refunds by period
+          billing_tax: Tax collected (net of refunds)
+          billing_tax_by_rate: Tax collected by rate (net of refunds)
+          billing_taxable: Taxable revenue
+          billing_zero_rated: Zero-rated revenue
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth
@@ -2687,6 +4176,7 @@ en:
           total_drift: Total Drift
           unmanaged_models: Unmanaged searchable models
         tabs:
+          billing: Billing
           charts: Charts
           charts_and_reports: Charts & Reports
           downloads: Downloads
@@ -2803,6 +4293,15 @@ en:
         title: New Navigation Item for %{name}
       route_names:
         agreements: Agreements
+        billing_agreement_requirements: Purchase terms
+        billing_allowances: Allowances and usage
+        billing_credit_accounts: Store credit accounts
+        billing_plans: Billing Plans
+        billing_processor_settings: Payment Methods
+        billing_promotions: Promotion codes
+        billing_sales: Sales
+        billing_subscribers: Subscribers
+        billing_tax_registrations: Tax registrations
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities
@@ -3928,6 +5427,8 @@ en:
     quotas:
       errors:
         not_local: must be local to this platform
+      storage_limit_reached: You have reached your storage limit, so this file cannot
+        be uploaded. Remove something or ask a steward about more storage.
       usage_meter:
         types:
           ai_translation_tokens: AI LLM usage tokens
@@ -5478,11 +6979,24 @@ en:
       title: 500 - Internal Server Error
     messages:
       accepted: must be accepted
+      account_mismatch: must belong to the same account
+      acknowledgement_required: must be accepted before this method can be turned
+        on
+      add_on_cannot_have_grants: cannot be given to an add-on
+      add_on_cannot_renew: an add-on is bought once, not renewed
+      add_on_has_grants: an add-on cannot include anything of its own; put that on
+        a plan
+      add_on_locked_by_orders: cannot be changed once orders include this plan
+      after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
+      already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
+      cannot_be_the_host: cannot be the host platform
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
+      country_not_supported: is not available in %{country}
+      currency_mismatch: must match the currency of its order
       denied_for_trusted_domain: cannot be granted by an email domain
       empty: can't be empty
       equal_to: must be equal to %{count}
@@ -5491,45 +7005,77 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      greater_than_refundable: is more than can still be refunded
+      hosted_local_billing_not_agreed: needs the hosted local billing agreements accepted
+        first
       immutable: cannot be changed once created; delete this provider and add a new
         one
+      immutable_after_processor_link: cannot be changed once the plan is linked to
+        a processor price
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
       invalid_characters: must not contain spaces or control characters
+      invalid_pricing_tier: 'pricing tier ''%{tier}'' is not one of: %{allowed}'
       invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      lookup_failed: could not be verified with the payment processor
       model_invalid: 'Validation failed: %{errors}'
+      must_be_a_primary_plan: must be a plan that is not an add-on
+      must_be_an_add_on: must be an add-on
+      no_payment_method: needs an online processor or at least one other way to pay
       not_a_community_role: must be a community role
       not_a_number: is not a number
+      not_a_purchase_agreement: must be a purchase agreement
+      not_an_amount: must be a plain figure such as 45.00
       not_an_integer: must be an integer
+      not_an_offline_method: "%{method} is not an installed payment method outside
+        a processor"
+      not_configured: is not set up for this platform
       not_found: not found
+      not_found_at_processor: was not found at the payment processor
+      not_installed: is not an installed payment processor
       not_locked: was not locked
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      not_the_buyer: can only be made by the buyer of the order
+      nothing_to_give_back: There is nothing on this order that can be given back
+        here.
       odd: must be odd
+      one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}
       present: must be blank
+      price_inactive: is archived at the payment processor
       public_mail_domain: is a public mail provider; confirm to trust every address
         on it
+      recipient_missing: needs an email address or a phone number
       required: must exist
       required_for_elevated_role: needs explicit confirmation before an email domain
         can grant a role above basic member
       taken: has already been taken
+      too_large: is too large
       too_long:
         one: is too long (maximum is %{count} character)
         other: is too long (maximum is %{count} characters)
+      too_precise: can have no more than %{places} decimal places in this currency
       too_short:
         one: is too short (minimum is %{count} character)
         other: is too short (minimum is %{count} characters)
+      transition_not_allowed: cannot change from %{from} to %{to}
+      unknown_owner_types: 'includes types that cannot be billed: %{types}'
+      unknown_setting: 'has fields this method does not use: %{fields}'
+      unsupported_price: is a kind of price that cannot be used here (weekly, daily
+        or usage-based)
+      used_by_another_platform: is already used by another platform
       weak_password: not strong enough. Consider adding a number, symbols or more
         letters to make it stronger. Avoid using the word 'password', your birthday,
         or other common easily-guessable passwords.
       wrong_length:
         one: is the wrong length (should be %{count} character)
         other: is the wrong length (should be %{count} characters)
+      wrong_sign: has the wrong sign for what this entry is
     models:
       address_geography_conflict: 'Typed text conflicts with the selected place: it
         should be "%{selected}".'
@@ -5870,6 +7416,7 @@ en:
   navbar:
     accept_invitation: Accept invitation
     account_navigation: Account and tools
+    billing: Billing
     conversations: Conversations
     footer_legal_navigation: Site information
     footer_navigation: Footer links
@@ -6051,6 +7598,7 @@ en:
           on route knowledge alone.
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
+        hosting_plan: Plan and usage
         identity_providers: Sign-in providers
         platform_domains: Domains
         quota_grants: Quota grants
@@ -6123,6 +7671,18 @@ en:
     label: Search the site
     placeholder: Search...
   seed_catalog:
+    billing_agreements:
+      categories:
+        billing_purchase_agreements: Purchase agreements
+      description: Draft purchase agreements with placeholder text. Nothing can be
+        sold until a steward writes the terms and activates them.
+      label: Billing Agreements
+    billing_tax:
+      categories:
+        billing_tax_canada: Canadian sales tax
+      description: Tax categories, zones and rates for the places a platform sells
+        in. Zones are tied to the geography provinces, so plant those first.
+      label: Sales Tax Reference Data
     geography:
       categories:
         continents: Continents

@@ -1,0 +1,11 @@
+{
+  "name": "billing_plans_new_link",
+  "device": "desktop",
+  "url": "/en/billing/plans/new?mode=link",
+  "title": "New Billing Plan | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_new_link",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb"
+}

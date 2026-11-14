@@ -1,0 +1,48 @@
+{
+  "name": "billing_catalog",
+  "device": "desktop",
+  "url": "/en/billing/catalog",
+  "title": "Plans | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "billing_catalog",
+  "flow": "billing_catalog",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_catalog_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-catalog-plans",
+      "title": "Listed plans",
+      "bullets": [
+        "Each plan shows its price and a button that starts checkout."
+      ],
+      "target": {
+        "x": 60.0,
+        "y": 160.0,
+        "width": 1320.0,
+        "height": 212.796875,
+        "right": 1380.0,
+        "bottom": 372.796875,
+        "center_x": 720.0,
+        "center_y": 266.3984375
+      },
+      "avoid": {
+        "x": 60.0,
+        "y": 160.0,
+        "width": 1320.0,
+        "height": 212.796875,
+        "right": 1380.0,
+        "bottom": 372.796875,
+        "center_x": 720.0,
+        "center_y": 266.3984375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 392.8,
+        "width": 380,
+        "height": 158,
+        "score": 1084.203125
+      }
+    }
+  ]
+}

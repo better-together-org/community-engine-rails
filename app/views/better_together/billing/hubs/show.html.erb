@@ -1,0 +1,127 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.hub.title') %>
+<% end %>
+
+<div id="billing-hub-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.hub.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.hub.intro', platform: billing_owner.name) %></p>
+
+  <div class="row g-4">
+    <section id="billing-hub-plans" class="col-lg-6" aria-labelledby="billing-hub-plans-heading">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-baseline">
+          <h2 id="billing-hub-plans-heading" class="h5 mb-0"><%= t('better_together.billing.hub.plans_heading') %></h2>
+          <%= link_to t('better_together.billing.hub.all_plans'), billing_subscriptions_path(locale: I18n.locale), id: 'billing-hub-plans-link', class: 'link-body-emphasis' %>
+        </div>
+        <% if @terms.any? %>
+          <ul class="list-group list-group-flush">
+            <% @terms.each do |term| %>
+              <li id="<%= dom_id(term, :hub) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
+                <span>
+                  <%= link_to term.plan.name, billing_subscription_path(term, locale: I18n.locale) %>
+                  <span class="d-block small text-body-secondary">
+                    <%= t('better_together.billing.hub.renews', date: l(term.pay_subscription.current_period_end.to_date, format: :long)) %>
+                  </span>
+                </span>
+                <span><%= billing_amount(term.unit_amount_cents, term.currency) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="card-body"><p id="billing-hub-plans-empty" class="text-body-secondary mb-0"><%= t('better_together.billing.hub.plans_none') %></p></div>
+        <% end %>
+        <div class="card-footer"><%= link_to t('better_together.billing.hub.browse_plans'), billing_catalog_path(locale: I18n.locale), id: 'billing-hub-browse-plans-link', class: 'link-body-emphasis' %></div>
+      </div>
+    </section>
+
+    <section id="billing-hub-orders" class="col-lg-6" aria-labelledby="billing-hub-orders-heading">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-baseline">
+          <h2 id="billing-hub-orders-heading" class="h5 mb-0"><%= t('better_together.billing.hub.orders_heading') %></h2>
+          <%= link_to t('better_together.billing.hub.all_orders'), billing_orders_path(locale: I18n.locale), id: 'billing-hub-orders-link', class: 'link-body-emphasis' %>
+        </div>
+        <% if @orders.any? %>
+          <ul class="list-group list-group-flush">
+            <% @orders.each do |order| %>
+              <li id="<%= dom_id(order, :hub) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
+                <span>
+                  <%= link_to order.number, billing_order_path(order, locale: I18n.locale) %>
+                  <span class="d-block small"><%= billing_order_status_badge(order) %></span>
+                  <% if @refunded_by_order[order.id].to_i.positive? %>
+                    <span id="<%= dom_id(order, :hub_refunded) %>" class="d-block small text-body-secondary">
+                      <%= t('better_together.billing.orders.refunded_total', amount: billing_amount(@refunded_by_order[order.id], order.currency)) %>
+                    </span>
+                  <% end %>
+                </span>
+                <span><%= billing_amount(order.total_cents, order.currency) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="card-body"><p id="billing-hub-orders-empty" class="text-body-secondary mb-0"><%= t('better_together.billing.hub.orders_none') %></p></div>
+        <% end %>
+      </div>
+    </section>
+
+    <% if @add_ons.any? %>
+      <section id="billing-hub-add-ons" class="col-lg-6" aria-labelledby="billing-hub-add-ons-heading">
+        <div class="card h-100">
+          <div class="card-header">
+            <h2 id="billing-hub-add-ons-heading" class="h5 mb-0"><%= t('better_together.billing.hub.add_ons_heading') %></h2>
+          </div>
+          <ul class="list-group list-group-flush">
+            <% @add_ons.each do |add_on| %>
+              <li id="<%= dom_id(add_on, :hub_add_on) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
+                <span><%= add_on.name %> <span class="small text-body-secondary"><%= billing_amount(add_on.amount_cents, add_on.currency) %></span></span>
+                <%= link_to t('better_together.billing.hub.add_on_buy'), new_billing_checkout_path(plan_id: add_on.id, locale: I18n.locale),
+                            id: dom_id(add_on, :hub_add_on_buy), class: 'btn btn-sm btn-outline-primary' %>
+              </li>
+            <% end %>
+          </ul>
+          <div class="card-footer small text-body-secondary" id="billing-hub-add-ons-hint"><%= t('better_together.billing.hub.add_ons_hint') %></div>
+        </div>
+      </section>
+    <% end %>
+
+    <section id="billing-hub-credit" class="col-lg-6" aria-labelledby="billing-hub-credit-heading">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-baseline">
+          <h2 id="billing-hub-credit-heading" class="h5 mb-0"><%= t('better_together.billing.hub.credit_heading') %></h2>
+          <%= link_to t('better_together.billing.hub.view_credit'), billing_credit_path(locale: I18n.locale), id: 'billing-hub-credit-link', class: 'link-body-emphasis' %>
+        </div>
+        <div class="card-body">
+          <% usable = @credit_accounts.select { |account| account.usable_cents.positive? } %>
+          <% if usable.any? %>
+            <ul class="list-unstyled mb-0">
+              <% usable.each do |account| %>
+                <li id="<%= dom_id(account, :hub) %>"><%= billing_amount(account.usable_cents, account.currency) %></li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p id="billing-hub-credit-empty" class="text-body-secondary mb-0"><%= t('better_together.billing.hub.credit_none') %></p>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing-hub-access" class="col-lg-6" aria-labelledby="billing-hub-access-heading">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-baseline">
+          <h2 id="billing-hub-access-heading" class="h5 mb-0"><%= t('better_together.billing.hub.access_heading') %></h2>
+          <%= link_to t('better_together.billing.hub.view_access'), billing_entitlements_path(locale: I18n.locale), id: 'billing-hub-access-link', class: 'link-body-emphasis' %>
+        </div>
+        <div class="card-body">
+          <p id="billing-hub-access-count" class="mb-0"><%= t('better_together.billing.hub.access_count', count: @access_count) %></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section id="billing-hub-settings" class="mt-4" aria-labelledby="billing-hub-settings-heading">
+    <h2 id="billing-hub-settings-heading" class="h5"><%= t('better_together.billing.hub.settings_heading') %></h2>
+    <div class="d-flex flex-wrap gap-2">
+      <%= link_to t('better_together.billing.hub.settings_addresses'), billing_billing_addresses_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-hub-addresses-link' %>
+      <%= link_to t('better_together.billing.hub.settings_notifications'), billing_notification_preferences_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-hub-notifications-link' %>
+    </div>
+  </section>
+</div>

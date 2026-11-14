@@ -1,0 +1,147 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+module BetterTogether
+  RSpec.describe Billing do
+    include_context 'with clean billing processors'
+
+    let(:host_platform) { configure_host_platform }
+    let(:other_platform) { create(:better_together_platform) }
+    let(:env) do
+      { 'BT_BILLING_ENABLED' => 'true', 'PAY_BUSINESS_NAME' => 'Example Co-op',
+        'PAY_BUSINESS_ADDRESS' => '1 Main St', 'PAY_SUPPORT_EMAIL' => 'support@example.org' }
+    end
+
+    it 'has no processor until an extension registers one' do
+      expect(described_class.processor_names).to be_empty
+      expect(described_class.processor_adapter).to be_nil
+      expect(described_class.enabled?(host_platform, env:)).to be false
+    end
+
+    describe 'methods outside a vendor' do
+      include_context 'with builtin billing processors'
+
+      it 'registers cash, cheque, e-transfer and store credit' do
+        expect(described_class.processor_names).to contain_exactly(:cash, :cheque, :etransfer, :store_credit)
+        expect(described_class.builtin_processors.keys).to contain_exactly(:cash, :cheque, :etransfer, :store_credit)
+      end
+
+      it 'tells them apart from a vendor processor' do
+        described_class.register_processor(:fake, -> { Billing::FakeAdapter.new })
+
+        expect(described_class.local_method?(:cash)).to be(true)
+        expect(described_class.local_method?('etransfer')).to be(true)
+        expect(described_class.local_method?(:store_credit)).to be(true)
+        expect(described_class.local_method?(:fake)).to be(false)
+        expect(described_class.local_method?(:ghost)).to be(false)
+      end
+
+      it 'tells a method the seller confirms from store credit, so credit is never treated as cash' do
+        expect(described_class.manual_method?(:cash)).to be(true)
+        expect(described_class.manual_method?(:store_credit)).to be(false)
+        expect(described_class.internal_method?(:store_credit)).to be(true)
+        expect(described_class.internal_method?(:cash)).to be(false)
+        expect(described_class.internal_method?(:ghost)).to be(false)
+      end
+
+      it 'is not enabled for anyone until a steward turns a method on' do
+        expect(described_class.enabled?(host_platform, env:)).to be(false)
+
+        host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                         settings: { 'instructions' => 'At the hall' })
+
+        expect(described_class.enabled?(host_platform, env:)).to be(true)
+        expect(described_class.enabled?(other_platform, env:)).to be(false)
+      end
+
+      it 'is never enabled or configurable for a hosted platform that has not accepted the hosted agreements (CONF-01)' do
+        # Written past validation: a row that predates the gate, or one made by hand, must still not sell.
+        other_platform.billing_processor_settings.new(processor: 'cash', enabled: true, acknowledge: true,
+                                                      settings: { 'instructions' => 'At the hall' }).save!(validate: false)
+
+        expect(described_class.enabled?(other_platform, env:)).to be(false)
+        expect(described_class.configurable?(other_platform, env:)).to be(false)
+        expect(described_class.configurable?(host_platform, env:)).to be(true)
+      end
+
+      it 'is enabled and configurable for a hosted platform once it accepted the agreements and turned a method on' do
+        grant_hosted_billing(other_platform)
+        other_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                          settings: { 'instructions' => 'At the hall' })
+
+        expect(described_class.configurable?(other_platform, env:)).to be(true)
+        expect(described_class.enabled?(other_platform, env:)).to be(true)
+      end
+
+      it 'can be configured before any method is on, but only when the host asked for billing' do
+        expect(described_class.configurable?(host_platform, env:)).to be(true)
+        expect(described_class.configurable?(host_platform, env: env.merge('BT_BILLING_ENABLED' => 'false'))).to be(false)
+        expect(described_class.configurable?(host_platform, env: env.except('PAY_SUPPORT_EMAIL'))).to be(false)
+        expect(described_class.configurable?(nil, env:)).to be(false)
+      end
+    end
+
+    it 'cannot be configured with nothing installed' do
+      expect(described_class.configurable?(host_platform, env:)).to be(false)
+    end
+
+    it 'resolves a registered processor by name and verifies the contract' do
+      described_class.register_processor(:fake, -> { Billing::FakeAdapter.new })
+
+      expect(described_class.processor_names).to eq([:fake])
+      expect(described_class.processor_adapter(:fake)).to be_a(Billing::FakeAdapter)
+      expect(described_class.processor_adapter).to be_a(Billing::FakeAdapter)
+    end
+
+    it 'refuses a registered factory that returns a non-conforming adapter' do
+      described_class.register_processor(:bad, -> { Object.new })
+
+      expect { described_class.processor_adapter(:bad) }.to raise_error(Billing::ProcessorAdapter::ContractError)
+    end
+
+    it 'refuses an adapter that reports a different name than it was registered under' do
+      described_class.register_processor(:stripe_eu, -> { Billing::FakeAdapter.new })
+
+      expect { described_class.processor_adapter(:stripe_eu) }
+        .to raise_error(Billing::ProcessorAdapter::ContractError, /registered as stripe_eu but reports processor_name fake/)
+    end
+
+    describe '.enabled?' do
+      before { described_class.register_processor(:fake, -> { Billing::FakeAdapter.new }) }
+
+      it 'works out the answer once per request for the real ENV' do
+        allow(BetterTogether::Billing::Configuration).to receive(:processors_for).and_return([:stripe])
+        allow(BetterTogether::Billing::Configuration).to receive_messages(requested?: true, ready?: true)
+        Current.reset
+
+        2.times { described_class.enabled?(host_platform) }
+
+        expect(BetterTogether::Billing::Configuration).to have_received(:processors_for).once
+        Current.reset
+      end
+
+      it 'is on for the host platform only with the flag, host identity and a processor' do
+        expect(described_class.enabled?(host_platform, env:)).to be true
+        expect(described_class.enabled?(host_platform, env: env.merge('BT_BILLING_ENABLED' => 'false'))).to be false
+        expect(described_class.enabled?(host_platform, env: env.except('PAY_SUPPORT_EMAIL'))).to be false
+      end
+
+      it 'is off for a platform that has no processor context of its own' do
+        expect(described_class.enabled?(other_platform, env:)).to be false
+      end
+
+      it 'is off when there is no platform at all, as in a job or console with no tenant in hand' do
+        expect(described_class.enabled?(nil, env:)).to be false
+      end
+
+      it 'defaults to the current request platform' do
+        Current.platform = host_platform
+
+        expect(described_class.enabled?(env:)).to be true
+      ensure
+        Current.platform = nil
+      end
+    end
+  end
+end

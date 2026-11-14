@@ -1,0 +1,14 @@
+---
+title: 'Checkout: a free plan'
+audience:
+- member
+journey_step: As a member, I accept the agreements and take a free plan; I am not
+  asked how to pay or for a billing address.
+callouts:
+- :id: place
+  :title: Get it free
+  :description: The plan starts at once; nothing is charged.
+accessibility_notes: The agreements are labelled checkboxes; there is no payment method
+  step.
+slug: billing_checkout_free_plan
+device: mobile

@@ -59,7 +59,7 @@ const platformBorderColors = {
 };
 
 export default class extends Controller {
-  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart", "searchQueriesChart", "dailySearchQueriesChart", "userAccountsOverviewChart", "userConfirmationsChart", "registrationSourcesChart", "cumulativeGrowthChart"]
+  static targets = ["pageViewsChart", "dailyPageViewsChart", "linkClicksChart", "dailyLinkClicksChart", "downloadsChart", "sharesChart", "sharesPerUrlPerPlatformChart", "linksByHostChart", "invalidByHostChart", "failuresDailyChart", "searchQueriesChart", "dailySearchQueriesChart", "userAccountsOverviewChart", "userConfirmationsChart", "registrationSourcesChart", "cumulativeGrowthChart", "billingRevenueChart", "billingTaxByRateChart"]
 
   connect() {
     // Store chart instances for later updates
@@ -84,6 +84,8 @@ export default class extends Controller {
     if (this.hasUserConfirmationsChartTarget) this.renderUserConfirmationsChart()
     if (this.hasRegistrationSourcesChartTarget) this.renderRegistrationSourcesChart()
     if (this.hasCumulativeGrowthChartTarget) this.renderCumulativeGrowthChart()
+    if (this.hasBillingRevenueChartTarget) this.renderBillingRevenueChart()
+    if (this.hasBillingTaxByRateChartTarget) this.renderBillingTaxByRateChart()
 
     // Listen for filter updates on the element itself
     this.boundHandleDataUpdate = this.handleDataUpdate.bind(this)
@@ -201,6 +203,12 @@ export default class extends Controller {
         break
       case 'cumulativeGrowthChart':
         this.updateChart('cumulativeGrowthChart', data)
+        break
+      case 'billingRevenueChart':
+        this.updateStackedChart('billingRevenueChart', data)
+        break
+      case 'billingTaxByRateChart':
+        this.updateChart('billingTaxByRateChart', data)
         break
     }
   }
@@ -952,6 +960,66 @@ export default class extends Controller {
       })
     })
     this.registerChart('cumulativeGrowthChart', this.cumulativeGrowthChartTarget, chart)
+  }
+
+  // Billing: revenue by kind for each month, quarter or year, stacked (one currency at a time).
+  renderBillingRevenueChart() {
+    const target = this.billingRevenueChartTarget
+    const data = JSON.parse(target.dataset.chartData || '{"labels":[],"datasets":[]}')
+    const chart = new Chart(target, {
+      type: 'bar',
+      data: { labels: data.labels, datasets: data.datasets },
+      options: Object.assign({}, sharedChartOptions, {
+        plugins: { legend: { display: true, position: 'top' } },
+        scales: {
+          x: {
+            stacked: true,
+            title: { display: true, text: target.dataset.axisXLabel, font: { size: 14, weight: 'bold' } },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            stacked: true,
+            title: { display: true, text: target.dataset.axisYLabel, font: { size: 14, weight: 'bold' } },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('billingRevenueChart', target, chart)
+  }
+
+  // Billing: tax collected, net of refunds, by tax and rate.
+  renderBillingTaxByRateChart() {
+    const target = this.billingTaxByRateChartTarget
+    const data = JSON.parse(target.dataset.chartData || '{"labels":[],"values":[]}')
+    const chart = new Chart(target, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: target.dataset.chartLabel,
+          data: data.values,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: Object.assign({}, sharedChartOptions, {
+        scales: {
+          x: {
+            title: { display: true, text: target.dataset.axisXLabel, font: { size: 14, weight: 'bold' } },
+            ticks: sharedChartOptions.scales.x.ticks
+          },
+          y: {
+            title: { display: true, text: target.dataset.axisYLabel, font: { size: 14, weight: 'bold' } },
+            beginAtZero: true,
+            ticks: sharedChartOptions.scales.y.ticks
+          }
+        }
+      })
+    })
+    this.registerChart('billingTaxByRateChart', target, chart)
   }
 
   registerChart(chartName, target, chart) {

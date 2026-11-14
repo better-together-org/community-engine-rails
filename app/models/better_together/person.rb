@@ -10,6 +10,10 @@ module BetterTogether
     end
 
     include Author
+    # A person who sells can ask buyers for terms of their own (see Billing::AgreementRequirement).
+    include Billing::AgreementTarget
+    # A person is the customer of every platform they pay (see Billing::PayCustomerOwner).
+    include Billing::PayCustomerOwner
     include Communicator
     include Contactable
     include CreatedRecords
@@ -37,6 +41,7 @@ module BetterTogether
     member joinable_type: 'platform', member_type: 'person', dependent: :destroy
     member joinable_type: 'community', member_type: 'person', dependent: :destroy
 
+    has_many :billing_default_addresses, class_name: 'BetterTogether::Billing::DefaultAddress', dependent: :destroy
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations,
@@ -75,6 +80,8 @@ module BetterTogether
                                     inverse_of: :creator
     has_many :page_view_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::PageViewReport', dependent: :destroy,
                                  inverse_of: :creator
+    has_many :billing_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::BillingReport', dependent: :destroy,
+                               inverse_of: :creator
     has_many :link_click_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkClickReport', dependent: :destroy,
                                   inverse_of: :creator
 
@@ -221,6 +228,7 @@ module BetterTogether
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
       notify_on_comments Boolean, default: true
+      notify_billing_by_email Boolean, default: true
     end
 
     # Ensure proper coercion and persistence for preferences store attributes
@@ -270,6 +278,13 @@ module BetterTogether
     def show_conversation_details=(value)
       prefs = (notification_preferences || {}).dup
       prefs['show_conversation_details'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
+    # Whether billing notices that are not critical are emailed too (a failed payment always is).
+    def notify_billing_by_email=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_billing_by_email'] = ActiveModel::Type::Boolean.new.cast(value)
       self.notification_preferences = prefs
     end
 

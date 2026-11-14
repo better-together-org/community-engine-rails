@@ -1,0 +1,83 @@
+{
+  "name": "billing_hosted_platforms",
+  "device": "desktop",
+  "url": "/en/billing/hosted_platforms",
+  "title": "Hosted platforms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_hosted",
+  "flow": "billing_hosted_platforms",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_hosted_billing_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-hosted-platforms-table",
+      "title": "Every hosted platform",
+      "bullets": [
+        "Which agreements each platform has accepted and whether its billing is on."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 232.0,
+        "width": 1296.0,
+        "height": 261.0,
+        "right": 1368.0,
+        "bottom": 493.0,
+        "center_x": 720.0,
+        "center_y": 362.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 232.0,
+        "width": 1296.0,
+        "height": 261.0,
+        "right": 1368.0,
+        "bottom": 493.0,
+        "center_x": 720.0,
+        "center_y": 362.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 513.0,
+        "width": 380,
+        "height": 158,
+        "score": 964.0
+      }
+    },
+    {
+      "selector": "#hosted_suspend_platform_36d42c1b-43ac-4832-b14e-96cd0bda8b0a",
+      "title": "Suspend billing",
+      "bullets": [
+        "Needs a reason. Pauses the platform's billing and keeps its data."
+      ],
+      "target": {
+        "x": 1281.671875,
+        "y": 313.5,
+        "width": 78.328125,
+        "height": 31.0,
+        "right": 1360.0,
+        "bottom": 344.5,
+        "center_x": 1320.8359375,
+        "center_y": 329.0
+      },
+      "avoid": {
+        "x": 1281.671875,
+        "y": 313.5,
+        "width": 78.328125,
+        "height": 31.0,
+        "right": 1360.0,
+        "bottom": 344.5,
+        "center_x": 1320.8359375,
+        "center_y": 329.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 1036,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+<%# Fields the processor fixed when it created the price are shown as text; the rest are inputs.
+    Option lists for the processor-backed selects are fetched live from the payment processor. %>
+<% persisted = billing_plan.persisted? %>
+<% linked = billing_plan.linked? %>
+<% link_mode = billing_plan.link_existing && !persisted %>
+<% selected_currency = billing_plan.currency.presence || BetterTogether::Billing::Configuration.default_currency %>
+<%= form_with(
+      model: billing_plan,
+      url: persisted ? billing_plan_path(billing_plan) : billing_plans_path,
+      class: 'needs-validation',
+      id: 'billing-plan-form',
+      skip_default_ids: false
+    ) do |form| %>
+  <% if billing_plan.errors.any? %>
+    <div class="alert alert-danger" role="alert" id="billing-plan-errors">
+      <ul class="mb-0">
+        <% billing_plan.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if linked %>
+    <div id="billing-plan-locked-fields-note" class="alert alert-light border" role="note">
+      <i class="fa-solid fa-lock me-1" aria-hidden="true"></i>
+      <%= t('better_together.billing.plans.locked_note', fields: billing_locked_field_names(billing_plan).to_sentence) %>
+      <% if policy(BetterTogether::Billing::Plan.new).new? %>
+        <%= link_to t('better_together.billing.plans.change_price'),
+                    new_billing_plan_path(locale: I18n.locale, from: billing_plan.id),
+                    class: 'alert-link ms-1', id: 'billing-plan-change-price-link' %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :link_existing, value: link_mode %>
+
+  <div id="billing-plan-core-fields" class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= form.label :identifier, t('better_together.billing.plans.field_identifier'), class: 'form-label' %>
+        <%= form.text_field :identifier,
+                            class: 'form-control',
+                            required: true,
+                            readonly: persisted,
+                            placeholder: t('better_together.billing.plans.identifier_placeholder') %>
+        <div class="form-text"><%= t('better_together.billing.plans.field_identifier_hint') %></div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div id="billing-plan-name-fields" class="mb-3">
+        <% if billing_plan.locked_field?(:name) %>
+          <%= form.label :name, t('better_together.billing.plans.field_name'), class: 'form-label' %>
+          <%= render 'locked_value', plan: billing_plan, field: :name, label: '', value: billing_plan.name %>
+        <% else %>
+          <%= render 'better_together/shared/translated_string_field', model: billing_plan, form:, attribute: :name %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div id="billing-plan-description-fields" class="mb-3">
+    <% if billing_plan.locked_field?(:description) %>
+      <%= form.label :description, t('better_together.billing.plans.field_description'), class: 'form-label' %>
+      <%= render 'locked_value', plan: billing_plan, field: :description, label: '', value: billing_plan.description %>
+    <% else %>
+      <%= render 'better_together/shared/translated_text_field', model: billing_plan, form:, attribute: :description %>
+    <% end %>
+  </div>
+
+  <div id="billing-plan-processor-fields" class="row g-3 mb-3">
+    <div class="col-md-4">
+      <%= form.label :processor, t('better_together.billing.plans.field_processor'), class: 'form-label' %>
+      <%= form.select :processor,
+                      billing_processor_choices,
+                      { include_blank: t('better_together.billing.plans.processor_none') },
+                      class: 'form-select',
+                      disabled: persisted %>
+      <div class="form-text"><%= t('better_together.billing.plans.field_processor_hint') %></div>
+    </div>
+  </div>
+
+  <% offline_methods = billing_offline_method_choices %>
+  <% if offline_methods.any? %>
+    <fieldset id="billing-plan-payment-methods" class="border rounded p-3 mb-4">
+      <legend class="h6 w-auto px-2"><%= t('better_together.billing.plans.field_accepted_payment_methods') %></legend>
+      <div class="form-text mb-2"><%= t('better_together.billing.plans.field_accepted_payment_methods_hint') %></div>
+      <%= form.collection_check_boxes :accepted_payment_methods, offline_methods, :last, :first do |box| %>
+        <div class="form-check">
+          <%= box.check_box(class: 'form-check-input', id: "billing-plan-payment-method-#{box.value}") %>
+          <%= box.label(class: 'form-check-label', for: "billing-plan-payment-method-#{box.value}") %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+
+  <% if form.object.recurring? %>
+    <fieldset id="billing-plan-renewal-fields" class="border rounded p-3 mb-4">
+      <legend class="h6 w-auto px-2"><%= t('better_together.billing.plans.renewal_section_title') %></legend>
+      <div class="form-text mb-2"><%= t('better_together.billing.plans.renewal_section_hint') %></div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= form.label :renewal_lead_days, t('better_together.billing.plans.field_renewal_lead_days'), class: 'form-label', for: 'billing-plan-renewal-lead-days' %>
+          <%= form.number_field :renewal_lead_days, class: 'form-control', min: 1, max: BetterTogether::Billing::Plan::MAX_LEAD_DAYS, id: 'billing-plan-renewal-lead-days' %>
+          <div class="form-text"><%= t('better_together.billing.plans.field_renewal_lead_days_hint') %></div>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :grace_days, t('better_together.billing.plans.field_grace_days'), class: 'form-label', for: 'billing-plan-grace-days' %>
+          <%= form.number_field :grace_days, class: 'form-control', min: 0, max: BetterTogether::Billing::Plan::MAX_GRACE_DAYS, id: 'billing-plan-grace-days' %>
+          <div class="form-text"><%= t('better_together.billing.plans.field_grace_days_hint') %></div>
+        </div>
+      </div>
+    </fieldset>
+  <% end %>
+
+  <fieldset id="billing-plan-price-fields" class="border rounded p-3 mb-4">
+    <legend class="float-none w-auto fs-6 px-2"><%= t('better_together.billing.plans.price_section_title') %></legend>
+
+    <% if linked %>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= render 'locked_value', plan: billing_plan, field: :amount_cents,
+                                     label: t('better_together.billing.plans.field_amount'),
+                                     value: billing_amount(billing_plan.amount_cents, billing_plan.currency) %>
+        </div>
+        <div class="col-md-4">
+          <%= render 'locked_value', plan: billing_plan, field: :billing_interval,
+                                     label: t('better_together.billing.plans.field_billing_interval'),
+                                     value: billing_interval_label(billing_plan.billing_interval) %>
+        </div>
+        <div class="col-md-4">
+          <%= render 'locked_value', plan: billing_plan, field: :processor_price_id,
+                                     label: t('better_together.billing.plans.field_processor_price_id'),
+                                     value: billing_plan.processor_price_id %>
+        </div>
+      </div>
+    <% else %>
+      <div id="billing-plan-product-select" class="mb-3">
+        <%= form.label :processor_product_id, t('better_together.billing.plans.field_processor_product_id'), class: 'form-label' %>
+        <%= form.select :processor_product_id,
+                        billing_plan.processor_product_id.present? ? [[billing_plan.processor_product_id, billing_plan.processor_product_id]] : [],
+                        { include_blank: t('better_together.billing.plans.product_none') },
+                        class: 'form-select',
+                        data: { controller: 'better_together--slim-select',
+                                'better_together--slim-select-options-value': billing_lookup_options(kind: 'products', preserve_selection: true) } %>
+        <div class="form-text"><%= t('better_together.billing.plans.field_processor_product_id_hint') %></div>
+      </div>
+
+      <% if link_mode %>
+        <div id="billing-plan-price-select" class="mb-3">
+          <%= form.label :processor_price_id, t('better_together.billing.plans.field_price'), class: 'form-label' %>
+          <%= form.select :processor_price_id,
+                          billing_plan.processor_price_id.present? ? [[billing_plan.processor_price_id, billing_plan.processor_price_id]] : [],
+                          { include_blank: true },
+                          class: 'form-select',
+                          required: true,
+                          data: { controller: 'better_together--slim-select',
+                                  'better_together--slim-select-options-value':
+                                    billing_lookup_options(kind: 'prices', preserve_selection: true,
+                                                           scope_from: { 'scope[product]' => '#billing_plan_processor_product_id' }) } %>
+          <div class="form-text"><%= t('better_together.billing.plans.field_price_hint') %></div>
+        </div>
+      <% else %>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="mb-3">
+              <%= form.label :billing_interval, t('better_together.billing.plans.field_billing_interval'), class: 'form-label' %>
+              <div id="billing-plan-interval-select">
+                <%= form.select :billing_interval,
+                                [[billing_interval_label(billing_plan.billing_interval), billing_plan.billing_interval]],
+                                {},
+                                class: 'form-select',
+                                required: true,
+                                data: { controller: 'better_together--slim-select',
+                                        'better_together--slim-select-options-value': billing_lookup_options(kind: 'intervals', preserve_selection: true) } %>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-3">
+              <% amount_invalid = billing_plan.errors.include?(:amount) %>
+              <%= form.label :amount, t('better_together.billing.plans.field_amount'), class: 'form-label' %>
+              <%= form.text_field :amount, value: billing_plan.amount_field_value, class: "form-control#{' is-invalid' if amount_invalid}",
+                                           required: true, inputmode: 'decimal', autocomplete: 'off',
+                                           'aria-describedby': 'billing-plan-amount-hint', 'aria-invalid': (amount_invalid ? 'true' : nil) %>
+              <div id="billing-plan-amount-hint" class="form-text"><%= t('better_together.billing.plans.field_amount_hint') %></div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-3">
+              <%= form.label :currency, t('better_together.billing.plans.field_currency'), class: 'form-label' %>
+              <div id="billing-plan-currency-select">
+                <%= form.select :currency,
+                                selected_currency.present? ? [[selected_currency, selected_currency]] : [],
+                                selected_currency.blank? ? { include_blank: true } : {},
+                                class: 'form-select',
+                                required: true,
+                                data: { controller: 'better_together--slim-select',
+                                        'better_together--slim-select-options-value': billing_lookup_options(kind: 'currencies', preserve_selection: true) } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </fieldset>
+
+  <% unless billing_plan.locked_field?(:active) %>
+    <div class="mb-4">
+      <div class="form-check">
+        <%= form.check_box :active, class: 'form-check-input' %>
+        <%= form.label :active, t('better_together.billing.plans.field_active'), class: 'form-check-label' %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <div class="form-check">
+      <%= form.check_box :listed, class: 'form-check-input', id: 'billing_plan_listed', aria: { describedby: 'billing-plan-listed-hint' } %>
+      <%= form.label :listed, t('better_together.billing.plans.field_listed'), class: 'form-check-label' %>
+    </div>
+    <div class="form-text" id="billing-plan-listed-hint"><%= t('better_together.billing.plans.field_listed_hint') %></div>
+  </div>
+
+  <div class="mb-4" id="billing-plan-add-on-group">
+    <div class="form-check">
+      <%= form.check_box :add_on, class: 'form-check-input', id: 'billing_plan_add_on', aria: { describedby: 'billing-plan-add-on-hint' } %>
+      <%= form.label :add_on, t('better_together.billing.plans.field_add_on'), class: 'form-check-label' %>
+    </div>
+    <div class="form-text" id="billing-plan-add-on-hint"><%= t('better_together.billing.plans.field_add_on_hint') %></div>
+  </div>
+
+  <% target_choices = BetterTogether::Billing::Plan.primary.sold_by_platform.where(platform_id: billing_plan.platform_id || Current.platform&.id)
+                                                   .where.not(id: billing_plan.id).order(:identifier) %>
+  <% if target_choices.any? %>
+    <fieldset class="mb-4" id="billing-plan-add-on-targets">
+      <legend class="h6"><%= t('better_together.billing.plans.add_on_targets_legend') %></legend>
+      <% target_choices.each do |target| %>
+        <div class="form-check">
+          <%= check_box_tag 'billing_plan[target_plan_ids][]', target.id, billing_plan.target_plan_ids.include?(target.id), class: 'form-check-input',
+                                                                                                              id: dom_id(target, :add_on_target) %>
+          <%= label_tag dom_id(target, :add_on_target), target.name, class: 'form-check-label' %>
+        </div>
+      <% end %>
+      <div class="form-text" id="billing-plan-add-on-targets-hint"><%= t('better_together.billing.plans.add_on_targets_hint') %></div>
+    </fieldset>
+  <% end %>
+
+  <fieldset class="mb-4" id="billing-plan-audience">
+    <legend class="h6"><%= t('better_together.billing.plans.audience_legend') %></legend>
+    <% %i[restricted_to_members restricted_to_subscribers].each do |field| %>
+      <div class="form-check">
+        <%= form.check_box field, class: 'form-check-input', id: "billing_plan_#{field}", aria: { describedby: "billing-plan-#{field.to_s.dasherize}-hint" } %>
+        <%= form.label field, t("better_together.billing.plans.field_#{field}"), class: 'form-check-label' %>
+        <div class="form-text" id="billing-plan-<%= field.to_s.dasherize %>-hint"><%= t("better_together.billing.plans.field_#{field}_hint") %></div>
+      </div>
+    <% end %>
+    <div class="form-text mt-2" id="billing-plan-audience-hint"><%= t('better_together.billing.plans.audience_hint') %></div>
+  </fieldset>
+
+  <%= render 'metadata_fields', form: form, billing_plan: billing_plan %>
+
+  <div class="d-flex gap-2" id="billing-plan-form-actions">
+    <%= form.submit persisted ? t('better_together.billing.plans.update_submit') : t('better_together.billing.plans.create_submit'),
+                    id: 'billing-plan-submit', class: 'btn btn-primary' %>
+    <%= link_to t('globals.cancel'),
+                persisted ? billing_plan_path(billing_plan, locale: I18n.locale) : billing_plans_path(locale: I18n.locale),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

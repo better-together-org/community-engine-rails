@@ -558,6 +558,11 @@ fr:
       messages:
         file_not_found: le fichier n'existe pas
         invalid_file_type: doit être un fichier markdown (.md ou .markdown)
+        platform_owner_mismatch: doit être la plateforme à laquelle appartient le
+          propriétaire
+        platform_parent_mismatch: doit être la même plateforme que le client ou l'abonnement
+          auquel il appartient
+        platform_readonly: ne peut pas être modifiée après la création de l'enregistrement
         record_invalid: 'La validation a échoué : %{errors}'
         restrict_dependent_destroy:
           has_many: Vous ne pouvez pas supprimer l'enregistrement parce que les %{record}
@@ -655,6 +660,8 @@ fr:
       better_together/content/navigation_area_block: Zone de navigation
       better_together/content/page_block: Blocage de Pages
       better_together/content/people_block: Personnes
+      better_together/content/plan_button_block: Bouton de forfait
+      better_together/content/plan_catalog_block: Catalogue des forfaits
       better_together/content/platform_block: Plateforme
       better_together/content/posts_block: Publications
       better_together/content/quote_block: Citation
@@ -836,7 +843,9 @@ fr:
         acceptance_methods:
           agreement_review: examen de l’accord
           api: API
+          checkout: Passage en caisse
           legacy: enregistrement hérité
+          seller_assisted: Enregistré par le vendeur
           sign_up: inscription
           system: système
         accepted_via: Accepté via %{method}
@@ -844,6 +853,8 @@ fr:
         pending: en attente
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: Vous êtes arrivé à la fin. Vous pouvez maintenant cocher la
+        case pour accepter.
       show:
         title: Accord
       status:
@@ -918,6 +929,1471 @@ fr:
         subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
+    billing:
+      addresses:
+        add: Ajouter l'adresse
+        added: Adresse ajoutée.
+        default: Par défaut
+        default_set: Adresse de facturation par défaut mise à jour.
+        intro: La taxe sur vos commandes est calculée selon votre adresse de facturation.
+          Votre adresse par défaut est proposée en premier au paiement.
+        list_title: Vos adresses
+        make_default: Définir par défaut
+        new_title: Ajouter une adresse
+        none: Vous n'avez pas encore d'adresse de facturation.
+        refused:
+          incomplete: Choisissez un pays et une province ou un état pour calculer
+            la taxe.
+          invalid: Cette adresse n'a pas pu être enregistrée. Vérifiez les champs
+            et réessayez.
+          missing: Saisissez une adresse.
+          not_found: Cette adresse est introuvable.
+        title: Adresses de facturation
+      allowances:
+        enforcement: Application
+        field_owner: Propriétaire
+        field_quota: Quota
+        field_state: État
+        field_usage: Utilisation
+        intro: La rigueur appliquée à chaque quota, et qui utilise quoi. Les forfaits
+          payants relèvent la limite d’une personne ou d’une communauté ; rien de
+          ce qui est déjà stocké n’est supprimé.
+        mode: Mode
+        mode_hard: 'Strict : refuse tout nouvel usage au-delà de la limite'
+        mode_off: 'Désactivé : pas même compté'
+        mode_shadow: 'Observation : compté, jamais refusé'
+        mode_soft: 'Souple : compté, avertit en cas de dépassement'
+        none: Personne n’a de quota payant ni ne dépasse une limite.
+        over: Au-delà de la limite
+        refused: Cela n’a pas pu être enregistré.
+        saved: Application enregistrée.
+        title: Quotas et utilisation
+        usage: Quotas payants et personnes au-delà de leur limite
+        within: Dans la limite
+      catalog:
+        back: Tous les forfaits
+        buy: Acheter
+        details: Ce que vous obtenez
+        free: Gratuit
+        get_free: Obtenir gratuitement
+        intro: Choisissez un forfait de %{platform}.
+        none: Aucun forfait n’est offert pour le moment.
+        price:
+          every_n_months: "%{price} tous les %{count} mois"
+          every_n_years: "%{price} tous les %{count} ans"
+          month: "%{price} par mois"
+          once: "%{price}, une fois"
+          year: "%{price} par an"
+        subscribe: S’abonner
+        title: Forfaits
+      checkout:
+        accept: J’ai lu et j’accepte %{title}
+        add_on_line: Complément
+        add_ons_dropped: Un complément que vous aviez choisi n'est plus proposé et
+          a été retiré de votre commande. Vérifiez le total avant de continuer.
+        add_ons_heading: Ajouter à votre commande
+        add_ons_hint: Compléments facultatifs pour cette commande. Mettez la commande
+          à jour pour les ajouter.
+        add_ons_status:
+          one: Commande mise à jour. Un complément sélectionné. Total %{total}.
+          other: Commande mise à jour. %{count} compléments sélectionnés. Total %{total}.
+          zero: Commande mise à jour. Aucun complément sélectionné. Total %{total}.
+        address:
+          choose: Adresse de facturation
+          hint: La taxe est calculée selon le lieu de facturation ; choisissez donc
+            votre pays et votre province ou État dans les listes.
+          line1: Adresse
+          make_default: Utiliser celle-ci comme adresse de facturation par défaut
+          new_heading: Nouvelle adresse de facturation
+          new_option: Une nouvelle adresse
+          postal_code: Code postal
+          title: Adresse de facturation
+        already_accepted: Vous avez déjà accepté la version actuelle.
+        continue: Continuer
+        error_accept_all: Acceptez chaque entente pour continuer.
+        error_address_incomplete: L’adresse de facturation doit avoir un pays et une
+          province ou un État choisis dans les listes.
+        error_address_invalid: La nouvelle adresse de facturation n’a pas pu être
+          enregistrée. Vérifiez-la et réessayez.
+        error_address_missing: Choisissez une adresse de facturation.
+        error_address_not_found: Cette adresse n’est pas la vôtre. Choisissez-en une
+          autre.
+        error_method_not_available: Choisissez un des modes de paiement disponibles.
+        error_not_ready: 'Cet achat ne peut pas être effectué pour le moment : les
+          conditions n’ont pas été configurées. Veuillez contacter les personnes qui
+          gèrent cette plateforme.'
+        error_order_changed: Le prix ou les compléments proposés ont changé pendant
+          votre commande. Rien n'a été débité. Vérifiez le total et passez de nouveau
+          la commande.
+        error_parts_too_large: Les montants saisis couvrent tout le prix. Laissez-en
+          une part au mode choisi ci-dessus, ou choisissez-le pour la totalité.
+        error_refused: Votre commande n’a pas pu être passée. Rien n’a été débité.
+          Veuillez réessayer.
+        free: Gratuit
+        get_free: Obtenir gratuitement
+        how_to_pay: Comment souhaitez-vous payer ?
+        no_methods: Il n’y a aucun moyen de payer pour le moment.
+        parts_heading: Payer une partie autrement
+        parts_hint: Facultatif. Saisissez un montant à côté d'un mode de paiement
+          pour payer cette somme maintenant. Le mode choisi ci-dessus paie le reste.
+        place_order: Passer la commande
+        placed: Votre commande a été passée.
+        renew_with: Renouveler avec
+        renew_with_default: Le mode qui paie la plus grande part
+        renew_with_hint: Chaque facture de renouvellement sera payée ainsi. Vous pouvez
+          ajouter d'autres paiements à toute facture.
+        review_intro: Lisez ces documents avant de passer votre commande. Vous devez
+          les accepter pour continuer.
+        review_title: Lire et accepter
+        subtotal: Sous-total
+        tax_note: La taxe, le cas échéant, est calculée selon votre adresse de facturation
+          et affichée avant la confirmation.
+        tax_note_new_address: La taxe est calculée selon l'adresse que vous saisissez
+          et affichée sur votre commande avant le paiement.
+        title: Obtenir %{plan}
+        unavailable_currency_not_supported: Non disponible dans cette devise.
+        unavailable_insufficient_credit: Vous n'avez pas assez de crédit en magasin
+          pour cet achat.
+        unavailable_not_enabled: Non disponible ici pour le moment.
+        unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        update_order: Mettre la commande à jour
+        view_agreement: Lire l’entente
+      credit:
+        any_purpose: Tout ce que la plateforme vend
+        balance_line: 'Solde : %{amount} (%{currency})'
+        deleted_holder: "(personne supprimée)"
+        field_amount: Accordé
+        field_balance: Solde
+        field_currency: Devise
+        field_expires: Expire
+        field_for: Peut payer
+        field_holder: Personne
+        field_origin: D'où il vient
+        field_remaining: Reste
+        grant_amount: Montant
+        grant_confirm: Accorder %{amount} de crédit à %{person}?
+        grant_confirm_blank: Accorder du crédit à %{person}?
+        grant_currency: Devise
+        grant_expires: Expire après (jours)
+        grant_expires_hint: Laissez vide pour un crédit qui n'expire pas.
+        grant_note: Note (facultatif)
+        grant_refused: Ce crédit n'a pas pu être accordé. Vérifiez le montant ; vous
+          ne pouvez pas vous accorder de crédit.
+        grant_submit: Accorder le crédit
+        grant_too_large: Ce crédit dépasse le maximum d'un seul octroi, soit %{maximum}.
+        granted: Crédit accordé.
+        history: Historique
+        history_caption: Ce qui est arrivé à ce crédit, du plus récent au plus ancien
+        intro: Crédit que vous détenez auprès de %{platform}. Il paie ce que la plateforme
+          vend elle-même, en entier, et une partie peut expirer.
+        kind_adjust: Ajusté
+        kind_expire: Expiré
+        kind_forfeit: Perdu
+        kind_grant: Crédit ajouté
+        kind_spend: Dépensé pour une commande
+        kind_spend_reversal: Rendu après un remboursement
+        lookup_failed: Personne sur cette plateforme n'a cet id.
+        lookup_hint: Saisissez au moins deux lettres d'un nom ou d'un identifiant.
+        lookup_label: Personne
+        lookup_placeholder: Rechercher par nom ou identifiant
+        lookup_submit: Trouver
+        lots_caption: Crédit que vous détenez, le plus proche de l'expiration en premier
+        never_expires: N'expire pas
+        no_accounts: Personne ne détient encore de crédit en magasin.
+        none: Vous n'avez pas de crédit en magasin.
+        origin_adjustment: Ajustement
+        origin_promotion: Promotion
+        origin_refund: Remboursement
+        origin_steward_grant: Accordé par un responsable
+        steward_intro: 'Recherchez une personne pour voir son crédit et lui en accorder.
+          Le crédit accordé est l''argent de la plateforme : vous ne pouvez pas vous
+          en accorder.'
+        steward_title: Comptes de crédit en magasin
+        title: Crédit en magasin
+        usable: Vous pouvez dépenser %{amount}
+      document:
+        generated: Généré le
+        net_paid: Payé après remboursements
+        questions: Des questions sur cette commande ? Écrivez à %{email}.
+        refunded: Remboursé
+        tax_heading: Taxe
+        title_invoice: Facture
+        title_receipt: Reçu
+      entitlements:
+        allowances: Quotas
+        for: 'Pour : %{name}'
+        grace_until: Votre paiement est en retard. Tout continue de fonctionner jusqu’au
+          %{date} ; payez avant pour le conserver.
+        intro: Ce que vous avez grâce à un forfait que vous payez, et la part de chaque
+          quota utilisée.
+        meter: "%{used} sur %{limit} utilisés (%{percent} %)"
+        meter_unlimited: Aucune limite
+        none: Vous n'avez encore rien grâce à un forfait.
+        status_active: Actif
+        status_grace: En retard
+        status_lapsed: Terminé
+        status_revoked: Remboursé
+        title: Mon accès
+        until: Valable jusqu’au %{date}.
+      events:
+        alerts:
+          alerted_body: 'Événements signalés par le processeur pour examen : %{count}.'
+          dead_lettered_body: 'Événements abandonnés : %{count}. Une personne doit
+            les examiner et les relancer.'
+          dead_lettered_heading: Certains événements ont été abandonnés.
+          heading: Alertes sur les événements de paiement
+          none: Rien ne demande d'attention.
+          oldest: 'Plus ancien événement non résolu :'
+          repeated_body: 'Événements échoués %{threshold} fois ou plus : %{count}.'
+          repeated_heading: Certains événements échouent sans cesse.
+          unresolved_body: 'Événements échoués ou abandonnés depuis plus de %{hours}
+            heures : %{count}.'
+          unresolved_heading: Certains problèmes ne sont pas résolus.
+        back: Retour aux événements de paiement
+        field_attempts: Tentatives
+        field_event: Événement
+        field_event_id: Identifiant d'événement du processeur
+        field_last_attempt: Dernière tentative
+        field_last_replayed: Dernière relance
+        field_processor: Processeur
+        field_reason: Raison de l'arrêt
+        field_received: Reçu
+        field_replays: Relances par un opérateur
+        field_status: État
+        filter_label: Filtrer les événements de paiement par état
+        index_intro: Messages du processeur de paiement qui n'ont pas pu être traités.
+          Regardez ce qui s'est passé, puis relancez-les une fois le problème réglé.
+        index_title: Événements de paiement
+        never: Pas encore
+        none: Aucun événement dans cet état.
+        reasons:
+          retries_exhausted: Il a échoué trop de fois.
+          stale_unresolved_drift: Il est resté inachevé trop longtemps.
+        refused:
+          not_replayable: Seuls les événements échoués ou abandonnés peuvent être
+            relancés.
+          other: L'événement n'a pas pu être relancé.
+          payload_unavailable: Le message de cet événement a déjà été supprimé, il
+            ne peut donc pas être traité à nouveau.
+          platform_not_configured: Cette plateforme n'a plus ce mode de paiement configuré.
+          unsupported_processor: Le mode de paiement de cet événement n'est plus installé.
+        replay_button: Relancer l'événement
+        replay_confirm: Relancer cet événement de paiement maintenant ?
+        replay_explainer: 'La relance traite à nouveau l''événement depuis le début.
+          Elle est sans risque : un événement déjà traité n''est pas appliqué une
+          seconde fois.'
+        replay_heading: Relancer cet événement
+        replay_not_needed: Cet événement n'a pas besoin d'être relancé.
+        replay_unavailable: 'Cet événement ne peut pas être relancé : son message
+          a déjà été supprimé ou son mode de paiement n''est plus configuré.'
+        replayed: L'événement a été mis en file pour être traité à nouveau.
+        show_intro: Ce qui est arrivé à cet événement. Le message lui-même est chiffré
+          et n'est pas affiché ici.
+        show_title: Événement de paiement
+        states:
+          alerted: Signalé
+          all: Tous
+          dead_lettered: Abandonné
+          failed: Échoué
+          ignored: Ignoré
+          pending: En attente
+          problems: À examiner
+          processed: Traité
+          replayed: Relancé
+        table_caption: Événements de paiement et leur état
+      hosted_billing:
+        accept_button: Accepter pour cette plateforme
+        accepted: Accord accepté pour cette plateforme.
+        accepted_state: Accepté pour cette plateforme.
+        go_to_methods: Configurer vos modes de paiement
+        intro: "%{platform} est hébergée. Acceptez ci-dessous les accords de facturation
+          de l'hôte pour débloquer ce que chacun couvre. Rien n'est activé tant que
+          vous n'avez pas aussi configuré un mode de paiement."
+        merchant_not_yet: La facturation comme commerçant de référence n'est pas encore
+          disponible. Vous pouvez accepter cet accord à l'avance.
+        methods_locked: Acceptez l'accord de facturation de plateforme hébergée et
+          l'accord de facturation locale pour accepter espèces, chèques ou virements.
+        modes:
+          billing:
+            title: Accord de facturation de plateforme hébergée
+            unlocks: Nécessaire avant toute facturation sur cette plateforme, locale
+              ou à distance.
+          local:
+            title: Accord de facturation locale hébergée
+            unlocks: Permet à cette plateforme d'accepter espèces, chèques et virements.
+              L'hôte ne les suit pas, ne les garantit pas et n'en est pas responsable.
+          merchant:
+            title: Accord d'intégration comme commerçant
+            unlocks: Permet à l'hôte d'encaisser pour cette plateforme comme commerçant
+              de référence.
+        not_in_force: Pas encore disponible. L'hôte prépare encore cet accord.
+        refused:
+          accept_box: Cochez la case pour accepter l'accord.
+          needs_billing_first: Acceptez d'abord l'accord de facturation de plateforme
+            hébergée.
+          not_in_force: Cet accord n'est pas encore en vigueur.
+        suspended: L'hôte a suspendu la facturation de cette plateforme. Vos données
+          sont conservées. Contactez l'hôte pour la rétablir.
+        title: Facturation hébergée
+      hosted_platforms:
+        accepted: Accepté
+        actions: Actions
+        intro: Quelles plateformes hébergées ont accepté quels accords de facturation,
+          et si leur facturation est active. Suspendre met la facturation en pause
+          et conserve les données.
+        none: Aucune plateforme n'est encore hébergée ici.
+        not_accepted: Non accepté
+        platform: Plateforme
+        reason: Motif de la suspension
+        reason_required: Indiquez un motif pour suspendre la facturation.
+        resume: Rétablir
+        resumed: Facturation rétablie pour cette plateforme.
+        status: Facturation
+        status_off: Inactive
+        status_on: Active
+        status_suspended: Suspendue
+        suspend: Suspendre
+        suspended: Facturation suspendue pour cette plateforme.
+        title: Plateformes hébergées
+      hosting_plan:
+        billing_link: 'Vendre sur cette plateforme : configuration de la facturation'
+        intro: Le forfait de cette plateforme chez %{host}, et la part utilisée.
+        manage: 'Les personnes qui paient ce forfait le gèrent chez %{host} : changement
+          de forfait, factures et demandes de remboursement.'
+        none: Cette plateforme n'a pas encore de forfait payant chez %{host}.
+        price: Prix
+        renews: Renouvellement le
+        see_plans: Voir les forfaits
+        title: Forfait et utilisation
+      hub:
+        access_count: 'Actifs : %{count}'
+        access_heading: Ce à quoi vous avez accès
+        add_on_buy: Ajouter
+        add_ons_heading: Options pour vos forfaits
+        add_ons_hint: Options ponctuelles pour les forfaits que vous avez déjà.
+        all_orders: Toutes les commandes
+        all_plans: Tous les forfaits
+        browse_plans: Voir les forfaits
+        credit_heading: Crédit en magasin
+        credit_none: Vous n’avez aucun crédit en magasin.
+        intro: Vos forfaits, commandes et crédit sur %{platform}.
+        orders_heading: Commandes récentes
+        orders_none: Vous n’avez passé aucune commande.
+        plans_heading: Forfaits actifs
+        plans_none: Vous n’avez aucun forfait actif.
+        renews: Renouvellement le %{date}
+        settings_addresses: Adresses de facturation
+        settings_heading: Paramètres de facturation
+        settings_notifications: Notifications de facturation
+        title: Facturation et forfaits
+        view_access: Voir mes accès
+        view_credit: Voir le crédit
+      notification_preferences:
+        always_hint: 'Ces avis demandent votre attention : ils sont toujours affichés
+          dans l''application et envoyés par courriel.'
+        always_title: Toujours envoyés
+        email_hint: Reçus, rappels de renouvellement, changements de forfait et décisions
+          de remboursement. Désactiver cette option n'arrête pas les avis urgents
+          ci-dessous.
+        email_label: M'envoyer les avis de facturation par courriel
+        intro: Choisissez quels avis de facturation sont aussi envoyés à votre courriel.
+          Ils apparaissent toujours dans l'application.
+        kinds:
+          cheque_bounced: Un chèque n'a pas été encaissé
+          grace_ending: Le délai supplémentaire de paiement se termine
+          hold_expiring: Une commande impayée va bientôt expirer
+          payment_action_required: Un paiement demande votre action
+          payment_failed: Un paiement a échoué
+          renewal_overdue: Un renouvellement est en retard
+        save: Enregistrer
+        saved: Paramètres de notification enregistrés.
+        title: Notifications de facturation
+      notifications:
+        agreement_reacceptance_needed:
+          buyer:
+            body: Les conditions de votre abonnement %{plan} ont changé. Acceptez-les
+              pour recevoir votre prochaine facture de renouvellement.
+            title: Veuillez examiner nos conditions mises à jour
+        amount_with_tax: "%{amount} (dont %{tax} de taxe)"
+        cheque_bounced:
+          buyer:
+            body: Le chèque de %{amount} n’a pas été encaissé; le paiement a donc
+              été annulé. Veuillez contacter le vendeur.
+            title: Un chèque pour la commande %{number} n’a pas été encaissé
+          seller:
+            body: Le chèque de %{amount} n’a pas été encaissé. Le paiement a été annulé.
+            title: Un chèque pour la commande %{number} n’a pas été encaissé
+        cheque_cleared:
+          body: Le chèque de %{amount} a été encaissé. Merci.
+          title: Votre chèque pour la commande %{number} a été encaissé
+        cheque_received:
+          body: Le vendeur a votre chèque et confirmera une fois qu’il sera encaissé.
+          title: Votre chèque pour la commande %{number} a été reçu
+        confirmation_reminder:
+          body: Un paiement de %{amount} par %{method} est en attente. Si vous l’avez
+            reçu, marquez-le comme reçu; sinon, vous pouvez le refuser.
+          title: La commande %{number} vous attend toujours
+        credit_granted:
+          holder:
+            body: Il est à vous pour acheter ce que %{platform} vend.
+            body_expiring: Il est à vous pour acheter ce que %{platform} vend, jusqu'au
+              %{expires}.
+            title: Vous avez %{amount} en crédit en magasin
+        dispute_opened:
+          body: Un acheteur a contesté un paiement pour la commande %{number}. Veuillez
+            l’examiner.
+          title: Un paiement a été contesté
+        dispute_resolved:
+          body: Le litige pour la commande %{number} a été réglé.
+          title: Un litige de paiement a été réglé
+        entitlement_granted:
+          buyer:
+            body: Ce que comprend votre forfait %{plan} est prêt à être utilisé. Consultez-le
+              dans Mon accès.
+            title: Votre accès %{plan} est actif
+        entitlement_lapsed:
+          buyer:
+            body: Ce que comprenait votre forfait %{plan} a été retiré, et rien de
+              ce que vous avez créé n’a été supprimé. Payez à nouveau pour le retrouver.
+            title: Votre accès %{plan} a pris fin
+        event_dead_lettered:
+          body: Un événement de facturation n’a pas pu être traité après plusieurs
+            essais. Veuillez l’examiner.
+          title: Un événement de facturation demande votre attention
+        grace_ending:
+          buyer:
+            body: Votre délai supplémentaire se termine le %{date}. Payez votre renouvellement
+              avant cette date pour garder votre abonnement.
+            title: Votre abonnement %{plan} est sur le point d’expirer
+        hold_expiring:
+          body: Nous gardons la commande %{number} pour vous, mais la réservation
+            se termine bientôt. Payez %{amount} par %{method} avant, sinon la commande
+            expirera.
+          title: Votre réservation de la commande %{number} se termine bientôt
+        order_cancelled:
+          buyer:
+            body: Rien n’a été débité.
+            title: La commande %{number} a été annulée
+          seller:
+            body: Une commande de %{amount} a été annulée avant d’être payée.
+            title: La commande %{number} a été annulée
+        order_expired:
+          buyer:
+            body: Elle n’a pas été payée à temps; ce qu’elle retenait a été libéré.
+            title: La commande %{number} a expiré
+          seller:
+            body: Une commande de %{amount} n’a pas été payée à temps et a expiré.
+            title: La commande %{number} a expiré
+        order_paid:
+          buyer:
+            body: Merci. Votre paiement de %{amount} a été reçu.
+            title: La commande %{number} est payée
+          seller:
+            body: Une commande de %{amount} a été payée.
+            title: La commande %{number} est payée
+        order_part_received:
+          buyer:
+            body: "%{received} sur %{amount} ont été reçus. Payez les %{left} restants
+              pour la terminer."
+            title: Un paiement a été reçu pour la commande %{number}
+          seller:
+            body: "%{received} d'une commande de %{amount} ont été reçus ; il reste
+              %{left} à payer."
+            title: Paiement partiel de la commande %{number}
+        order_partial_stalled:
+          buyer:
+            body: Elle est partiellement payée et reste ouverte. Payez les %{left}
+              restants quand vous le souhaitez.
+            title: La commande %{number} attend le solde
+          seller:
+            body: Une commande partiellement payée de %{amount} n'attend plus ses
+              parts impayées. Attendez le solde, ou remboursez les parts et annulez-la.
+            title: La commande %{number} est partiellement payée
+        order_placed:
+          buyer:
+            body: Nous la gardons pour vous. Payez %{amount} pour la terminer.
+            title: Votre commande %{number} a été passée
+          seller:
+            body: Une nouvelle commande de %{amount} attend son paiement.
+            title: Nouvelle commande %{number}
+        payment_action_required:
+          body: Votre banque doit vous demander de confirmer ce paiement avant qu’il
+            puisse aboutir.
+          title: Action requise pour payer la commande %{number}
+        payment_amount_mismatch:
+          body: Un paiement de la commande %{number} a été prélevé pour un montant
+            différent du total de la commande, %{amount}. Vérifiez le paiement, la
+            taxe et le processeur avant de vous y fier.
+          title: Le montant d'un paiement diffère de celui de sa commande
+        payment_claimed:
+          body: L’acheteur dit avoir envoyé %{amount} par %{method}. Vérifiez que
+            vous l’avez reçu, puis marquez-le comme reçu.
+          title: Paiement déclaré pour la commande %{number}
+        payment_confirmed:
+          body: Le vendeur a confirmé avoir reçu votre paiement de %{amount} par %{method}.
+            Merci.
+          title: Paiement reçu pour la commande %{number}
+        payment_failed:
+          body: Le paiement n’a pas abouti. Vérifiez vos informations de paiement
+            et réessayez.
+          title: Votre paiement pour la commande %{number} a échoué
+        payment_orphaned:
+          body: Un paiement de %{amount} a été reçu pour la commande %{number}, déjà
+            annulée. Il doit être remboursé; un remboursement a été enregistré comme
+            en attente.
+          title: Un paiement est arrivé pour une commande annulée
+        payment_place_gone:
+          buyer:
+            body: La commande avait expiré et ce qu’elle retenait n’est plus disponible.
+              Le vendeur vous contactera au sujet de votre paiement.
+            title: Votre paiement tardif pour la commande %{number} n’a pas pu être
+              pris en compte
+          seller:
+            body: La commande avait expiré et ce qu’elle retenait n’est plus disponible;
+              le paiement n’a donc pas été enregistré. Si vous avez été payé, rendez
+              l’argent.
+            title: Un paiement tardif n’a pas pu être pris en compte (commande %{number})
+        payment_rejected:
+          body: Le vendeur n’a pas accepté votre paiement par %{method}; la commande
+            a donc été annulée. Contactez le vendeur si vous pensez qu’il s’agit d’une
+            erreur.
+          title: Votre paiement pour la commande %{number} n’a pas été accepté
+        payment_succeeded:
+          body: Votre paiement de %{amount} a été reçu.
+          title: Reçu pour la commande %{number}
+        plan_sync_failed:
+          body: La synchronisation d’un plan a échoué. Ouvrez le plan pour réessayer.
+          title: Un plan n’a pas pu être envoyé au processeur de paiement
+        refund_failed:
+          body: Le processeur n’a pas pu effectuer un remboursement pour la commande
+            %{number}. L’acheteur attend toujours son argent; veuillez vérifier.
+          title: Un remboursement n’a pas abouti
+        refund_issued:
+          buyer:
+            body: Un remboursement a été émis pour votre commande.
+            title: Remboursement de la commande %{number}
+          seller:
+            body: Un remboursement a été émis pour une commande.
+            title: Remboursement émis pour la commande %{number}
+        refund_recorded:
+          body: Le vendeur a enregistré un remboursement pour votre commande.
+          title: Remboursement de la commande %{number}
+        refund_request_decided:
+          body: Le vendeur a répondu à votre demande de remboursement. Ouvrez la commande
+            pour lire la réponse.
+          title: Votre demande de remboursement pour la commande %{number} a reçu
+            une réponse
+        refund_requested:
+          buyer:
+            body: Votre demande de remboursement a été envoyée au vendeur.
+            title: Demande de remboursement pour la commande %{number}
+          seller:
+            body: Un acheteur a demandé un remboursement. Ouvrez la demande pour décider.
+            title: Remboursement demandé pour la commande %{number}
+        renewal_credit_insufficient:
+          buyer:
+            body: Votre renouvellement de %{plan} de %{amount} se paie avec votre
+              crédit en magasin et vous n’en avez pas assez. Ajoutez du crédit et
+              nous réessaierons chaque jour.
+            title: Pas assez de crédit en magasin pour votre renouvellement
+        renewal_invoice_issued:
+          buyer:
+            body: Votre renouvellement de %{plan} de %{amount} est prêt à payer. Votre
+              période en cours se termine le %{date}.
+            title: Facture de renouvellement %{number}
+        renewal_overdue:
+          buyer:
+            body: Votre période est terminée et le renouvellement n’a pas été payé.
+              Tout continue de fonctionner jusqu’au %{date} ; payez avant cette date
+              pour rester abonné.
+            title: Votre renouvellement de %{plan} est en retard
+          seller:
+            body: Le renouvellement d’un abonné n’a pas été payé à temps. Il expire
+              le %{date} sauf s’il est payé ou prolongé.
+            title: Un abonnement %{plan} est en retard
+        renewal_reminder:
+          buyer:
+            body: Votre renouvellement de %{plan} de %{amount} n’est toujours pas
+              payé. Votre période en cours se termine le %{date}.
+            title: 'Rappel : le renouvellement %{number} n’est pas payé'
+        settings_changed:
+          body: Quelqu’un a modifié la façon dont les acheteurs paient (%{method}).
+            Si vous ne vous y attendiez pas, vérifiez-le maintenant.
+          title: Un mode de paiement a été modifié
+        subscription_canceled:
+          buyer:
+            body: Votre abonnement a été annulé.
+            title: Votre abonnement a été annulé
+          seller:
+            body: Un abonnement a été annulé.
+            title: Un abonnement a été annulé
+        subscription_renewing:
+          body: Votre abonnement sera renouvelé sous peu. Vous pouvez le gérer depuis
+            votre compte.
+          title: Votre abonnement sera bientôt renouvelé
+        trial_ended:
+          body: Votre période d’essai est terminée.
+          title: Votre période d’essai est terminée
+        trial_ending:
+          body: Votre période d’essai est sur le point de se terminer.
+          title: Votre période d’essai se termine bientôt
+      offline_payments:
+        amount_to_pay: Payez %{amount}.
+        bounce_confirm: Marquer ce chèque comme refusé? Tout ce qu’il a accordé sera
+          annulé.
+        buyer_says_sent: L’acheteur dit l’avoir envoyé
+        claim: Je l’ai envoyé
+        claim_again: Mettre à jour ma note
+        claim_hint: Dire au vendeur que vous l’avez envoyé est facultatif. Il peut
+          confirmer votre paiement dans tous les cas.
+        claimed: Le vendeur a été informé que vous l’avez envoyé.
+        claimed_note: Vous l’avez dit au vendeur le %{date}.
+        clear_confirm: Marquer le chèque de la commande %{number} de %{buyer} comme
+          encaissé? Son paiement sera compté comme reçu.
+        disclosure_cash_in_person: L’argent comptant se remet en personne. Notez quand
+          et à qui.
+        disclosure_cheque_clearing: Un chèque peut prendre des jours à être encaissé
+          et peut être refusé. L’accès peut ne commencer qu’une fois le chèque encaissé.
+        disclosure_etransfer_canada: Interac e-Transfer nécessite un compte bancaire
+          canadien et se fait uniquement en dollars canadiens.
+        disclosure_heading: 'Avant de payer, veuillez comprendre :'
+        disclosure_hold: Nous gardons votre commande pendant %{hours} heures. Si le
+          vendeur n’a pas confirmé d’ici là, elle expire.
+        disclosure_no_tracking: La plateforme ne peut ni voir, ni suivre, ni protéger
+          ce paiement; il n’y a ni reçu automatique, ni remboursement, ni processus
+          de contestation.
+        disclosure_outside: Vous payez directement le vendeur, en dehors de cette
+          plateforme.
+        disclosure_seller_confirms: Votre commande n’est payée que lorsque le vendeur
+          confirme avoir reçu votre paiement.
+        done:
+          bounce: Marqué comme refusé. Ce qu’il avait accordé a été annulé.
+          clear: Marqué comme encaissé.
+          receive: Marqué comme reçu. L’acheteur a été informé.
+          reject: Refusé. La commande a été annulée et l’acheteur a été informé.
+        fee_uncollected: 'Non perçus : la plateforme ne peut pas prélever de frais
+          sur un paiement qu’elle ne voit jamais.'
+        field_buyer_reference: Note de l’acheteur
+        field_claimed: L’acheteur dit l’avoir envoyé
+        field_fee: Frais de la plateforme
+        field_in_person: Vendu en personne
+        heading: Payer par %{method}
+        hold_until: "(Nous gardons votre commande jusqu’au %{date}.)"
+        in_person_note: Les ententes ont été enregistrées comme acceptées en personne
+          avec vous.
+        instructions_heading: Comment payer
+        mark_bounced: Marquer comme refusé
+        mark_cheque_received: Marquer le chèque comme reçu
+        mark_cleared: Marquer comme encaissé
+        mark_received: Marquer comme reçu
+        not_claimed: Non (vous pouvez quand même confirmer)
+        queue_empty: Rien ne vous attend.
+        queue_intro: Paiements effectués en dehors de la plateforme. Marquez-en un
+          comme reçu quand l’argent vous parvient, que l’acheteur dise ou non l’avoir
+          envoyé.
+        queue_link: Paiements qui vous attendent
+        queue_title: Paiements qui vous attendent
+        receive_cheque_confirm: Marquer le chèque de la commande %{number} de %{buyer}
+          comme reçu (%{amount})? Marquez-le encaissé une fois payé par la banque.
+        receive_confirm: Marquer la commande %{number} de %{buyer} comme reçue (%{amount})?
+          La commande sera réglée et l’acheteur obtiendra l’accès.
+        receive_hint: Marquez ceci comme reçu quand l’argent vous est parvenu. Vous
+          n’avez pas à attendre que l’acheteur dise l’avoir envoyé.
+        received_on_label: Date de réception (facultatif)
+        reference_label: Une note pour le vendeur (facultatif)
+        refused:
+          invalid: Cela n’a pas pu être enregistré. Vérifiez ce que vous avez saisi.
+          not_allowed: Ce paiement ne peut plus être modifié ainsi.
+          place_gone: La commande avait expiré et ce qu’elle retenait n’est plus disponible;
+            rien n’a été enregistré. Si vous avez été payé, rendez l’argent.
+          refused: Cela n’a pas pu être fait.
+          self_confirmation: Vous ne pouvez pas confirmer un paiement pour votre propre
+            achat.
+          too_many_claims: Cela a été envoyé trop de fois.
+        reject: Non reçu, refuser
+        reject_confirm: Rejeter le paiement de la commande %{number} de %{buyer}?
+          La commande sera annulée et l’acheteur en sera informé.
+        reject_reason_label: Si vous ne l’avez pas reçu, dites pourquoi (l’acheteur
+          le verra)
+        rejection_reason: 'Le vendeur a indiqué : %{reason}'
+        seller_heading: Paiement par %{method}
+        seller_reference_label: Votre référence (facultatif)
+        status_awaiting: En attente de paiement
+        status_bounced: Chèque refusé
+        status_cancelled: Annulé
+        status_claimed: Envoyé, en attente du vendeur
+        status_cleared: Chèque encaissé
+        status_confirmed: Confirmé
+        status_expired: Réservation expirée
+        status_message_awaiting: Votre commande est réservée pendant que vous payez.
+          Suivez les instructions ci-dessous; le vendeur confirmera quand il aura
+          reçu votre paiement.
+        status_message_bounced: Votre chèque n’a pas été encaissé et le paiement a
+          été annulé. Veuillez contacter le vendeur.
+        status_message_cancelled: Cette commande a été annulée.
+        status_message_claimed: Vous avez dit au vendeur que vous l’avez envoyé. Le
+          vendeur confirmera quand il aura reçu votre paiement.
+        status_message_cleared: Votre chèque a été encaissé. Merci.
+        status_message_confirmed: Le vendeur a confirmé votre paiement. Merci.
+        status_message_expired: 'La réservation de votre commande a expiré. Si vous
+          avez déjà payé, dites-le au vendeur ci-dessous : il peut encore confirmer
+          votre paiement.'
+        status_message_received: Le vendeur a votre chèque et confirmera une fois
+          qu’il sera encaissé.
+        status_message_rejected: Le vendeur n’a pas accepté ce paiement; la commande
+          a donc été annulée.
+        status_received: Chèque reçu
+        status_rejected: Non accepté
+        too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
+          quand il aura reçu votre paiement.
+      order_documents:
+        already_in_language: Cette commande est déjà dans cette langue.
+        regenerated: La facture et le reçu ont été refaits en %{language}.
+        unknown_locale: Cette langue n'est pas disponible.
+      order_payments:
+        added: Le paiement a été ajouté. Suivez les instructions ci-dessous pour le
+          terminer.
+        paid: Le paiement a été effectué.
+        refused: Ce paiement n'a pas pu être ajouté. Vérifiez le montant et le mode
+          de paiement, puis réessayez.
+      order_summary:
+        included: incluse dans le prix
+        registration: "%{labels}: %{number}"
+        registrations: Numéros d'inscription
+        tax_on: "%{label} (%{rate}) sur %{base}"
+        taxed: Taxé
+      orders:
+        accepted_by: Acceptée par %{name} le %{date}
+        add_payment_amount: Montant (laissez vide pour payer le solde)
+        add_payment_btn: Ajouter le paiement
+        add_payment_cap: jusqu'à %{amount}
+        add_payment_heading: Payer le solde ou ajouter un paiement
+        add_payment_hint: Il reste %{balance} à payer. Payez tout d'une façon, ou
+          une partie maintenant et le reste autrement.
+        add_payment_method: Payer par
+        agreements_heading: Ententes acceptées
+        document_details: PDF, %{size}, généré le %{date}
+        document_language: Langue des documents
+        download_invoice: Télécharger la facture
+        download_receipt: Télécharger le reçu
+        field_amount: Montant
+        field_balance: Reste à payer
+        field_buyer: Acheteur
+        field_expires: À payer avant
+        field_item: Article
+        field_method: Mode
+        field_number: Commande
+        field_paid: Payé
+        field_placed: Passée le
+        field_purpose: Pour
+        field_quantity: Quantité
+        field_refund_date: Date
+        field_status: État
+        field_subtotal: Sous-total
+        field_tax: Taxe
+        field_total: Total
+        filter_any: Tous
+        filter_apply: Afficher
+        filter_clear: Effacer les filtres
+        filter_status: Statut
+        filter_year: Année
+        index_title: Mes commandes
+        lines_heading: Ce qui a été commandé
+        no_matching_orders: Aucune commande ne correspond à ces filtres.
+        no_orders: Vous n'avez pas encore de commande.
+        no_payments: Aucun paiement n'a encore été effectué.
+        no_sales: Il n'y a pas encore de commande.
+        order_number: Commande %{number}
+        pay_button: Payer maintenant
+        pay_heading: Payer %{amount}
+        pay_hint: Vous paierez sur la page sécurisée du fournisseur de paiement et
+          reviendrez ici.
+        pay_processing: Votre paiement est en cours de traitement. Nous vous dirons
+          quand il sera confirmé.
+        pay_unavailable: Ce paiement ne peut pas être démarré pour le moment. Veuillez
+          réessayer plus tard.
+        payment_status_cancelled: Annulé
+        payment_status_failed: Échoué
+        payment_status_partially_refunded: Partiellement remboursé
+        payment_status_pending: En attente
+        payment_status_processing: En cours de traitement
+        payment_status_refunded: Remboursé
+        payment_status_succeeded: Reçu
+        payments_heading: Paiements
+        placed_by: Passée par %{name}
+        purpose_exchange: Échange
+        purpose_one_time: Achat unique
+        purpose_subscription: Abonnement ou adhésion
+        purpose_ticket: Billets d'événement
+        refund_includes_tax: dont %{tax} de taxe
+        refund_status_failed: Échoué
+        refund_status_pending: En attente
+        refund_status_recorded: Enregistré par le vendeur
+        refund_status_succeeded: Remboursé
+        refunded_total: 'Remboursé : %{amount}'
+        refunds_caption: Argent remis pour la commande %{number}
+        refunds_heading: Remboursements
+        regenerate_documents: Refaire
+        return_paid: Merci. Votre paiement a été reçu.
+        return_pending: Merci. Nous confirmons votre paiement et vous le dirons dès
+          que ce sera fait.
+        sales_intro: Les commandes pour ce que vend cette plateforme, et où en est
+          chaque paiement.
+        sales_title: Ventes
+        status_awaiting_payment: En attente de paiement
+        status_cancelled: Annulée
+        status_draft: Brouillon
+        status_expired: Expirée
+        status_paid: Payée
+        status_partially_paid: Partiellement payée
+        status_partially_refunded: Partiellement remboursée
+        status_refunded: Remboursée
+      plan_defaults:
+        community_beneficiary_label: Acces communautaire
+        hosted_beneficiary_label: Acces heberge
+        one_time_participant_summary: Contribution unique a l'hebergement
+        personal_beneficiary_label: Acces personnel
+        recurring_participant_summary: Acces heberge continu et soutien de stewardship
+      plan_grants:
+        add: Ajouter
+        add_feature: Accès à une fonctionnalité
+        add_quota: Plus d’un quota
+        add_role: Un rôle
+        added: Ajouté au forfait.
+        amount_hint: Dans l’unité du quota (octets pour le stockage, jetons pour l’IA).
+        field_amount: Quantité supplémentaire
+        field_community: Communauté (si une communauté)
+        field_feature: Fonctionnalité
+        field_level: Niveau d’accès
+        field_quota: Quota
+        field_role: Rôle
+        field_where: Où
+        intro: Les personnes qui paient ce forfait les obtiennent tant qu’il est payé.
+          À l’expiration, seul ce que le forfait a donné est retiré ; les rôles et
+          accès déjà détenus restent, et rien de ce qui a été créé n’est supprimé.
+        none: Ce forfait ne comprend encore rien.
+        place_a_community: Une communauté
+        place_community: la communauté %{name}
+        place_platform: La plateforme
+        place_unknown: une communauté qui n’existe plus
+        refused: Cela n’a pas pu être ajouté. Vérifiez les choix ; un rôle qui peut
+          gérer des éléments ne peut pas être donné par un forfait.
+        remove: Retirer
+        remove_confirm: Retirer ceci du forfait ? Les personnes qui l’ont le perdent,
+          sauf si elles l’avaient déjà avant.
+        removed: Retiré du forfait.
+        role_hint: Seuls les rôles qui ne peuvent pas gérer sont proposés.
+        summary_feature: Accès à %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} de plus pour %{quota}"
+        summary_role: Le rôle %{role} dans %{where}
+        title: Ce que comprend ce forfait
+      plans:
+        actions_heading: Actions
+        add_on_targets_hint: Utilisé seulement pour une option. Cochez les forfaits
+          avec lesquels elle est proposée et dont les titulaires peuvent l'acheter
+          seule plus tard. Ne cochez rien pour la proposer avec tous les forfaits.
+        add_on_targets_legend: Forfaits que cette option prolonge
+        audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
+          une ou les deux pour le limiter : toute personne de l’un des types cochés
+          peut le voir et l’acheter.'
+        audience_legend: Qui peut voir et acheter ce forfait
+        beneficiary_placeholder: Accès hébergé
+        benefits_placeholder: |-
+          Accès communautaire hébergé
+          Soutien continu à l'intendance
+        change_price: Changer le prix
+        create_submit: Creer le plan
+        created: Plan de facturation cree avec succes.
+        deactivate_confirm: Desactiver ce plan ? Les abonnes existants ne seront pas
+          affectes.
+        edit_title: Modifier le plan de facturation
+        field_accepted_payment_methods: Accepter aussi
+        field_accepted_payment_methods_hint: Modes de paiement en dehors d'un processeur
+          de paiement. Chacun doit encore être activé pour le vendeur avant que les
+          acheteurs puissent l'utiliser.
+        field_active: Actif (visible pour les abonnes)
+        field_add_on: Option seulement
+        field_add_on_hint: Vendue uniquement en supplément sur la commande d'un autre
+          forfait, jamais seule. Paiement unique, sans accès inclus.
+        field_amount: Montant
+        field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
+          Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
+          entiers.
+        field_beneficiary_label: Etiquette du beneficiaire
+        field_billing_interval: Intervalle de facturation
+        field_community_capacity_tier: Niveau de capacite
+        field_currency: Devise
+        field_description: Description
+        field_eligible_owner_types: Eligible pour
+        field_grace_days: Jours supplémentaires en cas d’impayé
+        field_grace_days_hint: Tout continue de fonctionner pendant ce délai après
+          une période impayée. 0 signifie aucun. Le contenu n’est jamais supprimé.
+        field_hosted_access_level: Niveau d''acces heberge
+        field_identifier: Identifiant
+        field_identifier_hint: Cle unique lisible par machine. Ne peut pas etre modifiee
+          apres la creation.
+        field_interval_count: Durée de la période de facturation
+        field_listed: Afficher dans le catalogue public
+        field_listed_hint: Présente ce forfait à tout le monde, avec un bouton pour
+          l’acheter. Laissez décoché pour ne le vendre que par lien.
+        field_name: Nom
+        field_participant_benefits: Avantages
+        field_participant_benefits_hint: Un avantage par ligne.
+        field_participant_summary: Resume pour les participants
+        field_price: Prix existant
+        field_price_hint: Choisissez un prix qui existe déjà dans votre compte du
+          processeur de paiement. Son montant, sa devise, son intervalle et son produit
+          sont copiés depuis le processeur.
+        field_pricing_tier: Niveau tarifaire
+        field_pricing_tier_hint: Les niveaux solidaires permettent aux plus petites
+          cooperatives d''acceder a la plateforme a cout reduit.
+        field_processor: Processeur de paiement
+        field_processor_hint: Le processeur de paiement en ligne qui détient ce prix.
+          Laissez vide pour un plan payé uniquement par les modes ci-dessous.
+        field_processor_price_id: ID de prix du processeur
+        field_processor_price_id_hint: Depuis le tableau de bord de votre processeur
+          de paiement. Ne peut pas être modifié après la création.
+        field_processor_product_id: Produit
+        field_processor_product_id_hint: Choisissez un produit existant, ou laissez
+          vide pour en créer un nouveau dans votre processeur de paiement.
+        field_renewal_lead_days: Facturer autant de jours à l’avance
+        field_renewal_lead_days_hint: Combien de temps avant la fin d’une période
+          sa facture de renouvellement est créée.
+        field_restricted_to_members: Réservé aux membres
+        field_restricted_to_members_hint: Seulement les personnes ayant un forfait
+          d’adhésion actif.
+        field_restricted_to_subscribers: Réservé aux abonnés
+        field_restricted_to_subscribers_hint: Seulement les personnes ayant un abonnement
+          actif.
+        field_solidarity_description: Description de solidarite
+        field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
+          a qui ce niveau s''adresse.
+        field_support_tier: Niveau de support
+        hosted_access_placeholder: Standard
+        identifier_placeholder: p. ex. hosted_stewardship_monthly
+        index_title: Plans de facturation
+        interval_month: Mensuel
+        interval_one_time: Unique
+        interval_year: Annuel
+        locked_label: Défini à la création du prix
+        locked_note: "%{fields} ne peuvent pas être modifiés ici : le processeur de
+          paiement les fixe à la création du prix. Pour utiliser un autre prix, créez-en
+          un nouveau."
+        lookup_search: Rechercher…
+        lookup_unavailable: Impossible de joindre le processeur de paiement. Réessayez
+          dans un instant.
+        metadata_section_hint: Affiche sur les pages de facturation et les cartes
+          de droits
+        metadata_section_title: Metadonnees du plan
+        mode_create: Créer dans le processeur de paiement
+        mode_heading: Comment voulez-vous ajouter ce plan ?
+        mode_link: Lier un prix existant
+        new_plan: Nouveau plan
+        new_title: Nouveau plan de facturation
+        no_plans: Aucun plan de facturation n''a encore ete cree.
+        owner_type_community: Communaute
+        owner_type_person: Personne
+        payment_method_names:
+          cash: Argent comptant
+          cheque: Chèque
+          etransfer: Virement Interac
+          store_credit: Crédit en magasin
+        price_section_title: Prix
+        pricing_tier_solidarity_medium: Solidarite — Moyenne
+        pricing_tier_solidarity_premium: Prime de solidarite
+        pricing_tier_solidarity_small: Solidarite — Petite
+        pricing_tier_standard: Standard
+        processor_none: Aucun processeur en ligne
+        product_none: Créer un nouveau produit
+        renewal_section_hint: Pour les abonnés qui paient par un moyen autre qu’un
+          processeur de paiement. Un processeur renouvelle ses propres abonnements.
+        renewal_section_title: Renouvellements
+        retry_sync: Relancer la synchronisation
+        select_required: Veuillez choisir une valeur.
+        show_title: Plan de facturation
+        snapshot_drift: 'Différent chez le processeur de paiement : %{fields}.'
+        snapshot_loading: Chargement des détails du processeur de paiement…
+        snapshot_not_found: Ce prix est introuvable chez le processeur de paiement.
+        snapshot_not_linked: Ce plan n'est pas encore lié à un prix du processeur
+          de paiement.
+        snapshot_title: Processeur de paiement (%{processor})
+        snapshot_unavailable: Impossible de joindre le processeur de paiement.
+        solidarity_placeholder: p. ex. Pour les coopératives de moins de 100 k$ de
+          revenus annuels
+        status_active: Actif
+        status_inactive: Inactif
+        support_tier_placeholder: Communautaire
+        sync_errors:
+          not_configured: La facturation n'est pas configurée pour cette plateforme
+            et ce processeur.
+          processor_error: Le processeur de paiement n'a pas accepté ce plan. Vérifiez
+            les détails, puis relancez la synchronisation.
+          processor_unavailable: Le processeur de paiement est injoignable. Utilisez
+            « Relancer la synchronisation » pour réessayer.
+        sync_requested: La synchronisation avec le processeur de paiement a été demandée.
+        sync_status_failed: Échec de la synchronisation
+        sync_status_heading: État de la synchronisation
+        sync_status_pending: Synchronisation en attente
+        sync_status_synced: Synchronisé
+        sync_unsupported: Ce processeur de paiement ne prend pas en charge la synchronisation
+          des plans.
+        toggle_activate: Activer
+        toggle_deactivate: Desactiver
+        update_submit: Mettre a jour le plan
+        updated: Plan de facturation mis a jour avec succes.
+      processor_settings:
+        acknowledge_label: Je comprends et j'accepte ces limites.
+        acknowledged_on: Vous avez accepté ces limites le %{date}.
+        available_anywhere: Partout
+        available_only_in: Seulement en %{countries} (%{currencies})
+        disclosure_country: Il ne fonctionne que dans %{countries}, en %{currencies}.
+        disclosure_credit_expires: Chaque montant de crédit peut avoir sa propre date
+          d'expiration ; le crédit qui expire en premier est dépensé en premier.
+        disclosure_credit_not_cash: Le crédit n'est pas de l'argent comptant. Il ne
+          peut être ni retiré ni envoyé à quelqu'un, et il paie une commande en entier
+          ou pas du tout.
+        disclosure_credit_platform_only: 'Le crédit est l''argent de la plateforme
+          : il ne paie que ce que la plateforme vend elle-même, jamais pour un vendeur.'
+        disclosure_credit_refund: Les remboursements d'une commande payée avec du
+          crédit retournent au crédit de l'acheteur, pas à sa banque.
+        disclosure_no_fee: Aucuns frais d'application ne peuvent être perçus sur ces
+          paiements.
+        disclosure_no_protection: L'acheteur n'a aucune protection contre les rétrofacturations
+          ou les litiges, et vous assumez le risque d'un paiement qui n'arrive jamais.
+        disclosure_reconcile: Vous les rapprochez à la main. Il n'y a ni reçus ni
+          remboursements automatiques.
+        disclosure_title: Avant de l’activer
+        disclosure_untracked: 'Le paiement se fait en dehors de cette plateforme.
+          Il ne peut pas être suivi : vous confirmez chacun vous-même.'
+        field_enabled: Accepter ce mode de paiement
+        field_grant_on: Donner l'accès quand le paiement est
+        field_grant_on_hint: Un chèque peut être refusé. Attendre son encaissement
+          est plus sûr.
+        field_hold_hours: Garder une commande impayée pendant (heures)
+        field_hold_hours_hint: Passé ce délai sans paiement, la commande expire et
+          ce qu'elle retenait est libéré.
+        field_method: Mode
+        field_purposes: Accepter pour
+        field_status: État
+        field_where: Où il fonctionne
+        fields:
+          cash:
+            instructions: Où et quand remettre l'argent comptant
+          cheque:
+            address: Où envoyer ou déposer le chèque
+            instructions: Autre chose que les acheteurs doivent savoir
+            payee_name: Libeller le chèque à l’ordre de
+          etransfer:
+            instructions: Référence ou autres instructions
+            recipient_email: Envoyer le virement Interac à ce courriel
+            recipient_phone: ou à ce numéro de téléphone
+        grant_on_cleared: encaissé
+        grant_on_confirmed: confirmé
+        grant_on_received: reçu
+        how_to_pay: Ce que les acheteurs voient
+        how_to_pay_hint: Montré à un acheteur seulement sur sa propre commande, après
+          qu'il a accepté les conditions. Stocké chiffré et jamais mis dans un courriel.
+        index_intro: Façons d'être payé en dehors d'un processeur de paiement. Chacune
+          est installée pour toutes les plateformes, mais ne fonctionne qu'une fois
+          activée.
+        index_title: Modes de paiement
+        purpose_exchange: Échanges
+        purpose_one_time: Achats uniques
+        purpose_subscription: Abonnements et adhésions
+        purpose_ticket: Billets d'événement
+        saved: Mode de paiement enregistré.
+        status_disabled: Désactivé
+        status_enabled: Activé
+        status_not_set_up: Non configuré
+      promotions:
+        activate: Activer
+        always_open: Toujours
+        back_to_list: Retour aux promotions
+        code_hint: Lettres et chiffres, avec ou sans tirets.
+        code_label: Vous avez un code promotionnel ?
+        create: Créer le code
+        created_title: Votre code promotionnel
+        created_warning: Copiez ce code maintenant. Il n'est affiché qu'une fois et
+          ne pourra plus être consulté.
+        credit_days_hint: Laissez vide pour un crédit qui n'expire pas.
+        deactivate: Désactiver
+        field_amount: Crédit
+        field_credit_days: Durée du crédit (jours)
+        field_ends: Ferme
+        field_max: Nombre maximal de personnes
+        field_name: Nom
+        field_new_members: Seulement pour les personnes qui n'ont encore rien payé
+          ici
+        field_purposes: Le crédit peut payer
+        field_starts: Ouvre
+        field_status: Statut
+        field_used: Utilisé
+        field_window: Ouvert
+        index_intro: Un code donne du crédit en magasin quand quelqu'un l'utilise.
+          Les codes ne sont affichés qu'une fois, à leur création, et ne peuvent plus
+          être consultés.
+        index_title: Codes promotionnels
+        invalid: Ce code n'est pas valide.
+        max_hint: Laissez vide pour aucune limite. Chaque personne ne peut utiliser
+          un code qu'une fois.
+        name_hint: Pour vos dossiers. Les gens ne le voient pas, seulement le montant.
+        new_promotion: Nouvelle promotion
+        none: Il n'y a pas encore de promotions.
+        purposes_hint: Ne cochez rien pour tout ce que la plateforme vend.
+        redeem: Utiliser
+        redeemed: Code accepté. Votre crédit a été ajouté.
+        status_ended: Terminé
+        status_off: Inactif
+        status_on: Actif
+        status_scheduled: Pas encore ouvert
+        status_used_up: Épuisé
+        switched: Promotion mise à jour.
+        usage_of: "%{used} sur %{max}"
+      readiness:
+        check_agreements: Les ententes d’achat sont en vigueur pour %{purpose}.
+        check_configured: La facturation est activée et les coordonnées de votre organisation
+          sont définies.
+        check_method_enabled: Au moins un mode de paiement est activé.
+        detail_no_agreement: Aucune entente n’est encore exigée pour ce type d’achat.
+        detail_not_in_force: Une entente est encore un brouillon ou retirée. Relisez
+          son texte et passez-la à active.
+        done: 'Fait :'
+        not_ready: Pas prêt
+        plant_agreements: Planter les accords d'achat en brouillon
+        ready: Prêt
+        title: Prêt à vendre ?
+        todo: 'Reste à faire :'
+      refund_requests:
+        accept_policy: Lisez et acceptez la politique de remboursement avant d'envoyer
+          votre demande.
+        all: Toutes
+        already_decided: Cette demande a déjà fait l'objet d'une décision.
+        already_pending: Une demande de remboursement est déjà en attente sur cette
+          commande.
+        amount_hint: Laissez vide pour demander tout ce qui peut être remboursé.
+        amount_invalid: Ce montant dépasse ce qui peut encore être remboursé, ou n'est
+          pas positif.
+        amount_label: Montant demandé
+        approve: Approuver et rembourser
+        approved_amount: 'Approuvé : %{amount}'
+        approved_hint: Laissez vide pour rembourser ce qui est demandé (ou tout ce
+          qui est possible).
+        approved_label: Montant à rembourser
+        ask_link: Demander un remboursement
+        asked: Demandé
+        decided: Décision enregistrée. L'acheteur a été informé.
+        decline: Refuser
+        decline_needs_note: Expliquez pourquoi la demande est refusée afin que l'acheteur
+          puisse le lire.
+        details_label: Ce que le vendeur doit savoir
+        everything: Tout ce qui est possible
+        heading: Demandes de remboursement
+        new_intro: Dites au vendeur pourquoi vous voulez être remboursé. Il examine
+          la demande et vous répond ici. Seuls les paiements que le vendeur gère lui-même,
+          comme l'argent comptant, le chèque, le virement Interac ou le crédit en
+          magasin, peuvent être demandés ainsi.
+        new_title: Demander un remboursement pour la commande %{number}
+        none: Il n'y a aucune demande de remboursement.
+        order_link: Commande
+        policy_accept: 'J''ai lu et j''accepte : %{title}'
+        policy_accepted: Vous avez déjà accepté la politique de remboursement actuelle.
+        policy_view: Lire la politique de remboursement
+        queue_intro: Acheteurs qui demandent un remboursement sur ce que cette plateforme
+          vend. Ouvrez une demande pour l'approuver, l'approuver en partie ou la refuser.
+        queue_link: Demandes de remboursement
+        queue_title: Demandes de remboursement
+        reason_label: Motif
+        reasons:
+          cancelled_event: L'événement a été annulé
+          duplicate: J'ai payé deux fois
+          error: Il y a eu une erreur
+          other: Autre chose
+          requested_by_buyer: J'ai changé d'avis
+        refundable: Jusqu'à %{amount} peuvent encore être remboursés.
+        reply_hint: L'acheteur la lit. Obligatoire si vous refusez.
+        reply_label: Réponse à l'acheteur
+        sent: Votre demande de remboursement a été envoyée. Vous serez informé de
+          la décision du vendeur.
+        show_title: Demande de remboursement pour la commande %{number}
+        statuses:
+          approved: Approuvée
+          cancelled: Retirée
+          declined: Refusée
+          partially_approved: Approuvée en partie
+          pending: En attente
+        submit: Envoyer la demande
+        withdraw: Retirer la demande
+        withdrawn: Votre demande de remboursement a été retirée.
+      requirements:
+        add: Ajouter
+        add_title: Ajouter une exigence
+        any: Tous
+        applies_to_everything: Tout ce que vend la plateforme
+        created: Exigence ajoutée.
+        field_agreement: Entente
+        field_applies_to: S’applique à
+        field_mode: Application
+        field_payment_method: Mode de paiement
+        field_purpose: Type d’achat
+        index_intro: Choisissez les ententes qu’un acheteur doit accepter avant de
+          payer. Les valeurs par défaut s’appliquent à tout; un plan ou un mode de
+          paiement peut ajouter les siennes.
+        index_title: Conditions d’achat
+        mode_additional: Ajoutée aux valeurs par défaut
+        mode_replaces_default: Remplace les valeurs par défaut
+        none: Aucune entente n’est encore exigée. Rien ne peut être vendu tant qu’il
+          n’y en a pas.
+        remove: Retirer
+        removed: Exigence retirée.
+        state_active: En vigueur
+        state_draft: Brouillon
+        state_retired: Retirée
+      sales:
+        cancel_btn: Annuler cette commande
+        cancel_confirm: Annuler cette commande ? Ce qu'elle retenait sera libéré.
+        cancel_refused: La commande ne peut pas être annulée tant qu'il reste de l'argent
+          versé. Rendez d'abord chaque paiement.
+        cancelled: La commande a été annulée et ce qu'elle retenait a été libéré.
+        credit_refund_confirm: Retourner %{amount} au crédit de %{buyer} pour la commande
+          %{number}? Cette action est irréversible.
+        credit_refund_heading: Retourner au crédit en magasin
+        credit_refund_hint: 'L''acheteur a payé avec du crédit en magasin : l''argent
+          retourne aussitôt sur son solde de crédit. Il ne peut pas être versé en
+          espèces.'
+        credit_refund_submit: Retourner au crédit
+        refund_amount_label: Montant remboursé (jusqu’à %{max}; vide pour tout)
+        refund_confirm: Enregistrer un remboursement de %{amount} pour la commande
+          %{number} à %{buyer}? Cette action est irréversible.
+        refund_heading: Enregistrer un remboursement
+        refund_hint: La plateforme ne peut pas déplacer cet argent. Enregistrez-le
+          ici une fois rendu.
+        refund_reason_bounced: Chèque refusé
+        refund_reason_cancelled_event: Événement annulé
+        refund_reason_cancelled_order: Commande annulée
+        refund_reason_duplicate: Payé deux fois
+        refund_reason_error: Erreur
+        refund_reason_label: Motif
+        refund_reason_other: Autre
+        refund_reason_requested_by_buyer: Demandé par l’acheteur
+        refund_record: Enregistrer le remboursement
+        refund_recorded: Remboursement enregistré. L’acheteur a été informé.
+        refund_refused: Ce remboursement n’a pas pu être enregistré. Vérifiez le montant.
+        refund_tax_hint: Cette commande comprend %{tax} de taxe sur %{total}. Chaque
+          remboursement comporte sa part de cette taxe, distincte du montant net.
+        return_credit_btn: Rendre les paiements en crédit
+        return_heading: Rendre les paiements
+        return_hint: Cette commande est partiellement payée et reste ouverte pour
+          que l'acheteur règle les %{balance} restants. Pour l'annuler, rendez chaque
+          paiement puis annulez.
+        return_kind_credit: rendu à son crédit en magasin
+        return_kind_manual: vous le rendez, puis l'enregistrez dans le formulaire
+          de remboursement
+        return_kind_processor: remboursez-le auprès du processeur de paiement
+        return_refused: Les paiements n'ont pas pu être rendus. Vérifiez la commande
+          et réessayez.
+        returned: Le crédit a été rendu à l'acheteur.
+      subscribers:
+        cancel_at_end: Annuler à la fin de la période
+        cancel_now: Annuler maintenant
+        cancel_now_confirm: Mettre fin à cet abonnement maintenant ? Rien de ce qui
+          a été payé n’est remboursé.
+        cancelled: L’abonnement est annulé.
+        extend: Accorder plus de temps
+        extend_days: Accorder plus de jours avant l’expiration
+        field_subscriber: Abonné
+        filter_active: Actifs
+        filter_all: Tous
+        filter_ended: Terminés
+        filter_lapsed: Expirés
+        filter_overdue: En retard
+        filters: Filtrer les abonnés
+        grace_extended: Délai supplémentaire accordé.
+        index_intro: 'Personnes dont Community Engine renouvelle les abonnements.
+          Leur état suit Pay : en retard tant qu’une facture est impayée pendant le
+          délai supplémentaire, expiré ensuite.'
+        index_title: Abonnés
+        move_to_current_price: Passer au prix actuel
+        none: Aucun abonné ne correspond.
+        price_line: Vendu à %{price}. Le forfait coûte %{current} aujourd’hui.
+        price_moved: L’abonné passe au prix actuel dès la prochaine facture.
+        refused: Cela n’a pas pu être fait pour cet abonnement.
+        waive: Couvrir cette période sans paiement
+        waive_confirm: Couvrir la prochaine période sans paiement ? Sa facture est
+          annulée.
+        waived: La période est couverte.
+      subscriptions:
+        accept: Accepter et continuer
+        accept_all: Veuillez accepter toutes les conditions affichées.
+        cancel: Annuler à la fin de cette période
+        cancel_confirm: Annuler cet abonnement à la fin de la période payée ?
+        cancelled: Votre abonnement prendra fin à la fin de la période payée.
+        cannot_resume: Cet abonnement ne peut pas être repris.
+        field_grace: Délai supplémentaire jusqu’au
+        field_method: Payé par
+        field_period: Période
+        field_plan: Forfait
+        field_price: Prix
+        field_status: Statut
+        field_through: Payé jusqu’au
+        index_title: Abonnements
+        invoice: Facture %{number}
+        method_change_intro: Les renouvellements sont payés par %{method}. Choisissez
+          un autre mode pour les prochains renouvellements. Une facture déjà émise
+          garde son mode.
+        method_change_label: Payer les renouvellements par
+        method_change_none: Il n'y a pas d'autre mode de paiement des renouvellements
+          pour le moment.
+        method_change_refused:
+          not_local: Cet abonnement est renouvelé par son processeur de paiement.
+          not_offered: Ce mode de paiement n'est pas offert pour ce forfait.
+          unchanged: Les renouvellements sont déjà payés par ce mode.
+        method_change_submit: Changer de mode
+        method_change_title: Mode de paiement
+        method_changed: Les prochains renouvellements seront payés avec le nouveau
+          mode.
+        none: Vous n'avez aucun abonnement.
+        period_blocked: En suspens
+        period_lapsed: Expiré
+        period_needs_agreement: Vous devez accepter les conditions
+        period_paid: Payé
+        period_pending: En attente de paiement
+        period_waived: Couvert
+        periods_caption: Chaque période de cet abonnement et sa facture
+        periods_title: Périodes et factures
+        plan_change_credit_note: Différence au prorata pour un changement de forfait
+        plan_change_credited: Vous êtes sur le nouveau forfait. %{amount} a été ajouté
+          à votre crédit de magasin.
+        plan_change_done: Vous êtes sur le nouveau forfait.
+        plan_change_intro: Choisissez un autre forfait et le moment du changement.
+          À partir de la prochaine période, rien ne change d'ici là. Maintenant, le
+          reste de la période est calculé au prorata.
+        plan_change_invoiced: Facture de %{amount} établie. Votre forfait change dès
+          qu'elle est payée.
+        plan_change_label: Nouveau forfait
+        plan_change_none: Aucun autre forfait n'est disponible pour le moment.
+        plan_change_now_hint: Un forfait plus cher est facturé pour la différence
+          et change une fois la facture payée. Un forfait moins cher change aussitôt
+          et la différence est rendue en crédit de magasin.
+        plan_change_pending: Vous passerez à %{plan} au début de votre prochaine période
+          (après le %{date}).
+        plan_change_pending_invoice: Votre passage à %{plan} aura lieu dès que sa
+          facture sera payée.
+        plan_change_refused:
+          different_schedule: Ce forfait est facturé selon un autre calendrier ou
+            une autre devise, vous ne pouvez donc pas y passer d'ici.
+          not_available: Ce forfait n'est pas disponible.
+          not_running: Cet abonnement ne peut pas changer de forfait pour le moment.
+          over_limit: Vous utilisez plus que ce que permet ce forfait. Libérez d'abord
+            de l'espace, puis réessayez.
+          same_plan: Vous avez déjà ce forfait.
+        plan_change_saved: Enregistré. Votre forfait change au début de la prochaine
+          période.
+        plan_change_submit: Changer de forfait
+        plan_change_title: Changer de forfait
+        plan_change_view_invoice: Voir la facture
+        plan_change_when_legend: Quand le changement doit-il avoir lieu ?
+        plan_change_when_next: À partir de ma prochaine période (aucun frais maintenant)
+        plan_change_when_now: Maintenant (au prorata du reste de la période)
+        plan_change_withdraw: Garder mon forfait actuel
+        plan_change_withdrawn: Votre changement de forfait a été annulé.
+        resume: Conserver mon abonnement
+        resumed: Votre abonnement continuera.
+        review_intro: Les conditions de cet abonnement ont changé. Acceptez-les et
+          nous créerons votre prochaine facture de renouvellement.
+        review_title: Examiner et accepter
+        state_active: Actif
+        state_canceled: Terminé
+        state_ending: Se termine à la fin de cette période
+        state_past_due: En retard
+        state_unpaid: Expiré
+        terms_accepted: Merci. Votre facture de renouvellement est prête.
+      tax_registrations:
+        created: Inscription fiscale ajoutée.
+        edit_title: Modifier l'inscription fiscale
+        empty: Aucune inscription fiscale pour l'instant. Sans inscription, aucune
+          taxe n'est ajoutée aux commandes.
+        field_from: En vigueur à partir du
+        field_in_force: En vigueur
+        field_number: Numéro d'inscription
+        field_number_hint: Conservé chiffré et jamais réaffiché.
+        field_place: Lieu
+        field_place_hint: Choisissez le pays et, si vous êtes inscrit pour un seul
+          endroit, la province ou l'État. Ce sont les mêmes lieux que ceux de vos
+          zones fiscales.
+        field_prices: Prix
+        field_prices_hint: Laissez l'usage du pays sauf si les prix ici sont fixés
+          autrement.
+        field_status: Statut
+        field_status_hint: Seul « Inscrit » perçoit la taxe. Les autres indiquent
+          pourquoi elle n'est pas perçue.
+        field_to: En vigueur jusqu'au
+        field_to_hint: Laissez vide si l'inscription est en cours, sans date de fin.
+        index_intro: Où cette plateforme est inscrite pour percevoir les taxes, et
+          à quelles conditions. Les commandes sont taxées selon l'inscription du lieu
+          de l'acheteur ; si aucune ne perçoit, aucune taxe n'est ajoutée.
+        index_title: Inscriptions fiscales
+        new_title: Ajouter une inscription fiscale
+        number_kept: Laissez vide pour conserver le numéro enregistré
+        ongoing: En cours
+        prices:
+          added: La taxe s'ajoute aux prix
+          default: L'usage du pays
+          included: Les prix incluent la taxe
+        statuses:
+          exempt: Exempté, ne perçoit pas
+          not_collecting: Ne perçoit pas
+          registered: Inscrit, perçoit la taxe
+          small_supplier_exempt: Petit fournisseur, ne perçoit pas
+        updated: Inscription fiscale enregistrée.
+      walk_up:
+        address_city_name: Ville
+        address_country_name: Pays
+        address_hint: Conservée avec cette commande, et enregistrée pour l'acheteur
+          s'il n'a pas encore d'adresse. Indiquez la rue, la ville et le pays, ou
+          laissez tout vide.
+        address_legend: Adresse de facturation (facultatif)
+        address_line1: Adresse
+        address_line2: Appartement, bureau ou unité
+        address_postal_code: Code postal
+        address_state_province_name: Province ou État
+        agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
+          en personne
+        buyer_email_hint: Les avis de paiement de cette vente sont envoyés ici.
+        buyer_email_label: Courriel de l'acheteur
+        buyer_hint: Choisissez une personne déjà sur cette plateforme, ou laissez
+          vide et indiquez un nom ci-dessous pour l'ajouter. Tapez au moins deux lettres
+          d'un nom ou d'un identifiant.
+        buyer_label: Acheteur
+        buyer_name_hint: Nécessaire seulement si personne n’est choisi ci-dessus.
+          L’acheteur est enregistré pour cette vente et peut être invité à rejoindre
+          la communauté.
+        buyer_name_label: Nom (si l'acheteur n'est pas encore sur la plateforme)
+        buyer_placeholder: Rechercher par nom ou identifiant
+        error_invitation_cap: Vous avez déjà invité aujourd’hui le nombre maximal
+          de nouveaux acheteurs. Réessayez demain ou choisissez l’acheteur dans la
+          liste des membres.
+        error_member_email: Cette adresse courriel appartient à un membre de cette
+          plateforme. Choisissez-le plutôt dans la liste des membres.
+        error_refused: Cette vente n’a pas pu être enregistrée. Vérifiez l’acheteur,
+          le mode de paiement et les ententes.
+        intro: Enregistrez une vente faite en personne. L’acheteur n’a rien à faire;
+          il est informé ensuite.
+        method_label: Mode de paiement
+        new_link: Nouvelle vente en personne
+        placed: Vente enregistrée.
+        plan_label: Ce qui a été vendu
+        received_label: 'L’argent a déjà été remis : le marquer comme reçu'
+        submit: Enregistrer la vente
+        title: Vente en personne
+        unavailable: Il vous faut un forfait actif et un mode de paiement hors plateforme
+          activé avant de pouvoir enregistrer une vente en personne.
+    billing_mailer:
+      notification:
+        greeting: Bonjour %{name},
+        safety: Nous n’incluons jamais de détails de paiement dans un courriel. Pour
+          payer ou modifier quoi que ce soit, connectez-vous et ouvrez le lien ci-dessus.
+        support: Des questions ? Écrivez à %{email}.
+        view: Voir
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
@@ -1287,6 +2763,17 @@ fr:
           select_prompt: "— Sélectionner une zone de navigation —"
         people_block:
           empty: Aucune personne à afficher.
+        plan_button_block:
+          create_label: Créer un nouveau bloc %{type} pour la page
+          displays:
+            button: Bouton seulement
+            card: Carte avec prix
+          empty: Choisissez un forfait à proposer dans ce bloc.
+          plan_hint: Choisissez l'un des forfaits actifs de cette plateforme.
+        plan_catalog_block:
+          create_label: Créer un nouveau bloc %{type} pour la page
+          empty: Aucun forfait n'est offert pour le moment.
+          item_limit_hint: Nombre de forfaits à afficher, jusqu'à 24.
         posts_block:
           empty: Aucune publication à afficher.
         resource_block:
@@ -2578,6 +4065,14 @@ fr:
         placeholder: Tapez votre message...
         send: Envoyer
     metrics:
+      billing_reports:
+        empty_description: Créez un rapport pour télécharger les ventes, les revenus,
+          les taxes et les remboursements d’un mois, d’un trimestre ou d’une année
+          en fichier CSV.
+        empty_title: Aucun rapport de facturation pour l’instant
+        filters_text: "%{from} au %{to}, par %{interval}"
+        new_title: Nouveau rapport de facturation
+        title: Rapports de facturation
       errors:
         date_range_too_large: La plage de dates ne peut pas dépasser 1 an
         invalid_date_range: La date de début doit être antérieure à la date de fin
@@ -2589,11 +4084,23 @@ fr:
           all_locales: Toutes les Langues
           all_types: Tous les Types de Contenu
           apply: Appliquer les Filtres
+          bases:
+            invoice: Date de facture
+            paid: Date de paiement
+          basis: Compter une vente selon
           communities: Communautés
           content_type: Type de Contenu
+          currency: Devise
           day_of_week: Jour de la Semaine
+          first_currency: La première devise avec des ventes
           hour_of_day: Heure du Jour
+          interval: Par
+          intervals:
+            month: Mois
+            quarter: Trimestre
+            year: Année
           locale: Langue
+          owner: Ventes de qui
           pages: Pages
           people: Personnes
           reset: Réinitialiser les Filtres
@@ -2636,6 +4143,7 @@ fr:
           export: Exporter
         axis_labels:
           accounts: Accounts
+          amount: Montant
           confirmations: Rate (%)
           date: Date
           downloads: Téléchargements
@@ -2646,16 +4154,66 @@ fr:
           links: Liens
           page: Page
           page_views: Vues de page
+          period: Période
           platform: Plateforme
           search_queries: Recherches
           shares: Partages
           source: Source
+          tax: Taxe
           term: Terme
           total_users: Total Users
           url: URL
+        billing:
+          amount: Montant
+          authorities:
+            gst_hst: TPS/TVH (ARC)
+            other: Autre
+            pst: Taxe de vente provinciale (TVP)
+            qst: Taxe de vente du Québec (TVQ)
+            rst: Taxe de vente au détail (TVD)
+            vat: TVA
+          authority_title: Taxe due par administration
+          collected: Perçue
+          collected_by:
+            facilitator: Perçue par la plateforme pour le vendeur
+            platform: Perçue par la plateforme
+            seller: Perçue par le vendeur
+          empty: Aucune vente n’a été payée au cours des 30 derniers jours.
+          measures:
+            exempt: Revenus exonérés
+            gross: Total payé pour les ventes, taxes comprises
+            net_revenue: Revenus après remboursements, hors taxes
+            net_tax: Taxe perçue après remboursements
+            non_taxable: Revenus non taxables
+            refunded: Remboursé, taxes comprises
+            sales: Ventes
+            tax_collected: Taxe perçue
+            taxable: Revenus taxables
+            zero_rated: Revenus détaxés
+          no_region: Aucune région
+          owed: Dû (net des remboursements)
+          owner_all: Tous les vendeurs et la plateforme
+          owner_platform: La plateforme seulement
+          payment_method: Mode de paiement
+          refunded: Remboursée
+          region: Région
+          registration_number: Numéro d'inscription
+          registrations: Inscriptions
+          summary_note: Les ventes comptent le jour où elles ont été payées, dans
+            le fuseau horaire de la plateforme. Chaque devise est présentée séparément.
+          summary_title: Les 30 derniers jours
+          tax: Taxe
         charts:
           accounts_confirmed: Accounts Confirmed
           accounts_created: Accounts Created
+          billing_exempt: Revenus exonérés
+          billing_non_taxable: Revenus non taxables
+          billing_refunded: Revenus remboursés
+          billing_revenue: Revenus, taxes et remboursements par période
+          billing_tax: Taxe perçue (nette des remboursements)
+          billing_tax_by_rate: Taxe perçue par taux (nette des remboursements)
+          billing_taxable: Revenus taxables
+          billing_zero_rated: Revenus détaxés
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth
@@ -2735,6 +4293,7 @@ fr:
           total_drift: Écart total
           unmanaged_models: Modèles recherchables non gérés
         tabs:
+          billing: Facturation
           charts: Graphiques
           charts_and_reports: Graphiques et rapports
           downloads: Téléchargements
@@ -2853,6 +4412,15 @@ fr:
         title: Nouvel élément de navigation pour %{name}
       route_names:
         agreements: Accords
+        billing_agreement_requirements: Conditions d’achat
+        billing_allowances: Quotas et utilisation
+        billing_credit_accounts: Comptes de crédit en magasin
+        billing_plans: Forfaits de facturation
+        billing_processor_settings: Modes de paiement
+        billing_promotions: Codes promotionnels
+        billing_sales: Ventes
+        billing_subscribers: Abonnés
+        billing_tax_registrations: Inscriptions fiscales
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
         communities: Communautés
@@ -4019,6 +5587,9 @@ fr:
     quotas:
       errors:
         not_local: doit être local à cette plateforme
+      storage_limit_reached: Vous avez atteint votre limite de stockage; ce fichier
+        ne peut pas être téléversé. Supprimez quelque chose ou demandez plus de stockage
+        à un intendant.
       usage_meter:
         types:
           ai_translation_tokens: Jetons d'utilisation de LLM IA
@@ -5619,11 +7190,25 @@ fr:
       title: 500 - Erreur interne du serveur
     messages:
       accepted: doit être accepté(e)
+      account_mismatch: doit appartenir au même compte
+      acknowledgement_required: doit être accepté avant que ce mode puisse être activé
+      add_on_cannot_have_grants: ne peut pas être donné à un complément
+      add_on_cannot_renew: un complément s'achète une fois, il ne se renouvelle pas
+      add_on_has_grants: un complément ne peut rien inclure en propre; mettez-le sur
+        un forfait
+      add_on_locked_by_orders: ne peut plus être modifié dès que des commandes incluent
+        ce forfait
+      after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
+      already_pending: Une demande de remboursement est déjà en attente sur cette
+        commande.
       blank: doit être rempli(e)
+      cannot_be_the_host: ne peut pas être la plateforme hôte
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
+      country_not_supported: n'est pas disponible en %{country}
+      currency_mismatch: doit correspondre à la devise de sa commande
       denied_for_trusted_domain: ne peut pas être accordé par un domaine de courriel
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
@@ -5632,46 +7217,80 @@ fr:
       expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      greater_than_refundable: dépasse ce qui peut encore être remboursé
+      hosted_local_billing_not_agreed: exige d'abord les accords de facturation locale
+        hébergée
       immutable: ne peut pas être modifié après la création ; supprimez ce fournisseur
         et ajoutez-en un nouveau
+      immutable_after_processor_link: ne peut plus être modifié une fois le plan lié
+        à un prix du processeur
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
       invalid_characters: ne doit pas contenir d'espaces ni de caractères de contrôle
+      invalid_pricing_tier: 'le niveau de tarification « %{tier} » ne figure pas parmi
+        : %{allowed}'
       invalid_url: n'est pas une URL valide
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
+      must_be_a_primary_plan: doit être un forfait qui n'est pas une option
+      must_be_an_add_on: doit être une option
+      no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
+        de paiement
       not_a_community_role: doit être un rôle de communauté
       not_a_number: n'est pas un nombre
+      not_a_purchase_agreement: doit être une entente d’achat
+      not_an_amount: doit être un nombre simple comme 45,00
       not_an_integer: doit être un nombre entier
+      not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
+        dehors d'un processeur"
+      not_configured: n'est pas configuré pour cette plateforme
       not_found: n’a pas été trouvé(e)
+      not_found_at_processor: est introuvable chez le processeur de paiement
+      not_installed: n'est pas un processeur de paiement installé
       not_locked: n’était pas verrouillé(e)
       not_saved:
         one: 'une erreur a empêché ce (cet ou cette) %{resource} d’être enregistré(e) :'
         other: "%{count} erreurs ont empêché ce (cet ou cette) %{resource} d’être
           enregistré(e) :"
+      not_the_buyer: ne peut être faite que par l'acheteur de la commande
+      nothing_to_give_back: Rien sur cette commande ne peut être remboursé ici.
       odd: doit être impair
+      one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
       present: doit être vide
+      price_inactive: est archivé chez le processeur de paiement
       public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
         confiance à toutes ses adresses
+      recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
       required: doit exister
       required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
         de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
+      too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)
         other: est trop long (pas plus de %{count} caractères)
+      too_precise: peut avoir au plus %{places} décimales dans cette devise
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
+      transition_not_allowed: ne peut pas passer de %{from} à %{to}
+      unknown_owner_types: 'comprend des types qui ne peuvent pas être facturés :
+        %{types}'
+      unknown_setting: 'contient des champs que ce mode n''utilise pas : %{fields}'
+      unsupported_price: est un type de prix qui ne peut pas être utilisé ici (hebdomadaire,
+        quotidien ou à l’usage)
+      used_by_another_platform: est déjà utilisé par une autre plateforme
       weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
         ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',
         votre date de naissance ou d'autres mots de passe communs faciles à deviner.
       wrong_length:
         one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
+      wrong_sign: a le mauvais signe pour ce type d’écriture
     models:
       address_geography_conflict: 'Le texte saisi ne correspond pas au lieu sélectionné
         : il devrait être « %{selected} ».'
@@ -6018,6 +7637,7 @@ fr:
   navbar:
     accept_invitation: Accepter l'invitation
     account_navigation: Compte et outils
+    billing: Facturation
     conversations: Conversations
     footer_legal_navigation: Informations sur le site
     footer_navigation: Liens de pied de page
@@ -6202,6 +7822,7 @@ fr:
           dépendre uniquement d'une URL directe.
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
+        hosting_plan: Forfait et utilisation
         identity_providers: Fournisseurs de connexion
         platform_domains: Domaines
         quota_grants: Dérogations de quota
@@ -6275,6 +7896,19 @@ fr:
     label: Rechercher sur le site
     placeholder: Rechercher...
   seed_catalog:
+    billing_agreements:
+      categories:
+        billing_purchase_agreements: Accords d'achat
+      description: Accords d'achat en brouillon avec un texte provisoire. Rien ne
+        peut être vendu tant qu'une personne responsable n'a pas rédigé les conditions
+        et activé les accords.
+      label: Accords de facturation
+    billing_tax:
+      categories:
+        billing_tax_canada: Taxes de vente canadiennes
+      description: 'Catégories, zones et taux de taxes pour les lieux où une plateforme
+        vend. Les zones sont liées aux provinces de la géographie : plantez-les d''abord.'
+      label: Données de référence des taxes de vente
     geography:
       categories:
         continents: Continents

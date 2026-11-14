@@ -84,6 +84,31 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Content Security Ingress System](developers/systems/content_security_ingress_system.md) - Attachment gating, malware scanning, review records
 - [Safety and Federation Review Workflow](developers/systems/safety_and_federation_review_workflow.md) - Reviewer surfaces, safety cases, actions and notes
 
+##### **Billing** - [`billing/`](billing/)
+- [Billing Buyer Page](billing/buyer_billing_hub.md) - The signed-in buyer's own page: plans, orders, credit and access in one place, who can reach it and how it is scoped
+- [Billing Foundation and Processor Adapters](billing/processor-adapters.md) - Vendor-neutral billing core, host configuration and the adapter contract
+- [Billing Notifications](billing/notifications.md) - Who is told what about orders, payments and billing operations, never twice, never with payment details
+- [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
+- [Billing Plan Change](billing/plan_change.md) - A payer moves a subscription to another plan from the next period, with a downgrade guard on usage
+- [Billing Refund Requests](billing/refund_requests.md) - A buyer asks for money back, a steward approves, part-approves or declines with a reply, and approval reuses the ordinary refund record
+- [Billing Account Polish](billing/account_polish.md) - Order filters, changing a subscription's payment method, a billing address editor and billing email preferences
+- [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
+- [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
+- [Billing Entitlements and Quota Allowances](billing/entitlements_and_allowances.md) - What a plan gives (roles, feature access, quota allowances), one derivation from Pay's status, what is taken away at a lapse and what never is
+- [Billing Subscriptions and Renewals](billing/subscriptions_and_renewals.md) - Pay::Subscription as the one record, local renewals, periods that never drift, grace and lapse, and the payer and steward actions
+- [Billing Store Credit](billing/store_credit.md) - A ledger of credit a person holds with a platform: lots that expire, spending soonest-expiring first, refunds back to credit, and credit as one part of a payment
+- [Billing Partial Payments](billing/partial_payments.md) - Paying an order in parts by any method, net-paid status, part-paid orders that stay open, returning parts and cancelling, renew-with
+- [Billing Promotions](billing/promotions.md) - Promotion codes that give store credit: keyed-digest storage, shown once, one answer to every failure, and the limits on guessing
+- [Billing Local Pay Processor](billing/local_pay_processor.md) - How cash, cheque, e-transfer and store credit appear in Pay: the customer, charge and subscription, and what stays in the workflow
+- [Billing Offline Payment Methods](billing/offline_payment_methods.md) - Paying a seller directly by cash, cheque or e-transfer: the buyer's screen, the seller's confirmation (no buyer claim needed), late payments, sales in person
+- [Billing Payment Methods](billing/payment_methods.md) - Cash, cheque and e-transfer: how a seller turns them on, what buyers are told, the limits
+- [Billing Plan Catalog](billing/plan_catalog.md) - Plans, creating them at the processor, fields the processor fixes, async option lists
+- [Billing Platform Isolation](billing/platform_isolation.md) - How billing records are bound to exactly one platform
+- [Billing Data Encryption](billing/encryption.md) - What is encrypted at rest, the rules, and key rotation
+- [Billing Webhook Event Operations](billing/webhook_event_operations.md) - Runbook for failed and dead-lettered processor events: the operator page, rake tasks, sweeps, retry safety
+- [Hosted Billing Roadmap](billing/hosted_billing_roadmap.md) - What is in place for per-platform processors and community-managed plans, and what is left
+- [Hosted Billing Enablement](billing/hosted_billing_enablement.md) - The three host agreements, what each unlocks, the status page and suspension
+
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
 - [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
 - [Model Concerns Reference](reference/model_concerns_reference.md) - Concerns new or changed in 0.11.0
@@ -152,6 +177,29 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Mermaid (.mmd) source files*
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
+- [Billing Event Lifecycle State](diagrams/source/billing_event_lifecycle_state.mmd)
+- [Billing Event Pipeline Flow](diagrams/source/billing_event_pipeline_flow.mmd)
+- [Billing Local Pay Processor Model](diagrams/source/billing_local_pay_processor_model.mmd)
+- [Billing Notification Flow](diagrams/source/billing_notification_flow.mmd)
+- [Billing Offline Payment State Machine](diagrams/source/billing_offline_payment_state_machine.mmd)
+- [Billing Order Lifecycle Flow](diagrams/source/billing_order_lifecycle_flow.mmd)
+- [Billing Partial Payments Flow](diagrams/source/billing_partial_payments_flow.mmd)
+- [Billing Payment Methods Model](diagrams/source/billing_payment_methods_model.mmd)
+- [Billing Plan Processor Sync Flow](diagrams/source/billing_plan_processor_sync_flow.mmd)
+- [Billing Processor Adapter Contract Model](diagrams/source/billing_processor_adapter_contract_model.mmd)
+- [Billing Promotion Model](diagrams/source/billing_promotion_model.mmd)
+- [Billing Promotion Redemption Flow](diagrams/source/billing_promotion_redemption_flow.mmd)
+- [Billing Purchase Agreement Flow](diagrams/source/billing_purchase_agreement_flow.mmd)
+- [Billing Queue Topology](diagrams/source/billing_queue_topology.mmd)
+- [Billing Schema ERD](diagrams/source/billing_schema_erd.mmd)
+- [Billing Entitlement Lifecycle Flow](diagrams/source/billing_entitlement_lifecycle_flow.mmd)
+- [Billing Entitlement Model](diagrams/source/billing_entitlement_model.mmd)
+- [Community Engine Localized Attributes](diagrams/source/ce_localized_attributes.mmd) - Models and Mobility attributes with storage type
+- [Billing Subscription Lifecycle Flow](diagrams/source/billing_subscription_lifecycle_flow.mmd)
+- [Billing Subscription Model](diagrams/source/billing_subscription_model.mmd)
+- [Billing Store Credit Flow](diagrams/source/billing_store_credit_flow.mmd)
+- [Billing Store Credit Model](diagrams/source/billing_store_credit_model.mmd)
+- [Billing Tenancy and Ownership Model](diagrams/source/billing_tenancy_and_ownership_model.mmd)
 - [⚡ Caching Performance Flow](diagrams/source/caching_performance_flow.mmd)
 - [Community Action Network Governance Flow](diagrams/source/community_action_network_governance_flow.mmd)
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
@@ -195,6 +243,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Multi-Platform Deployment](production/multi_platform_deployment.md) - Running multiple platforms on a single instance
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
+- [Billing Queue Rollout](production/billing_queue_rollout.md) - Dedicated high-priority Sidekiq queue and capsule for payment jobs
 
 #### **Scripts** - [`scripts/`](scripts/)
 *Documentation maintenance and automation scripts*

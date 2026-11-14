@@ -60,6 +60,16 @@ RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog, :reduced_geography
       expect(described_class.missing_prerequisites(:provinces)).to eq([:countries])
     end
 
+    it 'lists both the countries and the provinces for settlements' do
+      expect(described_class.missing_prerequisites(:settlements)).to eq(%i[countries provinces])
+    end
+
+    it 'lists only the provinces for settlements once the countries are planted' do
+      described_class.plant(:countries)
+
+      expect(described_class.missing_prerequisites(:settlements)).to eq([:provinces])
+    end
+
     it 'is empty once the prerequisite is planted' do
       described_class.plant(:countries)
 

@@ -1,0 +1,49 @@
+{
+  "name": "seed_catalog_billing_agreements_ready",
+  "device": "desktop",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog_billing_agreements",
+  "flow": "seed_catalog_billing_agreements",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_billing_agreements_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plant-billing_purchase_agreements-btn",
+      "title": "Plant the purchase agreements",
+      "bullets": [
+        "Nothing needs planting first.",
+        "Nothing can be sold until a steward activates them."
+      ],
+      "target": {
+        "x": 1305.71875,
+        "y": 1012.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 1043.0,
+        "center_x": 1332.359375,
+        "center_y": 1027.5
+      },
+      "avoid": {
+        "x": 1305.71875,
+        "y": 1012.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 1043.0,
+        "center_x": 1332.359375,
+        "center_y": 1027.5
+      },
+      "placement": {
+        "side": "left",
+        "x": 905.72,
+        "y": 919.5,
+        "width": 380,
+        "height": 216,
+        "score": 1305.71875
+      }
+    }
+  ]
+}

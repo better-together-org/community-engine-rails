@@ -1,0 +1,47 @@
+{
+  "name": "billing_refund_tax",
+  "device": "mobile",
+  "url": "/en/billing/sales/6ab17e58-7920-41d0-80ef-8cdeb6ca5944",
+  "title": "Order BT-GDFGEZZN | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "flow": "billing_refund_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_refund_tax_spec.rb",
+  "callouts": [
+    {
+      "selector": "#refund_billing_payment_0a99a1b6-3e2d-426a-b781-5a360b0c62ae",
+      "title": "Tax in a refund",
+      "bullets": [
+        "Each refund carries its share of the order's tax, split from the net amount."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 495.390625,
+        "width": 461.0,
+        "height": 389.0,
+        "right": 473.0,
+        "bottom": 884.390625,
+        "center_x": 242.5,
+        "center_y": 689.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 210
+      }
+    }
+  ]
+}

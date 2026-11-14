@@ -1,0 +1,13 @@
+---
+title: Plans
+audience:
+- end_user
+journey_step: As a visitor, I compare the plans on offer and choose one.
+callouts:
+- :id: plans
+  :title: Plans
+  :description: Price, summary and a Subscribe, Buy or Get it free button.
+accessibility_notes: Each plan is an article with its own heading; buttons are links
+  with plain text names.
+slug: billing_catalog
+device: desktop

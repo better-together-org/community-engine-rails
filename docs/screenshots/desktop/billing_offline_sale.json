@@ -1,0 +1,81 @@
+{
+  "name": "billing_offline_sale",
+  "device": "desktop",
+  "url": "/en/billing/sales/3201bee9-dfe9-4df5-8aef-aa7f01a86dff",
+  "title": "Order BT-IRSFLFZL | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_offline_payments",
+  "flow": "billing_offline_sale",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-offline-receive-form-e0f189fa-61dd-4bb2-8780-543125d7d15d",
+      "title": "Say it arrived",
+      "bullets": [
+        "An optional reference and date; nothing is required."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 849.0,
+        "width": 1262.0,
+        "height": 161.0,
+        "right": 1343.5,
+        "bottom": 1010.0,
+        "center_x": 712.5,
+        "center_y": 929.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 132
+      }
+    },
+    {
+      "selector": "#billing-offline-reject-form-e0f189fa-61dd-4bb2-8780-543125d7d15d",
+      "title": "Or say it did not",
+      "bullets": [
+        "The buyer sees your reason."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 1026.0,
+        "width": 1262.0,
+        "height": 116.0,
+        "right": 1343.5,
+        "bottom": 1142.0,
+        "center_x": 712.5,
+        "center_y": 1084.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 196,
+        "width": 380,
+        "height": 106
+      }
+    }
+  ]
+}

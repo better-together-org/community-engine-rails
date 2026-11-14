@@ -1,0 +1,12 @@
+<%# The price of a plan in words: free, once, or per interval. %>
+<% price = billing_amount(plan.amount_cents, plan.currency) %>
+<% count = plan.interval_count.to_i.positive? ? plan.interval_count : 1 %>
+<% if plan.free? %>
+  <%= t('better_together.billing.catalog.free') %>
+<% elsif !plan.recurring? %>
+  <%= t('better_together.billing.catalog.price.once', price:) %>
+<% elsif count == 1 %>
+  <%= t("better_together.billing.catalog.price.#{plan.billing_interval}", price:) %>
+<% else %>
+  <%= t("better_together.billing.catalog.price.every_n_#{plan.billing_interval}s", price:, count:) %>
+<% end %>

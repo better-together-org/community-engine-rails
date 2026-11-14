@@ -64,6 +64,18 @@ FactoryBot.define do
     secondary_button_url_en { '' }
   end
 
+  factory :content_plan_catalog_block, class: 'BetterTogether::Content::PlanCatalogBlock' do
+    privacy { 'public' }
+    item_limit { 6 }
+    heading_en { 'Our plans' }
+  end
+
+  factory :content_plan_button_block, class: 'BetterTogether::Content::PlanButtonBlock' do
+    privacy { 'public' }
+    display_as { 'card' }
+    plan_id { '' }
+  end
+
   factory :content_alert_block, class: 'BetterTogether::Content::AlertBlock' do
     privacy { 'public' }
     alert_level { 'info' }

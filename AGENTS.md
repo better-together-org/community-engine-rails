@@ -251,7 +251,7 @@ element lacks one, add it to the view first.
   - For model/association changes: update Mermaid diagrams (e.g., `docs/diagrams/source/*_diagram.mmd` or add a new one).
 - Keep diagrams in Mermaid (`.mmd`) format in `docs/diagrams/source/` and render to exports for convenience.
   - Preferred: run `bin/render_diagrams` to regenerate images for all `docs/diagrams/source/*.mmd` files.
-  - After any migration or `schema.rb` change, run `bin/export_schema_diagrams` (regenerates the DBML, the full-schema ERD and the subsystem ERDs); the `Schema Diagrams` workflow fails PRs that skip it.
+  - After any migration or `schema.rb` change, run `bin/export_schema_diagrams` (regenerates the DBML, the full-schema ERD and the subsystem ERDs); the `Schema Diagrams` workflow fails PRs that skip it. The pre-commit hook runs `bin/check_diagrams --fix` automatically when a staged file feeds a diagram, regenerating against a scratch database loaded from `schema.rb` (as CI does) and staging the output; it needs `git config core.hooksPath bin/git-hooks`.
   - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/diagrams/source/your_diagram.mmd -o docs/diagrams/exports/png/your_diagram.png`.
 - PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
 - When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.
@@ -1040,3 +1040,11 @@ bin/dc ps                                        # Check service status
 bin/dc logs -f                                   # View logs
 bin/dc down                                      # Stop services
 ```
+
+## Agreements
+
+Any flow where a person reads and accepts an agreement must reuse the shared modal and recorder. Read `.claude/skills/agreement-mechanism/SKILL.md` first.
+
+## Localization
+
+All user-facing text is localized: static copy through I18n, stored content through Mobility translated attributes with an explicit `type: :string` or `type: :text`, never plain columns. Any change to a `translates` attribute must regenerate and commit the localized attribute diagram with `bin/export_localized_attributes` before the commit. Read `.claude/skills/localization-mandatory/SKILL.md` first.

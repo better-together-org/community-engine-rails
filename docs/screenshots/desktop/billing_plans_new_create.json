@@ -1,0 +1,83 @@
+{
+  "name": "billing_plans_new_create",
+  "device": "desktop",
+  "url": "/en/billing/plans/new",
+  "title": "New Billing Plan | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_new_create",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-mode-tabs",
+      "title": "Create or link",
+      "bullets": [
+        "Create a new price at the processor, or link one that exists."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 232.0,
+        "width": 1296.0,
+        "height": 40.0,
+        "right": 1360.5,
+        "bottom": 272.0,
+        "center_x": 712.5,
+        "center_y": 252.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 232.0,
+        "width": 1296.0,
+        "height": 40.0,
+        "right": 1360.5,
+        "bottom": 272.0,
+        "center_x": 712.5,
+        "center_y": 252.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 292.0,
+        "width": 380,
+        "height": 158,
+        "score": 1185.0
+      }
+    },
+    {
+      "selector": "#billing-plan-product-select",
+      "title": "Product",
+      "bullets": [
+        "Options come live from the processor as you type."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 721.0,
+        "width": 1262.0,
+        "height": 95.0,
+        "right": 1343.5,
+        "bottom": 816.0,
+        "center_x": 712.5,
+        "center_y": 768.5
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 721.0,
+        "width": 1262.0,
+        "height": 95.0,
+        "right": 1343.5,
+        "bottom": 816.0,
+        "center_x": 712.5,
+        "center_y": 768.5
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 569.0,
+        "width": 380,
+        "height": 132,
+        "score": 721.0
+      }
+    }
+  ]
+}

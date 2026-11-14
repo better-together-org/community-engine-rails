@@ -1,0 +1,13 @@
+---
+title: Giving store credit
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I give a member credit they can spend on what
+  the platform sells.
+callouts:
+- :id: grant
+  :title: Grant
+  :description: The member is told, and sees it on their credit page.
+accessibility_notes: Every field has a visible label; results are plain text.
+slug: billing_credit_accounts_lookup
+device: mobile

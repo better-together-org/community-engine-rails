@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Regenerates the localized (Mobility) attribute diagram, docs/diagrams/source/ce_localized_attributes.mmd,
+# and renders its exports. Run it after adding, removing or retyping any `translates` attribute.
+#
+#   bin/export_localized_attributes            # regenerate, then render
+#   bin/export_localized_attributes --check    # write nothing; fail if stale, or any translates is untyped or dynamic
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if [ "${1:-}" = "--check" ]; then
+  exec bin/dc-run-dummy bundle exec rails runner export_localized_attributes.rb --check
+fi
+
+bin/dc-run-dummy bundle exec rails runner export_localized_attributes.rb
+bin/render_diagrams ce_localized_attributes.mmd

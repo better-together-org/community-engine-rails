@@ -36,10 +36,12 @@ require 'ice_cube'
 require 'importmap-rails'
 require 'kaminari'
 require 'noticed'
+require 'pay'
 require 'premailer/rails'
 require 'pg_search'
 require 'rack/attack'
 require 'redcarpet'
+require 'receipts'
 require 'omniauth/rails_csrf_protection'
 require 'omniauth-github'
 require 'omniauth-facebook'
@@ -196,7 +198,17 @@ module BetterTogether
     # platform_connection_oauth_credentials.rb for the encrypted-storage side.
     initializer 'better_together.filter_sensitive_federation_params' do |app|
       app.config.filter_parameters += %i[
-        oauth_client_secret oauth_client_secret_digest client_secret authorization
+        oauth_client_secret oauth_client_secret_digest client_secret authorization promotion_code
+      ]
+    end
+
+    # Buyer and payee details typed at checkout, walk-up sales and offline method setup. Symbols match as
+    # substrings of the key, so `line1` also covers `billing_address[line1]`, and a filtered `billing_address`
+    # or `settings` hides everything nested under it.
+    initializer 'better_together.filter_billing_pii_params' do |app|
+      app.config.filter_parameters += %i[
+        buyer_name buyer_email reference billing_address line1 line2 city_name state_province_name
+        postal_code country_name settings
       ]
     end
 
@@ -289,6 +301,12 @@ module BetterTogether
 
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
+    end
+
+    # After every initializer, so processor extension gems have registered their adapters.
+    config.after_initialize do
+      BetterTogether::Billing.register_builtin_processors!
+      BetterTogether::Billing::WebhookSubscriptions.subscribe_all!
     end
 
     initializer 'better_together.append_migrations' do |app|

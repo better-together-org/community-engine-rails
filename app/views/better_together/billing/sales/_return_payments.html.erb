@@ -1,0 +1,28 @@
+<%# An order that is partly paid stays open. A steward who decides it will not be completed returns each part, then cancels it. %>
+<% if order.open? && order.net_paid_cents.positive? && policy(order).cancel? %>
+  <% parts = BetterTogether::Billing::Orders::ReturnPayments.pending(order) %>
+  <div id="<%= dom_id(order, :return_payments) %>" class="card mb-4 billing-return-payments">
+    <div class="card-header"><strong><%= t('better_together.billing.sales.return_heading') %></strong></div>
+    <div class="card-body">
+      <p id="billing-sale-return-hint" class="form-text"><%= t('better_together.billing.sales.return_hint', balance: billing_amount(order.balance_cents, order.currency)) %></p>
+      <ul id="billing-sale-return-parts" class="list-group mb-3">
+        <% parts.each do |part| %>
+          <li id="<%= dom_id(part.payment, :return_part) %>" class="list-group-item d-flex justify-content-between">
+            <span><%= billing_payment_method_label(part.payment.processor) %> <span class="text-body-secondary"><%= t("better_together.billing.sales.return_kind_#{part.kind}") %></span></span>
+            <span><%= billing_amount(part.cents, part.payment.currency) %></span>
+          </li>
+        <% end %>
+      </ul>
+      <% if parts.any? { |part| part.kind == :credit } %>
+        <%= button_to t('better_together.billing.sales.return_credit_btn'), return_payments_billing_sale_path(order, locale: I18n.locale),
+                      method: :post, id: 'billing-sale-return-credit-btn', class: 'btn btn-outline-secondary' %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<% if order.open? && policy(order).cancel? && order.net_paid_cents.zero? %>
+  <div id="<%= dom_id(order, :cancel) %>" class="mb-4">
+    <%= button_to t('better_together.billing.sales.cancel_btn'), cancel_billing_sale_path(order, locale: I18n.locale), method: :post, id: 'billing-sale-cancel-btn',
+                  class: 'btn btn-outline-danger', form: { data: { turbo_confirm: t('better_together.billing.sales.cancel_confirm') } } %>
+  </div>
+<% end %>

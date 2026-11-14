@@ -20,7 +20,9 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Protected
+    include Billing::Billable
     include Quotas::Owner
+    include Quotas::PlatformEnforcement
     include TimezoneAttributeAliasing
     include RemoveableAttachment
     include ::Storext.model
@@ -151,6 +153,34 @@ module BetterTogether
 
     after_commit :sync_primary_platform_domain!, on: %i[create update]
     after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_external? }
+
+    # Billing records are reached through their platform, never by a bare class-level
+    # read (see docs/billing/platform_isolation.md). Deleting a platform that has
+    # billing history is refused rather than silently dropping payment records.
+    has_many :billing_default_addresses, class_name: 'BetterTogether::Billing::DefaultAddress', dependent: :restrict_with_error
+    has_many :billing_credit_accounts, class_name: 'BetterTogether::Billing::CreditAccount', dependent: :restrict_with_error
+    has_many :billing_entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
+    has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
+    has_one :billing_hosted_account, class_name: 'BetterTogether::Billing::HostedAccount', dependent: :restrict_with_error
+    has_many :billing_agreement_requirements, class_name: 'BetterTogether::Billing::AgreementRequirement',
+                                              dependent: :restrict_with_error
+    has_many :billing_notification_receipts, class_name: 'BetterTogether::Billing::NotificationReceipt',
+                                             dependent: :restrict_with_error
+    has_many :billing_offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', dependent: :restrict_with_error
+    has_many :billing_orders, class_name: 'BetterTogether::Billing::Order', dependent: :restrict_with_error
+    has_many :billing_refund_requests, class_name: 'BetterTogether::Billing::RefundRequest', dependent: :restrict_with_error
+    has_many :billing_promotions, class_name: 'BetterTogether::Billing::Promotion', dependent: :restrict_with_error
+    has_many :billing_subscription_terms, class_name: 'BetterTogether::Billing::SubscriptionTerm', dependent: :restrict_with_error
+    has_many :billing_processor_settings, class_name: 'BetterTogether::Billing::ProcessorSetting',
+                                          dependent: :restrict_with_error
+    has_many :billing_plans, class_name: 'BetterTogether::Billing::Plan', dependent: :restrict_with_error
+    has_many :billing_tax_categories, class_name: 'BetterTogether::Billing::TaxCategory', dependent: :restrict_with_error
+    has_many :billing_tax_zones, class_name: 'BetterTogether::Billing::TaxZone', dependent: :restrict_with_error
+    has_many :billing_tax_rates, class_name: 'BetterTogether::Billing::TaxRate', dependent: :restrict_with_error
+    has_many :billing_tax_registrations, class_name: 'BetterTogether::Billing::TaxRegistration', dependent: :restrict_with_error
+
+    # A hosted platform is what hosting-subscription events are about.
+    include BetterTogether::Billing::Subjectable
 
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',

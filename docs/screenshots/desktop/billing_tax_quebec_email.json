@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_quebec_email",
+  "device": "desktop",
+  "url": "/en/billing/orders",
+  "title": "",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_quebec_email",
+  "callouts": [
+    {
+      "selector": "#billing-summary-email",
+      "title": "Notice email",
+      "bullets": [
+        "The email carries the full summary, never payment details."
+      ],
+      "target": {
+        "x": 437.0,
+        "y": 246.0,
+        "width": 566.0,
+        "height": 231.0,
+        "right": 1003.0,
+        "bottom": 477.0,
+        "center_x": 720.0,
+        "center_y": 361.5
+      },
+      "avoid": {
+        "x": 8.0,
+        "y": 8.0,
+        "width": 1424.0,
+        "height": 735.0,
+        "right": 1432.0,
+        "bottom": 743.0,
+        "center_x": 720.0,
+        "center_y": 375.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 763.0,
+        "width": 380,
+        "height": 158,
+        "score": 714.0
+      }
+    }
+  ]
+}

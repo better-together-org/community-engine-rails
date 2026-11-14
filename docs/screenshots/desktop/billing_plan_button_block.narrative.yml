@@ -1,0 +1,14 @@
+---
+title: Plan button block
+audience:
+- content_editor
+- end_user
+journey_step: As an editor I offer one plan from a page; visitors it is offered to
+  see the card and button.
+callouts:
+- :id: buy
+  :title: Subscribe
+  :description: Leads to checkout for this plan.
+accessibility_notes: The button is a link with a plain text name.
+slug: billing_plan_button_block
+device: desktop

@@ -6,6 +6,9 @@
   show_pageable_type = local_assigns.fetch(:show_pageable_type, true)
   show_hour_of_day = local_assigns.fetch(:show_hour_of_day, true)
   show_day_of_week = local_assigns.fetch(:show_day_of_week, true)
+  # Billing charts: the currency, whose sales and the size of the periods (options from billing_filter_options).
+  billing_options = local_assigns.fetch(:billing_options, nil)
+  show_interval = local_assigns.fetch(:show_interval, false)
 %>
 
 <div class="metrics-additional-filters card mb-3"
@@ -88,6 +91,40 @@
           </div>
         <% end %>
       </div>
+
+      <% if billing_options %>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="<%= chart_type %>_currency_filter" class="form-label"><%= t('better_together.metrics.filters.additional.currency') %></label>
+            <select class="form-select" id="<%= chart_type %>_currency_filter"
+                    data-better-together--metrics-additional-filters-target="currency"
+                    data-action="change->better-together--metrics-additional-filters#applyFilters">
+              <option value=""><%= t('better_together.metrics.filters.additional.first_currency') %></option>
+              <%= options_for_select(billing_options[:currencies]) %>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="<%= chart_type %>_owner_filter" class="form-label"><%= t('better_together.metrics.filters.additional.owner') %></label>
+            <select class="form-select" id="<%= chart_type %>_owner_filter"
+                    data-better-together--metrics-additional-filters-target="owner"
+                    data-action="change->better-together--metrics-additional-filters#applyFilters">
+              <%= options_for_select(billing_options[:owners]) %>
+            </select>
+          </div>
+          <% if show_interval %>
+            <div class="col-md-4">
+              <label for="<%= chart_type %>_interval_filter" class="form-label"><%= t('better_together.metrics.filters.additional.interval') %></label>
+              <select class="form-select" id="<%= chart_type %>_interval_filter"
+                      data-better-together--metrics-additional-filters-target="interval"
+                      data-action="change->better-together--metrics-additional-filters#applyFilters">
+                <% BetterTogether::Billing::TaxReport::INTERVALS.each do |interval| %>
+                  <option value="<%= interval %>"><%= t("better_together.metrics.filters.additional.intervals.#{interval}") %></option>
+                <% end %>
+              </select>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
 
       <div class="mt-3 text-end">
         <button type="button"

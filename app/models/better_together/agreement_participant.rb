@@ -13,7 +13,9 @@ module BetterTogether
       sign_up: 'sign_up',
       agreement_review: 'agreement_review',
       api: 'api',
-      system: 'system'
+      system: 'system',
+      checkout: 'checkout',
+      seller_assisted: 'seller_assisted'
     }, validate: true
 
     scope :accepted, -> { where.not(accepted_at: nil) }

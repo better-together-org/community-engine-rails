@@ -1,0 +1,83 @@
+{
+  "name": "billing_checkout_agreements",
+  "device": "desktop",
+  "url": "/en/billing/checkout/new?plan_id=c0c05bde-3d95-47d9-8a3c-94225e271b24&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_checkout_agreements",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-agreement-review",
+      "title": "Review and accept",
+      "bullets": [
+        "The purchase terms and the terms that come with this way of paying."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 424.0,
+        "width": 1296.0,
+        "height": 431.375,
+        "right": 1368.0,
+        "bottom": 855.375,
+        "center_x": 720.0,
+        "center_y": 639.6875
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 424.0,
+        "width": 1296.0,
+        "height": 431.375,
+        "right": 1368.0,
+        "bottom": 855.375,
+        "center_x": 720.0,
+        "center_y": 639.6875
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 875.38,
+        "width": 380,
+        "height": 158,
+        "score": 601.625
+      }
+    },
+    {
+      "selector": "#billing-checkout-place-btn",
+      "title": "Place order",
+      "bullets": [
+        "Nothing is placed until every agreement is accepted."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 879.375,
+        "width": 116.296875,
+        "height": 38.0,
+        "right": 188.296875,
+        "bottom": 917.375,
+        "center_x": 130.1484375,
+        "center_y": 898.375
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 879.375,
+        "width": 116.296875,
+        "height": 38.0,
+        "right": 188.296875,
+        "bottom": 917.375,
+        "center_x": 130.1484375,
+        "center_y": 898.375
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 937.38,
+        "width": 380,
+        "height": 132,
+        "score": 539.625
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+<section id="<%= dom_id(plan, :grants) %>" class="card mt-4" aria-labelledby="<%= dom_id(plan, :grants_title) %>">
+  <div class="card-header"><h2 id="<%= dom_id(plan, :grants_title) %>" class="h5 mb-0"><%= t('better_together.billing.plan_grants.title') %></h2></div>
+  <div class="card-body">
+    <p class="text-body-secondary"><%= t('better_together.billing.plan_grants.intro') %></p>
+
+    <% if plan.plan_grants.any? %>
+      <ul id="<%= dom_id(plan, :grants_list) %>" class="list-group mb-4">
+        <% plan.plan_grants.each do |grant| %>
+          <li id="<%= dom_id(grant) %>" class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= billing_plan_grant_summary(grant) %></span>
+            <%= button_to t('better_together.billing.plan_grants.remove'), billing_plan_plan_grant_path(plan, grant, locale: I18n.locale), method: :delete,
+                          class: 'btn btn-outline-danger btn-sm', id: dom_id(grant, :remove_btn),
+                          form: { data: { turbo_confirm: t('better_together.billing.plan_grants.remove_confirm') } } %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p id="<%= dom_id(plan, :grants_empty) %>" class="text-body-secondary"><%= t('better_together.billing.plan_grants.none') %></p>
+    <% end %>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-role-form' do %>
+          <%= hidden_field_tag :kind, 'membership_role' %>
+          <h3 class="h6"><%= t('better_together.billing.plan_grants.add_role') %></h3>
+          <%= label_tag 'billing-grant-role-joinable', t('better_together.billing.plan_grants.field_where'), class: 'form-label' %>
+          <%= select_tag :joinable, options_for_select([[t('better_together.billing.plan_grants.place_platform'), 'platform'], [t('better_together.billing.plan_grants.place_a_community'), 'community']]),
+                         id: 'billing-grant-role-joinable', class: 'form-select mb-2' %>
+          <%= label_tag 'billing-grant-role-community', t('better_together.billing.plan_grants.field_community'), class: 'form-label' %>
+          <%= select_tag :community_id, options_for_select(billing_grantable_communities.map { |community| [community.name, community.id] }), include_blank: true,
+                         id: 'billing-grant-role-community', class: 'form-select mb-2' %>
+          <%= label_tag 'billing-grant-role-role', t('better_together.billing.plan_grants.field_role'), class: 'form-label' %>
+          <%= select_tag :role, options_for_select((billing_grantable_roles('BetterTogether::Platform') + billing_grantable_roles('BetterTogether::Community')).map { |role| [role.name, role.identifier] }.uniq),
+                         id: 'billing-grant-role-role', class: 'form-select mb-2' %>
+          <div class="form-text mb-2"><%= t('better_together.billing.plan_grants.role_hint') %></div>
+          <%= submit_tag t('better_together.billing.plan_grants.add'), class: 'btn btn-outline-primary btn-sm', id: 'billing-grant-role-btn', name: nil %>
+        <% end %>
+      </div>
+      <div class="col-lg-4">
+        <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-feature-form' do %>
+          <%= hidden_field_tag :kind, 'feature_access' %>
+          <h3 class="h6"><%= t('better_together.billing.plan_grants.add_feature') %></h3>
+          <%= label_tag 'billing-grant-feature-key', t('better_together.billing.plan_grants.field_feature'), class: 'form-label' %>
+          <%= select_tag :feature_key, options_for_select(BetterTogether::FeatureRegistry.keys.map { |key| [BetterTogether::FeatureRegistry.name_for(key), key] }),
+                         id: 'billing-grant-feature-key', class: 'form-select mb-2' %>
+          <%= label_tag 'billing-grant-feature-level', t('better_together.billing.plan_grants.field_level'), class: 'form-label' %>
+          <%= select_tag :access_level, options_for_select(BetterTogether::FeatureAccessGrant::ACCESS_LEVELS.values), id: 'billing-grant-feature-level', class: 'form-select mb-2' %>
+          <%= submit_tag t('better_together.billing.plan_grants.add'), class: 'btn btn-outline-primary btn-sm', id: 'billing-grant-feature-btn', name: nil %>
+        <% end %>
+      </div>
+      <div class="col-lg-4">
+        <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-quota-form' do %>
+          <%= hidden_field_tag :kind, 'quota_allowance' %>
+          <h3 class="h6"><%= t('better_together.billing.plan_grants.add_quota') %></h3>
+          <%= label_tag 'billing-grant-quota-type', t('better_together.billing.plan_grants.field_quota'), class: 'form-label' %>
+          <%= select_tag :quota_type, options_for_select(BetterTogether::Quotas::Type.all.map { |type| ["#{type.key.humanize} (#{type.unit})", type.key] }),
+                         id: 'billing-grant-quota-type', class: 'form-select mb-2' %>
+          <%= label_tag 'billing-grant-quota-amount', t('better_together.billing.plan_grants.field_amount'), class: 'form-label' %>
+          <%= number_field_tag :amount, nil, id: 'billing-grant-quota-amount', class: 'form-control mb-2', min: 1, required: true %>
+          <div class="form-text mb-2"><%= t('better_together.billing.plan_grants.amount_hint') %></div>
+          <%= submit_tag t('better_together.billing.plan_grants.add'), class: 'btn btn-outline-primary btn-sm', id: 'billing-grant-quota-btn', name: nil %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>

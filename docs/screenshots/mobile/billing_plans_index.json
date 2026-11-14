@@ -1,0 +1,83 @@
+{
+  "name": "billing_plans_index",
+  "device": "mobile",
+  "url": "/en/billing/plans",
+  "title": "Billing Plans | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plans-table",
+      "title": "Plans",
+      "bullets": [
+        "Each plan is one price at the payment processor."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 492.390625,
+        "width": 487.0,
+        "height": 226.0,
+        "right": 500.0,
+        "bottom": 718.390625,
+        "center_x": 256.5,
+        "center_y": 605.390625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 492.390625,
+        "width": 487.0,
+        "height": 226.0,
+        "right": 500.0,
+        "bottom": 718.390625,
+        "center_x": 256.5,
+        "center_y": 605.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 121.5,
+        "y": 738.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 538.609375
+      }
+    },
+    {
+      "selector": "#new-billing-plan-btn",
+      "title": "New plan",
+      "bullets": [
+        "Create a plan here; no processor dashboard needed."
+      ],
+      "target": {
+        "x": 372.46875,
+        "y": 132.6875,
+        "width": 100.53125,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 170.6875,
+        "center_x": 422.734375,
+        "center_y": 151.6875
+      },
+      "avoid": {
+        "x": 372.46875,
+        "y": 132.6875,
+        "width": 100.53125,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 170.6875,
+        "center_x": 422.734375,
+        "center_y": 151.6875
+      },
+      "placement": {
+        "side": "below",
+        "x": 206.0,
+        "y": 190.69,
+        "width": 270.0,
+        "height": 158,
+        "score": 1086.3125
+      }
+    }
+  ]
+}

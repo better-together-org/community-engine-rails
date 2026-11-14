@@ -58,7 +58,7 @@
 <% end %>
 
   <!-- Cache the page content for better performance -->
-  <% cache page_show_cache_key(@page) do %>
+  <% cache_if !page_has_viewer_specific_blocks?(@content_blocks), page_show_cache_key(@page) do %>
     <% content_for :page_content do %>
     <% @content_blocks.each do |content_block| %>
       <% if @viewer_is_page_editor && !content_block.privacy_public? %>

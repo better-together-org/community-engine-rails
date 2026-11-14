@@ -1,0 +1,52 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.promotions.index_title') %>
+<% end %>
+
+<div id="billing-promotions-page" class="container my-4">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <h1 class="mb-0"><%= t('better_together.billing.promotions.index_title') %></h1>
+    <%= link_to t('better_together.billing.promotions.new_promotion'), new_billing_promotion_path(locale: I18n.locale), class: 'btn btn-primary', id: 'new-promotion-btn' %>
+  </div>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.promotions.index_intro') %></p>
+
+  <% if @promotions.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-promotions-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.promotions.field_name') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.promotions.field_amount') %></th>
+              <th scope="col"><%= t('better_together.billing.promotions.field_used') %></th>
+              <th scope="col"><%= t('better_together.billing.promotions.field_window') %></th>
+              <th scope="col"><%= t('better_together.billing.promotions.field_status') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @promotions.each do |promotion| %>
+              <tr id="<%= dom_id(promotion) %>">
+                <th scope="row"><%= promotion.name %></th>
+                <td class="text-end"><%= billing_amount(promotion.amount_cents, promotion.currency) %></td>
+                <td><%= billing_promotion_usage(promotion) %></td>
+                <td><%= billing_promotion_window(promotion) %></td>
+                <td><%= billing_promotion_status_badge(promotion) %></td>
+                <td class="text-end" id="<%= dom_id(promotion, :actions) %>">
+                  <% if promotion.active? %>
+                    <%= button_to t('better_together.billing.promotions.deactivate'), deactivate_billing_promotion_path(promotion, locale: I18n.locale), method: :patch,
+                                  class: 'btn btn-outline-secondary btn-sm', id: dom_id(promotion, :deactivate_btn) %>
+                  <% else %>
+                    <%= button_to t('better_together.billing.promotions.activate'), activate_billing_promotion_path(promotion, locale: I18n.locale), method: :patch,
+                                  class: 'btn btn-outline-primary btn-sm', id: dom_id(promotion, :activate_btn) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-promotions-empty" class="text-body-secondary"><%= t('better_together.billing.promotions.none') %></p>
+  <% end %>
+</div>

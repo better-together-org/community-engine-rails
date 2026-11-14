@@ -1,0 +1,27 @@
+<%# The invoice and the receipt of the order, when they have been made; each is the stored PDF, fetched through the upload's own download. %>
+<% documents = [order.invoice_document, order.receipt_document].compact.select { |document| policy(document.upload).download? } %>
+<% if documents.any? %>
+  <div id="<%= dom_id(order, :documents) %>" class="billing-order-documents d-flex flex-wrap gap-2 px-3 py-3 border-top">
+    <% documents.each do |document| %>
+      <%= link_to better_together.download_file_path(document.upload, locale: I18n.locale),
+                  id: dom_id(document, :download), class: "btn btn-outline-primary btn-sm billing-order-document-download billing-order-#{document.kind}-download",
+                  download: document.filename.to_s do %>
+        <i class="fas fa-file-pdf me-1" aria-hidden="true"></i>
+        <%= t("better_together.billing.orders.download_#{document.kind}") %>
+        <span class="visually-hidden"><%= t('better_together.billing.orders.document_details', size: number_to_human_size(document.byte_size), date: l(document.generated_at, format: :long)) %></span>
+      <% end %>
+    <% end %>
+  </div>
+  <%# Make them again in the language the page is read in, only when the documents are in another one. %>
+  <% if I18n.locale.to_s != order.documents_locale %>
+  <% regenerate_path = controller_name == 'sales' ? billing_sale_documents_path(order, locale: I18n.locale) : billing_order_documents_path(order, locale: I18n.locale) %>
+  <%= form_with url: regenerate_path, method: :post, id: dom_id(order, :regenerate_documents),
+                class: 'billing-order-documents-language d-flex flex-wrap align-items-center gap-2 px-3 pb-3' do |form| %>
+    <%= form.label :document_locale, t('better_together.billing.orders.document_language'), class: 'form-label mb-0 small', for: dom_id(order, :document_locale) %>
+    <%= form.select :document_locale, I18n.available_locales.map { |code| [t("locales.#{code}"), code] },
+                    { selected: I18n.locale }, id: dom_id(order, :document_locale), class: 'form-select form-select-sm w-auto' %>
+    <%= form.submit t('better_together.billing.orders.regenerate_documents'), id: dom_id(order, :regenerate_documents_submit),
+                    class: 'btn btn-outline-secondary btn-sm', data: { turbo: false } %>
+  <% end %>
+  <% end %>
+<% end %>

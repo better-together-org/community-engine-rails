@@ -1,0 +1,15 @@
+---
+title: Plan catalog block
+audience:
+- content_editor
+- end_user
+journey_step: As an editor I add the plan catalog block to a page; visitors see the
+  plans they can buy.
+callouts:
+- :id: plans
+  :title: Plan cards
+  :description: Price, summary and a button into checkout.
+accessibility_notes: The block is a labelled section; each plan is an article with
+  its own heading.
+slug: billing_plan_catalog_block
+device: desktop
