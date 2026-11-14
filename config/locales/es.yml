@@ -995,6 +995,15 @@ es:
         completed_message: Lista de verificación completa
         items_title: Elementos
         no_items: No hay elementos para mostrar
+    color_mode:
+      announce:
+        auto: 'Modo de color: automático, según su dispositivo.'
+        dark: 'Modo de color: oscuro.'
+        light: 'Modo de color: claro.'
+      auto: Auto
+      dark: Oscuro
+      label: Modo de color
+      light: Claro
     comment_config:
       hints:
         permission: Controla quién puede publicar nuevos comentarios.
@@ -3053,6 +3062,32 @@ es:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
       preferences:
+        appearance:
+          color_mode:
+            hint: Automático sigue el ajuste de tu dispositivo. Claro y oscuro se
+              quedan como los elijas.
+            title: Modo de color
+          contrast_note: 'Nota: este tema tiene pares de colores por debajo del contraste
+            WCAG AA. Elige otro tema si el texto es difícil de leer.'
+          description: Elige cómo se ve este sitio para ti. Tus elecciones te acompañan
+            en cada dispositivo donde inicies sesión.
+          platform_theme: Usar el tema de la plataforma
+          preview_button: Botón
+          preview_card: Una tarjeta sobre una banda de sección
+          preview_footer: Enlace del pie de página
+          preview_heading: Un título de ejemplo
+          preview_label: Vista previa de la apariencia
+          preview_link: enlace
+          preview_site_name: Tu sitio
+          preview_state: Vista previa de %{theme} en modo %{mode}. Cada elección se
+            guarda por separado.
+          preview_text: Texto con un
+          theme:
+            hint: Elige uno de los temas disponibles o el que eligió esta plataforma.
+            title: Tema
+          themes_disabled: Esta plataforma usa un solo tema para todos. Aun así, puedes
+            elegir tu modo de color abajo.
+          title: Apariencia
         language:
           title: Idioma
         messaging:
@@ -3582,6 +3617,11 @@ es:
         integrations: Integraciones
         security: Seguridad
       theme:
+        allow_user_themes: Permitir que cada persona elija su tema
+        allow_user_themes_hint: Si está activado, las personas con sesión iniciada
+          pueden elegir cualquier tema disponible en sus ajustes. Si está desactivado,
+          todos ven el tema de la plataforma. Cada persona siempre puede elegir su
+          modo de color (automático, claro u oscuro).
         apply: Aplicar tema
         clear: Vaciar todos los campos del tema
         colors:
@@ -3605,6 +3645,17 @@ es:
         contrast_pass: Cumple AA
         contrast_title: Comprobaciones de contraste
         current_image: "%{name} actual"
+        dark_color_label: 'Oscuro: %{color}'
+        dark_logo_hint: Opcional. Se muestra en modo oscuro en lugar del logotipo
+          del sitio. Si está vacío se usa el logotipo del sitio.
+        dark_logo_label: Logotipo del modo oscuro
+        dark_mode_disabled: Desactivado (solo claro)
+        dark_mode_enabled: Activado
+        dark_mode_label: Modo oscuro
+        dark_source_custom: Definir los míos
+        dark_source_derive: Derivar automáticamente
+        dark_source_label: Colores oscuros
+        default_mode_label: Predeterminado para visitantes nuevos
         default_option: Predeterminado
         favicon_hint: Un PNG, SVG o ICO pequeño y cuadrado que se muestra en la pestaña
           del navegador.
@@ -3625,6 +3676,12 @@ es:
         logo_hint: Se muestra en la barra de navegación. Es el logotipo de la comunidad
           de la plataforma.
         logo_label: Logotipo del sitio
+        mode_summary_fail: "%{mode}: %{count} par(es) por debajo de AA."
+        mode_summary_ok: "%{mode}: todos los pares cumplen AA."
+        modes_hint: Las personas visitantes pueden elegir Auto, Claro u Oscuro. Los
+          colores oscuros se aplican a cada color definido arriba. Déjelos derivados
+          o indique los suyos.
+        modes_title: Modo claro y oscuro
         picker_blank: Elija un tema para previsualizar
         picker_label: Empezar con un tema
         presets:
@@ -3657,6 +3714,7 @@ es:
         preview_input_value: Texto de ejemplo
         preview_label: Vista previa del tema
         preview_link: enlace de ejemplo
+        preview_mode_label: Modo de color de la vista previa
         preview_nav_one: Eventos
         preview_nav_two: Acerca de
         preview_primary: Acción principal

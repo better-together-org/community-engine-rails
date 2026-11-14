@@ -7,3 +7,10 @@ flowchart LR
   Settings --> Style["style#platform-theme-style<br/>CSS custom properties"]
   Attach --> Style
   Style --> Css["Platform Css block<br/>rendered after, always wins"]
+  Settings -->|"light tokens"| Light["root custom properties"]
+  Settings -->|"dark tokens or derive_dark"| Dark["data-bs-theme dark<br/>custom properties"]
+  Light --> Style
+  Dark --> Style
+  Visitor["Visitor toggle<br/>Auto, Light, Dark"] -->|"localStorage + cookie"| Html["html data-bs-theme<br/>set by head script"]
+  Html --> Dark
+  Form -->|"dark_logo"| Attach

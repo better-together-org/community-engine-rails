@@ -27,6 +27,9 @@ acme_forest:
   footer_link: '#ffffff'
   font: system        # system, tahoma, georgia or monospace
   radius: medium      # none, small, medium or large
+  dark:               # optional: hand-tuned dark colours (same keys as above, any subset)
+    page_bg: '#101a14'
+    body_text: '#e8f0ea'
 ```
 
 All twelve colour tokens are required and must be `#rrggbb`. A bad theme raises `ArgumentError` at boot with the reason.
@@ -41,6 +44,22 @@ end
 ```
 
 Use `to_prepare` so the registration survives code reloading in development.
+
+## Dark mode for your themes
+
+Every registered theme gets a dark mode automatically: dark tokens are derived from the light tokens (works for any
+theme, no list to maintain) and meet WCAG AA. If your designers want exact dark colours, add `dark:` (YAML) or
+`dark: { ... }` (`register_theme`). Colours you list are used as given; any you leave out are still derived.
+
+## User preference layering
+
+Signed-in people can pick any theme in the registry (built-ins plus yours) in Settings, stored as `theme` and
+`color_mode` in the existing `Person#preferences` store (no new table). `theme` is validated against
+`PlatformThemeConfig.themes`, so a registered theme is accepted and an unknown id is rejected; a stored id that
+disappears from the registry is ignored at render time. Layout order in `<head>`: engine stylesheet, `#platform-theme-style`
+(platform), `#user-theme-style` (the person, only when chosen and `allow_user_themes` is on), then the platform Css block.
+The platform switch only gates the theme; the colour mode is always the person's. The person's style is inline in the
+HTML for that request only; it is never fragment-cached, so register themes freely without cache keys to manage.
 
 ## Names and translations
 

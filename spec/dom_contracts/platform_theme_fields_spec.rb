@@ -65,4 +65,38 @@ RSpec.describe 'Platform theme fields DOM contract', :as_platform_manager, type:
     expect(doc.at_css('#platform-theme-status')['aria-live']).to eq('polite')
     expect(doc.at_css('#platform-theme-apply')['style']).to include('min-height:44px')
   end
+
+  it 'renders the light/dark mode settings, the preview mode switch and the dark logo field' do # rubocop:disable RSpec/MultipleExpectations
+    get edit_path
+    doc = parsed_response
+
+    %w[platform-theme-modes platform-theme-dark-colors platform-theme-mode-summary platform-dark-logo-field
+       platform-theme-preview-mode-light platform-theme-preview-mode-dark].each do |id|
+      expect(doc.at_css("##{id}")).to be_present, "missing ##{id}"
+    end
+    expect(doc.css('#platform-theme-dark-colors input').size).to eq(BetterTogether::PlatformThemeConfig::COLOR_KEYS.size)
+    expect(doc.at_css('#platform-theme-dark-colors')['hidden']).not_to be_nil
+    expect(doc.css('#platform-theme-preview [aria-pressed]').map { |b| b['aria-pressed'] }).to eq(%w[true false])
+    expect(doc.at_css('#platform-theme-preview-mode-dark')['style']).to include('min-height:44px')
+  end
+
+  it 'shows the custom dark colour inputs when the dark source is custom' do
+    host_platform.update!(theme: { 'primary' => '#1d4e89', 'dark_source' => 'custom', 'dark_primary' => '#6ca0e0' })
+    get edit_path
+
+    expect(parsed_response.at_css('#platform-theme-dark-colors')['hidden']).to be_nil
+    expect(parsed_response.at_css('#platform_theme_dark_primary')['value']).to eq('#6ca0e0')
+  end
+
+  it 'renders the visitor colour mode toggle as a labelled group of three 44px buttons with a status region' do # rubocop:disable RSpec/MultipleExpectations
+    get edit_path
+    toggle = parsed_response.at_css('#color-mode-toggle')
+
+    expect(toggle['data-controller']).to eq('better_together--color-mode')
+    expect(toggle.at_css('[role=group]')['aria-label']).to be_present
+    expect(toggle.css('button[aria-pressed]').size).to eq(3)
+    expect(toggle.css('button .visually-hidden').map(&:text)).to all(be_present)
+    expect(toggle.at_css('#color-mode-status')['aria-live']).to eq('polite')
+    expect(toggle.at_css('style').text).to include('min-width: 44px', 'min-height: 44px')
+  end
 end

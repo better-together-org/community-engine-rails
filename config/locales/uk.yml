@@ -982,6 +982,15 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    color_mode:
+      announce:
+        auto: 'Режим кольорів: автоматичний, за налаштуваннями пристрою.'
+        dark: 'Режим кольорів: темний.'
+        light: 'Режим кольорів: світлий.'
+      auto: Авто
+      dark: Темний
+      label: Режим кольорів
+      light: Світлий
     comment_config:
       hints:
         permission: Визначає, хто може публікувати нові коментарі.
@@ -3061,6 +3070,32 @@ uk:
         new_person: New person
       notification_preferences: Message notification preferences
       preferences:
+        appearance:
+          color_mode:
+            hint: Автоматичний відповідає налаштуванню вашого пристрою. Світлий і
+              темний залишаються такими, як ви обрали.
+            title: Режим кольору
+          contrast_note: 'Примітка: у цій темі є пари кольорів із контрастом нижче
+            WCAG AA. Оберіть іншу тему, якщо текст важко читати.'
+          description: Оберіть, як цей сайт виглядає для вас. Ваш вибір діє на кожному
+            пристрої, де ви входите в систему.
+          platform_theme: Використовувати тему платформи
+          preview_button: Кнопка
+          preview_card: Картка на смузі розділу
+          preview_footer: Посилання внизу сторінки
+          preview_heading: Приклад заголовка
+          preview_label: Попередній перегляд вигляду
+          preview_link: посиланням
+          preview_site_name: Ваш сайт
+          preview_state: 'Попередній перегляд: %{theme}, режим %{mode}. Кожен вибір
+            зберігається окремо.'
+          preview_text: Текст із
+          theme:
+            hint: Оберіть одну з доступних тем або тему, яку обрала ця платформа.
+            title: Тема
+          themes_disabled: Ця платформа використовує одну тему для всіх. Режим кольору
+            нижче ви все одно можете обрати.
+          title: Вигляд
         language:
           title: Мова
         messaging:
@@ -3583,6 +3618,11 @@ uk:
         integrations: Інтеграції
         security: Безпека
       theme:
+        allow_user_themes: Дозволити кожному обирати власну тему
+        allow_user_themes_hint: Якщо увімкнено, користувачі, що увійшли в систему,
+          можуть обрати будь-яку доступну тему у своїх налаштуваннях. Якщо вимкнено,
+          усі бачать тему платформи. Кожен завжди може обрати свій режим кольору (автоматичний,
+          світлий або темний).
         apply: Застосувати тему
         clear: Очистити всі поля теми
         colors:
@@ -3606,6 +3646,17 @@ uk:
         contrast_pass: Відповідає AA
         contrast_title: Перевірка контрасту
         current_image: 'Поточний: %{name}'
+        dark_color_label: 'Темний: %{color}'
+        dark_logo_hint: Необов'язково. Показується в темному режимі замість логотипа
+          сайту. Якщо порожньо, використовується логотип сайту.
+        dark_logo_label: Логотип для темного режиму
+        dark_mode_disabled: Вимкнено (лише світлий)
+        dark_mode_enabled: Увімкнено
+        dark_mode_label: Темний режим
+        dark_source_custom: Задати власні
+        dark_source_derive: Обчислити автоматично
+        dark_source_label: Темні кольори
+        default_mode_label: Типово для нових відвідувачів
         default_option: Типово
         favicon_hint: Невеликий квадратний PNG, SVG або ICO, що показується на вкладці
           браузера.
@@ -3624,6 +3675,12 @@ uk:
         images_title: Зображення
         logo_hint: Показується на панелі навігації. Це логотип спільноти платформи.
         logo_label: Логотип сайту
+        mode_summary_fail: "%{mode}: пар нижче AA: %{count}."
+        mode_summary_ok: "%{mode}: усі пари відповідають AA."
+        modes_hint: Відвідувачі можуть обирати Авто, Світлий або Темний. Темні кольори
+          застосовуються до кожного кольору, заданого вище. Залиште їх похідними або
+          вкажіть власні.
+        modes_title: Світлий і темний режим
         picker_blank: Оберіть тему для перегляду
         picker_label: Почати з теми
         presets:
@@ -3656,6 +3713,7 @@ uk:
         preview_input_value: Приклад тексту
         preview_label: Перегляд теми
         preview_link: прикладом посилання
+        preview_mode_label: Режим кольорів перегляду
         preview_nav_one: Події
         preview_nav_two: Про нас
         preview_primary: Основна дія

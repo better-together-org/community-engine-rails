@@ -8,6 +8,8 @@ module BetterTogether
   # - Notification preferences
   # - Messaging privacy settings
   class SettingsController < ApplicationController
+    include AppearancePreferenceParams
+
     before_action :authenticate_user!
     before_action :set_person
     before_action :set_feature_gate_visibility
@@ -99,7 +101,7 @@ module BetterTogether
         :notify_by_email,
         :show_conversation_details,
         :notify_on_comments
-      )
+      ).merge(appearance_params(@person))
     end
   end
 end
