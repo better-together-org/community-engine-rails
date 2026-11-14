@@ -135,13 +135,13 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
 | 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
 | 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | spec C1; migration held (C7, PR #2165) |
-| 7 | No dry-run or diff | The plan is the dry-run report | C3 |
+| 7 | No dry-run or diff | The plan is the dry-run report | **fixed in C3** |
 | 8 | No validation schema | JSON Schemas and `Protocol::Validator` | **fixed in C1** |
 | 9 | No signature verification | Detached signature over `MANIFEST.json`, key id in `origin` | spec C1; verification later |
 | 10 | No partial update or deletion model | `mode` plus `deletes:` tombstones limited to provenance-owned records | spec and schema C1, applier C3 |
 | 11 | No versioning or migration semantics | `version` 2.x selects the 2.0 schema, 1.x keeps old rules; `packet.version` per packet; `seed_pack.schema_version` | **fixed in C1** (selection), migrations later |
 | 12 | Inconsistent locale handling | `default_locale`, `locales`, `unsupported_locale_policy`, per-record `translations` | **fixed in C1** (declaration and consistency check), policy applied in C3 |
-| 13 | No ordering model | `position` per record; apply order is topological by references, then `position` | spec C1, C3 |
+| 13 | No ordering model | `position` per record; apply order is topological by references, then `position` | **fixed in C3** |
 | 14 | Errors flatten to strings | `Report` with file, record, field pointer, message; all errors at once | **fixed in C1** |
 | 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | C3 |
 | 16 | `ALLOWED_SEED_DIRECTORIES` blocks host-app directories and uploads | Configurable packet-source allowlist beyond `config/seeds` | **fixed in C4** |
@@ -155,6 +155,70 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 - `Seeds::PacketSources` is the allowlist for where packets may be read from: `config/seeds` (app and engine), roots registered with `PacketSources.register_root`, and `BETTER_TOGETHER_SEED_PACKET_ROOTS`. Paths are resolved through symlinks before the check (deficiency 16).
 
 Limit: `BlobAttacher` re-checks and attaches one-file attachments; `has_many_attached` records attach every listed file without the already-attached shortcut.
+
+## Type registry (C2)
+
+`Seeds::Registry` replaces the per-class `plant` pointers. Each type is declared once with a small DSL and frozen:
+
+```ruby
+BetterTogether::Seeds::Registry.register(:upload) do
+  model 'BetterTogether::Upload'
+  attributes :privacy
+  translated :name, :description
+  attachment :file
+end
+```
+
+| DSL | Meaning |
+|---|---|
+| `model` | The ActiveRecord class |
+| `natural_key col` | Column that holds the packet `key`, looked up inside the target platform (default `identifier`) |
+| `natural_key col, within: :ref` | Key is unique only inside a parent record (social account within its contact detail) |
+| `natural_key by_refs: [:a, :b]` | A join row identified by the records it joins (`page_block`) |
+| `attributes`, `translated` | The only fields a packet may write |
+| `reference name, to:, optional:` | Reference slots; `to:` lists allowed target types |
+| `attachment`, `position`, `sti` | Files, ordering column, and the subclass column for STI types such as content blocks |
+| `before_resolve`, `transform`, `after_plant` | Hooks for host-app logic |
+
+`Registry.ordered` returns types in dependency order and raises `DependencyCycle`. `TypeDefinition#find(platform:, key:, parent_refs:)` resolves a key on the target platform only, never globally. Host apps register their own types (NLO districts, NLV venues) from an initializer.
+
+Registered: `page`, `content_block`, `page_block`, `navigation_area`, `navigation_item`, `upload`, `event`, `community`, `contact_detail`, `social_media_account`, `platform` (lookup target only). `SocialMediaAccount::PLATFORMS` gains Flickr.
+
+### Findings while registering (added to the numbered list)
+
+| # | Deficiency | Resolution |
+|---|---|---|
+| 17 | Natural keys are not always a column: social accounts and join rows have none | `within:` and `by_refs:` key kinds |
+| 18 | `Page` has no cover or share image attachment, so the page share image needs a model change | Open model work item, not worked around |
+| 19 | `Event.identifier` is globally unique (index on `identifier` alone), unlike pages and uploads | Platform-scoped uniqueness needed before two platforms plant one events packet; open model work item |
+
+The registry spec checks each declared attribute is writable on the model, each attachment exists, and each reference points at a registered type, so a drifting model fails CI.
+
+## Planner and applier (C3)
+
+`Seeds::Plant.call(path:, platform:, apply: false)` loads a packet directory (`Seeds::Packet`: no symlinks, safe YAML, schema validation), plans it (`Seeds::Planner`) and, only with `apply: true` and an error-free plan, writes it (`Seeds::Applier`). It always returns the structured report; a dry run writes nothing, not even a `SeedPlanting`.
+
+```
+rake better_together:seeds:plan  PACKET=/path/to/packet PLATFORM=<platform identifier>
+rake better_together:seeds:plant PACKET=/path/to/packet PLATFORM=<platform identifier> APPLY=1
+```
+
+Planning checks that every attribute and translation is declared writable in the registry, every reference slot is allowed and resolves (packet-local first, then on the target platform), locales follow `unsupported_locale_policy`, the packet's `target.platform_identifier` matches, and `seed_pack.dependencies` are already planted. Records are ordered by reference (Kahn's algorithm, ties by type order, `position`, file order); cycles are errors.
+
+Each record is classified by comparing a flat snapshot of the fields the entry owns (`attr:`, `tr:<locale>:`, `ref:`, `position`) with the record and with the snapshot taken when this packet last planted it:
+
+| Situation | Action |
+|---|---|
+| No record with that key on the platform | `create` |
+| Record already holds the packet values | `unchanged` |
+| `add_only`, record differs | `skipped_edited` (existing records are never touched) |
+| `upsert` or `managed`, record differs, matches what the packet last planted | `update` |
+| Record differs and was edited since, or the packet never planted it | `skipped_edited` |
+| `managed` tombstone, record planted by the packet and unedited | `delete` |
+
+Apply takes a per-packet advisory lock (deficiency 15), writes one transaction with a savepoint per record, and rolls the whole packet back if any record errors, reporting every failing record with its field. A `SeedPlanting` row records the outcome; its `result.provenance` holds the per-record snapshots that the next plan reads, so provenance works today without new columns. Files fail closed per record until blob transport (C4) supplies `attach_files`.
+
+Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only); snapshot-based edit detection is replaced by provenance columns once C7 lands.
 
 ## What is deliberately not here
 
