@@ -3438,12 +3438,26 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        csp_title: Security / CSP embeds
+        custom_css_hint: Advanced override. Styles added here load after the theme
+          and take precedence over it.
+        custom_css_title: Custom CSS
+        domains_after_save: Save the platform first, then manage its domains and sign-in
+          providers here.
+        domains_hint: Review the domains this platform answers on and the services
+          people use to sign in.
         feature_gates_hint: Choose which rollout stage each feature requires on this
           platform.
         feature_gates_title: Feature rollout gates
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+        integrations_empty: No integrations are installed.
+        integrations_env_fallback: Using the %{variable} environment variable. A value
+          saved here replaces it.
+        integrations_hint: Settings for services connected through extension gems.
+          Each platform keeps its own values.
+        integrations_secret_set: A value is saved. Leave this blank to keep it.
         quota_defaults_hint: Starting limit for each new person, community and this
           platform. Leave a field blank to use the default set in the application
           configuration. Changing a value also updates existing quotas on this platform;
@@ -3473,6 +3487,15 @@ en:
         title: Register External Platform
       show:
         new_invitation: New invitation
+      tabs:
+        access: Access and privacy
+        appearance: Appearance
+        details: Details
+        domains: Domains and sign-in
+        errors: errors on this tab
+        features: Features and quotas
+        integrations: Integrations
+        security: Security
     posts:
       authors: Authors
       back_to_posts: Back to Posts
@@ -4737,6 +4760,9 @@ en:
               privacy, and time zone you choose.
             steward: A steward account is created with full management access to the
               new platform.
+  breadcrumbs:
+    home: Home
+    label: Breadcrumb
   community:
     create_failed: Create failed
     created: Created

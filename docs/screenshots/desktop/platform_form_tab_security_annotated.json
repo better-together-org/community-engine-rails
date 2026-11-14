@@ -1,0 +1,48 @@
+{
+  "name": "platform_form_tab_security_annotated",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_form_tabs",
+  "flow": "platform_edit_security",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_form_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-security-tab",
+      "title": "Security tab",
+      "bullets": [
+        "Content security policy origins."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 420.0,
+        "width": 306.0,
+        "height": 40.0,
+        "right": 378.0,
+        "bottom": 460.0,
+        "center_x": 225.0,
+        "center_y": 440.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 420.0,
+        "width": 306.0,
+        "height": 40.0,
+        "right": 378.0,
+        "bottom": 460.0,
+        "center_x": 225.0,
+        "center_y": 440.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 398.0,
+        "y": 374.0,
+        "width": 380,
+        "height": 132,
+        "score": 1062.0
+      }
+    }
+  ]
+}
