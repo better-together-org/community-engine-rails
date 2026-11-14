@@ -189,3 +189,11 @@ supported_os() {
   ! grep -nE '^\s*sudo ' "$SCRIPT"
   ! grep -nE 'apps:destroy' "$SCRIPT"
 }
+
+@test "deployment-dokku.md quotes the manifest's image pins" {
+  doc="${BATS_TEST_DIRNAME}/../../../docs/production/deployment-dokku.md"
+  postgis="$(sed -n 's/^POSTGIS_IMAGE_VERSION=//p' "$VERSIONS")"
+  redis="$(sed -n 's/^REDIS_IMAGE_VERSION=//p' "$VERSIONS")"
+  grep -q -- "--image-version $postgis" "$doc"
+  grep -q -- "--image-version $redis" "$doc"
+}

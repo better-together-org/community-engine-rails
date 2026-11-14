@@ -156,6 +156,20 @@ of copying them. It must honor `DRY_RUN`.
   parsing, and dry-run output (no mutating command executes).
 - Integration check in a throwaway container or VM, never on a fleet host.
 
+## Placement and use
+
+- Canonical copy: `bin/prod/host-setup.sh` with `bin/prod/host-setup.versions` in this
+  gem. The two files travel together; `--versions-file` points at another manifest.
+- Host apps: the Community Engine install generator (planned, Track K5) offers to copy
+  both files into the host app's `bin/prod/`, so a solo host app carries them. The
+  generator must copy the pair, never the script alone, and must not rewrite them.
+  Until that exists, copy them by hand from the gem release you deploy.
+- Runbook step 1 ("prepare the host"): run `--dry-run --yes` with the intended flags,
+  review the output, then run it for real. On an existing server, step 1 is instead
+  "verify the host meets the baseline": compare `dokku version`, `dokku plugin:list`,
+  `ufw status` and the manifest.
+- Where the manual commands live: [Deployment (Dokku)](./deployment-dokku.md).
+
 ## Out of scope
 
 Ruby, Node and application dependencies (the Dockerfile owns those); DNS and edge
