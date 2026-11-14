@@ -39,7 +39,15 @@ module BetterTogether
       # The enabled trusted domain covering this address, or nil. Only a verified address can match:
       # anyone can type an address they do not control.
       def match(platform:, email:, verified:)
-        return nil unless verified == true && platform.present?
+        return nil unless verified == true
+
+        lookup(platform:, email:)
+      end
+
+      # The enabled entry covering this address, verified or not. Only for deciding that a sign-up may proceed
+      # to email confirmation; it must never be the basis for access.
+      def lookup(platform:, email:)
+        return nil if platform.blank?
 
         host = email_host(email)
         return nil if host.blank?

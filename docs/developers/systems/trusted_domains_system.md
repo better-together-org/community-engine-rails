@@ -48,3 +48,19 @@ active community membership with the domain's role and writes an `account_create
 - `Grant` only adds the domain's role. An existing active membership is left alone.
 - Google verifies the address, not that the domain is a managed Workspace tenant. Restricting by the
   Workspace `hd` claim as a second factor is a separate follow-up.
+
+## Email and password sign-up
+
+An address typed into a form proves nothing, so access waits for confirmation.
+
+1. `Users::RegistrationsController#check_invitation_requirement` lets a sign-up without an invitation
+   through when `PlatformTrustedDomain.lookup` finds the typed address's domain. An invitation, when
+   present, takes precedence and the normal invitation rules apply.
+2. The account is created **unconfirmed** (Devise sends the confirmation email; nobody is signed in). Its
+   community membership is created `pending` with the domain's role, and a `account_created` audit entry
+   (`email_verified: false`) is written.
+3. When the address is confirmed (`after_confirmation` in `DeviseUser`), each pending community membership
+   whose platform trusts the confirmed address is passed to `TrustedDomains::Grant`: the membership
+   becomes `active` with the domain role and a `membership_granted` entry is written.
+
+Changing the address before confirming grants nothing unless the new address is also trusted.
