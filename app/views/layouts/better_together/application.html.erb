@@ -12,6 +12,7 @@
     <%= seo_meta_tags %>
     <%= canonical_link_tag %>
     <%= robots_meta_tag %>
+    <%= third_party_tracking_meta_tag %>
     <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
     <%= yield(:structured_data) if content_for?(:structured_data) %>
     <meta name="color-scheme" content="light dark">

@@ -8,11 +8,15 @@ module BetterTogether
     include Pundit::Authorization
     include InvitationSessionManagement
     include MentionPrefetch
+    include ThirdPartyTracking
     include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception
 
     layout :determine_layout
+
+    # Sign-in, sign-up and password flows carry tokens and are never measured by vendors.
+    skip_third_party_tracking if: :devise_controller?
 
     around_action :with_current_platform_context
     before_action :check_platform_setup
