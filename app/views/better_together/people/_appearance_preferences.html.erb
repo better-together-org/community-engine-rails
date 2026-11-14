@@ -1,0 +1,70 @@
+<%# Personal theme and colour mode with a live preview. Saved per field through the preference field controller. %>
+<%# locals: (person:) %>
+<% scope = 'better_together.people.preferences.appearance' %>
+<% themes_allowed = host_platform.allow_user_themes? %>
+<% cfg = BetterTogether::PlatformThemeConfig %>
+<% selected_theme = person.theme.to_s %>
+<% selected_theme = '' unless cfg.themes.key?(selected_theme) %>
+<% selected_mode = cfg::COLOR_MODES.include?(person.color_mode) ? person.color_mode : host_platform.theme_config.default_mode %>
+<section id="person-appearance-preferences" class="mb-4 pb-3 border-bottom" aria-labelledby="person-appearance-heading"
+         data-controller="better_together--user-theme-preview"
+         data-better_together--user-theme-preview-themes-value="<%= user_theme_preview_json %>"
+         data-better_together--user-theme-preview-state-text-value="<%= t("#{scope}.preview_state", theme: '%{theme}', mode: '%{mode}') %>"
+         data-better_together--user-theme-preview-contrast-note-value="<%= t("#{scope}.contrast_note") %>"
+         data-action="change->better_together--user-theme-preview#update preference:saved->better_together--user-theme-preview#saved">
+  <h5 id="person-appearance-heading" class="mb-3">
+    <i class="fa-solid fa-palette me-2" aria-hidden="true"></i>
+    <%= t("#{scope}.title") %>
+  </h5>
+  <p class="text-muted small mb-3"><%= t("#{scope}.description") %></p>
+
+  <% if themes_allowed %>
+    <%= preference_field(person, :theme,
+          field_type: :select,
+          label: t("#{scope}.theme.title"),
+          icon: 'fa-solid fa-swatchbook',
+          hint: t("#{scope}.theme.hint"),
+          field_options: { choices: user_theme_choices, selected: selected_theme }) %>
+  <% else %>
+    <p id="person-theme-disabled-note" class="text-muted small mb-3"><%= t("#{scope}.themes_disabled") %></p>
+  <% end %>
+
+  <%= preference_field(person, :color_mode,
+        field_type: :select,
+        label: t("#{scope}.color_mode.title"),
+        icon: 'fa-solid fa-circle-half-stroke',
+        hint: t("#{scope}.color_mode.hint"),
+        field_options: { choices: user_color_mode_choices, selected: selected_mode }) %>
+
+  <style>
+    #user-theme-preview .bts-preview { --bts-page-bg: #fff; --bts-body-text: #212529; --bts-band: #f1f3f5; --bts-navbar-bg: #fff; --bts-navbar-link: #1d4e89; --bts-link: #0b5394; --bts-primary: #1d4e89; --bts-primary-text: #fff; --bts-accent: #4a6fa5; --bts-footer-bg: #212529; --bts-footer-link: #fff;
+      background: var(--bts-page-bg); color: var(--bts-body-text); font-family: var(--bts-font, inherit); border: 1px solid var(--bs-border-color, currentColor); border-radius: var(--bts-radius, 0.375rem); overflow: hidden; }
+    #user-theme-preview .bts-preview[data-bs-theme="dark"] { --bts-page-bg: #212529; --bts-body-text: #f8f9fa; --bts-band: #2b3035; --bts-navbar-bg: #1a1d20; --bts-navbar-link: #f8f9fa; --bts-link: #6ea8fe; --bts-primary: #6ea8fe; --bts-primary-text: #000; --bts-accent: #6ea8fe; --bts-footer-bg: #14171a; --bts-footer-link: #f8f9fa; }
+    #user-theme-preview .bts-preview a { color: var(--bts-link); }
+    #user-theme-preview .bts-nav { background: var(--bts-navbar-bg); color: var(--bts-navbar-link); padding: 0.75rem 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    #user-theme-preview .bts-nav a, #user-theme-preview .bts-nav strong { color: var(--bts-navbar-link); }
+    #user-theme-preview .bts-btn { border: 1px solid var(--bts-primary); background: var(--bts-primary); color: var(--bts-primary-text); border-radius: var(--bts-radius, 0.375rem); padding: 0.375rem 0.75rem; font: inherit; }
+    #user-theme-preview .bts-card { border: 1px solid var(--bts-accent); border-radius: var(--bts-radius, 0.375rem); padding: 0.75rem; background: var(--bts-band); }
+    #user-theme-preview .bts-footer { background: var(--bts-footer-bg); color: var(--bts-footer-link); padding: 0.75rem 1rem; }
+    #user-theme-preview .bts-footer a { color: var(--bts-footer-link); }
+  </style>
+  <div id="user-theme-preview" class="mb-2" role="group" aria-label="<%= t("#{scope}.preview_label") %>">
+    <p id="user-theme-preview-state" class="small fw-semibold mb-2" role="status" aria-live="polite"
+       data-better_together--user-theme-preview-target="state"></p>
+    <div class="bts-preview" inert data-better_together--user-theme-preview-target="preview">
+      <div class="bts-nav" id="user-theme-preview-navbar">
+        <strong><%= host_platform.name.presence || t("#{scope}.preview_site_name") %></strong>
+        <a href="#"><%= t("#{scope}.preview_link") %></a>
+      </div>
+      <div class="p-3" id="user-theme-preview-body">
+        <p class="fw-bold mb-1"><%= t("#{scope}.preview_heading") %></p>
+        <p><%= t("#{scope}.preview_text") %> <a href="#"><%= t("#{scope}.preview_link") %></a></p>
+        <button type="button" class="bts-btn" tabindex="-1"><%= t("#{scope}.preview_button") %></button>
+        <div class="bts-card mt-3" id="user-theme-preview-card"><%= t("#{scope}.preview_card") %></div>
+      </div>
+      <div class="bts-footer" id="user-theme-preview-footer"><a href="#"><%= t("#{scope}.preview_footer") %></a></div>
+    </div>
+    <p id="user-theme-contrast-note" class="small text-warning-emphasis mt-2 mb-0" role="note" hidden
+       data-better_together--user-theme-preview-target="note"></p>
+  </div>
+</section>

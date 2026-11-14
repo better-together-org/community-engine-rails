@@ -613,6 +613,10 @@ en:
               inclusion: "%{value} is not a supported OAuth provider"
             uid:
               taken: has already been linked to another account
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} has a value that is not allowed"
         better_together/platform_domain:
           attributes:
             active:
@@ -999,6 +1003,15 @@ en:
         completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
+    color_mode:
+      announce:
+        auto: 'Colour mode: automatic, following your device.'
+        dark: 'Colour mode: dark.'
+        light: 'Colour mode: light.'
+      auto: Auto
+      dark: Dark
+      label: Colour mode
+      light: Light
     comment_config:
       hints:
         permission: Controls who is allowed to post new comments.
@@ -3045,6 +3058,33 @@ en:
         new_person: New person
       notification_preferences: Message notification preferences
       preferences:
+        appearance:
+          color_mode:
+            hint: Automatic follows your device setting. Light and dark stay as you
+              choose.
+            title: Colour mode
+          contrast_note: 'Note: this theme has some colour pairs below WCAG AA contrast.
+            Pick another theme if text is hard to read.'
+          description: Choose how this site looks for you. Your choices follow you
+            on every device you sign in on.
+          platform_theme: Use the platform's theme
+          preview_button: Button
+          preview_card: A card on a section band
+          preview_footer: Footer link
+          preview_heading: A sample heading
+          preview_label: Appearance preview
+          preview_link: link
+          preview_site_name: Your site
+          preview_state: Previewing %{theme} in %{mode} mode. Each choice saves on
+            its own.
+          preview_text: Body text with a
+          theme:
+            hint: Pick one of the available themes, or use the one chosen by this
+              platform.
+            title: Theme
+          themes_disabled: This platform uses one theme for everyone. You can still
+            choose your colour mode below.
+          title: Appearance
         language:
           title: Language
         messaging:
@@ -3652,6 +3692,125 @@ en:
         features: Features and quotas
         integrations: Integrations
         security: Security
+      theme:
+        allow_user_themes: Let people choose their own theme
+        allow_user_themes_hint: When on, signed-in people can pick any available theme
+          in their settings. When off, everyone sees the platform theme. People can
+          always choose their own colour mode (automatic, light or dark).
+        apply: Apply theme
+        clear: Clear all theme fields
+        colors:
+          accent: Accent colour
+          accent_dark: Accent colour (dark, for text)
+          band: Section band background
+          body_text: Body text
+          footer_bg: Footer background
+          footer_link: Footer links
+          link: Link colour
+          navbar_bg: Navigation background
+          navbar_link: Navigation text and links
+          page_bg: Page background
+          primary: Primary colour
+          primary_text: Text on primary buttons
+        contrast_aaa: Passes AAA
+        contrast_fail: Below AA, hard to read
+        contrast_hint: Ratios update as you type. Normal text needs at least 4.5:1
+          (WCAG AA).
+        contrast_pair: "%{foreground} on %{background}"
+        contrast_pass: Passes AA
+        contrast_title: Contrast checks
+        current_image: Current %{name}
+        dark_color_label: 'Dark: %{color}'
+        dark_logo_hint: Optional. Shown in dark mode instead of the site logo. The
+          site logo is used when this is empty.
+        dark_logo_label: Dark mode logo
+        dark_mode_disabled: Disabled (light only)
+        dark_mode_enabled: Enabled
+        dark_mode_label: Dark mode
+        dark_source_custom: Set my own
+        dark_source_derive: Derive automatically
+        dark_source_label: Dark colours
+        default_mode_label: Default for new visitors
+        default_option: Default
+        favicon_hint: A small square PNG, SVG or ICO shown in the browser tab.
+        favicon_label: Favicon
+        font_label: Font
+        fonts:
+          georgia: Georgia (serif)
+          monospace: Monospace
+          system: System sans-serif
+          tahoma: Tahoma
+        header_banner_hint: A wide image for the page header. Available to the theme
+          as --bts-header-banner.
+        header_banner_label: Header banner
+        hint: Set the main colours, font and corner style. Leave a field empty to
+          keep the default. The custom CSS below can still override anything set here.
+        images_title: Images
+        logo_hint: Shown in the navigation bar. This is the logo of the platform's
+          community.
+        logo_label: Site logo
+        mode_summary_fail: "%{mode}: %{count} pair(s) below AA."
+        mode_summary_ok: "%{mode}: every pair meets AA."
+        modes_hint: Visitors can switch between Auto, Light and Dark. Dark colours
+          apply to every colour you set above. Leave them derived, or supply your
+          own.
+        modes_title: Light and dark mode
+        picker_blank: Choose a theme to preview
+        picker_label: Start from a theme
+        presets:
+          cool:
+            description: Deep teal on a soft cool background with rounder corners.
+            name: Cool
+          dark:
+            description: Light text on a dark page for low-light viewing.
+            name: Dark
+          high_contrast:
+            description: Black, white and yellow with the strongest contrast and square
+              corners.
+            name: High contrast
+          neutral:
+            description: Calm blue on white. A safe default with strong contrast.
+            name: Neutral light
+          warm:
+            description: Earthy rust and cream with a serif font.
+            name: Warm
+        preview_alert: An informational message looks like this.
+        preview_badge: New
+        preview_band: A section band for highlighted content
+        preview_card_text: Cards use the page background and accent border.
+        preview_card_title: A card
+        preview_footer_link: Footer link
+        preview_heading: A heading in your theme
+        preview_hint: A sample page that updates as you pick a theme or edit a colour.
+          Nothing is saved until you save the platform.
+        preview_input_label: Form field
+        preview_input_value: Sample text
+        preview_label: Theme preview
+        preview_link: sample link
+        preview_mode_label: Preview colour mode
+        preview_nav_one: Events
+        preview_nav_two: About
+        preview_primary: Primary action
+        preview_secondary: Secondary action
+        preview_site_name: Your platform
+        preview_text: Body text sits on the page background, with a
+        preview_title: Preview
+        radii:
+          large: Large
+          medium: Medium
+          none: Square
+          small: Small
+        radius_label: Corner radius
+        remove: Remove
+        reset: Reset to saved values
+        status_applied: "%{name} applied to the fields. Save the platform to keep
+          it."
+        status_current: 'Current theme: %{name}'
+        status_custom: 'Current theme: custom colours'
+        status_none: No theme set, using the platform defaults
+        status_previewing: Previewing %{name}. Not applied yet.
+        title: Theme
+        white: white page
     posts:
       authors: Authors
       back_to_posts: Back to Posts

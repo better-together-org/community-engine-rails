@@ -600,6 +600,10 @@ es:
               inclusion: "%{value} no es un proveedor OAuth compatible"
             uid:
               taken: ya ha sido vinculado a otra cuenta
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} tiene un valor no permitido"
         better_together/platform_domain:
           attributes:
             active:
@@ -992,6 +996,15 @@ es:
         completed_message: Lista de verificación completa
         items_title: Elementos
         no_items: No hay elementos para mostrar
+    color_mode:
+      announce:
+        auto: 'Modo de color: automático, según su dispositivo.'
+        dark: 'Modo de color: oscuro.'
+        light: 'Modo de color: claro.'
+      auto: Auto
+      dark: Oscuro
+      label: Modo de color
+      light: Claro
     comment_config:
       hints:
         permission: Controla quién puede publicar nuevos comentarios.
@@ -3079,6 +3092,32 @@ es:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
       preferences:
+        appearance:
+          color_mode:
+            hint: Automático sigue el ajuste de tu dispositivo. Claro y oscuro se
+              quedan como los elijas.
+            title: Modo de color
+          contrast_note: 'Nota: este tema tiene pares de colores por debajo del contraste
+            WCAG AA. Elige otro tema si el texto es difícil de leer.'
+          description: Elige cómo se ve este sitio para ti. Tus elecciones te acompañan
+            en cada dispositivo donde inicies sesión.
+          platform_theme: Usar el tema de la plataforma
+          preview_button: Botón
+          preview_card: Una tarjeta sobre una banda de sección
+          preview_footer: Enlace del pie de página
+          preview_heading: Un título de ejemplo
+          preview_label: Vista previa de la apariencia
+          preview_link: enlace
+          preview_site_name: Tu sitio
+          preview_state: Vista previa de %{theme} en modo %{mode}. Cada elección se
+            guarda por separado.
+          preview_text: Texto con un
+          theme:
+            hint: Elige uno de los temas disponibles o el que eligió esta plataforma.
+            title: Tema
+          themes_disabled: Esta plataforma usa un solo tema para todos. Aun así, puedes
+            elegir tu modo de color abajo.
+          title: Apariencia
         language:
           title: Idioma
         messaging:
@@ -3712,6 +3751,128 @@ es:
         features: Funciones y cuotas
         integrations: Integraciones
         security: Seguridad
+      theme:
+        allow_user_themes: Permitir que cada persona elija su tema
+        allow_user_themes_hint: Si está activado, las personas con sesión iniciada
+          pueden elegir cualquier tema disponible en sus ajustes. Si está desactivado,
+          todos ven el tema de la plataforma. Cada persona siempre puede elegir su
+          modo de color (automático, claro u oscuro).
+        apply: Aplicar tema
+        clear: Vaciar todos los campos del tema
+        colors:
+          accent: Color de acento
+          accent_dark: Color de acento (oscuro, para texto)
+          band: Fondo de las franjas de sección
+          body_text: Texto del cuerpo
+          footer_bg: Fondo del pie de página
+          footer_link: Enlaces del pie de página
+          link: Color de los enlaces
+          navbar_bg: Fondo de la navegación
+          navbar_link: Texto y enlaces de la navegación
+          page_bg: Fondo de la página
+          primary: Color principal
+          primary_text: Texto de los botones principales
+        contrast_aaa: Cumple AAA
+        contrast_fail: Por debajo de AA, difícil de leer
+        contrast_hint: Las proporciones se actualizan al escribir. El texto normal
+          necesita al menos 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} sobre %{background}"
+        contrast_pass: Cumple AA
+        contrast_title: Comprobaciones de contraste
+        current_image: "%{name} actual"
+        dark_color_label: 'Oscuro: %{color}'
+        dark_logo_hint: Opcional. Se muestra en modo oscuro en lugar del logotipo
+          del sitio. Si está vacío se usa el logotipo del sitio.
+        dark_logo_label: Logotipo del modo oscuro
+        dark_mode_disabled: Desactivado (solo claro)
+        dark_mode_enabled: Activado
+        dark_mode_label: Modo oscuro
+        dark_source_custom: Definir los míos
+        dark_source_derive: Derivar automáticamente
+        dark_source_label: Colores oscuros
+        default_mode_label: Predeterminado para visitantes nuevos
+        default_option: Predeterminado
+        favicon_hint: Un PNG, SVG o ICO pequeño y cuadrado que se muestra en la pestaña
+          del navegador.
+        favicon_label: Favicon
+        font_label: Fuente
+        fonts:
+          georgia: Georgia (serif)
+          monospace: Monoespaciada
+          system: Sans serif del sistema
+          tahoma: Tahoma
+        header_banner_hint: Una imagen ancha para el encabezado. Disponible para el
+          tema como --bts-header-banner.
+        header_banner_label: Banner de encabezado
+        hint: Defina los colores principales, la fuente y el estilo de las esquinas.
+          Deje un campo vacío para conservar el valor predeterminado. El CSS personalizado
+          de abajo aún puede reemplazar estos ajustes.
+        images_title: Imágenes
+        logo_hint: Se muestra en la barra de navegación. Es el logotipo de la comunidad
+          de la plataforma.
+        logo_label: Logotipo del sitio
+        mode_summary_fail: "%{mode}: %{count} par(es) por debajo de AA."
+        mode_summary_ok: "%{mode}: todos los pares cumplen AA."
+        modes_hint: Las personas visitantes pueden elegir Auto, Claro u Oscuro. Los
+          colores oscuros se aplican a cada color definido arriba. Déjelos derivados
+          o indique los suyos.
+        modes_title: Modo claro y oscuro
+        picker_blank: Elija un tema para previsualizar
+        picker_label: Empezar con un tema
+        presets:
+          cool:
+            description: Verde azulado profundo sobre fondo suave y esquinas más redondeadas.
+            name: Frío
+          dark:
+            description: Texto claro sobre página oscura para poca luz.
+            name: Oscuro
+          high_contrast:
+            description: Negro, blanco y amarillo con el máximo contraste y esquinas
+              cuadradas.
+            name: Alto contraste
+          neutral:
+            description: Azul sereno sobre blanco. Una opción segura con buen contraste.
+            name: Neutro claro
+          warm:
+            description: Óxido y crema con una fuente con serifa.
+            name: Cálido
+        preview_alert: Un mensaje informativo se ve así.
+        preview_badge: Nuevo
+        preview_band: Una franja de sección para contenido destacado
+        preview_card_text: Las tarjetas usan el fondo de la página y el borde de acento.
+        preview_card_title: Una tarjeta
+        preview_footer_link: Enlace del pie de página
+        preview_heading: Un título en su tema
+        preview_hint: Una página de ejemplo que se actualiza al elegir un tema o editar
+          un color. No se guarda nada hasta que guarde la plataforma.
+        preview_input_label: Campo de formulario
+        preview_input_value: Texto de ejemplo
+        preview_label: Vista previa del tema
+        preview_link: enlace de ejemplo
+        preview_mode_label: Modo de color de la vista previa
+        preview_nav_one: Eventos
+        preview_nav_two: Acerca de
+        preview_primary: Acción principal
+        preview_secondary: Acción secundaria
+        preview_site_name: Su plataforma
+        preview_text: El texto del cuerpo está sobre el fondo de la página, con un
+        preview_title: Vista previa
+        radii:
+          large: Grande
+          medium: Mediano
+          none: Cuadrado
+          small: Pequeño
+        radius_label: Redondeo de esquinas
+        remove: Quitar
+        reset: Volver a los valores guardados
+        status_applied: "%{name} aplicado a los campos. Guarde la plataforma para
+          conservarlo."
+        status_current: 'Tema actual: %{name}'
+        status_custom: 'Tema actual: colores personalizados'
+        status_none: Sin tema, se usan los valores predeterminados de la plataforma
+        status_previewing: Vista previa de %{name}. Aún no aplicado.
+        title: Tema
+        white: página blanca
     posts:
       authors: Autores
       back_to_posts: Volver a publicaciones

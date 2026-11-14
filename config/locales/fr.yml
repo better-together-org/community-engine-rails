@@ -602,6 +602,10 @@ fr:
               inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
             uid:
               taken: a déjà été lié à un autre compte
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} a une valeur non autorisée"
         better_together/platform_domain:
           attributes:
             active:
@@ -996,6 +1000,15 @@ fr:
         completed_message: Liste de contrôle complète
         items_title: Éléments
         no_items: Aucun élément à afficher
+    color_mode:
+      announce:
+        auto: 'Mode de couleur : automatique, selon votre appareil.'
+        dark: 'Mode de couleur : sombre.'
+        light: 'Mode de couleur : clair.'
+      auto: Auto
+      dark: Sombre
+      label: Mode de couleur
+      light: Clair
     comment_config:
       hints:
         permission: Détermine qui est autorisé à publier de nouveaux commentaires.
@@ -3097,6 +3110,33 @@ fr:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
       preferences:
+        appearance:
+          color_mode:
+            hint: Automatique suit le réglage de votre appareil. Clair et sombre restent
+              tels que vous les choisissez.
+            title: Mode de couleur
+          contrast_note: 'Remarque : ce thème a des paires de couleurs sous le contraste
+            WCAG AA. Choisissez un autre thème si le texte est difficile à lire.'
+          description: Choisissez l'apparence de ce site pour vous. Vos choix vous
+            suivent sur chaque appareil où vous vous connectez.
+          platform_theme: Utiliser le thème de la plateforme
+          preview_button: Bouton
+          preview_card: Une carte sur une bande de section
+          preview_footer: Lien de pied de page
+          preview_heading: Un titre d'exemple
+          preview_label: Aperçu de l'apparence
+          preview_link: lien
+          preview_site_name: Votre site
+          preview_state: Aperçu de %{theme} en mode %{mode}. Chaque choix est enregistré
+            séparément.
+          preview_text: Du texte avec un
+          theme:
+            hint: Choisissez un des thèmes disponibles, ou celui retenu par cette
+              plateforme.
+            title: Thème
+          themes_disabled: Cette plateforme utilise un seul thème pour tout le monde.
+            Vous pouvez tout de même choisir votre mode de couleur ci-dessous.
+          title: Apparence
         language:
           title: Langue
         messaging:
@@ -3737,6 +3777,128 @@ fr:
         features: Fonctionnalités et quotas
         integrations: Intégrations
         security: Sécurité
+      theme:
+        allow_user_themes: Laisser chacun choisir son thème
+        allow_user_themes_hint: Lorsque cette option est activée, les personnes connectées
+          peuvent choisir n'importe quel thème disponible dans leurs paramètres. Lorsqu'elle
+          est désactivée, tout le monde voit le thème de la plateforme. Chacun peut
+          toujours choisir son mode de couleur (automatique, clair ou sombre).
+        apply: Appliquer le thème
+        clear: Vider tous les champs du thème
+        colors:
+          accent: Couleur d'accent
+          accent_dark: Couleur d'accent (foncée, pour le texte)
+          band: Fond des bandeaux de section
+          body_text: Texte courant
+          footer_bg: Fond du pied de page
+          footer_link: Liens du pied de page
+          link: Couleur des liens
+          navbar_bg: Fond de la navigation
+          navbar_link: Texte et liens de la navigation
+          page_bg: Fond de la page
+          primary: Couleur principale
+          primary_text: Texte des boutons principaux
+        contrast_aaa: Conforme AAA
+        contrast_fail: Sous AA, difficile à lire
+        contrast_hint: Les rapports se mettent à jour pendant la saisie. Le texte
+          normal exige au moins 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} sur %{background}"
+        contrast_pass: Conforme AA
+        contrast_title: Vérifications du contraste
+        current_image: "%{name} actuel"
+        dark_color_label: 'Sombre : %{color}'
+        dark_logo_hint: Facultatif. Affiché en mode sombre à la place du logo du site.
+          Le logo du site est utilisé s'il est vide.
+        dark_logo_label: Logo du mode sombre
+        dark_mode_disabled: Désactivé (clair seulement)
+        dark_mode_enabled: Activé
+        dark_mode_label: Mode sombre
+        dark_source_custom: Définir les miennes
+        dark_source_derive: Dériver automatiquement
+        dark_source_label: Couleurs sombres
+        default_mode_label: Par défaut pour les nouveaux visiteurs
+        default_option: Par défaut
+        favicon_hint: Un petit PNG, SVG ou ICO carré affiché dans l'onglet du navigateur.
+        favicon_label: Favicon
+        font_label: Police
+        fonts:
+          georgia: Georgia (avec empattement)
+          monospace: Chasse fixe
+          system: Sans empattement du système
+          tahoma: Tahoma
+        header_banner_hint: Une image large pour l'en-tête. Disponible pour le thème
+          sous --bts-header-banner.
+        header_banner_label: Bannière d'en-tête
+        hint: Définissez les couleurs principales, la police et le style des coins.
+          Laissez un champ vide pour garder la valeur par défaut. Le CSS personnalisé
+          ci-dessous peut toujours remplacer ces réglages.
+        images_title: Images
+        logo_hint: Affiché dans la barre de navigation. C'est le logo de la communauté
+          de la plateforme.
+        logo_label: Logo du site
+        mode_summary_fail: "%{mode} : %{count} paire(s) sous AA."
+        mode_summary_ok: "%{mode} : toutes les paires respectent AA."
+        modes_hint: Les visiteurs peuvent choisir Auto, Clair ou Sombre. Les couleurs
+          sombres s'appliquent à chaque couleur définie ci-dessus. Laissez-les dérivées
+          ou fournissez les vôtres.
+        modes_title: Mode clair et sombre
+        picker_blank: Choisir un thème à prévisualiser
+        picker_label: Partir d'un thème
+        presets:
+          cool:
+            description: Sarcelle profond sur fond doux et coins plus arrondis.
+            name: Froid
+          dark:
+            description: Texte clair sur page sombre pour une vue en faible lumière.
+            name: Sombre
+          high_contrast:
+            description: Noir, blanc et jaune avec le contraste maximal et des coins
+              carrés.
+            name: Contraste élevé
+          neutral:
+            description: Bleu calme sur blanc. Un choix sûr au contraste fort.
+            name: Neutre clair
+          warm:
+            description: Rouille et crème avec une police à empattement.
+            name: Chaud
+        preview_alert: Un message d'information ressemble à ceci.
+        preview_badge: Nouveau
+        preview_band: Un bandeau de section pour le contenu mis en valeur
+        preview_card_text: Les cartes utilisent le fond de la page et la bordure d'accent.
+        preview_card_title: Une carte
+        preview_footer_link: Lien du pied de page
+        preview_heading: Un titre dans votre thème
+        preview_hint: Une page d'exemple qui se met à jour quand vous choisissez un
+          thème ou modifiez une couleur. Rien n'est enregistré avant l'enregistrement
+          de la plateforme.
+        preview_input_label: Champ de formulaire
+        preview_input_value: Texte d'exemple
+        preview_label: Aperçu du thème
+        preview_link: lien d'exemple
+        preview_mode_label: Mode de couleur de l'aperçu
+        preview_nav_one: Événements
+        preview_nav_two: À propos
+        preview_primary: Action principale
+        preview_secondary: Action secondaire
+        preview_site_name: Votre plateforme
+        preview_text: Le texte courant repose sur le fond de la page, avec un
+        preview_title: Aperçu
+        radii:
+          large: Grand
+          medium: Moyen
+          none: Carré
+          small: Petit
+        radius_label: Arrondi des coins
+        remove: Supprimer
+        reset: Revenir aux valeurs enregistrées
+        status_applied: "%{name} appliqué aux champs. Enregistrez la plateforme pour
+          le conserver."
+        status_current: 'Thème actuel : %{name}'
+        status_custom: 'Thème actuel : couleurs personnalisées'
+        status_none: Aucun thème défini, valeurs par défaut de la plateforme
+        status_previewing: Aperçu de %{name}. Pas encore appliqué.
+        title: Thème
+        white: page blanche
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
