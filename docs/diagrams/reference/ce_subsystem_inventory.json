@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T21:20:02Z",
+  "generated_at": "2026-11-14T21:58:42Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -8072,6 +8072,12 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Seed",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "exchange_governance"
         }
       ]
     },
@@ -23320,6 +23326,10 @@
               "uuid FK"
             ],
             [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
               "seedable_id",
               "uuid FK"
             ],
@@ -23350,10 +23360,6 @@
             [
               "description",
               "text"
-            ],
-            [
-              "seeded_at",
-              "datetime"
             ]
           ],
           "validations": [
@@ -23371,6 +23377,12 @@
               "name": "creator",
               "foreign_key": "creator_id",
               "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
               "optional": true
             }
           ],
@@ -23427,6 +23439,13 @@
               "target": "BetterTogether::Person",
               "optional": true,
               "target_subsystem": "identity_access"
+            },
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
             }
           ]
         },
@@ -24365,6 +24384,12 @@
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Seed",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::SeedPlanting",
