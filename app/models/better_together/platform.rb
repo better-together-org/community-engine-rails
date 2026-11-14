@@ -10,6 +10,7 @@ module BetterTogether
     include PlatformFederationStatus
     include PlatformCspConfiguration
     include PlatformCssBlockManagement
+    include PlatformContentSlots
     include PlatformMembershipDisplay
     include Creatable
     include Identifier

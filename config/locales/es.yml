@@ -3476,6 +3476,31 @@ es:
         expired: Vencido
         pending: Pendiente
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} no admite ese tipo de contenido."
+          too_long: "%{slot} es demasiado largo (el límite es de %{max} caracteres
+            por idioma)."
+        footer_above:
+          hint: Se muestra encima del pie de página del sitio, por ejemplo un aviso
+            de financiadores o un descargo de responsabilidad.
+          label: Encima del pie de página
+        header_above:
+          hint: Se muestra encima del encabezado del sitio, por ejemplo un anuncio.
+          label: Encima del encabezado
+        hint: Bloques de contenido opcionales que se muestran en lugares fijos de
+          cada página de esta plataforma. Cada idioma es independiente; un idioma
+          faltante recurre al idioma predeterminado. Deje un espacio vacío para conservar
+          el diseño estándar.
+        not_found_headlines:
+          hint: Un titular por línea, hasta 20. Se elige uno al azar cuando no se
+            encuentra una página. Sin titulares, se usa el título estándar.
+          label: Titulares de la página 404
+        not_found_message:
+          hint: Se muestra bajo el título cuando no se encuentra una página.
+          label: Mensaje de la página 404
+        remove: Quitar este contenido
+        title: Contenido del encabezado, el pie de página y la página 404
       form:
         allow_membership_requests: Permitir solicitudes de membresía
         allow_membership_requests_hint: Muestra un formulario público de solicitud

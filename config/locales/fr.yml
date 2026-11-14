@@ -3499,6 +3499,31 @@ fr:
         expired: Expiré
         pending: En attente
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} ne peut pas utiliser ce type de contenu."
+          too_long: "%{slot} est trop long (la limite est de %{max} caractères par
+            langue)."
+        footer_above:
+          hint: Affiché au-dessus du pied de page du site, par exemple un avis de
+            bailleur de fonds ou une clause de non-responsabilité.
+          label: Au-dessus du pied de page
+        header_above:
+          hint: Affiché au-dessus de l'en-tête du site, par exemple une annonce.
+          label: Au-dessus de l'en-tête
+        hint: Blocs de contenu facultatifs affichés à des endroits fixes sur chaque
+          page de cette plateforme. Chaque langue est distincte; une langue manquante
+          revient à la langue par défaut. Laissez un emplacement vide pour conserver
+          la mise en page standard.
+        not_found_headlines:
+          hint: Un titre par ligne, jusqu'à 20. Un titre est choisi au hasard lorsqu'une
+            page est introuvable. Sans titre, le titre standard est utilisé.
+          label: Titres de la page 404
+        not_found_message:
+          hint: Affiché sous le titre lorsqu'une page est introuvable.
+          label: Message de la page 404
+        remove: Supprimer ce contenu
+        title: Contenu de l'en-tête, du pied de page et de la page 404
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
         allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
