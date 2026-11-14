@@ -74,6 +74,11 @@ module BetterTogether
       "storage_config_#{id}"
     end
 
+    # Bytes stored on this configuration's service (see Storage::Usage).
+    def used_bytes
+      Storage::Usage.bytes_for(self)
+    end
+
     private
 
     def local_storage_config
