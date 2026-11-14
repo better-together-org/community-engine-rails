@@ -12,13 +12,18 @@ module BetterTogether
     class BlobAttacher
       class Rejected < ArgumentError; end
 
-      def initialize(root:, manifest:)
+      def initialize(root:, manifest:, platform: nil)
         @root = Pathname.new(root)
         @manifest = manifest
+        @platform = platform
       end
 
+      # With a target platform the blobs are written to that platform's storage service,
+      # whatever platform the calling process happens to have set.
       def call(record:, entry:)
-        entry.files.each { |file| attach(record, file) }
+        Current.set(platform: @platform || Current.platform) do
+          entry.files.each { |file| attach(record, file) }
+        end
       end
 
       private
