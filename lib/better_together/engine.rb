@@ -139,6 +139,34 @@ module BetterTogether
       app.middleware.insert_before ActionDispatch::RemoteIp, BetterTogether::SpoofedForwardedForGuardMiddleware
     end
 
+    # Production delivery: gzip text responses, strip HTML comments, long-cache
+    # fingerprinted assets. Each can be turned off with an environment variable.
+    DELIVERY_COMPRESSIBLE_TYPES = %w[
+      text/html text/css text/plain text/xml text/javascript application/javascript application/json
+      application/xml application/rss+xml application/atom+xml image/svg+xml
+    ].freeze
+
+    initializer 'better_together.delivery_middleware' do |app|
+      next unless Rails.env.production?
+
+      %w[html_comment_stripper immutable_asset_cache].each do |name|
+        require root.join("app/middleware/better_together/#{name}").to_s
+      end
+
+      unless ENV['BTS_DISABLE_RESPONSE_COMPRESSION'].present?
+        app.middleware.insert_before 0, Rack::Deflater, include: DELIVERY_COMPRESSIBLE_TYPES
+      end
+      app.middleware.use BetterTogether::HtmlCommentStripper unless ENV['BTS_DISABLE_HTML_COMMENT_STRIPPING'].present?
+      app.middleware.use BetterTogether::ImmutableAssetCache unless ENV['BTS_DISABLE_ASSET_CACHE_HEADERS'].present?
+    end
+
+    # Images below the fold should not block first paint. Hosts that set
+    # image_loading themselves keep their value; the navbar logo opts out.
+    initializer 'better_together.image_loading_default' do |app|
+      app.config.action_view.image_loading ||= 'lazy'
+      app.config.action_view.image_decoding ||= 'async'
+    end
+
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
     # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
     # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.

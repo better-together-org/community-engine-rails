@@ -3493,12 +3493,27 @@ es:
           de CE puede cargar. Selecciona orígenes de confianza o escribe un nuevo
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
+        csp_title: Seguridad / incrustaciones CSP
+        custom_css_hint: Ajuste avanzado. Los estilos añadidos aquí se cargan después
+          del tema y tienen prioridad sobre él.
+        custom_css_title: CSS personalizado
+        domains_after_save: Guarde primero la plataforma y luego gestione aquí sus
+          dominios y proveedores de inicio de sesión.
+        domains_hint: Revise los dominios en los que responde esta plataforma y los
+          servicios de inicio de sesión.
         feature_gates_hint: Elige qué etapa de despliegue requiere cada funcionalidad
           en esta plataforma.
         feature_gates_title: Controles de despliegue de funcionalidades
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
+        integrations_empty: No hay integraciones instaladas.
+        integrations_env_fallback: Se usa la variable de entorno %{variable}. Un valor
+          guardado aquí la reemplaza.
+        integrations_hint: Ajustes de los servicios conectados mediante extensiones.
+          Cada plataforma conserva sus propios valores.
+        integrations_secret_set: Hay un valor guardado. Deje este campo vacío para
+          conservarlo.
         quota_defaults_hint: Límite inicial para cada persona y comunidad nuevas y
           para esta plataforma. Deja un campo en blanco para usar el valor de la configuración
           de la aplicación. Cambiar un valor también actualiza las cuotas existentes
@@ -3527,6 +3542,15 @@ es:
         title: Registrar plataforma externa
       show:
         new_invitation: Nueva invitación
+      tabs:
+        access: Acceso y privacidad
+        appearance: Apariencia
+        details: Detalles
+        domains: Dominios e inicio de sesión
+        errors: errores en esta pestaña
+        features: Funciones y cuotas
+        integrations: Integraciones
+        security: Seguridad
     posts:
       authors: Autores
       back_to_posts: Volver a publicaciones
@@ -4818,6 +4842,9 @@ es:
               la privacidad y la zona horaria que elijas.
             steward: Se crea una cuenta de responsable con acceso total de gestión
               a la nueva plataforma.
+  breadcrumbs:
+    home: Inicio
+    label: Ruta de navegación
   community:
     create_failed: Creación fallida
     created: Creado

@@ -3517,12 +3517,27 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        csp_title: Sécurité / intégrations CSP
+        custom_css_hint: Réglage avancé. Les styles ajoutés ici se chargent après
+          le thème et ont priorité sur lui.
+        custom_css_title: CSS personnalisé
+        domains_after_save: Enregistrez d'abord la plateforme, puis gérez ici ses
+          domaines et ses fournisseurs de connexion.
+        domains_hint: Consultez les domaines sur lesquels cette plateforme répond
+          et les services de connexion utilisés.
         feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
           fonctionnalité sur cette plateforme.
         feature_gates_title: Contrôles de déploiement des fonctionnalités
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
+        integrations_empty: Aucune intégration n'est installée.
+        integrations_env_fallback: La variable d'environnement %{variable} est utilisée.
+          Une valeur enregistrée ici la remplace.
+        integrations_hint: Réglages des services connectés par des extensions. Chaque
+          plateforme garde ses propres valeurs.
+        integrations_secret_set: Une valeur est enregistrée. Laissez ce champ vide
+          pour la conserver.
         quota_defaults_hint: Limite initiale pour chaque nouvelle personne, communauté
           et pour cette plateforme. Laissez un champ vide pour utiliser la valeur
           de la configuration de l'application. Modifier une valeur met aussi à jour
@@ -3552,6 +3567,15 @@ fr:
         title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
+      tabs:
+        access: Accès et confidentialité
+        appearance: Apparence
+        details: Détails
+        domains: Domaines et connexion
+        errors: erreurs dans cet onglet
+        features: Fonctionnalités et quotas
+        integrations: Intégrations
+        security: Sécurité
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
@@ -4859,6 +4883,9 @@ fr:
               la description, la confidentialité et le fuseau horaire que vous choisissez.
             steward: Un compte de responsable est créé avec un accès de gestion complet
               à la nouvelle plateforme.
+  breadcrumbs:
+    home: Accueil
+    label: Fil d'Ariane
   community:
     create_failed: Échec de la création
     created: Créé

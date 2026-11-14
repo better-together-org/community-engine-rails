@@ -2,6 +2,35 @@
 
 module BetterTogether
   module PlatformsHelper # rubocop:todo Style/Documentation
+    PLATFORM_FORM_TAB_ATTRIBUTES = {
+      'details' => %i[identifier name description slug host_url time_zone],
+      'access' => %i[privacy requires_invitation allow_membership_requests contributors_display_visibility],
+      'appearance' => %i[css_block],
+      'security' => %i[csp_frame_ancestors_text csp_frame_src_text csp_img_src_text
+                       csp_script_src_text csp_connect_src_text],
+      'features' => %i[feature_gate_rollouts quota_default_limits],
+      'integrations' => %i[integration_settings]
+    }.freeze
+
+    # Number of validation errors per platform form tab, so the tab holding them can be flagged.
+    def platform_form_tab_error_counts(platform)
+      PLATFORM_FORM_TAB_ATTRIBUTES.transform_values do |attributes|
+        platform.errors.count { |error| attributes.include?(error.attribute.to_s.split('.').first.to_sym) }
+      end
+    end
+
+    # The Integrations tab only exists when an extension gem registered a platform setting.
+    def platform_form_tab_ids
+      tabs = %w[details access appearance domains security features]
+      tabs << 'integrations' if BetterTogether::PlatformSettingsRegistry.any?
+      tabs
+    end
+
+    # The first tab holding errors, otherwise the details tab.
+    def platform_form_active_tab(error_counts)
+      error_counts.find { |_tab, count| count.positive? }&.first || 'details'
+    end
+
     # Get invitation token expiry timestamp for any invitation type
     # Checks all invitation types (platform, community, event) and returns the first one found
     def invitation_token_expires_at
