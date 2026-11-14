@@ -2,6 +2,8 @@
 
 module BetterTogether
   class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include AppearancePreferenceParams
+
     before_action :set_person, only: %i[show edit update destroy]
 
     # GET /people
@@ -174,7 +176,7 @@ module BetterTogether
         :show_conversation_details, :notify_on_comments, :profile_image, :cover_image,
         :remove_profile_image, :remove_cover_image,
         *resource_class.permitted_attributes
-      )
+      ).merge(appearance_params(@person))
     end
 
     def resource_class
