@@ -30,10 +30,10 @@ module BetterTogether
     end
 
     # The reason this request is excluded, or nil when it may be tracked.
-    def third_party_tracking_exclusion # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def third_party_tracking_exclusion(check_response: true) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return :explicit if @third_party_tracking_blocked
       return :not_a_read unless request.get? || request.head?
-      return :error_response unless response.successful?
+      return :error_response if check_response && !response_successful?
       return :private_platform unless platform_publicly_visible?
       return :sensitive_params if sensitive_params?
       return :private_record unless record_public_or_anonymous?
@@ -42,6 +42,16 @@ module BetterTogether
     rescue StandardError => e
       Rails.logger.warn("third_party_tracking: failing closed (#{e.class}: #{e.message})")
       :error
+    end
+
+    # True when the page is private or protected, judged without the response status (an error page
+    # for a private record is still private). Error reporters use it to stay at the essential tier.
+    def private_page?
+      !third_party_tracking_exclusion(check_response: false).nil?
+    end
+
+    def response_successful?
+      response.successful?
     end
 
     def platform_publicly_visible?

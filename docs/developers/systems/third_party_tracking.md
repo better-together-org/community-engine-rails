@@ -52,6 +52,6 @@ end
 
 Head scripts survive Turbo navigation, so a vendor script loaded on a public page could still observe the next, private page. Every layout therefore emits `<meta name="bt-third-party-tracking" content="on|off">`. Scripts must read it on each `turbo:load` and stop reporting when it is `off`.
 
-## Not covered
+## Error reporting on private pages
 
-Server-side error reporting (such as Sentry) is not a measurement vendor in this sense and is not gated by this rule.
+Server-side error reporting (such as Sentry) is not a measurement vendor, so it still reports errors from private and protected pages. It stays at the essential tier there: `error_reporting_context` includes `private_page`, true when the page would be excluded from tracking (judged without the response status, since an error page for a private record is still private). Reporters must not attach a person id when it is true. Browser replay must follow the `bt-third-party-tracking` meta tag above.
