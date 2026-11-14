@@ -37,6 +37,17 @@ STORAGE_PATH=""
 RUN_STEP=""
 WITH_ELASTICSEARCH=false
 VERSIONS_FILE=""
+DRY_RUN=false
+WITH_CLOUDFLARED=false
+WITH_NORDVPN=false
+WITH_FLEET_BASELINE=false
+FLEET_EXTENSION=""
+STORAGE_BACKEND="local"
+S3_ENDPOINT_ARG=""
+S3_BUCKET_ARG=""
+S3_REGION_ARG=""
+FAIL2BAN_IGNOREIP=""
+SKIP_FIREWALL=false
 OS_ID=""
 OS_VERSION=""
 OS_CODENAME=""
@@ -71,12 +82,25 @@ Options:
   -v, --verbose            Enable verbose debug messages.
   --versions-file=PATH     Version manifest (default: host-setup.versions next to
                            this script). Every pinned version comes from it.
+  --with-cloudflared       Also install Cloudflared (off by default).
+  --with-nordvpn           Also install NordVPN (off by default).
+  --with-fleet-baseline    Also run the BTS fleet baseline through a sourced
+                           extension; needs --fleet-extension=FILE.
+  --fleet-extension=FILE   Root-owned file defining fleet_baseline_run.
+  --storage-backend=NAME   local (default), garage or aws. Settings only; keys
+                           are never read or stored by this script.
+  --s3-endpoint=URL --s3-bucket=NAME --s3-region=NAME
+                           Garage or AWS bucket settings.
+  --skip-firewall          Leave the firewall alone (implied by --with-fleet-baseline,
+                           whose managed profile owns it).
+  --fail2ban-ignoreip=LIST Space-separated addresses fail2ban must never ban.
   --with-elasticsearch     Also install the Elasticsearch plugin. Off by default:
                            search uses Postgres (SEARCH_BACKEND=pg_search).
   --step=NAME              Run a specific step and the steps after it. Valid names:
                            welcome, specs, os_check, network, hardening, backup, tweaks,
-                           update, docker, dokku, cloudflared, nordvpn, hostname,
-                           storage, community_engine, elasticsearch (optional).
+                           update, docker, dokku, hostname, storage, community_engine;
+                           optional: elasticsearch, cloudflared, nordvpn,
+                           fleet_baseline.
   --help                   Display this help message.
 
 EOF
@@ -144,6 +168,16 @@ parse_args() {
         debug "Storage path set to $STORAGE_PATH"
         shift
         ;;
+      --with-cloudflared) WITH_CLOUDFLARED=true; shift ;;
+      --with-nordvpn) WITH_NORDVPN=true; shift ;;
+      --with-fleet-baseline) WITH_FLEET_BASELINE=true; shift ;;
+      --fleet-extension=*) FLEET_EXTENSION="${1#*=}"; shift ;;
+      --storage-backend=*) STORAGE_BACKEND="${1#*=}"; shift ;;
+      --s3-endpoint=*) S3_ENDPOINT_ARG="${1#*=}"; shift ;;
+      --s3-bucket=*) S3_BUCKET_ARG="${1#*=}"; shift ;;
+      --s3-region=*) S3_REGION_ARG="${1#*=}"; shift ;;
+      --skip-firewall) SKIP_FIREWALL=true; shift ;;
+      --fail2ban-ignoreip=*) FAIL2BAN_IGNOREIP="${1#*=}"; shift ;;
       --versions-file=*)
         VERSIONS_FILE="${1#*=}"
         shift
@@ -239,6 +273,30 @@ step_os_check() {
   if [ "$OS_ID:$OS_VERSION" = "ubuntu:26.04" ]; then
     printf -- "Note: Ubuntu 26.04 is supported by Dokku; the Docker repository for it is unverified.\n"
   fi
+}
+
+#############################################
+# Command helpers (a dry run prints instead of acting)
+#############################################
+run() {
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run]"
+    printf -- " %q" "$@"
+    printf -- "\n"
+    return 0
+  fi
+  "$@"
+}
+
+# Writes stdin to a file with the given mode; prints it on a dry run.
+write_file() {
+  local path="$1" mode="${2:-0644}"
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run] write %s (mode %s):\n" "$path" "$mode"
+    sed 's/^/    /'
+    return 0
+  fi
+  install -m "$mode" /dev/stdin "$path"
 }
 
 #############################################
@@ -480,30 +538,6 @@ hardware_tweaks() {
 }
 
 #############################################
-# New Step: Security Hardening
-#############################################
-security_hardening() {
-  debug "Starting security hardening"
-  printf -- "Applying security hardening measures...\n"
-  # Insert your security hardening commands here.
-  printf -- "Security hardening measures applied. (Placeholder)\n"
-  debug "Finished security hardening"
-  prompt_continue "Security Hardening" "Press Enter to continue after security hardening."
-}
-
-#############################################
-# New Step: Backup Configuration
-#############################################
-backup_config() {
-  debug "Starting backup configuration"
-  printf -- "Configuring backup settings...\n"
-  # Insert your backup configuration commands here.
-  printf -- "Backup configuration complete. (Placeholder)\n"
-  debug "Finished backup configuration"
-  prompt_continue "Backup Configuration" "Press Enter to continue after backup configuration."
-}
-
-#############################################
 # New Tool Installation Sub-Methods
 #############################################
 update_system() {
@@ -561,66 +595,100 @@ EOF
 
 install_cloudflared() {
   debug "Starting Cloudflared installation..."
-  printf -- "Installing Cloudflared...\n"
-  
-  mkdir -p --mode=0755 /usr/share/keyrings
-  curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
-  
-  echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" | tee /etc/apt/sources.list.d/cloudflared.list > /dev/null
-  apt-get update && apt-get install -y "cloudflared=${CLOUDFLARED_VERSION}"
-  
+  run mkdir -p --mode=0755 /usr/share/keyrings
+  run curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg -o /usr/share/keyrings/cloudflare-main.gpg
+  echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" |
+    write_file /etc/apt/sources.list.d/cloudflared.list
+  run apt-get update
+  run apt-get install -y "cloudflared=${CLOUDFLARED_VERSION}"
   debug "Finished Cloudflared installation."
 }
 
+# Uses NordVPN's signed apt repository instead of piping their installer to a shell.
 configure_nordvpn() {
   debug "Starting NordVPN configuration..."
   if command -v nordvpn &>/dev/null; then
-    printf -- "NordVPN is already installed and appears to be ready to use.\n"
-    printf -- "Would you like to reconfigure (login) NordVPN? (y/n): "
-    read -r nordvpn_choice
-    if [ "$nordvpn_choice" = "y" ] || [ "$nordvpn_choice" = "yes" ]; then
-      if [[ -n "$NORDVPN_LOGIN_URL" ]]; then
-        printf -- "Configuring NordVPN with login URL: %s...\n" "$NORDVPN_LOGIN_URL"
-        sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
-        nordvpn login --help
-      else
-        printf -- "No NordVPN login URL provided. Skipping NordVPN reconfiguration.\n"
-      fi
-    else
-      printf -- "Skipping NordVPN reconfiguration.\n"
-    fi
+    printf -- "NordVPN is already installed. Leaving it unchanged.\n"
+    return 0
+  fi
+  run curl -fsSL https://repo.nordvpn.com/gpg/nordvpn_public.asc -o /usr/share/keyrings/nordvpn.asc
+  echo "deb [signed-by=/usr/share/keyrings/nordvpn.asc] https://repo.nordvpn.com/deb/nordvpn/debian stable main" |
+    write_file /etc/apt/sources.list.d/nordvpn.list
+  run apt-get update
+  run apt-get install -y nordvpn
+  if [[ -n "$NORDVPN_LOGIN_URL" ]]; then
+    run nordvpn login --callback "$NORDVPN_LOGIN_URL"
   else
-    if [[ -n "$NORDVPN_LOGIN_URL" ]]; then
-      printf -- "NordVPN is not installed. Configuring NordVPN with login URL: %s...\n" "$NORDVPN_LOGIN_URL"
-      sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
-      nordvpn login --help
-    else
-      printf -- "No NordVPN login URL provided. Skipping NordVPN configuration.\n"
-    fi
+    printf -- "Run 'nordvpn login' yourself to finish.\n"
   fi
   debug "Finished NordVPN configuration."
 }
 
 configure_hostname() {
   debug "Starting hostname configuration..."
-  if [[ -n "$NEW_HOSTNAME" ]]; then
-    printf -- "Changing hostname to %s...\n" "$NEW_HOSTNAME"
-    # Insert commands to change the hostname.
-  else
+  if [[ -z "$NEW_HOSTNAME" ]]; then
     printf -- "No new hostname provided. Skipping hostname configuration.\n"
+    return 0
   fi
+  if [[ ! "$NEW_HOSTNAME" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]]; then
+    printf -- "Invalid hostname: %s\n" "$NEW_HOSTNAME" >&2
+    exit 1
+  fi
+  printf -- "Changing hostname to %s...\n" "$NEW_HOSTNAME"
+  run hostnamectl set-hostname "$NEW_HOSTNAME"
   debug "Finished hostname configuration."
 }
 
+# Validates the storage choice and prepares a host directory when one is given.
 configure_storage() {
   debug "Starting storage configuration..."
+  case "$STORAGE_BACKEND" in
+    local|garage|aws) ;;
+    *) printf -- "Unknown --storage-backend: %s (use local, garage or aws).\n" "$STORAGE_BACKEND" >&2; exit 1 ;;
+  esac
+  printf -- "Storage backend: %s\n" "$STORAGE_BACKEND"
   if [[ -n "$STORAGE_PATH" ]]; then
-    printf -- "Setting storage path to %s...\n" "$STORAGE_PATH"
-    # Insert commands to configure the storage path.
-  else
-    printf -- "No storage path provided. Skipping storage configuration.\n"
+    printf -- "Preparing storage path %s...\n" "$STORAGE_PATH"
+    run mkdir -p "$STORAGE_PATH"
+  fi
+  if [ "$STORAGE_BACKEND" = "garage" ]; then
+    printf -- "Garage needs a per-client bucket and key; create them with the Garage\n"
+    printf -- "bucket provisioning procedure first. Keys are not handled by this script.\n"
   fi
   debug "Finished storage configuration."
+}
+
+# Applies non-secret storage settings to an app. Key pairs are set by the operator.
+configure_app_storage() {
+  local app_name="$1"
+  case "$STORAGE_BACKEND" in
+    garage|aws)
+      if [ -z "$S3_BUCKET_ARG" ] || { [ "$STORAGE_BACKEND" = "garage" ] && [ -z "$S3_ENDPOINT_ARG" ]; }; then
+        printf -- "Storage backend %s needs --s3-bucket (and --s3-endpoint for garage).\n" "$STORAGE_BACKEND" >&2
+        exit 1
+      fi
+      ;;
+  esac
+  case "$STORAGE_BACKEND" in
+    garage)
+      run dokku config:set --no-restart "$app_name" \
+        ACTIVE_STORAGE_SERVICE=s3_compatible ACTIVE_STORAGE_ROUTE=proxy \
+        "S3_ENDPOINT=$S3_ENDPOINT_ARG" "S3_BUCKET_NAME=$S3_BUCKET_ARG" "S3_REGION=${S3_REGION_ARG:-garage}" \
+        AWS_REQUEST_CHECKSUM_CALCULATION=when_required AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+      printf -- "Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for %s yourself (never on a command line).\n" "$app_name"
+      ;;
+    aws)
+      run dokku config:set --no-restart "$app_name" \
+        ACTIVE_STORAGE_SERVICE=amazon ACTIVE_STORAGE_ROUTE=proxy \
+        "S3_BUCKET_NAME=$S3_BUCKET_ARG" "S3_REGION=${S3_REGION_ARG:-us-east-1}"
+      printf -- "Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for %s yourself (never on a command line).\n" "$app_name"
+      ;;
+    local)
+      run dokku storage:ensure-directory "$app_name/storage"
+      run dokku storage:mount "$app_name" "/var/lib/dokku/data/storage/$app_name/storage:/bt/storage"
+      run dokku config:set --no-restart "$app_name" ACTIVE_STORAGE_SERVICE=local
+      ;;
+  esac
 }
 
 # Downloads the pinned bootstrap script, verifies its checksum, then runs it.
@@ -765,36 +833,25 @@ configure_dokku() {
 }
 
 
-install_tools() {
-  debug "Starting install_tools"
-  printf -- "Starting full system update and tool installation...\n"
-  
-  prompt_continue "System Update" "Press Enter to update system packages."
-  update_system
-  
-  prompt_continue "Docker Installation" "Press Enter to install Docker."
-  install_docker
-  
-  prompt_continue "Cloudflared Installation" "Press Enter to install Cloudflared."
-  install_cloudflared
-  
-  prompt_continue "NordVPN Configuration" "Press Enter to configure NordVPN."
-  configure_nordvpn
-  
-  prompt_continue "Hostname Configuration" "Press Enter to configure hostname."
-  configure_hostname
-  
-  prompt_continue "Storage Configuration" "Press Enter to configure storage."
-  configure_storage
-  
-  prompt_continue "Tool Installation Summary" "Tools installed/updated. Press Enter to continue."
-  debug "Finished install_tools"
-}
-
-
 #############################################
 # Step: Setup Dokku App
 #############################################
+# AWS builds read the old AWS/FOG build args; Garage and local builds need none.
+configure_build_args() {
+  local app_name="$1" arg
+  if [ "$STORAGE_BACKEND" != "aws" ]; then return 0; fi
+  for arg in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY FOG_DIRECTORY FOG_HOST FOG_REGION ASSET_HOST CDN_DISTRIBUTION_ID; do
+    run dokku docker-options:add "$app_name" build "--build-arg $arg"
+  done
+}
+
+create_dokku_app() {
+  local app_name="$1"
+  run dokku apps:create "$app_name"
+  configure_build_args "$app_name"
+  configure_app_storage "$app_name"
+}
+
 setup_dokku_app() {
   local app_name="$1"
 
@@ -804,27 +861,13 @@ setup_dokku_app() {
 
     if prompt_substep "Sub-step: Recreate the Dokku app '$app_name'?\nThis will delete and recreate the app and all associated configurations."; then
       dokku apps:destroy "$app_name" --force
-      dokku apps:create "$app_name"
-      dokku docker-options:add "$app_name" build '--build-arg AWS_ACCESS_KEY_ID'
-      dokku docker-options:add "$app_name" build '--build-arg AWS_SECRET_ACCESS_KEY'
-      dokku docker-options:add "$app_name" build '--build-arg FOG_DIRECTORY'
-      dokku docker-options:add "$app_name" build '--build-arg FOG_HOST'
-      dokku docker-options:add "$app_name" build '--build-arg FOG_REGION'
-      dokku docker-options:add "$app_name" build '--build-arg ASSET_HOST'
-      dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
+      create_dokku_app "$app_name"
       printf -- "✅ Dokku app '%s' recreated.\n" "$app_name"
     else
       printf -- "⏩ Skipping Dokku app creation.\n"
     fi
   else
-    dokku apps:create "$app_name"
-    dokku docker-options:add "$app_name" build '--build-arg AWS_ACCESS_KEY_ID'
-    dokku docker-options:add "$app_name" build '--build-arg AWS_SECRET_ACCESS_KEY'
-    dokku docker-options:add "$app_name" build '--build-arg FOG_DIRECTORY'
-    dokku docker-options:add "$app_name" build '--build-arg FOG_HOST'
-    dokku docker-options:add "$app_name" build '--build-arg FOG_REGION'
-    dokku docker-options:add "$app_name" build '--build-arg ASSET_HOST'
-dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
+    create_dokku_app "$app_name"
     printf -- "✅ Dokku app '%s' created.\n" "$app_name"
   fi
 }
@@ -1047,6 +1090,7 @@ run_step() {
     dokku) install_dokku ;;
     elasticsearch) install_elasticsearch ;;
     cloudflared) install_cloudflared ;;
+    fleet_baseline) step_fleet_baseline ;;
     nordvpn) configure_nordvpn ;;
     hostname) configure_hostname ;;
     storage) configure_storage ;;
@@ -1066,10 +1110,18 @@ main() {
 
   # Define a combined ordered list of all steps.
   # Naming the optional step explicitly implies its flag.
-  if [ "$RUN_STEP" = "elasticsearch" ]; then WITH_ELASTICSEARCH=true; fi
+  case "$RUN_STEP" in
+    elasticsearch) WITH_ELASTICSEARCH=true ;;
+    cloudflared) WITH_CLOUDFLARED=true ;;
+    nordvpn) WITH_NORDVPN=true ;;
+    fleet_baseline) WITH_FLEET_BASELINE=true ;;
+  esac
   ALL_STEPS=("welcome" "specs" "os_check" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku")
   if [ "$WITH_ELASTICSEARCH" = true ]; then ALL_STEPS+=("elasticsearch"); fi
-  ALL_STEPS+=("cloudflared" "nordvpn" "hostname" "storage" "community_engine")
+  ALL_STEPS+=("hostname" "storage" "community_engine")
+  if [ "$WITH_CLOUDFLARED" = true ]; then ALL_STEPS+=("cloudflared"); fi
+  if [ "$WITH_NORDVPN" = true ]; then ALL_STEPS+=("nordvpn"); fi
+  if [ "$WITH_FLEET_BASELINE" = true ]; then ALL_STEPS+=("fleet_baseline"); fi
   
   if [ -n "$RUN_STEP" ]; then
     debug "RUN_STEP is set to: %s" "$RUN_STEP"
@@ -1136,10 +1188,30 @@ main() {
 
 
 #############################################
-# New Step: Security Hardening
+# Optional Step: BTS fleet baseline (sourced extension)
 #############################################
+step_fleet_baseline() {
+  local ext="$FLEET_EXTENSION" owner mode
+  if [ -z "$ext" ] || [ ! -f "$ext" ]; then
+    printf -- "--fleet-extension=FILE is required for the fleet_baseline step.\n" >&2
+    exit 1
+  fi
+  read -r owner mode < <(stat -c '%u %a' "$ext")
+  if [ "$owner" != "0" ] || [ $((8#$mode & 8#022)) -ne 0 ]; then
+    printf -- "Refusing %s: it is sourced as root, so it must be root-owned and not group or world writable.\n" "$ext" >&2
+    exit 1
+  fi
+  # shellcheck disable=SC1090
+  source "$ext"
+  if ! declare -F fleet_baseline_run >/dev/null; then
+    printf -- "%s does not define fleet_baseline_run.\n" "$ext" >&2
+    exit 1
+  fi
+  DRY_RUN="$DRY_RUN" fleet_baseline_run
+}
+
 #############################################
-# Function: Prompt for Sub-Step Execution
+# Step: Security hardening
 #############################################
 prompt_substep() {
   local sub_message="$1"
@@ -1147,126 +1219,104 @@ prompt_substep() {
   printf -- "Press Enter to run this sub-step, type skip to skip it, n/no to exit, h for overall help, or s to repeat this help: "
   read -r sub_choice
   case "$sub_choice" in
-    n|no)
-      debug "User chose to exit during sub-step prompt."
-      exit 0
-      ;;
-    h|help)
-      usage
-      ;;
-    s|step)
-      printf -- "%s\n" "$sub_message"
-      prompt_substep "$sub_message"
-      return $?  # Pass along the result.
-      ;;
-    skip)
-      return 1  # Indicate that the sub-step should be skipped.
-      ;;
-    *) 
-      return 0  # Default: execute the sub-step.
-      ;;
+    n|no) debug "User chose to exit during sub-step prompt."; exit 0 ;;
+    h|help) usage ;;
+    s|step) printf -- "%s\n" "$sub_message"; prompt_substep "$sub_message"; return $? ;;
+    skip) return 1 ;;
+    *) return 0 ;;
   esac
 }
 
-#############################################
-# New Step: Security Hardening
-#############################################
+# True when the invoking user (or root) has at least one authorized ssh key.
+ssh_keys_present() {
+  local home
+  home="$(getent passwd "${SUDO_USER:-root}" | cut -d: -f6)"
+  [ -s "$home/.ssh/authorized_keys" ] || [ -s /root/.ssh/authorized_keys ]
+}
+
+harden_ssh() {
+  if ! ssh_keys_present; then
+    printf -- "No authorized ssh keys found for %s or root; not disabling password login.\n" "${SUDO_USER:-root}" >&2
+    return 1
+  fi
+  run mkdir -p /etc/ssh/sshd_config.d
+  write_file /etc/ssh/sshd_config.d/90-ce-hardening.conf 0644 <<'EOF'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin prohibit-password
+EOF
+  if [ "$DRY_RUN" != true ]; then
+    if ! sshd -t; then
+      rm -f /etc/ssh/sshd_config.d/90-ce-hardening.conf
+      printf -- "sshd rejected the hardening file; removed it.\n" >&2
+      return 1
+    fi
+  fi
+  run systemctl reload ssh
+}
+
+setup_firewall() {
+  run apt-get install -y ufw
+  run ufw default deny incoming
+  run ufw default allow outgoing
+  run ufw allow 22/tcp
+  run ufw allow 80/tcp
+  run ufw allow 443/tcp
+  run ufw --force enable
+  printf -- "Note: ports published by Docker bypass ufw; Dokku proxies through nginx on 80/443.\n"
+}
+
+setup_fail2ban() {
+  run apt-get install -y fail2ban
+  {
+    printf -- "[sshd]\nenabled = true\nbackend = systemd\nmaxretry = 5\nbantime = 1h\n"
+    if [ -n "$FAIL2BAN_IGNOREIP" ]; then
+      printf -- "ignoreip = 127.0.0.1/8 ::1 %s\n" "$FAIL2BAN_IGNOREIP"
+    fi
+  } | write_file /etc/fail2ban/jail.d/ce-sshd.local
+  run systemctl enable --now fail2ban
+  run systemctl restart fail2ban
+}
+
+setup_unattended_upgrades() {
+  run apt-get install -y unattended-upgrades
+  write_file /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+  printf -- "Distribution defaults apply: security origins only; Docker and Dokku stay manual.\n"
+}
+
 security_hardening() {
   debug "Starting security hardening"
-  printf -- "\nApplying security hardening measures...\n"
-
-  # Sub-step 1: Disable Unused Services
-  if prompt_substep "Sub-step 1: Disable unused services (Placeholder: disabling example-service)"; then
-    printf -- "Disabling unused services...\n"
-    # Replace with actual command(s), e.g.:
-    # systemctl disable example-service
-    sleep 1
-    printf -- "Unused services disabled. (Placeholder)\n\n"
-  else
-    printf -- "Skipping disabling unused services.\n\n"
+  if [ "$SKIP_FIREWALL" = true ] || [ "$WITH_FLEET_BASELINE" = true ]; then
+    printf -- "Skipping the ufw sub-step (--skip-firewall or fleet baseline owns the firewall).\n"
+  elif prompt_substep "Sub-step 1: Firewall (ufw)\nDefault deny incoming; allow ssh, http, https; then enable."; then
+    setup_firewall
   fi
-
-  # Sub-step 2: Harden SSH Configuration
-  if prompt_substep "Sub-step 2: Harden SSH configuration (Placeholder: modifying /etc/ssh/sshd_config)"; then
-    printf -- "Hardening SSH configuration...\n"
-    # Example commands to harden SSH:
-    sed -i -E 's/^(#)?PermitRootLogin (prohibit-password|yes)/PermitRootLogin no/' /etc/ssh/sshd_config
-    sed -i -E 's/^(#)?PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-    systemctl restart ssh
-    sleep 1
-    printf -- "SSH configuration hardened. (Placeholder)\n\n"
-  else
-    printf -- "Skipping SSH hardening.\n\n"
+  if prompt_substep "Sub-step 2: ssh key-only login\nOnly applied when an authorized key exists; the config is validated before reload."; then
+    harden_ssh || true
   fi
-
-  # Sub-step 3: Configure Firewall (UFW)
-  if prompt_substep "Sub-step 3: Configure UFW firewall (Placeholder: enabling UFW and setting default rules)"; then
-    printf -- "Configuring UFW firewall...\n"
-    apt-get install ufw -y
-    ufw default deny incoming
-    ufw default allow outgoing
-    ufw allow http
-    ufw allow https
-    ufw limit ssh
-    ufw enable
-    sleep 1
-    printf -- "UFW firewall configured. (Placeholder)\n\n"
-  else
-    printf -- "Skipping UFW firewall configuration.\n\n"
+  if prompt_substep "Sub-step 3: fail2ban for ssh"; then
+    setup_fail2ban
   fi
-
-  # Sub-step 4: Setup Fail2Ban
-  if prompt_substep "Sub-step 4: Setup Fail2Ban (Placeholder: installing and configuring Fail2Ban)"; then
-    printf -- "Setting up Fail2Ban...\n"
-    apt-get install fail2ban -y
-    cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-    systemctl restart fail2ban
-    sleep 1
-    printf -- "Fail2Ban setup complete. (Placeholder)\n\n"
-  else
-    printf -- "Skipping Fail2Ban setup.\n\n"
+  if prompt_substep "Sub-step 4: unattended security upgrades"; then
+    setup_unattended_upgrades
   fi
-  
-  # Sub-step 5: Setup Unattended Upgrades
-  if prompt_substep "Sub-step 5: Setup Unattended Upgrades\nThis will install unattended-upgrades and enable automatic updates." ; then
-    printf -- "Installing unattended-upgrades...\n"
-    apt-get install unattended-upgrades -y
-    printf -- "Enabling unattended-upgrades...\n"
-    dpkg-reconfigure --priority=low unattended-upgrades
-    sleep 1
-    printf -- "Unattended upgrades configured. (Placeholder)\n\n"
-  else
-    printf -- "Skipping unattended upgrades configuration.\n\n"
-  fi
-
   debug "Finished security hardening"
-  prompt_continue "Security Hardening" "Press Enter to continue after security hardening."
 }
 
-#############################################
-# New Step: Backup Configuration
-#############################################
 backup_config() {
   debug "Starting backup configuration"
-  printf -- "Configuring backup settings...\n"
-  
-  # Sub-step 1: Install BorgBackup
-  if prompt_substep "Sub-step 1: Install BorgBackup\nThis will install BorgBackup using: sudo apt-get install borgbackup -y"; then
-    printf -- "Installing BorgBackup...\n"
-    apt-get install borgbackup -y
-    printf -- "BorgBackup installed: %s (manifest reference %s).\n\n" "$(borg --version 2>/dev/null || echo unknown)" "$BORG_VERSION"
-  else
-    printf -- "Skipping BorgBackup installation.\n\n"
+  if prompt_substep "Sub-step: Install the BorgBackup client\nNo repository or schedule is configured; the fleet layer or you do that."; then
+    run apt-get install -y borgbackup
+    if [ "$DRY_RUN" != true ]; then
+      printf -- "BorgBackup installed: %s (manifest reference %s).\n" "$(borg --version 2>/dev/null || echo unknown)" "$BORG_VERSION"
+    fi
   fi
-
-  printf -- "Backup configuration complete. (Placeholder)\n"
   debug "Finished backup configuration"
-  prompt_continue "Backup Configuration" "Press Enter to continue after backup configuration."
 }
 
-#############################################
-# Run the Script
-#############################################
 # Run only when executed, so tests can source the functions.
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   main "$@"
