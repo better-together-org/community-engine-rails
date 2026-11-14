@@ -64,3 +64,15 @@ An address typed into a form proves nothing, so access waits for confirmation.
    becomes `active` with the domain role and a `membership_granted` entry is written.
 
 Changing the address before confirming grants nothing unless the new address is also trusted.
+
+## Membership requests
+
+`Joatu::MembershipRequest` skips the pending state for a trusted domain, when the target is a platform's own
+community:
+
+- **Public form (no account):** the typed address is unverified, so approval sends the usual community
+  invitation (with the domain's role) to that address. Only the mailbox owner can use it. The sender is an
+  active `platform_manager`; if there is none, the request stays open for review.
+- **Signed-in requester:** approved at once, but only if the account email is confirmed.
+- Reviewers are not notified for an auto-approved request. Every approval writes a
+  `membership_request_approved` audit entry.
