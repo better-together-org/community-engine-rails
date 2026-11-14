@@ -31,13 +31,9 @@ module BetterTogether
       # What has been given back on each of these orders (money that failed to move is not counted).
       def refunded_by_order(orders)
         billing_owner.billing_orders.where(id: orders.map(&:id)).joins(payments: :refunds)
-                     .where(refunds_table => { status: Refund::COUNTED })
-                     .group("#{orders_table}.id").sum("#{refunds_table}.amount_cents")
+                     .where(Refund.arel_table[:status].in(Refund::COUNTED))
+                     .group(Order.arel_table[:id]).sum(Refund.arel_table[:amount_cents])
       end
-
-      def refunds_table = Refund.arel_table.name
-
-      def orders_table = Order.arel_table.name
 
       def load_credit_and_access
         @credit_accounts = billing_owner.billing_credit_accounts.where(holder: person).order(:currency)
