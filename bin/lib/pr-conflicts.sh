@@ -26,7 +26,15 @@ conflicted_files() {
   scratch="$(mktemp -d)"
   git fetch -q "$REMOTE" "$base" "+pull/${number}/head:refs/sweep/pr-${number}"
   git worktree add -q --detach "$scratch" "refs/sweep/pr-${number}"
-  git -C "$scratch" merge --no-commit --no-ff "${REMOTE}/${base}" >/dev/null 2>&1 || true
+  # The runner has no git identity; a merge started without one can refuse to run.
+  export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-pr-conflict-sweep}" GIT_AUTHOR_EMAIL="${GIT_AUTHOR_EMAIL:-noreply@users.noreply.github.com}"
+  export GIT_COMMITTER_NAME="${GIT_COMMITTER_NAME:-$GIT_AUTHOR_NAME}" GIT_COMMITTER_EMAIL="${GIT_COMMITTER_EMAIL:-$GIT_AUTHOR_EMAIL}"
+  git -C "$scratch" merge --no-commit --no-ff "${REMOTE}/${base}" > "$scratch.log" 2>&1 || true
+  if [ -z "$(git -C "$scratch" diff --name-only --diff-filter=U)" ]; then
+    # Nothing unmerged: say why, so a merge that could not start is not mistaken for no conflict.
+    tail -5 "$scratch.log" >&2
+  fi
+  rm -f "$scratch.log"
   git -C "$scratch" diff --name-only --diff-filter=U
   git -C "$scratch" merge --abort >/dev/null 2>&1 || true
   git worktree remove --force "$scratch"
