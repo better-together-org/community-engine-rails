@@ -1,0 +1,169 @@
+#!/usr/bin/env bash
+# Fixes the generated-file part of a pull request's merge conflicts (.github/generated-conflict-paths),
+# using GitHub-signed commits so everything shows as verified. Run in two phases around the regeneration:
+#
+#   --phase merge   1. checks the PR is eligible (open, conflicting, same-repo)
+#                   2. signed commit on the PR branch that sets the conflicted generated files to the base
+#                      branch's version, so both sides agree and those files no longer conflict
+#                   3. if only generated files conflicted: asks GitHub to merge the base into the PR branch
+#                      (update-branch), which GitHub signs, and leaves the checkout on the new PR head, ready
+#                      for the diagrams to be regenerated
+#                      if other files also conflict: stops after step 2 and comments, so a person resolves the
+#                      remaining (code) conflicts in the GitHub editor; the diagram-autofix workflow then
+#                      regenerates the diagrams once the merge is in
+#   --phase commit  one signed commit with whatever the regeneration changed under db/ and docs/diagrams
+#
+# Without --apply it only prints the plan. Writes `merged=true|false` to $GITHUB_OUTPUT when set.
+# Usage: bin/ci-resolve-generated-conflicts --pr N --phase merge|commit [--apply]
+# Env: GH_TOKEN (bts-robot), GITHUB_REPOSITORY, ALLOWLIST (glob file, default .github/generated-conflict-paths), REMOTE (default origin), GH (gh override for local use).
+set -euo pipefail
+
+GH="${GH:-gh}"
+REMOTE="${REMOTE:-origin}"
+# shellcheck disable=SC2034 # read by the sourced lib
+ALLOWLIST="${ALLOWLIST:-.github/generated-conflict-paths}"
+PR=""; PHASE=""; APPLY=0
+REGENERATED_PATHS=(db/community-engine-db.dbml docs/diagrams)
+NOTE_MARKER="<!-- pr-conflict-resolver -->"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --pr) PR="$2"; shift ;;
+    --phase) PHASE="$2"; shift ;;
+    --apply) APPLY=1 ;;
+    -h|--help) sed -n 2,16p "$0"; exit 0 ;;
+    *) echo "unknown argument: $1" >&2; exit 2 ;;
+  esac
+  shift
+done
+: "${PR:?--pr is required}" "${PHASE:?--phase is required}" "${GITHUB_REPOSITORY:?}"
+
+cd "$(git rev-parse --show-toplevel)"
+# shellcheck source-path=SCRIPTDIR source=lib/pr-conflicts.sh
+source "$(dirname "$0")/lib/pr-conflicts.sh"
+
+output() { [ -n "${GITHUB_OUTPUT:-}" ] && echo "$1" >> "$GITHUB_OUTPUT" || true; }
+stop() { echo "$1"; output "merged=false"; exit 0; }
+
+pr_field() { "$GH" pr view "$PR" --json "$1" --jq ".$1"; }
+
+# A branch that moved since checkout means a newer push; its own run re-evaluates.
+require_tip() { # require_tip <branch> <expected oid>
+  git fetch -q "$REMOTE" "$1"
+  [ "$(git rev-parse "refs/remotes/${REMOTE}/${1}")" = "$2" ] || stop "Branch ${1} moved since the run started; a newer run will handle it."
+}
+
+# Sets each file to the base branch's version (or deletes it when the base has none) in one signed commit.
+take_base_versions() { # take_base_versions <head> <base> <message> <files...>
+  local head="$1" base="$2" message="$3" f; shift 3
+  for f in "$@"; do
+    if git cat-file -e "refs/remotes/${REMOTE}/${base}:${f}" 2>/dev/null; then
+      mkdir -p "$(dirname "$f")"
+      git show "refs/remotes/${REMOTE}/${base}:${f}" > "$f"
+    else
+      rm -f "$f"
+    fi
+  done
+  BRANCH="$head" "$(dirname "$0")/ci-signed-commit" "$message" "$@"
+}
+
+# One comment per PR from the resolver, edited in place on later runs.
+note_on_pr() { # note_on_pr <body-file>
+  local id
+  id="$("$GH" api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
+    --jq "[.[] | select(.body | contains(\"${NOTE_MARKER}\"))][0].id // empty")"
+  if [ -n "$id" ]; then
+    "$GH" api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}" -F body=@"$1" >/dev/null
+  else
+    "$GH" pr comment "$PR" --body-file "$1" >/dev/null
+  fi
+}
+
+merge_phase() {
+  local state mergeable cross head base oid new files=() generated=() others=() f body
+  state="$(pr_field state)"; mergeable="$(pr_field mergeable)"; cross="$(pr_field isCrossRepository)"
+  head="$(pr_field headRefName)"; base="$(pr_field baseRefName)"; oid="$(pr_field headRefOid)"
+  [ "$state" = "OPEN" ] || stop "PR #${PR} is ${state}; nothing to do."
+  [ "$mergeable" = "CONFLICTING" ] || stop "PR #${PR} is ${mergeable}, not conflicting; nothing to do."
+  [ "$cross" = "false" ] || stop "PR #${PR} is from a fork; the robot cannot push to it."
+
+  mapfile -t files < <(conflicted_files "$PR" "$base")
+  [ "${#files[@]}" -gt 0 ] || stop "No conflict reproduced for #${PR}; leaving it alone."
+  for f in "${files[@]}"; do
+    if generated_only "$f"; then generated+=("$f"); else others+=("$f"); fi
+  done
+  [ "${#generated[@]}" -gt 0 ] || { printf 'PR #%s: no generated files conflict; these need a person:\n' "$PR"; printf '  %s\n' "${others[@]}"; stop "Not resolving."; }
+
+  echo "PR #${PR} (${head} into ${base}): generated files in conflict:"
+  printf '  %s\n' "${generated[@]}"
+  if [ "${#others[@]}" -gt 0 ]; then
+    echo "Files that need a person (left alone):"
+    printf '  %s\n' "${others[@]}"
+  fi
+  if [ "$APPLY" != 1 ]; then
+    if [ "${#others[@]}" -gt 0 ]; then
+      echo "[dry run] would set the generated files to ${base}'s version (signed commit) and comment; a person resolves the rest."
+    else
+      echo "[dry run] would set them to ${base}'s version (signed commit), update-branch, regenerate, commit the diff."
+    fi
+    stop "Dry run, no changes made."
+  fi
+
+  git fetch -q "$REMOTE" "$head" "$base"
+  git checkout -q -B "$head" "refs/remotes/${REMOTE}/${head}"
+  require_tip "$head" "$oid"
+  take_base_versions "$head" "$base" "chore(diagrams): take ${base} versions of generated files before merging" "${generated[@]}"
+
+  git fetch -q "$REMOTE" "$head"
+  new="$(git rev-parse "refs/remotes/${REMOTE}/${head}")"
+  [ "$new" != "$oid" ] || stop "The signed commit was not created (branch moved); a newer run will handle it."
+
+  if [ "${#others[@]}" -gt 0 ]; then
+    body="$(mktemp)"
+    {
+      echo "$NOTE_MARKER"
+      echo "The generated-file conflicts on this PR are fixed (they now match \`${base}\`). These conflicts need a person, and can be resolved in the GitHub editor:"
+      echo
+      # shellcheck disable=SC2016 # backticks here are Markdown, not a command
+      printf -- '- `%s`\n' "${others[@]}"
+      echo
+      echo "Once the merge is done the diagrams are regenerated automatically if their checks fail."
+    } > "$body"
+    note_on_pr "$body"
+    rm -f "$body"
+    stop "Generated files fixed; ${#others[@]} other conflicted file(s) left for a person."
+  fi
+
+  "$GH" api -X PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/update-branch" -f "expected_head_sha=${new}" >/dev/null \
+    || { echo "update-branch failed: the merge still conflicts. The extra commit is harmless; a person must resolve it."; output "merged=false"; exit 1; }
+
+  for _ in $(seq 1 24); do
+    [ "$(pr_field headRefOid)" != "$new" ] && break
+    sleep 5
+  done
+  [ "$(pr_field headRefOid)" != "$new" ] || { echo "GitHub did not finish the merge in time."; output "merged=false"; exit 1; }
+
+  git fetch -q "$REMOTE" "$head"
+  git reset -q --hard "refs/remotes/${REMOTE}/${head}"
+  echo "Merged ${base} into ${head}; head is now $(git rev-parse --short HEAD)."
+  output "merged=true"
+  output "head=${head}"
+  output "base=${base}"
+}
+
+commit_phase() {
+  local head base
+  head="$(pr_field headRefName)"; base="$(pr_field baseRefName)"
+  if [ -z "$(git status --porcelain -- "${REGENERATED_PATHS[@]}")" ]; then
+    echo "Regeneration changed nothing; the merge already left the diagrams current."
+    return 0
+  fi
+  git status --short -- "${REGENERATED_PATHS[@]}" | head -50
+  BRANCH="$head" "$(dirname "$0")/ci-signed-commit" "chore(diagrams): regenerate after merging ${base}" "${REGENERATED_PATHS[@]}"
+}
+
+case "$PHASE" in
+  merge) merge_phase ;;
+  commit) commit_phase ;;
+  *) echo "unknown phase: $PHASE" >&2; exit 2 ;;
+esac

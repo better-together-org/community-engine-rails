@@ -43,6 +43,8 @@ jobs:
     timeout-minutes: 30
     env:
       GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN || github.token }}
+      # off | dry-run | apply: whether a generated-files-only conflict starts the Diagram Conflict Resolver.
+      CONFLICT_RESOLVER_MODE: ${{ vars.CONFLICT_RESOLVER_MODE || 'off' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7

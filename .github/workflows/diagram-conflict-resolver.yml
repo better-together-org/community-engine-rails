@@ -1,0 +1,134 @@
+name: Diagram Conflict Resolver
+
+# Fixes the generated-file part of a pull request's merge conflicts (.github/generated-conflict-paths):
+# the generated files take the base branch's version. If nothing else conflicts, GitHub then merges the base
+# into the PR branch, the diagrams are regenerated and the difference is committed. If code files also
+# conflict, it stops after the first step and comments, leaving those for a person (diagram-autofix.yml
+# regenerates the diagrams afterwards). Every commit is made through the GitHub API
+# with the bts-robot token, so each one is signed and shows as verified. See bin/ci-resolve-generated-conflicts.
+#
+# Started by the PR Conflict Sweep (mode set by the repository variable CONFLICT_RESOLVER_MODE: off,
+# dry-run or apply) or by hand. Without `apply` it only prints what it would do.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "Pull request number"
+        required: true
+      apply:
+        description: "Make the commits (off prints the plan)"
+        type: boolean
+        default: false
+
+# Never two runs on one PR; do not cancel a run that is part-way through its commits.
+concurrency:
+  group: diagram-conflict-resolver-${{ inputs.pr }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PR: ${{ inputs.pr }}
+      APPLY: ${{ inputs.apply }}
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      SEARCH_BACKEND: "pg_search"
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      # The robot token is given only to the steps that need it. The steps that run the PR's own code
+      # (bundle, rails runner, the diagram generators) never see it.
+      - name: Require the robot token
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+        run: |
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "::error::Secret BTS_ROBOT_PUSH_TOKEN is not set; the resolver cannot make verified commits."
+            exit 1
+          fi
+
+      - name: Find the pull request branch
+        id: pr
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+        run: |
+          echo "head=$(gh pr view "${PR}" --repo "${GITHUB_REPOSITORY}" --json headRefName --jq .headRefName)" >> "${GITHUB_OUTPUT}"
+
+      - name: Checkout the pull request branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.pr.outputs.head }}
+          fetch-depth: 0
+
+      # The scripts and the generated-file list come from the default branch, copied outside the checkout,
+      # so a PR cannot change what runs with the robot token and the merge cannot overwrite them.
+      - name: Take the resolver tooling from main
+        shell: bash
+        run: |
+          git fetch -q origin main
+          tools="${RUNNER_TEMP}/resolver"
+          mkdir -p "${tools}/bin/lib"
+          for f in bin/ci-resolve-generated-conflicts bin/ci-signed-commit bin/lib/pr-conflicts.sh .github/generated-conflict-paths; do
+            git show "origin/main:${f}" > "${tools}/${f#.github/}"
+          done
+          chmod +x "${tools}/bin/ci-resolve-generated-conflicts" "${tools}/bin/ci-signed-commit"
+          echo "RESOLVER=${tools}/bin/ci-resolve-generated-conflicts" >> "${GITHUB_ENV}"
+          echo "ALLOWLIST=${tools}/generated-conflict-paths" >> "${GITHUB_ENV}"
+
+      - name: Merge the base into the branch
+        id: merge
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+        run: |
+          flags=(--pr "${PR}" --phase merge)
+          [[ "${APPLY}" == "true" ]] && flags+=(--apply)
+          "${RESOLVER}" "${flags[@]}"
+
+      - name: Regenerate the diagrams
+        if: steps.merge.outputs.merged == 'true'
+        uses: ./.github/actions/regenerate-diagrams
+
+      - name: Commit what the regeneration changed
+        if: steps.merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+        run: |
+          "${RESOLVER}" --pr "${PR}" --phase commit --apply
+
+      - name: Tell the pull request
+        if: steps.merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+          BASE: ${{ steps.merge.outputs.base }}
+        run: |
+          gh pr comment "${PR}" --repo "${GITHUB_REPOSITORY}" --body "Merge conflicts in generated files were resolved automatically: they took \`${BASE}\`'s version, \`${BASE}\` was merged into this branch by GitHub, and the diagrams were regenerated. Every commit is signed. Please check that CI is green."
