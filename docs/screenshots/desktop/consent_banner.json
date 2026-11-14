@@ -1,0 +1,11 @@
+{
+  "name": "consent_banner",
+  "device": "desktop",
+  "url": "/en/users/sign-in",
+  "title": "Sign In | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "consent",
+  "flow": "consent_banner",
+  "source_spec": "./spec/docs_screenshots/better_together/consent_banner_spec.rb"
+}
