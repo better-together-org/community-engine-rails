@@ -10,6 +10,7 @@ module BetterTogether
     include PlatformFederationStatus
     include PlatformCspConfiguration
     include PlatformCssBlockManagement
+    include PlatformContentSlots
     include PlatformMembershipDisplay
     include Creatable
     include Identifier
@@ -55,6 +56,8 @@ module BetterTogether
       # requests+ is additionally gated by allow_membership_requests via
       # Community#membership_requests_enabled?.
       allow_inbound_mail Boolean, default: true
+      # Whether signed-in people may pick their own theme (the colour mode choice is always theirs).
+      allow_user_themes Boolean, default: true
       contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
@@ -104,7 +107,9 @@ module BetterTogether
         :storage_configuration_id,
         :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
         :csp_script_src_text, :csp_connect_src_text,
-        { settings: %i[requires_invitation allow_membership_requests
+        :logo, :remove_logo, :header_banner, :remove_header_banner, :favicon, :remove_favicon, :dark_logo, :remove_dark_logo,
+        { theme: BetterTogether::PlatformThemeConfig::KEYS,
+          settings: %i[requires_invitation allow_membership_requests allow_user_themes
                        software_variant network_visibility connection_bootstrap_state
                        federation_protocol oauth_issuer_url search_query_analytics_enabled
                        search_query_analytics_mode contributors_display_visibility
@@ -119,6 +124,7 @@ module BetterTogether
 
     has_one_attached :profile_image
     has_one_attached :cover_image
+    include PlatformThemeSettings
 
     # One Sitemap row per locale plus one 'index' row (see BetterTogether::Sitemap).
     has_many :sitemaps, class_name: '::BetterTogether::Sitemap', dependent: :destroy
@@ -126,8 +132,12 @@ module BetterTogether
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
                                            dependent: :destroy
+    has_many :platform_trusted_domains, class_name: '::BetterTogether::PlatformTrustedDomain',
+                                        dependent: :destroy, inverse_of: :platform
+    has_many :trusted_domain_events, class_name: '::BetterTogether::TrustedDomainEvent', dependent: :delete_all
     has_many :outgoing_platform_connections,
              class_name: '::BetterTogether::PlatformConnection',
              foreign_key: :source_platform_id,
@@ -215,6 +225,11 @@ module BetterTogether
     # intentionally-private placeholder community.
     def privacy_ceiling_exempt?
       external?
+    end
+
+    # The trusted domain that lets this verified email register without an invitation, or nil.
+    def trusted_domain_for(email, verified:)
+      BetterTogether::PlatformTrustedDomain.match(platform: self, email:, verified:)
     end
 
     def membership_requests_enabled_for?(community = primary_community)

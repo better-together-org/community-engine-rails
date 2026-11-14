@@ -89,9 +89,10 @@ RSpec.feature 'Share Buttons', :js do
 
     within('.social-share-buttons') do
       all('[data-platform]').each do |button|
-        # Check for icon role
+        # The button is named by its aria-label; the icon is decorative and hidden from assistive technology
+        expect(button['aria-label']).to be_present
         icon = button.find('.fa-stack', match: :first)
-        expect(icon['role']).to eq('img')
+        expect(icon['aria-hidden']).to eq('true')
       end
     end
   end

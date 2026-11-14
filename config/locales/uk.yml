@@ -401,6 +401,10 @@ uk:
         type: Тип
         valid_from: Дійсний з
         valid_until: Дійсний до
+      better_together/redirect:
+        from_path: Старий шлях
+        status: Відповідь
+        to_path: Новий шлях
       better_together/resource_permission:
         action: Дія
         identifier: Ідентифікатор
@@ -587,6 +591,10 @@ uk:
               inclusion: "%{value} не є підтримуваним постачальником OAuth"
             uid:
               taken: вже пов'язано з іншим обліковим записом
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} має недопустиме значення"
         better_together/platform_domain:
           attributes:
             active:
@@ -594,6 +602,12 @@ uk:
               must_be_true_for_share_domain: повинно бути правдою для домену поширення
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: має бути шляхом, що починається з похилої риски, або повною
+                адресою http чи https
+              redirect_loop: веде назад до себе через інші перенаправлення
         better_together/short_link:
           attributes:
             target_url:
@@ -618,10 +632,12 @@ uk:
       better_together/content/communities_block: Спільноти
       better_together/content/css: Користувацький CSS
       better_together/content/events_block: Події
+      better_together/content/file_download_block: Завантаження файлу
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
+      better_together/content/image_gallery_block: Галерея зображень
       better_together/content/link: Посилання
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
@@ -673,6 +689,7 @@ uk:
       better_together/platform_domain: Домен платформи
       better_together/platform_invitation: Запрошення платформи
       better_together/post: Публікація
+      better_together/redirect: Перенаправлення
       better_together/resource_permission: Дозвіл ресурсу
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
@@ -966,6 +983,15 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    color_mode:
+      announce:
+        auto: 'Режим кольорів: автоматичний, за налаштуваннями пристрою.'
+        dark: 'Режим кольорів: темний.'
+        light: 'Режим кольорів: світлий.'
+      auto: Авто
+      dark: Темний
+      label: Режим кольорів
+      light: Світлий
     comment_config:
       hints:
         permission: Визначає, хто може публікувати нові коментарі.
@@ -1123,6 +1149,10 @@ uk:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Створити новий блок «%{block}»
+        create_for_page: Створити новий блок «%{block}» для сторінки
+        icon: Піктограма «%{block}»
       blocks:
         accordion_block:
           answer: Answer
@@ -1171,6 +1201,13 @@ uk:
               scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
               title: Вибрати з бібліотеки
               view_uploads: Переглянути завантаження та статуси перевірки
+        file_download_block:
+          description_help: Короткий опис (необов'язково)
+          empty: Цей файл недоступний.
+          label_help: Текст посилання (необов'язково, за замовчуванням назва файлу)
+          meta: "%{type}, %{size}"
+          open_inline: Відкрити в браузері замість завантаження
+          select_prompt: Виберіть файл
         hero:
           editor:
             background: Тло
@@ -1188,6 +1225,17 @@ uk:
           missing_url: URL iframe не налаштовано.
           url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
             або інше довірене вбудовування зі спільнотного простору.
+        image_gallery_block:
+          empty: Немає зображень для показу.
+          heading_help: Заголовок над галереєю (необов’язково)
+          images: Зображення
+          images_help: Оберіть блоки зображень у тому порядку, в якому вони мають
+            відображатися.
+          layout: Макет
+          layouts:
+            grid: Сітка
+            masonry: Мозаїка
+          lightbox: Відкривати зображення у переглядачі за кліком
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2114,6 +2162,13 @@ uk:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Закрити
+      counter: "{current} з {total}"
+      dialog_label: 'Галерея зображень: %{name}'
+      next: Наступне зображення
+      open_image: 'Відкрити зображення %{current} з %{total}: %{name}'
+      previous: Попереднє зображення
     infrastructure:
       locations: Locations
     invitations:
@@ -2790,34 +2845,41 @@ uk:
       new:
         title: New Navigation Item for %{name}
       route_names:
-        calendars: Calendars
-        calls_for_interest: Calls for Interest
-        communities: Communities
-        content_blocks: Content Blocks
-        events: Events
-        geography_continents: Continents
-        geography_countries: Countries
-        geography_maps: Maps
-        geography_regions: Regions
+        agreements: Угоди
+        calendars: Календарі
+        calls_for_interest: Заклики до зацікавлення
+        communities: Спільноти
+        content_blocks: Блоки вмісту
+        events: Події
+        federation_hub: Центр федерації
+        geography_continents: Континенти
+        geography_countries: Країни
+        geography_maps: Карти
+        geography_regions: Регіони
         geography_settlements: Населені пункти
-        geography_states: States
-        host_dashboard: Host Dashboard
-        host_dashboard_membership_review: Membership Review
-        host_dashboard_platform_connection_review: Federation Review
-        host_dashboard_safety_review: Safety Review
-        joatu_offers: Offers
-        joatu_requests: Requests
-        metrics_reports: Metrics Reports
-        navigation_areas: Navigation Areas
-        pages: Pages
-        people: People
+        geography_states: Штати
+        host_dashboard: Панель керування хоста
+        host_dashboard_membership_review: Перегляд членства
+        host_dashboard_platform_connection_review: Перегляд федерації
+        host_dashboard_safety_review: Перегляд безпеки
+        hub: Центр
+        joatu_hub: Центр Joatu
+        joatu_offers: Пропозиції
+        joatu_requests: Запити
+        metrics_reports: Звіти метрик
+        navigation_areas: Області навігації
+        oauth_applications: Застосунки OAuth
+        pages: Сторінки
+        people: Люди
         platform_connections: Підключення платформ
-        platforms: Platforms
+        platforms: Платформи
+        posts: Публікації
         reports: Звіти
-        resource_permissions: Resource Permissions
-        roles: Roles
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
         safety_cases: Огляд безпеки
-        users: Users
+        users: Користувачі
+        webhook_endpoints: Кінцеві точки вебхуків
       visibility_strategies:
         authenticated: Авторизовані користувачі
         permission: Користувачі з дозволом
@@ -2929,6 +2991,14 @@ uk:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} приєднався(-лась) як %{role} через %{domain}"
+          title: Довірений домен %{domain} надав членство
+        rate_limited:
+          body: Досягнуто погодинного ліміту для %{domain}. Нові люди залишаються
+            в очікуванні, доки ви їх не розглянете.
+          title: Довірений домен %{domain} досяг погодинного ліміту
     oauth:
       applications:
         create:
@@ -3031,6 +3101,32 @@ uk:
         new_person: New person
       notification_preferences: Message notification preferences
       preferences:
+        appearance:
+          color_mode:
+            hint: Автоматичний відповідає налаштуванню вашого пристрою. Світлий і
+              темний залишаються такими, як ви обрали.
+            title: Режим кольору
+          contrast_note: 'Примітка: у цій темі є пари кольорів із контрастом нижче
+            WCAG AA. Оберіть іншу тему, якщо текст важко читати.'
+          description: Оберіть, як цей сайт виглядає для вас. Ваш вибір діє на кожному
+            пристрої, де ви входите в систему.
+          platform_theme: Використовувати тему платформи
+          preview_button: Кнопка
+          preview_card: Картка на смузі розділу
+          preview_footer: Посилання внизу сторінки
+          preview_heading: Приклад заголовка
+          preview_label: Попередній перегляд вигляду
+          preview_link: посиланням
+          preview_site_name: Ваш сайт
+          preview_state: 'Попередній перегляд: %{theme}, режим %{mode}. Кожен вибір
+            зберігається окремо.'
+          preview_text: Текст із
+          theme:
+            hint: Оберіть одну з доступних тем або тему, яку обрала ця платформа.
+            title: Тема
+          themes_disabled: Ця платформа використовує одну тему для всіх. Режим кольору
+            нижче ви все одно можете обрати.
+          title: Вигляд
         language:
           title: Мова
         messaging:
@@ -3477,7 +3573,101 @@ uk:
         accepted: Прийнято
         expired: Закінчився термін
         pending: Очікує
+    platform_trusted_domains:
+      created: Довірений домен додано.
+      destroyed: Довірений домен видалено. Наявні облікові записи та членства не змінюються.
+      edit:
+        title: Редагувати довірений домен
+      events:
+        account_created: Обліковий запис створено
+        domain_added: Домен додано
+        domain_removed: Домен видалено
+        domain_updated: Домен змінено
+        grant_rate_limited: Досягнуто погодинного ліміту, надання чекає на розгляд
+        membership_granted: Членство надано
+        membership_request_approved: Запит на членство схвалено
+      form:
+        cancel: Скасувати
+        domain_hint: Лише частина після знака @, наприклад example.org. Для публічних
+          поштових сервісів, як-от gmail.com, потрібне підтвердження нижче.
+        domain_label: Домен електронної пошти
+        enabled_label: Увімкнено
+        include_subdomains_label: Довіряти також піддоменам (наприклад mail.example.org)
+        note_label: Примітка для інших стюардів (необов'язково)
+        public_domain_label: Я розумію, що це публічний поштовий домен і будь-хто
+          може мати там адресу
+        role_ceiling_label: Я розумію, що люди з підтвердженою адресою в цьому домені
+          автоматично отримують цю роль
+        role_hint: Лише ролі спільноти. Ролі платформи та стюарда не можна надавати
+          за доменом.
+        role_label: Надана роль спільноти
+        submit: Зберегти довірений домен
+      index:
+        activity_event: Подія
+        activity_heading: Остання активність
+        activity_none: Активності ще немає.
+        activity_person: Особа
+        activity_via: Через
+        activity_when: Коли
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей довірений домен? Наявні облікові записи та членства
+          залишаться без змін.
+        disabled_label: Вимкнено
+        edit_btn: Редагувати
+        enabled_label: Увімкнено
+        explanation: Люди, які входять через провайдера, що підтверджує пошту, або
+          підтверджують пошту після реєстрації, і чия адреса закінчується довіреним
+          доменом, отримують членство з обраною роллю без очікування розгляду. Кожне
+          надання записується в журнал.
+        header_accounts: Створено облікових записів
+        header_actions: Дії
+        header_domain: Домен
+        header_role: Роль
+        header_status: Статус
+        header_subdomains: Піддомени
+        new_btn: Додати довірений домен
+        no_domains: Довірених доменів ще немає.
+        subdomains_no: Лише точний збіг
+        subdomains_yes: Включено
+        subtitle: Довірені поштові домени %{platform_name}
+        table_aria: Довірені поштові домени
+        title: Довірені домени
+      new:
+        subtitle: Люди з підтвердженою адресою в цьому домені отримують обрану роль
+          на %{platform_name}.
+        title: Додати довірений домен
+      updated: Довірений домен оновлено.
+      vias:
+        membership_request: Запит на членство
+        oauth: Провайдер входу
+        password_registration: Реєстрація поштою
+        steward: Стюард
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} не підтримує цей тип вмісту."
+          too_long: "%{slot} задовгий (ліміт становить %{max} символів на мову)."
+        footer_above:
+          hint: Показується над підвалом сайту, наприклад повідомлення про фінансувальників
+            або застереження.
+          label: Над підвалом
+        header_above:
+          hint: Показується над заголовком сайту, наприклад оголошення.
+          label: Над заголовком
+        hint: Необов'язкові блоки вмісту, що показуються у фіксованих місцях на кожній
+          сторінці цієї платформи. Кожна мова окрема; відсутня мова повертається до
+          мови за замовчуванням. Залиште місце порожнім, щоб зберегти стандартний
+          макет.
+        not_found_headlines:
+          hint: Один заголовок на рядок, до 20. Один обирається випадково, коли сторінку
+            не знайдено. Без заголовків використовується стандартний.
+          label: Заголовки сторінки 404
+        not_found_message:
+          hint: Показується під заголовком, коли сторінку не знайдено.
+          label: Повідомлення сторінки 404
+        remove: Видалити цей вміст
+        title: Вміст заголовка, підвалу та сторінки 404
       form:
         allow_membership_requests: Дозволити запити на членство
         allow_membership_requests_hint: Показує публічну форму запиту на членство
@@ -3528,6 +3718,14 @@ uk:
           ai_translation_tokens: Токени використання LLM ШІ на місяць
           media_storage: Сховище
         quota_use_default: Використовувати значення за замовчуванням (%{size})
+        trusted_domains:
+          after_save: Спершу збережіть платформу, потім додайте тут довірені поштові
+            домени.
+          heading: Довірені поштові домени
+          hint: Підтверджені адреси цих доменів приєднуються із заданою роллю без
+            очікування розгляду.
+          manage: Керувати довіреними доменами
+          none: Довірених доменів немає.
       index:
         provision_new_platform: Налаштувати нову платформу
       new:
@@ -3552,6 +3750,126 @@ uk:
         features: Функції та квоти
         integrations: Інтеграції
         security: Безпека
+      theme:
+        allow_user_themes: Дозволити кожному обирати власну тему
+        allow_user_themes_hint: Якщо увімкнено, користувачі, що увійшли в систему,
+          можуть обрати будь-яку доступну тему у своїх налаштуваннях. Якщо вимкнено,
+          усі бачать тему платформи. Кожен завжди може обрати свій режим кольору (автоматичний,
+          світлий або темний).
+        apply: Застосувати тему
+        clear: Очистити всі поля теми
+        colors:
+          accent: Акцентний колір
+          accent_dark: Акцентний колір (темний, для тексту)
+          band: Тло смуг розділів
+          body_text: Основний текст
+          footer_bg: Тло підвалу
+          footer_link: Посилання підвалу
+          link: Колір посилань
+          navbar_bg: Тло навігації
+          navbar_link: Текст і посилання навігації
+          page_bg: Тло сторінки
+          primary: Основний колір
+          primary_text: Текст на основних кнопках
+        contrast_aaa: Відповідає AAA
+        contrast_fail: Нижче AA, важко читати
+        contrast_hint: Співвідношення оновлюються під час введення. Звичайний текст
+          потребує щонайменше 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} на %{background}"
+        contrast_pass: Відповідає AA
+        contrast_title: Перевірка контрасту
+        current_image: 'Поточний: %{name}'
+        dark_color_label: 'Темний: %{color}'
+        dark_logo_hint: Необов'язково. Показується в темному режимі замість логотипа
+          сайту. Якщо порожньо, використовується логотип сайту.
+        dark_logo_label: Логотип для темного режиму
+        dark_mode_disabled: Вимкнено (лише світлий)
+        dark_mode_enabled: Увімкнено
+        dark_mode_label: Темний режим
+        dark_source_custom: Задати власні
+        dark_source_derive: Обчислити автоматично
+        dark_source_label: Темні кольори
+        default_mode_label: Типово для нових відвідувачів
+        default_option: Типово
+        favicon_hint: Невеликий квадратний PNG, SVG або ICO, що показується на вкладці
+          браузера.
+        favicon_label: Фавікон
+        font_label: Шрифт
+        fonts:
+          georgia: Georgia (із засічками)
+          monospace: Моноширинний
+          system: Системний без засічок
+          tahoma: Tahoma
+        header_banner_hint: Широке зображення для заголовка. Доступне темі як --bts-header-banner.
+        header_banner_label: Банер заголовка
+        hint: Задайте основні кольори, шрифт і стиль кутів. Залиште поле порожнім,
+          щоб зберегти типове значення. Власний CSS нижче все ще може перевизначити
+          ці налаштування.
+        images_title: Зображення
+        logo_hint: Показується на панелі навігації. Це логотип спільноти платформи.
+        logo_label: Логотип сайту
+        mode_summary_fail: "%{mode}: пар нижче AA: %{count}."
+        mode_summary_ok: "%{mode}: усі пари відповідають AA."
+        modes_hint: Відвідувачі можуть обирати Авто, Світлий або Темний. Темні кольори
+          застосовуються до кожного кольору, заданого вище. Залиште їх похідними або
+          вкажіть власні.
+        modes_title: Світлий і темний режим
+        picker_blank: Оберіть тему для перегляду
+        picker_label: Почати з теми
+        presets:
+          cool:
+            description: Глибокий бірюзовий на м'якому тлі з більш округлими кутами.
+            name: Прохолодна
+          dark:
+            description: Світлий текст на темній сторінці для слабкого освітлення.
+            name: Темна
+          high_contrast:
+            description: Чорний, білий і жовтий із найсильнішим контрастом і прямими
+              кутами.
+            name: Високий контраст
+          neutral:
+            description: Спокійний синій на білому. Надійний варіант із сильним контрастом.
+            name: Нейтральна світла
+          warm:
+            description: Земляна іржа та крем із шрифтом із засічками.
+            name: Тепла
+        preview_alert: Інформаційне повідомлення виглядає так.
+        preview_badge: Нове
+        preview_band: Смуга розділу для виділеного вмісту
+        preview_card_text: Картки використовують тло сторінки та акцентну рамку.
+        preview_card_title: Картка
+        preview_footer_link: Посилання підвалу
+        preview_heading: Заголовок у вашій темі
+        preview_hint: Приклад сторінки, що оновлюється під час вибору теми чи зміни
+          кольору. Нічого не зберігається, доки ви не збережете платформу.
+        preview_input_label: Поле форми
+        preview_input_value: Приклад тексту
+        preview_label: Перегляд теми
+        preview_link: прикладом посилання
+        preview_mode_label: Режим кольорів перегляду
+        preview_nav_one: Події
+        preview_nav_two: Про нас
+        preview_primary: Основна дія
+        preview_secondary: Додаткова дія
+        preview_site_name: Ваша платформа
+        preview_text: Основний текст лежить на тлі сторінки, із
+        preview_title: Перегляд
+        radii:
+          large: Великі
+          medium: Середні
+          none: Прямі
+          small: Малі
+        radius_label: Заокруглення кутів
+        remove: Прибрати
+        reset: Повернути збережені значення
+        status_applied: Тему %{name} застосовано до полів. Збережіть платформу, щоб
+          залишити її.
+        status_current: 'Поточна тема: %{name}'
+        status_custom: 'Поточна тема: власні кольори'
+        status_none: Тему не задано, використано типові значення платформи
+        status_previewing: Перегляд теми %{name}. Ще не застосовано.
+        title: Тема
+        white: біла сторінка
     posts:
       authors: Автори
       back_to_posts: Назад до постів
@@ -3679,6 +3997,77 @@ uk:
       nav:
         resource_permissions: Дозволи ресурсів
         roles: Ролі
+    redirects:
+      created: Перенаправлення успішно додано.
+      destroyed: Перенаправлення видалено.
+      edit:
+        subtitle: Перенаправлення для %{platform_name}
+        title: Редагування %{from_path}
+      form:
+        active_label: Активне
+        cancel: Скасувати
+        create_btn: Додати перенаправлення
+        from_path_hint: Адреса, яку використовували відвідувачі, починається з похилої
+          риски. Порівняння не враховує регістр, кінцеву риску та рядок запиту.
+        from_path_label: Старий шлях
+        note_label: Примітка
+        preserve_query_label: Зберігати рядок запиту під час перенаправлення
+        status_label: Відповідь
+        statuses:
+          s301: 301 Переміщено назавжди
+          s302: 302 Знайдено (тимчасово)
+          s307: 307 Тимчасове перенаправлення
+          s308: 308 Постійне перенаправлення
+          s410: 410 Видалено
+        to_path_hint: Шлях на цьому сайті, що починається з похилої риски, або повна
+          адреса http чи https. Залиште порожнім лише для 410 Видалено.
+        to_path_label: Новий шлях або URL
+        update_btn: Оновити перенаправлення
+      index:
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити це перенаправлення?
+        edit_btn: Редагувати
+        gone_label: Видалено (нової адреси немає)
+        header_actions: Дії
+        header_from: Старий шлях
+        header_hits: Відвідування
+        header_status: Стан
+        header_to: Новий шлях
+        import_btn: Імпортувати
+        inactive_label: неактивне
+        new_btn: Додати перенаправлення
+        no_redirects: Перенаправлень ще немає.
+        search_btn: Шукати
+        search_label: Пошук перенаправлень
+        search_placeholder: Пошук за старим шляхом
+        subtitle: Старі адреси, що спрямовують відвідувачів на нове місце на %{platform_name}
+        table_aria: Перенаправлення
+        title: Перенаправлення
+      new:
+        subtitle: Додати перенаправлення для %{platform_name}
+        title: Нове перенаправлення
+      new_import:
+        back: Назад до перенаправлень
+        import_btn: Імпортувати
+        import_confirm: Імпортувати ці перенаправлення?
+        preview_btn: Попередній перегляд
+        report_applied: Імпорт завершено
+        report_created: Створено
+        report_error_line: 'Рядок %{row} (%{path}): %{message}'
+        report_preview: Попередній перегляд (нічого не збережено)
+        report_skipped: Пропущено (вже існують)
+        report_unchanged: Без змін
+        report_updated: Оновлено
+        rows_hint: 'Напишіть старий шлях, новий шлях і необов’язковий код (301, 302,
+          307, 308 або 410) через коми. Рядки, що починаються з #, ігноруються. Спершу
+          зробіть попередній перегляд; нічого не зберігається, доки ви не виберете
+          Імпортувати.'
+        rows_label: Перенаправлення, по одному в рядку
+        subtitle: Додати багато перенаправлень до %{platform_name} одразу
+        title: Імпорт перенаправлень
+        upsert_label: Також оновити наявні перенаправлення
+      updated: Перенаправлення успішно оновлено.
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
@@ -5114,6 +5503,11 @@ uk:
         submit: Надіслати
         terms_of_service:
           label: Я погоджуюся з Умовами використання
+        trusted_domains:
+          confirm_notice: Адреси в %{domains} приєднуються після підтвердження пошти.
+            Перевірте свою скриньку після реєстрації.
+          link: Зареєструватися з довіреною поштою
+          notice: Маєте адресу в %{domains}?
         view: Переглянути
       signed_up: Ласкаво просимо! Ви успішно зареєструвалися.
       signed_up_but_inactive: Ви успішно зареєструвалися. Проте ми не змогли авторизувати
@@ -5187,6 +5581,7 @@ uk:
       confirmation: не співпадає з %{attribute}
       confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
         запросіть новий
+      denied_for_trusted_domain: не може надаватися поштовим доменом
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -5204,6 +5599,7 @@ uk:
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       model_invalid: 'Перевірка не вдалася: %{errors}'
+      not_a_community_role: має бути роллю спільноти
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
       not_found: не знайдено
@@ -5216,7 +5612,11 @@ uk:
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
+      public_mail_domain: є публічним поштовим сервісом; підтвердьте, щоб довіряти
+        всім його адресам
       required: має існувати
+      required_for_elevated_role: потребує явного підтвердження, перш ніж поштовий
+        домен зможе надати роль вищу за базового учасника
       taken: вже зайнято
       too_long:
         few: занадто довгий (максимум %{count} символи)
@@ -5599,15 +5999,20 @@ uk:
       invalid_parameters: Недійсні параметри
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Обліковий запис та інструменти
     conversations: Conversations
+    footer_legal_navigation: Інформація про сайт
+    footer_navigation: Посилання внизу сторінки
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Головна
     my_profile: Мій профіль
     notifications_tooltip: Сповіщення
     search_tooltip: Пошук
     settings: Налаштування
     sign_in: Увійти
+    skip_to_content: Перейти до основного вмісту
     toggle_navigation: Переключити навігацію
     user_nav_tooltip: Меню облікового запису
   navigation:
@@ -5781,6 +6186,7 @@ uk:
         identity_providers: Постачальники входу
         platform_domains: Домени
         quota_grants: Гранти квоти
+        redirects: Перенаправлення
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
@@ -5821,6 +6227,7 @@ uk:
     continent: Континент
     country: Країна
     download_failed: Завантаження не вдалося
+    download_held: Цей файл ще перевіряється на безпеку. Спробуйте ще раз пізніше.
     invitation: Запрошення
     invitation_email: Електронна пошта запрошення
     member: Учасник
@@ -5845,6 +6252,7 @@ uk:
     confirm_destroy: Підтвердіть видалення
   search:
     button: Пошук
+    label: Пошук на сайті
     placeholder: Пошук...
   seed_catalog:
     geography:

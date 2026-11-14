@@ -13,7 +13,7 @@
       "selector": "#platform-appearance-tab",
       "title": "Appearance tab",
       "bullets": [
-        "Custom CSS today; theme settings land here next."
+        "Theme colours, font, images and custom CSS."
       ],
       "target": {
         "x": 12.0,

@@ -10,8 +10,10 @@
      role="button" 
      data-bs-toggle="dropdown" 
      data-turbo-prefetch="false"
+     aria-label="<%= t('navbar.notifications_tooltip') %>"
+     aria-haspopup="true"
      aria-expanded="false">
-    <i class="fa fa-bell"></i>
+    <i class="fa fa-bell" aria-hidden="true"></i>
     <%= unread_notification_counter %>
   </a>
   <ul id="notification-list" 

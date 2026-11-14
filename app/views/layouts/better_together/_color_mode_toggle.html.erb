@@ -1,0 +1,30 @@
+<% if color_mode_enabled? %>
+  <% person = theme_person %>
+  <% scope = 'better_together.color_mode' %>
+  <% current = color_mode_preference %>
+  <li id="color-mode-toggle" class="nav-item" data-controller="better_together--color-mode"
+      <% if person %>data-better_together--color-mode-save-url-value="<%= better_together.person_path(person, locale: I18n.locale) %>"<% end %>
+      data-better_together--color-mode-announce-auto-value="<%= t("#{scope}.announce.auto") %>"
+      data-better_together--color-mode-announce-light-value="<%= t("#{scope}.announce.light") %>"
+      data-better_together--color-mode-announce-dark-value="<%= t("#{scope}.announce.dark") %>">
+    <style>
+      #color-mode-toggle .btn-group { gap: 0.125rem; }
+      #color-mode-toggle .color-mode-option { min-width: 44px; min-height: 44px; color: inherit; border: 1px solid transparent; background: transparent; opacity: 0.8; }
+      #color-mode-toggle .color-mode-option[aria-pressed="true"] { border-color: currentColor; opacity: 1; }
+      #color-mode-toggle .color-mode-option:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+      @media (prefers-reduced-motion: no-preference) { #color-mode-toggle .color-mode-option { transition: opacity 0.15s ease-in-out; } }
+    </style>
+    <div class="btn-group" role="group" aria-label="<%= t("#{scope}.label") %>">
+      <% { 'auto' => 'fa-circle-half-stroke', 'light' => 'fa-sun', 'dark' => 'fa-moon' }.each do |mode, icon| %>
+        <button type="button" class="btn color-mode-option" id="color-mode-<%= mode %>" data-mode="<%= mode %>"
+                data-better_together--color-mode-target="button" data-action="better_together--color-mode#select"
+                aria-pressed="<%= (current == mode).to_s %>" title="<%= t("#{scope}.#{mode}") %>">
+          <i class="fas <%= icon %>" aria-hidden="true"></i>
+          <span class="visually-hidden"><%= t("#{scope}.#{mode}") %></span>
+        </button>
+      <% end %>
+    </div>
+    <span id="color-mode-status" class="visually-hidden" role="status" aria-live="polite"
+          data-better_together--color-mode-target="status"></span>
+  </li>
+<% end %>
