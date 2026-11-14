@@ -47,6 +47,17 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
     expect(steward_edit.agreement_terms.first.content.to_plain_text).to eq('Our own words')
   end
 
+  it 'keeps untouched agreements in draft when run again, and only the one a steward activated stays active' do
+    first = described_class.call(host_platform)
+    first['subscription_agreement'].update!(lifecycle_state: 'active')
+
+    second = described_class.call(host_platform)
+
+    expect(second.transform_values(&:lifecycle_state)).to eq(
+      'subscription_agreement' => 'active', 'one_time_purchase_agreement' => 'draft', 'offline_payment_terms' => 'draft'
+    )
+  end
+
   it 'gives each platform its own copies, so one platform\'s terms never apply to another' do
     mine = described_class.call(host_platform)
     theirs = described_class.call(other_platform)
