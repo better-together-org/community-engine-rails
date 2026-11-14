@@ -319,7 +319,9 @@ module BetterTogether
             download_metrics_reports
             view_platform_logs
             access_beta_features
-          ]
+          ],
+          # manage_platform_code is deliberately held by this role alone, never by the stewards.
+          'platform_code_manager' => %w[read_platform manage_platform_code]
           # Add more mappings as needed...
         }
 
@@ -595,6 +597,14 @@ module BetterTogether
             name: 'Network Admin',
             description: 'Manages platform-to-platform network relationships, connection approvals, and ' \
                          'federation trust settings without inheriting full local platform stewardship.'
+          },
+          {
+            protected: true,
+            identifier: 'platform_code_manager',
+            position: 10,
+            resource_type: 'BetterTogether::Platform',
+            name: 'Platform Code Manager',
+            description: 'May add scripts, styles and meta tags to the platform head and body.'
           }
         ]
       end
@@ -708,6 +718,10 @@ module BetterTogether
           {
             action: 'view', target: 'alpha_features', resource_type: 'BetterTogether::Platform',
             identifier: 'access_alpha_features', protected: true, position: 27
+          },
+          {
+            action: 'manage', target: 'platform_code', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_code', protected: true, position: 28
           }
         ]
       end

@@ -454,6 +454,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # rubocop:enable Metrics/BlockLength
 
         # Only logged-in Platform Managers have access to these routes
+        # Custom code is gated by its own permission, which the platform stewards do not hold.
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform_code') } do
+          scope path: 'host' do
+            resources :platforms, only: [] do
+              resources :platform_snippets, except: %i[show] do
+                member { patch :move }
+                collection { patch :toggle_all }
+              end
+            end
+          end
+        end
+
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'

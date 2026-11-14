@@ -3546,6 +3546,110 @@ fr:
         accepted: Accepté
         expired: Expiré
         pending: En attente
+    platform_snippets:
+      applies_to_options:
+        all: Tout le monde
+        signed_out: Visiteurs non connectés uniquement
+      audit_actions:
+        created: Créé
+        destroyed: Supprimé
+        disabled: Désactivé
+        enabled: Activé
+        updated: Mis à jour
+      consent_categories:
+        analytics: Analyse
+        marketing: Marketing
+        none: Non requis
+      destroyed: Extrait supprimé.
+      edit:
+        subtitle: Pour %{platform_name}.
+        title: Modifier %{name}
+      errors:
+        invalid_meta_markup: doit contenir des balises meta ou des liens preconnect
+        invalid_script_markup: doit être du JavaScript sans balises script ni commentaires
+          HTML
+        invalid_src: doit être une adresse https
+        invalid_style_markup: doit être du CSS sans balises style ni commentaires
+          HTML
+        meta_requires_head: les balises meta ne peuvent aller que dans le head
+        origin_not_allowed: l'origine %{origin} n'est pas autorisée par les paramètres
+          de sécurité des scripts de cette plateforme
+      form:
+        allow_origin: Autoriser l'origine de ce script dans la politique de sécurité
+          du contenu
+        allow_origin_hint: Ajoute l'origine aux origines de script autorisées de cette
+          plateforme.
+        applies_to: Affiché à
+        cancel: Annuler
+        consent_category: Consentement du visiteur
+        consent_hint: Les extraits d'analyse et de marketing sont retenus jusqu'au
+          consentement des visiteurs.
+        content: Code
+        content_hint: Les scripts en ligne s'exécutent avec le nonce de sécurité de
+          la page. N'incluez pas de balises script ou style. Pour le type meta, uniquement
+          des balises meta et des liens preconnect.
+        enabled: Activé
+        enabled_hint: Laissez désactivé jusqu'à ce que vous ayez testé l'extrait.
+        kind: Type
+        location: Emplacement
+        name: Nom
+        notes: Notes
+        save: Enregistrer l'extrait
+        src: Adresse du script
+        src_hint: Pour les scripts externes uniquement. L'adresse doit utiliser https
+          et son origine doit être autorisée dans les paramètres de sécurité de la
+          plateforme.
+        warning: Ce code s'exécute dans le navigateur de chaque visiteur. Testez avec
+          le mode sans échec et gardez l'extrait désactivé jusqu'à ce que vous soyez
+          prêt.
+      index:
+        audit_line: "%{action} : %{name}"
+        audit_title: Modifications récentes
+        back_to_platform: Retour aux paramètres de la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer cet extrait ?
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        header_actions: Actions
+        header_consent: Consentement
+        header_kind: Type
+        header_location: Emplacement
+        header_name: Nom
+        header_status: Statut
+        kill_switch_hint: Ajoutez ?safe_mode=1 à l'adresse d'une page pour voir le
+          site sans extraits.
+        kill_switch_off: Tous les extraits sont désactivés.
+        kill_switch_on: Les extraits sont actifs.
+        kill_switch_title: Tous les extraits
+        move_down: Descendre
+        move_up: Monter
+        new_btn: Nouvel extrait
+        none_yet: Aucun extrait pour l'instant.
+        subtitle: Scripts, styles et balises meta ajoutés à chaque page de %{platform_name}.
+        table_aria: Extraits de code personnalisé
+        title: Code personnalisé
+        turn_off: Tout désactiver
+        turn_on: Tout activer
+        warning: Les extraits s'exécutent dans le navigateur de chaque visiteur et
+          peuvent lire ce qu'il voit et saisit sur cette plateforme. N'ajoutez que
+          du code de confiance.
+      kinds:
+        html_meta: Balises meta
+        script_inline: Script en ligne
+        script_src: Script externe
+        style_inline: Style en ligne
+      locations:
+        body_end: Fin du body
+        body_start: Début du body
+        head_end: Fin du head
+        head_start: Début du head
+      new:
+        subtitle: Pour %{platform_name}. Les nouveaux extraits sont désactivés au
+          départ.
+        title: Nouvel extrait
+      saved: Extrait enregistré.
+      switch_updated: L'interrupteur des extraits a été mis à jour.
     platforms:
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
@@ -3566,6 +3670,10 @@ fr:
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
         csp_title: Sécurité / intégrations CSP
+        custom_code_hint: Ajoutez des scripts, styles et balises meta à chaque page.
+          Nécessite l'autorisation de gérer le code de la plateforme.
+        custom_code_link: Gérer le code personnalisé
+        custom_code_title: Code personnalisé
         custom_css_hint: Réglage avancé. Les styles ajoutés ici se chargent après
           le thème et ont priorité sur lui.
         custom_css_title: CSS personnalisé

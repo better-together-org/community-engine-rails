@@ -25,6 +25,8 @@ RSpec.describe 'layouts/better_together/application' do
       hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe,
       request: double(original_url: 'http://test.host/current', user_agent: 'RSpec', path: '/current')
     )
+    view.extend(BetterTogether::PlatformSnippetsHelper)
+    allow(view).to receive(:render_platform_snippets).and_return('')
     allow(view).to receive(:metrics_body_tag).and_yield
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
     allow(view).to receive(:render).and_call_original

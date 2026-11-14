@@ -59,6 +59,9 @@ erDiagram
   EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "provider_platform / provider_platform_id"
   PLATFORM_IDENTITY_PROVIDERS ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_identity_provider / platform_identity_provider_id"
   EXT_PLATFORM_DOMAIN ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_domain / platform_domain_id"
+  EXT_PLATFORM ||--o{ PLATFORM_SNIPPETS : "platform / platform_id"
+  EXT_PERSON o|--o{ PLATFORM_SNIPPETS : "updated_by / updated_by_id"
+  EXT_PLATFORM ||--o{ PLATFORM_SNIPPET_AUDITS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
@@ -341,6 +344,28 @@ erDiagram
   PLATFORM_IDENTITY_PROVIDER_DOMAINS {
     platform_domain_id uuid
     platform_identity_provider_id uuid
+  }
+
+  PLATFORM_SNIPPETS {
+    platform_id uuid
+    updated_by_id uuid
+    applies_to string
+    consent_category string
+    kind string
+    location string
+    name string
+    src string
+    content text
+    notes text
+  }
+
+  PLATFORM_SNIPPET_AUDITS {
+    actor_id uuid
+    platform_id uuid
+    snippet_id uuid
+    action string
+    snippet_name string
+    change_set jsonb
   }
 
   QUOTAS {

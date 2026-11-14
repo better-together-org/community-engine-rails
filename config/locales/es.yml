@@ -3523,6 +3523,105 @@ es:
         accepted: Aceptado
         expired: Vencido
         pending: Pendiente
+    platform_snippets:
+      applies_to_options:
+        all: Todos
+        signed_out: Solo visitantes sin sesión
+      audit_actions:
+        created: Creado
+        destroyed: Eliminado
+        disabled: Desactivado
+        enabled: Activado
+        updated: Actualizado
+      consent_categories:
+        analytics: Analítica
+        marketing: Marketing
+        none: No necesario
+      destroyed: Fragmento eliminado.
+      edit:
+        subtitle: Para %{platform_name}.
+        title: Editar %{name}
+      errors:
+        invalid_meta_markup: debe contener metaetiquetas o enlaces preconnect
+        invalid_script_markup: debe ser JavaScript sin etiquetas script ni comentarios
+          HTML
+        invalid_src: debe ser una dirección https
+        invalid_style_markup: debe ser CSS sin etiquetas style ni comentarios HTML
+        meta_requires_head: las metaetiquetas solo pueden ir en el head
+        origin_not_allowed: el origen %{origin} no está permitido por los ajustes
+          de seguridad de scripts de esta plataforma
+      form:
+        allow_origin: Permitir el origen de este script en la política de seguridad
+          de contenido
+        allow_origin_hint: Añade el origen a los orígenes de script permitidos de
+          esta plataforma.
+        applies_to: Se muestra a
+        cancel: Cancelar
+        consent_category: Consentimiento del visitante
+        consent_hint: Los fragmentos de analítica y marketing se retienen hasta que
+          los visitantes den su consentimiento.
+        content: Código
+        content_hint: Los scripts en línea se ejecutan con el nonce de seguridad de
+          la página. No incluya etiquetas script ni style. Para el tipo meta, solo
+          metaetiquetas y enlaces preconnect.
+        enabled: Activado
+        enabled_hint: Déjelo desactivado hasta que haya probado el fragmento.
+        kind: Tipo
+        location: Ubicación
+        name: Nombre
+        notes: Notas
+        save: Guardar fragmento
+        src: Dirección del script
+        src_hint: Solo para scripts externos. La dirección debe usar https y su origen
+          debe estar permitido en los ajustes de seguridad de la plataforma.
+        warning: Este código se ejecuta en el navegador de cada visitante. Pruebe
+          con el modo seguro y mantenga el fragmento desactivado hasta que esté listo.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Cambios recientes
+        back_to_platform: Volver a los ajustes de la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este fragmento?"
+        disabled_label: Desactivado
+        edit_btn: Editar
+        enabled_label: Activado
+        header_actions: Acciones
+        header_consent: Consentimiento
+        header_kind: Tipo
+        header_location: Ubicación
+        header_name: Nombre
+        header_status: Estado
+        kill_switch_hint: Añada ?safe_mode=1 a la dirección de cualquier página para
+          ver el sitio sin fragmentos.
+        kill_switch_off: Todos los fragmentos están desactivados.
+        kill_switch_on: Los fragmentos están activos.
+        kill_switch_title: Todos los fragmentos
+        move_down: Bajar
+        move_up: Subir
+        new_btn: Nuevo fragmento
+        none_yet: Aún no hay fragmentos.
+        subtitle: Scripts, estilos y metaetiquetas añadidos a cada página de %{platform_name}.
+        table_aria: Fragmentos de código personalizado
+        title: Código personalizado
+        turn_off: Desactivar todos
+        turn_on: Activar todos
+        warning: Los fragmentos se ejecutan en el navegador de cada visitante y pueden
+          leer lo que ven y escriben en esta plataforma. Añada solo código de confianza.
+      kinds:
+        html_meta: Metaetiquetas
+        script_inline: Script en línea
+        script_src: Script externo
+        style_inline: Estilo en línea
+      locations:
+        body_end: Final del body
+        body_start: Inicio del body
+        head_end: Final del head
+        head_start: Inicio del head
+      new:
+        subtitle: Para %{platform_name}. Los fragmentos nuevos comienzan desactivados.
+        title: Nuevo fragmento
+      saved: Fragmento guardado.
+      switch_updated: Se actualizó el interruptor de fragmentos.
     platforms:
       form:
         allow_membership_requests: Permitir solicitudes de membresía
@@ -3542,6 +3641,10 @@ es:
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
         csp_title: Seguridad / incrustaciones CSP
+        custom_code_hint: Añada scripts, estilos y metaetiquetas a cada página. Requiere
+          el permiso de gestión de código de la plataforma.
+        custom_code_link: Gestionar código personalizado
+        custom_code_title: Código personalizado
         custom_css_hint: Ajuste avanzado. Los estilos añadidos aquí se cargan después
           del tema y tienen prioridad sobre él.
         custom_css_title: CSS personalizado

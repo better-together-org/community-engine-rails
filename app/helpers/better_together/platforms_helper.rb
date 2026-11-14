@@ -19,11 +19,16 @@ module BetterTogether
       end
     end
 
-    # The Integrations tab only exists when an extension gem registered a platform setting.
-    def platform_form_tab_ids
+    # The Integrations tab exists when an extension gem registered a platform setting, or when the
+    # person may manage the platform's custom code snippets.
+    def platform_form_tab_ids(platform = nil)
       tabs = %w[details access appearance domains security features]
-      tabs << 'integrations' if BetterTogether::PlatformSettingsRegistry.any?
+      tabs << 'integrations' if BetterTogether::PlatformSettingsRegistry.any? || platform_code_tab?(platform)
       tabs
+    end
+
+    def platform_code_tab?(platform)
+      platform&.persisted? && policy(BetterTogether::PlatformSnippet.new(platform:)).index?
     end
 
     # The first tab holding errors, otherwise the details tab.

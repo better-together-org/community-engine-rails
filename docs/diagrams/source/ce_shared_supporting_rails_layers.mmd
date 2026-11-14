@@ -341,6 +341,11 @@ classDiagram
       models: PlatformIdentityProvider
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__PlatformSnippetsController["PlatformSnippetsController"] {
+      <<Controller>>
+      models: PlatformSnippet
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
     class BetterTogether__QuotaGrantsController["QuotaGrantsController"] {
       <<Controller>>
       models: QuotaGrant
@@ -580,6 +585,18 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformSnippet["PlatformSnippet"] {
+      <<Model>>
+      table: better_together_platform_snippets
+      concerns: BetterTogetherId, Positioned, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__PlatformSnippetAudit["PlatformSnippetAudit"] {
+      <<Model>>
+      table: better_together_platform_snippet_audits
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
       table: better_together_quotas
@@ -760,6 +777,8 @@ classDiagram
   BetterTogether__PlatformDomainsController --|> BetterTogether__ApplicationController
   BetterTogether__PlatformIdentityProvidersController ..> BetterTogether__PlatformIdentityProvider : manages
   BetterTogether__PlatformIdentityProvidersController --|> BetterTogether__ApplicationController
+  BetterTogether__PlatformSnippetsController ..> BetterTogether__PlatformSnippet : manages
+  BetterTogether__PlatformSnippetsController --|> BetterTogether__ApplicationController
   BetterTogether__QuotaGrantsController ..> BetterTogether__QuotaGrant : manages
   BetterTogether__QuotaGrantsController --|> BetterTogether__ApplicationController
   BetterTogether__RedirectsController ..> BetterTogether__Redirect : manages
@@ -834,6 +853,9 @@ classDiagram
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformDomain : platform_domain
+  BetterTogether__PlatformSnippet --> BetterTogether__Platform : platform
+  BetterTogether__PlatformSnippet --> BetterTogether__Person : updated_by
+  BetterTogether__PlatformSnippetAudit --> BetterTogether__Platform : platform
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota

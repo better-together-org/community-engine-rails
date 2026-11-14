@@ -365,6 +365,14 @@ entries:
     reverse_association: received_platform_invitations
     concern: BetterTogether::InvitationParticipant
 
+  - key: BetterTogether::PlatformSnippet#updated_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformSnippet
+    association: updated_by
+    foreign_key: updated_by_id
+    action: retain
+
   - key: BetterTogether::GuestAccess#inviter
     kind: model_reference
     owner: person

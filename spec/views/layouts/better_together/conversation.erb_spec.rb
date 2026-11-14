@@ -13,6 +13,7 @@ RSpec.describe 'layouts/better_together/conversation' do
       persisted?: false
     )
 
+    view.extend(BetterTogether::PlatformSnippetsHelper)
     allow(view).to receive(:metrics_body_tag).and_yield
     allow(view).to receive(:render).and_call_original
     allow(view).to receive(:render).with('layouts/better_together/custom_head_javascript').and_return('')
@@ -35,7 +36,7 @@ RSpec.describe 'layouts/better_together/conversation' do
       request: double(original_url: 'http://test.host/current', path: '/current')
     )
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
-    allow(view).to receive(:base_url).and_return('http://test.host')
+    allow(view).to receive_messages(render_platform_snippets: '', base_url: 'http://test.host')
     allow(view).to receive_messages(stimulus_debug_enabled?: false, robots_meta_tag: '', sitemap_index_path: '/sitemap.xml',
                                     sitemap_path: '/sitemap.xml')
   end

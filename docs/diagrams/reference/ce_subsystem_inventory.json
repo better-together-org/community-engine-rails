@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T02:04:48Z",
+  "generated_at": "2026-11-14T15:03:07Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3552,6 +3552,12 @@
           "source_subsystem": "content_publishing"
         },
         {
+          "from": "BetterTogether::Content::ImageGalleryBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
           "from": "BetterTogether::Content::Image",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
@@ -3571,6 +3577,12 @@
         },
         {
           "from": "BetterTogether::Content::Hero",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Content::FileDownloadBlock",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "source_subsystem": "content_publishing"
@@ -3868,6 +3880,12 @@
           "to": "BetterTogether::OauthApplication",
           "label": "oauth_application (oauth_application_id)",
           "source_subsystem": "integrations_webhooks"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Person",
+          "label": "updated_by (updated_by_id)",
+          "source_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::AgentGrant",
@@ -6964,6 +6982,12 @@
           "source_subsystem": "content_publishing"
         },
         {
+          "from": "BetterTogether::Content::ImageGalleryBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
           "from": "BetterTogether::Content::Image",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -6983,6 +7007,12 @@
         },
         {
           "from": "BetterTogether::Content::Hero",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Content::FileDownloadBlock",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "content_publishing"
@@ -7523,6 +7553,18 @@
         },
         {
           "from": "BetterTogether::Redirect",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippetAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -8530,7 +8572,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::AlertBlock",
@@ -8672,7 +8714,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Block",
@@ -8805,10 +8847,12 @@
             "Content::CommunitiesBlock",
             "Content::Css",
             "Content::EventsBlock",
+            "Content::FileDownloadBlock",
             "Content::Hero",
             "Content::Html",
             "Content::IframeBlock",
             "Content::Image",
+            "Content::ImageGalleryBlock",
             "Content::Markdown",
             "Content::MermaidDiagram",
             "Content::NavigationAreaBlock",
@@ -8829,10 +8873,12 @@
             "BetterTogether::Content::CommunitiesBlock",
             "BetterTogether::Content::Css",
             "BetterTogether::Content::EventsBlock",
+            "BetterTogether::Content::FileDownloadBlock",
             "BetterTogether::Content::Hero",
             "BetterTogether::Content::Html",
             "BetterTogether::Content::IframeBlock",
             "BetterTogether::Content::Image",
+            "BetterTogether::Content::ImageGalleryBlock",
             "BetterTogether::Content::Markdown",
             "BetterTogether::Content::MermaidDiagram",
             "BetterTogether::Content::NavigationAreaBlock",
@@ -8844,7 +8890,7 @@
             "BetterTogether::Content::Template",
             "BetterTogether::Content::VideoBlock"
           ],
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::CallToActionBlock",
@@ -8991,7 +9037,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::ChecklistBlock",
@@ -9127,7 +9173,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::CommunitiesBlock",
@@ -9263,7 +9309,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Css",
@@ -9398,7 +9444,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::EventsBlock",
@@ -9534,7 +9580,149 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
+        },
+        {
+          "name": "BetterTogether::Content::FileDownloadBlock",
+          "label": "Content::FileDownloadBlock",
+          "source_path": "app/models/better_together/content/file_download_block.rb",
+          "table_name": "better_together_content_blocks",
+          "columns": [
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "protected",
+              "boolean"
+            ],
+            [
+              "visible",
+              "boolean"
+            ],
+            [
+              "accessibility_attributes",
+              "jsonb"
+            ],
+            [
+              "content_area_settings",
+              "jsonb"
+            ],
+            [
+              "content_data",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])",
+            "InclusionValidator: visible (in=[true, false])",
+            "ContentTypeValidator: background_image_file (in=[\"image/jpeg\", \"image/png\", \"image/gif\", \"image/webp\", \"image/svg+xml\"])",
+            "SizeValidator: background_image_file (less_than=20971520, message=\"is too large\")",
+            "InclusionValidator: container_class (allow_blank=true, in=[\"container\", \"container-fluid\"], message=\"must be a valid Bootstrap container class (container, container-fluid) or none.\")"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "background_image_file_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "reports_received",
+              "as": "reportable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "text_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "description",
+            "label"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Content::BlockAttributes",
+            "BetterTogether::Creatable",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Reportable",
+            "BetterTogether::Seedable",
+            "BetterTogether::Translatable",
+            "BetterTogether::Visible"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Hero",
@@ -9709,7 +9897,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Html",
@@ -9844,7 +10032,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::IframeBlock",
@@ -9981,7 +10169,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Image",
@@ -10127,7 +10315,142 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
+        },
+        {
+          "name": "BetterTogether::Content::ImageGalleryBlock",
+          "label": "Content::ImageGalleryBlock",
+          "source_path": "app/models/better_together/content/image_gallery_block.rb",
+          "table_name": "better_together_content_blocks",
+          "columns": [
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "protected",
+              "boolean"
+            ],
+            [
+              "visible",
+              "boolean"
+            ],
+            [
+              "accessibility_attributes",
+              "jsonb"
+            ],
+            [
+              "content_area_settings",
+              "jsonb"
+            ],
+            [
+              "content_data",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])",
+            "InclusionValidator: visible (in=[true, false])",
+            "ContentTypeValidator: background_image_file (in=[\"image/jpeg\", \"image/png\", \"image/gif\", \"image/webp\", \"image/svg+xml\"])",
+            "SizeValidator: background_image_file (less_than=20971520, message=\"is too large\")",
+            "InclusionValidator: container_class (allow_blank=true, in=[\"container\", \"container-fluid\"], message=\"must be a valid Bootstrap container class (container, container-fluid) or none.\")"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "background_image_file_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "reports_received",
+              "as": "reportable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "heading"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Content::BlockAttributes",
+            "BetterTogether::Creatable",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Reportable",
+            "BetterTogether::Seedable",
+            "BetterTogether::Translatable",
+            "BetterTogether::Visible"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Link",
@@ -10323,7 +10646,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::MermaidDiagram",
@@ -10465,7 +10788,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::NavigationAreaBlock",
@@ -10601,7 +10924,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::PageBlock",
@@ -10790,7 +11113,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::PlatformBlock",
@@ -10980,7 +11303,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::QuoteBlock",
@@ -11124,7 +11447,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::RichText",
@@ -11289,7 +11612,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::StatisticsBlock",
@@ -11431,7 +11754,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::Template",
@@ -11558,7 +11881,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Content::VideoBlock",
@@ -11694,7 +12017,7 @@
           ],
           "shared_table_reference": "Content::Block",
           "shared_table_reference_name": "BetterTogether::Content::Block",
-          "shared_table_group_size": 22
+          "shared_table_group_size": 24
         },
         {
           "name": "BetterTogether::Page",
@@ -12639,10 +12962,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -12756,10 +13081,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -12815,10 +13142,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13037,10 +13366,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13092,10 +13423,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13127,10 +13460,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13159,10 +13494,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13203,10 +13540,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13237,10 +13576,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13289,10 +13630,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13354,10 +13697,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13395,10 +13740,12 @@
             "Content::NavigationAreaBlock",
             "Content::MermaidDiagram",
             "Content::Markdown",
+            "Content::ImageGalleryBlock",
             "Content::Image",
             "Content::IframeBlock",
             "Content::Html",
             "Content::Hero",
+            "Content::FileDownloadBlock",
             "Content::EventsBlock",
             "Content::Css",
             "Content::CommunitiesBlock",
@@ -13555,6 +13902,18 @@
           "target_subsystem": "platform_network"
         },
         {
+          "from": "BetterTogether::Content::FileDownloadBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::FileDownloadBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::Content::Hero",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
@@ -13598,6 +13957,18 @@
         },
         {
           "from": "BetterTogether::Content::Image",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::ImageGalleryBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::ImageGalleryBlock",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -30198,6 +30569,174 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformSnippet",
+          "label": "PlatformSnippet",
+          "source_path": "app/models/better_together/platform_snippet.rb",
+          "table_name": "better_together_platform_snippets",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "updated_by_id",
+              "uuid FK"
+            ],
+            [
+              "applies_to",
+              "string"
+            ],
+            [
+              "consent_category",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "location",
+              "string"
+            ],
+            [
+              "name",
+              "string"
+            ],
+            [
+              "src",
+              "string"
+            ],
+            [
+              "content",
+              "text"
+            ],
+            [
+              "notes",
+              "text"
+            ]
+          ],
+          "validations": [
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "PresenceValidator: name",
+            "InclusionValidator: location (in=[\"head_start\", \"head_end\", \"body_start\", \"body_end\"])",
+            "InclusionValidator: kind (in=[\"script_inline\", \"script_src\", \"style_inline\", \"html_meta\"])",
+            "InclusionValidator: consent_category (in=[\"none\", \"analytics\", \"marketing\"])",
+            "InclusionValidator: applies_to (in=[\"all\", \"signed_out\"])",
+            "PresenceValidator: content (unless=:script_src?)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "updated_by",
+              "foreign_key": "updated_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Positioned",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "updated_by",
+              "foreign_key": "updated_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformSnippetAudit",
+          "label": "PlatformSnippetAudit",
+          "source_path": "app/models/better_together/platform_snippet_audit.rb",
+          "table_name": "better_together_platform_snippet_audits",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "snippet_id",
+              "uuid FK"
+            ],
+            [
+              "action",
+              "string"
+            ],
+            [
+              "snippet_name",
+              "string"
+            ],
+            [
+              "change_set",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: action (in=[\"created\", \"updated\", \"enabled\", \"disabled\", \"destroyed\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Quota",
           "label": "Quota",
           "source_path": "app/models/better_together/quota.rb",
@@ -31167,7 +31706,7 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: platform_name",
-            "InclusionValidator: platform_name (in=[\"Facebook\", \"Instagram\", \"LinkedIn\", \"YouTube\", \"TikTok\", \"Reddit\", \"What'sApp\"])",
+            "InclusionValidator: platform_name (in=[\"Facebook\", \"Instagram\", \"LinkedIn\", \"YouTube\", \"TikTok\", \"Reddit\", \"What'sApp\", \"Flickr\"])",
             "UniquenessValidator: platform_name (scope=:contact_detail_id, message=\"account already exists for this contact\")",
             "PresenceValidator: handle (unless=dynamic)",
             "FormatValidator: url (allow_blank=true, with=/(?=(?i:http|https):)\n        ([a-zA-Z][\\-+.a-zA-Z\\d]*):                           (?# 1: scheme)\n        (?:\n           ((?:[\\-_.!~*'()a-zA-Z\\d;?:@&=+$,]|%[a-fA-F\\d]{2})(?:[\\-_.!~*'()a-zA-Z\\d;\\/?:@&=+$,\\[\\]]|%[a-fA-F\\d]{2})*)                    (?# 2: opaque)\n        |\n           (?:(?:\n             \\/\\/(?:\n                 (?:(?:((?:[\\-_.!~*'()a-zA-Z\\d;:&=+$,]|%[a-fA-F\\d]{2})*)@)?        (?# 3: userinfo)\n                   (?:((?:(?:[a-zA-Z0-9\\-.]|%\\h\\h)+|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|\\[(?:(?:[a-fA-F\\d]{1,4}:)*(?:[a-fA-F\\d]{1,4}|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(?:(?:[a-fA-F\\d]{1,4}:)*[a-fA-F\\d]{1,4})?::(?:(?:[a-fA-F\\d]{1,4}:)*(?:[a-fA-F\\d]{1,4}|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}))?)\\]))(?::(\\d*))?))? (?# 4: host, 5: port)\n               |\n                 ((?:[\\-_.!~*'()a-zA-Z\\d$,;:@&=+]|%[a-fA-F\\d]{2})+)                 (?# 6: registry)\n               )\n             |\n             (?!\\/\\/))                           (?# XXX: '\\/\\/' is the mark for hostport)\n             (\\/(?:[\\-_.!~*'()a-zA-Z\\d:@&=+$,]|%[a-fA-F\\d]{2})*(?:;(?:[\\-_.!~*'()a-zA-Z\\d:@&=+$,]|%[a-fA-F\\d]{2})*)*(?:\\/(?:[\\-_.!~*'()a-zA-Z\\d:@&=+$,]|%[a-fA-F\\d]{2})*(?:;(?:[\\-_.!~*'()a-zA-Z\\d:@&=+$,]|%[a-fA-F\\d]{2})*)*)*)?                    (?# 7: path)\n           )(?:\\?((?:[\\-_.!~*'()a-zA-Z\\d;\\/?:@&=+$,\\[\\]]|%[a-fA-F\\d]{2})*))?                 (?# 8: query)\n        )\n        (?:\\#((?:[\\-_.!~*'()a-zA-Z\\d;\\/?:@&=+$,\\[\\]]|%[a-fA-F\\d]{2})*))?                  (?# 9: fragment)\n      /x)"
@@ -32694,6 +33233,21 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformSnippetsController",
+          "label": "PlatformSnippetsController",
+          "source_path": "app/controllers/better_together/platform_snippets_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::PlatformSnippet"
+          ],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::QuotaGrantsController",
           "label": "QuotaGrantsController",
           "source_path": "app/controllers/better_together/quota_grants_controller.rb",
@@ -33067,6 +33621,8 @@
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
             "Redirect",
+            "PlatformSnippetAudit",
+            "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -33301,6 +33857,7 @@
             "ReportFollowupsController",
             "RedirectsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33370,6 +33927,7 @@
             "ReportFollowupsController",
             "RedirectsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33439,6 +33997,7 @@
             "ReportFollowupsController",
             "RedirectsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33519,6 +34078,7 @@
             "ReportFollowupsController",
             "RedirectsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33641,6 +34201,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Infrastructure::BuildingConnection",
+            "PlatformSnippet",
             "Infrastructure::Floor"
           ]
         },
@@ -33709,6 +34270,8 @@
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
             "Redirect",
+            "PlatformSnippetAudit",
+            "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -34147,6 +34710,24 @@
           "from": "BetterTogether::PlatformIdentityProviderDomain",
           "to": "BetterTogether::PlatformDomain",
           "label": "platform_domain (platform_domain_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Person",
+          "label": "updated_by (updated_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippetAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
