@@ -84,7 +84,26 @@ module BetterTogether
                         .permit(:strategy, :enabled, :client_id, :client_secret, :scopes, :issuer, :label, :trust_verified_email,
                                 platform_domain_ids: [])
       permitted.delete(:client_secret) if permitted[:client_secret].blank? && @identity_provider&.persisted?
-      restrict_domain_ids(drop_immutable_params(permitted))
+      restrict_domain_ids(drop_host_only_params(drop_immutable_params(permitted)))
+    end
+
+    # Issuer-based providers (OpenID Connect) let whoever controls the issuer assert identities, so
+    # creating one and trusting its email claims are reserved for host platform managers.
+    def drop_host_only_params(permitted)
+      return permitted if host_platform_manager?
+
+      permitted.delete(:trust_verified_email)
+      permitted.delete(:issuer)
+      permitted.delete(:strategy) if issuer_strategy?(permitted[:strategy])
+      permitted
+    end
+
+    def issuer_strategy?(strategy)
+      BetterTogether::IdentityProviders.find(strategy)&.requires_issuer == true
+    end
+
+    def host_platform_manager?
+      current_user&.person&.host_platform_manager? == true
     end
 
     # Strategy and issuer identify the provider's identities, so they are fixed once created.

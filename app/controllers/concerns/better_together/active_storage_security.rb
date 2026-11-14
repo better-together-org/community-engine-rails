@@ -89,7 +89,8 @@ module BetterTogether
     def authorize_blob_access
       return unless @blob.present?
 
-      record = resolve_authorizable_record(attachment_record_for(@blob))
+      record = authorizable_record_for(@blob)
+      return if performed?
 
       return if publicly_accessible?(record)
 
@@ -101,14 +102,23 @@ module BetterTogether
       enforce_download_policy!(record) if record
     end
 
-    # Returns the first attachment's record, or nil on any error.
+    # Resolves the record a viewer is really reading. A lookup error must not turn into "no record",
+    # because no record means any signed-in viewer passes; fail closed instead.
+    def authorizable_record_for(blob)
+      resolve_authorizable_record(attachment_record_for(blob))
+    rescue StandardError => e
+      Rails.logger.warn("[BetterTogether::ActiveStorageSecurity] record lookup failed for blob #{blob.id}: #{e.class}")
+      BetterTogether.report_error(e, context: { blob_id: blob.id, check: 'blob_record_lookup' })
+      head :forbidden
+      nil
+    end
+
+    # Returns the first attachment's record, or nil when the blob has no attachment.
     # A blob may be attached to many records (e.g. via mirror/shared uploads);
     # we check the first one. All attachments of a shared blob should have the
     # same privacy model in practice.
     def attachment_record_for(blob)
       blob.attachments.first&.record
-    rescue StandardError
-      nil
     end
 
     # An inline Trix/rich-text image embed attaches to the ActionText::RichText join
@@ -169,13 +179,14 @@ module BetterTogether
       BetterTogether::MediaCachePolicy.for_blob(@blob)
     end
 
-    # Runs the record's Pundit policy #download? check if it exists.
-    # Renders 403 on denial; silently passes if the policy has no download? method
-    # (other controllers are responsible for those resource types).
+    # Runs the record's Pundit policy #download? check, or #show? when the policy defines no
+    # download?, so a viewer who may not see a record cannot fetch its media. A record with no
+    # policy at all is left to the controller that owns that resource type.
     def enforce_download_policy!(record)
       policy = Pundit.policy(current_user, record)
-      return unless policy.respond_to?(:download?)
-      return if policy.download?
+      action = %i[download? show?].find { |name| policy.respond_to?(name) }
+      return unless action
+      return if policy.public_send(action)
 
       head :forbidden
     rescue Pundit::NotAuthorizedError

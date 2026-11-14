@@ -114,11 +114,27 @@ module BetterTogether
         expires_at:,
         access_token: auth.credentials.token,
         access_token_secret: auth.credentials.secret,
-        auth: auth.to_hash
+        auth: scrubbed_auth_hash(auth)
       }
 
       merge_optional_attributes(attributes, auth)
       attributes
+    end
+
+    # Keep profile data only. Tokens and id_tokens live in the encrypted token columns; copying the
+    # raw provider payload into a plain jsonb column would store them unencrypted.
+    SENSITIVE_AUTH_KEYS = %w[credentials id_token refresh_token access_token token secret].freeze
+
+    def self.scrubbed_auth_hash(auth)
+      scrub_sensitive(auth.to_hash.deep_stringify_keys)
+    end
+
+    def self.scrub_sensitive(value)
+      case value
+      when Hash then value.except(*SENSITIVE_AUTH_KEYS).transform_values { |v| scrub_sensitive(v) }
+      when Array then value.map { |v| scrub_sensitive(v) }
+      else value
+      end
     end
 
     def self.extract_expires_at(auth)

@@ -2,7 +2,7 @@
 
 **Target Audience:** All community members  
 **Document Type:** User Guide  
-**Last Updated:** April 3, 2026
+**Last Updated:** November 12, 2026
 
 ## Overview
 
@@ -71,6 +71,66 @@ The exact timing depends on platform operations, but the `0.11.0` design assumes
 - the request may stay visible as active until the platform finishes review
 
 If you need help while waiting, contact the platform organizers directly.
+
+## If You Are The Only Steward Of Your Platform
+
+Each platform has its own accounts, so deleting your account only removes your account on this platform. If you are the only steward, deleting your account would leave the platform without anyone in charge. For that reason the normal deletion form is replaced by a notice and a link to **Request platform removal**.
+
+![Account settings for the only steward, showing the notice and the platform removal link.](../screenshots/desktop/account_deletion_last_steward.png)
+
+[Mobile screenshot of the last steward notice](../screenshots/mobile/account_deletion_last_steward.png)
+
+You have two options:
+
+1. Make someone else a steward first, then delete your account as usual.
+2. Send a platform removal request. It goes to the host platform stewards, who review it. Nothing is removed when you send it.
+
+![The platform removal request form.](../screenshots/desktop/account_deletion_platform_request.png)
+
+While a request is waiting, the page shows when it was sent and lets you cancel it. Only one request can be pending for a platform.
+
+![A pending platform removal request with the cancel button.](../screenshots/desktop/account_deletion_platform_request_pending.png)
+
+The same rule applies if the deletion is attempted another way: the request is refused, and the deletion executor refuses to remove the last steward.
+
+## For Platform Operators
+
+### Flow
+
+```mermaid
+flowchart TD
+    A[Member opens account settings] --> B{Last steward of their platform?}
+    B -- No --> C[Deletion request form]
+    C --> D[PersonDeletionRequest pending]
+    D -- cancel --> E[cancelled]
+    D --> F[Operator reviews and runs PersonDeletionExecutor]
+    F --> G{Still the last steward?}
+    G -- No --> H[Account removed, platform kept]
+    G -- Yes --> I[LastStewardError, nothing deleted]
+    B -- Yes --> J[Notice and link to platform removal form]
+    J --> K[PlatformDeletionRequest pending]
+    K -- cancel --> L[cancelled]
+    K --> M[platform_deletion_requested event]
+    M --> N[Task feature creates a task for host stewards]
+    N --> O[Host stewards review and decide]
+```
+
+Diagram files: [Mermaid source](../diagrams/source/person_deletion_last_steward_flow.mmd), [PNG](../diagrams/exports/png/person_deletion_last_steward_flow.png), [SVG](../diagrams/exports/svg/person_deletion_last_steward_flow.svg). Data model: [source](../diagrams/source/platform_deletion_request_model.mmd), [PNG](../diagrams/exports/png/platform_deletion_request_model.png).
+
+### What is enforced
+
+- `PersonDeletionRequest` cannot be created for the last steward of the person's platform. The settings page and both entry points (`POST /person_deletion_requests` and account `DELETE`) redirect to the platform removal form.
+- `PersonDeletionExecutor` raises `LastStewardError` if the person became the last steward after the request was filed.
+- `PersonHardDeletionExecutor` (the operator rake task for prelaunch purges) is not guarded on purpose, because operators use it to remove whole test accounts.
+- `PlatformDeletionRequest` can only be created by an active steward of that platform, one pending request per platform.
+
+### Task feature hook
+
+The task feature does not exist yet. Creating a platform removal request publishes the `platform_deletion_requested.better_together` notification with `platform_id`, `request_id` and `requested_by_id`. The task feature should subscribe to it and create the host steward task. Until then, requests are stored with status `pending` and no host steward is notified.
+
+### Tests
+
+`spec/requests/better_together/account_deletion_flow_spec.rb` covers the whole flow for a normal member (request, cancel, approve, account removed, platform kept) and for the last steward (redirects, platform request, event, cancel, executor refusal, and a steward who is not the last one). Model coverage is in `spec/models/better_together/platform_deletion_request_spec.rb`, ids in `spec/dom_contracts/account_deletion_spec.rb`, and screenshots in `spec/docs_screenshots/better_together/account_deletion_spec.rb`.
 
 ## Related Guides
 

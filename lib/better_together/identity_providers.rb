@@ -129,6 +129,8 @@ BetterTogether.register_identity_provider(
   requires_issuer: true,
   configure: lambda { |options, creds, env|
     issuer = creds.options['issuer'] || creds.options[:issuer]
+    # Resolve at request time: a hostname that was public when saved may not be now.
+    BetterTogether::SafeOutboundHost.assert_public!(URI.parse(issuer.to_s).host)
     options[:issuer] = issuer
     options[:discovery] = true
     options[:response_type] = :code

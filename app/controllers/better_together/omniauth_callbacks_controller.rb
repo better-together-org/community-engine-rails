@@ -136,6 +136,10 @@ module BetterTogether
       # Ensure user has community membership
       ensure_community_membership(user)
 
+      # Invitations are consumed only once the address is confirmed: an unverified provider email
+      # must not spend an invitation or grant its role.
+      return unless user.confirmed?
+
       # Process any pending invitations (may update role/membership)
       handle_all_invitations(user)
     end
@@ -153,11 +157,20 @@ module BetterTogether
         member: person
       ) do |membership|
         membership.role = community_role
-        membership.status = 'active' # Mirrors registration: membership exists even before email confirmation
+        membership.status = oauth_membership_status
       end
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error "Failed to create community membership for OAuth user: #{e.message}"
       # Don't raise - allow sign-in to proceed even if membership creation fails
+    end
+
+    # Same rule as email registration: invitations activate immediately, otherwise the platform's
+    # membership-request setting decides between pending (needs approval) and active.
+    def oauth_membership_status
+      return 'active' if valid_invitation_in_session?
+      return 'pending' if helpers.host_platform&.membership_requests_enabled_for?(helpers.host_community)
+
+      'active'
     end
 
     # Prevent OAuth signup when platform requires invitation
@@ -246,6 +259,10 @@ module BetterTogether
     end
 
     # The platform this sign-in is for, from the requested domain (the same domain the provider gate checked).
+    def membership_platform
+      local_platform || ::Current.platform
+    end
+
     def local_platform
       @local_platform ||= BetterTogether::OmniauthFullHost.domain_for(request.env)&.platform
     end
@@ -267,6 +284,7 @@ module BetterTogether
         current_user:,
         invitations:,
         local_platform:,
+        membership_platform:,
         identity_platform: identity_credentials&.identity_platform,
         trust_verified_email: identity_credentials&.trust_verified_email || false
       )

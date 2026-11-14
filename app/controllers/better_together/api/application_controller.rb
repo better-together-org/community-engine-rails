@@ -45,7 +45,8 @@ module BetterTogether
       # Check if the current request is authenticated via OAuth2 token
       # @return [Boolean]
       def oauth2_authenticated?
-        doorkeeper_token.present? && doorkeeper_token.accessible?
+        doorkeeper_token.present? && doorkeeper_token.accessible? &&
+          doorkeeper_token.application&.usable_on?(Current.platform) == true
       rescue StandardError
         false
       end

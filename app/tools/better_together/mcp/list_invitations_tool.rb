@@ -50,7 +50,7 @@ module BetterTogether
       def accessible_invitations
         person = current_user.person
         scope = BetterTogether::Invitation.includes(:inviter, :invitee, :role)
-        return scope.all if person&.permitted_to?('manage_platform')
+        return scope.where(platform_id: Current.platform&.id) if person&.platform_manager?
 
         scope.where(inviter: person).or(scope.where(invitee: person))
       end

@@ -589,6 +589,11 @@ es:
                 pública
             visibility_strategy:
               inclusion: debe ser autenticado o permiso
+        better_together/person_deletion_request:
+          attributes:
+            base:
+              last_platform_steward: no se puede eliminar mientras seas la única persona
+                administradora de tu plataforma
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -3217,6 +3222,9 @@ es:
         thanks: Gracias
     person_platform_integrations:
       create:
+        account_not_on_platform: No pudimos vincular esta cuenta de %{provider} con
+          una cuenta existente en esta plataforma. Inicia sesión con tu método habitual
+          o pide ayuda a una persona organizadora de la plataforma.
         already_connected: Ya tiene una cuenta de %{provider} conectada. Por favor
           desconéctela primero si desea conectar una cuenta diferente.
         email_mismatch: 'No se puede conectar la cuenta de %{provider}: el correo
@@ -3365,6 +3373,30 @@ es:
           se pausarán."
         sync_cursor: Cursor de sincronización
         sync_status: Estado de sincronización
+    platform_deletion_requests:
+      back: Volver a los ajustes de la cuenta
+      cancel: Cancelar solicitud
+      cancelled: Tu solicitud de eliminación de la plataforma fue cancelada.
+      created: Tu solicitud de eliminación de la plataforma se ha enviado a las personas
+        administradoras anfitrionas.
+      explanation: Eliminar tu cuenta dejaría esta plataforma sin administración,
+        por lo que no está permitido. Envía una solicitud a las personas administradoras
+        de la plataforma anfitriona para que la eliminen, o pide antes a otra persona
+        que sea administradora.
+      go_to_form: Solicitar la eliminación de la plataforma
+      intro: Eres la única persona administradora de %{platform}.
+      last_steward_notice: Eres la única persona administradora de esta plataforma.
+        Para salir, pide a las personas administradoras anfitrionas que eliminen la
+        plataforma, o nombra antes a otra persona administradora.
+      pending: Tu solicitud se envió el %{date} y está pendiente de revisión.
+      reason: "¿Por qué quieres que se elimine la plataforma?"
+      reason_hint: Opcional. Las personas administradoras anfitrionas lo leerán al
+        revisar la solicitud.
+      redirected: Eres la última persona administradora de esta plataforma, por lo
+        que la eliminación de la cuenta se gestiona como una solicitud de eliminación
+        de la plataforma.
+      submit: Enviar solicitud de eliminación
+      title: Solicitar la eliminación de esta plataforma
     platform_domains:
       cancel: Cancelar
       cannot_destroy_primary: No se puede eliminar el dominio principal. Establezca

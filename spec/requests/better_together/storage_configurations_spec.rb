@@ -333,23 +333,11 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       ).to be true
     end
 
-    it 'saves the configuration as the platform active storage without rebinding the shared service' do
-      expect_any_instance_of(BetterTogether::StorageConfigurationsController) # rubocop:disable RSpec/AnyInstance
-        .not_to receive(:rebind_active_storage_service)
-
-      put activate_platform_storage_configuration_path(tenant_platform, tenant_config, locale:)
-
-      expect(response).to have_http_status(:see_other)
-      expect(tenant_platform.reload.storage_configuration_id).to eq(tenant_config.id)
-    end
-
-    it 'shows the pending-multi-tenant-support notice instead of the restart notice' do
-      put activate_platform_storage_configuration_path(tenant_platform, tenant_config, locale:)
-      follow_redirect!
-
-      expect_html_content(
-        I18n.t('better_together.storage_configurations.activated_pending_multi_tenant_support', name: tenant_config.name)
-      )
+    it 'keeps a tenant steward away from the host-only activate route', :aggregate_failures do
+      expect do
+        put activate_platform_storage_configuration_path(tenant_platform, tenant_config, locale:)
+      end.to raise_error(ActionController::RoutingError)
+      expect(tenant_platform.reload.storage_configuration_id).not_to eq(tenant_config.id)
     end
   end
 

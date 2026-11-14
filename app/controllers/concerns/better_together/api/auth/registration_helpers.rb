@@ -57,7 +57,12 @@ module BetterTogether
 
         # Check if invitation code is valid
         def valid_invitation_code?(code)
-          BetterTogether::Invitation.pending.not_expired.exists?(token: code)
+          BetterTogether::Invitation.redeemable_on(Current.platform).pending.not_expired.exists?(token: code)
+        end
+
+        def audit_refused_api_invitation(invitation_code)
+          BetterTogether::Invitation.audit_refused_redemption(invitation_code, Current.platform, channel: :api)
+          nil
         end
 
         # Load invitations from request params instead of session (API is stateless)
@@ -65,8 +70,8 @@ module BetterTogether
           invitation_code = params.dig(:user, :invitation_code) || params[:invitation_code]
           return unless invitation_code.present?
 
-          invitation = BetterTogether::Invitation.pending.not_expired.find_by(token: invitation_code)
-          return unless invitation
+          invitation = BetterTogether::Invitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: invitation_code)
+          return audit_refused_api_invitation(invitation_code) unless invitation
 
           # Determine type and store in instance variables for use during registration
           case invitation

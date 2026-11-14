@@ -139,7 +139,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get :weather, on: :member
         end
 
-        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do
+        authenticated :user, ->(u) { u.host_platform_manager? } do
           resources :settlements, except: %i[index show]
         end
       end
@@ -375,6 +375,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         get 'settings', to: 'settings#index'
         resources :person_data_exports, only: %i[create show]
         resources :person_deletion_requests, only: %i[create destroy]
+        resources :platform_deletion_requests, only: %i[new create destroy]
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
         get 'settings/my_data', to: 'settings#my_data', as: :settings_my_data
         get 'settings/usage', to: 'settings#usage', as: :settings_usage
@@ -397,7 +398,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Routes accessible to Platform Managers OR Analytics Viewers
         # rubocop:disable Metrics/BlockLength
         authenticated :user, lambda { |u|
-          u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
+          u.permitted_to?('view_metrics_dashboard') || u.platform_manager?
         } do
           scope path: 'host' do
             # Reporting for collected metrics
@@ -454,7 +455,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # rubocop:enable Metrics/BlockLength
 
         # Only logged-in Platform Managers have access to these routes
-        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
+        authenticated :user, ->(u) { u.platform_manager? } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
             get 'membership-review', to: 'host_dashboard#membership_review', as: 'host_dashboard_membership_review'
@@ -732,7 +733,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Only allow authenticated users to get access
   # to the Sidekiq web interface
   devise_scope :user do
-    authenticated :user, ->(u) { u&.person&.permitted_to?('manage_platform') } do
+    authenticated :user, ->(u) { u&.host_platform_manager? } do
       mount Sidekiq::Web => '/sidekiq'
     end
   end

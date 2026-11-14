@@ -443,7 +443,7 @@ module BetterTogether
 
     def find_invitation_by_token
       token = params[:invitation_token].presence || params[:token].presence
-      @invitation = BetterTogether::Invitation.pending.not_expired.find_by(token: token)
+      @invitation = BetterTogether::Invitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       render_not_found unless @invitation
     end
 

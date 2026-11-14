@@ -67,7 +67,7 @@ module BetterTogether
     def authorize_mini_profiler_if_enabled
       return unless BetterTogether::Profiling.enabled?
       return unless defined?(Rack::MiniProfiler)
-      return unless current_user&.permitted_to?('manage_platform')
+      return unless current_user&.host_platform_manager?
 
       Rack::MiniProfiler.authorize_request
     end
@@ -98,7 +98,7 @@ module BetterTogether
 
       return unless token.present?
 
-      @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
+      @platform_invitation = ::BetterTogether::PlatformInvitation.redeemable_on(Current.platform).pending.find_by(token: token)
 
       if params[:invitation_code].present? && @platform_invitation
         # On first visit with the invitation code, update the session with the token and a new expiry.
@@ -111,6 +111,7 @@ module BetterTogether
         I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
         session[:locale] = I18n.locale
       else
+        ::BetterTogether::Invitation.audit_refused_redemption(token, Current.platform, channel: :web)
         session.delete(:platform_invitation_token)
         session.delete(:platform_invitation_expires_at)
       end
@@ -435,7 +436,7 @@ module BetterTogether
 
     def after_sign_in_path_for(resource)
       stored_location_for(resource) ||
-        if resource.permitted_to?('manage_platform')
+        if resource.platform_manager?
           host_dashboard_path
         else
           BetterTogether.base_path_with_locale

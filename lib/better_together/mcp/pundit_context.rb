@@ -74,9 +74,15 @@ module BetterTogether
                              end
 
         token = Doorkeeper::OAuth::Token.authenticate(doorkeeper_request, :from_bearer_authorization)
-        token if token&.accessible? && token.acceptable?('mcp_access')
+        token if usable_mcp_token?(token)
       end
       private_class_method :doorkeeper_token_from
+
+      # Accessible, carries mcp_access, and was issued for the platform serving this request.
+      def self.usable_mcp_token?(token)
+        token&.accessible? && token.acceptable?('mcp_access') && token.application&.usable_on?(Current.platform)
+      end
+      private_class_method :usable_mcp_token?
 
       def self.context_for_owner(token)
         return nil unless token
@@ -161,6 +167,10 @@ module BetterTogether
       # @param permission_identifier [String] Permission identifier (e.g., 'manage_platform')
       # @param record [ActiveRecord::Base, nil] Optional record to check permission against
       # @return [Boolean] True if permitted, false otherwise
+      def platform_manager?
+        agent.respond_to?(:platform_manager?) && agent.platform_manager?
+      end
+
       def permitted_to?(permission_identifier, record = nil)
         return false unless agent
 

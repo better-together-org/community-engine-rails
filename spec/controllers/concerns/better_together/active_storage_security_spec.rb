@@ -306,18 +306,65 @@ module BetterTogether
       end
     end
 
+    describe '#authorize_blob_access when the record lookup fails' do
+      let(:blob) { instance_double(ActiveStorage::Blob, id: 'blob-id') }
+
+      before do
+        controller.instance_variable_set(:@blob, blob)
+        controller.current_user = build_stubbed(:better_together_person)
+        controller.user_signed_in = true
+        allow(blob).to receive(:attachments).and_raise(StandardError, 'db down')
+        allow(BetterTogether).to receive(:report_error)
+      end
+
+      it 'refuses instead of treating the blob as having no record' do
+        expect(controller).to receive(:head).with(:forbidden)
+        controller.send(:authorize_blob_access)
+      end
+    end
+
     describe '#enforce_download_policy!' do
       let(:user) { build_stubbed(:better_together_person) }
       let(:record) { instance_double(BetterTogether::Upload) }
 
       before { controller.current_user = user }
 
-      context 'when the policy has no download? method' do
-        let(:policy) { instance_double(BetterTogether::ApplicationPolicy) }
+      context 'when the policy has no download? method but allows show?' do
+        let(:policy) { instance_double(BetterTogether::ApplicationPolicy, show?: true) }
 
         before do
           allow(Pundit).to receive(:policy).with(user, record).and_return(policy)
           allow(policy).to receive(:respond_to?).with(:download?).and_return(false)
+          allow(policy).to receive(:respond_to?).with(:show?).and_return(true)
+        end
+
+        it 'does not render' do
+          expect(controller).not_to receive(:head)
+          controller.send(:enforce_download_policy!, record)
+        end
+      end
+
+      context 'when the policy has no download? method and denies show?' do
+        let(:policy) { instance_double(BetterTogether::ApplicationPolicy, show?: false) }
+
+        before do
+          allow(Pundit).to receive(:policy).with(user, record).and_return(policy)
+          allow(policy).to receive(:respond_to?).with(:download?).and_return(false)
+          allow(policy).to receive(:respond_to?).with(:show?).and_return(true)
+        end
+
+        it 'renders 403' do
+          expect(controller).to receive(:head).with(:forbidden)
+          controller.send(:enforce_download_policy!, record)
+        end
+      end
+
+      context 'when the policy answers neither download? nor show?' do
+        let(:policy) { instance_double(BetterTogether::ApplicationPolicy) }
+
+        before do
+          allow(Pundit).to receive(:policy).with(user, record).and_return(policy)
+          allow(policy).to receive(:respond_to?).and_return(false)
         end
 
         it 'does not render' do

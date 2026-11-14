@@ -211,7 +211,7 @@ module BetterTogether
     end
 
     def find_community_invitation(token)
-      BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
+      BetterTogether::CommunityInvitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
     end
 
     def store_valid_community_invitation(token, invitation)
@@ -264,7 +264,7 @@ module BetterTogether
     end
 
     def handle_valid_invitation_token(token)
-      invitation = ::BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
+      invitation = ::BetterTogether::CommunityInvitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       unless invitation&.invitable.present?
         render_not_found
         return true # Return true to stop further processing

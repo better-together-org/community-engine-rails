@@ -134,7 +134,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
       expect(attributes[:name]).to eq('Test User')
       expect(attributes[:image_url]).to be_a(URI)
       expect(attributes[:image_url].to_s).to eq('https://avatars.githubusercontent.com/u/123456?v=4')
-      expect(attributes[:auth]).to eq(github_auth_hash.to_hash)
+      expect(attributes[:auth]).to eq(described_class.scrubbed_auth_hash(github_auth_hash))
     end
 
     it 'handles expires_at when present' do

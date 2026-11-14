@@ -52,6 +52,37 @@ RSpec.describe BetterTogether::PlatformContextMiddleware do
       end
     end
 
+    context 'when fail-closed is enabled and several platforms exist' do
+      around do |example|
+        previous = BetterTogether.fail_closed_unknown_hosts
+        BetterTogether.fail_closed_unknown_hosts = true
+        example.run
+      ensure
+        BetterTogether.fail_closed_unknown_hosts = previous
+      end
+
+      before do
+        configure_host_platform
+        create(:better_together_platform)
+        Rails.cache.delete('better_together/single_platform')
+      end
+
+      after { Rails.cache.delete('better_together/single_platform') }
+
+      it 'returns 404 for an unknown host' do
+        response, captured = call_with_host('unknown-host.test')
+        expect(response.first).to eq(404)
+        expect(captured).to be_empty
+      end
+
+      it 'still serves health checks' do
+        middleware, captured = capturing_app
+        status, = middleware.call(Rack::MockRequest.env_for('http://unknown-host.test/up'))
+        expect(status).to eq(200)
+        expect(captured[:platform]).to be_present
+      end
+    end
+
     context 'when no domain or host platform exists' do
       it 'sets Current.platform to nil' do
         # better_together_platforms is in ESSENTIAL_TABLES so host platforms persist

@@ -30,7 +30,7 @@ Doorkeeper.configure do # rubocop:disable Metrics/BlockLength
   # Admin authenticator for Doorkeeper dashboard
   # Only platform managers can manage OAuth applications
   admin_authenticator do
-    if current_user&.person&.permitted_to?('manage_platform')
+    if current_user&.host_platform_manager?
       current_user
     else
       redirect_to main_app.root_url, alert: I18n.t('doorkeeper.errors.unauthorized')

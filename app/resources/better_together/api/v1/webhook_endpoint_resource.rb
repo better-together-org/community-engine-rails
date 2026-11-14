@@ -40,13 +40,11 @@ module BetterTogether
           context[:policy_used]&.call
           user = context&.dig(:current_user)
 
-          if user&.person&.permitted_to?('manage_platform')
-            BetterTogether::WebhookEndpoint.all
-          elsif user&.person
-            BetterTogether::WebhookEndpoint.where(person: user.person)
-          else
-            BetterTogether::WebhookEndpoint.none
-          end
+          person = user&.person
+          return BetterTogether::WebhookEndpoint.none unless person
+          return BetterTogether::WebhookEndpoint.where(platform_id: Current.platform&.id) if person.platform_manager?
+
+          BetterTogether::WebhookEndpoint.where(person:)
         end
       end
     end

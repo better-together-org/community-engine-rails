@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ApplicationPolicy # rubocop:todo Style/Documentation
+  class ApplicationPolicy # rubocop:todo Metrics/ClassLength, Style/Documentation
     attr_reader :user, :record, :agent, :robot, :invitation_token
 
     def initialize(user, record, invitation_token: nil)
@@ -67,7 +67,7 @@ module BetterTogether
         @options = options
       end
 
-      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
         result = scope.order(created_at: :desc)
 
         table = scope.arel_table
@@ -77,8 +77,9 @@ module BetterTogether
           # require an explicit management, membership, or ownership path.
           query = visible_privacy_query(table)
 
-          if permitted_to?('manage_platform')
-            query = query.or(table[:privacy].eq('private'))
+          if platform_manager?
+            # A manager sees private rows of the platform they manage, never another platform's.
+            query = query.or(managed_private_rows(table))
           elsif agent
             if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?
               membership_table = scope.membership_class.arel_table
@@ -110,12 +111,27 @@ module BetterTogether
         !!agent&.permitted_to?(permission_identifier, record)
       end
 
+      def platform_manager?
+        !!(agent.respond_to?(:platform_manager?) && agent.platform_manager?)
+      end
+
+      def host_platform_manager?
+        !!(agent.respond_to?(:host_platform_manager?) && agent.host_platform_manager?)
+      end
+
       def feature_enabled?(feature_key, platform: Current.platform)
         actor = user || agent || robot
         BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:)
       end
 
       private
+
+      def managed_private_rows(table)
+        rows = table[:privacy].eq('private')
+        return rows unless scope.column_names.include?('platform_id')
+
+        rows.and(table[:platform_id].eq(Current.platform.id))
+      end
 
       def visible_privacy_query(table)
         if robot.present?
@@ -226,6 +242,14 @@ module BetterTogether
 
     def permitted_to?(permission_identifier, record = nil)
       !!agent&.permitted_to?(permission_identifier, record)
+    end
+
+    def platform_manager?
+      !!(agent.respond_to?(:platform_manager?) && agent.platform_manager?)
+    end
+
+    def host_platform_manager?
+      !!(agent.respond_to?(:host_platform_manager?) && agent.host_platform_manager?)
     end
 
     def robot_can_access_record?(target = record)

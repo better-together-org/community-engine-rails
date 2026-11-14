@@ -19,7 +19,7 @@ module BetterTogether
 
       class Scope < BetterTogether::CategoryPolicy::Scope # rubocop:todo Style/Documentation
         def resolve
-          return scope.all if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+          return scope.all if permitted_to?('manage_platform_settings', Current.platform) || platform_manager?
 
           scope.none
         end

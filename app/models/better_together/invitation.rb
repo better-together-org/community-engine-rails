@@ -29,6 +29,8 @@ module BetterTogether
     enum :status, STATUS_VALUES, prefix: :status
 
     scope :pending, -> { where(status: 'pending') }
+    # A token is only redeemable on the platform that issued it.
+    scope :redeemable_on, ->(platform) { platform ? where(platform_id: platform.id) : none }
     scope :accepted, -> { where(status: 'accepted') }
     scope :not_expired, -> { where('valid_until IS NULL OR valid_until >= ?', Time.current) }
     scope :expired, -> { where('valid_until IS NOT NULL AND valid_until < ?', Time.current) }
@@ -43,6 +45,26 @@ module BetterTogether
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validate :invitee_presence
     validate :prevent_duplicate_invitations
+
+    # Records a refused redemption when a token exists but was issued for another platform.
+    # Only ids and the channel are logged, never the token. Returns the audit payload or nil.
+    def self.audit_refused_redemption(token, platform, channel:)
+      invitation = token.present? && (find_by(token: token) || BetterTogether::PlatformInvitation.find_by(token: token))
+      return unless invitation
+
+      issuing_id = issuing_platform_id_for(invitation)
+      return if issuing_id == platform&.id
+
+      BetterTogether::TenancyAudit.record('invitation.redemption_refused', invitation_id: invitation.id,
+                                                                           invitation_type: invitation.class.name,
+                                                                           issuing_platform_id: issuing_id,
+                                                                           channel: channel.to_s)
+    end
+
+    def self.issuing_platform_id_for(invitation)
+      invitation.is_a?(BetterTogether::PlatformInvitation) ? invitation.invitable_id : invitation.platform_id
+    end
+    private_class_method :issuing_platform_id_for
 
     # Common invitation actions
     def accept!(invitee_person: nil)

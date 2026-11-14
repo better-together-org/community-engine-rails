@@ -2144,7 +2144,7 @@ Table "better_together_person_platform_integrations" {
   "created_at" timestamp [not null]
   "updated_at" timestamp [not null]
   "provider" varchar(50) [not null, default: '']
-  "uid" varchar(50) [not null, default: '']
+  "uid" varchar(255) [not null, default: '']
   "name" varchar
   "handle" varchar
   "profile_url" varchar
@@ -2289,6 +2289,28 @@ Table "better_together_platform_connections" {
     "source_platform_id" [name: "idx_on_source_platform_id_bed3ccb00c"]
     "status" [name: "index_better_together_platform_connections_on_status"]
     "target_platform_id" [name: "idx_on_target_platform_id_24cfb3a8bf"]
+  }
+}
+
+Table "better_together_platform_deletion_requests" {
+  "id" uuid [pk]
+  "platform_id" uuid [not null]
+  "requested_by_id" uuid [not null]
+  "reviewed_by_id" uuid
+  "status" varchar [not null, default: 'pending']
+  "requested_at" timestamp [not null]
+  "resolved_at" timestamp
+  "requested_reason" text
+  "reviewer_notes" text
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+
+  indexes {
+    "platform_id" [unique, name: "idx_bt_platform_deletion_requests_pending"]
+    "platform_id" [name: "idx_bt_platform_deletion_requests_platform"]
+    "requested_by_id" [name: "idx_bt_platform_deletion_requests_requester"]
+    "reviewed_by_id" [name: "idx_bt_platform_deletion_requests_reviewer"]
   }
 }
 
@@ -3013,11 +3035,11 @@ Table "better_together_users" {
   "unlock_token" varchar
   "locked_at" timestamp
   "type" varchar
-  "platform_id" uuid
+  "platform_id" uuid [not null]
 
   indexes {
+    "platform_id, lower((email)::text)" [unique, name: "index_bt_users_on_platform_and_lower_email"]
     "confirmation_token" [unique, name: "index_better_together_users_on_confirmation_token"]
-    "email" [unique, name: "index_better_together_users_on_email"]
     "platform_id" [name: "index_better_together_users_on_platform_id"]
     "reset_password_token" [unique, name: "index_better_together_users_on_reset_password_token"]
     "type" [name: "index_better_together_users_on_type"]
@@ -3808,6 +3830,12 @@ Ref: "better_together_places"."space_id" > "better_together_geography_spaces"."i
 Ref: "better_together_platform_connections"."source_platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_platform_connections"."target_platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_platform_deletion_requests"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_platform_deletion_requests"."requested_by_id" > "better_together_people"."id"
+
+Ref: "better_together_platform_deletion_requests"."reviewed_by_id" > "better_together_people"."id"
 
 Ref: "better_together_platform_domains"."platform_id" > "better_together_platforms"."id"
 

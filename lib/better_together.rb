@@ -37,6 +37,12 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
+
+  # When true, requests for hostnames with no active PlatformDomain get a 404
+  # instead of falling back to the host platform. See PlatformContextMiddleware.
+  # Single-platform installs (one non-external platform) are never affected.
+  mattr_accessor :fail_closed_unknown_hosts
+  self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
   mattr_accessor :head_tag_providers
   # :gem (engine migrations run in place) or :install (copied into db/migrate); recorded by the installer
   mattr_accessor :host_migrations_mode

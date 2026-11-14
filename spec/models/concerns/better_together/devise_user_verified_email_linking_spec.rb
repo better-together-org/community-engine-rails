@@ -18,21 +18,44 @@ RSpec.describe BetterTogether::DeviseUser, '.from_omniauth verified-email linkin
     )
   end
 
-  def sign_in_with(auth_hash)
-    user_class.from_omniauth(person_platform_integration: nil, auth: auth_hash, current_user: nil)
+  let(:local_platform) { configure_host_platform }
+
+  def sign_in_with(auth_hash, platform: local_platform)
+    user_class.from_omniauth(person_platform_integration: nil, auth: auth_hash, current_user: nil,
+                             local_platform: platform)
+  end
+
+  def join(user, platform)
+    platform.community.person_community_memberships.find_or_create_by!(member: user.person) do |m|
+      m.role = BetterTogether::Role.find_by(resource_type: 'BetterTogether::Community') ||
+               BetterTogether::Role.first
+      m.status = 'active'
+    end
+    user
   end
 
   context 'when the provider verified the email' do
     let(:emails) { [{ 'email' => email, 'primary' => true, 'verified' => true }] }
 
     it 'links to an existing confirmed account' do
-      existing = create(:user, email:)
+      existing = join(create(:user, email:), local_platform)
 
       expect(sign_in_with(auth)).to eq(existing)
     end
 
+    it 'never links an account from another platform; it creates a separate account here', :aggregate_failures do
+      elsewhere = create(:user, email:)
+      other = create(:better_together_platform, :public)
+
+      result = sign_in_with(auth, platform: other)
+
+      expect(result).not_to eq(elsewhere)
+      expect(result.platform).to eq(other)
+      expect(elsewhere.reload.person_platform_integrations).to be_empty
+    end
+
     it 'confirms an existing unconfirmed account and rotates its password' do
-      existing = create(:user, email:, password: 'AttackerChosen123!@#')
+      existing = join(create(:user, email:, password: 'AttackerChosen123!@#'), local_platform)
       existing.update_columns(confirmed_at: nil) # rubocop:disable Rails/SkipsModelValidations
       digest = existing.encrypted_password
 

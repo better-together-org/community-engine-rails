@@ -72,9 +72,9 @@ module BetterTogether
       invitation_class = invitation_class_for_resource
 
       if resource
-        invitation_class.pending.not_expired.find_by(token: token, invitable: resource)
+        invitation_class.redeemable_on(Current.platform).pending.not_expired.find_by(token: token, invitable: resource)
       else
-        invitation_class.pending.not_expired.find_by(token: token)
+        invitation_class.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       end
     end
 
@@ -144,7 +144,7 @@ module BetterTogether
     end
 
     def find_any_invitation_by_token(token)
-      invitation_class_for_resource.find_by(token: token)
+      invitation_class_for_resource.redeemable_on(Current.platform).find_by(token: token)
     end
 
     # Template methods - controllers should implement these
