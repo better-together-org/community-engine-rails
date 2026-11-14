@@ -21,11 +21,10 @@ module BetterTogether
         end
 
         # JSONAPI attribute accessor
-        # rubocop:disable Naming/PredicateMethod
+        # rubocop:disable-next Naming/PredicateMethod
         def confirmed
           confirmed?
         end
-        # rubocop:enable Naming/PredicateMethod
       end
     end
   end

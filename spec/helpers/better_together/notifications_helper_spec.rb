@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether # :nodoc:
-  # rubocop:disable Metrics/BlockLength
+  # rubocop:disable-next Metrics/BlockLength
   RSpec.describe NotificationsHelper do
     let(:unread_count) { 0 }
     let(:unread_relation) { double('unread_relation', size: unread_count) } # rubocop:todo RSpec/VerifiedDoubles
@@ -65,12 +65,10 @@ module BetterTogether # :nodoc:
 
     describe '#recent_notifications' do
       let(:recent_notifications) { double('recent_notifications') } # rubocop:todo RSpec/VerifiedDoubles
-      # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo-next RSpec/VerifiedDoubles
       let(:ordered_notifications) { double('ordered_notifications', limit: recent_notifications) }
-      # rubocop:enable RSpec/VerifiedDoubles
-      # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo-next RSpec/VerifiedDoubles
       let(:joined_notifications) { double('joined_notifications', order: ordered_notifications) }
-      # rubocop:enable RSpec/VerifiedDoubles
       let(:notifications) { double('notifications', joins: joined_notifications) } # rubocop:todo RSpec/VerifiedDoubles
 
       it 'returns recent notifications ordered by created_at desc' do
@@ -80,9 +78,8 @@ module BetterTogether # :nodoc:
 
     describe 'fragment cache methods' do
       let(:record) { double('record', cache_key_with_version: 'record-1-version') } # rubocop:todo RSpec/VerifiedDoubles
-      # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo-next RSpec/VerifiedDoubles
       let(:event) { double('event', cache_key_with_version: 'event-1-version', record: record) }
-      # rubocop:enable RSpec/VerifiedDoubles
       let(:notification) do
         double('notification', # rubocop:todo RSpec/VerifiedDoubles
                cache_key_with_version: 'notification-1-version',
@@ -186,5 +183,4 @@ module BetterTogether # :nodoc:
       end
     end
   end
-  # rubocop:enable Metrics/BlockLength
 end

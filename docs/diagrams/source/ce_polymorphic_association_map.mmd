@@ -58,7 +58,7 @@ flowchart TB
     BetterTogether__FederationAccessToken_polymorphic_summary["FederationAccessToken\nowner: seeds"]
     BetterTogether__NavigationArea_polymorphic_summary["NavigationArea\ntarget: navigable, owner: seeds, owner: slugs, owner: string_translations"]
     BetterTogether__NavigationItem_polymorphic_summary["NavigationItem\ntarget: linkable, owner: seeds, owner: slugs, owner: string_translations"]
-    BetterTogether__Platform_polymorphic_summary["Platform\nowner: seeds, owner: slugs, owner: views, owner: rich_text_translations, owner: rich_text_description +8"]
+    BetterTogether__Platform_polymorphic_summary["Platform\nowner: seeds, owner: slugs, owner: views, owner: rich_text_translations, owner: rich_text_description +11"]
     BetterTogether__PlatformConnection_polymorphic_summary["PlatformConnection\nowner: seeds"]
     BetterTogether__PlatformDomain_polymorphic_summary["PlatformDomain\nowner: seeds"]
     BetterTogether__PlatformInvitation_polymorphic_summary["PlatformInvitation\nowner: seeds, owner: rich_text_greeting"]
@@ -263,8 +263,8 @@ flowchart TB
     shared_supporting_polymorphic_anchor:::hidden
     BetterTogether__Activity_polymorphic_summary["Activity\ntarget: trackable, target: owner, target: recipient"]
     BetterTogether__AgentGrant_polymorphic_summary["AgentGrant\nowner: seeds"]
-    BetterTogether__CommentAddedNotifier_polymorphic_summary["CommentAddedNotifier\nfamily: 21 models\ntarget: record"]
-    BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary["CommentAddedNotifier::Notification\nfamily: 21 models\ntarget: recipient"]
+    BetterTogether__CommentAddedNotifier_polymorphic_summary["CommentAddedNotifier\nfamily: 22 models\ntarget: record"]
+    BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary["CommentAddedNotifier::Notification\nfamily: 22 models\ntarget: recipient"]
     BetterTogether__CommentConfig_polymorphic_summary["CommentConfig\ntarget: commentable, owner: seeds"]
     BetterTogether__ContactDetail_polymorphic_summary["ContactDetail\ntarget: contactable, owner: seeds"]
     BetterTogether__ContentSecurity__Finding_polymorphic_summary["ContentSecurity::Finding\nowner: seeds"]
@@ -290,6 +290,7 @@ flowchart TB
     BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary["PlatformIdentityProviderDomain\nowner: seeds"]
     BetterTogether__PlatformSnippet_polymorphic_summary["PlatformSnippet\nowner: seeds"]
     BetterTogether__PlatformSnippetAudit_polymorphic_summary["PlatformSnippetAudit\nowner: seeds"]
+    BetterTogether__PlatformTrustedDomain_polymorphic_summary["PlatformTrustedDomain\nowner: seeds"]
     BetterTogether__Quota_polymorphic_summary["Quota\ntarget: owner, owner: seeds"]
     BetterTogether__QuotaBalance_polymorphic_summary["QuotaBalance\nowner: seeds"]
     BetterTogether__QuotaGrant_polymorphic_summary["QuotaGrant\ntarget: owner, target: granted_by, owner: seeds"]
@@ -298,6 +299,7 @@ flowchart TB
     BetterTogether__Redirect_polymorphic_summary["Redirect\nowner: seeds"]
     BetterTogether__ShortLink_polymorphic_summary["ShortLink\ntarget: linkable, owner: seeds, owner: string_translations"]
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
+    BetterTogether__TrustedDomainEvent_polymorphic_summary["TrustedDomainEvent\nowner: seeds"]
     BetterTogether__Weather__CurrentCondition_polymorphic_summary["Weather::CurrentCondition\nowner: seeds"]
     BetterTogether__Weather__Forecast_polymorphic_summary["Weather::Forecast\nowner: seeds"]
     BetterTogether__Weather__Location_polymorphic_summary["Weather::Location\nowner: seeds"]
@@ -333,7 +335,8 @@ flowchart TB
     BetterTogether__PlatformIdentityProvider_polymorphic_summary ~~~ BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary
     BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary ~~~ BetterTogether__PlatformSnippet_polymorphic_summary
     BetterTogether__PlatformSnippet_polymorphic_summary ~~~ BetterTogether__PlatformSnippetAudit_polymorphic_summary
-    BetterTogether__PlatformSnippetAudit_polymorphic_summary ~~~ BetterTogether__Quota_polymorphic_summary
+    BetterTogether__PlatformSnippetAudit_polymorphic_summary ~~~ BetterTogether__PlatformTrustedDomain_polymorphic_summary
+    BetterTogether__PlatformTrustedDomain_polymorphic_summary ~~~ BetterTogether__Quota_polymorphic_summary
     BetterTogether__Quota_polymorphic_summary ~~~ BetterTogether__QuotaBalance_polymorphic_summary
     BetterTogether__QuotaBalance_polymorphic_summary ~~~ BetterTogether__QuotaGrant_polymorphic_summary
     BetterTogether__QuotaGrant_polymorphic_summary ~~~ BetterTogether__QuotaReservation_polymorphic_summary
@@ -341,7 +344,8 @@ flowchart TB
     BetterTogether__QuotaUsage_polymorphic_summary ~~~ BetterTogether__Redirect_polymorphic_summary
     BetterTogether__Redirect_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
     BetterTogether__ShortLink_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary
-    BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__Weather__CurrentCondition_polymorphic_summary
+    BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__TrustedDomainEvent_polymorphic_summary
+    BetterTogether__TrustedDomainEvent_polymorphic_summary ~~~ BetterTogether__Weather__CurrentCondition_polymorphic_summary
     BetterTogether__Weather__CurrentCondition_polymorphic_summary ~~~ BetterTogether__Weather__Forecast_polymorphic_summary
     BetterTogether__Weather__Forecast_polymorphic_summary ~~~ BetterTogether__Weather__Location_polymorphic_summary
     BetterTogether__Weather__Location_polymorphic_summary ~~~ BetterTogether__Weather__Observation_polymorphic_summary

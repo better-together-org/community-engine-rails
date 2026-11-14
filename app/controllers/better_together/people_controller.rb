@@ -2,6 +2,8 @@
 
 module BetterTogether
   class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include AppearancePreferenceParams
+
     before_action :set_person, only: %i[show edit update destroy]
 
     # GET /people
@@ -49,7 +51,7 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
-    # rubocop:disable Metrics/BlockLength
+    # rubocop:disable-next Metrics/BlockLength
     def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
         # Ensure boolean toggles are respected even when unchecked ("0")
@@ -105,7 +107,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/BlockLength
 
     # DELETE /people/1
     def destroy
@@ -174,7 +175,7 @@ module BetterTogether
         :show_conversation_details, :notify_on_comments, :profile_image, :cover_image,
         :remove_profile_image, :remove_cover_image,
         *resource_class.permitted_attributes
-      )
+      ).merge(appearance_params(@person))
     end
 
     def resource_class

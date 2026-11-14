@@ -62,6 +62,9 @@ erDiagram
   EXT_PLATFORM ||--o{ PLATFORM_SNIPPETS : "platform / platform_id"
   EXT_PERSON o|--o{ PLATFORM_SNIPPETS : "updated_by / updated_by_id"
   EXT_PLATFORM ||--o{ PLATFORM_SNIPPET_AUDITS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_TRUSTED_DOMAINS : "platform / platform_id"
+  EXT_ROLE ||--o{ PLATFORM_TRUSTED_DOMAINS : "role / role_id"
+  EXT_PERSON o|--o{ PLATFORM_TRUSTED_DOMAINS : "created_by / created_by_id"
   EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
@@ -75,6 +78,10 @@ erDiagram
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ SOCIAL_MEDIA_ACCOUNTS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ TRUSTED_DOMAIN_EVENTS : "platform / platform_id"
+  PLATFORM_TRUSTED_DOMAINS o|--o{ TRUSTED_DOMAIN_EVENTS : "platform_trusted_domain / platform_trusted_domain_id"
+  EXT_PERSON o|--o{ TRUSTED_DOMAIN_EVENTS : "actor / actor_id"
+  EXT_PERSON o|--o{ TRUSTED_DOMAIN_EVENTS : "subject / subject_id"
   WEATHER_LOCATIONS ||--o{ WEATHER_CURRENT_CONDITIONS : "location / location_id"
   WEATHER_LOCATIONS ||--o{ WEATHER_FORECASTS : "location / location_id"
   EXT_GEOGRAPHY_SETTLEMENT ||--o{ WEATHER_LOCATIONS : "settlement / settlement_id"
@@ -368,6 +375,18 @@ erDiagram
     change_set jsonb
   }
 
+  PLATFORM_TRUSTED_DOMAINS {
+    created_by_id uuid
+    platform_id uuid
+    role_id uuid
+    domain string
+    note text
+    enabled boolean
+    include_subdomains boolean
+    public_domain_confirmed boolean
+    role_ceiling_confirmed boolean
+  }
+
   QUOTAS {
     owner_id uuid
     platform_id uuid
@@ -462,6 +481,18 @@ erDiagram
     url string
   }
 
+  TRUSTED_DOMAIN_EVENTS {
+    actor_id uuid
+    platform_id uuid
+    platform_trusted_domain_id uuid
+    subject_id uuid
+    domain string
+    event_type string
+    role_identifier string
+    via string
+    details jsonb
+  }
+
   WEATHER_CURRENT_CONDITIONS {
     location_id uuid
     fetched_at datetime
@@ -551,6 +582,10 @@ erDiagram
   }
 
   EXT_PLATFORM_DOMAIN {
+    string export_ref
+  }
+
+  EXT_ROLE {
     string export_ref
   }
 

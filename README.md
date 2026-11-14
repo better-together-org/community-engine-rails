@@ -69,28 +69,34 @@ gem 'better_together', '~> 0.11.0',
     branch: 'main'
 ```
 
-Include `pundit_resources` in your Gemfile from our GitHub repository
+Include the forks CE needs in your Gemfile (check the engine's Gemfile for the current list):
 
 ```ruby
-gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'main'
+gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'master'
+gem 'storext', github: 'better-together-org/storext'
 ```
 
-Run the engine installer. This will create an initializer to allow you to customize the engine, such as setting your own user class.
+Start from a fresh Rails app that uses PostgreSQL with PostGIS, sprockets (remove `propshaft` if present; `--asset-pipeline=sprockets` is ignored by some Rails versions) and UUID primary keys:
 
-```bash
-rails g better_together:install
+```yaml
+# config/database.yml
+default: &default
+  adapter: postgis
 ```
 
-Install the migrations. This will run a rake task to copy over the migrations from the better_together engine.
+Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
 
 ```bash
-rails better_together:install:migrations
+rails g better_together:install            # engine migrations run from the gem (default)
+rails g better_together:install --migrations=install   # copy migrations into db/migrate instead
 ```
 
-Run the migrations. This will set up the database tables required to run the better_together engine.
+If you use Action Text, run `rails action_text:install` before the engine migrations and delete its copied migration; CE ships its own Action Text tables.
+
+Create and migrate the database. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
 
 ```bash
-rails db:migrate
+rails db:create db:migrate
 ```
 
 ## Development: Getting Started

@@ -345,6 +345,30 @@ entries:
     reverse_association: created_communities
     concern: BetterTogether::CreatedRecords
 
+  - key: BetterTogether::PlatformTrustedDomain#created_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformTrustedDomain
+    association: created_by
+    foreign_key: created_by_id
+    action: anonymize
+
+  - key: BetterTogether::TrustedDomainEvent#actor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::TrustedDomainEvent
+    association: actor
+    foreign_key: actor_id
+    action: anonymize
+
+  - key: BetterTogether::TrustedDomainEvent#subject
+    kind: model_reference
+    owner: person
+    model: BetterTogether::TrustedDomainEvent
+    association: subject
+    foreign_key: subject_id
+    action: anonymize
+
   - key: BetterTogether::PlatformInvitation#inviter
     kind: model_reference
     owner: person
