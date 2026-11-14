@@ -17,6 +17,7 @@ RSpec.describe BetterTogether::Seeds::Registry do
       definition = described_class.fetch(:redirect)
 
       expect(definition.natural_key_columns).to eq([:from_path])
+      expect(definition.natural_key_via_attribute).to be(true)
       expect(BetterTogether::Redirect::SEED_ATTRIBUTES).to all(satisfy { |attr| definition.writable?(attr) })
     end
 

@@ -169,7 +169,7 @@ module BetterTogether
       def locate(definition, entry, _index)
         return nil if definition.by_refs.any? || definition.within
 
-        definition.find(platform:, key: entry.key)
+        definition.find(platform:, key: entry.key, attributes: entry.attributes)
       end
 
       def classify(entry, definition, existing)
