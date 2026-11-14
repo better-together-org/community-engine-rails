@@ -2839,11 +2839,13 @@ fr:
       new:
         title: Nouvel élément de navigation pour %{name}
       route_names:
+        agreements: Accords
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
         communities: Communautés
         content_blocks: Blocs de contenu
         events: Événements
+        federation_hub: Hub de fédération
         geography_continents: Continents
         geography_countries: Pays
         geography_maps: Cartes
@@ -2854,19 +2856,24 @@ fr:
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
+        hub: Hub
+        joatu_hub: Hub Joatu
         joatu_offers: Offres
         joatu_requests: Requêtes
         metrics_reports: Rapports de métriques
         navigation_areas: Zones de navigation
+        oauth_applications: Applications OAuth
         pages: Pages
         people: Personnes
         platform_connections: Connexions de plateforme
         platforms: Plateformes
+        posts: Publications
         reports: Signalements
         resource_permissions: Permissions des ressources
         roles: Rôles
         safety_cases: Revue de sécurité
         users: Utilisateurs
+        webhook_endpoints: Points de terminaison webhook
       visibility_strategies:
         authenticated: Utilisateurs connectés
         permission: Utilisateurs avec permission

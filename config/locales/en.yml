@@ -2789,11 +2789,13 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        agreements: Agreements
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities
         content_blocks: Content Blocks
         events: Events
+        federation_hub: Federation Hub
         geography_continents: Continents
         geography_countries: Countries
         geography_maps: Maps
@@ -2804,19 +2806,24 @@ en:
         host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
+        hub: Hub
+        joatu_hub: Joatu Hub
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
+        oauth_applications: OAuth Applications
         pages: Pages
         people: People
         platform_connections: Platform Connections
         platforms: Platforms
+        posts: Posts
         reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
         safety_cases: Safety Review
         users: Users
+        webhook_endpoints: Webhook Endpoints
       visibility_strategies:
         authenticated: Signed-in users
         permission: Users with permission

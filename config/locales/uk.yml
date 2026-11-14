@@ -2832,34 +2832,41 @@ uk:
       new:
         title: New Navigation Item for %{name}
       route_names:
-        calendars: Calendars
-        calls_for_interest: Calls for Interest
-        communities: Communities
-        content_blocks: Content Blocks
-        events: Events
-        geography_continents: Continents
-        geography_countries: Countries
-        geography_maps: Maps
-        geography_regions: Regions
+        agreements: Угоди
+        calendars: Календарі
+        calls_for_interest: Заклики до зацікавлення
+        communities: Спільноти
+        content_blocks: Блоки вмісту
+        events: Події
+        federation_hub: Центр федерації
+        geography_continents: Континенти
+        geography_countries: Країни
+        geography_maps: Карти
+        geography_regions: Регіони
         geography_settlements: Населені пункти
-        geography_states: States
-        host_dashboard: Host Dashboard
-        host_dashboard_membership_review: Membership Review
-        host_dashboard_platform_connection_review: Federation Review
-        host_dashboard_safety_review: Safety Review
-        joatu_offers: Offers
-        joatu_requests: Requests
-        metrics_reports: Metrics Reports
-        navigation_areas: Navigation Areas
-        pages: Pages
-        people: People
+        geography_states: Штати
+        host_dashboard: Панель керування хоста
+        host_dashboard_membership_review: Перегляд членства
+        host_dashboard_platform_connection_review: Перегляд федерації
+        host_dashboard_safety_review: Перегляд безпеки
+        hub: Центр
+        joatu_hub: Центр Joatu
+        joatu_offers: Пропозиції
+        joatu_requests: Запити
+        metrics_reports: Звіти метрик
+        navigation_areas: Області навігації
+        oauth_applications: Застосунки OAuth
+        pages: Сторінки
+        people: Люди
         platform_connections: Підключення платформ
-        platforms: Platforms
+        platforms: Платформи
+        posts: Публікації
         reports: Звіти
-        resource_permissions: Resource Permissions
-        roles: Roles
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
         safety_cases: Огляд безпеки
-        users: Users
+        users: Користувачі
+        webhook_endpoints: Кінцеві точки вебхуків
       visibility_strategies:
         authenticated: Авторизовані користувачі
         permission: Користувачі з дозволом
