@@ -51,6 +51,16 @@ Every registered theme gets a dark mode automatically: dark tokens are derived f
 theme, no list to maintain) and meet WCAG AA. If your designers want exact dark colours, add `dark:` (YAML) or
 `dark: { ... }` (`register_theme`). Colours you list are used as given; any you leave out are still derived.
 
+## User preference layering
+
+Signed-in people can pick any theme in the registry (built-ins plus yours) in Settings, stored as `theme` and
+`color_mode` in the existing `Person#preferences` store (no new table). `theme` is validated against
+`PlatformThemeConfig.themes`, so a registered theme is accepted and an unknown id is rejected; a stored id that
+disappears from the registry is ignored at render time. Layout order in `<head>`: engine stylesheet, `#platform-theme-style`
+(platform), `#user-theme-style` (the person, only when chosen and `allow_user_themes` is on), then the platform Css block.
+The platform switch only gates the theme; the colour mode is always the person's. The person's style is inline in the
+HTML for that request only; it is never fragment-cached, so register themes freely without cache keys to manage.
+
 ## Names and translations
 
 If you pass no `name:`/`description:`, the picker uses `better_together.platforms.theme.presets.<id>.name` and

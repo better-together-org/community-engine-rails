@@ -144,6 +144,20 @@ module BetterTogether
       theme.except('dark').merge(dark).merge('dark_source' => dark.any? ? 'custom' : 'derive')
     end
 
+    # Style rules for a person's chosen theme. dark_mode_enabled mirrors the platform's switch, or is true
+    # when the person picked a colour mode themselves (that choice is never gated by the platform).
+    def self.user_css(id, dark_mode_enabled: true)
+      new(flat_theme(id.to_s).merge('dark_mode' => dark_mode_enabled ? 'enabled' : 'disabled')).to_css
+    end
+
+    # Per-theme data for the live preview in a person's settings: light and dark custom properties plus
+    # font and radius, and any contrast failures of the light tokens.
+    def self.preview_data(id, config = nil)
+      config ||= new(flat_theme(id.to_s))
+      { light: config.css_variables, dark: config.dark_values.transform_keys { |k| "--bts-#{k.dasherize}" },
+        failures: id.present? && themes.key?(id.to_s) ? contrast_failures(id.to_s).size : 0 }
+    end
+
     # Normalizes raw form or stored values to a hash with only known keys and non-blank values.
     def self.sanitize(raw)
       hash = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw.to_h

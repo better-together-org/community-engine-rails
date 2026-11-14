@@ -47,6 +47,31 @@ Host app note: gem views use only the `--bts-*` custom properties and Bootstrap 
 
 ![Toggle, dark](../screenshots/desktop/platform_site_color_mode_dark.png)
 
+## Personal themes and colour mode
+
+Every signed-in person has an Appearance section in Settings, under the Preferences tab (`/settings`). It has two choices, each saved on its own:
+
+- Theme: any available theme (the built-ins, plus any a host app registered) or "Use the platform's theme". A live preview shows the theme and colour mode before they are saved.
+- Colour mode: Automatic (follows the device), Light or Dark.
+
+The Appearance tab has a switch, **Let people choose their own theme** (`allow_user_themes`, on by default):
+
+- On: people can pick a theme in their settings.
+- Off: the theme control is hidden and any saved personal theme is ignored on the server. Everyone sees the platform theme.
+- The colour mode choice is never gated by this switch. Light and dark are an accessibility need (glare, migraines, low vision), so every signed-in person can always set it, even when you turned dark mode off for visitors; their dark tokens are then derived from your theme.
+
+How the layers combine, from first to last in the page head: Bootstrap and the engine stylesheet, the platform theme (Appearance tab), the person's own theme (only for signed-in people who chose one), then the platform Css block. The Css block still wins as the advanced override. The person's choice replaces the platform's colour, font and radius tokens, but not the header banner. A signed-in person's stored colour mode is the source of truth and is mirrored into the browser (localStorage and cookie) so the next page paints without a flash. Visitors who are not signed in keep the device-local toggle and the platform default.
+
+Personal themes never leak between people: the page head is not cached per platform, the cached navigation and branding fragments contain no theme output, and the style element is built from the signed-in person only.
+
+If a registered theme has colour pairs below AA, the settings preview shows a short note.
+
+![Appearance settings](../screenshots/desktop/user_theme_preferences_controls.png)
+
+![Dark preview](../screenshots/desktop/user_theme_preferences_preview_dark.png)
+
+![Colour mode only](../screenshots/desktop/user_theme_preferences_themes_off.png)
+
 ## Contrast checks
 
 Below the colour fields, each important pair shows its contrast ratio as you type: button text on primary, navigation text on its background, footer links on the footer, body text and links on the page and band colours, and the accent. Normal text needs at least 4.5 to 1 (WCAG AA). A pair under that shows a red "Below AA" warning. The warning does not block saving, so you can decide, but low contrast text is hard to read for many people.

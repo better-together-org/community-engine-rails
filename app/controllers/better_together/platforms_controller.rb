@@ -197,10 +197,11 @@ module BetterTogether
       scalar_settings_attributes + csp_array_attributes
     end
 
-    def scalar_settings_attributes
+    def scalar_settings_attributes # rubocop:disable Metrics/MethodLength
       %i[
         requires_invitation
         allow_membership_requests
+        allow_user_themes
         contributors_display_visibility
         software_variant
         network_visibility

@@ -3080,6 +3080,33 @@ fr:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
       preferences:
+        appearance:
+          color_mode:
+            hint: Automatique suit le réglage de votre appareil. Clair et sombre restent
+              tels que vous les choisissez.
+            title: Mode de couleur
+          contrast_note: 'Remarque : ce thème a des paires de couleurs sous le contraste
+            WCAG AA. Choisissez un autre thème si le texte est difficile à lire.'
+          description: Choisissez l'apparence de ce site pour vous. Vos choix vous
+            suivent sur chaque appareil où vous vous connectez.
+          platform_theme: Utiliser le thème de la plateforme
+          preview_button: Bouton
+          preview_card: Une carte sur une bande de section
+          preview_footer: Lien de pied de page
+          preview_heading: Un titre d'exemple
+          preview_label: Aperçu de l'apparence
+          preview_link: lien
+          preview_site_name: Votre site
+          preview_state: Aperçu de %{theme} en mode %{mode}. Chaque choix est enregistré
+            séparément.
+          preview_text: Du texte avec un
+          theme:
+            hint: Choisissez un des thèmes disponibles, ou celui retenu par cette
+              plateforme.
+            title: Thème
+          themes_disabled: Cette plateforme utilise un seul thème pour tout le monde.
+            Vous pouvez tout de même choisir votre mode de couleur ci-dessous.
+          title: Apparence
         language:
           title: Langue
         messaging:
@@ -3616,6 +3643,11 @@ fr:
         integrations: Intégrations
         security: Sécurité
       theme:
+        allow_user_themes: Laisser chacun choisir son thème
+        allow_user_themes_hint: Lorsque cette option est activée, les personnes connectées
+          peuvent choisir n'importe quel thème disponible dans leurs paramètres. Lorsqu'elle
+          est désactivée, tout le monde voit le thème de la plateforme. Chacun peut
+          toujours choisir son mode de couleur (automatique, clair ou sombre).
         apply: Appliquer le thème
         clear: Vider tous les champs du thème
         colors:

@@ -189,13 +189,36 @@ module BetterTogether
 
     COLOR_MODE_COOKIE = 'bts_color_mode'
 
-    # Whether visitors can switch colour modes on this platform (theme setting, on unless disabled).
-    def color_mode_enabled?(platform = host_platform)
-      platform.respond_to?(:theme_config) && platform.theme_config.dark_mode_enabled?
+    # The signed-in person, when the helper is rendered where authentication exists.
+    def theme_person
+      safe_current_person
     end
 
-    # The visitor's saved mode (cookie) when valid, else the platform default: auto, light or dark.
+    # The theme id the signed-in person chose, when the platform allows personal themes and the id is
+    # still in the registry. Blank means "use the platform's theme".
+    def user_theme_id(platform = host_platform)
+      id = theme_person&.theme.presence
+      return unless id && platform.respond_to?(:allow_user_themes?) && platform.allow_user_themes?
+
+      id if BetterTogether::PlatformThemeConfig.themes.key?(id)
+    end
+
+    # The colour mode the signed-in person chose (never gated by allow_user_themes), or nil.
+    def user_color_mode
+      mode = theme_person&.color_mode
+      mode if BetterTogether::PlatformThemeConfig::COLOR_MODES.include?(mode)
+    end
+
+    # Whether visitors can switch colour modes: the platform theme allows it, or the person chose a mode.
+    def color_mode_enabled?(platform = host_platform)
+      (platform.respond_to?(:theme_config) && platform.theme_config.dark_mode_enabled?) || user_color_mode.present?
+    end
+
+    # The saved mode: the signed-in person's stored choice, else the visitor's cookie, else the platform
+    # default (auto, light or dark).
     def color_mode_preference(platform = host_platform)
+      return user_color_mode if user_color_mode
+
       saved = cookies[COLOR_MODE_COOKIE]
       return saved if BetterTogether::PlatformThemeConfig::COLOR_MODES.include?(saved)
 
@@ -210,20 +233,45 @@ module BetterTogether
       mode = color_mode_preference(platform)
       attrs = { 'data-bts-color-mode' => mode }
       attrs['data-bs-theme'] = mode unless mode == 'auto'
+      attrs['data-bts-user-mode'] = user_color_mode if user_color_mode
+      attrs['data-bts-user-theme'] = user_theme_id(platform) if user_theme_id(platform)
       attrs
+    end
+
+    # The signed-in person's own theme, rendered after the platform theme and before the platform Css block.
+    # Anonymous visitors, and people on platforms that disallow personal themes, get nothing.
+    def user_theme_style_tag(platform = host_platform)
+      css = user_theme_css(platform)
+      content_tag(:style, css.html_safe, type: 'text/css', id: 'user-theme-style') if css.present? # rubocop:disable Rails/OutputSafety
+    end
+
+    def user_theme_css(platform = host_platform)
+      return unless platform.respond_to?(:theme_config)
+
+      platform_dark = platform.theme_config.dark_mode_enabled?
+      if (id = user_theme_id(platform))
+        BetterTogether::PlatformThemeConfig.user_css(id, dark_mode_enabled: platform_dark || user_color_mode.present?)
+      elsif user_color_mode.present? && !platform_dark
+        # The platform turned dark mode off, but this person chose a mode: give them dark tokens too.
+        BetterTogether::PlatformThemeConfig.new(platform.theme_config.values.merge('dark_mode' => 'enabled')).to_css
+      end
     end
 
     def color_scheme_meta_tag(platform = host_platform)
       tag.meta name: 'color-scheme', content: color_mode_enabled?(platform) ? 'light dark' : 'light'
     end
 
-    # Runs before first paint: resolves the saved or default mode to data-bs-theme.
+    # Runs before first paint: resolves the saved or default mode to data-bs-theme. For a signed-in person
+    # the stored choice (data-bts-user-mode) wins and is mirrored into localStorage and the cookie.
     def color_mode_head_script_tag(platform = host_platform)
       return unless color_mode_enabled?(platform)
 
       javascript_tag(<<~JS.squish, nonce: true)
-        (function(){try{var d=document.documentElement,m=d.getAttribute('data-bts-color-mode')||'auto';
-        try{var s=localStorage.getItem('bts-color-mode');if(s==='auto'||s==='light'||s==='dark'){m=s;}}catch(e){}
+        (function(){try{var d=document.documentElement,m=d.getAttribute('data-bts-color-mode')||'auto',u=d.getAttribute('data-bts-user-mode');
+        if(u==='auto'||u==='light'||u==='dark'){m=u;
+        try{localStorage.setItem('bts-color-mode',u);}catch(e){}
+        document.cookie='bts_color_mode='+u+'; path=/; max-age=31536000; SameSite=Lax'+(location.protocol==='https:'?'; Secure':'');}
+        else{try{var s=localStorage.getItem('bts-color-mode');if(s==='auto'||s==='light'||s==='dark'){m=s;}}catch(e){}}
         var t=m==='auto'?(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):m;
         d.setAttribute('data-bs-theme',t);d.setAttribute('data-bts-color-mode',m);}catch(e){}})();
       JS
