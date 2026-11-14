@@ -28,7 +28,7 @@ module BetterTogether
       render wizard_step_definition.template
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def create_host_platform # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @form = ::BetterTogether::HostPlatformDetailsForm.new(base_platform)
 
@@ -57,7 +57,6 @@ module BetterTogether
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
       render wizard_step_definition.template, status: :unprocessable_entity
     end
-    # rubocop:enable Metrics/MethodLength
 
     def admin_creation
       # Find or create the wizard step
@@ -74,7 +73,7 @@ module BetterTogether
       render wizard_step_definition.template
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def create_admin # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @form = ::BetterTogether::HostPlatformAdminForm.new(::BetterTogether::User.new)
 
@@ -118,7 +117,6 @@ module BetterTogether
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
       render wizard_step_definition.template, status: :unprocessable_entity
     end
-    # rubocop:enable Metrics/MethodLength
 
     # More steps can be added here...
 

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Helper methods for the shared feedback surface UI.
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module FeedbackSurfaceHelper
     FEEDBACK_SURFACE_SCOPE_KEYS = {
       BetterTogether::Content::Block => 'section',
@@ -182,5 +182,4 @@ module BetterTogether
       'content'
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

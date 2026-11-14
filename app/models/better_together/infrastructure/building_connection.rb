@@ -36,7 +36,7 @@ module BetterTogether
 
       protected
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def set_new_building_details # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         return unless connection
 
@@ -54,7 +54,6 @@ module BetterTogether
         building.description = connection.description
         building.privacy = connection.privacy
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

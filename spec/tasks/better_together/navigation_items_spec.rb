@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'rake'
 
-# rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/DescribeClass, RSpec/SpecFilePathFormat
 RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
   # NOTE: Rake tasks are loaded fresh for each example to ensure parallel_tests compatibility
   # and prevent state pollution between examples.
@@ -238,4 +238,3 @@ RSpec.describe 'better_together:navigation_items rake tasks', type: :task do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass, RSpec/SpecFilePathFormat

@@ -92,7 +92,7 @@ module BetterTogether
     # Default attributes to include in webhook payloads.
     # Override in models for custom attribute selection.
     # @return [Hash]
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def webhook_attributes
       attrs = {}
       attrs[:created_at] = created_at&.iso8601 if respond_to?(:created_at)
@@ -103,6 +103,5 @@ module BetterTogether
       attrs[:privacy] = try(:privacy)
       attrs.compact
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end

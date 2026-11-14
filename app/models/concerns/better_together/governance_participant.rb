@@ -5,7 +5,7 @@ module BetterTogether
   module GovernanceParticipant
     extend ActiveSupport::Concern
 
-    # rubocop:disable Metrics/BlockLength
+    # rubocop:disable-next Metrics/BlockLength
     included do
       has_many :authored_safety_notes,
                foreign_key: :author_id,
@@ -38,6 +38,5 @@ module BetterTogether
                dependent: :nullify,
                inverse_of: :reviewed_by
     end
-    # rubocop:enable Metrics/BlockLength
   end
 end

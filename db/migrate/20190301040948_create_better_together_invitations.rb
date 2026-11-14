@@ -39,18 +39,18 @@ class CreateBetterTogetherInvitations < ActiveRecord::Migration[7.0]
                       index: {
                         name: 'by_invitable'
                       }
-      t.bt_references  :inviter,
-                       null: false,
-                       polymorphic: true,
-                       index: {
-                         name: 'by_inviter'
-                       }
-      t.bt_references  :invitee,
-                       null: false,
-                       polymorphic: true,
-                       index: {
-                         name: 'by_invitee'
-                       }
+      t.bt_references :inviter,
+                      null: false,
+                      polymorphic: true,
+                      index: {
+                        name: 'by_inviter'
+                      }
+      t.bt_references :invitee,
+                      null: false,
+                      polymorphic: true,
+                      index: {
+                        name: 'by_invitee'
+                      }
       t.string :invitee_email,
                null: false,
                index: {
@@ -64,9 +64,8 @@ class CreateBetterTogetherInvitations < ActiveRecord::Migration[7.0]
     end
 
     add_index :better_together_invitations, %i[invitee_email invitable_id], unique: true,
-                                                                            # rubocop:todo Layout/LineLength
+                                                                            # rubocop:todo-next Layout/LineLength
                                                                             name: "invitations_on_invitee_email_and_invitable_id"
-    # rubocop:enable Layout/LineLength
     add_index :better_together_invitations, %i[invitable_id status],
               name: "invitations_on_invitable_id_and_status"
     add_index :better_together_invitations, :invitee_email, where: "status = 'pending'",

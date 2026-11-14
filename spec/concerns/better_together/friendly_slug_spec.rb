@@ -5,11 +5,10 @@ require 'rails_helper'
 # Spec helpers for BetterTogether.
 module BetterTogether # :nodoc:
   describe FriendlySlug do
-    # rubocop:todo RSpec/LeakyConstantDeclaration
+    # rubocop:todo-next RSpec/LeakyConstantDeclaration
     class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include FriendlySlug
     end
-    # rubocop:enable RSpec/LeakyConstantDeclaration
 
     describe TestClass do
       it_behaves_like 'a friendly slugged record'

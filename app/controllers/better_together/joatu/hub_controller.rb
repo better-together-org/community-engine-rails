@@ -5,7 +5,7 @@ module BetterTogether
     # Landing page for the Exchange hub
     class HubController < BetterTogether::ApplicationController
       # rubocop:todo Metrics/PerceivedComplexity
-      # rubocop:todo Metrics/CyclomaticComplexity
+      # rubocop:todo-next Metrics/CyclomaticComplexity
       def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         person = helpers.current_person
 
@@ -55,7 +55,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/PerceivedComplexity
     end
   end

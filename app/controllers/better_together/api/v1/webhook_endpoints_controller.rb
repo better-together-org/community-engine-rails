@@ -39,7 +39,7 @@ module BetterTogether
 
         # POST /api/v1/webhook_endpoints/:id/test
         # Sends a test ping event to verify the endpoint is reachable
-        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable-next Metrics/MethodLength
         def test
           endpoint = BetterTogether::WebhookEndpoint.find(params[:id])
           authorize endpoint, :test?
@@ -68,7 +68,6 @@ module BetterTogether
             }
           }, status: :accepted
         end
-        # rubocop:enable Metrics/MethodLength
       end
     end
   end

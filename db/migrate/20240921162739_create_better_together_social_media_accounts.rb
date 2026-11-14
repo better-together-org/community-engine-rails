@@ -11,8 +11,7 @@ class CreateBetterTogetherSocialMediaAccounts < ActiveRecord::Migration[7.1] # r
     end
 
     add_index :better_together_social_media_accounts, %i[contact_detail_id platform], unique: true,
-                                                                                      # rubocop:todo Layout/LineLength
+                                                                                      # rubocop:todo-next Layout/LineLength
                                                                                       name: 'index_bt_sma_on_contact_detail_and_platform'
-    # rubocop:enable Layout/LineLength
   end
 end

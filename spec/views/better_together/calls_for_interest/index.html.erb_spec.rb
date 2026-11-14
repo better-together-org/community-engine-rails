@@ -4,8 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'calls_for_interest/index.html.erb' do
   it 'works' do # rubocop:todo RSpec/ExampleWording
-    # rubocop:todo RSpec/IdenticalEqualityAssertion
+    # rubocop:todo-next RSpec/IdenticalEqualityAssertion
     expect(true).to be(true) # rubocop:todo RSpec/ExpectActual, RSpec/IdenticalEqualityAssertion
-    # rubocop:enable RSpec/IdenticalEqualityAssertion
   end
 end

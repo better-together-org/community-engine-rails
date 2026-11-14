@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Builds a fully destructive inventory for prelaunch account cleanup.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PersonHardDeletionInventory
     DELETE_ONLY_MODELS = [
       'BetterTogether::ConversationParticipant',
@@ -55,7 +55,7 @@ module BetterTogether
       end
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def reflected_entries_for(owner:, owner_label:)
       return [] unless owner
 
@@ -78,7 +78,6 @@ module BetterTogether
         }
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def includable_reflection?(reflection)
       reflection.options[:through].blank? && direct_destroyable_reflection?(reflection)
@@ -133,5 +132,4 @@ module BetterTogether
       end
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
