@@ -72,6 +72,17 @@ better_together:
         es: 'Términos para pagar en efectivo, con cheque o por transferencia electrónica: el pago va directamente al vendedor y la plataforma no puede rastrearlo ni protegerlo.'
         fr: 'Conditions du paiement comptant, par chèque ou par virement : le paiement va directement au vendeur et la plateforme ne peut ni le suivre ni le protéger.'
         uk: 'Умови оплати готівкою, чеком або електронним переказом: платіж іде безпосередньо продавцю, а платформа не може його відстежити чи захистити.'
+    - identifier: refund_policy
+      title:
+        en: Refund Policy
+        es: Política de reembolsos
+        fr: Politique de remboursement
+        uk: Політика повернення коштів
+      description:
+        en: 'When and how a refund can be asked for, how long a decision takes, and what comes back (and to where).'
+        es: 'Cuándo y cómo se puede pedir un reembolso, cuánto tarda la decisión y qué se devuelve (y adónde).'
+        fr: 'Quand et comment demander un remboursement, le délai de la décision, et ce qui est rendu (et où).'
+        uk: 'Коли і як можна просити повернення коштів, скільки триває рішення і що повертається (та куди).'
     requirements:
     - agreement: subscription_agreement
       purpose: subscription

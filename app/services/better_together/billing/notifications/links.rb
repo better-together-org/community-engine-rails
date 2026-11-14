@@ -14,6 +14,7 @@ module BetterTogether
           when Order then record
           when Payment, OfflinePayment, SubscriptionPeriod then record.order
           when Refund then record.payment.order
+          when RefundRequest then record.order # rubocop:disable Lint/DuplicateBranch
           end
         end
 

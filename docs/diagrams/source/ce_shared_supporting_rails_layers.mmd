@@ -195,6 +195,15 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +2
     }
+    class BetterTogether__Billing__RefundRequestsController["Billing::RefundRequestsController"] {
+      <<Controller>>
+      models: Billing::RefundRequest
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__SaleRefundRequestsController["Billing::SaleRefundRequestsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__TaxRegistrationsController["Billing::TaxRegistrationsController"] {
       <<Controller>>
       models: Billing::TaxRegistration
@@ -461,6 +470,11 @@ classDiagram
       <<Model>>
       table: better_together_billing_plan_add_ons
       concerns: Billing::ParentBound, Billing::PlatformBound
+    }
+    class BetterTogether__Billing__RefundRequest["Billing::RefundRequest"] {
+      <<Model>>
+      table: better_together_billing_refund_requests
+      concerns: Billing::EncryptedAttributes, Billing::ParentBound, Billing::PlatformBound, Billing::Subjectable
     }
     class BetterTogether__Billing__TaxCategory["Billing::TaxCategory"] {
       <<Model>>
@@ -776,6 +790,9 @@ classDiagram
   BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderPaymentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__RefundRequestsController ..> BetterTogether__Billing__RefundRequest : manages
+  BetterTogether__Billing__RefundRequestsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__SaleRefundRequestsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__TaxRegistrationsController ..> BetterTogether__Billing__TaxRegistration : manages
   BetterTogether__Billing__TaxRegistrationsController --|> BetterTogether__ApplicationController
   BetterTogether__BotDefense__ChallengesController --|> BetterTogether__ApplicationController
@@ -846,6 +863,10 @@ classDiagram
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Platform : platform
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : add_on
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Platform : platform
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Person : requester
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Person : decided_by
   BetterTogether__Billing__TaxCategory --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Billing__Order : order

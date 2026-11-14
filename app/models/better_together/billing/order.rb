@@ -62,6 +62,7 @@ module BetterTogether
                                        dependent: :restrict_with_error
       has_many :documents, class_name: 'BetterTogether::Billing::OrderDocument', inverse_of: :order, dependent: :destroy
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
+      has_many :refund_requests, class_name: 'BetterTogether::Billing::RefundRequest', inverse_of: :order, dependent: :restrict_with_error
       has_many :offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :order,
                                   dependent: :restrict_with_error
 

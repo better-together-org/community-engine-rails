@@ -62,6 +62,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_SUBSCRIPTION_TERMS : "platform / platform_id"
   EXT_PAY_SUBSCRIPTION ||--o{ BILLING_SUBSCRIPTION_TERMS : "pay_subscription / pay_subscription_id"
   BILLING_PLANS ||--o{ BILLING_SUBSCRIPTION_TERMS : "plan / plan_id"
+  BILLING_PLANS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan / pending_plan_id"
+  BILLING_ORDERS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan_order / pending_plan_order_id"
 
   BILLING_AGREEMENT_REQUIREMENTS {
     agreement_id uuid
@@ -301,14 +303,14 @@ erDiagram
   BILLING_SUBSCRIPTION_TERMS {
     beneficiary_id uuid
     pay_subscription_id uuid
+    pending_plan_id uuid
+    pending_plan_order_id uuid
     plan_id uuid
     platform_id uuid
     beneficiary_type string
     currency string
     payment_method string
     anchor_sequence integer
-    unit_amount_cents integer
-    anchor_at datetime
   }
 
   EXT_AGREEMENT {

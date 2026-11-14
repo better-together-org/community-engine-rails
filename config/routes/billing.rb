@@ -32,7 +32,7 @@ end
 # Not nested under the host dashboard and carrying no route-level permission check:
 # access is sign-in plus Pundit on the billing owner (see Billing::OwnerScoped).
 concern :billing_plans do # rubocop:disable Metrics/BlockLength
-  namespace :billing do
+  namespace :billing do # rubocop:disable Metrics/BlockLength
     resources :plans, except: :destroy do
       member do
         post :sync
@@ -53,6 +53,14 @@ concern :billing_plans do # rubocop:disable Metrics/BlockLength
       resources :payments, only: :create, controller: 'order_payments'
       # Make the invoice and receipt again in another language.
       resource :documents, only: :create, controller: 'order_documents'
+      # The buyer asks for money back, and can withdraw the request while it waits.
+      resources :refund_requests, only: %i[new create] do
+        post :cancel, on: :member
+      end
+    end
+    # The steward's queue of refund requests and the decision on each.
+    resources :refund_requests, only: %i[index show], controller: 'sale_refund_requests' do
+      post :decide, on: :member
     end
     resource :checkout, only: %i[new create]
     resources :agreement_requirements, only: %i[index create destroy]
@@ -101,6 +109,9 @@ concern :billing_subscriptions do
         patch :cancel
         patch :resume
         post :accept_agreements
+        # Choose another plan from the next period, or take the choice back.
+        post :change_plan
+        delete :change_plan, action: :withdraw_plan_change, as: :withdraw_plan_change
       end
     end
     resources :subscribers, only: %i[index show] do
