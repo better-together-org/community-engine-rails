@@ -25,6 +25,8 @@ RSpec.describe 'layouts/better_together/application' do
       hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe,
       request: double(original_url: 'http://test.host/current', user_agent: 'RSpec', path: '/current')
     )
+    view.extend(BetterTogether::PlatformSnippetsHelper)
+    allow(view).to receive(:render_platform_snippets).and_return('')
     allow(view).to receive(:metrics_body_tag).and_yield
     view.define_singleton_method(:render_platform_content_slot) { |*| '' }
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
@@ -35,6 +37,7 @@ RSpec.describe 'layouts/better_together/application' do
     allow(view).to receive(:render).with('layouts/better_together/flash_messages').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/extra_page_content_bottom').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/footer').and_return('')
+    allow(view).to receive(:render).with('layouts/better_together/consent_banner').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/mobile_bar').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/custom_body_javascript').and_return('')
     # Helpers / routes added to the layout on this branch:

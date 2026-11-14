@@ -31,6 +31,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Commentable` | Commentable | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Communicator` | Communicator | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `CommunityAssignable` | Communityassignable | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `ConsentCookieSync` | Consentcookiesync | `PersonSeedsController`, `PersonPlatformMembershipsController`, `PersonPlatformIntegrationsController`, `PersonLinksController`, `PersonLinkedSeedsController`, `PersonDeletionRequestsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `ContactData` | Contactdata | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Contactable` | Adds contact detail, website, phone, and social-link associations. | `Person` | Directory/admin surfaces can over-disclose private contact details if policies are too coarse. |
 | `Content::AttachableBlock` | Attachableblock | `Content::VideoBlock`, `Content::Image` | Review the concern source for configuration-specific coupling or visibility implications. |
