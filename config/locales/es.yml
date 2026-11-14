@@ -1133,6 +1133,10 @@ es:
     contacts:
       add: Agregar Contacto
     content:
+      block_picker:
+        create: Crear un nuevo bloque %{block}
+        create_for_page: Crear un nuevo bloque %{block} para la página
+        icon: Icono de %{block}
       blocks:
         accordion_block:
           answer: Answer

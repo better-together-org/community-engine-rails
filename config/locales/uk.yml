@@ -1125,6 +1125,10 @@ uk:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Створити новий блок «%{block}»
+        create_for_page: Створити новий блок «%{block}» для сторінки
+        icon: Піктограма «%{block}»
       blocks:
         accordion_block:
           answer: Answer
