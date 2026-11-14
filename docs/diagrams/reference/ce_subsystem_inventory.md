@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-11T17:52:36Z`.
+Generated from live Rails reflections at `2026-11-14T03:01:43Z`.
 
 ## Identity, access, and memberships
 
@@ -684,6 +684,8 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PlatformConnectionSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | PlatformIdentityProvider | `better_together_platform_identity_providers` | `client_id` (string FK)<br>`platform_id` (uuid FK)<br>`provider_platform_id` (uuid FK)<br>`scopes` (string)<br>`strategy` (string)<br>`client_secret` (text) | FormatValidator: client_id, client_secret (allow_nil=true, without=/[[:cntrl:]\s]/, message=:invalid_characters)<br>PresenceValidator: strategy<br>InclusionValidator: strategy (in=dynamic)<br>UniquenessValidator: provider_platform_id (scope=:platform_id)<br>PresenceValidator: issuer (if=dynamic) | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`provider_platform` -> `Platform` (platform_network) |
 | PlatformIdentityProviderDomain | `better_together_platform_identity_provider_domains` | `platform_domain_id` (uuid FK)<br>`platform_identity_provider_id` (uuid FK) | UniquenessValidator: platform_domain_id (scope=:platform_identity_provider_id) | `BetterTogetherId`<br>`Seedable` | `platform_domain` -> `PlatformDomain` (platform_network) |
+| PlatformSnippet | `better_together_platform_snippets` | `platform_id` (uuid FK)<br>`updated_by_id` (uuid FK)<br>`applies_to` (string)<br>`consent_category` (string)<br>`kind` (string)<br>`location` (string) | NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)<br>PresenceValidator: name<br>InclusionValidator: location (in=["head_start", "head_end", "body_start", "body_end"])<br>InclusionValidator: kind (in=["script_inline", "script_src", "style_inline", "html_meta"])<br>InclusionValidator: consent_category (in=["none", "analytics", "marketing"])<br>InclusionValidator: applies_to (in=["all", "signed_out"]) | `BetterTogetherId`<br>`Positioned`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`updated_by` -> `Person` (identity_access) |
+| PlatformSnippetAudit | `better_together_platform_snippet_audits` | `actor_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`snippet_id` (uuid FK)<br>`action` (string)<br>`snippet_name` (string)<br>`change_set` (jsonb) | InclusionValidator: action (in=["created", "updated", "enabled", "disabled", "destroyed"]) | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | Quota | `better_together_quotas` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`enforcement_mode` (string)<br>`owner_type` (string)<br>`period` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>UniquenessValidator: owner_id (scope=[:owner_type, :quota_type]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaBalance | `better_together_quota_balances` | `platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`period_key` (string)<br>`consumed` (integer)<br>`reserved` (integer)<br>`recalculated_at` (datetime) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: period_key<br>UniquenessValidator: quota_id (scope=:period_key)<br>NumericalityValidator: consumed, reserved (only_integer=true) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaGrant | `better_together_quota_grants` | `granted_by_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`granted_by_type` (string)<br>`owner_type` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>InclusionValidator: granted_by_type (allow_nil=true, in=["BetterTogether::Person", "BetterTogether::Robot"]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
@@ -808,6 +810,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | OmniauthCallbacksController | `Devise::OmniauthCallbacksController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | PlatformDomainsController | `BetterTogether::ApplicationController` | `PlatformDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | PlatformIdentityProvidersController | `BetterTogether::ApplicationController` | `PlatformIdentityProvider` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| PlatformSnippetsController | `BetterTogether::ApplicationController` | `PlatformSnippet` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | QuotaGrantsController | `BetterTogether::ApplicationController` | `QuotaGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | ReportFollowupsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | ResourceController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
@@ -890,6 +893,8 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `PlatformConnectionSubmittedNotifier::Notification`: `recipient` (belongs_to)
 - `PlatformIdentityProvider`: `seeds` (has_many)
 - `PlatformIdentityProviderDomain`: `seeds` (has_many)
+- `PlatformSnippet`: `seeds` (has_many)
+- `PlatformSnippetAudit`: `seeds` (has_many)
 - `Quota`: `owner` (belongs_to), `seeds` (has_many)
 - `QuotaBalance`: `seeds` (has_many)
 - `QuotaGrant`: `owner` (belongs_to), `granted_by` (belongs_to), `seeds` (has_many)

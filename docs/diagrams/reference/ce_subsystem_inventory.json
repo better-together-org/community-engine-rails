@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T17:52:36Z",
+  "generated_at": "2026-11-14T03:01:43Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3870,6 +3870,12 @@
           "source_subsystem": "integrations_webhooks"
         },
         {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Person",
+          "label": "updated_by (updated_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Person",
           "label": "operator (operator_id)",
@@ -7517,6 +7523,18 @@
         },
         {
           "from": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippetAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -30192,6 +30210,174 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformSnippet",
+          "label": "PlatformSnippet",
+          "source_path": "app/models/better_together/platform_snippet.rb",
+          "table_name": "better_together_platform_snippets",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "updated_by_id",
+              "uuid FK"
+            ],
+            [
+              "applies_to",
+              "string"
+            ],
+            [
+              "consent_category",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "location",
+              "string"
+            ],
+            [
+              "name",
+              "string"
+            ],
+            [
+              "src",
+              "string"
+            ],
+            [
+              "content",
+              "text"
+            ],
+            [
+              "notes",
+              "text"
+            ]
+          ],
+          "validations": [
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "PresenceValidator: name",
+            "InclusionValidator: location (in=[\"head_start\", \"head_end\", \"body_start\", \"body_end\"])",
+            "InclusionValidator: kind (in=[\"script_inline\", \"script_src\", \"style_inline\", \"html_meta\"])",
+            "InclusionValidator: consent_category (in=[\"none\", \"analytics\", \"marketing\"])",
+            "InclusionValidator: applies_to (in=[\"all\", \"signed_out\"])",
+            "PresenceValidator: content (unless=:script_src?)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "updated_by",
+              "foreign_key": "updated_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Positioned",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "updated_by",
+              "foreign_key": "updated_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformSnippetAudit",
+          "label": "PlatformSnippetAudit",
+          "source_path": "app/models/better_together/platform_snippet_audit.rb",
+          "table_name": "better_together_platform_snippet_audits",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "snippet_id",
+              "uuid FK"
+            ],
+            [
+              "action",
+              "string"
+            ],
+            [
+              "snippet_name",
+              "string"
+            ],
+            [
+              "change_set",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: action (in=[\"created\", \"updated\", \"enabled\", \"disabled\", \"destroyed\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Quota",
           "label": "Quota",
           "source_path": "app/models/better_together/quota.rb",
@@ -32602,6 +32788,21 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformSnippetsController",
+          "label": "PlatformSnippetsController",
+          "source_path": "app/controllers/better_together/platform_snippets_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::PlatformSnippet"
+          ],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::QuotaGrantsController",
           "label": "QuotaGrantsController",
           "source_path": "app/controllers/better_together/quota_grants_controller.rb",
@@ -32959,6 +33160,8 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "PlatformSnippetAudit",
+            "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -33192,6 +33395,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33260,6 +33464,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33328,6 +33533,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33407,6 +33613,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -33529,6 +33736,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Infrastructure::BuildingConnection",
+            "PlatformSnippet",
             "Infrastructure::Floor"
           ]
         },
@@ -33596,6 +33804,8 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "PlatformSnippetAudit",
+            "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -34034,6 +34244,24 @@
           "from": "BetterTogether::PlatformIdentityProviderDomain",
           "to": "BetterTogether::PlatformDomain",
           "label": "platform_domain (platform_domain_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Person",
+          "label": "updated_by (updated_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippetAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
