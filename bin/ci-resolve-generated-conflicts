@@ -139,8 +139,14 @@ merge_phase() {
   fi
 
   progress "asking GitHub to merge ${base} into ${head}"
-  timeout 120 "$GH" api -X PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/update-branch" -f "expected_head_sha=${new}" >/dev/null \
-    || { echo "update-branch failed: the merge still conflicts. The extra commit is harmless; a person must resolve it."; output "merged=false"; exit 1; }
+  # GitHub may not have registered the new commit yet, so a first attempt can be refused; try again.
+  local attempt updated=0 err
+  for attempt in 1 2 3 4 5 6; do
+    if err="$(timeout 120 "$GH" api -X PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/update-branch" -f "expected_head_sha=${new}" 2>&1)"; then updated=1; break; fi
+    progress "update-branch attempt ${attempt} refused: $(echo "$err" | tr '\n' ' ' | cut -c1-200)"
+    sleep 10
+  done
+  [ "$updated" = 1 ] || { echo "update-branch kept failing: the merge may still conflict. The extra commit is harmless; a person must resolve it."; output "merged=false"; exit 1; }
 
   for _ in $(seq 1 24); do
     [ "$(pr_field headRefOid)" != "$new" ] && break
