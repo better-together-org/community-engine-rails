@@ -20,7 +20,6 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentHook do
     before do
       allow(config).to receive_messages(enabled?: true)
       allow(config).to receive(:enabled_for_surface?) { |surface| surface.to_s == 'attachments' }
-      allow(BetterTogether::ContentSecurity::ScanAttachmentJob).to receive(:perform_later)
     end
 
     it 'enrolls an attachment on a model that does not declare scans_attachment' do
@@ -28,7 +27,7 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentHook do
       expect { attach(blob) }.to change { item_class.where(blob_id: blob.id).count }.by(1)
       item = item_class.find_by(blob_id: blob.id)
       expect(item).to have_attributes(source_surface: 'attachments', lifecycle_state: 'pending_scan')
-      expect(BetterTogether::ContentSecurity::ScanAttachmentJob).to have_received(:perform_later).with(item.id)
+      expect(BetterTogether::ContentSecurity::ScanAttachmentJob).to have_been_enqueued.with(item.id)
     end
 
     it 'gives every blob in a many slot its own item' do
