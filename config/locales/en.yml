@@ -5488,15 +5488,20 @@ en:
       invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Account and tools
     conversations: Conversations
+    footer_legal_navigation: Site information
+    footer_navigation: Footer links
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Main
     my_profile: My Profile
     notifications_tooltip: Notifications
     search_tooltip: Search
     settings: Settings
     sign_in: Sign In
+    skip_to_content: Skip to main content
     toggle_navigation: Toggle navigation
     user_nav_tooltip: Account Menu
   navigation:
@@ -5733,6 +5738,7 @@ en:
     confirm_destroy: Confirm destroy
   search:
     button: Search
+    label: Search the site
     placeholder: Search...
   seed_catalog:
     geography:
