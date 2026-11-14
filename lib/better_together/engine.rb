@@ -13,6 +13,7 @@ require 'better_together/identity_providers'
 require 'better_together/identity_provider_credentials'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/generator_templates'
 require 'better_together/profiling'
 require 'better_together/storage_resolver'
 require 'better_together/url_sanitizer'
@@ -88,10 +89,17 @@ module BetterTogether
     config.paths['config/routes.rb'] = 'config/routes.rb'
     config.paths.add 'config/routes', glob: '**/*.rb'
 
-    config.generators do |g|
+    config.app_generators do |g|
       g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
       g.test_framework :rspec
+      g.templates << root.join('lib/templates').to_s
+    end
+
+    # The ActiveRecord generator classes can load before Rails reads the template paths,
+    # so register the app and engine lib/templates on them explicitly.
+    generators do
+      BetterTogether::GeneratorTemplates.register(Rails.application.config.generators.templates)
     end
 
     config.before_initialize do
