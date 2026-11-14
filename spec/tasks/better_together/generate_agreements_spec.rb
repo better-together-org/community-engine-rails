@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'rake'
 
-# rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/DescribeClass, RSpec/SpecFilePathFormat
 RSpec.describe 'better_together:seed:agreements', type: :task do
   around do |example|
     previous_clear = ENV.delete('CLEAR')
@@ -65,4 +65,3 @@ RSpec.describe 'better_together:seed:agreements', type: :task do
     expect(BetterTogether::Agreement.find_by!(identifier: 'content_publishing_agreement')).to be_present
   end
 end
-# rubocop:enable RSpec/DescribeClass, RSpec/SpecFilePathFormat

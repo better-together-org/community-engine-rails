@@ -7,7 +7,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
   let(:people_reviewer) { create(:better_together_user, :confirmed, email: 'people-reviewer@example.test') }
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
@@ -22,7 +22,6 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     membership.save!
     user.person.touch
   end
-  # rubocop:enable Metrics/AbcSize
 
   describe 'GET /:locale/.../host/p/:id' do
     let!(:person) { create(:better_together_person, privacy: 'public') }

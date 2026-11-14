@@ -5,11 +5,10 @@ require 'rails_helper'
 # Spec helpers for BetterTogether.
 module BetterTogether # :nodoc:
   describe Identity, type: :model do
-    # rubocop:todo RSpec/LeakyConstantDeclaration
+    # rubocop:todo-next RSpec/LeakyConstantDeclaration
     class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include Identity
     end
-    # rubocop:enable RSpec/LeakyConstantDeclaration
 
     before do
       # Create test table for each example to ensure parallel_tests compatibility

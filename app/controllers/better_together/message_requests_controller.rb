@@ -3,6 +3,7 @@
 module BetterTogether
   # Handles creation and response (accept/decline) for messaging permission requests.
   class MessageRequestsController < ApplicationController
+    skip_third_party_tracking
     before_action :authenticate_user!
     before_action :set_message_request, only: %i[show accept decline]
     after_action :verify_authorized

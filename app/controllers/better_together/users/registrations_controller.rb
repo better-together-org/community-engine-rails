@@ -14,17 +14,15 @@ module BetterTogether
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Lint/CopDirectiveSyntax
+      # rubocop:todo-next Lint/CopDirectiveSyntax
       before_action :process_invitation_code_parameters, only: %i[new create]
-      # rubocop:enable Lint/CopDirectiveSyntax
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Lint/CopDirectiveSyntax
+      # rubocop:todo-next Lint/CopDirectiveSyntax
       before_action :set_required_agreements, only: %i[new create]
-      # rubocop:enable Lint/CopDirectiveSyntax
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/PerceivedComplexity
       before_action :load_all_invitations_from_session, only: %i[new create]
@@ -247,6 +245,7 @@ module BetterTogether
         end
 
         setup_community_membership(user, person)
+        record_trusted_registration(user)
         handle_all_invitations(user)
         create_agreement_participants(person)
       end
@@ -318,8 +317,7 @@ module BetterTogether
 
       def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
         person = person_param || user.person
-        community_role = determine_community_role_from_invitations
-        desired_status = registration_community_membership_status
+        community_role, desired_status = registration_membership_role_and_status
 
         begin
           membership = helpers.host_community.person_community_memberships.find_or_initialize_by(
@@ -336,6 +334,37 @@ module BetterTogether
           Rails.logger.error "Unexpected error creating community membership: #{e.message}"
           raise e
         end
+      end
+
+      # A typed, unconfirmed trusted-domain address holds the domain role pending until the address is confirmed.
+      def registration_membership_role_and_status
+        return [trusted_registration_domain.role, 'pending'] if trusted_registration_domain.present?
+
+        [determine_community_role_from_invitations, registration_community_membership_status]
+      end
+
+      # The trusted domain covering the typed address when no invitation is in play; nil otherwise.
+      def trusted_registration_domain
+        return @trusted_registration_domain if defined?(@trusted_registration_domain)
+
+        @trusted_registration_domain =
+          if valid_invitation_in_session?
+            nil
+          else
+            BetterTogether::PlatformTrustedDomain.lookup(platform: helpers.host_platform,
+                                                         email: params.dig(:user, :email))
+          end
+      end
+
+      def record_trusted_registration(user)
+        return if trusted_registration_domain.blank?
+
+        BetterTogether::TrustedDomainEvent.create!(
+          platform: trusted_registration_domain.platform, platform_trusted_domain: trusted_registration_domain,
+          subject: user.person, event_type: 'account_created', via: 'password_registration',
+          domain: trusted_registration_domain.domain, role_identifier: trusted_registration_domain.role.identifier,
+          details: { email_verified: false }
+        )
       end
 
       def registration_community_membership_status
@@ -425,6 +454,8 @@ module BetterTogether
       # Check if platform requires invitation and if valid invitation exists
       def check_invitation_requirement # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return unless helpers.host_platform&.requires_invitation?
+        # An address on a trusted domain may create an account (unconfirmed) without an invitation
+        return if trusted_registration_domain.present?
 
         # If invitation code was provided but no valid session invitation exists, it's invalid
         if params[:invitation_code].present? && !valid_invitation_in_session?

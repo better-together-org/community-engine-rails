@@ -104,7 +104,7 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
     end
     let!(:other_private_request) { create(:better_together_joatu_request, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'authenticated user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
@@ -125,9 +125,8 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
         expect(resolved).to include(public_request)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
@@ -142,6 +141,5 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
         expect(resolved).not_to include(membership_request)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end
