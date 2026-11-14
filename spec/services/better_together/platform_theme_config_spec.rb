@@ -110,4 +110,52 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
       end
     end
   end
+
+  describe 'host-registered themes' do
+    let(:tokens) { described_class.builtin_themes['neutral'].merge('primary' => '#0b3d2e') }
+
+    after { described_class.reset_registered_themes! }
+
+    it 'adds a theme next to the built-ins and accepts it as a preset' do
+      described_class.register_theme('acme_forest', tokens, name: 'Acme forest')
+
+      expect(described_class.themes.keys).to include('neutral', 'acme_forest')
+      expect(described_class.invalid_value?('preset', 'acme_forest')).to be(false)
+      expect(described_class.theme_name('acme_forest')).to eq('Acme forest')
+    end
+
+    it 'falls back to a humanized name when no label or translation exists' do
+      described_class.register_theme('acme_forest', tokens)
+
+      expect(described_class.theme_name('acme_forest')).to eq('Acme forest')
+      expect(described_class.theme_description('acme_forest')).to eq('')
+    end
+
+    it 'rejects built-in ids, bad ids, invalid values and incomplete token sets' do
+      expect { described_class.register_theme('neutral', tokens) }.to raise_error(ArgumentError, /built-in/)
+      expect { described_class.register_theme('Bad Id', tokens) }.to raise_error(ArgumentError, /invalid theme id/)
+      expect { described_class.register_theme('x', tokens.merge('link' => 'red')) }.to raise_error(ArgumentError, /invalid link/)
+      expect { described_class.register_theme('x', tokens.except('band')) }.to raise_error(ArgumentError, /missing band/)
+    end
+
+    it 'reports contrast failures so host specs can enforce AA' do
+      described_class.register_theme('acme_pale', tokens.merge('link' => '#cccccc'))
+
+      expect(described_class.contrast_failures('acme_pale').map(&:first)).to include('link')
+      expect(described_class.contrast_failures('neutral')).to be_empty
+    end
+
+    it 'loads a YAML file of themes with optional name and description' do
+      file = Rails.root.join('tmp/host_themes_spec.yml')
+      file.dirname.mkpath
+      file.write({ 'acme_yaml' => tokens.merge('name' => 'Acme YAML', 'description' => 'From a file') }.to_yaml)
+
+      described_class.register_themes_from(file)
+
+      expect(described_class.theme_name('acme_yaml')).to eq('Acme YAML')
+      expect(described_class.themes['acme_yaml']).not_to have_key('name')
+    ensure
+      file&.delete if file&.exist?
+    end
+  end
 end

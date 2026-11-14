@@ -14,7 +14,7 @@
     <div class="row g-2 align-items-start">
       <div class="col-md-6">
         <%= select_tag 'theme_picker',
-                       options_for_select(cfg.themes.map { |id, tokens| [t("#{scope}.presets.#{id}.name"), id, { 'data-tokens' => tokens.to_json, 'data-description' => t("#{scope}.presets.#{id}.description") }] },
+                       options_for_select(cfg.themes.map { |id, tokens| [cfg.theme_name(id), id, { 'data-tokens' => tokens.to_json, 'data-description' => cfg.theme_description(id) }] },
                                           config['preset']),
                        id: 'platform_theme_picker', include_blank: t("#{scope}.picker_blank"), class: 'form-select',
                        'data-better_together--platform-theme-target' => 'picker',
@@ -45,7 +45,7 @@
        data-custom-text="<%= t("#{scope}.status_custom") %>"
        data-none-text="<%= t("#{scope}.status_none") %>"
        data-applied-text="<%= t("#{scope}.status_applied", name: '%{name}') %>"
-       data-current-name="<%= config['preset'].present? ? t("#{scope}.presets.#{config['preset']}.name") : '' %>"></p>
+       data-current-name="<%= config['preset'].present? ? cfg.theme_name(config['preset']) : '' %>"></p>
   </div>
 
   <%= render partial: 'better_together/platforms/theme_preview', locals: { platform: platform } %>

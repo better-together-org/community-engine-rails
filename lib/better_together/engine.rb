@@ -269,6 +269,16 @@ module BetterTogether
       end
     end
 
+    # to_prepare re-runs after code reloads, so host themes survive the registry class being reloaded.
+    initializer 'better_together.host_platform_themes' do |app|
+      app.config.to_prepare do
+        path = Rails.root.join('config/platform_themes.yml')
+        if path.exist? && path != BetterTogether::PlatformThemeConfig::THEMES_PATH
+          BetterTogether::PlatformThemeConfig.register_themes_from(path)
+        end
+      end
+    end
+
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
     end
