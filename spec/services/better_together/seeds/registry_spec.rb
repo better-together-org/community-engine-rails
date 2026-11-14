@@ -9,8 +9,15 @@ RSpec.describe BetterTogether::Seeds::Registry do
     it 'registers the record types the foray packet needs' do
       expect(described_class.types.map(&:name)).to include(
         :page, :content_block, :page_block, :navigation_area, :navigation_item, :upload, :event,
-        :social_media_account, :contact_detail
+        :social_media_account, :contact_detail, :redirect
       )
+    end
+
+    it 'registers redirects with the model\'s own seed attributes' do
+      definition = described_class.fetch(:redirect)
+
+      expect(definition.natural_key_columns).to eq([:from_path])
+      expect(BetterTogether::Redirect::SEED_ATTRIBUTES).to all(satisfy { |attr| definition.writable?(attr) })
     end
 
     it 'maps every type to a loadable model with a natural key it can query' do

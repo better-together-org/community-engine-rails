@@ -11,6 +11,7 @@ module BetterTogether
         register_navigation
         register_files_and_events
         register_contacts
+        register_redirects
       end
 
       def self.register_content
@@ -100,7 +101,17 @@ module BetterTogether
         end
       end
 
-      private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts
+      # Redirects are keyed by their normalized from_path, unique per platform.
+      def self.register_redirects
+        Registry.register(:redirect) do
+          model 'BetterTogether::Redirect'
+          natural_key :from_path
+          attributes(*BetterTogether::Redirect::SEED_ATTRIBUTES)
+        end
+      end
+
+      private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
+                           :register_redirects
     end
   end
 end
