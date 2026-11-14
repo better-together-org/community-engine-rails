@@ -351,6 +351,11 @@ classDiagram
       models: QuotaGrant
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__RedirectsController["RedirectsController"] {
+      <<Controller>>
+      models: Redirect
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
     class BetterTogether__ReportFollowupsController["ReportFollowupsController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
@@ -622,6 +627,12 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: subject, target: actor, target: owner, owner: seeds
     }
+    class BetterTogether__Redirect["Redirect"] {
+      <<Model>>
+      table: better_together_redirects
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__ShortLink["ShortLink"] {
       <<Model>>
       table: better_together_short_links
@@ -770,6 +781,8 @@ classDiagram
   BetterTogether__PlatformSnippetsController --|> BetterTogether__ApplicationController
   BetterTogether__QuotaGrantsController ..> BetterTogether__QuotaGrant : manages
   BetterTogether__QuotaGrantsController --|> BetterTogether__ApplicationController
+  BetterTogether__RedirectsController ..> BetterTogether__Redirect : manages
+  BetterTogether__RedirectsController --|> BetterTogether__ApplicationController
   BetterTogether__ReportFollowupsController --|> BetterTogether__ApplicationController
   BetterTogether__ResourceController --|> BetterTogether__ApplicationController
   BetterTogether__RobotsController --|> BetterTogether__ApplicationController
@@ -851,6 +864,7 @@ classDiagram
   BetterTogether__QuotaReservation --> BetterTogether__Quota : quota
   BetterTogether__QuotaUsage --> BetterTogether__Platform : platform
   BetterTogether__QuotaUsage --> BetterTogether__Quota : quota
+  BetterTogether__Redirect --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform

@@ -401,6 +401,10 @@ fr:
         type: Type
         valid_from: Valide à partir de
         valid_until: Valide jusqu'à
+      better_together/redirect:
+        from_path: Ancien chemin
+        status: Réponse
+        to_path: Nouveau chemin
       better_together/resource_permission:
         action: Action
         identifier: Identifiant
@@ -605,6 +609,12 @@ fr:
               must_be_true_for_share_domain: doit être vrai pour un domaine de partage
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: doit être un chemin commençant par une barre oblique ou une
+                adresse http ou https complète
+              redirect_loop: ramène à elle-même par d'autres redirections
         better_together/short_link:
           attributes:
             target_url:
@@ -629,10 +639,12 @@ fr:
       better_together/content/communities_block: Communautés
       better_together/content/css: CSS Personnalisé
       better_together/content/events_block: Événements
+      better_together/content/file_download_block: Téléchargement de fichier
       better_together/content/hero: Héros
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Galerie d'images
       better_together/content/link: Lien
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagramme Mermaid
@@ -684,6 +696,7 @@ fr:
       better_together/platform_domain: Domaine de plateforme
       better_together/platform_invitation: Invitation à la Plateforme
       better_together/post: Publication
+      better_together/redirect: Redirection
       better_together/resource_permission: Autorisation des Ressources
       better_together/role: Rôle
       better_together/role_resource_permission: Autorisation des Ressources de Rôle
@@ -1132,6 +1145,10 @@ fr:
     contacts:
       add: Ajouter un contact
     content:
+      block_picker:
+        create: Créer un nouveau bloc %{block}
+        create_for_page: Créer un nouveau bloc %{block} pour la page
+        icon: Icône %{block}
       blocks:
         accordion_block:
           answer: Answer
@@ -1185,6 +1202,13 @@ fr:
                 ici.
               title: Choisir depuis la bibliothèque
               view_uploads: Voir les téléversements et leurs statuts de révision
+        file_download_block:
+          description_help: Brève description (facultatif)
+          empty: Ce fichier n'est pas disponible.
+          label_help: Texte du lien (facultatif, par défaut le nom du fichier)
+          meta: "%{type}, %{size}"
+          open_inline: Ouvrir dans le navigateur au lieu de télécharger
+          select_prompt: Sélectionner un fichier
         hero:
           editor:
             background: Arrière-plan
@@ -1203,6 +1227,16 @@ fr:
           missing_url: Aucune URL d'iframe configurée.
           url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
             ou une autre intégration de confiance d'un espace communautaire.
+        image_gallery_block:
+          empty: Aucune image à afficher.
+          heading_help: Titre affiché au-dessus de la galerie (facultatif)
+          images: Images
+          images_help: Choisissez les blocs d'image dans l'ordre souhaité.
+          layout: Disposition
+          layouts:
+            grid: Grille
+            masonry: Mosaïque
+          lightbox: Ouvrir les images dans une visionneuse au clic
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2109,6 +2143,13 @@ fr:
         no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
           demande pour voir des correspondances.
         suggested_matches: Correspondances suggérées
+    image_gallery:
+      close: Fermer
+      counter: "{current} sur {total}"
+      dialog_label: 'Galerie d''images : %{name}'
+      next: Image suivante
+      open_image: 'Ouvrir l''image %{current} sur %{total} : %{name}'
+      previous: Image précédente
     infrastructure:
       locations: Emplacements
     invitations:
@@ -2798,11 +2839,13 @@ fr:
       new:
         title: Nouvel élément de navigation pour %{name}
       route_names:
+        agreements: Accords
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
         communities: Communautés
         content_blocks: Blocs de contenu
         events: Événements
+        federation_hub: Hub de fédération
         geography_continents: Continents
         geography_countries: Pays
         geography_maps: Cartes
@@ -2813,19 +2856,24 @@ fr:
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
+        hub: Hub
+        joatu_hub: Hub Joatu
         joatu_offers: Offres
         joatu_requests: Requêtes
         metrics_reports: Rapports de métriques
         navigation_areas: Zones de navigation
+        oauth_applications: Applications OAuth
         pages: Pages
         people: Personnes
         platform_connections: Connexions de plateforme
         platforms: Plateformes
+        posts: Publications
         reports: Signalements
         resource_permissions: Permissions des ressources
         roles: Rôles
         safety_cases: Revue de sécurité
         users: Utilisateurs
+        webhook_endpoints: Points de terminaison webhook
       visibility_strategies:
         authenticated: Utilisateurs connectés
         permission: Utilisateurs avec permission
@@ -3812,6 +3860,79 @@ fr:
       nav:
         resource_permissions: Autorisations de ressources
         roles: Rôles
+    redirects:
+      created: La redirection a été ajoutée.
+      destroyed: La redirection a été supprimée.
+      edit:
+        subtitle: Redirection pour %{platform_name}
+        title: Modifier %{from_path}
+      form:
+        active_label: Active
+        cancel: Annuler
+        create_btn: Ajouter la redirection
+        from_path_hint: L'adresse utilisée par les visiteurs, commençant par une barre
+          oblique. La correspondance ignore la casse, la barre finale et la chaîne
+          de requête.
+        from_path_label: Ancien chemin
+        note_label: Note
+        preserve_query_label: Conserver la chaîne de requête lors de la redirection
+        status_label: Réponse
+        statuses:
+          s301: 301 Déplacée définitivement
+          s302: 302 Trouvée (temporaire)
+          s307: 307 Redirection temporaire
+          s308: 308 Redirection permanente
+          s410: 410 Disparue
+        to_path_hint: Un chemin de ce site commençant par une barre oblique, ou une
+          adresse http ou https complète. Laissez vide seulement pour 410 Disparue.
+        to_path_label: Nouveau chemin ou URL
+        update_btn: Mettre à jour la redirection
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer cette redirection ?
+        edit_btn: Modifier
+        gone_label: Disparue (aucune nouvelle adresse)
+        header_actions: Actions
+        header_from: Ancien chemin
+        header_hits: Visites
+        header_status: Statut
+        header_to: Nouveau chemin
+        import_btn: Importer
+        inactive_label: inactive
+        new_btn: Ajouter une redirection
+        no_redirects: Aucune redirection pour l'instant.
+        search_btn: Rechercher
+        search_label: Rechercher des redirections
+        search_placeholder: Rechercher par ancien chemin
+        subtitle: Anciennes adresses qui envoient les visiteurs vers un nouvel emplacement
+          sur %{platform_name}
+        table_aria: Redirections
+        title: Redirections
+      new:
+        subtitle: Ajouter une redirection pour %{platform_name}
+        title: Nouvelle redirection
+      new_import:
+        back: Retour aux redirections
+        import_btn: Importer
+        import_confirm: Importer ces redirections ?
+        preview_btn: Aperçu
+        report_applied: Importation terminée
+        report_created: Créées
+        report_error_line: 'Ligne %{row} (%{path}) : %{message}'
+        report_preview: Aperçu (rien n'a été enregistré)
+        report_skipped: Ignorées (existent déjà)
+        report_unchanged: Inchangées
+        report_updated: Mises à jour
+        rows_hint: 'Écrivez l''ancien chemin, le nouveau chemin et un statut facultatif
+          (301, 302, 307, 308 ou 410), séparés par des virgules. Les lignes commençant
+          par # sont ignorées. Faites d''abord un aperçu ; rien n''est enregistré
+          avant de choisir Importer.'
+        rows_label: Redirections, une par ligne
+        subtitle: Ajouter plusieurs redirections à %{platform_name} en une fois
+        title: Importer des redirections
+        upsert_label: Mettre aussi à jour les redirections existantes
+      updated: La redirection a été mise à jour.
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
       invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
@@ -5718,15 +5839,20 @@ fr:
       invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
+    account_navigation: Compte et outils
     conversations: Conversations
+    footer_legal_navigation: Informations sur le site
+    footer_navigation: Liens de pied de page
     host_mgmt_tooltip: Gestion de l'hôte
     locale_switcher_tooltip: Changer de langue
     log_out: Se déconnecter
+    main_navigation: Principale
     my_profile: Mon profil
     notifications_tooltip: Notifications
     search_tooltip: Rechercher
     settings: Paramètres
     sign_in: Se connecter
+    skip_to_content: Aller au contenu principal
     toggle_navigation: Basculer la navigation
     user_nav_tooltip: Menu du compte
   navigation:
@@ -5901,6 +6027,7 @@ fr:
         identity_providers: Fournisseurs de connexion
         platform_domains: Domaines
         quota_grants: Dérogations de quota
+        redirects: Redirections
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage
         title: Opérations de la plateforme
@@ -5941,6 +6068,8 @@ fr:
     continent: Continent
     country: Pays
     download_failed: Échec du téléchargement
+    download_held: Ce fichier est encore en cours de vérification de sécurité. Veuillez
+      réessayer bientôt.
     invitation: Invitation
     invitation_email: E-mail d'invitation
     member: Membre
@@ -5965,6 +6094,7 @@ fr:
     confirm_destroy: Confirmer la destruction
   search:
     button: Rechercher
+    label: Rechercher sur le site
     placeholder: Rechercher...
   seed_catalog:
     geography:

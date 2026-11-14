@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe <%= full_class_name %>Policy do
+  subject(:policy) { described_class.new(nil, record) }
+
+  let(:record) { build(:<%= factory_name %>) }
+
+  it 'denies anonymous visitors' do
+    expect(policy.index?).to be_falsey
+  end
+end

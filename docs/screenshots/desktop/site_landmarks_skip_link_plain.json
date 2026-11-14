@@ -1,0 +1,11 @@
+{
+  "name": "site_landmarks_skip_link_plain",
+  "device": "desktop",
+  "url": "/en/landmarks-docs",
+  "title": "About the foray | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "site_landmarks_review",
+  "flow": "site_landmarks_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/site_landmarks_spec.rb"
+}

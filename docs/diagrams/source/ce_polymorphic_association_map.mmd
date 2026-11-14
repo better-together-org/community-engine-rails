@@ -93,7 +93,7 @@ flowchart TB
     BetterTogether__Categorization_polymorphic_summary["Categorization\ntarget: category, target: categorizable, owner: seeds"]
     BetterTogether__Category_polymorphic_summary["Category\nowner: seeds, owner: slugs, owner: views, owner: cover_image_attachment, owner: rich_text_translations +6"]
     BetterTogether__Comment_polymorphic_summary["Comment\ntarget: commentable, owner: seeds, owner: reports_received"]
-    BetterTogether__Content__Block_polymorphic_summary["Content::Block\nfamily: 22 models\nowner: seeds, owner: background_image_file_attachment, owner: reports_received, owner: string_translations, owner: text_translations +7"]
+    BetterTogether__Content__Block_polymorphic_summary["Content::Block\nfamily: 24 models\nowner: seeds, owner: background_image_file_attachment, owner: reports_received, owner: string_translations, owner: text_translations +7"]
     BetterTogether__Content__Link_polymorphic_summary["Content::Link\nowner: seeds"]
     BetterTogether__Content__PageBlock_polymorphic_summary["Content::PageBlock\nowner: seeds"]
     BetterTogether__Content__PlatformBlock_polymorphic_summary["Content::PlatformBlock\nowner: seeds"]
@@ -295,6 +295,7 @@ flowchart TB
     BetterTogether__QuotaGrant_polymorphic_summary["QuotaGrant\ntarget: owner, target: granted_by, owner: seeds"]
     BetterTogether__QuotaReservation_polymorphic_summary["QuotaReservation\ntarget: subject, target: actor, target: owner, owner: seeds"]
     BetterTogether__QuotaUsage_polymorphic_summary["QuotaUsage\ntarget: subject, target: actor, target: owner, owner: seeds"]
+    BetterTogether__Redirect_polymorphic_summary["Redirect\nowner: seeds"]
     BetterTogether__ShortLink_polymorphic_summary["ShortLink\ntarget: linkable, owner: seeds, owner: string_translations"]
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
     BetterTogether__Weather__CurrentCondition_polymorphic_summary["Weather::CurrentCondition\nowner: seeds"]
@@ -337,7 +338,8 @@ flowchart TB
     BetterTogether__QuotaBalance_polymorphic_summary ~~~ BetterTogether__QuotaGrant_polymorphic_summary
     BetterTogether__QuotaGrant_polymorphic_summary ~~~ BetterTogether__QuotaReservation_polymorphic_summary
     BetterTogether__QuotaReservation_polymorphic_summary ~~~ BetterTogether__QuotaUsage_polymorphic_summary
-    BetterTogether__QuotaUsage_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
+    BetterTogether__QuotaUsage_polymorphic_summary ~~~ BetterTogether__Redirect_polymorphic_summary
+    BetterTogether__Redirect_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
     BetterTogether__ShortLink_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary
     BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__Weather__CurrentCondition_polymorphic_summary
     BetterTogether__Weather__CurrentCondition_polymorphic_summary ~~~ BetterTogether__Weather__Forecast_polymorphic_summary
