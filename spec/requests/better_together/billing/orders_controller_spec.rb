@@ -37,6 +37,50 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     expect(response.body).not_to include(first_page)
   end
 
+  describe 'filters' do
+    let(:dom) { ActionView::RecordIdentifier }
+    let!(:old_order) do
+      place_order.tap { |o| o.update_columns(created_at: Time.utc(2025, 6, 1)) } # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    before { sign_in member }
+
+    it 'offers a status filter and the years the buyer has orders in' do
+      get orders_path
+
+      expect(response.body).to include('billing-orders-filters', 'billing-orders-filter-status', 'billing-orders-filter-year', '>2025<')
+    end
+
+    it 'keeps only the chosen year' do
+      get orders_path, params: { year: 2025 }
+
+      expect(response.body).to include(dom.dom_id(old_order))
+      expect(response.body).not_to include(dom.dom_id(order))
+    end
+
+    it 'keeps only the chosen status' do
+      old_order.update_columns(status: 'cancelled') # rubocop:disable Rails/SkipsModelValidations
+
+      get orders_path, params: { status: 'cancelled' }
+
+      expect(response.body).to include(dom.dom_id(old_order))
+      expect(response.body).not_to include(dom.dom_id(order))
+    end
+
+    it 'says so when nothing matches, and offers to clear the filters' do
+      get orders_path, params: { year: 2030 }
+
+      expect(response.body).to include('billing-orders-empty', 'billing-orders-filter-clear')
+    end
+
+    it 'ignores a status or year it does not know' do
+      get orders_path, params: { status: 'bogus', year: "2025'; drop" }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(dom.dom_id(order), dom.dom_id(old_order))
+    end
+  end
+
   it 'is a 404 while billing is off for the platform' do
     sign_in member
     allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)

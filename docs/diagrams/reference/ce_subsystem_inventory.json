@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T23:18:08Z",
+  "generated_at": "2026-11-12T23:23:17Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -36741,6 +36741,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::BillingAddressesController",
+          "label": "Billing::BillingAddressesController",
+          "source_path": "app/controllers/better_together/billing/billing_addresses_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::CatalogController",
           "label": "Billing::CatalogController",
           "source_path": "app/controllers/better_together/billing/catalog_controller.rb",
@@ -36758,6 +36772,20 @@
           "name": "BetterTogether::Billing::HubsController",
           "label": "Billing::HubsController",
           "source_path": "app/controllers/better_together/billing/hubs_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::NotificationPreferencesController",
+          "label": "Billing::NotificationPreferencesController",
+          "source_path": "app/controllers/better_together/billing/notification_preferences_controller.rb",
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
@@ -37875,8 +37903,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
-            "Billing::CatalogController"
+            "Billing::CatalogController",
+            "Billing::BillingAddressesController"
           ]
         },
         {
@@ -38136,8 +38166,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -38212,8 +38244,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -38288,8 +38322,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -38375,8 +38411,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
             "Billing::HubsController",
             "Billing::CatalogController",
+            "Billing::BillingAddressesController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",

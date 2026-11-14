@@ -913,6 +913,24 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      addresses:
+        add: Add address
+        added: Address added.
+        default: Default
+        default_set: Default billing address updated.
+        intro: Tax on your orders is worked out from your billing address. Your default
+          is offered first at checkout.
+        list_title: Your addresses
+        make_default: Make default
+        new_title: Add an address
+        none: You have no billing address yet.
+        refused:
+          incomplete: Choose a country and a state or province so tax can be worked
+            out.
+          invalid: That address could not be saved. Check the fields and try again.
+          missing: Enter an address.
+          not_found: That address was not found.
+        title: Billing addresses
       allowances:
         enforcement: Enforcement
         field_owner: Owner
@@ -1108,9 +1126,31 @@ en:
         plans_heading: Active plans
         plans_none: You have no active plans.
         renews: Renews %{date}
+        settings_addresses: Billing addresses
+        settings_heading: Billing settings
+        settings_notifications: Billing notifications
         title: Billing and plans
         view_access: View my access
         view_credit: View credit
+      notification_preferences:
+        always_hint: These need your attention, so they are always shown in the app
+          and emailed.
+        always_title: Always sent
+        email_hint: Receipts, renewal reminders, plan changes and refund decisions.
+          Turning this off does not stop the urgent notices below.
+        email_label: Email me billing notices
+        intro: Choose which billing notices are also sent to your email. They always
+          appear in the app.
+        kinds:
+          cheque_bounced: A cheque did not clear
+          grace_ending: Extra time to pay is ending
+          hold_expiring: An unpaid order is about to expire
+          payment_action_required: A payment needs your action
+          payment_failed: A payment failed
+          renewal_overdue: A renewal is overdue
+        save: Save
+        saved: Notification settings saved.
+        title: Billing notifications
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1467,8 +1507,14 @@ en:
         field_subtotal: Subtotal
         field_tax: Tax
         field_total: Total
+        filter_any: Any
+        filter_apply: Show
+        filter_clear: Clear filters
+        filter_status: Status
+        filter_year: Year
         index_title: My orders
         lines_heading: What was ordered
+        no_matching_orders: No orders match these filters.
         no_orders: You have no orders yet.
         no_payments: No payment has been made yet.
         no_sales: There are no orders yet.
@@ -1966,6 +2012,17 @@ en:
         field_through: Paid through
         index_title: Subscriptions
         invoice: Invoice %{number}
+        method_change_intro: Renewals are paid by %{method}. Choose another way for
+          later renewals. An invoice already made keeps its method.
+        method_change_label: Pay renewals by
+        method_change_none: There is no other way to pay renewals right now.
+        method_change_refused:
+          not_local: This subscription is renewed by its payment processor.
+          not_offered: That way of paying is not available for this plan.
+          unchanged: That is already the method renewals are paid by.
+        method_change_submit: Change method
+        method_change_title: Payment method
+        method_changed: Later renewals will be paid by the new method.
         none: You have no subscriptions.
         period_blocked: On hold
         period_lapsed: Lapsed

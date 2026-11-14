@@ -20,6 +20,7 @@ module BetterTogether
         authorize @term
         @gate = agreement_gate if @term.periods.exists?(status: 'needs_agreement')
         @plan_options = Subscriptions::ChangePlan.options(@term)
+        @method_options = Subscriptions::ChangeMethod.options(@term)
       end
 
       def cancel
@@ -49,6 +50,15 @@ module BetterTogether
         authorize @term, :change_plan?
         Subscriptions::ChangePlan.withdraw(term: @term)
         redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_withdrawn')
+      end
+
+      # Later renewals are paid another way.
+      def change_method
+        authorize @term
+        Subscriptions::ChangeMethod.call(term: @term, method: params[:payment_method])
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.method_changed')
+      rescue Subscriptions::ChangeMethod::Refused => e
+        redirect_to show_path, alert: t("better_together.billing.subscriptions.method_change_refused.#{e.code}")
       end
 
       # The payer accepts the agreements that changed; the renewal invoice is made at once.

@@ -911,6 +911,25 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      addresses:
+        add: Ajouter l'adresse
+        added: Adresse ajoutée.
+        default: Par défaut
+        default_set: Adresse de facturation par défaut mise à jour.
+        intro: La taxe sur vos commandes est calculée selon votre adresse de facturation.
+          Votre adresse par défaut est proposée en premier au paiement.
+        list_title: Vos adresses
+        make_default: Définir par défaut
+        new_title: Ajouter une adresse
+        none: Vous n'avez pas encore d'adresse de facturation.
+        refused:
+          incomplete: Choisissez un pays et une province ou un état pour calculer
+            la taxe.
+          invalid: Cette adresse n'a pas pu être enregistrée. Vérifiez les champs
+            et réessayez.
+          missing: Saisissez une adresse.
+          not_found: Cette adresse est introuvable.
+        title: Adresses de facturation
       allowances:
         enforcement: Application
         field_owner: Propriétaire
@@ -1111,9 +1130,32 @@ fr:
         plans_heading: Forfaits actifs
         plans_none: Vous n’avez aucun forfait actif.
         renews: Renouvellement le %{date}
+        settings_addresses: Adresses de facturation
+        settings_heading: Paramètres de facturation
+        settings_notifications: Notifications de facturation
         title: Facturation et forfaits
         view_access: Voir mes accès
         view_credit: Voir le crédit
+      notification_preferences:
+        always_hint: 'Ces avis demandent votre attention : ils sont toujours affichés
+          dans l''application et envoyés par courriel.'
+        always_title: Toujours envoyés
+        email_hint: Reçus, rappels de renouvellement, changements de forfait et décisions
+          de remboursement. Désactiver cette option n'arrête pas les avis urgents
+          ci-dessous.
+        email_label: M'envoyer les avis de facturation par courriel
+        intro: Choisissez quels avis de facturation sont aussi envoyés à votre courriel.
+          Ils apparaissent toujours dans l'application.
+        kinds:
+          cheque_bounced: Un chèque n'a pas été encaissé
+          grace_ending: Le délai supplémentaire de paiement se termine
+          hold_expiring: Une commande impayée va bientôt expirer
+          payment_action_required: Un paiement demande votre action
+          payment_failed: Un paiement a échoué
+          renewal_overdue: Un renouvellement est en retard
+        save: Enregistrer
+        saved: Paramètres de notification enregistrés.
+        title: Notifications de facturation
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1489,8 +1531,14 @@ fr:
         field_subtotal: Sous-total
         field_tax: Taxe
         field_total: Total
+        filter_any: Tous
+        filter_apply: Afficher
+        filter_clear: Effacer les filtres
+        filter_status: Statut
+        filter_year: Année
         index_title: Mes commandes
         lines_heading: Ce qui a été commandé
+        no_matching_orders: Aucune commande ne correspond à ces filtres.
         no_orders: Vous n'avez pas encore de commande.
         no_payments: Aucun paiement n'a encore été effectué.
         no_sales: Il n'y a pas encore de commande.
@@ -2015,6 +2063,20 @@ fr:
         field_through: Payé jusqu’au
         index_title: Abonnements
         invoice: Facture %{number}
+        method_change_intro: Les renouvellements sont payés par %{method}. Choisissez
+          un autre mode pour les prochains renouvellements. Une facture déjà émise
+          garde son mode.
+        method_change_label: Payer les renouvellements par
+        method_change_none: Il n'y a pas d'autre mode de paiement des renouvellements
+          pour le moment.
+        method_change_refused:
+          not_local: Cet abonnement est renouvelé par son processeur de paiement.
+          not_offered: Ce mode de paiement n'est pas offert pour ce forfait.
+          unchanged: Les renouvellements sont déjà payés par ce mode.
+        method_change_submit: Changer de mode
+        method_change_title: Mode de paiement
+        method_changed: Les prochains renouvellements seront payés avec le nouveau
+          mode.
         none: Vous n'avez aucun abonnement.
         period_blocked: En suspens
         period_lapsed: Expiré
