@@ -1,8 +1,10 @@
 name: Diagram Conflict Resolver
 
-# Fixes a pull request whose merge conflicts are ONLY generated files (.github/generated-conflict-paths):
-# the generated files take the base branch's version, GitHub merges the base into the PR branch, the
-# diagrams are regenerated, and the difference is committed. Every commit is made through the GitHub API
+# Fixes the generated-file part of a pull request's merge conflicts (.github/generated-conflict-paths):
+# the generated files take the base branch's version. If nothing else conflicts, GitHub then merges the base
+# into the PR branch, the diagrams are regenerated and the difference is committed. If code files also
+# conflict, it stops after the first step and comments, leaving those for a person (diagram-autofix.yml
+# regenerates the diagrams afterwards). Every commit is made through the GitHub API
 # with the bts-robot token, so each one is signed and shows as verified. See bin/ci-resolve-generated-conflicts.
 #
 # Started by the PR Conflict Sweep (mode set by the repository variable CONFLICT_RESOLVER_MODE: off,
@@ -33,7 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
       PR: ${{ inputs.pr }}
       APPLY: ${{ inputs.apply }}
       RAILS_ENV: test
@@ -62,8 +63,12 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      # The robot token is given only to the steps that need it. The steps that run the PR's own code
+      # (bundle, rails runner, the diagram generators) never see it.
       - name: Require the robot token
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
         run: |
           if [[ -z "${GH_TOKEN}" ]]; then
             echo "::error::Secret BTS_ROBOT_PUSH_TOKEN is not set; the resolver cannot make verified commits."
@@ -73,6 +78,8 @@ jobs:
       - name: Find the pull request branch
         id: pr
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
         run: |
           echo "head=$(gh pr view "${PR}" --repo "${GITHUB_REPOSITORY}" --json headRefName --jq .headRefName)" >> "${GITHUB_OUTPUT}"
 
@@ -81,7 +88,6 @@ jobs:
         with:
           ref: ${{ steps.pr.outputs.head }}
           fetch-depth: 0
-          token: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
 
       # The scripts and the generated-file list come from the default branch, copied outside the checkout,
       # so a PR cannot change what runs with the robot token and the merge cannot overwrite them.
@@ -101,59 +107,28 @@ jobs:
       - name: Merge the base into the branch
         id: merge
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
         run: |
           flags=(--pr "${PR}" --phase merge)
           [[ "${APPLY}" == "true" ]] && flags+=(--apply)
           "${RESOLVER}" "${flags[@]}"
 
-      - name: Install libvips
-        if: steps.merge.outputs.merged == 'true'
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libvips42t64 || sudo apt-get install -y --no-install-recommends libvips42
-
-      - name: Install Ruby
-        if: steps.merge.outputs.merged == 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.4.12"
-          bundler-cache: true
-
-      - name: Set up Node
-        if: steps.merge.outputs.merged == 'true'
-        uses: actions/setup-node@v7
-        with:
-          node-version: "20"
-
-      - name: Load the merged schema
-        if: steps.merge.outputs.merged == 'true'
-        run: |
-          cd spec/dummy
-          bundle exec rake db:create db:schema:load
-
       - name: Regenerate the diagrams
         if: steps.merge.outputs.merged == 'true'
-        env:
-          CHROME_PATH: /usr/bin/google-chrome
-        run: |
-          bin/export_schema_diagrams --skip-subsystems
-          cd spec/dummy
-          bundle exec rails runner export_subsystem_diagrams.rb
-          bundle exec rails runner export_localized_attributes.rb
-          cd ../..
-          chmod +x bin/render_diagrams
-          ./bin/render_diagrams
+        uses: ./.github/actions/regenerate-diagrams
 
       - name: Commit what the regeneration changed
         if: steps.merge.outputs.merged == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
         run: |
           "${RESOLVER}" --pr "${PR}" --phase commit --apply
 
       - name: Tell the pull request
         if: steps.merge.outputs.merged == 'true'
         env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
           BASE: ${{ steps.merge.outputs.base }}
         run: |
           gh pr comment "${PR}" --repo "${GITHUB_REPOSITORY}" --body "Merge conflicts in generated files were resolved automatically: they took \`${BASE}\`'s version, \`${BASE}\` was merged into this branch by GitHub, and the diagrams were regenerated. Every commit is signed. Please check that CI is green."
