@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T20:21:19Z",
+  "generated_at": "2026-11-14T21:20:02Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -722,9 +722,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug",
             "PresenceValidator: email",
-            "UniquenessValidator: email (case_sensitive=false)",
             "PresenceValidator: email (if=:email_required?)",
-            "UniquenessValidator: email (allow_blank=true, case_sensitive=true, if=:devise_will_save_change_to_email?)"
+            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)",
+            "UniquenessValidator: email (case_sensitive=false, scope=:platform_id)"
           ],
           "belongs_to": [
             {
@@ -2416,9 +2416,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug",
             "PresenceValidator: email",
-            "UniquenessValidator: email (case_sensitive=false)",
             "PresenceValidator: email (if=:email_required?)",
-            "UniquenessValidator: email (allow_blank=true, case_sensitive=true, if=:devise_will_save_change_to_email?)"
+            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)",
+            "UniquenessValidator: email (case_sensitive=false, scope=:platform_id)"
           ],
           "belongs_to": [
             {
@@ -4003,6 +4003,18 @@
           "from": "BetterTogether::PlatformSnippet",
           "to": "BetterTogether::Person",
           "label": "updated_by (updated_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformDeletionRequest",
+          "to": "BetterTogether::Person",
+          "label": "requested_by (requested_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformDeletionRequest",
+          "to": "BetterTogether::Person",
+          "label": "reviewed_by (reviewed_by_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -7861,6 +7873,12 @@
           "from": "BetterTogether::PlatformIdentityProvider",
           "to": "BetterTogether::Platform",
           "label": "provider_platform (provider_platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformDeletionRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -30906,6 +30924,107 @@
           "shared_table_group_size": 22
         },
         {
+          "name": "BetterTogether::PlatformDeletionRequest",
+          "label": "PlatformDeletionRequest",
+          "source_path": "app/models/better_together/platform_deletion_request.rb",
+          "table_name": "better_together_platform_deletion_requests",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "requested_by_id",
+              "uuid FK"
+            ],
+            [
+              "reviewed_by_id",
+              "uuid FK"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "requested_reason",
+              "text"
+            ],
+            [
+              "reviewer_notes",
+              "text"
+            ],
+            [
+              "requested_at",
+              "datetime"
+            ],
+            [
+              "resolved_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: status (in=[\"pending\", \"cancelled\", \"approved\", \"rejected\"])",
+            "PresenceValidator: requested_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "requested_by",
+              "foreign_key": "requested_by_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "reviewed_by",
+              "foreign_key": "reviewed_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "requested_by",
+              "foreign_key": "requested_by_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "reviewed_by",
+              "foreign_key": "reviewed_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::PlatformIdentityProvider",
           "label": "PlatformIdentityProvider",
           "source_path": "app/models/better_together/platform_identity_provider.rb",
@@ -34129,6 +34248,23 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformDeletionRequestsController",
+          "label": "PlatformDeletionRequestsController",
+          "source_path": "app/controllers/better_together/platform_deletion_requests_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::PlatformDeletionRequest"
+          ],
+          "concerns": [
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
           "name": "BetterTogether::PlatformDomainsController",
           "label": "PlatformDomainsController",
           "source_path": "app/controllers/better_together/platform_domains_controller.rb",
@@ -34610,6 +34746,7 @@
             "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
+            "PlatformDeletionRequest",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -34708,6 +34845,7 @@
             "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
+            "PlatformDeletionRequestsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
@@ -34918,6 +35056,7 @@
             "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
+            "PlatformDeletionRequestsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
@@ -34990,6 +35129,7 @@
             "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
+            "PlatformDeletionRequestsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
@@ -35062,6 +35202,7 @@
             "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
+            "PlatformDeletionRequestsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
@@ -35145,6 +35286,7 @@
             "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
+            "PlatformDeletionRequestsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
@@ -35341,6 +35483,7 @@
             "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
+            "PlatformDeletionRequest",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -35409,6 +35552,7 @@
             "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
+            "PlatformDeletionRequestsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
@@ -35829,6 +35973,24 @@
         },
         {
           "from": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformDeletionRequest",
+          "to": "BetterTogether::Person",
+          "label": "requested_by (requested_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformDeletionRequest",
+          "to": "BetterTogether::Person",
+          "label": "reviewed_by (reviewed_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformDeletionRequest",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

@@ -30,6 +30,7 @@ module BetterTogether
     validates :requested_at, presence: true
     validates :status, presence: true
     validate :single_active_request, on: :create
+    validate :not_last_platform_steward, on: :create
 
     scope :latest_first, -> { order(requested_at: :desc, created_at: :desc) }
     scope :active, -> { where(status: :pending) }
@@ -62,6 +63,12 @@ module BetterTogether
       return unless self.class.active.where(person_id: person_id).exists?
 
       errors.add(:base, 'already has a pending deletion request')
+    end
+
+    def not_last_platform_steward
+      return unless person&.last_platform_steward?
+
+      errors.add(:base, :last_platform_steward)
     end
 
     def capture_current_platform
