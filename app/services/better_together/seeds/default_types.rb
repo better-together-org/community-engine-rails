@@ -18,7 +18,7 @@ module BetterTogether
           model 'BetterTogether::Page'
           attributes :slug, :privacy, :meta_description, :keywords, :layout, :template, :published_at, :show_title
           translated :title, :content
-          reference :parent_community, to: :community, optional: true
+          reference :community, to: :community, optional: true
           reference :sidebar_nav, to: :navigation_area, optional: true
         end
         Registry.register(:content_block) do
@@ -66,7 +66,6 @@ module BetterTogether
           model 'BetterTogether::Event'
           attributes :privacy, :starts_at, :ends_at, :duration_minutes, :timezone, :registration_url, :status
           translated :name, :description
-          reference :community, to: :community, optional: true
           attachment :cover_image
         end
       end

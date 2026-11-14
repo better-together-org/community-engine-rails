@@ -129,21 +129,21 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 
 | # | Deficiency | Resolution | Status |
 |---|---|---|---|
-| 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | registry **in C2**, applier C3 |
+| 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | registry **in C2**, applier **in C3** |
 | 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | registered **in C2** (Flickr added), redirects D1 |
 | 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | spec C1, code C4 |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
 | 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
 | 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | spec C1; migration held (C7, PR #2165) |
-| 7 | No dry-run or diff | The plan is the dry-run report | C3 |
+| 7 | No dry-run or diff | The plan is the dry-run report | **fixed in C3** |
 | 8 | No validation schema | JSON Schemas and `Protocol::Validator` | **fixed in C1** |
 | 9 | No signature verification | Detached signature over `MANIFEST.json`, key id in `origin` | spec C1; verification later |
 | 10 | No partial update or deletion model | `mode` plus `deletes:` tombstones limited to provenance-owned records | spec and schema C1, applier C3 |
 | 11 | No versioning or migration semantics | `version` 2.x selects the 2.0 schema, 1.x keeps old rules; `packet.version` per packet; `seed_pack.schema_version` | **fixed in C1** (selection), migrations later |
 | 12 | Inconsistent locale handling | `default_locale`, `locales`, `unsupported_locale_policy`, per-record `translations` | **fixed in C1** (declaration and consistency check), policy applied in C3 |
-| 13 | No ordering model | `position` per record; apply order is topological by references, then `position` | spec C1, C3 |
+| 13 | No ordering model | `position` per record; apply order is topological by references, then `position` | **fixed in C3** |
 | 14 | Errors flatten to strings | `Report` with file, record, field pointer, message; all errors at once | **fixed in C1** |
-| 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | C3 |
+| 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | **fixed in C3** |
 | 16 | `ALLOWED_SEED_DIRECTORIES` blocks host-app directories and uploads | Configurable packet-source allowlist beyond `config/seeds` | C4 |
 
 ## Type registry (C2)
@@ -183,6 +183,32 @@ Registered: `page`, `content_block`, `page_block`, `navigation_area`, `navigatio
 | 19 | `Event.identifier` is globally unique (index on `identifier` alone), unlike pages and uploads | Platform-scoped uniqueness needed before two platforms plant one events packet; open model work item |
 
 The registry spec checks each declared attribute is writable on the model, each attachment exists, and each reference points at a registered type, so a drifting model fails CI.
+
+## Planner and applier (C3)
+
+`Seeds::Plant.call(path:, platform:, apply: false)` loads a packet directory (`Seeds::Packet`: no symlinks, safe YAML, schema validation), plans it (`Seeds::Planner`) and, only with `apply: true` and an error-free plan, writes it (`Seeds::Applier`). It always returns the structured report; a dry run writes nothing, not even a `SeedPlanting`.
+
+```
+rake better_together:seeds:plan  PACKET=/path/to/packet PLATFORM=<platform identifier>
+rake better_together:seeds:plant PACKET=/path/to/packet PLATFORM=<platform identifier> APPLY=1
+```
+
+Planning checks that every attribute and translation is declared writable in the registry, every reference slot is allowed and resolves (packet-local first, then on the target platform), locales follow `unsupported_locale_policy`, the packet's `target.platform_identifier` matches, and `seed_pack.dependencies` are already planted. Records are ordered by reference (Kahn's algorithm, ties by type order, `position`, file order); cycles are errors.
+
+Each record is classified by comparing a flat snapshot of the fields the entry owns (`attr:`, `tr:<locale>:`, `ref:`, `position`) with the record and with the snapshot taken when this packet last planted it:
+
+| Situation | Action |
+|---|---|
+| No record with that key on the platform | `create` |
+| Record already holds the packet values | `unchanged` |
+| `add_only`, record differs | `skipped_edited` (existing records are never touched) |
+| `upsert` or `managed`, record differs, matches what the packet last planted | `update` |
+| Record differs and was edited since, or the packet never planted it | `skipped_edited` |
+| `managed` tombstone, record planted by the packet and unedited | `delete` |
+
+Apply takes a per-packet advisory lock (deficiency 15), writes one transaction with a savepoint per record, and rolls the whole packet back if any record errors, reporting every failing record with its field. A `SeedPlanting` row records the outcome; its `result.provenance` holds the per-record snapshots that the next plan reads, so provenance works today without new columns. Files fail closed per record until blob transport (C4) supplies `attach_files`.
+
+Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only); snapshot-based edit detection is replaced by provenance columns once C7 lands.
 
 ## What is deliberately not here
 

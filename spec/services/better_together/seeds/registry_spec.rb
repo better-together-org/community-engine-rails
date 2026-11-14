@@ -39,6 +39,14 @@ RSpec.describe BetterTogether::Seeds::Registry do
       end
     end
 
+    it 'names references after real associations of the model' do
+      described_class.types.each do |definition|
+        definition.references.each_key do |slot|
+          expect(definition.model.reflect_on_association(slot)).to be_present, "#{definition.name} has no association #{slot}"
+        end
+      end
+    end
+
     it 'points every reference at a registered type' do
       described_class.types.each do |definition|
         definition.references.each_value do |ref|
