@@ -3481,6 +3481,16 @@ en:
         title: Register External Platform
       show:
         new_invitation: New invitation
+      storage_tab:
+        bucket: Bucket
+        description: Where this platform's uploaded files are kept. Files are stored
+          in the platform's own bucket when a storage configuration is active.
+        health: Connection health
+        manage: Manage storage configurations
+        service_type: Service type
+        shared_default: Shared installation default
+        source: Active configuration
+        title: File storage
       tabs:
         access: Access and privacy
         appearance: Appearance
@@ -3489,6 +3499,7 @@ en:
         errors: errors on this tab
         features: Features and quotas
         security: Security
+        storage: Storage
     posts:
       authors: Authors
       back_to_posts: Back to Posts
@@ -4182,15 +4193,16 @@ en:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "'%{name}' is now this platform's file storage. New
+        uploads from this platform use it immediately; existing files stay where they
+        are."
+      activated_with_restart: "'%{name}' activated. New uploads use it immediately;
+        other app processes pick it up within about 30 seconds."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'Connection to ''%{name}'' failed: %{message}'
+      connection_ok: Connection to '%{name}' succeeded.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -4199,18 +4211,21 @@ en:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Failed
+        ok: Healthy
+        unknown: Not tested
       index:
         activate_btn: Set active
-        activate_confirm: Activate this configuration? The current process rebinds
-          immediately. Other app processes require a restart to pick up the change.
-          Existing files stay on the old backend — blob migration is a separate manual
-          step.
+        activate_confirm: Activate this configuration? New uploads use it immediately
+          and other app processes pick it up within about 30 seconds. Existing files
+          stay on the old backend; blob migration is a separate manual step.
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
         activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+          the current process immediately. Other app processes pick up the change
+          within about 30 seconds.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -4229,6 +4244,7 @@ en:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: Health
         header_name: Name
         header_status: Status
         header_type: Type
@@ -4241,6 +4257,7 @@ en:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Test connection
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive

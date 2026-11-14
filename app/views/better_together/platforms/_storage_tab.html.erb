@@ -1,0 +1,29 @@
+<%# locals: (platform:) %>
+<% resolver = BetterTogether::StorageResolver.new(platform) %>
+<% summary = resolver.summary %>
+<% config = platform.active_storage_configuration %>
+<div class="card border-0 bg-body-tertiary mb-3" id="platform-storage-summary">
+  <div class="card-body">
+    <h2 class="h5 mb-2"><%= t('better_together.platforms.storage_tab.title') %></h2>
+    <p class="text-muted"><%= t('better_together.platforms.storage_tab.description') %></p>
+    <dl class="row mb-3">
+      <dt class="col-sm-4"><%= t('better_together.platforms.storage_tab.source') %></dt>
+      <dd class="col-sm-8" id="platform-storage-source">
+        <%= summary[:source] == :platform_config ? config.name : t('better_together.platforms.storage_tab.shared_default') %>
+      </dd>
+      <dt class="col-sm-4"><%= t('better_together.platforms.storage_tab.service_type') %></dt>
+      <dd class="col-sm-8"><code><%= summary[:service_type] %></code></dd>
+      <% if summary[:bucket].present? %>
+        <dt class="col-sm-4"><%= t('better_together.platforms.storage_tab.bucket') %></dt>
+        <dd class="col-sm-8"><code><%= summary[:bucket] %></code></dd>
+      <% end %>
+      <% if config %>
+        <dt class="col-sm-4"><%= t('better_together.platforms.storage_tab.health') %></dt>
+        <dd class="col-sm-8" id="platform-storage-health"><%= render 'better_together/storage_configurations/health', config: %></dd>
+      <% end %>
+    </dl>
+    <%= link_to t('better_together.platforms.storage_tab.manage'),
+                platform_storage_configurations_path(platform),
+                id: 'platform-storage-manage', class: 'btn btn-outline-primary' %>
+  </div>
+</div>

@@ -6,7 +6,7 @@ require 'rails_helper'
 # target these identifiers, and every pre-existing field keeps its name.
 RSpec.describe 'Platform form tabs DOM contract', :as_platform_manager, type: :request do # rubocop:disable RSpec/DescribeClass
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
-  let(:tabs) { %w[details access appearance domains security features] }
+  let(:tabs) { %w[details access appearance domains security features storage] }
   let(:edit_path) { better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug) }
 
   it 'renders one pill and one pane per tab, with Details active first' do # rubocop:disable RSpec/MultipleExpectations

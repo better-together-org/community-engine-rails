@@ -1,0 +1,49 @@
+{
+  "name": "platform_storage_configurations_annotated",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/storage_configurations",
+  "title": "Storage Configurations | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_storage",
+  "flow": "platform_storage_configurations",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_storage_tab_spec.rb",
+  "callouts": [
+    {
+      "selector": "table",
+      "title": "Health and test connection",
+      "bullets": [
+        "Each row shows its last connection test.",
+        "Test connection writes, reads and deletes a probe file."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 573.0,
+        "width": 1296.0,
+        "height": 103.0,
+        "right": 1368.0,
+        "bottom": 676.0,
+        "center_x": 720.0,
+        "center_y": 624.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 573.0,
+        "width": 1296.0,
+        "height": 103.0,
+        "right": 1368.0,
+        "bottom": 676.0,
+        "center_x": 720.0,
+        "center_y": 624.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 696.0,
+        "width": 380,
+        "height": 242,
+        "score": 781.0
+      }
+    }
+  ]
+}

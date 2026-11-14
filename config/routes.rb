@@ -524,6 +524,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :storage_configurations, except: %i[show] do
                 member do
                   put :activate
+                  post :test_connection
                 end
               end
               resources :platform_domains, except: %i[show]
