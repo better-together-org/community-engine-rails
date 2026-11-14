@@ -26,6 +26,23 @@ RSpec.describe BetterTogether::Billing::Entitlements::Handlers::MembershipRole d
       expect(handler(platform_params(manager_role)).errors).to eq([:role_privileged])
     end
 
+    it 'refuse a role holding any permission that is not read-only, whatever it is named' do
+      permission = create(:better_together_resource_permission, identifier: "approve_#{SecureRandom.hex(3)}", action: 'update',
+                                                                resource_type: 'BetterTogether::Platform', target: 'platform')
+      role = create(:better_together_role, :platform_role, identifier: "quiet-#{SecureRandom.hex(3)}", name: 'Quiet')
+      role.resource_permissions << permission
+
+      expect(handler(platform_params(role)).errors).to eq([:role_privileged])
+    end
+
+    it 'accept a role holding only read-only permissions' do
+      permission = create(:better_together_resource_permission, identifier: "see_#{SecureRandom.hex(3)}", action: 'read',
+                                                                resource_type: 'BetterTogether::Platform', target: 'platform')
+      supporter_role.resource_permissions << permission
+
+      expect(handler(platform_params).errors).to be_empty
+    end
+
     it 'refuse a role that does not exist, a place that is not allowed, and a community that is not this platform\'s' do
       expect(handler({ 'joinable' => 'platform', 'role' => 'nope' }).errors).to eq([:role_unknown])
       expect(handler({ 'joinable' => 'elsewhere', 'role' => supporter_role.identifier }).errors).to include(:joinable_unknown)

@@ -30,6 +30,14 @@ RSpec.describe BetterTogether::BillingMailer do
     expect(mail.html_part.body.decoded).to include(Pay.support_email.to_s)
   end
 
+  it 'names the hosted platform, not the host\'s business or support address, on a hosted platform\'s order' do
+    order.platform.update_column(:host, false) # rubocop:disable Rails/SkipsModelValidations
+    body = mail.html_part.body.decoded
+
+    expect(body).to include(ERB::Util.html_escape(order.platform.name))
+    expect(body).not_to include(Pay.business_name.to_s) if Pay.business_name.present?
+  end
+
   it 'reads in the recipient\'s language' do
     buyer.update!(locale: 'fr')
 

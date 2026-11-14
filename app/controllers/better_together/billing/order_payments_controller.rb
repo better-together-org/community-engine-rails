@@ -15,17 +15,23 @@ module BetterTogether
 
       def create
         authorize @order, :add_payment?
+        return refuse if params[:token].to_s.strip.blank?
+
         redirect_to billing_order_path(@order, locale: I18n.locale), notice: notice_for(add_payment)
       rescue Orders::AddPayment::Refused => e
         Rails.logger.warn("[billing] add payment refused: #{e.message}")
-        redirect_to billing_order_path(@order, locale: I18n.locale), alert: t('better_together.billing.order_payments.refused')
+        refuse
       end
 
       private
 
+      def refuse
+        redirect_to billing_order_path(@order, locale: I18n.locale), alert: t('better_together.billing.order_payments.refused')
+      end
+
       def add_payment
         Orders::AddPayment.call(order: @order, payment_method: params[:payment_method].to_s, amount_cents:,
-                                idempotency_key: params[:token].presence || SecureRandom.hex(8))
+                                idempotency_key: params[:token].to_s.strip)
       end
 
       def set_order

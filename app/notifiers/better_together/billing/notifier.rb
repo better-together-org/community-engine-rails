@@ -51,6 +51,16 @@ module BetterTogether
         Orders::Summary.for_order(order) if order
       end
 
+      # The seller named in the email footer: the host's Pay details on the host platform, else the platform's own name and no
+      # support address (the host's are not the hosted platform's).
+      def seller_identity
+        order = Notifications::Links.order_of(record)
+        platform = order&.platform
+        return { business: platform.name, support_email: nil } unless platform.nil? || platform.host?
+
+        { business: Pay.business_name.presence, support_email: Pay.support_email.try(:address).presence }
+      end
+
       # The stored PDFs that go with this notice (made now if the order's state has none yet, in the reader's language); none
       # for anyone but the buyer.
       def documents

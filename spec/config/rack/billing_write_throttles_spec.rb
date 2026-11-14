@@ -43,7 +43,9 @@ RSpec.describe 'Billing write throttles', :skip_host_setup do # rubocop:disable 
     'tax registration update' => ['/en/billing/tax_registrations/abc', 'PATCH', 20, 10],
     'agreement requirement create' => ['/en/billing/agreement_requirements', 'POST', 20, 10],
     'agreement requirement destroy' => ['/en/billing/agreement_requirements/abc', 'DELETE', 20, 10],
-    'plan sync' => ['/en/billing/plans/abc/sync', 'POST', 10, 5]
+    'plan sync' => ['/en/billing/plans/abc/sync', 'POST', 10, 5],
+    'subscription agreements' => ['/en/billing/subscriptions/abc/accept_agreements', 'POST', 20, 10],
+    'checkout return' => ['/en/billing/orders/abc/checkout_return', 'GET', 30, 15]
   }
 
   routes.each do |label, (path, method, ip_limit, user_limit)|
@@ -64,6 +66,15 @@ RSpec.describe 'Billing write throttles', :skip_host_setup do # rubocop:disable 
         expect(call(path, method, ip: '198.51.100.99', user_id: 'u2').status).to eq(200)
       end
     end
+  end
+
+  it 'throttles a flood of processor webhooks per address, well above normal traffic' do
+    rule = Rack::Attack.throttles.fetch('billing/webhooks/ip')
+    request = ->(path, method) { Rack::Attack::Request.new(Rack::MockRequest.env_for(path, method:, 'REMOTE_ADDR' => '203.0.113.9')) }
+
+    expect(rule.limit).to eq(600)
+    expect(rule.block.call(request.call('/pay/webhooks/stripe', 'POST'))).to eq('203.0.113.9')
+    expect(rule.block.call(request.call('/pay/webhooks/stripe', 'GET'))).to be_nil
   end
 
   it 'leaves GETs and unrelated billing pages alone' do

@@ -92,13 +92,16 @@ module BetterTogether
         end
 
         def company
-          { name: business_name, address: Pay.business_address.presence, email: support_email }.compact
+          { name: business_name, address: (Pay.business_address.presence if host_seller?), email: support_email }.compact
         end
 
-        # Pay hands the support address back as a Mail::Address, which is never blank, even when none is set.
-        def support_email = Pay.support_email.try(:address).presence
+        # The Pay business details are the host's. A hosted platform's documents name that platform, never the host.
+        def host_seller? = order.platform.nil? || order.platform.host?
 
-        def business_name = Pay.business_name.presence || order.platform&.name.to_s
+        # Pay hands the support address back as a Mail::Address, which is never blank, even when none is set.
+        def support_email = (Pay.support_email.try(:address).presence if host_seller?)
+
+        def business_name = (Pay.business_name.presence if host_seller?) || order.platform&.name.to_s
 
         def details
           [[t_order(:field_number), order.number], [t_order(:field_status), t_order("status_#{order.status}")],

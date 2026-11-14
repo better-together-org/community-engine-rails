@@ -127,6 +127,24 @@ module BetterTogether
 
           check_purchasables!
           check_payment_methods!
+          check_authority!
+        end
+
+        # Paying for a person (a gift) is open to any buyer. Buying for a community or any other owner needs a steward or
+        # someone who manages that community, unless a term or sale already settled who the beneficiary is.
+        def check_authority!
+          return if authority_not_needed? || buyer.permitted_to?(:manage_platform, platform) || manages_beneficiary?
+
+          raise Refused, 'the buyer may not purchase on behalf of that person or community'
+        end
+
+        def authority_not_needed?
+          on_behalf_of.nil? || on_behalf_of == buyer || on_behalf_of.is_a?(BetterTogether::Person) ||
+            seller_assisted || renewal || subject.present?
+        end
+
+        def manages_beneficiary?
+          on_behalf_of.is_a?(BetterTogether::Community) && buyer.permitted_to?('update_community', on_behalf_of)
         end
 
         def check_payment_methods!

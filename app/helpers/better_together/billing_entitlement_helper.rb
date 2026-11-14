@@ -11,10 +11,10 @@ module BetterTogether
                class: "badge #{ENTITLEMENT_BADGES.fetch(entitlement.status, 'bg-secondary')} entitlement-status-badge")
     end
 
-    # Roles a plan may give: those that hold no `manage_*` permission, for the platform or for a community.
+    # Roles a plan may give: those that hold only read-only permissions, for the platform or for a community.
     def billing_grantable_roles(resource_type)
       BetterTogether::Role.where(resource_type:).positioned.reject do |role|
-        role.resource_permissions.pluck(:identifier).any? { |identifier| identifier.match?(Billing::Entitlements::Handlers::MembershipRole::PRIVILEGED) }
+        Billing::Entitlements::Handlers::MembershipRole.privileged_role?(role)
       end
     end
 

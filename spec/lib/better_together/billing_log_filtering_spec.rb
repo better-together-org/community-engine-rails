@@ -36,4 +36,11 @@ RSpec.describe 'Billing request log filtering' do # rubocop:disable RSpec/Descri
     expect(filtered['billing_processor_setting']['enabled']).to eq('1')
     expect(filtered['reference']).to eq('[FILTERED]')
   end
+
+  it 'filters the checkout form token and a tax registration number' do
+    filtered = filter.filter('checkout_token' => 'abc', 'tax_registration' => { 'registration_number' => '123 RT 0001' })
+
+    expect(filtered['checkout_token']).to eq('[FILTERED]')
+    expect(filtered['tax_registration']['registration_number']).to eq('[FILTERED]')
+  end
 end

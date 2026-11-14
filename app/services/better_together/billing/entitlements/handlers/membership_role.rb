@@ -9,7 +9,8 @@ module BetterTogether
         #   { "joinable": "platform", "role": "supporter" }
         #   { "joinable": "community", "community_id": "<uuid>", "role": "member" }
         #
-        # * **Only unprivileged roles.** A role that holds any `manage_*` permission can never be granted by a plan.
+        # * **Only unprivileged roles.** A role is grantable only when every permission it holds is read-only (an allowlist of
+        #   actions); any other permission makes it privileged, whatever it is named.
         # * **Only this platform's** platform and communities.
         # * A membership the person already has (invited, added by hand) is **adopted and never taken away**
         #   (`owned: false`). Only a membership this entitlement made is removed when it lapses.
@@ -17,7 +18,12 @@ module BetterTogether
         #   the person's permission cache is expired at once. Their "you were added / removed" emails are
         #   suppressed (`suppress_notifications`); a paid role is not news in the way an invitation is.
         class MembershipRole < Base
-          PRIVILEGED = /\Amanage_/
+          READ_ONLY_ACTIONS = %w[read view list show].freeze
+
+          # A role is privileged unless every permission it holds is read-only.
+          def self.privileged_role?(role)
+            role.resource_permissions.pluck(:action).any? { |action| READ_ONLY_ACTIONS.exclude?(action.to_s.downcase) }
+          end
 
           def self.parameter_errors(parameters, platform:)
             new(parameters, platform:).errors
@@ -77,9 +83,7 @@ module BetterTogether
 
           def memberships = community? ? BetterTogether::PersonCommunityMembership : BetterTogether::PersonPlatformMembership
 
-          def privileged?(found)
-            found.resource_permissions.pluck(:identifier).any? { |identifier| identifier.match?(PRIVILEGED) }
-          end
+          def privileged?(found) = self.class.privileged_role?(found)
 
           def create_membership(entitlement, person)
             attributes = { member: person, joinable:, role:, status: 'active' }

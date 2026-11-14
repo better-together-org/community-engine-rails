@@ -208,7 +208,7 @@ module BetterTogether
     initializer 'better_together.filter_billing_pii_params' do |app|
       app.config.filter_parameters += %i[
         buyer_name buyer_email reference billing_address line1 line2 city_name state_province_name
-        postal_code country_name settings
+        postal_code country_name settings checkout_token registration_number
       ]
     end
 

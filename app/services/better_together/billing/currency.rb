@@ -21,6 +21,8 @@ module BetterTogether
       # Whole minor units from what a person typed ("12.50"), or nil when it is not a plain amount.
       def to_minor(text, code)
         text = text.to_s.strip
+        # A comma is a decimal mark only when what follows fits the currency ("12,50"), never a thousands mark ("1,000").
+        text = text.tr(',', '.') if text.match?(/\A\d+,\d{1,#{[exponent(code), 1].max}}\z/) && exponent(code).positive?
         return unless text.match?(/\A\d+(\.\d+)?\z/)
 
         (BigDecimal(text) * (10**exponent(code))).round.to_i

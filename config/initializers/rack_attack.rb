@@ -202,6 +202,21 @@ module Rack
       req.post? && req.path.match?(%r{/billing/plans/[^/]+/sync/?\z})
     end
 
+    # Ticking a subscription's agreements records acceptances; coming back from a processor checkout syncs the order
+    # with the processor each time.
+    billing_write_throttle('subscription_agreements', ip_limit: 20, user_limit: 10) do |req|
+      req.post? && req.path.match?(%r{/billing/subscriptions/[^/]+/accept_agreements/?\z})
+    end
+
+    billing_write_throttle('checkout_return', ip_limit: 30, user_limit: 15) do |req|
+      req.get? && req.path.match?(%r{/billing/orders/[^/]+/checkout_return/?\z})
+    end
+
+    # Processor webhooks arrive from a few addresses, so the limit is high; it only stops a flood.
+    throttle('billing/webhooks/ip', limit: 600, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{\A(/pay)?/webhooks/})
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).

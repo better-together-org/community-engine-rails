@@ -44,10 +44,13 @@ module BetterTogether
       def already_in?(locale) = @order.documents_locale == locale.to_s
 
       def regenerate(locale)
-        @order.update!(document_locale: locale.to_s)
-        kinds = [@order.invoice_document, @order.receipt_document].compact.map { |document| document.kind.to_sym }
-        kinds = [nil] if kinds.empty?
-        kinds.each { |kind| Orders::GenerateDocument.call(@order, kind:, locale:) }
+        # All or nothing: a failure part way leaves the order in its old language with its old documents.
+        ActiveRecord::Base.transaction do
+          @order.update!(document_locale: locale.to_s)
+          kinds = [@order.invoice_document, @order.receipt_document].compact.map { |document| document.kind.to_sym }
+          kinds = [nil] if kinds.empty?
+          kinds.each { |kind| Orders::GenerateDocument.call(@order, kind:, locale:) }
+        end
       end
 
       def language_name(locale) = I18n.t("locales.#{locale}", default: locale.to_s)

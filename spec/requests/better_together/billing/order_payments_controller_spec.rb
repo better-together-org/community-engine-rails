@@ -39,6 +39,22 @@ RSpec.describe BetterTogether::Billing::OrderPaymentsController do
       expect(response.body).to include('billing-order-add-payment-form', ActionView::RecordIdentifier.dom_id(order, :balance))
     end
 
+    it 'accepts a comma as the decimal mark in the amount' do
+      give_credit(2000, holder: buyer_user.person)
+
+      post payments_path, params: { payment_method: 'store_credit', amount: '12,50', token: 'a' }
+
+      expect(order.payments.find_by(processor: 'store_credit')).to have_attributes(amount_cents: 1250)
+    end
+
+    it 'refuses a payment sent without its form token, rather than making up a key' do
+      give_credit(2000, holder: buyer_user.person)
+
+      expect { post payments_path, params: { payment_method: 'store_credit', amount: '10.00', token: ' ' } }
+        .not_to(change { order.payments.count })
+      expect(response).to redirect_to(order_path)
+    end
+
     it 'uses all the credit it can when no amount is typed, and shows one card per waiting cash part' do
       give_credit(1000, holder: buyer_user.person)
       post payments_path, params: { payment_method: 'store_credit', token: 'a' }

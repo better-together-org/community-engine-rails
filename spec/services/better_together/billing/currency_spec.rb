@@ -19,6 +19,9 @@ RSpec.describe BetterTogether::Billing::Currency do
     expect(described_class.to_minor(' 7 ', 'USD')).to eq(700)
     expect(described_class.to_minor('1000', 'JPY')).to eq(1_000)
     expect(described_class.to_minor('0.005', 'USD')).to eq(1)
+    expect(described_class.to_minor('12,50', 'USD')).to eq(1_250)
+    expect(described_class.to_minor('12,5', 'EUR')).to eq(1_250)
+    expect(described_class.to_minor('12,50', 'JPY')).to be_nil
     ['', nil, 'lots', '-5', '1,000', '1e3', '12.5.0'].each { |text| expect(described_class.to_minor(text, 'USD')).to be_nil }
   end
 

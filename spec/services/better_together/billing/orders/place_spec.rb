@@ -94,6 +94,10 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
       expect { place_order(line_items: [{ purchasable: plan }, { purchasable: cad }]) }.to raise_error(described_class::Refused, /same currency/)
     end
 
+    it 'an order on behalf of a community the buyer does not manage' do
+      expect { place_order(on_behalf_of: create(:better_together_community)) }.to raise_error(described_class::Refused, /on behalf of/)
+    end
+
     it 'a purpose that is not known' do
       expect { place_order(agreements: false, purpose: 'barter') }.to raise_error(described_class::Refused, /not a kind of purchase/)
     end

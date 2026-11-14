@@ -33,6 +33,15 @@ RSpec.describe BetterTogether::Billing::OrderDocumentsController do
       expect(order.locale_for_documents).to eq(:fr)
     end
 
+    it 'leaves the language and the documents as they were when making them again fails part way', :aggregate_failures do
+      allow(BetterTogether::Billing::Orders::GenerateDocument).to receive(:call).and_raise(StandardError, 'boom')
+
+      expect { post sale_documents_path, params: { document_locale: 'fr' } }.to raise_error(StandardError, 'boom')
+
+      expect(order.reload.document_locale).to be_nil
+      expect(order.documents.current.count).to eq(1)
+    end
+
     it 'refuses a language the app does not support and changes nothing', :aggregate_failures do
       expect { post sale_documents_path, params: { document_locale: 'xx' } }.not_to(change { order.documents.count })
 
