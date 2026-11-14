@@ -9,7 +9,7 @@ const MODES = ["auto", "light", "dark"]
 // and applied through Bootstrap 5.3's data-bs-theme on the html element.
 export default class extends Controller {
   static targets = ["button", "status"]
-  static values = { announceAuto: String, announceLight: String, announceDark: String }
+  static values = { saveUrl: String, announceAuto: String, announceLight: String, announceDark: String }
 
   connect() {
     this.root = document.documentElement
@@ -32,6 +32,7 @@ export default class extends Controller {
     const mode = event.currentTarget.dataset.mode
     if (!MODES.includes(mode)) return
     this.root.dataset.btsColorMode = mode
+    if (this.hasSaveUrlValue && this.saveUrlValue) this.root.dataset.btsUserMode = mode
     this.save(mode)
     this.apply()
     this.statusTarget.textContent = this[`announce${mode[0].toUpperCase()}${mode.slice(1)}Value`]
@@ -48,5 +49,18 @@ export default class extends Controller {
     try { window.localStorage.setItem(STORAGE_KEY, mode) } catch (e) { /* storage may be unavailable */ }
     const secure = window.location.protocol === "https:" ? "; Secure" : ""
     document.cookie = `${COOKIE}=${mode}; path=/; max-age=31536000; SameSite=Lax${secure}`
+    this.saveToAccount(mode)
+  }
+
+  // A signed-in person's stored preference is the source of truth, so keep it in step with the toggle.
+  saveToAccount(mode) {
+    if (!this.hasSaveUrlValue || !this.saveUrlValue) return
+    const body = new FormData()
+    body.append("person[color_mode]", mode)
+    fetch(this.saveUrlValue, {
+      method: "PATCH",
+      headers: { "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content, "Accept": "application/json" },
+      body
+    }).catch(() => { /* the local choice still applies */ })
   }
 }

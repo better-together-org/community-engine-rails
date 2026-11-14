@@ -45,6 +45,7 @@
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
     <%= platform_theme_style_tag %>
+    <%= user_theme_style_tag %>
     <%= platform_favicon_tag %>
 
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>

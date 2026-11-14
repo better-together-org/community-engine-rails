@@ -3028,6 +3028,33 @@ en:
         new_person: New person
       notification_preferences: Message notification preferences
       preferences:
+        appearance:
+          color_mode:
+            hint: Automatic follows your device setting. Light and dark stay as you
+              choose.
+            title: Colour mode
+          contrast_note: 'Note: this theme has some colour pairs below WCAG AA contrast.
+            Pick another theme if text is hard to read.'
+          description: Choose how this site looks for you. Your choices follow you
+            on every device you sign in on.
+          platform_theme: Use the platform's theme
+          preview_button: Button
+          preview_card: A card on a section band
+          preview_footer: Footer link
+          preview_heading: A sample heading
+          preview_label: Appearance preview
+          preview_link: link
+          preview_site_name: Your site
+          preview_state: Previewing %{theme} in %{mode} mode. Each choice saves on
+            its own.
+          preview_text: Body text with a
+          theme:
+            hint: Pick one of the available themes, or use the one chosen by this
+              platform.
+            title: Theme
+          themes_disabled: This platform uses one theme for everyone. You can still
+            choose your colour mode below.
+          title: Appearance
         language:
           title: Language
         messaging:
@@ -3536,6 +3563,10 @@ en:
         integrations: Integrations
         security: Security
       theme:
+        allow_user_themes: Let people choose their own theme
+        allow_user_themes_hint: When on, signed-in people can pick any available theme
+          in their settings. When off, everyone sees the platform theme. People can
+          always choose their own colour mode (automatic, light or dark).
         apply: Apply theme
         clear: Clear all theme fields
         colors:

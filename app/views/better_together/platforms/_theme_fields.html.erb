@@ -10,6 +10,12 @@
   <h2 class="h5"><%= t("#{scope}.title") %></h2>
   <p class="form-text text-muted"><%= t("#{scope}.hint") %></p>
 
+  <div id="platform-allow-user-themes" class="form-check mb-3">
+    <%= form.check_box :allow_user_themes, { class: 'form-check-input', checked: platform.allow_user_themes?, id: dom_id(platform, :allow_user_themes) } %>
+    <%= form.label :allow_user_themes, t("#{scope}.allow_user_themes"), class: 'form-check-label', for: dom_id(platform, :allow_user_themes) %>
+    <div class="form-text text-muted"><%= t("#{scope}.allow_user_themes_hint") %></div>
+  </div>
+
   <div id="platform-theme-picker" class="mb-3">
     <%= label_tag :platform_theme_picker, t("#{scope}.picker_label"), class: 'form-label' %>
     <div class="row g-2 align-items-start">
