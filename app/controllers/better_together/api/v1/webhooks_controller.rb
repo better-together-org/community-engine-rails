@@ -25,7 +25,7 @@ module BetterTogether
         require_oauth_scopes :admin, only: %i[receive]
 
         # POST /api/v1/webhooks/receive
-        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable-next Metrics/MethodLength
         def receive
           validate_webhook_payload!
           return if performed?
@@ -46,7 +46,6 @@ module BetterTogether
             }
           }, status: result[:http_status] || :ok
         end
-        # rubocop:enable Metrics/MethodLength
 
         private
 
@@ -78,7 +77,7 @@ module BetterTogether
           }, status: :unprocessable_entity
         end
 
-        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable-next Metrics/MethodLength
         def process_webhook_event(event:, payload:)
           case event
           when 'ping'
@@ -95,7 +94,6 @@ module BetterTogether
             }
           end
         end
-        # rubocop:enable Metrics/MethodLength
 
         def handle_ping
           {

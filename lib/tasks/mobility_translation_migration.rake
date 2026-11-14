@@ -90,23 +90,20 @@ namespace :translations do # rubocop:todo Metrics/BlockLength
               updated_at: text_translation.updated_at
             }
 
-            # rubocop:todo Layout/LineLength
+            # rubocop:todo-next Layout/LineLength
             puts "✓ Prepared for migration: #{text_translation.translatable_type} ##{text_translation.translatable_id} name (#{text_translation.locale}): '#{text_translation.value}'"
-            # rubocop:enable Layout/LineLength
             migration_count += 1
           else
-            # rubocop:todo Layout/LineLength
+            # rubocop:todo-next Layout/LineLength
             puts "⚠ String translation already exists for #{text_translation.translatable_type} ##{text_translation.translatable_id} name (#{text_translation.locale}), skipping"
-            # rubocop:enable Layout/LineLength
             skipped_count += 1
           end
 
           # Always prepare text translation for bulk deletion
           records_to_delete << text_translation.id
         rescue StandardError => e
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           puts "✗ Error preparing #{text_translation.translatable_type} ##{text_translation.translatable_id}: #{e.message}"
-          # rubocop:enable Layout/LineLength
           error_count += 1
         end
 
@@ -202,14 +199,12 @@ namespace :translations do # rubocop:todo Metrics/BlockLength
         if string_exists
           # Safe to delete the text translation - add to bulk deletion list
           records_to_delete << text_translation.id
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           puts "🗑️  Prepared for cleanup: #{text_translation.translatable_type} ##{text_translation.translatable_id} name (#{text_translation.locale})"
-          # rubocop:enable Layout/LineLength
           cleanup_count += 1
         else
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           puts "⚠️  String translation missing for #{text_translation.translatable_type} ##{text_translation.translatable_id} (#{text_translation.locale}) - skipping cleanup"
-          # rubocop:enable Layout/LineLength
           verification_failures += 1
         end
       end

@@ -8,7 +8,7 @@ require 'yaml'
 
 module BetterTogether # :nodoc:
   # Captures deterministic desktop and mobile screenshots for documentation specs.
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module CapybaraScreenshotEngine # :nodoc:
     extend self
 
@@ -26,7 +26,7 @@ module BetterTogether # :nodoc:
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def register_drivers
       return if @registered
 
@@ -54,7 +54,6 @@ module BetterTogether # :nodoc:
 
       @registered = true
     end
-    # rubocop:enable Metrics/MethodLength
 
     def devices_for(device)
       return %i[desktop mobile] if device.nil? || device.to_sym == :both
@@ -62,7 +61,7 @@ module BetterTogether # :nodoc:
       [device.to_sym]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def capture_single(name, device, metadata:, callouts:, narrative: nil)
       directory = SCREENSHOT_ROOT.join(device.to_s)
       FileUtils.mkdir_p(directory)
@@ -108,7 +107,6 @@ module BetterTogether # :nodoc:
 
       image_path.to_s
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def default_metadata(name, device)
       {
@@ -133,7 +131,7 @@ module BetterTogether # :nodoc:
       nil
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def collect_callout_targets(callouts)
       normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
       return [] if normalized.empty?
@@ -153,7 +151,6 @@ module BetterTogether # :nodoc:
         callout.merge(target: geometry[:target], avoid: geometry[:avoid])
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def normalize_callout(callout)
       {
@@ -302,7 +299,7 @@ module BetterTogether # :nodoc:
       nil
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def hide_sticky_elements
       Capybara.page.execute_script(<<~JS)
         (function() {
@@ -332,7 +329,6 @@ module BetterTogether # :nodoc:
     rescue StandardError
       nil
     end
-    # rubocop:enable Metrics/MethodLength
 
     def restore_sticky_elements
       Capybara.page.execute_script(<<~JS)
@@ -352,5 +348,4 @@ module BetterTogether # :nodoc:
       nil
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

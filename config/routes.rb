@@ -396,7 +396,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # Routes accessible to Platform Managers OR Analytics Viewers
-        # rubocop:disable Metrics/BlockLength
+        # rubocop:disable-next Metrics/BlockLength
         authenticated :user, lambda { |u|
           u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
         } do
@@ -452,7 +452,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
-        # rubocop:enable Metrics/BlockLength
 
         # Only logged-in Platform Managers have access to these routes
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength

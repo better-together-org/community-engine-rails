@@ -170,7 +170,7 @@ RSpec.describe 'Documentation screenshots for agreement flows',
     expect(result[:mobile]).to end_with("docs/screenshots/mobile/#{slug}.png")
   end
 
-  # rubocop:todo Metrics/MethodLength
+  # rubocop:todo-next Metrics/MethodLength
   def fill_in_action_text_hidden_input(field_name, value)
     page.execute_script(<<~JS, field_name, value)
       (function(targetName, content) {
@@ -189,7 +189,6 @@ RSpec.describe 'Documentation screenshots for agreement flows',
       })(arguments[0], arguments[1]);
     JS
   end
-  # rubocop:enable Metrics/MethodLength
 
   def select_model_privacy(value)
     page.execute_script(<<~JS, value)
@@ -203,7 +202,7 @@ RSpec.describe 'Documentation screenshots for agreement flows',
     JS
   end
 
-  # rubocop:todo Metrics/AbcSize
+  # rubocop:todo-next Metrics/AbcSize
   def open_blocked_publish_modal
     capybara_sign_in_user(publisher_user.email, 'SecureTest123!@#')
     visit new_community_path(locale: I18n.default_locale)
@@ -222,9 +221,8 @@ RSpec.describe 'Documentation screenshots for agreement flows',
     expect(page).to have_text('Agreement', wait: 10)
     expect(page).to have_button('I agree', disabled: true, wait: 10)
   end
-  # rubocop:enable Metrics/AbcSize
 
-  # rubocop:todo Metrics/MethodLength
+  # rubocop:todo-next Metrics/MethodLength
   def scroll_agreement_modal_to_end
     Selenium::WebDriver::Wait.new(timeout: 10).until do
       page.evaluate_script(<<~JS)
@@ -246,7 +244,6 @@ RSpec.describe 'Documentation screenshots for agreement flows',
       })();
     JS
   end
-  # rubocop:enable Metrics/MethodLength
 
   def accept_required_registration_agreements_for(person)
     BetterTogether::Agreement.registration_consent_records.each do |agreement|

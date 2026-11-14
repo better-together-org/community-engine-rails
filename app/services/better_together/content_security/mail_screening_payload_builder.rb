@@ -5,7 +5,7 @@ require 'digest'
 module BetterTogether
   module ContentSecurity
     # Builds shared-contract screening payloads for inbound email bodies and attachments.
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class MailScreeningPayloadBuilder
       def initialize(inbound_email:, mail:, resolution:, sender:, body_plain:)
         @inbound_email = inbound_email
@@ -23,7 +23,7 @@ module BetterTogether
 
       attr_reader :inbound_email, :mail, :resolution, :sender, :body_plain
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def message_payload(message)
         base_payload(
           source: {
@@ -44,7 +44,6 @@ module BetterTogether
           content_text: [message_metadata_text, body_plain, attachment_manifest_text].compact_blank.join("\n\n")
         )
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def attachment_payloads(message)
         mail.attachments.each_with_index.map do |attachment, index|
@@ -176,6 +175,5 @@ module BetterTogether
         }
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

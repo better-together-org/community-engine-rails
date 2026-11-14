@@ -11,7 +11,7 @@ module BetterTogether
       @person_community_membership = build_person_community_membership
       authorize @person_community_membership
 
-      # rubocop:todo Metrics/BlockLength
+      # rubocop:todo-next Metrics/BlockLength
       respond_to do |format|
         if self_service_request? && @person_community_membership.persisted?
           flash[:notice] = existing_self_service_notice(@person_community_membership)
@@ -22,9 +22,8 @@ module BetterTogether
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.append('members_list',
-                                  # rubocop:todo Layout/LineLength
+                                  # rubocop:todo-next Layout/LineLength
                                   partial: 'better_together/person_community_memberships/person_community_membership_member', locals: { membership: @person_community_membership }),
-              # rubocop:enable Layout/LineLength
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
                                                      locals: { flash: })
             ]
@@ -42,7 +41,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/BlockLength
     end
 
     def destroy # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
