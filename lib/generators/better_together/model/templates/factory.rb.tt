@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+FactoryBot.define do
+  factory :<%= factory_name %>, class: '<%= full_class_name %>' do
+<% translatable_names.each do |name| -%>
+    sequence(:<%= name %>) { |n| "<%= name.humanize %> #{n}" }
+<% end -%>
+<% column_attributes.each do |attribute| -%>
+    <%= attribute.name %> { <%= attribute.default.inspect %> }
+<% end -%>
+  end
+end
