@@ -80,6 +80,15 @@ RSpec.describe BetterTogether::Billing::CreditAccountsController do
       expect(response.body).not_to include('billing-credit-grant-form')
     end
 
+    it 'treats a real person who is not a member exactly like an id that does not exist' do
+      stranger = create(:better_together_person)
+
+      get accounts_path(person_id: stranger.id)
+
+      expect(response.body).to include('billing-credit-lookup-failed')
+      expect(response.body).not_to include('billing-credit-grant-form', stranger.name)
+    end
+
     it 'shows an account\'s lots and entries, with who gave it' do
       lot = give(buyer, 1500, note: 'Thanks for volunteering')
       account = lot.account

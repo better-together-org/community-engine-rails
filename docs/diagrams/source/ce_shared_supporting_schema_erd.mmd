@@ -9,6 +9,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_DEFAULT_ADDRESSES : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_DEFAULT_ADDRESSES : "person / person_id"
   EXT_ADDRESS ||--o{ BILLING_DEFAULT_ADDRESSES : "address / address_id"
+  EXT_PLATFORM ||--o{ BILLING_HOSTED_ACCOUNTS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_HOSTED_ACCOUNTS : "suspended_by / suspended_by_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXT_PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_ORDER_DOCUMENTS : "platform / platform_id"
@@ -132,6 +134,14 @@ erDiagram
     person_id uuid
     platform_id uuid
     kind string
+  }
+
+  BILLING_HOSTED_ACCOUNTS {
+    platform_id uuid
+    suspended_by_id uuid
+    status string
+    suspension_reason text
+    suspended_at datetime
   }
 
   NOTICED_EVENTS {

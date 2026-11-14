@@ -59,7 +59,7 @@
       <div class="card-body">
         <% unless internal %>
         <div class="mb-3">
-          <%= form.label :hold_hours, t('better_together.billing.processor_settings.field_hold_hours'), class: 'form-label' %>
+          <%= form.label :hold_hours, t('better_together.billing.processor_settings.field_hold_hours'), class: 'form-label', for: 'billing-processor-hold-hours' %>
           <%= form.number_field :hold_hours, class: 'form-control', min: BetterTogether::Billing::ProcessorSetting::MIN_HOLD_HOURS,
                                              max: BetterTogether::Billing::ProcessorSetting::MAX_HOLD_HOURS, id: 'billing-processor-hold-hours' %>
           <div class="form-text"><%= t('better_together.billing.processor_settings.field_hold_hours_hint') %></div>
@@ -68,7 +68,7 @@
 
         <% if adapter.grant_on_options.many? %>
           <div class="mb-3">
-            <%= form.label :grant_on, t('better_together.billing.processor_settings.field_grant_on'), class: 'form-label' %>
+            <%= form.label :grant_on, t('better_together.billing.processor_settings.field_grant_on'), class: 'form-label', for: 'billing-processor-grant-on' %>
             <%= form.select :grant_on, adapter.grant_on_options.map { |option| [t("better_together.billing.processor_settings.grant_on_#{option}"), option] },
                             {}, class: 'form-select', id: 'billing-processor-grant-on' %>
             <div class="form-text"><%= t('better_together.billing.processor_settings.field_grant_on_hint') %></div>

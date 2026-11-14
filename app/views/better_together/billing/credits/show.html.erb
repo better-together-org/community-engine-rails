@@ -24,7 +24,7 @@
             <%= t('better_together.billing.credit.usable', amount: billing_amount(account.usable_cents, account.currency)) %>
           </span>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" role="region" tabindex="0" aria-labelledby="<%= dom_id(account, :heading) %>">
           <table id="<%= dom_id(account, :lots) %>" class="table mb-0 billing-credit-lots-table">
             <caption class="visually-hidden"><%= t('better_together.billing.credit.lots_caption') %></caption>
             <thead class="table-light">

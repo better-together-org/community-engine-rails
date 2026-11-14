@@ -10,6 +10,8 @@
 # * promotion_redemptions: one per person per promotion (unique), tying the person to the credit lot the
 #   redemption made.
 #
+# The promotion's name is a Mobility translation, not a column.
+#
 # platform_id is NOT NULL, and the redemption's links to its promotion and lot are COMPOSITE foreign keys
 # with the platform, so a row can never point at another platform's.
 class CreateBetterTogetherBillingPromotions < ActiveRecord::Migration[7.2]
@@ -33,7 +35,6 @@ class CreateBetterTogetherBillingPromotions < ActiveRecord::Migration[7.2]
     create_bt_table :billing_promotions do |t|
       t.uuid :platform_id, null: false
       t.references :created_by, type: :uuid, index: false, foreign_key: { to_table: :better_together_people, on_delete: :nullify }
-      t.string :name, null: false
       t.string :code_digest, null: false
       t.bigint :amount_cents, null: false
       t.string :currency, null: false

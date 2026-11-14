@@ -39,6 +39,43 @@
   </div>
 </div>
 
+<% refunds = billing_order_refunds(order).to_a %>
+<% if refunds.any? %>
+  <div id="billing-order-refunds" class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong><%= t('better_together.billing.orders.refunds_heading') %></strong>
+      <span id="<%= dom_id(order, :refunded) %>" class="text-body-secondary">
+        <%= t('better_together.billing.orders.refunded_total', amount: billing_amount(refunds.sum(&:amount_cents), order.currency)) %>
+      </span>
+    </div>
+    <div class="table-responsive">
+      <table id="billing-order-refunds-table" class="table mb-0" aria-label="<%= t('better_together.billing.orders.refunds_caption', number: order.number) %>">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('better_together.billing.orders.field_refund_date') %></th>
+            <th scope="col"><%= t('better_together.billing.orders.field_status') %></th>
+            <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_amount') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% refunds.each do |refund| %>
+            <tr id="<%= dom_id(refund) %>">
+              <th scope="row" class="fw-normal"><%= l(refund.created_at, format: :long) %></th>
+              <td><%= billing_refund_status_label(refund) %></td>
+              <td class="text-end">
+                <%= billing_amount(refund.amount_cents, refund.currency) %>
+                <% if refund.tax_cents.positive? %>
+                  <span class="d-block small text-body-secondary"><%= t('better_together.billing.orders.refund_includes_tax', tax: billing_amount(refund.tax_cents, refund.currency)) %></span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
 <% if order.agreement_acceptances.any? %>
   <div class="card mb-4">
     <div class="card-header"><strong><%= t('better_together.billing.orders.agreements_heading') %></strong></div>

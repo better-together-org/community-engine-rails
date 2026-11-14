@@ -1,0 +1,63 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.events.index_title') %>
+<% end %>
+
+<div id="billing-events-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.events.index_title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.events.index_intro') %></p>
+
+  <%= render 'better_together/billing/events/alerts', summary: @alert_summary %>
+
+  <nav id="billing-events-filter" aria-label="<%= t('better_together.billing.events.filter_label') %>" class="mb-3">
+    <ul class="nav nav-pills flex-wrap gap-1">
+      <% BetterTogether::Billing::EventsController::STATES.each do |state| %>
+        <li class="nav-item">
+          <%= link_to t("better_together.billing.events.states.#{state}"), billing_events_path(state:, locale: I18n.locale),
+                      id: "billing-events-filter-#{state}", class: "nav-link#{' active' if @state == state}",
+                      aria: { current: (@state == state ? 'page' : nil) } %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+
+  <% if @events.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-events-table" class="table table-hover mb-0">
+          <caption class="visually-hidden"><%= t('better_together.billing.events.table_caption') %></caption>
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.events.field_event') %></th>
+              <th scope="col"><%= t('better_together.billing.events.field_status') %></th>
+              <th scope="col"><%= t('better_together.billing.events.field_attempts') %></th>
+              <th scope="col"><%= t('better_together.billing.events.field_last_attempt') %></th>
+              <th scope="col"><%= t('better_together.billing.events.field_reason') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @events.each do |event| %>
+              <tr id="<%= dom_id(event) %>">
+                <th scope="row">
+                  <%= event.event_type %>
+                  <div class="text-body-secondary small fw-normal"><code><%= event.processor %></code></div>
+                </th>
+                <td><%= billing_event_status_badge(event) %></td>
+                <td><%= event.attempt_count %></td>
+                <td><%= event.last_attempted_at ? l(event.last_attempted_at, format: :short) : t('better_together.billing.events.never') %></td>
+                <td><%= event.dead_letter_reason ? t("better_together.billing.events.reasons.#{event.dead_letter_reason}", default: event.dead_letter_reason) : '' %></td>
+                <td class="text-end">
+                  <%= link_to t('globals.view'), billing_event_path(event, locale: I18n.locale),
+                              id: "billing-event-view-#{event.id}", class: 'btn btn-outline-secondary btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="billing-events-pagination" class="mt-3"><%= paginate @events %></div>
+  <% else %>
+    <p id="billing-events-empty" class="text-body-secondary"><%= t('better_together.billing.events.none') %></p>
+  <% end %>
+</div>

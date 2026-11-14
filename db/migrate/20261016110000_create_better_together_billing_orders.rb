@@ -12,6 +12,7 @@
 # * A payment is one payment made against an order through one method (a vendor processor,
 #   cash, store credit...), so an order can be paid in parts by different methods. Its
 #   idempotency key makes repeating a request harmless. A refund belongs to one payment.
+# * Line descriptions are Mobility translations, not columns.
 # * Money is integer minor units plus an ISO currency, never a float.
 class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   def up
@@ -32,7 +33,7 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
   def create_orders # rubocop:disable Metrics/MethodLength
     return if table_exists?(:better_together_billing_orders)
 
-    create_bt_table :billing_orders do |t|
+    create_bt_table :billing_orders do |t| # rubocop:disable Metrics/BlockLength
       t.references :platform, null: false, type: :uuid, index: { name: 'idx_bt_billing_orders_platform' },
                               foreign_key: { to_table: :better_together_platforms }
       t.string :seller_type
@@ -57,6 +58,13 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.uuid :pay_subscription_id
       # For a subscription order: the method each renewal is paid by, chosen by the buyer (see Subscriptions::Start).
       t.string :renewal_payment_method
+      # What a walk-up sale records about the buyer: the email notices go to and the billing address (JSON).
+      # Both are personal data, so the model encrypts them: text columns, no default.
+      t.text :buyer_email
+      t.text :billing_address
+      # The language the order was placed in and, when a steward asks for it, the language its documents are made in.
+      t.string :placed_locale
+      t.string :document_locale
     end
 
     add_index :better_together_billing_orders, %i[id platform_id], unique: true, name: 'idx_bt_billing_orders_id_platform'
@@ -79,7 +87,6 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.uuid :order_id, null: false
       t.string :purchasable_type, null: false
       t.uuid :purchasable_id, null: false
-      t.string :description, null: false
       t.integer :quantity, null: false, default: 1
       t.integer :unit_amount_cents, null: false
       t.string :currency, null: false
@@ -142,6 +149,8 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.references :recorded_by, type: :uuid, index: { name: 'idx_bt_billing_refunds_recorded_by' },
                                  foreign_key: { to_table: :better_together_people, on_delete: :nullify }
       t.integer :amount_cents, null: false
+      # The part of the refund that is tax, pro-rated from the order's tax when the refund is recorded.
+      t.integer :tax_cents, null: false, default: 0
       t.string :currency, null: false
       t.string :status, null: false, default: 'pending'
       t.string :reason

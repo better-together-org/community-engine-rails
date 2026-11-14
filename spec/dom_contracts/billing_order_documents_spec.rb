@@ -43,4 +43,12 @@ RSpec.describe 'Billing order documents DOM contract', :as_platform_manager, typ
 
     expect(response.body).not_to include(dom_id.dom_id(order, :documents))
   end
+
+  it 'connects the language label to its select' do
+    BetterTogether::Billing::Orders::GenerateDocument.call(order)
+
+    get "/fr/billing/orders/#{order.id}"
+
+    expect_labels_resolved(response.body, within: "##{dom_id.dom_id(order, :regenerate_documents)}")
+  end
 end

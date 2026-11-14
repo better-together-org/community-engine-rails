@@ -841,6 +841,7 @@ en:
         pending: pending
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: You have read to the end. You can now tick the box to accept.
       show:
         title: Agreement
       status:
@@ -1049,6 +1050,8 @@ en:
         field_origin: Where it came from
         field_remaining: Left
         grant_amount: Amount
+        grant_confirm: Give %{amount} of store credit to %{person}?
+        grant_confirm_blank: Give store credit to %{person}?
         grant_currency: Currency
         grant_expires: Expires after (days)
         grant_expires_hint: Leave empty for credit that does not expire.
@@ -1056,6 +1059,8 @@ en:
         grant_refused: That credit could not be given. Check the amount, and note
           that you cannot give credit to yourself.
         grant_submit: Give credit
+        grant_too_large: That credit is more than one grant may give. The most is
+          %{maximum}.
         granted: Credit given.
         history: History
         history_caption: What has happened to this credit, newest first
@@ -1109,6 +1114,123 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
+      events:
+        alerts:
+          alerted_body: 'Events the processor reported for attention: %{count}.'
+          dead_lettered_body: 'Dead-lettered events: %{count}. They need a person
+            to look and retry.'
+          dead_lettered_heading: Some events were given up on.
+          heading: Payment event alerts
+          none: Nothing needs attention.
+          oldest: 'Oldest unresolved event:'
+          repeated_body: 'Events that failed %{threshold} or more times: %{count}.'
+          repeated_heading: Some events keep failing.
+          unresolved_body: 'Failed or dead-lettered events older than %{hours} hours:
+            %{count}.'
+          unresolved_heading: Some problems are not resolved.
+        back: Back to payment events
+        field_attempts: Attempts
+        field_event: Event
+        field_event_id: Processor event id
+        field_last_attempt: Last attempt
+        field_last_replayed: Last retried
+        field_processor: Processor
+        field_reason: Why it stopped
+        field_received: Received
+        field_replays: Retries by an operator
+        field_status: State
+        filter_label: Filter payment events by state
+        index_intro: Messages from the payment processor that could not be handled.
+          Look at what went wrong, then retry them once it is fixed.
+        index_title: Payment events
+        never: Not yet
+        none: There are no events in this state.
+        reasons:
+          retries_exhausted: It failed too many times.
+          stale_unresolved_drift: It was left unfinished for too long.
+        refused:
+          not_replayable: Only failed or dead-lettered events can be retried.
+          other: The event could not be retried.
+          payload_unavailable: The message of this event was already removed, so it
+            cannot be run again.
+          platform_not_configured: This platform no longer has that payment method
+            set up.
+          unsupported_processor: The payment method of this event is no longer installed.
+        replay_button: Retry event
+        replay_confirm: Retry this payment event now?
+        replay_explainer: 'Retrying runs the event again from the start. It is safe
+          to retry: an event that already went through is not applied a second time.'
+        replay_heading: Retry this event
+        replay_not_needed: This event does not need a retry.
+        replay_unavailable: This event cannot be retried because its message was already
+          removed or its payment method is no longer set up.
+        replayed: The event was queued to run again.
+        show_intro: What happened to this event. The message itself is stored encrypted
+          and is not shown here.
+        show_title: Payment event
+        states:
+          alerted: Reported
+          all: All
+          dead_lettered: Dead-lettered
+          failed: Failed
+          ignored: Ignored
+          pending: Waiting
+          problems: Needs attention
+          processed: Done
+          replayed: Retried
+        table_caption: Payment events and their state
+      hosted_billing:
+        accept_button: Accept for this platform
+        accepted: Agreement accepted for this platform.
+        accepted_state: Accepted for this platform.
+        go_to_methods: Set up your payment methods
+        intro: "%{platform} is hosted. Accept the host's billing agreements below
+          to unlock what each one covers. Nothing is switched on until you also set
+          up a payment method."
+        merchant_not_yet: Merchant of record billing is not available yet. You can
+          accept this agreement ahead of time.
+        methods_locked: Accept the hosted platform billing agreement and the hosted
+          local billing agreement to take cash, cheque or e-transfer payments.
+        modes:
+          billing:
+            title: Hosted platform billing agreement
+            unlocks: Needed before any billing on this platform, local or remote.
+          local:
+            title: Hosted local billing agreement
+            unlocks: Lets this platform take cash, cheque and e-transfer. The host
+              does not track, guarantee or hold liability for these.
+          merchant:
+            title: Merchant onboarding agreement
+            unlocks: Lets the host collect payments for this platform as merchant
+              of record.
+        not_in_force: Not available yet. The host is still preparing this agreement.
+        refused:
+          accept_box: Tick the box to accept the agreement.
+          needs_billing_first: Accept the hosted platform billing agreement first.
+          not_in_force: That agreement is not in force yet.
+        suspended: The host has suspended billing for this platform. Your data is
+          kept. Contact the host to have it restored.
+        title: Hosted billing
+      hosted_platforms:
+        accepted: Accepted
+        actions: Actions
+        intro: Which hosted platforms have accepted which billing agreements, and
+          whether their billing is on. Suspending pauses a platform's billing and
+          keeps its data.
+        none: No platforms are hosted here yet.
+        not_accepted: Not accepted
+        platform: Platform
+        reason: Reason for suspending
+        reason_required: Give a reason to suspend billing.
+        resume: Resume
+        resumed: Billing resumed for that platform.
+        status: Billing
+        status_off: 'Off'
+        status_on: 'On'
+        status_suspended: Suspended
+        suspend: Suspend
+        suspended: Billing suspended for that platform.
+        title: Hosted platforms
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to
@@ -1380,6 +1502,8 @@ en:
           payment either way.
         claimed: The seller has been told you sent it.
         claimed_note: You told the seller on %{date}.
+        clear_confirm: Mark the cheque for order %{number} from %{buyer} as cleared?
+          Its payment will be counted as received.
         disclosure_cash_in_person: Cash is handed over in person. Keep a note of when
           and to whom.
         disclosure_cheque_clearing: A cheque can take days to clear and can bounce.
@@ -1419,6 +1543,10 @@ en:
           money reaches you, whether or not the buyer says they sent it.
         queue_link: Payments waiting for you
         queue_title: Payments waiting for you
+        receive_cheque_confirm: Mark the cheque for order %{number} from %{buyer}
+          as received (%{amount})? Mark it cleared once the bank has paid it.
+        receive_confirm: Mark order %{number} from %{buyer} as received (%{amount})?
+          The order will be settled and the buyer given access.
         receive_hint: Mark this received when the money has reached you. You do not
           need to wait for the buyer to say they sent it.
         received_on_label: Date received (optional)
@@ -1432,6 +1560,8 @@ en:
           self_confirmation: You cannot confirm a payment for your own purchase.
           too_many_claims: That has been sent too many times.
         reject: Not received, reject
+        reject_confirm: Reject the payment for order %{number} from %{buyer}? The
+          order will be cancelled and the buyer told.
         reject_reason_label: If you did not receive it, say why (the buyer will see
           this)
         rejection_reason: 'The seller said: %{reason}'
@@ -1503,6 +1633,7 @@ en:
         field_placed: Placed
         field_purpose: For
         field_quantity: Quantity
+        field_refund_date: Date
         field_status: Status
         field_subtotal: Subtotal
         field_tax: Tax
@@ -1540,6 +1671,14 @@ en:
         purpose_one_time: One-time purchase
         purpose_subscription: Subscription or membership
         purpose_ticket: Event tickets
+        refund_includes_tax: includes %{tax} tax
+        refund_status_failed: Failed
+        refund_status_pending: Pending
+        refund_status_recorded: Recorded by the seller
+        refund_status_succeeded: Refunded
+        refunded_total: Refunded %{amount}
+        refunds_caption: Money given back for order %{number}
+        refunds_heading: Refunds
         regenerate_documents: Make again
         return_paid: Thank you. Your payment was received.
         return_pending: Thank you. We are confirming your payment and will tell you
@@ -1618,9 +1757,9 @@ en:
         field_add_on: Add-on only
         field_add_on_hint: Sold only as an extra on another plan's order, never on
           its own. One-time, no included access.
-        field_amount_cents: Amount (smallest currency unit)
-        field_amount_cents_hint: e.g. 4500 = 45.00 for most currencies; 4500 = 4500
-          for zero-decimal currencies such as JPY
+        field_amount: Amount
+        field_amount_hint: Type the price as you would write it, for example 45.00.
+          Currencies without cents, such as JPY and KRW, take whole numbers.
         field_beneficiary_label: Beneficiary label
         field_billing_interval: Billing interval
         field_community_capacity_tier: Capacity tier
@@ -1936,11 +2075,15 @@ en:
         cancel_refused: The order cannot be cancelled while money is still against
           it. Return each payment first.
         cancelled: The order was cancelled and what it held was released.
+        credit_refund_confirm: Return %{amount} to the store credit of %{buyer} for
+          order %{number}? This cannot be undone.
         credit_refund_heading: Return to store credit
         credit_refund_hint: The buyer paid with store credit, so the money goes back
           onto their credit balance at once. It cannot be paid out as cash.
         credit_refund_submit: Return to credit
         refund_amount_label: Amount given back (up to %{max}; blank for all)
+        refund_confirm: Record a refund of %{amount} for order %{number} to %{buyer}?
+          This cannot be undone.
         refund_heading: Record a refund
         refund_hint: The platform cannot move this money. Record it here once you
           have given it back.
@@ -2131,10 +2274,14 @@ en:
         buyer_hint: Pick someone already on this platform, or leave this empty and
           give a name below to add them. Type at least two letters of a name or handle.
         buyer_label: Buyer
-        buyer_name_hint: Needed only when no one is picked above. They are added as
-          a member and invited to join the community.
+        buyer_name_hint: Needed only when no one is picked above. The buyer is recorded
+          for this sale, and may be invited to join the community.
         buyer_name_label: Name (if the buyer is not on the platform yet)
         buyer_placeholder: Search by name or handle
+        error_invitation_cap: You have invited as many new buyers today as is allowed.
+          Try again tomorrow, or pick the buyer from the member list.
+        error_member_email: That email belongs to a member of this platform. Choose
+          them from the member list instead.
         error_refused: That sale could not be recorded. Check the buyer, the way of
           paying and the agreements.
         intro: Record a sale made face to face. The buyer does not need to do anything;
@@ -3759,8 +3906,8 @@ en:
           all_types: All Content Types
           apply: Apply Filters
           bases:
-            invoice: The day it was placed
-            paid: The day it was paid
+            invoice: Invoice date
+            paid: Payment date
           basis: Count a sale by
           communities: Communities
           content_type: Content Type
@@ -4081,6 +4228,15 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        billing_agreement_requirements: Purchase terms
+        billing_allowances: Allowances and usage
+        billing_credit_accounts: Store credit accounts
+        billing_plans: Billing Plans
+        billing_processor_settings: Payment Methods
+        billing_promotions: Promotion codes
+        billing_sales: Sales
+        billing_subscribers: Subscribers
+        billing_tax_registrations: Tax registrations
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities
@@ -6322,6 +6478,7 @@ en:
       already_confirmed: was already confirmed, please try signing in
       already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
+      cannot_be_the_host: cannot be the host platform
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
@@ -6335,6 +6492,8 @@ en:
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
       greater_than_refundable: is more than can still be refunded
+      hosted_local_billing_not_agreed: needs the hosted local billing agreements accepted
+        first
       immutable_after_processor_link: cannot be changed once the plan is linked to
         a processor price
       in: must be in %{count}
@@ -6351,6 +6510,7 @@ en:
       no_payment_method: needs an online processor or at least one other way to pay
       not_a_number: is not a number
       not_a_purchase_agreement: must be a purchase agreement
+      not_an_amount: must be a plain figure such as 45.00
       not_an_integer: must be an integer
       not_an_offline_method: "%{method} is not an installed payment method outside
         a processor"
@@ -6373,9 +6533,11 @@ en:
       recipient_missing: needs an email address or a phone number
       required: must exist
       taken: has already been taken
+      too_large: is too large
       too_long:
         one: is too long (maximum is %{count} character)
         other: is too long (maximum is %{count} characters)
+      too_precise: can have no more than %{places} decimal places in this currency
       too_short:
         one: is too short (minimum is %{count} character)
         other: is too short (minimum is %{count} characters)

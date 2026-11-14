@@ -12,8 +12,9 @@ module BetterTogether
       def show
         authorize BetterTogether::Billing::Order, :index?
         @terms = own_terms.limit(5)
-        @orders = billing_owner.billing_orders.bought_by(person).newest_first.limit(5)
+        @orders = billing_owner.billing_orders.bought_by(person).newest_first.limit(5).to_a
         @add_ons = extras_for_held_plans
+        @refunded_by_order = refunded_by_order(@orders)
         load_credit_and_access
       end
 
@@ -26,6 +27,17 @@ module BetterTogether
         billing_owner.billing_plans.sold_by_platform.active.add_on.order(:amount_cents, :identifier).limit(20)
                      .select { |add_on| policy(add_on).buy_alone? }.first(6)
       end
+
+      # What has been given back on each of these orders (money that failed to move is not counted).
+      def refunded_by_order(orders)
+        billing_owner.billing_orders.where(id: orders.map(&:id)).joins(payments: :refunds)
+                     .where(refunds_table => { status: Refund::COUNTED })
+                     .group("#{orders_table}.id").sum("#{refunds_table}.amount_cents")
+      end
+
+      def refunds_table = Refund.arel_table.name
+
+      def orders_table = Order.arel_table.name
 
       def load_credit_and_access
         @credit_accounts = billing_owner.billing_credit_accounts.where(holder: person).order(:currency)

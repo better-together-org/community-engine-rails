@@ -26,6 +26,30 @@ module BetterTogether
         (BigDecimal(text) * (10**exponent(code))).round.to_i
       end
 
+      # The largest price a form accepts, in minor units (the column is a bigint).
+      MAX_MINOR = 99_999_999_999
+
+      # What a person typed as a price ("45", "45.00", "45,50") as [minor units, nil], or [nil, reason] where the reason
+      # is :blank, :not_an_amount, :too_precise (more decimals than the currency has) or :too_large.
+      def parse_major(text, code)
+        text = text.to_s.strip
+        return [nil, :blank] if text.empty?
+
+        text = text.tr(',', '.') if text.count(',') == 1 && text.exclude?('.')
+        return [nil, :not_an_amount] unless text.match?(/\A\d+(\.\d+)?\z/)
+
+        scaled = BigDecimal(text) * (10**exponent(code))
+        return [nil, :too_precise] unless scaled == scaled.round
+        return [nil, :too_large] if scaled > MAX_MINOR
+
+        [scaled.to_i, nil]
+      end
+
+      # A stored price as it is typed into a form: "45.00", or "4500" for a currency with no cents.
+      def to_input(amount_minor, code)
+        format("%.#{exponent(code)}f", to_major(amount_minor, code))
+      end
+
       def unit(code)
         return '' if code.blank?
 

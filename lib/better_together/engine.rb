@@ -155,6 +155,16 @@ module BetterTogether
       ]
     end
 
+    # Buyer and payee details typed at checkout, walk-up sales and offline method setup. Symbols match as
+    # substrings of the key, so `line1` also covers `billing_address[line1]`, and a filtered `billing_address`
+    # or `settings` hides everything nested under it.
+    initializer 'better_together.filter_billing_pii_params' do |app|
+      app.config.filter_parameters += %i[
+        buyer_name buyer_email reference billing_address line1 line2 city_name state_province_name
+        postal_code country_name settings
+      ]
+    end
+
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true

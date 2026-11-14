@@ -8,6 +8,7 @@ RSpec.describe 'Pay webhook delivery into the billing event log' do # rubocop:di
   include ActiveJob::TestHelper
 
   include_context 'with clean billing processors'
+  include_context 'with billing switched on'
 
   let!(:host_platform) { configure_host_platform }
   let(:delegator) { Pay::Webhooks::Delegator.new }

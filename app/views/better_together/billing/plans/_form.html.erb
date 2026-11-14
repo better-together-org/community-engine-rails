@@ -120,7 +120,7 @@
       <div class="row g-3">
         <div class="col-md-4">
           <%= render 'locked_value', plan: billing_plan, field: :amount_cents,
-                                     label: t('better_together.billing.plans.field_amount_cents'),
+                                     label: t('better_together.billing.plans.field_amount'),
                                      value: billing_amount(billing_plan.amount_cents, billing_plan.currency) %>
         </div>
         <div class="col-md-4">
@@ -178,9 +178,12 @@
           </div>
           <div class="col-md-4">
             <div class="mb-3">
-              <%= form.label :amount_cents, t('better_together.billing.plans.field_amount_cents'), class: 'form-label' %>
-              <%= form.number_field :amount_cents, class: 'form-control', min: 0, required: true %>
-              <div class="form-text"><%= t('better_together.billing.plans.field_amount_cents_hint') %></div>
+              <% amount_invalid = billing_plan.errors.include?(:amount) %>
+              <%= form.label :amount, t('better_together.billing.plans.field_amount'), class: 'form-label' %>
+              <%= form.text_field :amount, value: billing_plan.amount_field_value, class: "form-control#{' is-invalid' if amount_invalid}",
+                                           required: true, inputmode: 'decimal', autocomplete: 'off',
+                                           'aria-describedby': 'billing-plan-amount-hint', 'aria-invalid': (amount_invalid ? 'true' : nil) %>
+              <div id="billing-plan-amount-hint" class="form-text"><%= t('better_together.billing.plans.field_amount_hint') %></div>
             </div>
           </div>
           <div class="col-md-4">
@@ -259,7 +262,7 @@
 
   <div class="d-flex gap-2" id="billing-plan-form-actions">
     <%= form.submit persisted ? t('better_together.billing.plans.update_submit') : t('better_together.billing.plans.create_submit'),
-                    class: 'btn btn-primary' %>
+                    id: 'billing-plan-submit', class: 'btn btn-primary' %>
     <%= link_to t('globals.cancel'),
                 persisted ? billing_plan_path(billing_plan, locale: I18n.locale) : billing_plans_path(locale: I18n.locale),
                 class: 'btn btn-outline-secondary' %>

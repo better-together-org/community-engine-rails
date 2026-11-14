@@ -17,8 +17,8 @@ flowchart LR
   billing -->|11 cross-subsystem refs| identity_access
   billing -->|21 cross-subsystem refs| platform_network
   billing -->|3 cross-subsystem refs| shared_supporting
-  content_publishing -->|30 cross-subsystem refs| identity_access
-  content_publishing -->|36 cross-subsystem refs| platform_network
+  content_publishing -->|28 cross-subsystem refs| identity_access
+  content_publishing -->|34 cross-subsystem refs| platform_network
   conversations_safety -->|9 cross-subsystem refs| identity_access
   conversations_safety -->|8 cross-subsystem refs| platform_network
   events_calendar -->|5 cross-subsystem refs| identity_access
@@ -40,10 +40,10 @@ flowchart LR
   metrics_search_ai -->|13 cross-subsystem refs| platform_network
   metrics_search_ai -->|1 cross-subsystem refs| shared_supporting
   platform_network -->|9 cross-subsystem refs| identity_access
-  shared_supporting -->|6 cross-subsystem refs| billing
+  shared_supporting -->|3 cross-subsystem refs| billing
   shared_supporting -->|1 cross-subsystem refs| content_publishing
   shared_supporting -->|2 cross-subsystem refs| conversations_safety
   shared_supporting -->|3 cross-subsystem refs| events_calendar
   shared_supporting -->|8 cross-subsystem refs| geography_and_places
-  shared_supporting -->|16 cross-subsystem refs| identity_access
-  shared_supporting -->|63 cross-subsystem refs| platform_network
+  shared_supporting -->|15 cross-subsystem refs| identity_access
+  shared_supporting -->|62 cross-subsystem refs| platform_network

@@ -166,6 +166,12 @@ module BetterTogether
         placed.shift while placed.size > 20
       end
 
+      def ticked_agreement_identifiers
+        return [] unless @gate&.ready?
+
+        @gate.missing.select { |agreement| params[helpers.agreement_acceptance_param_name(agreement)] == '1' }.map(&:identifier)
+      end
+
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
         order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose,
@@ -203,8 +209,12 @@ module BetterTogether
         { payments: [*@parts, { payment_method: @method }] }
       end
 
+      # The agreement step comes back with the boxes the buyer had ticked, so one slip does not
+      # send them back through every agreement. The tick is only a convenience: create asks again.
       def render_again(reason)
         @error = reason
+        @gate ||= build_gate if @method || @plan.free?
+        @ticked_agreements = ticked_agreement_identifiers
         load_billing_details
         render :new, status: :unprocessable_content
       end

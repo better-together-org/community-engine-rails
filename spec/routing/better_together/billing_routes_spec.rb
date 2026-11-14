@@ -37,10 +37,27 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
       expect(pay_mount(draw_billing_routes)).to be_nil
     end
 
-    context 'when a processor gem is installed' do
+    context 'when a processor gem is installed but the host has not switched billing on' do
+      before do
+        allow(Pay::Stripe).to receive(:enabled?).and_return(true)
+        allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+      end
+
+      it 'leaves the webhook address unmounted, so it answers 404' do
+        route_set = draw_billing_routes
+
+        expect(pay_mount(route_set)).to be_nil
+        expect(route_set.call(Rack::MockRequest.env_for('/pay/webhooks/stripe', method: 'POST')).first).to eq(404)
+      end
+    end
+
+    context 'when a processor gem is installed and billing is switched on' do
       let(:mount) { pay_mount(draw_billing_routes) }
 
-      before { allow(Pay::Stripe).to receive(:enabled?).and_return(true) }
+      before do
+        allow(Pay::Stripe).to receive(:enabled?).and_return(true)
+        allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(true)
+      end
 
       it 'is mounted at /pay' do
         expect(mount).to be_present

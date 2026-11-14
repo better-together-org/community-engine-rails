@@ -104,7 +104,9 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Plan Catalog](billing/plan_catalog.md) - Plans, creating them at the processor, fields the processor fixes, async option lists
 - [Billing Platform Isolation](billing/platform_isolation.md) - How billing records are bound to exactly one platform
 - [Billing Data Encryption](billing/encryption.md) - What is encrypted at rest, the rules, and key rotation
+- [Billing Webhook Event Operations](billing/webhook_event_operations.md) - Runbook for failed and dead-lettered processor events: the operator page, rake tasks, sweeps, retry safety
 - [Hosted Billing Roadmap](billing/hosted_billing_roadmap.md) - What is in place for per-platform processors and community-managed plans, and what is left
+- [Hosted Billing Enablement](billing/hosted_billing_enablement.md) - The three host agreements, what each unlocks, the status page and suspension
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
 - [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
@@ -174,6 +176,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Mermaid (.mmd) source files*
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
+- [Billing Event Lifecycle State](diagrams/source/billing_event_lifecycle_state.mmd)
 - [Billing Event Pipeline Flow](diagrams/source/billing_event_pipeline_flow.mmd)
 - [Billing Local Pay Processor Model](diagrams/source/billing_local_pay_processor_model.mmd)
 - [Billing Notification Flow](diagrams/source/billing_notification_flow.mmd)

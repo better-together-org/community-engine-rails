@@ -836,6 +836,8 @@ fr:
         pending: en attente
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: Vous êtes arrivé à la fin. Vous pouvez maintenant cocher la
+        case pour accepter.
       show:
         title: Accord
       status:
@@ -1052,6 +1054,8 @@ fr:
         field_origin: D'où il vient
         field_remaining: Reste
         grant_amount: Montant
+        grant_confirm: Accorder %{amount} de crédit à %{person}?
+        grant_confirm_blank: Accorder du crédit à %{person}?
         grant_currency: Devise
         grant_expires: Expire après (jours)
         grant_expires_hint: Laissez vide pour un crédit qui n'expire pas.
@@ -1059,6 +1063,7 @@ fr:
         grant_refused: Ce crédit n'a pas pu être accordé. Vérifiez le montant ; vous
           ne pouvez pas vous accorder de crédit.
         grant_submit: Accorder le crédit
+        grant_too_large: Ce crédit dépasse le maximum d'un seul octroi, soit %{maximum}.
         granted: Crédit accordé.
         history: Historique
         history_caption: Ce qui est arrivé à ce crédit, du plus récent au plus ancien
@@ -1113,6 +1118,126 @@ fr:
         status_revoked: Remboursé
         title: Mon accès
         until: Valable jusqu’au %{date}.
+      events:
+        alerts:
+          alerted_body: 'Événements signalés par le processeur pour examen : %{count}.'
+          dead_lettered_body: 'Événements abandonnés : %{count}. Une personne doit
+            les examiner et les relancer.'
+          dead_lettered_heading: Certains événements ont été abandonnés.
+          heading: Alertes sur les événements de paiement
+          none: Rien ne demande d'attention.
+          oldest: 'Plus ancien événement non résolu :'
+          repeated_body: 'Événements échoués %{threshold} fois ou plus : %{count}.'
+          repeated_heading: Certains événements échouent sans cesse.
+          unresolved_body: 'Événements échoués ou abandonnés depuis plus de %{hours}
+            heures : %{count}.'
+          unresolved_heading: Certains problèmes ne sont pas résolus.
+        back: Retour aux événements de paiement
+        field_attempts: Tentatives
+        field_event: Événement
+        field_event_id: Identifiant d'événement du processeur
+        field_last_attempt: Dernière tentative
+        field_last_replayed: Dernière relance
+        field_processor: Processeur
+        field_reason: Raison de l'arrêt
+        field_received: Reçu
+        field_replays: Relances par un opérateur
+        field_status: État
+        filter_label: Filtrer les événements de paiement par état
+        index_intro: Messages du processeur de paiement qui n'ont pas pu être traités.
+          Regardez ce qui s'est passé, puis relancez-les une fois le problème réglé.
+        index_title: Événements de paiement
+        never: Pas encore
+        none: Aucun événement dans cet état.
+        reasons:
+          retries_exhausted: Il a échoué trop de fois.
+          stale_unresolved_drift: Il est resté inachevé trop longtemps.
+        refused:
+          not_replayable: Seuls les événements échoués ou abandonnés peuvent être
+            relancés.
+          other: L'événement n'a pas pu être relancé.
+          payload_unavailable: Le message de cet événement a déjà été supprimé, il
+            ne peut donc pas être traité à nouveau.
+          platform_not_configured: Cette plateforme n'a plus ce mode de paiement configuré.
+          unsupported_processor: Le mode de paiement de cet événement n'est plus installé.
+        replay_button: Relancer l'événement
+        replay_confirm: Relancer cet événement de paiement maintenant ?
+        replay_explainer: 'La relance traite à nouveau l''événement depuis le début.
+          Elle est sans risque : un événement déjà traité n''est pas appliqué une
+          seconde fois.'
+        replay_heading: Relancer cet événement
+        replay_not_needed: Cet événement n'a pas besoin d'être relancé.
+        replay_unavailable: 'Cet événement ne peut pas être relancé : son message
+          a déjà été supprimé ou son mode de paiement n''est plus configuré.'
+        replayed: L'événement a été mis en file pour être traité à nouveau.
+        show_intro: Ce qui est arrivé à cet événement. Le message lui-même est chiffré
+          et n'est pas affiché ici.
+        show_title: Événement de paiement
+        states:
+          alerted: Signalé
+          all: Tous
+          dead_lettered: Abandonné
+          failed: Échoué
+          ignored: Ignoré
+          pending: En attente
+          problems: À examiner
+          processed: Traité
+          replayed: Relancé
+        table_caption: Événements de paiement et leur état
+      hosted_billing:
+        accept_button: Accepter pour cette plateforme
+        accepted: Accord accepté pour cette plateforme.
+        accepted_state: Accepté pour cette plateforme.
+        go_to_methods: Configurer vos modes de paiement
+        intro: "%{platform} est hébergée. Acceptez ci-dessous les accords de facturation
+          de l'hôte pour débloquer ce que chacun couvre. Rien n'est activé tant que
+          vous n'avez pas aussi configuré un mode de paiement."
+        merchant_not_yet: La facturation comme commerçant de référence n'est pas encore
+          disponible. Vous pouvez accepter cet accord à l'avance.
+        methods_locked: Acceptez l'accord de facturation de plateforme hébergée et
+          l'accord de facturation locale pour accepter espèces, chèques ou virements.
+        modes:
+          billing:
+            title: Accord de facturation de plateforme hébergée
+            unlocks: Nécessaire avant toute facturation sur cette plateforme, locale
+              ou à distance.
+          local:
+            title: Accord de facturation locale hébergée
+            unlocks: Permet à cette plateforme d'accepter espèces, chèques et virements.
+              L'hôte ne les suit pas, ne les garantit pas et n'en est pas responsable.
+          merchant:
+            title: Accord d'intégration comme commerçant
+            unlocks: Permet à l'hôte d'encaisser pour cette plateforme comme commerçant
+              de référence.
+        not_in_force: Pas encore disponible. L'hôte prépare encore cet accord.
+        refused:
+          accept_box: Cochez la case pour accepter l'accord.
+          needs_billing_first: Acceptez d'abord l'accord de facturation de plateforme
+            hébergée.
+          not_in_force: Cet accord n'est pas encore en vigueur.
+        suspended: L'hôte a suspendu la facturation de cette plateforme. Vos données
+          sont conservées. Contactez l'hôte pour la rétablir.
+        title: Facturation hébergée
+      hosted_platforms:
+        accepted: Accepté
+        actions: Actions
+        intro: Quelles plateformes hébergées ont accepté quels accords de facturation,
+          et si leur facturation est active. Suspendre met la facturation en pause
+          et conserve les données.
+        none: Aucune plateforme n'est encore hébergée ici.
+        not_accepted: Non accepté
+        platform: Plateforme
+        reason: Motif de la suspension
+        reason_required: Indiquez un motif pour suspendre la facturation.
+        resume: Rétablir
+        resumed: Facturation rétablie pour cette plateforme.
+        status: Facturation
+        status_off: Inactive
+        status_on: Active
+        status_suspended: Suspendue
+        suspend: Suspendre
+        suspended: Facturation suspendue pour cette plateforme.
+        title: Plateformes hébergées
       hub:
         access_count: 'Actifs : %{count}'
         access_heading: Ce à quoi vous avez accès
@@ -1396,6 +1521,8 @@ fr:
           confirmer votre paiement dans tous les cas.
         claimed: Le vendeur a été informé que vous l’avez envoyé.
         claimed_note: Vous l’avez dit au vendeur le %{date}.
+        clear_confirm: Marquer le chèque de la commande %{number} de %{buyer} comme
+          encaissé? Son paiement sera compté comme reçu.
         disclosure_cash_in_person: L’argent comptant se remet en personne. Notez quand
           et à qui.
         disclosure_cheque_clearing: Un chèque peut prendre des jours à être encaissé
@@ -1439,6 +1566,10 @@ fr:
           envoyé.
         queue_link: Paiements qui vous attendent
         queue_title: Paiements qui vous attendent
+        receive_cheque_confirm: Marquer le chèque de la commande %{number} de %{buyer}
+          comme reçu (%{amount})? Marquez-le encaissé une fois payé par la banque.
+        receive_confirm: Marquer la commande %{number} de %{buyer} comme reçue (%{amount})?
+          La commande sera réglée et l’acheteur obtiendra l’accès.
         receive_hint: Marquez ceci comme reçu quand l’argent vous est parvenu. Vous
           n’avez pas à attendre que l’acheteur dise l’avoir envoyé.
         received_on_label: Date de réception (facultatif)
@@ -1453,6 +1584,8 @@ fr:
             achat.
           too_many_claims: Cela a été envoyé trop de fois.
         reject: Non reçu, refuser
+        reject_confirm: Rejeter le paiement de la commande %{number} de %{buyer}?
+          La commande sera annulée et l’acheteur en sera informé.
         reject_reason_label: Si vous ne l’avez pas reçu, dites pourquoi (l’acheteur
           le verra)
         rejection_reason: 'Le vendeur a indiqué : %{reason}'
@@ -1527,6 +1660,7 @@ fr:
         field_placed: Passée le
         field_purpose: Pour
         field_quantity: Quantité
+        field_refund_date: Date
         field_status: État
         field_subtotal: Sous-total
         field_tax: Taxe
@@ -1564,6 +1698,14 @@ fr:
         purpose_one_time: Achat unique
         purpose_subscription: Abonnement ou adhésion
         purpose_ticket: Billets d'événement
+        refund_includes_tax: dont %{tax} de taxe
+        refund_status_failed: Échoué
+        refund_status_pending: En attente
+        refund_status_recorded: Enregistré par le vendeur
+        refund_status_succeeded: Remboursé
+        refunded_total: 'Remboursé : %{amount}'
+        refunds_caption: Argent remis pour la commande %{number}
+        refunds_heading: Remboursements
         regenerate_documents: Refaire
         return_paid: Merci. Votre paiement a été reçu.
         return_pending: Merci. Nous confirmons votre paiement et vous le dirons dès
@@ -1646,9 +1788,10 @@ fr:
         field_add_on: Option seulement
         field_add_on_hint: Vendue uniquement en supplément sur la commande d'un autre
           forfait, jamais seule. Paiement unique, sans accès inclus.
-        field_amount_cents: Montant (plus petite unité monétaire)
-        field_amount_cents_hint: p. ex. 4500 = 45,00 pour la plupart des devises;
-          4500 = 4500 pour les devises sans décimales comme le JPY
+        field_amount: Montant
+        field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
+          Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
+          entiers.
         field_beneficiary_label: Etiquette du beneficiaire
         field_billing_interval: Intervalle de facturation
         field_community_capacity_tier: Niveau de capacite
@@ -1984,12 +2127,16 @@ fr:
         cancel_refused: La commande ne peut pas être annulée tant qu'il reste de l'argent
           versé. Rendez d'abord chaque paiement.
         cancelled: La commande a été annulée et ce qu'elle retenait a été libéré.
+        credit_refund_confirm: Retourner %{amount} au crédit de %{buyer} pour la commande
+          %{number}? Cette action est irréversible.
         credit_refund_heading: Retourner au crédit en magasin
         credit_refund_hint: 'L''acheteur a payé avec du crédit en magasin : l''argent
           retourne aussitôt sur son solde de crédit. Il ne peut pas être versé en
           espèces.'
         credit_refund_submit: Retourner au crédit
         refund_amount_label: Montant remboursé (jusqu’à %{max}; vide pour tout)
+        refund_confirm: Enregistrer un remboursement de %{amount} pour la commande
+          %{number} à %{buyer}? Cette action est irréversible.
         refund_heading: Enregistrer un remboursement
         refund_hint: La plateforme ne peut pas déplacer cet argent. Enregistrez-le
           ici une fois rendu.
@@ -2190,10 +2337,16 @@ fr:
           vide et indiquez un nom ci-dessous pour l'ajouter. Tapez au moins deux lettres
           d'un nom ou d'un identifiant.
         buyer_label: Acheteur
-        buyer_name_hint: Nécessaire seulement si personne n'est choisi ci-dessus.
-          La personne est ajoutée comme membre et invitée à rejoindre la communauté.
+        buyer_name_hint: Nécessaire seulement si personne n’est choisi ci-dessus.
+          L’acheteur est enregistré pour cette vente et peut être invité à rejoindre
+          la communauté.
         buyer_name_label: Nom (si l'acheteur n'est pas encore sur la plateforme)
         buyer_placeholder: Rechercher par nom ou identifiant
+        error_invitation_cap: Vous avez déjà invité aujourd’hui le nombre maximal
+          de nouveaux acheteurs. Réessayez demain ou choisissez l’acheteur dans la
+          liste des membres.
+        error_member_email: Cette adresse courriel appartient à un membre de cette
+          plateforme. Choisissez-le plutôt dans la liste des membres.
         error_refused: Cette vente n’a pas pu être enregistrée. Vérifiez l’acheteur,
           le mode de paiement et les ententes.
         intro: Enregistrez une vente faite en personne. L’acheteur n’a rien à faire;
@@ -3868,8 +4021,8 @@ fr:
           all_types: Tous les Types de Contenu
           apply: Appliquer les Filtres
           bases:
-            invoice: Le jour de la commande
-            paid: Le jour du paiement
+            invoice: Date de facture
+            paid: Date de paiement
           basis: Compter une vente selon
           communities: Communautés
           content_type: Type de Contenu
@@ -4194,6 +4347,15 @@ fr:
       new:
         title: Nouvel élément de navigation pour %{name}
       route_names:
+        billing_agreement_requirements: Conditions d’achat
+        billing_allowances: Quotas et utilisation
+        billing_credit_accounts: Comptes de crédit en magasin
+        billing_plans: Forfaits de facturation
+        billing_processor_settings: Modes de paiement
+        billing_promotions: Codes promotionnels
+        billing_sales: Ventes
+        billing_subscribers: Abonnés
+        billing_tax_registrations: Inscriptions fiscales
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
         communities: Communautés
@@ -6510,6 +6672,7 @@ fr:
       already_pending: Une demande de remboursement est déjà en attente sur cette
         commande.
       blank: doit être rempli(e)
+      cannot_be_the_host: ne peut pas être la plateforme hôte
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
@@ -6523,6 +6686,8 @@ fr:
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       greater_than_refundable: dépasse ce qui peut encore être remboursé
+      hosted_local_billing_not_agreed: exige d'abord les accords de facturation locale
+        hébergée
       immutable_after_processor_link: ne peut plus être modifié une fois le plan lié
         à un prix du processeur
       in: doit être dans l'intervalle %{count}
@@ -6541,6 +6706,7 @@ fr:
         de paiement
       not_a_number: n'est pas un nombre
       not_a_purchase_agreement: doit être une entente d’achat
+      not_an_amount: doit être un nombre simple comme 45,00
       not_an_integer: doit être un nombre entier
       not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
         dehors d'un processeur"
@@ -6563,9 +6729,11 @@ fr:
       recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
       required: doit exister
       taken: est déjà utilisé(e)
+      too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)
         other: est trop long (pas plus de %{count} caractères)
+      too_precise: peut avoir au plus %{places} décimales dans cette devise
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)

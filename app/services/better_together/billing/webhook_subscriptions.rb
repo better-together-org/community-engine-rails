@@ -8,7 +8,10 @@ module BetterTogether
       class << self
         # One processor that fails to build or subscribe is logged and reported, and
         # skipped; it must never stop the application (or `db:migrate`) from booting.
+        # Does nothing while the host has billing switched off (BT_BILLING_ENABLED).
         def subscribe_all!
+          return unless Configuration.requested?
+
           BetterTogether::Billing.processor_names.each do |name|
             subscribe(name)
           rescue StandardError => e

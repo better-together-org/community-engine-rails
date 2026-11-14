@@ -6,7 +6,8 @@ module BetterTogether
     # period ends unpaid, past due to unpaid when the grace ends, a cancellation to canceled when its date
     # arrives (see Subscriptions::Advance). It also tries once more to pay a renewal invoice from store credit
     # when the payer's credit may have been topped up. One subscription at a time. A maintenance sweep: the
-    # only cross-tenant read, acting on one record at a time. Safe to repeat.
+    # only cross-tenant read, acting on one record at a time. Safe to repeat. A suspended hosted platform is
+    # skipped (see HostedBilling).
     class AdvanceSubscriptionsJob < ApplicationJob
       def perform
         BetterTogether::Billing::SubscriptionTerm.local.select(:id).find_each { |row| advance(row.id) }
@@ -16,6 +17,8 @@ module BetterTogether
 
       def advance(term_id)
         term = BetterTogether::Billing::SubscriptionTerm.find(term_id)
+        return unless BetterTogether::Billing::HostedBilling.permits?(term.platform, :billing)
+
         Subscriptions::Advance.call(term:)
         retry_credit(term)
       rescue StandardError => e
