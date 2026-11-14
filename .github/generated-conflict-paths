@@ -1,0 +1,6 @@
+# Files that are generated from other files. A merge conflict confined to these can be fixed by
+# regenerating them (see bin/ci-pr-conflict-sweep). One glob per line; `*` also matches `/`.
+# Code, migrations and spec/dummy/db/schema.rb are NOT listed: taking a side there can drop a
+# migration or a column, so those conflicts always go to a person.
+db/community-engine-db.dbml
+docs/diagrams/*
