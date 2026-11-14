@@ -3053,6 +3053,9 @@ Table "better_together_storage_configurations" {
   "region" varchar
   "access_key_id" varchar
   "secret_access_key" varchar
+  "health_status" varchar
+  "health_message" varchar
+  "health_checked_at" timestamp
 
   indexes {
     "platform_id" [name: "index_better_together_storage_configurations_on_platform_id"]

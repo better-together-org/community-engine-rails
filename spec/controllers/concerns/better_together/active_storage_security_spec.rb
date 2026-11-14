@@ -307,7 +307,7 @@ module BetterTogether
     end
 
     describe '#authorize_blob_access when the record lookup fails' do
-      let(:blob) { instance_double(ActiveStorage::Blob, id: 'blob-id') }
+      let(:blob) { instance_double(ActiveStorage::Blob, id: 'blob-id', service_name: 'local') }
 
       before do
         controller.instance_variable_set(:@blob, blob)
