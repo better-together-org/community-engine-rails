@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-12T22:30:10Z`.
+Generated from live Rails reflections at `2026-11-12T22:36:04Z`.
 
 ## Identity, access, and memberships
 
