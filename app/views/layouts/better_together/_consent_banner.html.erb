@@ -1,0 +1,54 @@
+<%# Shown only when the platform loads code that needs consent. Not a modal: the page stays usable. %>
+<% if consent_banner_needed? %>
+  <% decided = consent_decision.present? %>
+  <section id="consent-banner-region"
+           class="bt-consent"
+           aria-labelledby="consent-banner-title"
+           data-controller="better_together--consent"
+           data-better_together--consent-reload-value="<%= consent_gated_snippets?(host_platform) %>">
+    <div id="consent-banner" class="bt-consent__banner card shadow" data-better_together--consent-target="banner" <%= 'hidden' if decided %>>
+      <div class="card-body">
+        <h2 id="consent-banner-title" class="h5"><%= t('better_together.consent.title') %></h2>
+        <p id="consent-banner-text"><%= t('better_together.consent.body') %>
+          <% policy = BetterTogether::Page.i18n.find_by(slug: 'cookie-policy') %>
+          <% if policy %><%= link_to t('better_together.consent.policy_link'), better_together.render_page_path(policy.slug) %><% end %>
+        </p>
+        <div id="consent-choices" class="mb-3" data-better_together--consent-target="choices" hidden>
+          <fieldset>
+            <legend class="h6"><%= t('better_together.consent.choices_legend') %></legend>
+            <p class="small text-muted"><%= t('better_together.consent.essential_note') %></p>
+            <% %w[analytics marketing].each do |category| %>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="consent-<%= category %>"
+                       data-better_together--consent-target="<%= category %>" <%= 'checked' if consent_granted?(category) %>>
+                <label class="form-check-label" for="consent-<%= category %>"><%= t("better_together.consent.#{category}") %></label>
+              </div>
+            <% end %>
+            <button type="button" id="consent-save" class="btn btn-primary mt-2 bt-consent__button"
+                    data-action="click->better_together--consent#saveChoices"><%= t('better_together.consent.save') %></button>
+          </fieldset>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" id="consent-accept-all" class="btn btn-primary bt-consent__button"
+                  data-action="click->better_together--consent#acceptAll"><%= t('better_together.consent.accept_all') %></button>
+          <button type="button" id="consent-essential-only" class="btn btn-outline-primary bt-consent__button"
+                  data-action="click->better_together--consent#essentialOnly"><%= t('better_together.consent.essential_only') %></button>
+          <button type="button" id="consent-choose" class="btn btn-link bt-consent__button"
+                  aria-expanded="false" aria-controls="consent-choices" data-better_together--consent-target="choose"
+                  data-action="click->better_together--consent#toggleChoices"><%= t('better_together.consent.choose') %></button>
+        </div>
+      </div>
+    </div>
+    <button type="button" id="consent-preferences-link" class="btn btn-sm btn-light border bt-consent__reopen bt-consent__button"
+            data-better_together--consent-target="reopen" data-action="click->better_together--consent#reopen" <%= 'hidden' unless decided %>>
+      <%= t('better_together.consent.preferences') %>
+    </button>
+    <p id="consent-status" class="visually-hidden" role="status" aria-live="polite"
+       data-better_together--consent-target="status" data-saved-message="<%= t('better_together.consent.saved') %>"></p>
+  </section>
+  <style nonce="<%= content_security_policy_nonce %>">
+    .bt-consent__banner { position: fixed; inset-inline: 1rem; bottom: 1rem; z-index: 1080; max-width: 40rem; }
+    .bt-consent__reopen { position: fixed; inset-inline-start: 1rem; bottom: 1rem; z-index: 1070; }
+    .bt-consent__button { min-height: 44px; min-width: 44px; }
+  </style>
+<% end %>

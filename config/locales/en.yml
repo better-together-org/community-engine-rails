@@ -1121,6 +1121,21 @@ en:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Accept all
+      analytics: 'Analytics: help us understand how the site is used'
+      body: This site would like to use analytics and marketing code. Essential features
+        always work. You can change your mind at any time.
+      choices_legend: Optional categories
+      choose: Choose
+      essential_note: Essential features are always on.
+      essential_only: Essential only
+      marketing: 'Marketing: measure and personalize outreach'
+      policy_link: Read the cookie policy.
+      preferences: Cookie preferences
+      save: Save my choices
+      saved: Your privacy choices were saved.
+      title: Your privacy choices
     contact_details:
       contact_information: Contact information
       title: Contact Details

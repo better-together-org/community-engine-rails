@@ -63,6 +63,7 @@ RSpec.describe 'Documentation screenshots for platform custom code', # rubocop:d
                   new_platform_platform_snippet_path(host_platform, locale:)
                 end)
           expect(page).to have_css(selector, wait: 10)
+          expect(page).to be_axe_clean.within('main').according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
           find(selector).scroll_to(:center)
         end
 
