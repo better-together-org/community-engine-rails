@@ -1,7 +1,7 @@
 {
   "name": "billing_tax_reports_new",
   "device": "desktop",
-  "url": "/en/host/metrics/billing_reports/new",
+  "url": "/en/host/metrics/billing_reports",
   "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 0.0,
-        "y": 387.59375,
+        "y": 487.984375,
         "width": 1440.0,
         "height": 38.0,
         "right": 1440.0,
-        "bottom": 425.59375,
+        "bottom": 525.984375,
         "center_x": 720.0,
-        "center_y": 406.59375
+        "center_y": 506.984375
       },
       "avoid": {
         "x": 0.0,
-        "y": 145.59375,
+        "y": 245.984375,
         "width": 1440.0,
         "height": 490.0,
         "right": 1440.0,
-        "bottom": 635.59375,
+        "bottom": 735.984375,
         "center_x": 720.0,
-        "center_y": 390.59375
+        "center_y": 490.984375
       },
       "placement": {
         "side": "below",
         "x": 530.0,
-        "y": 655.59,
+        "y": 755.98,
         "width": 380,
         "height": 184,
-        "score": 821.40625
+        "score": 721.015625
       }
     }
   ]
