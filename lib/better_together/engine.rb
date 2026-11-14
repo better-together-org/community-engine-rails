@@ -9,8 +9,11 @@ require 'active_storage_validations'
 require 'activerecord-import'
 require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
+require 'better_together/identity_providers'
+require 'better_together/identity_provider_credentials'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/generator_templates'
 require 'better_together/profiling'
 require 'better_together/storage_resolver'
 require 'better_together/url_sanitizer'
@@ -39,6 +42,9 @@ require 'rack/attack'
 require 'redcarpet'
 require 'omniauth/rails_csrf_protection'
 require 'omniauth-github'
+require 'omniauth-facebook'
+require 'omniauth-google-oauth2'
+require 'omniauth_openid_connect'
 require 'reform/rails'
 require 'ruby_llm'
 require 'sidekiq-scheduler'
@@ -83,10 +89,17 @@ module BetterTogether
     config.paths['config/routes.rb'] = 'config/routes.rb'
     config.paths.add 'config/routes', glob: '**/*.rb'
 
-    config.generators do |g|
+    config.app_generators do |g|
       g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
       g.test_framework :rspec
+      g.templates << root.join('lib/templates').to_s
+    end
+
+    # The ActiveRecord generator classes can load before Rails reads the template paths,
+    # so register the app and engine lib/templates on them explicitly.
+    generators do
+      BetterTogether::GeneratorTemplates.register(Rails.application.config.generators.templates)
     end
 
     config.before_initialize do
@@ -124,6 +137,12 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # Platform-scoped redirects answer before routing, so they win over the pages catch-all.
+    initializer 'better_together.redirect_middleware', after: 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/redirect_middleware').to_s
+      app.middleware.insert_after BetterTogether::PlatformContextMiddleware, BetterTogether::RedirectMiddleware
+    end
+
     # ActionDispatch::RemoteIp raises IpSpoofAttackError for malformed
     # X-Forwarded-For headers before Rack::Attack's scanner blocklists ever
     # run. Insert this guard immediately before RemoteIp so that traffic gets
@@ -132,6 +151,34 @@ module BetterTogether
     initializer 'better_together.spoofed_forwarded_for_guard_middleware' do |app|
       require root.join('app/middleware/better_together/spoofed_forwarded_for_guard_middleware').to_s
       app.middleware.insert_before ActionDispatch::RemoteIp, BetterTogether::SpoofedForwardedForGuardMiddleware
+    end
+
+    # Production delivery: gzip text responses, strip HTML comments, long-cache
+    # fingerprinted assets. Each can be turned off with an environment variable.
+    DELIVERY_COMPRESSIBLE_TYPES = %w[
+      text/html text/css text/plain text/xml text/javascript application/javascript application/json
+      application/xml application/rss+xml application/atom+xml image/svg+xml
+    ].freeze
+
+    initializer 'better_together.delivery_middleware' do |app|
+      next unless Rails.env.production?
+
+      %w[html_comment_stripper immutable_asset_cache].each do |name|
+        require root.join("app/middleware/better_together/#{name}").to_s
+      end
+
+      unless ENV['BTS_DISABLE_RESPONSE_COMPRESSION'].present?
+        app.middleware.insert_before 0, Rack::Deflater, include: DELIVERY_COMPRESSIBLE_TYPES
+      end
+      app.middleware.use BetterTogether::HtmlCommentStripper unless ENV['BTS_DISABLE_HTML_COMMENT_STRIPPING'].present?
+      app.middleware.use BetterTogether::ImmutableAssetCache unless ENV['BTS_DISABLE_ASSET_CACHE_HEADERS'].present?
+    end
+
+    # Images below the fold should not block first paint. Hosts that set
+    # image_loading themselves keep their value; the navbar logo opts out.
+    initializer 'better_together.image_loading_default' do |app|
+      app.config.action_view.image_loading ||= 'lazy'
+      app.config.action_view.image_decoding ||= 'async'
     end
 
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
@@ -151,6 +198,13 @@ module BetterTogether
       app.config.filter_parameters += %i[
         oauth_client_secret oauth_client_secret_digest client_secret authorization
       ]
+    end
+
+    # Gate every OmniAuth request/callback by platform domain, after Warden and so ahead of the
+    # strategies Devise appends later (session, flash and Warden are then available to the failure handler).
+    initializer 'better_together.omniauth_platform_gate' do |app|
+      require root.join('app/middleware/better_together/omniauth_platform_gate').to_s
+      app.middleware.insert_after(Warden::Manager, BetterTogether::OmniauthPlatformGate)
     end
 
     initializer 'better_together.action_mailer' do |app|
@@ -220,6 +274,16 @@ module BetterTogether
         app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
         # Mirrors config/initializers/fast_mcp.rb, which mounts MCP from the same variable.
         app.config.mcp.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development? || Rails.env.test?).to_s == 'true'
+      end
+    end
+
+    # to_prepare re-runs after code reloads, so host themes survive the registry class being reloaded.
+    initializer 'better_together.host_platform_themes' do |app|
+      app.config.to_prepare do
+        path = Rails.root.join('config/platform_themes.yml')
+        if path.exist? && path != BetterTogether::PlatformThemeConfig::THEMES_PATH
+          BetterTogether::PlatformThemeConfig.register_themes_from(path)
+        end
       end
     end
 

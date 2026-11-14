@@ -1,7 +1,7 @@
 {
   "name": "settlement_weather_summary_card",
   "device": "mobile",
-  "url": "/en/g/settlements/settlement-1",
+  "url": "/en/g/settlements/settlement-3",
   "title": "Test Host Community",
   "locale": "en",
   "role": "visitor",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 29.0,
-        "y": 664.390625,
+        "y": 688.390625,
         "width": 442.0,
         "height": 183.390625,
         "right": 471.0,
-        "bottom": 847.78125,
+        "bottom": 871.78125,
         "center_x": 250.0,
-        "center_y": 756.0859375
+        "center_y": 780.0859375
       },
       "avoid": {
         "x": 29.0,
-        "y": 664.390625,
+        "y": 688.390625,
         "width": 442.0,
         "height": 183.390625,
         "right": 471.0,
-        "bottom": 847.78125,
+        "bottom": 871.78125,
         "center_x": 250.0,
-        "center_y": 756.0859375
+        "center_y": 780.0859375
       },
       "placement": {
         "side": "above",
         "x": 115.0,
-        "y": 480.39,
+        "y": 504.39,
         "width": 270.0,
         "height": 164,
-        "score": 664.390625
+        "score": 688.390625
       }
     }
   ]

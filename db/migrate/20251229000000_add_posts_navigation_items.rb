@@ -3,6 +3,9 @@
 # Adds posts navigation items to header and host dropdown
 class AddPostsNavigationItems < ActiveRecord::Migration[7.2]
   def up
+    # A database built from zero gets these items from the seed builders.
+    return unless table_has_rows?(:better_together_platforms)
+
     puts 'Adding posts navigation items...'
 
     header_area = ensure_navigation_area(

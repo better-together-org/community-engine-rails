@@ -3,7 +3,8 @@
   <%= t('errors.not_found.title') %>
 <% end %>
 <div class="container mt-4">
-  <h1><%= t('errors.not_found.title') %></h1>
+  <h1 id="not-found-headline"><%= platform_not_found_headline.presence || t('errors.not_found.title') %></h1>
+  <%= render_platform_content_slot(:not_found_message) %>
   <p><%= t('errors.not_found.description') %></p>
   <p><%= link_to t('views.buttons.go_home'), home_page_path, class: 'btn btn-primary' %></p>
 </div>

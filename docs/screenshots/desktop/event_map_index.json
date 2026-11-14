@@ -2,7 +2,7 @@
   "name": "event_map_index",
   "device": "desktop",
   "url": "/en/events",
-  "title": "Events | Funk, Altenwerth and Bruen",
+  "title": "Events | Test Host Community",
   "locale": "en",
   "role": "community_organizer",
   "feature_set": "event_map",
@@ -42,7 +42,7 @@
         "y": 825.0,
         "width": 380,
         "height": 320,
-        "score": 656.0
+        "score": 652.0
       }
     }
   ]

@@ -55,6 +55,8 @@ module OmniauthTestHelpers # :nodoc:
                                expires_at: options[:expires_at] || 1.hour.from_now.to_i
                              },
                              extra: {
+                               # GitHub emails count as verified only when listed with verified: true
+                               all_emails: options.fetch(:verified_email, true) ? [{ email:, primary: true, verified: true }] : [],
                                raw_info: {
                                  login: options[:nickname] || unique_username,
                                  html_url: options[:profile_url] || "https://github.com/#{unique_username}"

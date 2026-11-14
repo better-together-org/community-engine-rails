@@ -1,0 +1,11 @@
+{
+  "name": "platform_form_tab_features",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_form_tabs",
+  "flow": "platform_edit_features",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_form_tabs_spec.rb"
+}

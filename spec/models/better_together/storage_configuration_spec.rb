@@ -132,6 +132,8 @@ RSpec.describe BetterTogether::StorageConfiguration do
       expect(result[:service]).to eq('S3')
       expect(result[:endpoint]).to eq(config.endpoint)
       expect(result[:force_path_style]).to be true
+      expect(result).to include(request_checksum_calculation: 'when_required',
+                                response_checksum_validation: 'when_required')
     end
   end
 

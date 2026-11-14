@@ -102,7 +102,9 @@
             <% show_feature_access_grants = policy(::BetterTogether::FeatureAccessGrant.new(platform: @platform)).index? %>
             <% show_quota_grants = policy(::BetterTogether::QuotaGrant.new(platform: @platform)).index? %>
             <% show_platform_domains = policy(@platform.platform_domains.build).index? %>
-            <% show_platform_operations = (@platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show?) || policy(::BetterTogether::StorageConfiguration.new(platform: @platform)).index? || show_feature_access_grants || show_quota_grants || show_platform_domains %>
+            <% show_identity_providers = policy(@platform.platform_identity_providers.build).index? %>
+            <% show_redirects = policy(@platform.redirects.build).index? %>
+            <% show_platform_operations = (@platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show?) || policy(::BetterTogether::StorageConfiguration.new(platform: @platform)).index? || show_feature_access_grants || show_quota_grants || show_platform_domains || show_identity_providers || show_redirects %>
             <% if show_platform_operations %>
               <div class="card border-0 bg-body-tertiary mt-4">
                 <div class="card-body">
@@ -123,6 +125,18 @@
                     <% if show_platform_domains %>
                       <%= link_to t('platforms.show.operations.platform_domains', default: 'Domains'),
                                   platform_platform_domains_path(@platform),
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                    <% if show_redirects %>
+                      <%= link_to t('platforms.show.operations.redirects'),
+                                  platform_redirects_path(@platform),
+                                  id: 'platform-redirects-link',
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                    <% if show_identity_providers %>
+                      <%= link_to t('platforms.show.operations.identity_providers', default: 'Sign-in providers'),
+                                  platform_platform_identity_providers_path(@platform),
+                                  id: 'platform-identity-providers-link',
                                   class: 'btn btn-outline-primary btn-sm' %>
                     <% end %>
                     <% if show_feature_access_grants %>

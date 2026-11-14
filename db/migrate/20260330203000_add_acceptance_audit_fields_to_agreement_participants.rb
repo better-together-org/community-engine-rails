@@ -35,6 +35,8 @@ class AddAcceptanceAuditFieldsToAgreementParticipants < ActiveRecord::Migration[
   end
 
   def backfill_acceptance_audit_fields
+    return unless table_has_rows?(:better_together_agreement_participants)
+
     BetterTogether::AgreementParticipant.reset_column_information
     BetterTogether::Agreement.reset_column_information
 
