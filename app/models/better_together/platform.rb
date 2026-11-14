@@ -104,7 +104,7 @@ module BetterTogether
         :storage_configuration_id,
         :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
         :csp_script_src_text, :csp_connect_src_text,
-        :logo, :remove_logo, :header_banner, :remove_header_banner, :favicon, :remove_favicon,
+        :logo, :remove_logo, :header_banner, :remove_header_banner, :favicon, :remove_favicon, :dark_logo, :remove_dark_logo,
         { theme: BetterTogether::PlatformThemeConfig::KEYS,
           settings: %i[requires_invitation allow_membership_requests
                        software_variant network_visibility connection_bootstrap_state

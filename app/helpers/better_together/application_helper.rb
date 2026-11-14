@@ -187,6 +187,48 @@ module BetterTogether
       content_tag(:style, css.html_safe, type: 'text/css', id: 'platform-theme-style') if css.present? # rubocop:disable Rails/OutputSafety
     end
 
+    COLOR_MODE_COOKIE = 'bts_color_mode'
+
+    # Whether visitors can switch colour modes on this platform (theme setting, on unless disabled).
+    def color_mode_enabled?(platform = host_platform)
+      platform.respond_to?(:theme_config) && platform.theme_config.dark_mode_enabled?
+    end
+
+    # The visitor's saved mode (cookie) when valid, else the platform default: auto, light or dark.
+    def color_mode_preference(platform = host_platform)
+      saved = cookies[COLOR_MODE_COOKIE]
+      return saved if BetterTogether::PlatformThemeConfig::COLOR_MODES.include?(saved)
+
+      platform.respond_to?(:theme_config) ? platform.theme_config.default_mode : 'auto'
+    end
+
+    # Attributes for the html element. An explicit light or dark mode is rendered server side so the
+    # first paint is right; auto is resolved by the inline head script from prefers-color-scheme.
+    def html_color_mode_attributes(platform = host_platform)
+      return {} unless color_mode_enabled?(platform)
+
+      mode = color_mode_preference(platform)
+      attrs = { 'data-bts-color-mode' => mode }
+      attrs['data-bs-theme'] = mode unless mode == 'auto'
+      attrs
+    end
+
+    def color_scheme_meta_tag(platform = host_platform)
+      tag.meta name: 'color-scheme', content: color_mode_enabled?(platform) ? 'light dark' : 'light'
+    end
+
+    # Runs before first paint: resolves the saved or default mode to data-bs-theme.
+    def color_mode_head_script_tag(platform = host_platform)
+      return unless color_mode_enabled?(platform)
+
+      javascript_tag(<<~JS.squish, nonce: true)
+        (function(){try{var d=document.documentElement,m=d.getAttribute('data-bts-color-mode')||'auto';
+        try{var s=localStorage.getItem('bts-color-mode');if(s==='auto'||s==='light'||s==='dark'){m=s;}}catch(e){}
+        var t=m==='auto'?(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):m;
+        d.setAttribute('data-bs-theme',t);d.setAttribute('data-bts-color-mode',m);}catch(e){}})();
+      JS
+    end
+
     def platform_favicon_tag(platform = host_platform)
       return unless platform.respond_to?(:favicon) && platform.favicon.attached?
 

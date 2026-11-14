@@ -25,7 +25,10 @@ RSpec.describe 'Documentation screenshots for platform theme settings', # ruboco
     Current.platform = host_platform
   end
 
-  after { Current.platform = nil }
+  after do
+    Current.platform = nil
+    host_platform.update!(theme: {})
+  end
 
   def capture_theme(name, bullets, selector, &)
     BetterTogether::CapybaraScreenshotEngine.capture(
@@ -90,5 +93,47 @@ RSpec.describe 'Documentation screenshots for platform theme settings', # ruboco
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_theme_low_contrast.png')
+  end
+
+  it 'captures a theme previewed in dark mode' do
+    result = capture_theme('platform_theme_preview_mode_dark',
+                           ['Dark mode preview', 'Switch the preview between Light and Dark.'], '#platform-theme-preview') do
+      open_appearance_tab
+      pick_theme('warm')
+      find('#platform-theme-preview-mode-dark').click
+      expect(page).to have_css('#platform-theme-preview .bts-preview[data-bs-theme=dark]', wait: 5)
+      find('#platform-theme-preview').scroll_to(:center)
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_theme_preview_mode_dark.png')
+  end
+
+  it 'captures the light and dark mode settings with custom dark colours' do
+    result = capture_theme('platform_theme_modes_settings',
+                           ['Light and dark mode', 'Enable dark mode, set the default and choose the dark colours.'],
+                           '#platform-theme-modes') do
+      open_appearance_tab
+      pick_theme('cool')
+      click_button 'platform-theme-apply'
+      expect(page).to have_css('#platform-theme-dark-colors:not([hidden])', wait: 5)
+      find('#platform-theme-modes').scroll_to(:top)
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_theme_modes_settings.png')
+  end
+
+  %w[light dark].each do |mode|
+    it "captures the site with the colour mode toggle in #{mode} mode" do
+      host_platform.update!(theme: BetterTogether::PlatformThemeConfig.flat_theme('warm').merge('preset' => 'warm'))
+      name = "platform_site_color_mode_#{mode}"
+      result = capture_theme(name, ['Colour mode toggle', 'Visitors choose Auto, Light or Dark.'], '#color-mode-toggle') do
+        capybara_login_as_platform_manager
+        visit platform_path(host_platform, locale:)
+        find("#color-mode-#{mode}").click
+        expect(page).to have_css("html[data-bs-theme=#{mode}]", wait: 5)
+      end
+
+      expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{name}.png")
+    end
   end
 end

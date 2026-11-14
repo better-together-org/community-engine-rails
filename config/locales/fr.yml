@@ -987,6 +987,15 @@ fr:
         completed_message: Liste de contrôle complète
         items_title: Éléments
         no_items: Aucun élément à afficher
+    color_mode:
+      announce:
+        auto: 'Mode de couleur : automatique, selon votre appareil.'
+        dark: 'Mode de couleur : sombre.'
+        light: 'Mode de couleur : clair.'
+      auto: Auto
+      dark: Sombre
+      label: Mode de couleur
+      light: Clair
     comment_config:
       hints:
         permission: Détermine qui est autorisé à publier de nouveaux commentaires.
@@ -3604,6 +3613,17 @@ fr:
         contrast_pass: Conforme AA
         contrast_title: Vérifications du contraste
         current_image: "%{name} actuel"
+        dark_color_label: 'Sombre : %{color}'
+        dark_logo_hint: Facultatif. Affiché en mode sombre à la place du logo du site.
+          Le logo du site est utilisé s'il est vide.
+        dark_logo_label: Logo du mode sombre
+        dark_mode_disabled: Désactivé (clair seulement)
+        dark_mode_enabled: Activé
+        dark_mode_label: Mode sombre
+        dark_source_custom: Définir les miennes
+        dark_source_derive: Dériver automatiquement
+        dark_source_label: Couleurs sombres
+        default_mode_label: Par défaut pour les nouveaux visiteurs
         default_option: Par défaut
         favicon_hint: Un petit PNG, SVG ou ICO carré affiché dans l'onglet du navigateur.
         favicon_label: Favicon
@@ -3623,6 +3643,12 @@ fr:
         logo_hint: Affiché dans la barre de navigation. C'est le logo de la communauté
           de la plateforme.
         logo_label: Logo du site
+        mode_summary_fail: "%{mode} : %{count} paire(s) sous AA."
+        mode_summary_ok: "%{mode} : toutes les paires respectent AA."
+        modes_hint: Les visiteurs peuvent choisir Auto, Clair ou Sombre. Les couleurs
+          sombres s'appliquent à chaque couleur définie ci-dessus. Laissez-les dérivées
+          ou fournissez les vôtres.
+        modes_title: Mode clair et sombre
         picker_blank: Choisir un thème à prévisualiser
         picker_label: Partir d'un thème
         presets:
@@ -3656,6 +3682,7 @@ fr:
         preview_input_value: Texte d'exemple
         preview_label: Aperçu du thème
         preview_link: lien d'exemple
+        preview_mode_label: Mode de couleur de l'aperçu
         preview_nav_one: Événements
         preview_nav_two: À propos
         preview_primary: Action principale

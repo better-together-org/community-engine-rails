@@ -8,7 +8,8 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
       themes = described_class.themes
       expect(themes.keys).to contain_exactly('neutral', 'warm', 'cool', 'high_contrast', 'dark')
       themes.each_value do |tokens|
-        expect(tokens.keys - %w[font radius]).to match_array(described_class::COLOR_KEYS)
+        expect(tokens.keys - %w[font radius dark]).to match_array(described_class::COLOR_KEYS)
+        expect(tokens['dark'].keys).to match_array(described_class::COLOR_KEYS)
         expect(described_class::FONT_STACKS).to have_key(tokens['font'])
         expect(described_class::RADII).to have_key(tokens['radius'])
       end
@@ -16,11 +17,21 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
 
     it 'meets the minimum contrast for every pair of every theme (AA for text, 3:1 for the focus accent)' do
       described_class.themes.each do |id, tokens|
-        described_class::CONTRAST_PAIRS.each do |fg, bg, minimum|
-          ratio = described_class.contrast_ratio(tokens[fg], tokens[bg])
-          expect(ratio).to be >= minimum, "#{id}: #{fg} on #{bg} is #{ratio}, needs #{minimum}"
+        { 'light' => tokens, 'dark' => tokens['dark'] }.each do |mode, set|
+          described_class::CONTRAST_PAIRS.each do |fg, bg, minimum|
+            ratio = described_class.contrast_ratio(set[fg], set[bg])
+            expect(ratio).to be >= minimum, "#{id} (#{mode}): #{fg} on #{bg} is #{ratio}, needs #{minimum}"
+          end
         end
       end
+    end
+
+    it 'marks which dark text pairs reach AAA' do
+      tokens = described_class.themes['high_contrast']['dark']
+      aaa = described_class::CONTRAST_PAIRS.select do |fg, bg, min|
+        min >= 4.5 && described_class.contrast_ratio(tokens[fg], tokens[bg]) >= 7
+      end
+      expect(aaa.size).to eq(8)
     end
 
     it 'marks which text pairs reach AAA' do
@@ -108,6 +119,71 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
       described_class.themes.each_value do |tokens|
         expect(described_class.new(tokens).low_contrast_pairs).to be_empty
       end
+    end
+  end
+
+  describe 'dark mode' do
+    let(:custom_light) do
+      { 'primary' => '#ee722a', 'primary_text' => '#ffffff', 'accent' => '#b8480f', 'accent_dark' => '#8a3a0e',
+        'page_bg' => '#fffaf5', 'band' => '#f5f5f5', 'body_text' => '#243542', 'link' => '#243542',
+        'navbar_bg' => '#243542', 'navbar_link' => '#ffffff', 'footer_bg' => '#243542', 'footer_link' => '#ffffff' }
+    end
+
+    it 'derives a dark set that meets AA for every pair, for the built-in themes and a custom one' do
+      sets = described_class.themes.transform_values { |t| t.except('dark', 'font', 'radius') }.merge('custom' => custom_light)
+      sets.each do |id, light|
+        dark = described_class.derive_dark(light)
+        described_class::CONTRAST_PAIRS.each do |fg, bg, minimum|
+          ratio = described_class.contrast_ratio(dark[fg], dark[bg])
+          expect(ratio).to be >= minimum, "#{id} derived dark: #{fg} on #{bg} is #{ratio}, needs #{minimum}"
+        end
+      end
+    end
+
+    it 'derives only the colours that have a light value and against Bootstrap dark when the page is unset' do
+      dark = described_class.derive_dark('link' => '#0b5394', 'body_text' => '#212529')
+
+      expect(dark.keys).to contain_exactly('link', 'body_text')
+      expect(described_class.contrast_ratio(dark['link'], described_class::DARK_DEFAULT_PAGE_BG)).to be >= 4.5
+    end
+
+    it 'defaults to enabled and auto, and reads the stored mode settings' do
+      expect(described_class.new({})).to be_dark_mode_enabled
+      expect(described_class.new({}).default_mode).to eq('auto')
+      config = described_class.new('dark_mode' => 'disabled', 'default_mode' => 'dark')
+      expect(config).not_to be_dark_mode_enabled
+      expect(config.default_mode).to eq('dark')
+    end
+
+    it 'rejects unknown mode values' do
+      expect(described_class.errors_for('dark_mode' => 'maybe', 'default_mode' => 'sepia', 'dark_source' => 'x').size).to eq(3)
+    end
+
+    it 'prefers custom dark tokens and fills the rest by derivation' do
+      config = described_class.new(custom_light.merge('dark_source' => 'custom', 'dark_page_bg' => '#101010'))
+
+      expect(config.dark_values['page_bg']).to eq('#101010')
+      expect(config.dark_values['link']).to be_present
+    end
+
+    it 'warns about custom dark pairs below AA' do
+      config = described_class.new(custom_light.merge('dark_source' => 'custom', 'dark_body_text' => '#222222', 'dark_page_bg' => '#101010'))
+
+      expect(config.low_contrast_pairs_dark.map { |fg, bg, _| [fg, bg] }).to include(%w[body_text page_bg])
+    end
+
+    it 'renders dark custom properties under data-bs-theme and omits them when disabled' do
+      css = described_class.new(custom_light).to_css
+      expect(css).to include('[data-bs-theme="dark"]', '--bts-page-bg:')
+
+      expect(described_class.new(custom_light.merge('dark_mode' => 'disabled')).to_css).not_to include('data-bs-theme')
+    end
+
+    it 'flattens a built-in theme to form values with dark_ tokens' do
+      flat = described_class.flat_theme('warm')
+
+      expect(flat).to include('dark_source' => 'custom', 'dark_page_bg' => described_class.themes['warm']['dark']['page_bg'])
+      expect(flat).not_to have_key('dark')
     end
   end
 end

@@ -2,7 +2,7 @@
 <% scope = 'better_together.platforms.theme' %>
 <%# Scoped styles: the preview reads the same --bts-* variables the live site uses, set on this element only. %>
 <style>
-  #platform-theme-preview .bts-preview { background: var(--bts-page-bg, #fff); color: var(--bts-body-text, #212529); font-family: var(--bts-font, inherit); border: 1px solid #ced4da; border-radius: var(--bts-radius, 0.375rem); overflow: hidden; }
+  #platform-theme-preview .bts-preview { background: var(--bts-page-bg, #fff); color: var(--bts-body-text, #212529); font-family: var(--bts-font, inherit); border: 1px solid var(--bs-border-color, currentColor); border-radius: var(--bts-radius, 0.375rem); overflow: hidden; }
   #platform-theme-preview .bts-preview a { color: var(--bts-link, #0b5394); }
   #platform-theme-preview .bts-nav { background: var(--bts-navbar-bg, #fff); color: var(--bts-navbar-link, #1d4e89); padding: 0.75rem 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
   #platform-theme-preview .bts-nav a, #platform-theme-preview .bts-nav strong { color: var(--bts-navbar-link, #1d4e89); }
@@ -24,6 +24,15 @@
   <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
     <h3 class="h6 mb-0" id="platform-theme-preview-heading"><%= t("#{scope}.preview_title") %></h3>
     <span id="platform-theme-preview-state" class="badge text-bg-secondary" data-better_together--platform-theme-target="state"></span>
+    <div class="btn-group ms-auto" role="group" aria-label="<%= t("#{scope}.preview_mode_label") %>">
+      <% %w[light dark].each do |mode| %>
+        <button type="button" id="platform-theme-preview-mode-<%= mode %>" class="btn btn-outline-secondary" style="min-height:44px;min-width:44px"
+                aria-pressed="<%= (mode == 'light').to_s %>" data-mode="<%= mode %>"
+                data-better_together--platform-theme-target="modeButton" data-action="better_together--platform-theme#previewMode">
+          <%= t("better_together.color_mode.#{mode}") %>
+        </button>
+      <% end %>
+    </div>
   </div>
   <p class="form-text"><%= t("#{scope}.preview_hint") %></p>
   <div class="bts-preview" inert>

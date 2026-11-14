@@ -21,6 +21,32 @@ Pick a theme in the Theme dropdown. The live preview below it shows a navigation
 
 Edit any colour, font or radius field by hand and the preview and the contrast list update at once.
 
+## Light and dark mode
+
+Every theme has a light and a dark colour set. Visitors see a three-way toggle in the navigation bar: Auto (follows the device setting `prefers-color-scheme`), Light and Dark. The choice is remembered in the browser (localStorage) and a cookie, so the server renders the right mode on the first paint. The mode is applied with Bootstrap 5.3 `data-bs-theme` on the `html` element by a small inline script in the page head.
+
+In the Appearance tab, under Light and dark mode:
+
+- Dark mode: enable or disable it. When disabled the toggle is hidden and the site is light only.
+- Default for new visitors: Auto, Light or Dark.
+- Dark colours: Derive automatically builds a dark set from your light colours so every pair still meets AA. Set my own shows a dark field for each colour; any you leave empty are derived.
+- The built-in themes ship with hand-checked dark sets. Every pair meets AA in both modes.
+- Dark colours apply only to colours that have a light value.
+- The preview has a Light and Dark switch, and the contrast list shows the mode being previewed. A summary line reports pairs below AA for both modes.
+- Dark mode logo: optional. Shown in dark mode instead of the site logo; the site logo is the fallback.
+
+The toggle is keyboard operable, has a labelled group, 44 pixel targets and announces the new mode. Reset returns the form to the saved values.
+
+Host app note: gem views use only the `--bts-*` custom properties and Bootstrap variables. A host `theme.scss` that hardcodes colours will not follow dark mode; switch those to `var(--bs-body-bg)`, `var(--bs-body-color)` and the `--bts-*` tokens, or set Dark mode to Disabled.
+
+![Light and dark mode settings](../screenshots/desktop/platform_theme_modes_settings.png)
+
+![Dark preview](../screenshots/desktop/platform_theme_preview_mode_dark.png)
+
+![Toggle, light](../screenshots/desktop/platform_site_color_mode_light.png)
+
+![Toggle, dark](../screenshots/desktop/platform_site_color_mode_dark.png)
+
 ## Contrast checks
 
 Below the colour fields, each important pair shows its contrast ratio as you type: button text on primary, navigation text on its background, footer links on the footer, body text and links on the page and band colours, and the accent. Normal text needs at least 4.5 to 1 (WCAG AA). A pair under that shows a red "Below AA" warning. The warning does not block saving, so you can decide, but low contrast text is hard to read for many people.

@@ -19,21 +19,21 @@
         "x": 394.5,
         "y": 544.0,
         "width": 966.0,
-        "height": 502.5625,
+        "height": 526.1875,
         "right": 1360.5,
-        "bottom": 1046.5625,
+        "bottom": 1070.1875,
         "center_x": 877.5,
-        "center_y": 795.28125
+        "center_y": 807.09375
       },
       "avoid": {
         "x": 394.5,
         "y": 544.0,
         "width": 966.0,
-        "height": 502.5625,
+        "height": 526.1875,
         "right": 1360.5,
-        "bottom": 1046.5625,
+        "bottom": 1070.1875,
         "center_x": 877.5,
-        "center_y": 795.28125
+        "center_y": 807.09375
       },
       "placement": {
         "side": "above",

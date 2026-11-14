@@ -355,6 +355,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         resources :platforms, only: %i[index show new create edit update] do
+          member { get :theme_dark }
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend

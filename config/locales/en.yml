@@ -990,6 +990,15 @@ en:
         completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
+    color_mode:
+      announce:
+        auto: 'Colour mode: automatic, following your device.'
+        dark: 'Colour mode: dark.'
+        light: 'Colour mode: light.'
+      auto: Auto
+      dark: Dark
+      label: Colour mode
+      light: Light
     comment_config:
       hints:
         permission: Controls who is allowed to post new comments.
@@ -3524,6 +3533,17 @@ en:
         contrast_pass: Passes AA
         contrast_title: Contrast checks
         current_image: Current %{name}
+        dark_color_label: 'Dark: %{color}'
+        dark_logo_hint: Optional. Shown in dark mode instead of the site logo. The
+          site logo is used when this is empty.
+        dark_logo_label: Dark mode logo
+        dark_mode_disabled: Disabled (light only)
+        dark_mode_enabled: Enabled
+        dark_mode_label: Dark mode
+        dark_source_custom: Set my own
+        dark_source_derive: Derive automatically
+        dark_source_label: Dark colours
+        default_mode_label: Default for new visitors
         default_option: Default
         favicon_hint: A small square PNG, SVG or ICO shown in the browser tab.
         favicon_label: Favicon
@@ -3542,6 +3562,12 @@ en:
         logo_hint: Shown in the navigation bar. This is the logo of the platform's
           community.
         logo_label: Site logo
+        mode_summary_fail: "%{mode}: %{count} pair(s) below AA."
+        mode_summary_ok: "%{mode}: every pair meets AA."
+        modes_hint: Visitors can switch between Auto, Light and Dark. Dark colours
+          apply to every colour you set above. Leave them derived, or supply your
+          own.
+        modes_title: Light and dark mode
         picker_blank: Choose a theme to preview
         picker_label: Start from a theme
         presets:
@@ -3574,6 +3600,7 @@ en:
         preview_input_value: Sample text
         preview_label: Theme preview
         preview_link: sample link
+        preview_mode_label: Preview colour mode
         preview_nav_one: Events
         preview_nav_two: About
         preview_primary: Primary action

@@ -11,15 +11,19 @@ module BetterTogether
     included do
       has_one_attached :header_banner
       has_one_attached :favicon
+      has_one_attached :dark_logo
 
-      attr_accessor :remove_header_banner, :remove_favicon, :remove_logo
+      attr_accessor :remove_header_banner, :remove_favicon, :remove_logo, :remove_dark_logo
 
       validates :header_banner, content_type: BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES,
                                 size: { less_than: 20.megabytes }
+      validates :dark_logo, content_type: BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES,
+                            size: { less_than: 20.megabytes }
       validates :favicon, content_type: FAVICON_TYPES, size: { less_than: 1.megabyte }
       validate :theme_values_are_valid
 
       before_save :purge_header_banner, if: -> { remove_header_banner == '1' }
+      before_save :purge_dark_logo, if: -> { remove_dark_logo == '1' }
       before_save :purge_favicon, if: -> { remove_favicon == '1' }
       after_save :apply_logo_to_community
     end
@@ -50,6 +54,8 @@ module BetterTogether
     def purge_header_banner = header_banner.purge_later
 
     def purge_favicon = favicon.purge_later
+
+    def purge_dark_logo = dark_logo.purge_later
 
     def theme_values_are_valid
       bad = BetterTogether::PlatformThemeConfig.errors_for(theme).map(&:first)

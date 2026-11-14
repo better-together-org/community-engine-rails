@@ -970,6 +970,15 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    color_mode:
+      announce:
+        auto: 'Режим кольорів: автоматичний, за налаштуваннями пристрою.'
+        dark: 'Режим кольорів: темний.'
+        light: 'Режим кольорів: світлий.'
+      auto: Авто
+      dark: Темний
+      label: Режим кольорів
+      light: Світлий
     comment_config:
       hints:
         permission: Визначає, хто може публікувати нові коментарі.
@@ -3580,6 +3589,17 @@ uk:
         contrast_pass: Відповідає AA
         contrast_title: Перевірка контрасту
         current_image: 'Поточний: %{name}'
+        dark_color_label: 'Темний: %{color}'
+        dark_logo_hint: Необов'язково. Показується в темному режимі замість логотипа
+          сайту. Якщо порожньо, використовується логотип сайту.
+        dark_logo_label: Логотип для темного режиму
+        dark_mode_disabled: Вимкнено (лише світлий)
+        dark_mode_enabled: Увімкнено
+        dark_mode_label: Темний режим
+        dark_source_custom: Задати власні
+        dark_source_derive: Обчислити автоматично
+        dark_source_label: Темні кольори
+        default_mode_label: Типово для нових відвідувачів
         default_option: Типово
         favicon_hint: Невеликий квадратний PNG, SVG або ICO, що показується на вкладці
           браузера.
@@ -3598,6 +3618,12 @@ uk:
         images_title: Зображення
         logo_hint: Показується на панелі навігації. Це логотип спільноти платформи.
         logo_label: Логотип сайту
+        mode_summary_fail: "%{mode}: пар нижче AA: %{count}."
+        mode_summary_ok: "%{mode}: усі пари відповідають AA."
+        modes_hint: Відвідувачі можуть обирати Авто, Світлий або Темний. Темні кольори
+          застосовуються до кожного кольору, заданого вище. Залиште їх похідними або
+          вкажіть власні.
+        modes_title: Світлий і темний режим
         picker_blank: Оберіть тему для перегляду
         picker_label: Почати з теми
         presets:
@@ -3630,6 +3656,7 @@ uk:
         preview_input_value: Приклад тексту
         preview_label: Перегляд теми
         preview_link: прикладом посилання
+        preview_mode_label: Режим кольорів перегляду
         preview_nav_one: Події
         preview_nav_two: Про нас
         preview_primary: Основна дія

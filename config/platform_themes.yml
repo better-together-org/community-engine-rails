@@ -16,6 +16,19 @@ neutral:
   footer_link: '#ffffff'
   font: system
   radius: medium
+  dark:
+    page_bg: '#171717'
+    band: '#202427'
+    navbar_bg: '#1f1f1f'
+    footer_bg: '#0e0f10'
+    body_text: '#e5e6e6'
+    link: '#7abbf5'
+    accent_dark: '#7fafe6'
+    accent: '#7292c0'
+    navbar_link: '#eaedf1'
+    footer_link: '#ededed'
+    primary: '#6ca0e0'
+    primary_text: '#000000'
 warm:
   primary: '#9c3d10'
   primary_text: '#ffffff'
@@ -31,6 +44,19 @@ warm:
   footer_link: '#fff4e8'
   font: georgia
   radius: small
+  dark:
+    page_bg: '#251709'
+    band: '#312416'
+    navbar_bg: '#241d19'
+    footer_bg: '#120f0d'
+    body_text: '#e8e5e3'
+    link: '#f2a77d'
+    accent_dark: '#f1a074'
+    accent: '#e7844b'
+    navbar_link: '#f3ede8'
+    footer_link: '#f3ede8'
+    primary: '#ee8c5d'
+    primary_text: '#000000'
 cool:
   primary: '#0f6b6b'
   primary_text: '#ffffff'
@@ -46,6 +72,19 @@ cool:
   footer_link: '#ffffff'
   font: system
   radius: large
+  dark:
+    page_bg: '#121c1c'
+    band: '#1d2a2a'
+    navbar_bg: '#122b2b'
+    footer_bg: '#091616'
+    body_text: '#e4e7e7'
+    link: '#82eeee'
+    accent_dark: '#79ecec'
+    accent: '#61d1d1'
+    navbar_link: '#ededed'
+    footer_link: '#ededed'
+    primary: '#62e9e9'
+    primary_text: '#000000'
 high_contrast:
   primary: '#000000'
   primary_text: '#ffffff'
@@ -61,6 +100,19 @@ high_contrast:
   footer_link: '#ffff00'
   font: system
   radius: none
+  dark:
+    page_bg: '#000000'
+    band: '#000000'
+    body_text: '#ffffff'
+    link: '#99c2ff'
+    accent: '#99c2ff'
+    accent_dark: '#b3d1ff'
+    primary: '#ffffff'
+    primary_text: '#000000'
+    navbar_bg: '#000000'
+    navbar_link: '#ffffff'
+    footer_bg: '#000000'
+    footer_link: '#ffffff'
 dark:
   primary: '#8ab4f8'
   primary_text: '#0b1b33'
@@ -76,3 +128,16 @@ dark:
   footer_link: '#e8eaed'
   font: system
   radius: medium
+  dark:
+    primary: '#8ab4f8'
+    primary_text: '#0b1b33'
+    accent: '#8ab4f8'
+    accent_dark: '#a8c7fa'
+    page_bg: '#15181d'
+    band: '#1f242b'
+    body_text: '#e8eaed'
+    link: '#a8c7fa'
+    navbar_bg: '#0e1013'
+    navbar_link: '#e8eaed'
+    footer_bg: '#0e1013'
+    footer_link: '#e8eaed'
