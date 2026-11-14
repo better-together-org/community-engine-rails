@@ -1123,6 +1123,10 @@ es:
         status_revoked: Reembolsado
         title: Mi acceso
         until: Vigente hasta el %{date}.
+      errors:
+        summary:
+          one: '1 problema requiere su atención:'
+          other: "%{count} problemas requieren su atención:"
       events:
         alerts:
           alerted_body: 'Eventos que el procesador señaló para revisión: %{count}.'
@@ -2252,6 +2256,30 @@ es:
         state_past_due: Vencida
         state_unpaid: Caducada
         terms_accepted: Gracias. Tu factura de renovación está lista.
+      tables:
+        agreement_requirements: Acuerdos exigidos para las compras
+        allowances: Asignaciones y lo que se ha usado
+        credit_accounts: Cuentas de crédito de la tienda
+        hosted_platforms: Plataformas alojadas y su estado de facturación
+        offline_queue: Pagos fuera de línea a la espera del vendedor
+        order_line_items: Artículos de este pedido
+        order_payments: Pagos de este pedido
+        order_totals: Totales del pedido
+        orders: Sus pedidos
+        plans: Planes a la venta
+        processor_settings: Métodos de pago y su configuración
+        promotions: Promociones
+        refund_requests: Solicitudes de reembolso
+        sales: Ventas
+        subscribers: Suscriptores
+        subscriptions: Sus suscripciones
+        summary_authorities: Impuestos por autoridad en %{currency}
+        summary_payments: Pagos por método en %{currency}
+        summary_regions: Ventas por región en %{currency}
+        summary_registrations: Registros de impuestos en %{currency}
+        summary_tax: Impuestos cobrados en %{currency}
+        summary_totals: Totales en %{currency}
+        tax_registrations: Registros de impuestos
       tax_registrations:
         created: Registro de impuestos añadido.
         edit_title: Editar registro de impuestos

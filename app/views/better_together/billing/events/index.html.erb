@@ -24,7 +24,7 @@
     <div class="card">
       <div class="table-responsive">
         <table id="billing-events-table" class="table table-hover mb-0">
-          <caption class="visually-hidden"><%= t('better_together.billing.events.table_caption') %></caption>
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.events.table_caption') %></caption>
           <thead class="table-light">
             <tr>
               <th scope="col"><%= t('better_together.billing.events.field_event') %></th>
@@ -44,7 +44,7 @@
                 </th>
                 <td><%= billing_event_status_badge(event) %></td>
                 <td><%= event.attempt_count %></td>
-                <td><%= event.last_attempted_at ? l(event.last_attempted_at, format: :short) : t('better_together.billing.events.never') %></td>
+                <td><%= event.last_attempted_at ? billing_time(event.last_attempted_at, format: :short) : t('better_together.billing.events.never') %></td>
                 <td><%= event.dead_letter_reason ? t("better_together.billing.events.reasons.#{event.dead_letter_reason}", default: event.dead_letter_reason) : '' %></td>
                 <td class="text-end">
                   <%= link_to t('globals.view'), billing_event_path(event, locale: I18n.locale),

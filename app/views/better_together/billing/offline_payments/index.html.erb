@@ -3,7 +3,7 @@
 <% end %>
 
 <div id="billing-offline-queue-page" class="container my-4">
-  <nav aria-label="breadcrumb" class="mb-3">
+  <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><%= link_to t('better_together.billing.orders.sales_title'), billing_sales_path(locale: I18n.locale) %></li>
       <li class="breadcrumb-item active" aria-current="page"><%= t('better_together.billing.offline_payments.queue_title') %></li>
@@ -16,6 +16,7 @@
     <div class="card">
       <div class="table-responsive">
         <table id="billing-offline-queue" class="table table-hover mb-0">
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.offline_queue') %></caption>
           <thead class="table-light">
             <tr>
               <th scope="col"><%= t('better_together.billing.orders.field_number') %></th>

@@ -31,6 +31,7 @@
     <%# No horizontal scroll: words in the labels and descriptions break, amounts never do, so it wraps at any width. %>
     <div class="mw-100">
       <table id="<%= prefix %>-line-items" class="table mb-0 text-break">
+        <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.order_line_items') %></caption>
         <thead class="table-light">
           <tr>
             <th scope="col"><%= t('better_together.billing.orders.field_item') %></th>
@@ -61,6 +62,7 @@
     </div>
   <% else %>
     <table id="billing-summary-<%= scope %>-rows" class="table table-borderless table-sm w-auto mw-100 ms-auto mb-0 billing-summary-rows">
+      <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.order_totals') %></caption>
       <tbody><%= rows %></tbody>
     </table>
   <% end %>

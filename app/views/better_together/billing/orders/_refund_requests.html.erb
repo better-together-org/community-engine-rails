@@ -17,7 +17,7 @@
             <div class="d-flex justify-content-between flex-wrap gap-2">
               <span>
                 <%= t("better_together.billing.refund_requests.reasons.#{request.reason}") %>
-                <span class="text-body-secondary"><%= l(request.created_at.to_date, format: :long) %></span>
+                <span class="text-body-secondary"><%= billing_time(request.created_at, date_only: true) %></span>
               </span>
               <span id="<%= dom_id(request, :status) %>" class="badge text-bg-secondary"><%= t("better_together.billing.refund_requests.statuses.#{request.status}") %></span>
             </div>

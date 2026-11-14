@@ -9,7 +9,7 @@
       <dl id="<%= dom_id(offline, :details) %>" class="row">
         <dt class="col-sm-4"><%= t('better_together.billing.offline_payments.field_claimed') %></dt>
         <dd id="<%= dom_id(offline, :claimed_at) %>" class="col-sm-8">
-          <%= offline.claimed_by_buyer? ? l(offline.claimed_at, format: :long) : t('better_together.billing.offline_payments.not_claimed') %>
+          <%= offline.claimed_by_buyer? ? billing_time(offline.claimed_at) : t('better_together.billing.offline_payments.not_claimed') %>
         </dd>
         <% if offline.buyer_reference.present? %>
           <dt class="col-sm-4"><%= t('better_together.billing.offline_payments.field_buyer_reference') %></dt>

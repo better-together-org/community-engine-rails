@@ -12,13 +12,7 @@
       skip_default_ids: false
     ) do |form| %>
   <% if billing_plan.errors.any? %>
-    <div class="alert alert-danger" role="alert" id="billing-plan-errors">
-      <ul class="mb-0">
-        <% billing_plan.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <%= render 'better_together/billing/error_summary', record: billing_plan, id: 'billing-plan-errors', prefix: 'billing_plan_' %>
   <% end %>
 
   <% if linked %>

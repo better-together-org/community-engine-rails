@@ -11,6 +11,7 @@
       <div class="card-header"><strong><%= code %></strong></div>
       <div class="table-responsive">
         <table id="billing-summary-<%= code.downcase %>-table" class="table table-sm mb-0">
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.summary_totals', currency: code) %></caption>
           <tbody>
             <% [
                  ['sales', summary.sales_count.to_s],
@@ -35,6 +36,7 @@
       <% if summary.tax_rows.any? %>
         <div class="table-responsive border-top">
           <table id="billing-summary-<%= code.downcase %>-tax" class="table table-sm mb-0">
+            <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.summary_tax', currency: code) %></caption>
             <thead class="table-light">
               <tr>
                 <th scope="col"><%= t('better_together.metrics.reports.billing.tax') %></th>
@@ -57,6 +59,7 @@
       <% if summary.authority_rows.any? %>
         <div class="table-responsive border-top">
           <table id="billing-summary-<%= code.downcase %>-authorities" class="table table-sm mb-0">
+            <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.summary_authorities', currency: code) %></caption>
             <thead class="table-light">
               <tr>
                 <th scope="col"><%= t('better_together.metrics.reports.billing.authority_title') %></th>
@@ -77,6 +80,7 @@
       <% if summary.regions.any? %>
         <div class="table-responsive border-top">
           <table id="billing-summary-<%= code.downcase %>-regions" class="table table-sm mb-0">
+            <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.summary_regions', currency: code) %></caption>
             <thead class="table-light">
               <tr>
                 <th scope="col"><%= t('better_together.metrics.reports.billing.region') %></th>
@@ -99,6 +103,7 @@
       <% if summary.registrations.any? %>
         <div class="table-responsive border-top">
           <table id="billing-summary-<%= code.downcase %>-registrations" class="table table-sm mb-0">
+            <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.summary_registrations', currency: code) %></caption>
             <thead class="table-light">
               <tr>
                 <th scope="col"><%= t('better_together.metrics.reports.billing.registrations') %></th>
@@ -119,6 +124,7 @@
       <% if summary.payments.any? %>
         <div class="table-responsive border-top">
           <table id="billing-summary-<%= code.downcase %>-payments" class="table table-sm mb-0">
+            <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.summary_payments', currency: code) %></caption>
             <thead class="table-light">
               <tr>
                 <th scope="col"><%= t('better_together.metrics.reports.billing.payment_method') %></th>

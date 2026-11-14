@@ -1131,6 +1131,10 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
+      errors:
+        summary:
+          one: '1 problem needs your attention:'
+          other: "%{count} problems need your attention:"
       events:
         alerts:
           alerted_body: 'Events the processor reported for attention: %{count}.'
@@ -2247,6 +2251,30 @@ en:
         state_past_due: Past due
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
+      tables:
+        agreement_requirements: Agreements required for purchases
+        allowances: Allowances and what has been used
+        credit_accounts: Store credit accounts
+        hosted_platforms: Hosted platforms and their billing state
+        offline_queue: Offline payments waiting for the seller
+        order_line_items: Items in this order
+        order_payments: Payments on this order
+        order_totals: Order totals
+        orders: Your orders
+        plans: Plans for sale
+        processor_settings: Payment methods and their settings
+        promotions: Promotions
+        refund_requests: Refund requests
+        sales: Sales
+        subscribers: Subscribers
+        subscriptions: Your subscriptions
+        summary_authorities: Tax by authority in %{currency}
+        summary_payments: Payments by method in %{currency}
+        summary_regions: Sales by region in %{currency}
+        summary_registrations: Tax registrations in %{currency}
+        summary_tax: Tax collected in %{currency}
+        summary_totals: Totals in %{currency}
+        tax_registrations: Tax registrations
       tax_registrations:
         created: Tax registration added.
         edit_title: Edit tax registration

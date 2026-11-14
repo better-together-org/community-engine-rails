@@ -10,14 +10,14 @@
 
   <dl id="<%= dom_id(@term, :details) %>" class="row mb-4">
     <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_through') %></dt>
-    <dd class="col-sm-9" id="subscription-through"><%= l(subscription.current_period_end.to_date, format: :long) %></dd>
+    <dd class="col-sm-9" id="subscription-through"><%= billing_time(subscription.current_period_end, date_only: true) %></dd>
     <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_price') %></dt>
     <dd class="col-sm-9" id="subscription-price"><%= billing_amount(@term.unit_amount_cents, @term.currency) %></dd>
     <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_method') %></dt>
     <dd class="col-sm-9" id="subscription-method"><%= billing_payment_method_label(@term.payment_method) %></dd>
     <% if @term.grace_ends_at && subscription.status == 'past_due' %>
       <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_grace') %></dt>
-      <dd class="col-sm-9" id="subscription-grace"><%= l(@term.grace_ends_at.to_date, format: :long) %></dd>
+      <dd class="col-sm-9" id="subscription-grace"><%= billing_time(@term.grace_ends_at, date_only: true) %></dd>
     <% end %>
   </dl>
 
@@ -63,7 +63,7 @@
               <%= t('better_together.billing.subscriptions.plan_change_pending_invoice', plan: @term.pending_plan.name) %>
               <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale), id: 'subscription-plan-change-invoice-link' %>
             <% else %>
-              <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: l(subscription.current_period_end.to_date, format: :long)) %>
+              <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: billing_time_text(subscription.current_period_end, date_only: true)) %>
             <% end %>
           </p>
           <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale),
@@ -123,7 +123,7 @@
   <div class="card">
     <div class="table-responsive">
       <table id="<%= dom_id(@term, :periods) %>" class="table mb-0">
-        <caption class="visually-hidden"><%= t('better_together.billing.subscriptions.periods_caption') %></caption>
+        <caption class="visually-hidden position-absolute"><%= t('better_together.billing.subscriptions.periods_caption') %></caption>
         <thead class="table-light">
           <tr>
             <th scope="col"><%= t('better_together.billing.subscriptions.field_period') %></th>

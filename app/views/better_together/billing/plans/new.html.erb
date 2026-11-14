@@ -3,7 +3,7 @@
 <% end %>
 
 <div class="container my-4">
-  <nav aria-label="breadcrumb" class="mb-3">
+  <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <%= link_to t('better_together.billing.plans.index_title'), billing_plans_path(locale: I18n.locale) %>

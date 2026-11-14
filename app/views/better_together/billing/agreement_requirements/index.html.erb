@@ -12,6 +12,7 @@
     <% if @requirements.any? %>
       <div class="table-responsive">
         <table id="billing-agreement-requirements-table" class="table mb-0">
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.agreement_requirements') %></caption>
           <thead class="table-light">
             <tr>
               <th scope="col"><%= t('better_together.billing.requirements.field_agreement') %></th>
@@ -55,9 +56,8 @@
       <div class="card-header"><strong><%= t('better_together.billing.requirements.add_title') %></strong></div>
       <div class="card-body">
         <% if @requirement.errors.any? %>
-          <div class="alert alert-danger" role="alert" id="billing-agreement-requirement-errors">
-            <ul class="mb-0"><% @requirement.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
-          </div>
+          <%= render 'better_together/billing/error_summary', record: @requirement, id: 'billing-agreement-requirement-errors',
+                     field_ids: { agreement: 'billing-requirement-agreement', agreement_id: 'billing-requirement-agreement' } %>
         <% end %>
         <div class="row g-3">
           <div class="col-md-6">

@@ -19,6 +19,7 @@
     <div class="card">
       <div class="table-responsive">
         <table id="billing-subscribers-table" class="table table-hover mb-0">
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.subscribers') %></caption>
           <thead class="table-light">
             <tr>
               <th scope="col"><%= t('better_together.billing.subscribers.field_subscriber') %></th>
@@ -34,7 +35,7 @@
                 <th scope="row"><%= term.payer&.name %></th>
                 <td><%= term.plan.name %></td>
                 <td><%= billing_subscription_status_badge(term.pay_subscription) %></td>
-                <td><%= l(term.pay_subscription.current_period_end.to_date, format: :long) %></td>
+                <td><%= billing_time(term.pay_subscription.current_period_end, date_only: true) %></td>
                 <td class="text-end">
                   <%= link_to t('globals.view'), billing_subscriber_path(term, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
                 </td>

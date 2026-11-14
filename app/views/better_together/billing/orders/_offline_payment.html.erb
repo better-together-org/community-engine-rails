@@ -27,7 +27,7 @@
           <p id="billing-offline-amount<%= suffix %>" class="fw-bold">
             <%= t('better_together.billing.offline_payments.amount_to_pay', amount: billing_amount(offline.payment.amount_cents, order.currency)) %>
             <% if order.expires_at %>
-              <span class="fw-normal text-body-secondary"><%= t('better_together.billing.offline_payments.hold_until', date: l(order.expires_at, format: :long)) %></span>
+              <span class="fw-normal text-body-secondary"><%= t('better_together.billing.offline_payments.hold_until', date: billing_time_text(order.expires_at)) %></span>
             <% end %>
           </p>
         <% end %>
@@ -36,7 +36,7 @@
           <strong><%= t('better_together.billing.offline_payments.disclosure_heading') %></strong>
           <ul class="mb-0">
             <% billing_offline_disclosure_keys(offline).each do |key| %>
-              <li><%= t(key, hours: ((order.expires_at - order.placed_at) / 1.hour).round) %></li>
+              <li><%= t(key, hours: (order.expires_at && order.placed_at ? ((order.expires_at - order.placed_at) / 1.hour).round : 0)) %></li>
             <% end %>
           </ul>
         </div>
@@ -48,7 +48,7 @@
           </p>
           <% if offline.claimed_by_buyer? %>
             <p id="billing-offline-claimed-note<%= suffix %>" class="text-success">
-              <%= t('better_together.billing.offline_payments.claimed_note', date: l(offline.claimed_at, format: :long)) %>
+              <%= t('better_together.billing.offline_payments.claimed_note', date: billing_time_text(offline.claimed_at)) %>
             </p>
           <% end %>
           <div class="mb-3">

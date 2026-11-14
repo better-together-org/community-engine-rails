@@ -14,12 +14,12 @@
 
   <dl id="<%= dom_id(@term, :details) %>" class="row mb-4">
     <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_through') %></dt>
-    <dd class="col-sm-9" id="subscriber-through"><%= l(subscription.current_period_end.to_date, format: :long) %></dd>
+    <dd class="col-sm-9" id="subscriber-through"><%= billing_time(subscription.current_period_end, date_only: true) %></dd>
     <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_method') %></dt>
     <dd class="col-sm-9" id="subscriber-method"><%= billing_payment_method_label(@term.payment_method) %></dd>
     <% if @term.grace_ends_at %>
       <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_grace') %></dt>
-      <dd class="col-sm-9" id="subscriber-grace"><%= l(@term.grace_ends_at.to_date, format: :long) %></dd>
+      <dd class="col-sm-9" id="subscriber-grace"><%= billing_time(@term.grace_ends_at, date_only: true) %></dd>
     <% end %>
   </dl>
 
@@ -50,7 +50,7 @@
   <div class="card">
     <div class="table-responsive">
       <table id="<%= dom_id(@term, :periods) %>" class="table mb-0">
-        <caption class="visually-hidden"><%= t('better_together.billing.subscriptions.periods_caption') %></caption>
+        <caption class="visually-hidden position-absolute"><%= t('better_together.billing.subscriptions.periods_caption') %></caption>
         <tbody>
           <% @term.periods.to_a.reverse.each do |period| %>
             <tr id="<%= dom_id(period) %>">

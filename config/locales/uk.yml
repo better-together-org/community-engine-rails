@@ -1111,6 +1111,12 @@ uk:
         status_revoked: Повернено
         title: Мій доступ
         until: Діє до %{date}.
+      errors:
+        summary:
+          few: "%{count} проблеми потребують вашої уваги:"
+          many: "%{count} проблем потребують вашої уваги:"
+          one: '1 проблема потребує вашої уваги:'
+          other: "%{count} проблем потребують вашої уваги:"
       events:
         alerts:
           alerted_body: 'Події, на які процесор вказав для перегляду: %{count}.'
@@ -2223,6 +2229,30 @@ uk:
         state_past_due: Прострочена
         state_unpaid: Спливла
         terms_accepted: Дякуємо. Ваш рахунок на продовження готовий.
+      tables:
+        agreement_requirements: Угоди, потрібні для покупок
+        allowances: Ліміти та використане
+        credit_accounts: Рахунки магазинного кредиту
+        hosted_platforms: Розміщені платформи та стан їх виставлення рахунків
+        offline_queue: Офлайн-платежі, що очікують продавця
+        order_line_items: Позиції цього замовлення
+        order_payments: Платежі за це замовлення
+        order_totals: Підсумки замовлення
+        orders: Ваші замовлення
+        plans: Плани в продажу
+        processor_settings: Способи оплати та їх налаштування
+        promotions: Акції
+        refund_requests: Запити на відшкодування
+        sales: Продажі
+        subscribers: Передплатники
+        subscriptions: Ваші передплати
+        summary_authorities: Податок за органами у %{currency}
+        summary_payments: Платежі за способами у %{currency}
+        summary_regions: Продажі за регіонами у %{currency}
+        summary_registrations: Податкові реєстрації у %{currency}
+        summary_tax: Зібраний податок у %{currency}
+        summary_totals: Підсумки у %{currency}
+        tax_registrations: Податкові реєстрації
       tax_registrations:
         created: Податкову реєстрацію додано.
         edit_title: Редагувати податкову реєстрацію

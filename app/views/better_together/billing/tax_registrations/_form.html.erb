@@ -6,13 +6,10 @@
       id: 'billing-tax-registration-form'
     ) do |form| %>
   <% if registration.errors.any? %>
-    <div class="alert alert-danger" role="alert" id="billing-tax-registration-errors">
-      <ul class="mb-0">
-        <% registration.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
+    <%= render 'better_together/billing/error_summary', record: registration, id: 'billing-tax-registration-errors',
+               field_ids: { status: 'billing-tax-registration-status', prices_include_tax: 'billing-tax-registration-prices',
+                            registration_number: 'billing-tax-registration-number', effective_from: 'billing-tax-registration-from',
+                            effective_to: 'billing-tax-registration-to' } %>
   <% end %>
 
   <div class="row g-3 mb-4">

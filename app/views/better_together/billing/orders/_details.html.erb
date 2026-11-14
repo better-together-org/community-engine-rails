@@ -7,7 +7,7 @@
   <div class="card-body">
     <dl class="row mb-0">
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_placed') %></dt>
-      <dd id="<%= dom_id(order, :placed_at) %>" class="col-sm-8"><%= order.placed_at ? l(order.placed_at, format: :long) : '—' %></dd>
+      <dd id="<%= dom_id(order, :placed_at) %>" class="col-sm-8"><%= billing_time(order.placed_at) %></dd>
 
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_purpose') %></dt>
       <dd id="<%= dom_id(order, :purpose) %>" class="col-sm-8"><%= t("better_together.billing.orders.purpose_#{order.purpose}") %></dd>
@@ -25,7 +25,7 @@
 
       <% if order.open? && order.expires_at %>
         <dt class="col-sm-4"><%= t('better_together.billing.orders.field_expires') %></dt>
-        <dd id="<%= dom_id(order, :expires_at) %>" class="col-sm-8"><%= l(order.expires_at, format: :long) %></dd>
+        <dd id="<%= dom_id(order, :expires_at) %>" class="col-sm-8"><%= billing_time(order.expires_at) %></dd>
       <% end %>
     </dl>
   </div>
@@ -49,7 +49,8 @@
       </span>
     </div>
     <div class="table-responsive">
-      <table id="billing-order-refunds-table" class="table mb-0" aria-label="<%= t('better_together.billing.orders.refunds_caption', number: order.number) %>">
+      <table id="billing-order-refunds-table" class="table mb-0">
+        <caption class="visually-hidden position-absolute"><%= t('better_together.billing.orders.refunds_caption', number: order.number) %></caption>
         <thead class="table-light">
           <tr>
             <th scope="col"><%= t('better_together.billing.orders.field_refund_date') %></th>
@@ -60,7 +61,7 @@
         <tbody>
           <% refunds.each do |refund| %>
             <tr id="<%= dom_id(refund) %>">
-              <th scope="row" class="fw-normal"><%= l(refund.created_at, format: :long) %></th>
+              <th scope="row" class="fw-normal"><%= billing_time(refund.created_at) %></th>
               <td><%= billing_refund_status_label(refund) %></td>
               <td class="text-end">
                 <%= billing_amount(refund.amount_cents, refund.currency) %>
@@ -84,7 +85,7 @@
         <li id="<%= dom_id(acceptance) %>" class="list-group-item">
           <%= acceptance.agreement_title %>
           <span class="d-block small text-body-secondary">
-            <%= t('better_together.billing.orders.accepted_by', name: acceptance.signer.name, date: l(acceptance.accepted_at, format: :long)) %>
+            <%= t('better_together.billing.orders.accepted_by', name: acceptance.signer.name, date: billing_time_text(acceptance.accepted_at)) %>
           </span>
         </li>
       <% end %>
@@ -97,6 +98,7 @@
   <% if order.payments.any? %>
     <div class="table-responsive">
       <table id="billing-order-payments" class="table mb-0">
+        <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.order_payments') %></caption>
         <thead class="table-light">
           <tr>
             <th scope="col"><%= t('better_together.billing.orders.field_method') %></th>

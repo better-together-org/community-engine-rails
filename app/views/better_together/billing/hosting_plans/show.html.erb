@@ -21,13 +21,13 @@
               <dd class="col-sm-8"><%= billing_amount(term.unit_amount_cents, term.currency) %> / <%= billing_interval_label(term.plan.billing_interval) %></dd>
               <% if term.pay_subscription.current_period_end %>
                 <dt class="col-sm-4"><%= t('better_together.billing.hosting_plan.renews') %></dt>
-                <dd class="col-sm-8" id="<%= dom_id(term, :hosting_renews) %>"><%= l(term.pay_subscription.current_period_end.to_date, format: :long) %></dd>
+                <dd class="col-sm-8" id="<%= dom_id(term, :hosting_renews) %>"><%= billing_time(term.pay_subscription.current_period_end, date_only: true) %></dd>
               <% end %>
             </dl>
           <% end %>
           <% if entitlement.grace? && entitlement.grace_ends_at %>
             <p class="text-warning-emphasis" id="<%= dom_id(entitlement, :hosting_grace) %>">
-              <%= t('better_together.billing.entitlements.grace_until', date: l(entitlement.grace_ends_at.to_date, format: :long)) %>
+              <%= t('better_together.billing.entitlements.grace_until', date: billing_time_text(entitlement.grace_ends_at, date_only: true)) %>
             </p>
           <% end %>
 

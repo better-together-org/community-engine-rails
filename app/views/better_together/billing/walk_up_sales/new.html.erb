@@ -3,7 +3,7 @@
 <% end %>
 
 <div id="billing-walk-up-page" class="container my-4">
-  <nav aria-label="breadcrumb" class="mb-3">
+  <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><%= link_to t('better_together.billing.orders.sales_title'), billing_sales_path(locale: I18n.locale) %></li>
       <li class="breadcrumb-item active" aria-current="page"><%= t('better_together.billing.walk_up.title') %></li>
@@ -13,7 +13,8 @@
   <p class="text-body-secondary mb-4"><%= t('better_together.billing.walk_up.intro') %></p>
 
   <% if @error %>
-    <div class="alert alert-danger" role="alert" id="billing-walk-up-error"><%= t("better_together.billing.walk_up.error_#{@error}") %></div>
+    <div class="alert alert-danger" role="alert" id="billing-walk-up-error" tabindex="-1" data-controller="better_together--billing-error-summary"
+         data-better_together--billing-error-summary-fields-value="<%= %w[billing-walk-up-plan billing-walk-up-method billing-walk-up-buyer billing-walk-up-buyer-name billing-walk-up-buyer-email].to_json %>"><%= t("better_together.billing.walk_up.error_#{@error}") %></div>
   <% end %>
 
   <% if @plans.empty? || (@methods.empty? && @plans.none?(&:free?)) %>

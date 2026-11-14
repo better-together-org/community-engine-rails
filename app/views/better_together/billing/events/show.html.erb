@@ -23,16 +23,16 @@
         <dt class="col-sm-4"><%= t('better_together.billing.events.field_replays') %></dt>
         <dd class="col-sm-8"><%= @event.replay_count.to_i %></dd>
         <dt class="col-sm-4"><%= t('better_together.billing.events.field_received') %></dt>
-        <dd class="col-sm-8"><%= l(@event.created_at, format: :long) %></dd>
+        <dd class="col-sm-8"><%= billing_time(@event.created_at) %></dd>
         <dt class="col-sm-4"><%= t('better_together.billing.events.field_last_attempt') %></dt>
-        <dd class="col-sm-8"><%= @event.last_attempted_at ? l(@event.last_attempted_at, format: :long) : t('better_together.billing.events.never') %></dd>
+        <dd class="col-sm-8"><%= @event.last_attempted_at ? billing_time(@event.last_attempted_at) : t('better_together.billing.events.never') %></dd>
         <% if @event.dead_lettered? %>
           <dt class="col-sm-4"><%= t('better_together.billing.events.field_reason') %></dt>
           <dd class="col-sm-8"><%= t("better_together.billing.events.reasons.#{@event.dead_letter_reason}", default: @event.dead_letter_reason.to_s) %></dd>
         <% end %>
         <% if @event.last_replayed_at %>
           <dt class="col-sm-4"><%= t('better_together.billing.events.field_last_replayed') %></dt>
-          <dd class="col-sm-8"><%= l(@event.last_replayed_at, format: :long) %></dd>
+          <dd class="col-sm-8"><%= billing_time(@event.last_replayed_at) %></dd>
         <% end %>
       </dl>
     </div>

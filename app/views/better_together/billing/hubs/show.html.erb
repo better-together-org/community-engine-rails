@@ -20,7 +20,7 @@
                 <span>
                   <%= link_to term.plan.name, billing_subscription_path(term, locale: I18n.locale) %>
                   <span class="d-block small text-body-secondary">
-                    <%= t('better_together.billing.hub.renews', date: l(term.pay_subscription.current_period_end.to_date, format: :long)) %>
+                    <%= t('better_together.billing.hub.renews', date: billing_time_text(term.pay_subscription.current_period_end, date_only: true)) %>
                   </span>
                 </span>
                 <span><%= billing_amount(term.unit_amount_cents, term.currency) %></span>

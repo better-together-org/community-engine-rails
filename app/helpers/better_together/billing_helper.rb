@@ -14,6 +14,22 @@ module BetterTogether
     end
 
     # What an order says about money (lines, one row per tax, total, registration numbers), for any surface.
+    # A date or moment as a <time> element in the reader's locale, or a dash when there is none.
+    # `date_only` drops the clock for a moment that is only ever shown as a day.
+    def billing_time(value, format: :long, date_only: false)
+      return '—' if value.blank?
+
+      shown = date_only && value.respond_to?(:to_date) ? value.to_date : value
+      time_tag(value, l(shown, format:))
+    end
+
+    # The same as plain text, for a sentence translated with the date inside it.
+    def billing_time_text(value, format: :long, date_only: false)
+      return '—' if value.blank?
+
+      l(date_only && value.respond_to?(:to_date) ? value.to_date : value, format:)
+    end
+
     def billing_order_summary(order) = BetterTogether::Billing::Orders::Summary.for_order(order)
 
     def billing_interval_label(interval)

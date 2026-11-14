@@ -18,6 +18,7 @@
     <div class="card">
       <div class="table-responsive">
         <table id="billing-sales-table" class="table table-hover mb-0">
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.sales') %></caption>
           <thead class="table-light">
             <tr>
               <th scope="col"><%= t('better_together.billing.orders.field_number') %></th>
@@ -34,7 +35,7 @@
               <tr id="<%= dom_id(order) %>">
                 <th scope="row"><code><%= order.number %></code></th>
                 <td><%= order.buyer.name %></td>
-                <td><%= order.placed_at ? l(order.placed_at.to_date, format: :long) : '—' %></td>
+                <td><%= billing_time(order.placed_at, date_only: true) %></td>
                 <td><%= billing_order_status_badge(order) %></td>
                 <td class="text-end billing-sale-tax"><%= order.tax_cents.positive? ? billing_amount(order.tax_cents, order.currency) : '—' %></td>
                 <td class="text-end"><%= billing_amount(order.total_cents, order.currency) %></td>

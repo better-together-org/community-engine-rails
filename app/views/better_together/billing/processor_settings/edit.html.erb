@@ -6,7 +6,7 @@
 <% end %>
 
 <div id="billing-processor-setting-edit-page" class="container my-4">
-  <nav aria-label="breadcrumb" class="mb-3">
+  <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <%= link_to t('better_together.billing.processor_settings.index_title'), billing_processor_settings_path(locale: I18n.locale) %>
@@ -22,13 +22,9 @@
                 url: billing_processor_setting_path(name, locale: I18n.locale), method: :patch,
                 id: 'billing-processor-setting-form') do |form| %>
     <% if @setting.errors.any? %>
-      <div class="alert alert-danger" role="alert" id="billing-processor-setting-errors">
-        <ul class="mb-0">
-          <% @setting.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
+      <%= render 'better_together/billing/error_summary', record: @setting, id: 'billing-processor-setting-errors',
+                 field_ids: { hold_hours: 'billing-processor-hold-hours', grant_on: 'billing-processor-grant-on',
+                              acknowledge: 'billing-processor-acknowledge' } %>
     <% end %>
 
     <% if adapter.instruction_fields.any? %>
@@ -100,7 +96,7 @@
       </ul>
       <% if @setting.acknowledged? %>
         <p class="mb-0 small" id="billing-processor-acknowledged">
-          <%= t('better_together.billing.processor_settings.acknowledged_on', date: l(@setting.acknowledged_at.to_date, format: :long)) %>
+          <%= t('better_together.billing.processor_settings.acknowledged_on', date: billing_time_text(@setting.acknowledged_at, date_only: true)) %>
         </p>
       <% else %>
         <div class="form-check">

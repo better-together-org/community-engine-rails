@@ -35,7 +35,7 @@
         <% if summary[:oldest_unresolved_at].present? %>
           <div class="small">
             <%= t('better_together.billing.events.alerts.oldest') %>
-            <strong><%= l(summary[:oldest_unresolved_at], format: :long) %></strong>
+            <strong><%= billing_time(summary[:oldest_unresolved_at]) %></strong>
           </div>
         <% end %>
       </div>

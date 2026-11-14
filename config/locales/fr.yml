@@ -1135,6 +1135,10 @@ fr:
         status_revoked: Remboursé
         title: Mon accès
         until: Valable jusqu’au %{date}.
+      errors:
+        summary:
+          one: '1 problème demande votre attention :'
+          other: "%{count} problèmes demandent votre attention :"
       events:
         alerts:
           alerted_body: 'Événements signalés par le processeur pour examen : %{count}.'
@@ -2307,6 +2311,30 @@ fr:
         state_past_due: En retard
         state_unpaid: Expiré
         terms_accepted: Merci. Votre facture de renouvellement est prête.
+      tables:
+        agreement_requirements: Accords exigés pour les achats
+        allowances: Allocations et ce qui a été utilisé
+        credit_accounts: Comptes de crédit en boutique
+        hosted_platforms: Plateformes hébergées et leur état de facturation
+        offline_queue: Paiements hors ligne en attente du vendeur
+        order_line_items: Articles de cette commande
+        order_payments: Paiements de cette commande
+        order_totals: Totaux de la commande
+        orders: Vos commandes
+        plans: Forfaits en vente
+        processor_settings: Modes de paiement et leurs paramètres
+        promotions: Promotions
+        refund_requests: Demandes de remboursement
+        sales: Ventes
+        subscribers: Abonnés
+        subscriptions: Vos abonnements
+        summary_authorities: Taxes par autorité en %{currency}
+        summary_payments: Paiements par mode en %{currency}
+        summary_regions: Ventes par région en %{currency}
+        summary_registrations: Inscriptions fiscales en %{currency}
+        summary_tax: Taxes perçues en %{currency}
+        summary_totals: Totaux en %{currency}
+        tax_registrations: Inscriptions fiscales
       tax_registrations:
         created: Inscription fiscale ajoutée.
         edit_title: Modifier l'inscription fiscale

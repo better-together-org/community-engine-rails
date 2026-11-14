@@ -19,10 +19,10 @@
           </p>
           <% if entitlement.grace? && entitlement.grace_ends_at %>
             <p class="text-warning-emphasis" id="<%= dom_id(entitlement, :grace) %>">
-              <%= t('better_together.billing.entitlements.grace_until', date: l(entitlement.grace_ends_at.to_date, format: :long)) %>
+              <%= t('better_together.billing.entitlements.grace_until', date: billing_time_text(entitlement.grace_ends_at, date_only: true)) %>
             </p>
           <% elsif entitlement.ends_at && entitlement.live? %>
-            <p id="<%= dom_id(entitlement, :ends) %>"><%= t('better_together.billing.entitlements.until', date: l(entitlement.ends_at.to_date, format: :long)) %></p>
+            <p id="<%= dom_id(entitlement, :ends) %>"><%= t('better_together.billing.entitlements.until', date: billing_time_text(entitlement.ends_at, date_only: true)) %></p>
           <% end %>
 
           <% allowances = entitlement.grants.applied.allowances.to_a %>

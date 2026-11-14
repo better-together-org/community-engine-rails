@@ -10,12 +10,19 @@
   <% end %>
 
   <% if @error %>
-    <div class="alert alert-danger" role="alert" id="billing-checkout-error"><%= t("better_together.billing.checkout.error_#{@error}") %></div>
+    <% fields = case @error.to_s
+                when 'method_not_available' then @choices.map { |choice| "billing-checkout-method-#{choice.name}" }
+                when 'parts_too_large' then @choices.map { |choice| "billing-checkout-part-#{choice.name}" }
+                when 'accept_all' then Array(@gate&.missing).map { |agreement| "billing-agreement-accept-#{agreement.identifier}" }
+                when /\Aaddress_/ then %w[billing-checkout-address-select billing-checkout-address-line1 billing-checkout-address-postal-code]
+                else [] end %>
+    <div class="alert alert-danger" role="alert" id="billing-checkout-error" tabindex="-1" data-controller="better_together--billing-error-summary"
+         data-better_together--billing-error-summary-fields-value="<%= fields.to_json %>"><%= t("better_together.billing.checkout.error_#{@error}") %></div>
   <% end %>
 
   <%# The summary follows the billing address picker: choosing another address reloads just this frame (see billing_checkout_address_controller). %>
   <turbo-frame id="billing-checkout-tax-frame">
-  <div id="billing-checkout-summary" class="card mb-4">
+  <div id="billing-checkout-summary" class="card mb-4" role="status" aria-live="polite" aria-atomic="true">
     <div class="card-body d-flex justify-content-between">
       <span><strong><%= @plan.name %></strong><span class="d-block text-body-secondary"><%= billing_interval_label(@plan.billing_interval) %></span></span>
       <span class="fs-5"><%= @plan.free? ? t('better_together.billing.checkout.free') : billing_amount(@plan.amount_cents, @plan.currency) %></span>
