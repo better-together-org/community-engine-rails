@@ -1135,6 +1135,10 @@ en:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Create a new %{block} block
+        create_for_page: Create a new %{block} block for the page
+        icon: "%{block} icon"
       blocks:
         accordion_block:
           answer: Answer

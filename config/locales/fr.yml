@@ -1132,6 +1132,10 @@ fr:
     contacts:
       add: Ajouter un contact
     content:
+      block_picker:
+        create: Créer un nouveau bloc %{block}
+        create_for_page: Créer un nouveau bloc %{block} pour la page
+        icon: Icône %{block}
       blocks:
         accordion_block:
           answer: Answer
