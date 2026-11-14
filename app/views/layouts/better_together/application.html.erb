@@ -55,6 +55,7 @@
     <%= render_platform_snippets(:head_end) %>
   </head>
   <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
+    <a class="visually-hidden-focusable bt-skip-link" id="skip-to-content" href="#main-content"><%= t('navbar.skip_to_content') %></a>
     <div class="wrapper">
       <%= render_platform_snippets(:body_start) %>
       <!-- Custom Header from Host App -->
@@ -63,7 +64,7 @@
       <%= render 'layouts/better_together/flash_messages' %>
 
       <!-- Main Section -->
-      <main class="content">
+      <main id="main-content" class="content" tabindex="-1">
         <%= yield %>
       </main>
 

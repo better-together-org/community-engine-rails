@@ -131,6 +131,7 @@ module BetterTogether
              class_name: '::BetterTogether::PlatformSnippet', dependent: :destroy
     has_many :platform_snippet_audits, class_name: '::BetterTogether::PlatformSnippetAudit', dependent: :delete_all
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
                                            dependent: :destroy
     has_many :outgoing_platform_connections,
