@@ -21,7 +21,10 @@ RSpec.describe 'Storage round trip against a real bucket', :env_required do
 
   before { skip 'set the STORAGE_ROUNDTRIP_* variables to run' if env.size < 4 }
 
+  # A skipped example still runs after hooks, and `config` would try to create an invalid row.
   after do
+    next if env.size < 4
+
     Current.reset
     platform.update!(storage_configuration_id: nil)
     config.destroy
