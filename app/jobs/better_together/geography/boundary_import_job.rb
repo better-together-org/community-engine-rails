@@ -13,7 +13,7 @@ module BetterTogether
     # `better_together:geography:import_boundaries` (see lib/tasks), which throttles calls
     # serially to respect Nominatim's usage policy. Idempotent: skips records that already
     # have a boundary unless force_refresh is true.
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class BoundaryImportJob < ApplicationJob
       queue_as :low_priority
       discard_on ActiveJob::DeserializationError
@@ -193,6 +193,5 @@ module BetterTogether
         RGeo::Geographic.spherical_factory(srid: 4326)
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

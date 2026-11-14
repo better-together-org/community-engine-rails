@@ -29,7 +29,7 @@ module BetterTogether
     # GET /better_together/calendars/:id/feed.ics
     # Returns ICS feed for calendar subscription
     # Supports token-based authentication for external calendar apps
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def feed
       @calendar = set_resource_instance
 
@@ -91,7 +91,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # GET /better_together/calendars/new
     def new

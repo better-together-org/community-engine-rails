@@ -1,0 +1,11 @@
+{
+  "name": "image_gallery_plain",
+  "device": "mobile",
+  "url": "/en/gallery-spec-page-bca46b5e?gallery_layout=grid&gallery_lightbox=0&gallery_token=bca46b5e",
+  "title": "Harbour gallery | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "image_gallery",
+  "flow": "plain",
+  "source_spec": "./spec/docs_screenshots/better_together/image_gallery_spec.rb"
+}

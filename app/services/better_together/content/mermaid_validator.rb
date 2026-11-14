@@ -18,7 +18,7 @@ module BetterTogether
 
       private
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def validate_basic_syntax
         return add_error('Content cannot be blank') if content.blank?
 
@@ -47,7 +47,6 @@ module BetterTogether
 
         add_error("Invalid graph direction '#{direction}'. Must be one of: #{valid_directions.join(', ')}")
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # Find the first non-comment, non-config line (the actual diagram type)
       def find_diagram_type_line

@@ -1,0 +1,83 @@
+{
+  "name": "platform_trusted_domains_index",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/trusted_domains",
+  "title": "Trusted domains | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "trusted_domains",
+  "flow": "trusted_domains_index",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_trusted_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#trusted-domains-explanation",
+      "title": "What a trusted domain does",
+      "bullets": [
+        "Verified or confirmed addresses on a listed domain join without waiting for review."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 189.390625,
+        "width": 476.0,
+        "height": 154.0,
+        "right": 488.0,
+        "bottom": 343.390625,
+        "center_x": 250.0,
+        "center_y": 266.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 82.0,
+        "width": 500.0,
+        "height": 533.390625,
+        "right": 500.0,
+        "bottom": 615.390625,
+        "center_x": 250.0,
+        "center_y": 348.6953125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 635.39,
+        "width": 270.0,
+        "height": 242,
+        "score": 641.609375
+      }
+    },
+    {
+      "selector": "#new-platform-trusted-domain-btn",
+      "title": "Add trusted domain",
+      "bullets": [
+        "Opens the form for a domain, a community role and the confirmations."
+      ],
+      "target": {
+        "x": 318.828125,
+        "y": 96.6875,
+        "width": 169.171875,
+        "height": 62.0,
+        "right": 488.0,
+        "bottom": 158.6875,
+        "center_x": 403.4140625,
+        "center_y": 127.6875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 82.0,
+        "width": 500.0,
+        "height": 533.390625,
+        "right": 500.0,
+        "bottom": 615.390625,
+        "center_x": 250.0,
+        "center_y": 348.6953125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 944,
+        "width": 270.0,
+        "height": 184,
+        "score": 0
+      }
+    }
+  ]
+}

@@ -30,9 +30,9 @@ module BetterTogether
         end
       end
 
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def build_better_together # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
-        # rubocop:todo Metrics/BlockLength
+        # rubocop:todo-next Metrics/BlockLength
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create Better Together Nav Area
@@ -110,16 +110,14 @@ module BetterTogether
             area.reload.save!
           end
         end
-        # rubocop:enable Metrics/BlockLength
       end
-      # rubocop:enable Metrics/AbcSize
 
       FOOTER_PAGE_SLUGS = %w[
         faq privacy-policy terms-of-service code-of-conduct accessibility cookie-policy contact
       ].freeze
 
       def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
-        # rubocop:todo Metrics/BlockLength
+        # rubocop:todo-next Metrics/BlockLength
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             footer_page_attrs = [
@@ -256,11 +254,10 @@ module BetterTogether
                       type: 'BetterTogether::Content::RichText',
                       privacy: 'public',
                       seed_privacy_ceiling_exempt: true,
-                      # rubocop:todo Lint/CopDirectiveSyntax
+                      # rubocop:todo-next Lint/CopDirectiveSyntax
                       content_en: <<-HTML
                           <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
-                      # rubocop:enable Lint/CopDirectiveSyntax
                     }
                   },
                   {
@@ -346,11 +343,10 @@ module BetterTogether
             area.save!
           end
         end
-        # rubocop:enable Metrics/BlockLength
       end
 
       def build_header # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
-        # rubocop:todo Metrics/BlockLength
+        # rubocop:todo-next Metrics/BlockLength
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create platform header pages
@@ -470,12 +466,11 @@ module BetterTogether
             area.save!
           end
         end
-        # rubocop:enable Metrics/BlockLength
       end
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def build_host # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Lint/CopDirectiveSyntax, Metrics/BlockLength
-        # rubocop:todo Metrics/BlockLength
+        # rubocop:todo-next Metrics/BlockLength
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create Platform Header Host Navigation Area and its Navigation Items
@@ -648,9 +643,7 @@ module BetterTogether
             area.reload.save!
           end
         end
-        # rubocop:enable Metrics/BlockLength
       end
-      # rubocop:enable Metrics/MethodLength
 
       # Clear existing data - Use with caution!
       def clear_existing

@@ -54,7 +54,7 @@ module BetterTogether
         CONNECTION_REQUEST_TYPE   = 'BetterTogether::Joatu::ConnectionRequest'
         PRIVATE_REQUEST_TYPES     = [MEMBERSHIP_REQUEST_TYPE, CONNECTION_REQUEST_TYPE].freeze
 
-        # rubocop:todo Metrics/MethodLength
+        # rubocop:todo-next Metrics/MethodLength
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
           return scope.none unless current_platform
 
@@ -70,10 +70,9 @@ module BetterTogether
           end
 
           # Standalone requests: not a response to another resource
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           standalone = base.left_joins(:response_links_as_response)
                            .where(better_together_joatu_response_links: { id: nil })
-          # rubocop:enable Layout/LineLength
 
           # Unauthenticated: public standalone requests only, no blocking to apply
           return standalone.where(privacy: 'public') unless user.present?
@@ -103,15 +102,13 @@ module BetterTogether
 
           response_to_my_offer = base.joins(join_sources).where(offers[:creator_id].eq(agent_id))
 
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           result = base.where(id: community_visible.select(:id))
                        .or(base.where(id: owned.select(:id)))
                        .or(base.where(id: response_to_my_offer.select(:id)))
-          # rubocop:enable Layout/LineLength
 
           exclude_blocked_creators(result)
         end
-        # rubocop:enable Metrics/MethodLength
 
         private
 

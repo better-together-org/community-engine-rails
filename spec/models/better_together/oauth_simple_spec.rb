@@ -82,9 +82,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
       end.to change(BetterTogether.user_class, :count).by(1)
                                                       .and change(BetterTogether::Person, :count).by(1)
                                                                                                  .and change(
-                                                                                                   # rubocop:todo Layout/LineLength
+                                                                                                   # rubocop:todo-next Layout/LineLength
                                                                                                    BetterTogether::PersonPlatformIntegration, :count
-                                                                                                   # rubocop:enable Layout/LineLength
                                                                                                  ).by(1)
     end
 

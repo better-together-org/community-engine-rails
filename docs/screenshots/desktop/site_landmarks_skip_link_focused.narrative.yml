@@ -1,0 +1,19 @@
+---
+title: Site landmarks and skip link
+audience:
+- content_editor
+- developer
+journey_step: As a keyboard user, I press Tab once to reveal the skip link and jump
+  to the page content.
+callouts:
+- :id: skip_link
+  :title: Skip link
+  :description: Visually hidden until focused; targets main#main-content.
+- :id: main_nav
+  :title: Labelled main navigation
+  :description: nav#header-nav carries an aria-label; the navs are distinguishable
+    landmarks.
+accessibility_notes: header, labelled navs, main#main-content; dropdowns expose aria-expanded
+  and aria-haspopup.
+slug: site_landmarks_skip_link_focused
+device: desktop

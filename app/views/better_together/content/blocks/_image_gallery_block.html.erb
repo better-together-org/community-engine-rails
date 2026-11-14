@@ -1,0 +1,20 @@
+<%# locals: (image_gallery_block:) -%>
+<% images = image_gallery_block.images.select { |image| image.media.attached? && policy(image).show? } %>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: image_gallery_block } do %>
+  <% if images.empty? %>
+    <p class="image-gallery-block__empty text-muted">
+      <%= t('better_together.content.blocks.image_gallery_block.empty') %>
+    </p>
+  <% else %>
+    <% cache [image_gallery_block, images.map(&:cache_key_with_version), I18n.locale] do %>
+      <div class="image-gallery-block">
+        <% if image_gallery_block.heading.present? %>
+          <h2 class="image-gallery-block__heading h4 mb-3"><%= image_gallery_block.heading %></h2>
+        <% end %>
+        <%= render_image_gallery(images, image_gallery_block.heading.presence || image_gallery_block.block_name,
+                                 layout: image_gallery_block.layout, label: image_gallery_block.heading.presence,
+                                 lightbox: image_gallery_block.lightbox?) %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

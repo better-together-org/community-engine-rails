@@ -1,0 +1,48 @@
+{
+  "name": "platform_theme_modes_settings",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_theme_settings",
+  "flow": "platform_theme_modes_settings",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_theme_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-theme-modes",
+      "title": "Light and dark mode",
+      "bullets": [
+        "Enable dark mode, set the default and choose the dark colours."
+      ],
+      "target": {
+        "x": 394.5,
+        "y": 460.1875,
+        "width": 966.0,
+        "height": 536.1875,
+        "right": 1360.5,
+        "bottom": 996.375,
+        "center_x": 877.5,
+        "center_y": 728.28125
+      },
+      "avoid": {
+        "x": 394.5,
+        "y": 460.1875,
+        "width": 966.0,
+        "height": 536.1875,
+        "right": 1360.5,
+        "bottom": 996.375,
+        "center_x": 877.5,
+        "center_y": 728.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 687.5,
+        "y": 1016.38,
+        "width": 380,
+        "height": 158,
+        "score": 460.625
+      }
+    }
+  ]
+}
