@@ -16,7 +16,7 @@ RSpec.describe 'HtmlAssertionHelpers Integration' do
 
   before do
     # Create a simple controller action that renders person name
-    # rubocop:disable RSpec/AnyInstance
+    # rubocop:disable-next RSpec/AnyInstance
     allow_any_instance_of(ActionDispatch::Response).to receive(:body).and_return(
       <<~HTML
         <html>
@@ -28,7 +28,6 @@ RSpec.describe 'HtmlAssertionHelpers Integration' do
         </html>
       HTML
     )
-    # rubocop:enable RSpec/AnyInstance
   end
 
   describe 'using helper methods' do

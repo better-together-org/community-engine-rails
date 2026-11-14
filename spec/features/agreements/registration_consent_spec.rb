@@ -5,9 +5,8 @@ require 'rails_helper'
 RSpec.describe 'User registration agreements', :no_auth, :user_registration do
   let!(:privacy_agreement) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }
   # rubocop:enable RSpec/LetSetup
-  # rubocop:todo RSpec/LetSetup
+  # rubocop:todo-next RSpec/LetSetup
   let!(:tos_agreement) { BetterTogether::Agreement.find_by!(identifier: 'terms_of_service') }
-  # rubocop:enable RSpec/LetSetup
   let!(:platform) { configure_host_platform }
   let(:test_email) { unique_email }
   let(:test_identifier) { unique_identifier('testuser') }

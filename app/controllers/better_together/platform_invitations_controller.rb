@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # rubocop:todo Metrics/ClassLength
+  # rubocop:todo-next Metrics/ClassLength
   class PlatformInvitationsController < ApplicationController # rubocop:todo Style/Documentation
     include PerUserThrottling
 
@@ -290,5 +290,4 @@ module BetterTogether
       found_class || BetterTogether::PlatformInvitation
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

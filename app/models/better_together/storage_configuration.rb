@@ -99,6 +99,11 @@ module BetterTogether
       persist_rotation(candidate)
     end
 
+    # Bytes stored on this configuration's service (see Storage::Usage).
+    def used_bytes
+      Storage::Usage.bytes_for(self)
+    end
+
     private
 
     def persist_rotation(candidate) # rubocop:disable Naming/PredicateMethod

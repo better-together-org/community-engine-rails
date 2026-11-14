@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Helper methods for settings page
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module SettingsHelper
     # Renders a self-contained preference field with individual form and change tracking
     #
@@ -47,6 +47,25 @@ module BetterTogether
       end
     end
 
+    # [label, id] choices for a person's theme select: the platform's own theme first, then every theme.
+    def user_theme_choices
+      cfg = BetterTogether::PlatformThemeConfig
+      [[t('better_together.people.preferences.appearance.platform_theme'), '']] +
+        cfg.themes.keys.map { |id| [cfg.theme_name(id), id] }
+    end
+
+    def user_color_mode_choices
+      BetterTogether::PlatformThemeConfig::COLOR_MODES.map { |mode| [t("better_together.color_mode.#{mode}"), mode] }
+    end
+
+    # Preview tokens keyed by theme id ('' is the platform's own theme), embedded for the live preview.
+    def user_theme_preview_json(platform = host_platform)
+      cfg = BetterTogether::PlatformThemeConfig
+      data = cfg.themes.keys.index_with { |id| cfg.preview_data(id) }
+      data[''] = cfg.preview_data('', platform.theme_config)
+      data.to_json
+    end
+
     private
 
     # rubocop:disable Metrics/ParameterLists
@@ -73,7 +92,7 @@ module BetterTogether
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def render_field_by_type(person, field_name, field_type, field_options)
       field_value = person.send(field_name)
       base_attrs = {
@@ -96,7 +115,6 @@ module BetterTogether
         render_text_field(field_value, base_attrs, field_options)
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def render_select_field(field_name, field_value, field_options, base_attrs)
       if field_name == :locale
@@ -105,12 +123,13 @@ module BetterTogether
                    base_attrs.merge(class: 'form-select'))
       else
         choices = field_options[:choices] || []
-        select_tag("person[#{field_name}]", options_for_select(choices, field_value),
+        selected = field_options.key?(:selected) ? field_options[:selected] : field_value
+        select_tag("person[#{field_name}]", options_for_select(choices, selected),
                    base_attrs.merge(class: 'form-select'))
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def render_time_zone_field(field_value, base_attrs, _field_options)
       default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
@@ -147,7 +166,6 @@ module BetterTogether
         html_options
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def render_toggle_field(field_name, field_value, base_attrs)
       content_tag(:div, class: 'form-check form-switch') do
@@ -195,5 +213,4 @@ module BetterTogether
       end
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

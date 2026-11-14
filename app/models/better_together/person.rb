@@ -211,6 +211,10 @@ module BetterTogether
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
       federate_content Boolean, default: false
+      # Personal appearance: a theme id from PlatformThemeConfig.themes (blank = the platform's theme) and a
+      # colour mode (auto, light or dark; blank = the platform default).
+      theme String
+      color_mode String
     end
 
     store_attributes :notification_preferences do
@@ -229,6 +233,18 @@ module BetterTogether
     def time_zone=(value)
       prefs = (preferences || {}).dup
       prefs['time_zone'] = value&.to_s
+      self.preferences = prefs
+    end
+
+    def theme=(value)
+      prefs = (preferences || {}).dup
+      prefs['theme'] = value.to_s.strip.presence
+      self.preferences = prefs
+    end
+
+    def color_mode=(value)
+      prefs = (preferences || {}).dup
+      prefs['color_mode'] = value.to_s.strip.downcase.presence
       self.preferences = prefs
     end
 
@@ -268,6 +284,8 @@ module BetterTogether
     validates :locale,
               inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
               allow_nil: true
+    validates :theme, inclusion: { in: -> { BetterTogether::PlatformThemeConfig.themes.keys } }, allow_blank: true
+    validates :color_mode, inclusion: { in: BetterTogether::PlatformThemeConfig::COLOR_MODES }, allow_blank: true
 
     # Return email from user if available, otherwise from contact details
     def email

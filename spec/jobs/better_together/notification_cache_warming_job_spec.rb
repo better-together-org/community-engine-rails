@@ -16,9 +16,8 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
 
   describe '#perform' do
     it 'processes notifications with given ids' do
-      # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo-next RSpec/VerifiedDoubles
       relation = double('relation', includes: double('includes_relation', find_each: nil))
-      # rubocop:enable RSpec/VerifiedDoubles
       allow(Noticed::Notification).to receive(:where).with(id: notification_ids).and_return(relation)
 
       described_class.new.perform(notification_ids)
@@ -137,12 +136,10 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
 
   describe 'cache key methods' do
     let(:job) { described_class.new }
-    # rubocop:todo RSpec/VerifiedDoubles
+    # rubocop:todo-next RSpec/VerifiedDoubles
     let(:record) { double('record', cache_key_with_version: 'record-key', respond_to?: true) }
-    # rubocop:enable RSpec/VerifiedDoubles
-    # rubocop:todo RSpec/VerifiedDoubles
+    # rubocop:todo-next RSpec/VerifiedDoubles
     let(:event) { double('event', cache_key_with_version: 'event-key', respond_to?: true, record: record) }
-    # rubocop:enable RSpec/VerifiedDoubles
     let(:notification) do
       double('notification', # rubocop:todo RSpec/VerifiedDoubles
              cache_key_with_version: 'notification-key',

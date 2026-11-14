@@ -3,7 +3,7 @@
 module BetterTogether
   # Sends emails for PersonPlatformIntegration events
   class PersonPlatformIntegrationMailer < ApplicationMailer
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def integration_created
       @person = params[:recipient]
       @integration = params[:person_platform_integration]
@@ -25,6 +25,5 @@ module BetterTogether
                    provider: @integration.provider.titleize)
       )
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end

@@ -1,0 +1,11 @@
+<%= @locale %>:
+  activerecord:
+    models:
+      better_together/content/<%= block_name %>:
+        one: <%= human %> block
+        other: <%= human.pluralize %> blocks
+  better_together:
+    content:
+      blocks:
+        <%= block_name %>:
+          empty: Nothing to show yet.

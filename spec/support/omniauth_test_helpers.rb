@@ -16,7 +16,7 @@ module OmniauthTestHelpers # :nodoc:
   #   RSpec.describe 'OAuth flows', :omniauth do
   #     # OmniAuth state is automatically isolated for each example
   #   end
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def self.included(base)
     base.around(:each, :omniauth) do |example|
       # Save original OmniAuth state
@@ -31,14 +31,13 @@ module OmniauthTestHelpers # :nodoc:
       OmniauthTestHelpers.reset_failure_handler!
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   # Creates a GitHub OAuth auth hash with unique identifiers
   # @param email [String] email address for the OAuth user
   # @param uid [String] OAuth provider UID
   # @param options [Hash] additional options to customize the auth hash
   # @return [OmniAuth::AuthHash] configured auth hash
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def github_oauth_hash(email: unique_email, uid: unique_oauth_uid, **options)
     OmniAuth::AuthHash.new({
                              provider: 'github',
@@ -64,5 +63,4 @@ module OmniauthTestHelpers # :nodoc:
                              }
                            })
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 end

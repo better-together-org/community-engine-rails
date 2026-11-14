@@ -77,7 +77,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def peer_platform
     @peer_platform ||= BetterTogether::Platform.find_or_initialize_by(identifier: 'neighbourhood-commons').tap do |platform|
       platform.assign_attributes(
@@ -96,7 +96,6 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
       platform.save!
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def network_admin
     @network_admin ||= BetterTogether::User.find_by(email: network_admin_email) || create(
@@ -108,7 +107,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
     )
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def platform_connection
     @platform_connection ||= create(
       :better_together_platform_connection,
@@ -136,9 +135,8 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
       sync_cursor: 'cursor-2026-04-04T00:00:00Z'
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
   def storage_configurations
     @storage_configurations ||= begin
       local = host_platform.storage_configurations.find_or_initialize_by(name: 'Host Local Disk')
@@ -170,9 +168,8 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
       [local, amazon, compatible]
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def seed_release_state!
     BetterTogether::AccessControlBuilder.seed_data
     network_admin
@@ -197,7 +194,6 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
     )
     integration.save!
   end
-  # rubocop:enable Metrics/MethodLength
 
   def login_as_network_admin
     @network_admin = nil unless BetterTogether::User.find_by(email: network_admin_email)
