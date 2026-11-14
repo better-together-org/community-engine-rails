@@ -839,7 +839,7 @@ Table "better_together_event_series_sessions" {
   "updated_at" timestamp [not null]
   "series_id" uuid [not null]
   "session_id" uuid [not null]
-  "position" integer [not null]
+  "position" integer [not null, default: 0]
 
   indexes {
     "series_id" [name: "bt_event_series_sessions_by_series"]
@@ -2339,7 +2339,7 @@ Table "better_together_platform_identity_providers" {
   "client_secret" text
   "scopes" varchar
   "options" jsonb [not null, default: '{}']
-  "position" integer [not null]
+  "position" integer [not null, default: 0]
 
   indexes {
     ("platform_id", "provider_platform_id") [unique, name: "idx_bt_platform_idps_unique"]
