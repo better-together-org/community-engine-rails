@@ -94,3 +94,14 @@ confirmation. Without the flag the invitation gate is unchanged, and the control
 | Index | ![Trusted domains index](../../screenshots/desktop/platform_trusted_domains_index.png) |
 | New | ![New trusted domain](../../screenshots/desktop/platform_trusted_domains_new.png) |
 | Sign-up | ![Trusted domain sign-up](../../screenshots/desktop/trusted_domain_sign_up.png) |
+
+## Audit, notification and limits
+
+- Every grant writes a `TrustedDomainEvent` (`account_created` or `membership_granted`), and domain changes write
+  `domain_added`, `domain_updated` and `domain_removed`. Events are append-only and keep a snapshot of the domain.
+- After a grant, `TrustedDomains::NotifyStewards` sends an in-app `TrustedDomainGrantNotifier` notification to the
+  platform's active stewards (`platform_steward`, `platform_manager`, `platform_administrator`).
+- `TrustedDomains::Grant` allows 30 grants per domain per hour (`TRUSTED_DOMAIN_GRANTS_PER_HOUR`). Beyond that the
+  person stays pending for normal review, one `grant_rate_limited` event is logged and stewards are notified once
+  per hour.
+- The trusted domains index shows accounts created per domain and the 20 most recent events as the report.

@@ -2887,6 +2887,14 @@ en:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} joined as %{role} through %{domain}"
+          title: Trusted domain %{domain} granted membership
+        rate_limited:
+          body: The hourly limit for %{domain} was reached. New people stay pending
+            until you review them.
+          title: Trusted domain %{domain} reached its hourly limit
     oauth:
       applications:
         create:
@@ -3427,6 +3435,14 @@ en:
         unchanged.
       edit:
         title: Edit trusted domain
+      events:
+        account_created: Account created
+        domain_added: Domain added
+        domain_removed: Domain removed
+        domain_updated: Domain changed
+        grant_rate_limited: Hourly limit reached, grant held for review
+        membership_granted: Membership granted
+        membership_request_approved: Membership request approved
       form:
         cancel: Cancel
         domain_hint: Only the part after the @ sign, for example example.org. Public
@@ -3444,6 +3460,12 @@ en:
         role_label: Community role granted
         submit: Save trusted domain
       index:
+        activity_event: Event
+        activity_heading: Recent activity
+        activity_none: No activity yet.
+        activity_person: Person
+        activity_via: Via
+        activity_when: When
         back_to_platform: Back to platform
         delete_btn: Remove
         delete_confirm: Remove this trusted domain? Existing accounts and memberships
@@ -3455,6 +3477,7 @@ en:
           or who confirm their email after signing up, and whose address ends in a
           trusted domain get membership with the chosen role without waiting for review.
           Every grant is logged.
+        header_accounts: Accounts created
         header_actions: Actions
         header_domain: Domain
         header_role: Role
@@ -3472,6 +3495,11 @@ en:
           role on %{platform_name}.
         title: Add trusted domain
       updated: Trusted domain was updated.
+      vias:
+        membership_request: Membership request
+        oauth: Sign-in provider
+        password_registration: Email sign-up
+        steward: Steward
     platforms:
       form:
         allow_membership_requests: Allow membership requests

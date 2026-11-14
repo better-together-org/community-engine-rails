@@ -2919,6 +2919,14 @@ es:
           in the safety review queue
         title: New safety report requires review
       time_ago: hace %{time}
+      trusted_domain_grant:
+        granted:
+          body: "%{person} se unió como %{role} mediante %{domain}"
+          title: El dominio de confianza %{domain} otorgó una membresía
+        rate_limited:
+          body: Se alcanzó el límite por hora de %{domain}. Las nuevas personas quedan
+            pendientes hasta que las revise.
+          title: El dominio de confianza %{domain} alcanzó su límite por hora
     oauth:
       applications:
         create:
@@ -3481,6 +3489,14 @@ es:
         no cambian.
       edit:
         title: Editar dominio de confianza
+      events:
+        account_created: Cuenta creada
+        domain_added: Dominio agregado
+        domain_removed: Dominio eliminado
+        domain_updated: Dominio modificado
+        grant_rate_limited: Límite por hora alcanzado, concesión en espera de revisión
+        membership_granted: Membresía otorgada
+        membership_request_approved: Solicitud de membresía aprobada
       form:
         cancel: Cancelar
         domain_hint: Solo la parte después de la arroba, por ejemplo example.org.
@@ -3499,6 +3515,12 @@ es:
         role_label: Rol de comunidad otorgado
         submit: Guardar dominio de confianza
       index:
+        activity_event: Evento
+        activity_heading: Actividad reciente
+        activity_none: Aún no hay actividad.
+        activity_person: Persona
+        activity_via: Mediante
+        activity_when: Cuándo
         back_to_platform: Volver a la plataforma
         delete_btn: Eliminar
         delete_confirm: "¿Eliminar este dominio de confianza? Las cuentas y membresías
@@ -3510,6 +3532,7 @@ es:
           o confirman su correo tras registrarse, y cuya dirección termina en un dominio
           de confianza obtienen la membresía con el rol elegido sin esperar revisión.
           Cada concesión queda registrada.
+        header_accounts: Cuentas creadas
         header_actions: Acciones
         header_domain: Dominio
         header_role: Rol
@@ -3527,6 +3550,11 @@ es:
           el rol elegido en %{platform_name}.
         title: Agregar dominio de confianza
       updated: Se actualizó el dominio de confianza.
+      vias:
+        membership_request: Solicitud de membresía
+        oauth: Proveedor de acceso
+        password_registration: Registro con correo
+        steward: Administración
     platforms:
       form:
         allow_membership_requests: Permitir solicitudes de membresía

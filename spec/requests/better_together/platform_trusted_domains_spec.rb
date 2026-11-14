@@ -44,6 +44,27 @@ RSpec.describe 'BetterTogether::PlatformTrustedDomainsController', :as_platform_
     end
   end
 
+  describe 'accounts report and activity' do
+    it 'counts accounts created per domain and lists recent events', :aggregate_failures do
+      entry = create(:platform_trusted_domain, platform:, domain: 'report.example.org')
+      2.times do
+        BetterTogether::TrustedDomainEvent.create!(platform:, platform_trusted_domain: entry, event_type: 'account_created',
+                                                   domain: entry.domain, via: 'oauth')
+      end
+      get index_path
+
+      row = page_html.at_css("##{ActionView::RecordIdentifier.dom_id(entry)}")
+      expect(row.css('td')[3].text.strip).to eq('2')
+      expect(page_html.css('#trusted-domain-activity-table tbody tr').size).to eq(2)
+    end
+
+    it 'shows the empty activity state' do
+      get index_path
+
+      expect(page_html.at_css('#no-trusted-domain-activity')).to be_present
+    end
+  end
+
   describe 'platform form Access tab' do
     it 'links to the trusted domains screen', :aggregate_failures do
       create(:platform_trusted_domain, platform:, domain: 'tab.example.org')
