@@ -11,6 +11,7 @@ module BetterTogether
     self.table_name = 'better_together_storage_configurations'
 
     SERVICE_TYPES = %w[local amazon s3_compatible].freeze
+    HEALTH_STATUSES = %w[ok failed].freeze
     S3_COMPATIBLE_CHECKSUM_OPTIONS = {
       request_checksum_calculation: 'when_required',
       response_checksum_validation: 'when_required'
@@ -38,6 +39,11 @@ module BetterTogether
     validates :secret_access_key, presence: true, if: :s3_service?
     validates :endpoint, presence: true, if: :s3_compatible?
     validates :endpoint, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
+    # The host platform's operator may point at an internal store (for example http://garage:3900).
+    # A tenant platform may not, because its endpoint is chosen by someone other than the host operator.
+    validate :endpoint_host_safe, unless: -> { platform&.host? }
+    validate :bucket_not_used_by_another_platform, if: :s3_service?
+    validates :health_status, inclusion: { in: HEALTH_STATUSES }, allow_nil: true
 
     scope :s3_services, -> { where.not(service_type: 'local') }
     scope :for_platform, ->(platform) { where(platform:) }
@@ -74,7 +80,57 @@ module BetterTogether
       "storage_config_#{id}"
     end
 
+    # Runs a write, read and delete probe and records the result on the row.
+    def test_connection!
+      result = Storage::ConnectionTest.new(self).call
+      update_columns(health_status: result.ok? ? 'ok' : 'failed', health_message: result.message, # rubocop:disable Rails/SkipsModelValidations
+                     health_checked_at: Time.current)
+      result
+    end
+
+    # Replaces the key pair only after the new pair passes a connection test, so a typo cannot lock
+    # a platform out of its bucket. Returns true on success and adds an error on failure.
+    def rotate_credentials!(access_key_id:, secret_access_key:)
+      candidate = dup.tap { |c| c.assign_attributes(access_key_id:, secret_access_key:) }
+      result = Storage::ConnectionTest.new(candidate).call
+      return rotate_failed(result) unless result.ok? && candidate.valid?
+
+      update!(access_key_id:, secret_access_key:, health_status: 'ok', health_message: 'ok',
+              health_checked_at: Time.current)
+      ActiveStorage::Blob.services.forget(storage_key) if ActiveStorage::Blob.services.respond_to?(:forget)
+      true
+    end
+
     private
+
+    def endpoint_host_safe
+      BetterTogether::SafeFederationUrlValidator
+        .new(attributes: [:endpoint])
+        .validate_each(self, :endpoint, endpoint)
+    end
+
+    def rotate_failed(result) # rubocop:disable Naming/PredicateMethod
+      errors.add(:base, :connection_failed, message: "connection test failed (#{result.message})")
+      false
+    end
+
+    # One bucket belongs to one platform. Without this, two platforms could share a bucket and
+    # see each other's files, since blob keys carry no platform prefix.
+    def bucket_not_used_by_another_platform
+      return if bucket.blank?
+
+      taken = self.class.s3_services.where.not(platform_id:).where(bucket:)
+                  .any? { |other| same_store?(other) }
+      errors.add(:bucket, :taken) if taken
+    end
+
+    def same_store?(other)
+      normalize_endpoint(other.endpoint) == normalize_endpoint(endpoint)
+    end
+
+    def normalize_endpoint(value)
+      value.to_s.strip.downcase.chomp('/')
+    end
 
     def local_storage_config
       { service: 'Disk', root: Rails.root.join('storage').to_s }
