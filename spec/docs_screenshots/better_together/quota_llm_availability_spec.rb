@@ -35,6 +35,7 @@ RSpec.describe 'Documentation screenshots for LLM usage token availability',
     ) do
       capybara_login_as_platform_manager
       visit edit_platform_path(host_platform, locale:)
+      find('#platform-features-tab').click
 
       find("##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults)}").scroll_to(:center)
       expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults_media_storage)}")

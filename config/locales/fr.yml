@@ -3498,6 +3498,58 @@ fr:
         accepted: Accepté
         expired: Expiré
         pending: En attente
+    platform_trusted_domains:
+      created: Le domaine de confiance a été ajouté.
+      destroyed: Le domaine de confiance a été supprimé. Les comptes et adhésions
+        existants ne changent pas.
+      edit:
+        title: Modifier le domaine de confiance
+      form:
+        cancel: Annuler
+        domain_hint: Uniquement la partie après l'arobase, par exemple example.org.
+          Les fournisseurs publics comme gmail.com exigent la confirmation ci-dessous.
+        domain_label: Domaine de courriel
+        enabled_label: Activé
+        include_subdomains_label: Faire aussi confiance aux sous-domaines (par exemple
+          mail.example.org)
+        note_label: Note pour les autres stewards (facultatif)
+        public_domain_label: Je comprends qu'il s'agit d'un domaine de courriel public
+          et que n'importe qui peut y avoir une adresse
+        role_ceiling_label: Je comprends que les personnes ayant une adresse vérifiée
+          sur ce domaine reçoivent automatiquement ce rôle
+        role_hint: Rôles de communauté uniquement. Les rôles de plateforme et de steward
+          ne peuvent pas être accordés par domaine.
+        role_label: Rôle de communauté accordé
+        submit: Enregistrer le domaine de confiance
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce domaine de confiance ? Les comptes et adhésions
+          existants restent inchangés.
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        explanation: Les personnes qui se connectent avec un fournisseur vérifiant
+          leur courriel, ou qui confirment leur courriel après l'inscription, et dont
+          l'adresse se termine par un domaine de confiance obtiennent l'adhésion avec
+          le rôle choisi sans attendre d'examen. Chaque attribution est journalisée.
+        header_actions: Actions
+        header_domain: Domaine
+        header_role: Rôle
+        header_status: Statut
+        header_subdomains: Sous-domaines
+        new_btn: Ajouter un domaine de confiance
+        no_domains: Aucun domaine de confiance pour le moment.
+        subdomains_no: Correspondance exacte seulement
+        subdomains_yes: Inclus
+        subtitle: Domaines de courriel de confiance de %{platform_name}
+        table_aria: Domaines de courriel de confiance
+        title: Domaines de confiance
+      new:
+        subtitle: Les personnes ayant une adresse vérifiée sur ce domaine reçoivent
+          le rôle choisi sur %{platform_name}.
+        title: Ajouter un domaine de confiance
+      updated: Le domaine de confiance a été mis à jour.
     platforms:
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
@@ -3517,6 +3569,14 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        csp_title: Sécurité / intégrations CSP
+        custom_css_hint: Réglage avancé. Les styles ajoutés ici se chargent après
+          le thème et ont priorité sur lui.
+        custom_css_title: CSS personnalisé
+        domains_after_save: Enregistrez d'abord la plateforme, puis gérez ici ses
+          domaines et ses fournisseurs de connexion.
+        domains_hint: Consultez les domaines sur lesquels cette plateforme répond
+          et les services de connexion utilisés.
         feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
           fonctionnalité sur cette plateforme.
         feature_gates_title: Contrôles de déploiement des fonctionnalités
@@ -3537,6 +3597,14 @@ fr:
           ai_translation_tokens: Jetons d'utilisation de LLM IA par mois
           media_storage: Stockage
         quota_use_default: Utiliser la valeur par défaut (%{size})
+        trusted_domains:
+          after_save: Enregistrez d'abord la plateforme, puis ajoutez ici les domaines
+            de courriel de confiance.
+          heading: Domaines de courriel de confiance
+          hint: Les adresses vérifiées de ces domaines adhèrent avec un rôle défini
+            sans attendre d'examen.
+          manage: Gérer les domaines de confiance
+          none: Aucun domaine de confiance.
       index:
         provision_new_platform: Provisionner une nouvelle plateforme
       new:
@@ -3552,6 +3620,14 @@ fr:
         title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
+      tabs:
+        access: Accès et confidentialité
+        appearance: Apparence
+        details: Détails
+        domains: Domaines et connexion
+        errors: erreurs dans cet onglet
+        features: Fonctionnalités et quotas
+        security: Sécurité
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
@@ -5122,6 +5198,11 @@ fr:
         submit: Soumettre
         terms_of_service:
           label: J'accepte les Conditions d'Utilisation
+        trusted_domains:
+          confirm_notice: Les adresses de %{domains} adhèrent après la confirmation
+            de votre courriel. Vérifiez votre boîte de réception une fois inscrit.
+          link: S'inscrire avec un courriel de confiance
+          notice: Avez-vous une adresse chez %{domains} ?
         view: Voir
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
