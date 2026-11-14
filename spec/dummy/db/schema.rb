@@ -701,7 +701,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
     t.datetime "updated_at", null: false
     t.uuid "series_id", null: false
     t.uuid "session_id", null: false
-    t.integer "position", null: false
+    t.integer "position", default: 0, null: false
     t.index ["series_id"], name: "bt_event_series_sessions_by_series"
     t.index ["session_id"], name: "bt_event_series_sessions_by_session", unique: true
   end
@@ -1937,7 +1937,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
     t.text "client_secret"
     t.string "scopes"
     t.jsonb "options", default: {}, null: false
-    t.integer "position", null: false
+    t.integer "position", default: 0, null: false
     t.index ["platform_id", "provider_platform_id"], name: "idx_bt_platform_idps_unique", unique: true
     t.index ["platform_id"], name: "idx_bt_platform_idps_on_platform_id"
     t.index ["provider_platform_id"], name: "idx_bt_platform_idps_on_provider_platform_id"

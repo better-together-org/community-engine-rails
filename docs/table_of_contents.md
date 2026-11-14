@@ -191,6 +191,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Production** - [`production/`](production/)
 *Deployment and production environment documentation*
 - [Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
+- [Host Setup Script](production/host_setup_script.md) - Preparing a server with `bin/prod/host-setup.sh`
 - [Multi-Platform Deployment](production/multi_platform_deployment.md) - Running multiple platforms on a single instance
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
