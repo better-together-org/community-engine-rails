@@ -60,6 +60,11 @@
   class: "BetterTogether::Billing::DeadLetterStaleBillingEventsJob"
   description: "Promote exhausted or stale billing events into a dead-letter state for operator review"
 
+"better_together:billing:enqueue_stuck_events_10min":
+  cron: "*/10 * * * *" # every 10 minutes
+  class: "BetterTogether::Billing::EnqueueStuckBillingEventsJob"
+  description: "Give a processing job to billing events left pending with no job working on them"
+
 "better_together:quotas:reservation_sweep_5min":
   cron: "*/5 * * * *" # every 5 minutes
   class: "BetterTogether::Quotas::ReservationSweeperJob"

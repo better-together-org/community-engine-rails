@@ -45,7 +45,7 @@ RSpec.describe BetterTogether::Billing::ReplayEvent do
   it 'refuses events that are not dead-lettered' do
     live = create(:better_together_billing_event)
 
-    expect(described_class.call(billing_event: live, requested_by: requester)).to have_attributes(enqueued: false, reason: :not_dead_lettered)
+    expect(described_class.call(billing_event: live, requested_by: requester)).to have_attributes(enqueued: false, reason: :not_replayable)
   end
 
   it 'refuses events whose payload was redacted' do

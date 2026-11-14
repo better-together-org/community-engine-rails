@@ -24,7 +24,7 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
     { 'better_together/billing/plans' => :plan, 'better_together/billing/catalog' => :plan,
       'better_together/billing/orders' => :order, 'better_together/billing/sales' => :order,
       'better_together/billing/credit_accounts' => :account, 'better_together/billing/subscriptions' => :term,
-      'better_together/billing/subscribers' => :term }
+      'better_together/billing/subscribers' => :term, 'better_together/billing/events' => :event }
   end
   # What each list must show for the steward's own platform (proves the page is not simply empty).
   let(:listed) do
@@ -49,7 +49,8 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
     promotion = platform.billing_promotions.create!(name: "Promo #{tag}", amount_cents: 1500, currency: 'USD', active: true,
                                                     code_digest: BetterTogether::Billing::Promotion.digest_for(SecureRandom.hex(10)))
     create(:better_together_billing_tax_registration, platform:, country_iso: 'CA')
-    { plan:, order:, offline:, promotion:, term: seed_term(platform, plan),
+    event = create(:better_together_billing_event, platform:, processing_status: 'failed', event_type: "fake.invoice.#{tag.downcase}")
+    { plan:, order:, offline:, promotion:, event:, term: seed_term(platform, plan),
       account: credit.find_account(platform:, holder:, currency: 'USD'),
       requirement: create(:better_together_billing_agreement_requirement, platform:),
       report: BetterTogether::Metrics::BillingReport.create!(platform:, creator: person, filters: { 'owner' => 'all', 'interval' => 'month' }) }

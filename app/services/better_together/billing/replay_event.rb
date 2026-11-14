@@ -2,7 +2,8 @@
 
 module BetterTogether
   module Billing
-    # Validates and re-enqueues a dead-lettered event for operator replay.
+    # Validates and re-enqueues a failed or dead-lettered event for operator replay.
+    # Replaying moves the event to `replayed`, so a second request for it is refused.
     class ReplayEvent
       Result = Struct.new(:enqueued, :reason, keyword_init: true)
 
@@ -23,7 +24,7 @@ module BetterTogether
 
       # Why this event cannot be replayed, or nil when it can.
       def refusal_reason(billing_event)
-        return :not_dead_lettered unless billing_event.dead_lettered?
+        return :not_replayable unless billing_event.problematic?
         return :payload_unavailable unless billing_event.replayable_payload?
         return :unsupported_processor unless BetterTogether::Billing.processor_names.include?(billing_event.processor.to_sym)
 

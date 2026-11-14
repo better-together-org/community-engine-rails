@@ -86,6 +86,12 @@ module BetterTogether
                   id: dom_id(order, :status_badge))
     end
 
+    # The processing state of a webhook event, as words as well as colour.
+    def billing_event_status_badge(event)
+      content_tag(:span, t("better_together.billing.events.states.#{event.processing_status}", default: event.processing_status.humanize),
+                  class: "badge billing-event-status-badge #{event.status_badge_class}", id: dom_id(event, :status_badge))
+    end
+
     # On, off, or not set up yet; the page lists every installed method.
     def billing_processor_setting_badge(setting)
       state = if setting.nil? then 'not_set_up'

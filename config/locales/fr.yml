@@ -1078,6 +1078,72 @@ fr:
         status_revoked: Remboursé
         title: Mon accès
         until: Valable jusqu’au %{date}.
+      events:
+        alerts:
+          alerted_body: 'Événements signalés par le processeur pour examen : %{count}.'
+          dead_lettered_body: 'Événements abandonnés : %{count}. Une personne doit
+            les examiner et les relancer.'
+          dead_lettered_heading: Certains événements ont été abandonnés.
+          heading: Alertes sur les événements de paiement
+          none: Rien ne demande d'attention.
+          oldest: 'Plus ancien événement non résolu :'
+          repeated_body: 'Événements échoués %{threshold} fois ou plus : %{count}.'
+          repeated_heading: Certains événements échouent sans cesse.
+          unresolved_body: 'Événements échoués ou abandonnés depuis plus de %{hours}
+            heures : %{count}.'
+          unresolved_heading: Certains problèmes ne sont pas résolus.
+        back: Retour aux événements de paiement
+        field_attempts: Tentatives
+        field_event: Événement
+        field_event_id: Identifiant d'événement du processeur
+        field_last_attempt: Dernière tentative
+        field_last_replayed: Dernière relance
+        field_processor: Processeur
+        field_reason: Raison de l'arrêt
+        field_received: Reçu
+        field_replays: Relances par un opérateur
+        field_status: État
+        filter_label: Filtrer les événements de paiement par état
+        index_intro: Messages du processeur de paiement qui n'ont pas pu être traités.
+          Regardez ce qui s'est passé, puis relancez-les une fois le problème réglé.
+        index_title: Événements de paiement
+        never: Pas encore
+        none: Aucun événement dans cet état.
+        reasons:
+          retries_exhausted: Il a échoué trop de fois.
+          stale_unresolved_drift: Il est resté inachevé trop longtemps.
+        refused:
+          not_replayable: Seuls les événements échoués ou abandonnés peuvent être
+            relancés.
+          other: L'événement n'a pas pu être relancé.
+          payload_unavailable: Le message de cet événement a déjà été supprimé, il
+            ne peut donc pas être traité à nouveau.
+          platform_not_configured: Cette plateforme n'a plus ce mode de paiement configuré.
+          unsupported_processor: Le mode de paiement de cet événement n'est plus installé.
+        replay_button: Relancer l'événement
+        replay_confirm: Relancer cet événement de paiement maintenant ?
+        replay_explainer: 'La relance traite à nouveau l''événement depuis le début.
+          Elle est sans risque : un événement déjà traité n''est pas appliqué une
+          seconde fois.'
+        replay_heading: Relancer cet événement
+        replay_not_needed: Cet événement n'a pas besoin d'être relancé.
+        replay_unavailable: 'Cet événement ne peut pas être relancé : son message
+          a déjà été supprimé ou son mode de paiement n''est plus configuré.'
+        replayed: L'événement a été mis en file pour être traité à nouveau.
+        show_intro: Ce qui est arrivé à cet événement. Le message lui-même est chiffré
+          et n'est pas affiché ici.
+        show_title: Événement de paiement
+        states:
+          alerted: Signalé
+          all: Tous
+          dead_lettered: Abandonné
+          failed: Échoué
+          ignored: Ignoré
+          pending: En attente
+          problems: À examiner
+          processed: Traité
+          replayed: Relancé
+        table_caption: Événements de paiement et leur état
       hub:
         access_count: 'Actifs : %{count}'
         access_heading: Ce à quoi vous avez accès

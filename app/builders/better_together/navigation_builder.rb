@@ -671,6 +671,17 @@ module BetterTogether
                 privacy: 'private',
                 visibility_strategy: 'permission',
                 permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-events',
+                title_en: 'Payment events',
+                slug_en: 'billing-events',
+                position: 16,
+                item_type: 'link',
+                route_name: 'billing_events_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
               }
             ]
 
