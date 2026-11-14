@@ -3507,6 +3507,13 @@ es:
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
+        integrations_empty: No hay integraciones instaladas.
+        integrations_env_fallback: Se usa la variable de entorno %{variable}. Un valor
+          guardado aquí la reemplaza.
+        integrations_hint: Ajustes de los servicios conectados mediante extensiones.
+          Cada plataforma conserva sus propios valores.
+        integrations_secret_set: Hay un valor guardado. Deje este campo vacío para
+          conservarlo.
         quota_defaults_hint: Límite inicial para cada persona y comunidad nuevas y
           para esta plataforma. Deja un campo en blanco para usar el valor de la configuración
           de la aplicación. Cambiar un valor también actualiza las cuotas existentes
@@ -3542,6 +3549,7 @@ es:
         domains: Dominios e inicio de sesión
         errors: errores en esta pestaña
         features: Funciones y cuotas
+        integrations: Integraciones
         security: Seguridad
     posts:
       authors: Autores

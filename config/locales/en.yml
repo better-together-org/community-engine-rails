@@ -3452,6 +3452,12 @@ en:
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+        integrations_empty: No integrations are installed.
+        integrations_env_fallback: Using the %{variable} environment variable. A value
+          saved here replaces it.
+        integrations_hint: Settings for services connected through extension gems.
+          Each platform keeps its own values.
+        integrations_secret_set: A value is saved. Leave this blank to keep it.
         quota_defaults_hint: Starting limit for each new person, community and this
           platform. Leave a field blank to use the default set in the application
           configuration. Changing a value also updates existing quotas on this platform;
@@ -3488,6 +3494,7 @@ en:
         domains: Domains and sign-in
         errors: errors on this tab
         features: Features and quotas
+        integrations: Integrations
         security: Security
     posts:
       authors: Authors

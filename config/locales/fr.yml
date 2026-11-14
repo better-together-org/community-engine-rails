@@ -3531,6 +3531,13 @@ fr:
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
+        integrations_empty: Aucune intégration n'est installée.
+        integrations_env_fallback: La variable d'environnement %{variable} est utilisée.
+          Une valeur enregistrée ici la remplace.
+        integrations_hint: Réglages des services connectés par des extensions. Chaque
+          plateforme garde ses propres valeurs.
+        integrations_secret_set: Une valeur est enregistrée. Laissez ce champ vide
+          pour la conserver.
         quota_defaults_hint: Limite initiale pour chaque nouvelle personne, communauté
           et pour cette plateforme. Laissez un champ vide pour utiliser la valeur
           de la configuration de l'application. Modifier une valeur met aussi à jour
@@ -3567,6 +3574,7 @@ fr:
         domains: Domaines et connexion
         errors: erreurs dans cet onglet
         features: Fonctionnalités et quotas
+        integrations: Intégrations
         security: Sécurité
     posts:
       authors: Auteurs
