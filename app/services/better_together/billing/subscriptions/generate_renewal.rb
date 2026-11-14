@@ -32,6 +32,18 @@ module BetterTogether
           end
         end
 
+        # A renewal is taxed through the same calculator as any order, for the place the subscriber was last taxed for:
+        # the latest invoice's, else the order that started the subscription. Rates and registrations are read now.
+        def tax_address
+          source = last_invoice || starting_order
+          return {} unless source
+
+          settlement = source.tax_settlement
+          return { settlement: } if settlement
+
+          { country_iso: source.tax_country_iso.presence, region_code: source.tax_region_code.presence }.compact
+        end
+
         private
 
         attr_reader :term, :now
@@ -49,10 +61,13 @@ module BetterTogether
 
         def next_period
           sequence = (term.periods.last&.sequence || -1) + 1
-          return unless now >= term.period_start(sequence) - plan.renewal_lead_days.days
+          return unless due?(sequence)
 
+          ChangePlan.apply(term) if term.pending_plan_id
           term.periods.create!(period_attributes(sequence))
         end
+
+        def due?(sequence) = now >= term.period_start(sequence) - plan.renewal_lead_days.days
 
         def period_attributes(sequence)
           { platform_id: platform.id, sequence:, starts_at: term.period_start(sequence), ends_at: term.period_end(sequence) }
@@ -77,18 +92,6 @@ module BetterTogether
         def invoice_attributes
           { platform:, buyer: term.payer, signer: term.payer, purpose: 'subscription', subject: term, on_behalf_of: term.beneficiary,
             renewal: true, payment_method: method_to_open, line_items: [invoice_line_item], tax_address: }
-        end
-
-        # A renewal is taxed through the same calculator as any order, for the place the subscriber was last taxed for:
-        # the latest invoice's, else the order that started the subscription. Rates and registrations are read now.
-        def tax_address
-          source = last_invoice || starting_order
-          return {} unless source
-
-          settlement = source.tax_settlement
-          return { settlement: } if settlement
-
-          { country_iso: source.tax_country_iso.presence, region_code: source.tax_region_code.presence }.compact
         end
 
         def last_invoice = term.periods.where.not(order_id: nil).last&.order

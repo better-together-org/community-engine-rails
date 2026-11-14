@@ -19,13 +19,26 @@ module BetterTogether
       def catalog? = billing_available?(Current.platform)
 
       # One listed plan in the catalog: it is listed and active, and the person qualifies for its audience.
-      def catalog_show? = catalog? && record.listed? && record.active? && purchase?
+      def catalog_show? = catalog? && record.listed? && record.active? && !record.add_on? && purchase?
+
+      # A plan offered from a page (a plan block): active, and the person qualifies, listed in the catalog or not.
+      def offer? = catalog? && record.active? && !record.add_on? && purchase?
 
       # Buying a plan, listed or not: a plan limited to members or subscribers is for them alone, so a link to it gets no one else in.
       def purchase?
         return false unless record.platform_id == Current.platform&.id && record.seller_id.blank?
 
         record.open_to?(audience_for(user))
+      end
+
+      # An add-on bought on its own, later: the buyer qualifies for its audience and holds a plan it extends (any primary plan of the
+      # platform when it names none). Buying one with a plan at checkout is #purchase?.
+      def buy_alone?
+        return false unless record.add_on? && purchase?
+
+        held = BetterTogether::Billing::Plans::Holdings.call(platform: Current.platform, person: user&.person)
+        targets = record.target_links.pluck(:plan_id)
+        targets.empty? ? held.any? : held.intersect?(targets)
       end
 
       class Scope < OwnerPolicy::Scope; end
@@ -37,7 +50,7 @@ module BetterTogether
           return scope.none unless platform && BetterTogether::Billing.enabled?(platform)
 
           audience = BetterTogether::Billing::Plans::Audience.call(platform:, person: agent)
-          scope.for_platform(platform).sold_by_platform.listed.open_to(audience)
+          scope.for_platform(platform).sold_by_platform.primary.listed.open_to(audience)
         end
       end
 

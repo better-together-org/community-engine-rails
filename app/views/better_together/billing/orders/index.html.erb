@@ -12,6 +12,25 @@
     </div>
   </div>
 
+  <%= form_with url: billing_orders_path(locale: I18n.locale), method: :get, id: 'billing-orders-filters', class: 'row g-2 align-items-end mb-3' do %>
+    <div class="col-sm-4 col-md-3">
+      <%= label_tag :status, t('better_together.billing.orders.filter_status'), class: 'form-label' %>
+      <%= select_tag :status, options_for_select([[t('better_together.billing.orders.filter_any'), '']] + BetterTogether::Billing::Order::STATUSES.map { |status| [t("better_together.billing.orders.status_#{status}"), status] }, @status),
+                     id: 'billing-orders-filter-status', class: 'form-select' %>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <%= label_tag :year, t('better_together.billing.orders.filter_year'), class: 'form-label' %>
+      <%= select_tag :year, options_for_select([[t('better_together.billing.orders.filter_any'), '']] + @years, @year),
+                     id: 'billing-orders-filter-year', class: 'form-select' %>
+    </div>
+    <div class="col-auto d-flex gap-2">
+      <%= submit_tag t('better_together.billing.orders.filter_apply'), name: nil, id: 'billing-orders-filter-btn', class: 'btn btn-primary' %>
+      <% if @status || @year %>
+        <%= link_to t('better_together.billing.orders.filter_clear'), billing_orders_path(locale: I18n.locale), id: 'billing-orders-filter-clear', class: 'btn btn-outline-secondary' %>
+      <% end %>
+    </div>
+  <% end %>
+
   <% if @orders.any? %>
     <div class="card">
       <div class="table-responsive">
@@ -41,8 +60,8 @@
         </table>
       </div>
     </div>
-    <div id="billing-orders-pagination" class="mt-3"><%= paginate @orders %></div>
+    <div id="billing-orders-pagination" class="mt-3"><%= paginate @orders, params: { status: @status, year: @year } %></div>
   <% else %>
-    <p id="billing-orders-empty" class="text-body-secondary"><%= t('better_together.billing.orders.no_orders') %></p>
+    <p id="billing-orders-empty" class="text-body-secondary"><%= t(@status || @year ? 'better_together.billing.orders.no_matching_orders' : 'better_together.billing.orders.no_orders') %></p>
   <% end %>
 </div>

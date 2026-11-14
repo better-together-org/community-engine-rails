@@ -1,0 +1,48 @@
+{
+  "name": "billing_hub_add_ons",
+  "device": "mobile",
+  "url": "/en/billing",
+  "title": "Billing and plans | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_add_on_targets",
+  "flow": "billing_hub_add_ons",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_add_on_targets_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-hub-add-ons",
+      "title": "Extras for your plans",
+      "bullets": [
+        "One-time extras for a plan you already hold, bought on their own."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 466.390625,
+        "width": 500.0,
+        "height": 120.0,
+        "right": 500.0,
+        "bottom": 586.390625,
+        "center_x": 250.0,
+        "center_y": 526.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 466.390625,
+        "width": 500.0,
+        "height": 120.0,
+        "right": 500.0,
+        "bottom": 586.390625,
+        "center_x": 250.0,
+        "center_y": 526.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 606.39,
+        "width": 270.0,
+        "height": 216,
+        "score": 670.609375
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+---
+title: Extras on the billing page
+audience:
+- end_user
+journey_step: As a member with a plan, I come back later and add an extra without
+  buying the plan again.
+callouts:
+- :id: extras
+  :title: Extras
+  :description: Each extra links straight into checkout.
+accessibility_notes: The section is labelled by its heading; each extra has a text
+  button.
+slug: billing_hub_add_ons
+device: mobile

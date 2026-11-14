@@ -32,6 +32,73 @@
     <% end %>
   </div>
 
+  <% if @term.local? %>
+    <section id="subscription-method-change" class="card mb-4" aria-labelledby="subscription-method-change-title">
+      <div class="card-header"><strong id="subscription-method-change-title"><%= t('better_together.billing.subscriptions.method_change_title') %></strong></div>
+      <div class="card-body">
+        <% if @method_options.any? %>
+          <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.method_change_intro', method: billing_payment_method_label(@term.payment_method)) %></p>
+          <%= form_with url: change_method_billing_subscription_path(@term, locale: I18n.locale), method: :patch, id: 'subscription-method-change-form', class: 'row g-2' do %>
+            <div class="col-md-8">
+              <%= label_tag :payment_method, t('better_together.billing.subscriptions.method_change_label'), class: 'form-label' %>
+              <%= select_tag :payment_method, options_for_select(@method_options.map { |choice| [billing_payment_method_label(choice.name), choice.name] }),
+                             id: 'subscription-method-change-select', class: 'form-select' %>
+            </div>
+            <div class="col-md-4 align-self-end">
+              <%= submit_tag t('better_together.billing.subscriptions.method_change_submit'), id: 'subscription-method-change-btn', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        <% else %>
+          <p id="subscription-method-change-none" class="text-body-secondary mb-0"><%= t('better_together.billing.subscriptions.method_change_none') %></p>
+        <% end %>
+      </div>
+    </section>
+
+    <section id="subscription-plan-change" class="card mb-4" aria-labelledby="subscription-plan-change-title">
+      <div class="card-header"><strong id="subscription-plan-change-title"><%= t('better_together.billing.subscriptions.plan_change_title') %></strong></div>
+      <div class="card-body">
+        <% if @term.pending_plan %>
+          <p id="subscription-plan-change-pending">
+            <% if @term.pending_plan_order %>
+              <%= t('better_together.billing.subscriptions.plan_change_pending_invoice', plan: @term.pending_plan.name) %>
+              <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale), id: 'subscription-plan-change-invoice-link' %>
+            <% else %>
+              <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: l(subscription.current_period_end.to_date, format: :long)) %>
+            <% end %>
+          </p>
+          <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale),
+                        method: :delete, id: 'subscription-plan-change-withdraw-btn', class: 'btn btn-outline-secondary' %>
+        <% elsif @plan_options.any? %>
+          <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.plan_change_intro') %></p>
+          <%= form_with url: change_plan_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-plan-change-form', class: 'row g-2' do %>
+            <div class="col-md-8">
+              <%= label_tag :plan_id, t('better_together.billing.subscriptions.plan_change_label'), class: 'form-label' %>
+              <%= select_tag :plan_id, options_for_select(@plan_options.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }),
+                             id: 'subscription-plan-change-select', class: 'form-select' %>
+            </div>
+            <fieldset class="col-12" id="subscription-plan-change-when">
+              <legend class="form-label fs-6"><%= t('better_together.billing.subscriptions.plan_change_when_legend') %></legend>
+              <div class="form-check">
+                <%= radio_button_tag :when, 'next', true, id: 'subscription-plan-change-when-next', class: 'form-check-input' %>
+                <%= label_tag 'subscription-plan-change-when-next', t('better_together.billing.subscriptions.plan_change_when_next'), class: 'form-check-label' %>
+              </div>
+              <div class="form-check">
+                <%= radio_button_tag :when, 'now', false, id: 'subscription-plan-change-when-now', class: 'form-check-input' %>
+                <%= label_tag 'subscription-plan-change-when-now', t('better_together.billing.subscriptions.plan_change_when_now'), class: 'form-check-label' %>
+              </div>
+              <p class="form-text mb-0"><%= t('better_together.billing.subscriptions.plan_change_now_hint') %></p>
+            </fieldset>
+            <div class="col-md-4 align-self-end">
+              <%= submit_tag t('better_together.billing.subscriptions.plan_change_submit'), id: 'subscription-plan-change-btn', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        <% else %>
+          <p id="subscription-plan-change-none" class="text-body-secondary mb-0"><%= t('better_together.billing.subscriptions.plan_change_none') %></p>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <% if @gate && @gate.missing.any? %>
     <section id="subscription-agreements" class="card mb-4" aria-labelledby="subscription-agreements-title">
       <div class="card-header"><strong id="subscription-agreements-title"><%= t('better_together.billing.subscriptions.review_title') %></strong></div>

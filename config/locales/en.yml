@@ -654,6 +654,8 @@ en:
       better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
       better_together/content/people_block: People
+      better_together/content/plan_button_block: Plan Button
+      better_together/content/plan_catalog_block: Plan Catalog
       better_together/content/platform_block: Platform
       better_together/content/posts_block: Posts
       better_together/content/quote_block: Quote
@@ -912,6 +914,24 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      addresses:
+        add: Add address
+        added: Address added.
+        default: Default
+        default_set: Default billing address updated.
+        intro: Tax on your orders is worked out from your billing address. Your default
+          is offered first at checkout.
+        list_title: Your addresses
+        make_default: Make default
+        new_title: Add an address
+        none: You have no billing address yet.
+        refused:
+          incomplete: Choose a country and a state or province so tax can be worked
+            out.
+          invalid: That address could not be saved. Check the fields and try again.
+          missing: Enter an address.
+          not_found: That address was not found.
+        title: Billing addresses
       allowances:
         enforcement: Enforcement
         field_owner: Owner
@@ -951,6 +971,15 @@ en:
         title: Plans
       checkout:
         accept: I have read and accept %{title}
+        add_on_line: Add-on
+        add_ons_dropped: An extra you chose is no longer offered, so it was removed
+          from your order. Check the total before you continue.
+        add_ons_heading: Add to your order
+        add_ons_hint: Optional extras for this order. Update the order to add them.
+        add_ons_status:
+          one: Order updated. One extra selected. Total %{total}.
+          other: Order updated. %{count} extras selected. Total %{total}.
+          zero: Order updated. No extras selected. Total %{total}.
         address:
           choose: Billing address
           hint: Tax is worked out from where you are billed, so choose your country
@@ -973,6 +1002,9 @@ en:
         error_method_not_available: Choose one of the ways to pay that are available.
         error_not_ready: 'This purchase cannot be completed yet: the terms for it
           have not been set up. Please contact the people who run this platform.'
+        error_order_changed: The price or the extras on offer changed while you were
+          checking out. Nothing has been charged. Please review the total and place
+          the order again.
         error_parts_too_large: The amounts you entered cover the whole price. Leave
           some for the way chosen above, or choose it for the whole amount.
         error_refused: Your order could not be placed. Nothing has been charged. Please
@@ -993,6 +1025,7 @@ en:
         review_intro: Read these before you place your order. You have to accept them
           to continue.
         review_title: Review and accept
+        subtotal: Subtotal
         tax_note: Tax, if any, is worked out from your billing address and shown before
           you confirm.
         tax_note_new_address: Tax is worked out from the address you enter, and shown
@@ -1002,6 +1035,7 @@ en:
         unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        update_order: Update order
         view_agreement: View the agreement
       credit:
         any_purpose: Anything the platform sells
@@ -1200,6 +1234,9 @@ en:
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to
+        add_on_buy: Add
+        add_ons_heading: Extras for your plans
+        add_ons_hint: One-time extras for plans you already have.
         all_orders: All orders
         all_plans: All plans
         browse_plans: Browse plans
@@ -1211,9 +1248,31 @@ en:
         plans_heading: Active plans
         plans_none: You have no active plans.
         renews: Renews %{date}
+        settings_addresses: Billing addresses
+        settings_heading: Billing settings
+        settings_notifications: Billing notifications
         title: Billing and plans
         view_access: View my access
         view_credit: View credit
+      notification_preferences:
+        always_hint: These need your attention, so they are always shown in the app
+          and emailed.
+        always_title: Always sent
+        email_hint: Receipts, renewal reminders, plan changes and refund decisions.
+          Turning this off does not stop the urgent notices below.
+        email_label: Email me billing notices
+        intro: Choose which billing notices are also sent to your email. They always
+          appear in the app.
+        kinds:
+          cheque_bounced: A cheque did not clear
+          grace_ending: Extra time to pay is ending
+          hold_expiring: An unpaid order is about to expire
+          payment_action_required: A payment needs your action
+          payment_failed: A payment failed
+          renewal_overdue: A renewal is overdue
+        save: Save
+        saved: Notification settings saved.
+        title: Billing notifications
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1377,6 +1436,17 @@ en:
         refund_recorded:
           body: The seller recorded a refund for your order.
           title: Refund for order %{number}
+        refund_request_decided:
+          body: The seller answered your refund request. Open the order to read the
+            reply.
+          title: Your refund request for order %{number} was answered
+        refund_requested:
+          buyer:
+            body: Your refund request was sent to the seller.
+            title: Refund request for order %{number}
+          seller:
+            body: A buyer asked for a refund. Open the request to decide.
+            title: Refund requested for order %{number}
         renewal_credit_insufficient:
           buyer:
             body: Your %{plan} renewal for %{amount} is paid from store credit and
@@ -1568,8 +1638,14 @@ en:
         field_subtotal: Subtotal
         field_tax: Tax
         field_total: Total
+        filter_any: Any
+        filter_apply: Show
+        filter_clear: Clear filters
+        filter_status: Status
+        filter_year: Year
         index_title: My orders
         lines_heading: What was ordered
+        no_matching_orders: No orders match these filters.
         no_orders: You have no orders yet.
         no_payments: No payment has been made yet.
         no_sales: There are no orders yet.
@@ -1658,6 +1734,10 @@ en:
         title: What this plan includes
       plans:
         actions_heading: Actions
+        add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
+          with, and whose holders may buy it on its own later. Leave all unticked
+          to offer it with every plan.
+        add_on_targets_legend: Plans this add-on extends
         audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
           it: a person who is any of the ticked kinds can see and buy it.'
         audience_legend: Who may see and buy this plan
@@ -1674,6 +1754,9 @@ en:
         field_accepted_payment_methods_hint: Ways to pay outside a payment processor.
           Each still has to be turned on for the seller before buyers can use it.
         field_active: Active (visible to subscribers)
+        field_add_on: Add-on only
+        field_add_on_hint: Sold only as an extra on another plan's order, never on
+          its own. One-time, no included access.
         field_amount: Amount
         field_amount_hint: Type the price as you would write it, for example 45.00.
           Currencies without cents, such as JPY and KRW, take whole numbers.
@@ -1907,6 +1990,63 @@ en:
         ready: Ready
         title: Ready to sell?
         todo: 'Still to do:'
+      refund_requests:
+        accept_policy: Read and accept the refund policy before sending your request.
+        all: All
+        already_decided: This request has already been decided.
+        already_pending: There is already a refund request waiting on this order.
+        amount_hint: Leave empty to ask for everything that can be given back.
+        amount_invalid: That amount is more than can still be given back, or is not
+          positive.
+        amount_label: Amount to ask for
+        approve: Approve and give back
+        approved_amount: 'Approved: %{amount}'
+        approved_hint: Leave empty to give back what was asked for (or everything
+          possible).
+        approved_label: Amount to give back
+        ask_link: Ask for a refund
+        asked: Asked for
+        decided: Decision saved. The buyer has been told.
+        decline: Decline
+        decline_needs_note: Explain why the request is declined so the buyer can read
+          it.
+        details_label: Anything the seller should know
+        everything: Everything possible
+        heading: Refund requests
+        new_intro: Tell the seller why you want money back. They review it and answer
+          you here. Only payments the seller handles themselves, such as cash, cheque,
+          e-Transfer or store credit, can be asked for this way.
+        new_title: Ask for a refund on order %{number}
+        none: There are no refund requests.
+        order_link: Order
+        policy_accept: I have read and accept the %{title}
+        policy_accepted: You have already accepted the current refund policy.
+        policy_view: Read the refund policy
+        queue_intro: Buyers asking for money back on what this platform sells. Open
+          one to approve it, approve part of it or decline it.
+        queue_link: Refund requests
+        queue_title: Refund requests
+        reason_label: Reason
+        reasons:
+          cancelled_event: The event was cancelled
+          duplicate: I paid twice
+          error: There was a mistake
+          other: Something else
+          requested_by_buyer: I changed my mind
+        refundable: Up to %{amount} can still be given back.
+        reply_hint: The buyer reads this. Required when you decline.
+        reply_label: Reply to the buyer
+        sent: Your refund request was sent. You will be told what the seller decides.
+        show_title: Refund request for order %{number}
+        statuses:
+          approved: Approved
+          cancelled: Withdrawn
+          declined: Declined
+          partially_approved: Partly approved
+          pending: Waiting
+        submit: Send request
+        withdraw: Withdraw request
+        withdrawn: Your refund request was withdrawn.
       requirements:
         add: Add
         add_title: Add a requirement
@@ -2015,6 +2155,17 @@ en:
         field_through: Paid through
         index_title: Subscriptions
         invoice: Invoice %{number}
+        method_change_intro: Renewals are paid by %{method}. Choose another way for
+          later renewals. An invoice already made keeps its method.
+        method_change_label: Pay renewals by
+        method_change_none: There is no other way to pay renewals right now.
+        method_change_refused:
+          not_local: This subscription is renewed by its payment processor.
+          not_offered: That way of paying is not available for this plan.
+          unchanged: That is already the method renewals are paid by.
+        method_change_submit: Change method
+        method_change_title: Payment method
+        method_changed: Later renewals will be paid by the new method.
         none: You have no subscriptions.
         period_blocked: On hold
         period_lapsed: Lapsed
@@ -2024,6 +2175,40 @@ en:
         period_waived: Covered
         periods_caption: Each period of this subscription and its invoice
         periods_title: Periods and invoices
+        plan_change_credit_note: Prorated difference for a plan change
+        plan_change_credited: You are on the new plan. %{amount} was added to your
+          store credit.
+        plan_change_done: You are on the new plan.
+        plan_change_intro: Pick another plan and when it changes. From your next period,
+          nothing changes until then. Now, the rest of this period is prorated.
+        plan_change_invoiced: Invoice made for %{amount}. Your plan changes when it
+          is paid.
+        plan_change_label: New plan
+        plan_change_none: There is no other plan you can move to right now.
+        plan_change_now_hint: A dearer plan is invoiced for the difference and changes
+          once that is paid. A cheaper plan changes at once and the difference comes
+          back as store credit.
+        plan_change_pending: You will move to %{plan} when your next period starts
+          (after %{date}).
+        plan_change_pending_invoice: Your move to %{plan} happens when its invoice
+          is paid.
+        plan_change_refused:
+          different_schedule: That plan bills on a different schedule or currency,
+            so you cannot move to it from here.
+          not_available: That plan is not available.
+          not_running: This subscription cannot change plan right now.
+          over_limit: You are using more than that plan allows. Free some space first,
+            then try again.
+          same_plan: You are already on that plan.
+        plan_change_saved: Saved. Your plan changes when the next period starts.
+        plan_change_submit: Change plan
+        plan_change_title: Change plan
+        plan_change_view_invoice: View the invoice
+        plan_change_when_legend: When should it change?
+        plan_change_when_next: From my next period (no charge now)
+        plan_change_when_now: Now (prorated for the rest of this period)
+        plan_change_withdraw: Keep my current plan
+        plan_change_withdrawn: Your plan change was cancelled.
         resume: Keep my subscription
         resumed: Your subscription will continue.
         review_intro: The terms for this subscription changed. Accept them and we
@@ -2447,6 +2632,17 @@ en:
           select_prompt: "— Select a navigation area —"
         people_block:
           empty: No people to display.
+        plan_button_block:
+          create_label: Create a new %{type} block for the page
+          displays:
+            button: Button only
+            card: Card with price
+          empty: Choose a plan for this block to offer.
+          plan_hint: Pick one of this platform's active plans.
+        plan_catalog_block:
+          create_label: Create a new %{type} block for the page
+          empty: No plans are on offer right now.
+          item_limit_hint: How many plans to show, up to 24.
         posts_block:
           empty: No posts to display.
         resource_block:
@@ -6273,8 +6469,14 @@ en:
       account_mismatch: must belong to the same account
       acknowledgement_required: must be accepted before this method can be turned
         on
+      add_on_cannot_have_grants: cannot be given to an add-on
+      add_on_cannot_renew: an add-on is bought once, not renewed
+      add_on_has_grants: an add-on cannot include anything of its own; put that on
+        a plan
+      add_on_locked_by_orders: cannot be changed once orders include this plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
+      already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
       cannot_be_the_host: cannot be the host platform
       confirmation: doesn't match %{attribute}
@@ -6303,6 +6505,8 @@ en:
       less_than_or_equal_to: must be less than or equal to %{count}
       lookup_failed: could not be verified with the payment processor
       model_invalid: 'Validation failed: %{errors}'
+      must_be_a_primary_plan: must be a plan that is not an add-on
+      must_be_an_add_on: must be an add-on
       no_payment_method: needs an online processor or at least one other way to pay
       not_a_number: is not a number
       not_a_purchase_agreement: must be a purchase agreement
@@ -6318,6 +6522,9 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      not_the_buyer: can only be made by the buyer of the order
+      nothing_to_give_back: There is nothing on this order that can be given back
+        here.
       odd: must be odd
       one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}

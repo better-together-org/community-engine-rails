@@ -13,6 +13,7 @@ module BetterTogether
         authorize BetterTogether::Billing::Order, :index?
         @terms = own_terms.limit(5)
         @orders = billing_owner.billing_orders.bought_by(person).newest_first.limit(5).to_a
+        @add_ons = extras_for_held_plans
         @refunded_by_order = refunded_by_order(@orders)
         load_credit_and_access
       end
@@ -20,6 +21,12 @@ module BetterTogether
       private
 
       def person = current_user.person
+
+      # Add-ons this person may buy on their own because they hold a plan the add-on extends.
+      def extras_for_held_plans
+        billing_owner.billing_plans.sold_by_platform.active.add_on.order(:amount_cents, :identifier).limit(20)
+                     .select { |add_on| policy(add_on).buy_alone? }.first(6)
+      end
 
       # What has been given back on each of these orders (money that failed to move is not counted).
       def refunded_by_order(orders)

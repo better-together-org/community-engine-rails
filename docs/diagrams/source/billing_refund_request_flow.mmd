@@ -1,0 +1,14 @@
+%% Billing — a buyer asks for money back, and the seller decides once.
+flowchart TD
+  A[Buyer opens their order] --> B{Paid by cash, cheque, e-Transfer or credit,\nand nothing already waiting?}
+  B -- no --> X[No way to ask: the order shows nothing to request]
+  B -- yes --> C[RefundRequests::Create: status pending]
+  C --> D[Notify buyer and the people who manage billing]
+  C --> W[Buyer may withdraw: status cancelled]
+  D --> E{Steward decides, once}
+  E -- decline with a reply --> F[status declined, nothing given back]
+  E -- approve all or part --> G[Refunds::Record against each local payment,\nnewest first, one key per payment]
+  G --> H[Tax pro-rated, credit reversed, order settled]
+  H --> I[status approved or partially_approved]
+  F --> J[Notify buyer: reply on the order page]
+  I --> J

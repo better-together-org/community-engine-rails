@@ -26,7 +26,8 @@ RSpec.describe 'Billing subscriptions DOM contract', type: :request do # rubocop
 
     get "/#{locale}/billing/subscriptions/#{term.id}"
     expect_ids(dom_id(term, :show_page), dom_id(term, :details), 'subscription-through', 'subscription-price', 'subscription-method',
-               'subscription-actions', 'subscription-cancel-btn', dom_id(term, :periods), dom_id(term.periods.first))
+               'subscription-actions', 'subscription-cancel-btn', 'subscription-method-change', 'subscription-method-change-form',
+               'subscription-method-change-select', 'subscription-method-change-btn', dom_id(term, :periods), dom_id(term.periods.first))
     expect(response.body).to include('period-status-badge')
   end
 

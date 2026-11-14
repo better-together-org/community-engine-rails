@@ -167,9 +167,9 @@ included, more storage and features. Tier C: a separate app and database, the pl
 | 4.4 | As a buyer I cancel at period end and resume before it ends. | B | CE renewed subscriptions. Processor renewed ones have no payer screen in core. |
 | 4.5 | As a buyer I upgrade, downgrade or switch interval. | M | Same as 1.9. |
 | 4.6 | As a buyer I change the payment method on an existing subscription. | P | Checkout offers "renew with"; terms are immutable and there is no change screen. |
-| 4.7 | As a buyer I request a refund on an order or payment, give a reason and track its status. | M | `RefundRequest`, buyer form, status. Stewards record refunds today. |
-| 4.8 | As a steward I review, approve, partly approve or decline refund requests, see the refund policy and reply to the buyer. | M | Queue UI and notifications, reusing `Refunds::Record`. |
-| 4.9 | As a buyer I see refund status, amount and tax on my order page. | P | Refund rows exist; request state does not. |
+| 4.7 | As a buyer I request a refund on an order or payment, give a reason and track its status. | B | `RefundRequest`, buyer form on the order page, status. See [refund requests](refund_requests.md). |
+| 4.8 | As a steward I review, approve, partly approve or decline refund requests, see the refund policy and reply to the buyer. | B | Queue at `/billing/refund_requests`, notifications, reuses `Refunds::Record`. The refund policy text is not shown yet. |
+| 4.9 | As a buyer I see refund status, amount and tax on my order page. | B | Request state, approved amount and the reply show on the order page. |
 | 4.10 | As a buyer I cancel an unpaid order or an offline payment claim. | P | Claim exists; buyer cancel of an awaiting payment order unconfirmed. |
 | 4.11 | As a buyer I see my store credit, lots and expiry and redeem a promotion code. | B | `/billing/credit`. |
 | 4.12 | As a buyer I accept changed agreements when terms change. | B | `needs_agreement` flow. |
