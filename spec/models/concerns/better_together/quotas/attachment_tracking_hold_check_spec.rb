@@ -16,12 +16,19 @@ RSpec.describe BetterTogether::Quotas::AttachmentTracking do
                                     subject: blob, enforce: false)
   end
 
+  # Other examples commit usage against the host's quota (it is shared and not rolled back), so room is
+  # measured from what is already used, not from zero.
+  def limit_to_headroom(amount)
+    used = BetterTogether::Quotas.usage_for(type: 'media_storage', owner: host)[:used]
+    BetterTogether::Quota.find_by!(owner: host, quota_type: 'media_storage').update!(limit: used + amount)
+  end
+
   def attachment = ActiveStorage::Attachment.new(record: person, name: 'profile_image', blob:)
 
   before do
     BetterTogether::Quotas.sync_limit!(type: 'media_storage', owner: host)
     host.set_quota_enforcement!('media_storage', 'hard')
-    BetterTogether::Quota.find_by!(owner: host, quota_type: 'media_storage').update!(limit: 10_000)
+    limit_to_headroom(10_000)
   end
 
   it 'allows a blob that matches its hold' do
@@ -36,7 +43,7 @@ RSpec.describe BetterTogether::Quotas::AttachmentTracking do
 
   it 'refuses a blob bigger than its hold when the difference does not fit' do
     hold(100)
-    BetterTogether::Quota.find_by!(owner: host, quota_type: 'media_storage').update!(limit: 1_000)
+    limit_to_headroom(1_000)
 
     expect(attachment).not_to be_valid
   end

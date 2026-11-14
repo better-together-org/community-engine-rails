@@ -8,6 +8,8 @@
   <div id="billing-sales-actions" class="d-flex flex-wrap gap-2 mb-4">
     <%= link_to t('better_together.billing.offline_payments.queue_link'), billing_offline_payments_path(locale: I18n.locale),
                 id: 'billing-sales-offline-queue-link', class: 'btn btn-outline-secondary' %>
+    <%= link_to t('better_together.billing.refund_requests.queue_link'), billing_refund_requests_path(locale: I18n.locale),
+                id: 'billing-sales-refund-requests-link', class: 'btn btn-outline-secondary' %>
     <%= link_to t('better_together.billing.walk_up.new_link'), new_billing_walk_up_sale_path(locale: I18n.locale),
                 id: 'new-walk-up-sale-btn', class: 'btn btn-primary' %>
   </div>

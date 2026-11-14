@@ -1,0 +1,83 @@
+{
+  "name": "billing_refund_request_new",
+  "device": "desktop",
+  "url": "/en/billing/orders/e5215d10-f938-47dd-af68-a21c9e070fa1/refund_requests/new",
+  "title": "Ask for a refund on order BT-LQEOPJDS | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_refund_requests",
+  "flow": "billing_refund_request_new",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_refund_requests_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-refund-request-form",
+      "title": "Ask for a refund",
+      "bullets": [
+        "Choose a reason, say how much, and tell the seller what they should know."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 279.0,
+        "width": 1296.0,
+        "height": 608.1875,
+        "right": 1368.0,
+        "bottom": 887.1875,
+        "center_x": 720.0,
+        "center_y": 583.09375
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 279.0,
+        "width": 1296.0,
+        "height": 608.1875,
+        "right": 1368.0,
+        "bottom": 887.1875,
+        "center_x": 720.0,
+        "center_y": 583.09375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 907.19,
+        "width": 380,
+        "height": 158,
+        "score": 569.8125
+      }
+    },
+    {
+      "selector": "#billing-refund-policy",
+      "title": "Refund policy",
+      "bullets": [
+        "Read the policy in the window, then tick the box to send the request."
+      ],
+      "target": {
+        "x": 89.0,
+        "y": 691.0,
+        "width": 1262.0,
+        "height": 125.1875,
+        "right": 1351.0,
+        "bottom": 816.1875,
+        "center_x": 720.0,
+        "center_y": 753.59375
+      },
+      "avoid": {
+        "x": 89.0,
+        "y": 691.0,
+        "width": 1262.0,
+        "height": 125.1875,
+        "right": 1351.0,
+        "bottom": 816.1875,
+        "center_x": 720.0,
+        "center_y": 753.59375
+      },
+      "placement": {
+        "side": "right",
+        "x": 1036,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}

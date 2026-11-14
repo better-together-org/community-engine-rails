@@ -1265,6 +1265,17 @@ es:
         refund_recorded:
           body: El vendedor registró un reembolso de su pedido.
           title: Reembolso del pedido %{number}
+        refund_request_decided:
+          body: El vendedor respondió a su solicitud de reembolso. Abra el pedido
+            para leer la respuesta.
+          title: Su solicitud de reembolso del pedido %{number} tuvo respuesta
+        refund_requested:
+          buyer:
+            body: Su solicitud de reembolso se envió al vendedor.
+            title: Solicitud de reembolso del pedido %{number}
+          seller:
+            body: Un comprador pidió un reembolso. Abra la solicitud para decidir.
+            title: Reembolso solicitado para el pedido %{number}
         renewal_credit_insufficient:
           buyer:
             body: Tu renovación de %{plan} por %{amount} se paga con crédito de la
@@ -1794,6 +1805,63 @@ es:
         ready: Listo
         title: "¿Listo para vender?"
         todo: 'Pendiente:'
+      refund_requests:
+        accept_policy: Lea y acepte la política de reembolsos antes de enviar su solicitud.
+        all: Todas
+        already_decided: Esta solicitud ya fue resuelta.
+        already_pending: Ya hay una solicitud de reembolso en espera para este pedido.
+        amount_hint: Déjelo vacío para pedir todo lo que se pueda devolver.
+        amount_invalid: Ese importe supera lo que aún se puede devolver, o no es positivo.
+        amount_label: Importe solicitado
+        approve: Aprobar y devolver
+        approved_amount: 'Aprobado: %{amount}'
+        approved_hint: Déjelo vacío para devolver lo solicitado (o todo lo posible).
+        approved_label: Importe a devolver
+        ask_link: Pedir un reembolso
+        asked: Solicitado
+        decided: Decisión guardada. Se informó al comprador.
+        decline: Rechazar
+        decline_needs_note: Explique por qué se rechaza la solicitud para que el comprador
+          pueda leerlo.
+        details_label: Algo que el vendedor deba saber
+        everything: Todo lo posible
+        heading: Solicitudes de reembolso
+        new_intro: Cuéntele al vendedor por qué quiere que le devuelvan el dinero.
+          Él la revisa y le responde aquí. Solo se pueden pedir así los pagos que
+          gestiona el propio vendedor, como efectivo, cheque, transferencia o crédito
+          de la tienda.
+        new_title: Pedir un reembolso del pedido %{number}
+        none: No hay solicitudes de reembolso.
+        order_link: Pedido
+        policy_accept: 'He leído y acepto: %{title}'
+        policy_accepted: Ya aceptó la política de reembolsos vigente.
+        policy_view: Leer la política de reembolsos
+        queue_intro: Compradores que piden la devolución de lo que vende esta plataforma.
+          Abra una para aprobarla, aprobarla en parte o rechazarla.
+        queue_link: Solicitudes de reembolso
+        queue_title: Solicitudes de reembolso
+        reason_label: Motivo
+        reasons:
+          cancelled_event: Se canceló el evento
+          duplicate: Pagué dos veces
+          error: Hubo un error
+          other: Otro motivo
+          requested_by_buyer: Cambié de opinión
+        refundable: Todavía se pueden devolver hasta %{amount}.
+        reply_hint: El comprador la lee. Es obligatoria si rechaza.
+        reply_label: Respuesta al comprador
+        sent: Se envió su solicitud de reembolso. Se le informará de lo que decida
+          el vendedor.
+        show_title: Solicitud de reembolso del pedido %{number}
+        statuses:
+          approved: Aprobada
+          cancelled: Retirada
+          declined: Rechazada
+          partially_approved: Aprobada en parte
+          pending: En espera
+        submit: Enviar solicitud
+        withdraw: Retirar la solicitud
+        withdrawn: Se retiró su solicitud de reembolso.
       requirements:
         add: Añadir
         add_title: Añadir un requisito
@@ -6287,6 +6355,7 @@ es:
         plan
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
+      already_pending: Ya hay una solicitud de reembolso en espera para este pedido.
       blank: no puede estar en blanco
       confirmation: no coincide con %{attribute}
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
@@ -6329,6 +6398,8 @@ es:
       not_saved:
         one: 'Ocurrió un error al tratar de guardar %{resource}:'
         other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
+      not_the_buyer: solo puede hacerla el comprador del pedido
+      nothing_to_give_back: No hay nada en este pedido que se pueda devolver aquí.
       odd: debe ser impar
       one_time_single: debe ser 1 para un precio único
       other_than: debe ser distinto de %{count}

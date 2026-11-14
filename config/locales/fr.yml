@@ -1284,6 +1284,18 @@ fr:
         refund_recorded:
           body: Le vendeur a enregistré un remboursement pour votre commande.
           title: Remboursement de la commande %{number}
+        refund_request_decided:
+          body: Le vendeur a répondu à votre demande de remboursement. Ouvrez la commande
+            pour lire la réponse.
+          title: Votre demande de remboursement pour la commande %{number} a reçu
+            une réponse
+        refund_requested:
+          buyer:
+            body: Votre demande de remboursement a été envoyée au vendeur.
+            title: Demande de remboursement pour la commande %{number}
+          seller:
+            body: Un acheteur a demandé un remboursement. Ouvrez la demande pour décider.
+            title: Remboursement demandé pour la commande %{number}
         renewal_credit_insufficient:
           buyer:
             body: Votre renouvellement de %{plan} de %{amount} se paie avec votre
@@ -1833,6 +1845,67 @@ fr:
         ready: Prêt
         title: Prêt à vendre ?
         todo: 'Reste à faire :'
+      refund_requests:
+        accept_policy: Lisez et acceptez la politique de remboursement avant d'envoyer
+          votre demande.
+        all: Toutes
+        already_decided: Cette demande a déjà fait l'objet d'une décision.
+        already_pending: Une demande de remboursement est déjà en attente sur cette
+          commande.
+        amount_hint: Laissez vide pour demander tout ce qui peut être remboursé.
+        amount_invalid: Ce montant dépasse ce qui peut encore être remboursé, ou n'est
+          pas positif.
+        amount_label: Montant demandé
+        approve: Approuver et rembourser
+        approved_amount: 'Approuvé : %{amount}'
+        approved_hint: Laissez vide pour rembourser ce qui est demandé (ou tout ce
+          qui est possible).
+        approved_label: Montant à rembourser
+        ask_link: Demander un remboursement
+        asked: Demandé
+        decided: Décision enregistrée. L'acheteur a été informé.
+        decline: Refuser
+        decline_needs_note: Expliquez pourquoi la demande est refusée afin que l'acheteur
+          puisse le lire.
+        details_label: Ce que le vendeur doit savoir
+        everything: Tout ce qui est possible
+        heading: Demandes de remboursement
+        new_intro: Dites au vendeur pourquoi vous voulez être remboursé. Il examine
+          la demande et vous répond ici. Seuls les paiements que le vendeur gère lui-même,
+          comme l'argent comptant, le chèque, le virement Interac ou le crédit en
+          magasin, peuvent être demandés ainsi.
+        new_title: Demander un remboursement pour la commande %{number}
+        none: Il n'y a aucune demande de remboursement.
+        order_link: Commande
+        policy_accept: 'J''ai lu et j''accepte : %{title}'
+        policy_accepted: Vous avez déjà accepté la politique de remboursement actuelle.
+        policy_view: Lire la politique de remboursement
+        queue_intro: Acheteurs qui demandent un remboursement sur ce que cette plateforme
+          vend. Ouvrez une demande pour l'approuver, l'approuver en partie ou la refuser.
+        queue_link: Demandes de remboursement
+        queue_title: Demandes de remboursement
+        reason_label: Motif
+        reasons:
+          cancelled_event: L'événement a été annulé
+          duplicate: J'ai payé deux fois
+          error: Il y a eu une erreur
+          other: Autre chose
+          requested_by_buyer: J'ai changé d'avis
+        refundable: Jusqu'à %{amount} peuvent encore être remboursés.
+        reply_hint: L'acheteur la lit. Obligatoire si vous refusez.
+        reply_label: Réponse à l'acheteur
+        sent: Votre demande de remboursement a été envoyée. Vous serez informé de
+          la décision du vendeur.
+        show_title: Demande de remboursement pour la commande %{number}
+        statuses:
+          approved: Approuvée
+          cancelled: Retirée
+          declined: Refusée
+          partially_approved: Approuvée en partie
+          pending: En attente
+        submit: Envoyer la demande
+        withdraw: Retirer la demande
+        withdrawn: Votre demande de remboursement a été retirée.
       requirements:
         add: Ajouter
         add_title: Ajouter une exigence
@@ -6370,6 +6443,8 @@ fr:
         ce forfait
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
+      already_pending: Une demande de remboursement est déjà en attente sur cette
+        commande.
       blank: doit être rempli(e)
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
@@ -6414,6 +6489,8 @@ fr:
         one: 'une erreur a empêché ce (cet ou cette) %{resource} d’être enregistré(e) :'
         other: "%{count} erreurs ont empêché ce (cet ou cette) %{resource} d’être
           enregistré(e) :"
+      not_the_buyer: ne peut être faite que par l'acheteur de la commande
+      nothing_to_give_back: Rien sur cette commande ne peut être remboursé ici.
       odd: doit être impair
       one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
