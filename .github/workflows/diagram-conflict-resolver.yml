@@ -106,6 +106,7 @@ jobs:
 
       - name: Merge the base into the branch
         id: merge
+        timeout-minutes: 15
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
@@ -116,6 +117,7 @@ jobs:
 
       - name: Regenerate the diagrams
         if: steps.merge.outputs.merged == 'true'
+        timeout-minutes: 30
         uses: ./.github/actions/regenerate-diagrams
 
       - name: Commit what the regeneration changed

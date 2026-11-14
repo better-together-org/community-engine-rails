@@ -42,6 +42,7 @@ cd "$(git rev-parse --show-toplevel)"
 # shellcheck source-path=SCRIPTDIR source=lib/pr-conflicts.sh
 source "$(dirname "$0")/lib/pr-conflicts.sh"
 
+progress() { echo "[$(date -u +%H:%M:%S)] $*"; }
 output() { [ -n "${GITHUB_OUTPUT:-}" ] && echo "$1" >> "$GITHUB_OUTPUT" || true; }
 stop() { echo "$1"; output "merged=false"; exit 0; }
 
@@ -64,7 +65,7 @@ take_base_versions() { # take_base_versions <head> <base> <message> <files...>
       rm -f "$f"
     fi
   done
-  BRANCH="$head" "$(dirname "$0")/ci-signed-commit" "$message" "$@"
+  BRANCH="$head" timeout 600 "$(dirname "$0")/ci-signed-commit" "$message" "$@"
 }
 
 # One comment per PR from the resolver, edited in place on later runs.
@@ -87,6 +88,7 @@ merge_phase() {
   [ "$mergeable" = "CONFLICTING" ] || stop "PR #${PR} is ${mergeable}, not conflicting; nothing to do."
   [ "$cross" = "false" ] || stop "PR #${PR} is from a fork; the robot cannot push to it."
 
+  progress "finding the conflicted files"
   mapfile -t files < <(conflicted_files "$PR" "$base")
   [ "${#files[@]}" -gt 0 ] || stop "No conflict reproduced for #${PR}; leaving it alone."
   for f in "${files[@]}"; do
@@ -109,9 +111,11 @@ merge_phase() {
     stop "Dry run, no changes made."
   fi
 
+  progress "checking out ${head}"
   git fetch -q "$REMOTE" "$head" "$base"
   git checkout -q -B "$head" "refs/remotes/${REMOTE}/${head}"
   require_tip "$head" "$oid"
+  progress "committing ${#generated[@]} generated file(s) at ${base}'s version"
   take_base_versions "$head" "$base" "chore(diagrams): take ${base} versions of generated files before merging" "${generated[@]}"
 
   git fetch -q "$REMOTE" "$head"
@@ -134,7 +138,8 @@ merge_phase() {
     stop "Generated files fixed; ${#others[@]} other conflicted file(s) left for a person."
   fi
 
-  "$GH" api -X PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/update-branch" -f "expected_head_sha=${new}" >/dev/null \
+  progress "asking GitHub to merge ${base} into ${head}"
+  timeout 120 "$GH" api -X PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR}/update-branch" -f "expected_head_sha=${new}" >/dev/null \
     || { echo "update-branch failed: the merge still conflicts. The extra commit is harmless; a person must resolve it."; output "merged=false"; exit 1; }
 
   for _ in $(seq 1 24); do
@@ -159,7 +164,8 @@ commit_phase() {
     return 0
   fi
   git status --short -- "${REGENERATED_PATHS[@]}" | head -50
-  BRANCH="$head" "$(dirname "$0")/ci-signed-commit" "chore(diagrams): regenerate after merging ${base}" "${REGENERATED_PATHS[@]}"
+  progress "committing the regenerated files"
+  BRANCH="$head" timeout 600 "$(dirname "$0")/ci-signed-commit" "chore(diagrams): regenerate after merging ${base}" "${REGENERATED_PATHS[@]}"
 }
 
 case "$PHASE" in
