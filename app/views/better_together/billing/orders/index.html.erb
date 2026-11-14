@@ -14,12 +14,12 @@
 
   <%= form_with url: billing_orders_path(locale: I18n.locale), method: :get, id: 'billing-orders-filters', class: 'row g-2 align-items-end mb-3' do %>
     <div class="col-sm-4 col-md-3">
-      <%= label_tag :status, t('better_together.billing.orders.filter_status'), class: 'form-label' %>
+      <%= label_tag 'billing-orders-filter-status', t('better_together.billing.orders.filter_status'), class: 'form-label' %>
       <%= select_tag :status, options_for_select([[t('better_together.billing.orders.filter_any'), '']] + BetterTogether::Billing::Order::STATUSES.map { |status| [t("better_together.billing.orders.status_#{status}"), status] }, @status),
                      id: 'billing-orders-filter-status', class: 'form-select' %>
     </div>
     <div class="col-sm-4 col-md-3">
-      <%= label_tag :year, t('better_together.billing.orders.filter_year'), class: 'form-label' %>
+      <%= label_tag 'billing-orders-filter-year', t('better_together.billing.orders.filter_year'), class: 'form-label' %>
       <%= select_tag :year, options_for_select([[t('better_together.billing.orders.filter_any'), '']] + @years, @year),
                      id: 'billing-orders-filter-year', class: 'form-select' %>
     </div>

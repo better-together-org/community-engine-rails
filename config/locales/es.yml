@@ -4341,6 +4341,9 @@ es:
         billing_agreement_requirements: Condiciones de compra
         billing_allowances: Cuotas y uso
         billing_credit_accounts: Cuentas de crédito de la tienda
+        billing_events: Eventos de facturación
+        billing_hosted_billing: Facturación alojada
+        billing_hosted_platforms: Plataformas alojadas
         billing_plans: Planes de facturación
         billing_processor_settings: Métodos de pago
         billing_promotions: Códigos promocionales

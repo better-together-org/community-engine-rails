@@ -40,7 +40,7 @@
           <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.method_change_intro', method: billing_payment_method_label(@term.payment_method)) %></p>
           <%= form_with url: change_method_billing_subscription_path(@term, locale: I18n.locale), method: :patch, id: 'subscription-method-change-form', class: 'row g-2' do %>
             <div class="col-md-8">
-              <%= label_tag :payment_method, t('better_together.billing.subscriptions.method_change_label'), class: 'form-label' %>
+              <%= label_tag 'subscription-method-change-select', t('better_together.billing.subscriptions.method_change_label'), class: 'form-label' %>
               <%= select_tag :payment_method, options_for_select(@method_options.map { |choice| [billing_payment_method_label(choice.name), choice.name] }),
                              id: 'subscription-method-change-select', class: 'form-select' %>
             </div>

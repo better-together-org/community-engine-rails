@@ -4415,6 +4415,9 @@ fr:
         billing_agreement_requirements: Conditions d’achat
         billing_allowances: Quotas et utilisation
         billing_credit_accounts: Comptes de crédit en magasin
+        billing_events: Événements de facturation
+        billing_hosted_billing: Facturation hébergée
+        billing_hosted_platforms: Plateformes hébergées
         billing_plans: Forfaits de facturation
         billing_processor_settings: Modes de paiement
         billing_promotions: Codes promotionnels

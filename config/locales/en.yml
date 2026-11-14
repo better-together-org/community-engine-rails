@@ -4296,6 +4296,9 @@ en:
         billing_agreement_requirements: Purchase terms
         billing_allowances: Allowances and usage
         billing_credit_accounts: Store credit accounts
+        billing_events: Billing events
+        billing_hosted_billing: Hosted billing
+        billing_hosted_platforms: Hosted platforms
         billing_plans: Billing Plans
         billing_processor_settings: Payment Methods
         billing_promotions: Promotion codes

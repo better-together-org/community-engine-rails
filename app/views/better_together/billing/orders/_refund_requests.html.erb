@@ -7,7 +7,7 @@
       <strong><%= t('better_together.billing.refund_requests.heading') %></strong>
       <% if can_ask %>
         <%= link_to t('better_together.billing.refund_requests.ask_link'), new_billing_order_refund_request_path(order, locale: I18n.locale),
-                    id: 'billing-order-ask-refund-link', class: 'btn btn-outline-secondary btn-sm' %>
+                    id: 'billing-order-ask-refund-link', class: 'btn btn-outline-dark btn-sm' %>
       <% end %>
     </div>
     <% if requests.any? %>
