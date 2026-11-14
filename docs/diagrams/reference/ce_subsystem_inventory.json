@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T16:16:02Z",
+  "generated_at": "2026-11-14T16:43:13Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -37943,6 +37943,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::HostingPlansController",
+          "label": "Billing::HostingPlansController",
+          "source_path": "app/controllers/better_together/billing/hosting_plans_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::HubsController",
           "label": "Billing::HubsController",
           "source_path": "app/controllers/better_together/billing/hubs_controller.rb",
@@ -39129,6 +39143,7 @@
             "Billing::OrderDocumentsController",
             "Billing::NotificationPreferencesController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
@@ -39396,6 +39411,7 @@
             "Billing::OrderDocumentsController",
             "Billing::NotificationPreferencesController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
@@ -39480,6 +39496,7 @@
             "Billing::OrderDocumentsController",
             "Billing::NotificationPreferencesController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
@@ -39564,6 +39581,7 @@
             "Billing::OrderDocumentsController",
             "Billing::NotificationPreferencesController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",
@@ -39659,6 +39677,7 @@
             "Billing::OrderDocumentsController",
             "Billing::NotificationPreferencesController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::EventsController",

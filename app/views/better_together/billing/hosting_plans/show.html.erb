@@ -1,0 +1,63 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.hosting_plan.title') %>
+<% end %>
+
+<div id="billing-hosting-plan-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.hosting_plan.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.hosting_plan.intro', host: @host&.name) %></p>
+
+  <% if @entitlements.any? %>
+    <% @entitlements.each do |entitlement| %>
+      <% term = @terms.find { |candidate| candidate.pay_subscription_id == entitlement.pay_subscription_id } %>
+      <section id="<%= dom_id(entitlement, :hosting) %>" class="card mb-4" aria-labelledby="<%= dom_id(entitlement, :hosting_heading) %>">
+        <div class="card-header d-flex justify-content-between align-items-baseline">
+          <h2 id="<%= dom_id(entitlement, :hosting_heading) %>" class="h5 mb-0"><%= entitlement.plan.name %></h2>
+          <span><%= billing_entitlement_status_badge(entitlement) %></span>
+        </div>
+        <div class="card-body">
+          <% if term %>
+            <dl id="<%= dom_id(term, :hosting_details) %>" class="row mb-3">
+              <dt class="col-sm-4"><%= t('better_together.billing.hosting_plan.price') %></dt>
+              <dd class="col-sm-8"><%= billing_amount(term.unit_amount_cents, term.currency) %> / <%= billing_interval_label(term.plan.billing_interval) %></dd>
+              <% if term.pay_subscription.current_period_end %>
+                <dt class="col-sm-4"><%= t('better_together.billing.hosting_plan.renews') %></dt>
+                <dd class="col-sm-8" id="<%= dom_id(term, :hosting_renews) %>"><%= l(term.pay_subscription.current_period_end.to_date, format: :long) %></dd>
+              <% end %>
+            </dl>
+          <% end %>
+          <% if entitlement.grace? && entitlement.grace_ends_at %>
+            <p class="text-warning-emphasis" id="<%= dom_id(entitlement, :hosting_grace) %>">
+              <%= t('better_together.billing.entitlements.grace_until', date: l(entitlement.grace_ends_at.to_date, format: :long)) %>
+            </p>
+          <% end %>
+
+          <% allowances = entitlement.grants.applied.allowances.to_a %>
+          <% if allowances.any? %>
+            <h3 class="h6 mt-3"><%= t('better_together.billing.entitlements.allowances') %></h3>
+            <ul id="<%= dom_id(entitlement, :hosting_usage) %>" class="list-unstyled">
+              <% allowances.each do |grant| %>
+                <% reading = @meters[[entitlement.id, grant.quota_type]] %>
+                <li id="<%= dom_id(grant, :hosting) %>" class="mb-2">
+                  <div><%= grant.quota_type.humanize %></div>
+                  <% if reading && !reading.unlimited? %>
+                    <div class="progress" role="progressbar" aria-label="<%= grant.quota_type.humanize %>" aria-valuenow="<%= reading.percent %>" aria-valuemin="0" aria-valuemax="100">
+                      <div class="progress-bar <%= 'bg-danger' if reading.over? %>" style="width: <%= reading.percent %>%"></div>
+                    </div>
+                  <% end %>
+                  <small class="text-body-secondary"><%= reading ? billing_meter_label(reading) : '' %></small>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+    <p id="billing-hosting-plan-manage" class="text-body-secondary"><%= t('better_together.billing.hosting_plan.manage', host: @host&.name) %></p>
+  <% else %>
+    <div id="billing-hosting-plan-none" class="alert alert-info" role="status">
+      <p class="mb-2"><%= t('better_together.billing.hosting_plan.none', host: @host&.name) %></p>
+      <%= link_to t('better_together.billing.hosting_plan.see_plans'), billing_catalog_path(locale: I18n.locale), id: 'billing-hosting-plan-see-plans' %>
+    </div>
+  <% end %>
+  <p><%= link_to t('better_together.billing.hosting_plan.billing_link'), billing_hosted_billing_path(locale: I18n.locale), id: 'billing-hosting-plan-billing-link' %></p>
+</div>
