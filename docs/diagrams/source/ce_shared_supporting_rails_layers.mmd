@@ -174,6 +174,10 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__Billing__BillingAddressesController["Billing::BillingAddressesController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__CatalogController["Billing::CatalogController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
@@ -198,6 +202,10 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
+    class BetterTogether__Billing__NotificationPreferencesController["Billing::NotificationPreferencesController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__OrderDocumentsController["Billing::OrderDocumentsController"] {
       <<Controller>>
       models: Billing::OrderDocument
@@ -210,6 +218,15 @@ classDiagram
     class BetterTogether__Billing__PeopleController["Billing::PeopleController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +2
+    }
+    class BetterTogether__Billing__RefundRequestsController["Billing::RefundRequestsController"] {
+      <<Controller>>
+      models: Billing::RefundRequest
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__SaleRefundRequestsController["Billing::SaleRefundRequestsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Billing__TaxRegistrationsController["Billing::TaxRegistrationsController"] {
       <<Controller>>
@@ -382,9 +399,24 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__PlatformIdentityProvidersController["PlatformIdentityProvidersController"] {
+      <<Controller>>
+      models: PlatformIdentityProvider
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
+    class BetterTogether__PlatformTrustedDomainsController["PlatformTrustedDomainsController"] {
+      <<Controller>>
+      models: PlatformTrustedDomain
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
     class BetterTogether__QuotaGrantsController["QuotaGrantsController"] {
       <<Controller>>
       models: QuotaGrant
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
+    class BetterTogether__RedirectsController["RedirectsController"] {
+      <<Controller>>
+      models: Redirect
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ReportFollowupsController["ReportFollowupsController"] {
@@ -478,6 +510,16 @@ classDiagram
       table: better_together_billing_order_documents
       concerns: Billing::ParentBound, Billing::PlatformBound
     }
+    class BetterTogether__Billing__PlanAddOn["Billing::PlanAddOn"] {
+      <<Model>>
+      table: better_together_billing_plan_add_ons
+      concerns: Billing::ParentBound, Billing::PlatformBound
+    }
+    class BetterTogether__Billing__RefundRequest["Billing::RefundRequest"] {
+      <<Model>>
+      table: better_together_billing_refund_requests
+      concerns: Billing::EncryptedAttributes, Billing::ParentBound, Billing::PlatformBound, Billing::Subjectable
+    }
     class BetterTogether__Billing__TaxCategory["Billing::TaxCategory"] {
       <<Model>>
       table: better_together_billing_tax_categories
@@ -515,13 +557,13 @@ classDiagram
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
       table: noticed_events
-      variants: Billing::Notifier, CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier +16
+      variants: Billing::Notifier, CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier +17
       weak refs: target: record
     }
     class BetterTogether__CommentAddedNotifier__Notification["CommentAddedNotifier::Notification\n(shared table family)"] {
       <<Model>>
       table: noticed_notifications
-      variants: Billing::Notifier::Notification, CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification +16
+      variants: Billing::Notifier::Notification, CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification +17
       weak refs: target: recipient
     }
     class BetterTogether__CommentConfig["CommentConfig"] {
@@ -653,6 +695,24 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformIdentityProvider["PlatformIdentityProvider"] {
+      <<Model>>
+      table: better_together_platform_identity_providers
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__PlatformIdentityProviderDomain["PlatformIdentityProviderDomain"] {
+      <<Model>>
+      table: better_together_platform_identity_provider_domains
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__PlatformTrustedDomain["PlatformTrustedDomain"] {
+      <<Model>>
+      table: better_together_platform_trusted_domains
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
       table: better_together_quotas
@@ -683,6 +743,12 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: subject, target: actor, target: owner, owner: seeds
     }
+    class BetterTogether__Redirect["Redirect"] {
+      <<Model>>
+      table: better_together_redirects
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__ShortLink["ShortLink"] {
       <<Model>>
       table: better_together_short_links
@@ -694,6 +760,12 @@ classDiagram
       <<Model>>
       table: better_together_social_media_accounts
       concerns: BetterTogetherId, PlatformScoped, Privacy, PrivacyCeilingValidatable +1
+      weak refs: owner: seeds
+    }
+    class BetterTogether__TrustedDomainEvent["TrustedDomainEvent"] {
+      <<Model>>
+      table: better_together_trusted_domain_events
+      concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Weather__CurrentCondition["Weather::CurrentCondition"] {
@@ -786,16 +858,21 @@ classDiagram
   BetterTogether__Api__V1__ShortLinksController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__UploadsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__WebhookEndpointsController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Billing__BillingAddressesController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__CatalogController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__EventsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostedBillingsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostedPlatformsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostingPlansController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HubsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__NotificationPreferencesController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderDocumentsController ..> BetterTogether__Billing__OrderDocument : manages
   BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderPaymentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__RefundRequestsController ..> BetterTogether__Billing__RefundRequest : manages
+  BetterTogether__Billing__RefundRequestsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__SaleRefundRequestsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__TaxRegistrationsController ..> BetterTogether__Billing__TaxRegistration : manages
   BetterTogether__Billing__TaxRegistrationsController --|> BetterTogether__ApplicationController
   BetterTogether__BotDefense__ChallengesController --|> BetterTogether__ApplicationController
@@ -838,8 +915,14 @@ classDiagram
   BetterTogether__NewPlatformSetupController --|> BetterTogether__ApplicationController
   BetterTogether__NewPlatformSetupStepsController --|> BetterTogether__WizardStepsController
   BetterTogether__PlatformDomainsController --|> BetterTogether__ApplicationController
+  BetterTogether__PlatformIdentityProvidersController ..> BetterTogether__PlatformIdentityProvider : manages
+  BetterTogether__PlatformIdentityProvidersController --|> BetterTogether__ApplicationController
+  BetterTogether__PlatformTrustedDomainsController ..> BetterTogether__PlatformTrustedDomain : manages
+  BetterTogether__PlatformTrustedDomainsController --|> BetterTogether__ApplicationController
   BetterTogether__QuotaGrantsController ..> BetterTogether__QuotaGrant : manages
   BetterTogether__QuotaGrantsController --|> BetterTogether__ApplicationController
+  BetterTogether__RedirectsController ..> BetterTogether__Redirect : manages
+  BetterTogether__RedirectsController --|> BetterTogether__ApplicationController
   BetterTogether__ReportFollowupsController --|> BetterTogether__ApplicationController
   BetterTogether__ResourceController --|> BetterTogether__ApplicationController
   BetterTogether__RobotsController --|> BetterTogether__ApplicationController
@@ -865,6 +948,13 @@ classDiagram
   BetterTogether__Billing__OrderDocument --> BetterTogether__Platform : platform
   BetterTogether__Billing__OrderDocument --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__OrderDocument --> BetterTogether__Upload : upload
+  BetterTogether__Billing__PlanAddOn --> BetterTogether__Platform : platform
+  BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : plan
+  BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : add_on
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Platform : platform
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Person : requester
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Person : decided_by
   BetterTogether__Billing__TaxCategory --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Billing__Order : order
@@ -929,6 +1019,13 @@ classDiagram
   BetterTogether__PersonMessagingGrant --> BetterTogether__Person : grantee
   BetterTogether__PhoneNumber --> BetterTogether__Platform : platform
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : platform
+  BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
+  BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider
+  BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformDomain : platform_domain
+  BetterTogether__PlatformTrustedDomain --> BetterTogether__Platform : platform
+  BetterTogether__PlatformTrustedDomain --> BetterTogether__Role : role
+  BetterTogether__PlatformTrustedDomain --> BetterTogether__Person : created_by
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota
@@ -937,10 +1034,15 @@ classDiagram
   BetterTogether__QuotaReservation --> BetterTogether__Quota : quota
   BetterTogether__QuotaUsage --> BetterTogether__Platform : platform
   BetterTogether__QuotaUsage --> BetterTogether__Quota : quota
+  BetterTogether__Redirect --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform
   BetterTogether__SocialMediaAccount --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__TrustedDomainEvent --> BetterTogether__Platform : platform
+  BetterTogether__TrustedDomainEvent --> BetterTogether__PlatformTrustedDomain : platform_trusted_domain
+  BetterTogether__TrustedDomainEvent --> BetterTogether__Person : actor
+  BetterTogether__TrustedDomainEvent --> BetterTogether__Person : subject
   BetterTogether__Weather__CurrentCondition --> BetterTogether__Weather__Location : location
   BetterTogether__Weather__Forecast --> BetterTogether__Weather__Location : location
   BetterTogether__Weather__Location --> BetterTogether__Geography__Settlement : settlement

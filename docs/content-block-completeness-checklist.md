@@ -153,6 +153,10 @@ Stimulus interactions are ready.
 | `PostsBlock` | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
 | `ChecklistBlock` | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
 | `NavigationAreaBlock` | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| `PlanCatalogBlock` | ✅ | ✅ (no cache, audience-dependent) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `PlanButtonBlock` | ✅ | ✅ (no cache, audience-dependent) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `FileDownloadBlock` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `ImageGalleryBlock` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 **Legend:**
 - ✅ Present and correct

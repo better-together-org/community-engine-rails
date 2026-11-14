@@ -7,24 +7,7 @@
   <p class="text-body-secondary mb-4"><%= t('better_together.billing.catalog.intro', platform: billing_owner.name) %></p>
 
   <% if @plans.any? %>
-    <div id="billing-catalog-plans" class="row g-4">
-      <% @plans.each do |plan| %>
-        <div class="col-md-6 col-lg-4">
-          <article id="<%= dom_id(plan, :catalog) %>" class="card h-100 billing-catalog-plan">
-            <div class="card-body d-flex flex-column">
-              <h2 class="h5 card-title">
-                <%= link_to plan.name, billing_catalog_plan_path(plan, locale: I18n.locale), id: dom_id(plan, :catalog_link) %>
-              </h2>
-              <p id="<%= dom_id(plan, :catalog_price) %>" class="h4 mb-3"><%= render 'better_together/billing/catalog/price', plan: %></p>
-              <% if plan.display_participant_summary.present? %>
-                <p class="text-body-secondary"><%= plan.display_participant_summary %></p>
-              <% end %>
-              <div class="mt-auto"><%= render 'better_together/billing/catalog/buy_button', plan: %></div>
-            </div>
-          </article>
-        </div>
-      <% end %>
-    </div>
+    <%= render 'better_together/billing/catalog/plans', plans: @plans %>
   <% else %>
     <p id="billing-catalog-empty" class="text-body-secondary"><%= t('better_together.billing.catalog.none') %></p>
   <% end %>

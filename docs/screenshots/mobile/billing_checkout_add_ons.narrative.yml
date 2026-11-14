@@ -1,0 +1,12 @@
+---
+title: Checkout with add-ons
+audience:
+- end_user
+journey_step: As a member buying a plan, I tick an extra and see it added to my order.
+callouts:
+- :id: add_ons
+  :title: Add-ons
+  :description: One-time extras paid by the local methods.
+accessibility_notes: The extras are a labelled fieldset of checkboxes with a hint.
+slug: billing_checkout_add_ons
+device: mobile

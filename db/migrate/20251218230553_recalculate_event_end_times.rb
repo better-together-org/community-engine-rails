@@ -3,18 +3,12 @@
 # Recalculates and sets ends_at for events that have starts_at and duration_minutes but no ends_at
 class RecalculateEventEndTimes < ActiveRecord::Migration[7.2]
   def up
-    table = :better_together_events
-    return unless table_exists?(table)
-    return unless %i[starts_at duration_minutes ends_at].all? { |c| column_exists?(table, c) }
+    puts "Recalculating event end times for events with duration but no end time..."
 
-    say 'Recalculating event end times for events with duration but no end time...'
-
-    # Plain SQL (the rake task needs the app model and is not loaded on a from-zero run).
-    execute <<~SQL.squish
-      UPDATE better_together_events
-      SET ends_at = starts_at + (duration_minutes * INTERVAL '1 minute')
-      WHERE starts_at IS NOT NULL AND duration_minutes IS NOT NULL AND ends_at IS NULL
-    SQL
+    # Execute the rake task that calculates ends_at from starts_at + duration_minutes
+    # This ensures events are properly categorized as ongoing vs past
+    run_engine_rake_task('better_together:events:recalculate_end_times',
+                         skip_when_empty: %i[better_together_events])
   end
 
   def down

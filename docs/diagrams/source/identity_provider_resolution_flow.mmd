@@ -1,0 +1,15 @@
+flowchart TD
+  Catalog["BetterTogether.register_identity_provider<br/>(strategy catalog, names known at boot)"] --> Devise["Devise config.omniauth per catalog key"]
+  Request["Request or callback /users/auth/:strategy"] --> Gate["OmniauthPlatformGate (Rack middleware)"]
+  Gate --> Domain["Effective PlatformDomain from request host"]
+  Domain --> Claim{"Row allows this domain?<br/>(PlatformIdentityProviderDomain)"}
+  Claim -- "yes, enabled" --> Use["Use PlatformIdentityProvider credentials"]
+  Claim -- "yes, disabled" --> Refuse["Refuse sign-in (no ENV fallback)"]
+  Claim -- no --> HostDomain{"Host platform domain?"}
+  HostDomain -- yes --> Env["ENV credentials (e.g. GITHUB_CLIENT_ID)"]
+  HostDomain -- no --> Refuse
+  Env --> Setup["OmniauthSetup sets strategy options per request"]
+  Use --> Setup
+  Refuse --> Failure["OmniAuth failure: provider_not_configured_for_platform"]
+  Row["PlatformIdentityProvider<br/>platform_id, provider_platform_id (external Platform), strategy, client_id, client_secret (encrypted)"] --> Join["PlatformIdentityProviderDomain<br/>(one domain, one config per strategy)"]
+  Join -.-> Claim

@@ -38,6 +38,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
                                  expires_at: 1.hour.from_now.to_i
                                },
                                extra: {
+                                 all_emails: [{ email: 'test@example.com', primary: true, verified: true }],
                                  raw_info: {
                                    html_url: 'https://github.com/testuser',
                                    login: 'testuser'

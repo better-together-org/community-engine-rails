@@ -224,6 +224,7 @@ module BetterTogether
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
       notify_on_comments Boolean, default: true
+      notify_billing_by_email Boolean, default: true
     end
 
     # Ensure proper coercion and persistence for preferences store attributes
@@ -261,6 +262,13 @@ module BetterTogether
     def show_conversation_details=(value)
       prefs = (notification_preferences || {}).dup
       prefs['show_conversation_details'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
+    # Whether billing notices that are not critical are emailed too (a failed payment always is).
+    def notify_billing_by_email=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_billing_by_email'] = ActiveModel::Type::Boolean.new.cast(value)
       self.notification_preferences = prefs
     end
 

@@ -67,6 +67,7 @@ module BetterTogether
                      when Order then subject
                      when Payment, OfflinePayment, SubscriptionPeriod then subject.order
                      when Refund then subject.payment.order
+                     when RefundRequest then subject.order # rubocop:disable Lint/DuplicateBranch
                      end
         end
 

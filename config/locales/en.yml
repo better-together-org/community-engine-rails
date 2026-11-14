@@ -401,6 +401,10 @@ en:
         type: Type
         valid_from: Valid from
         valid_until: Valid until
+      better_together/redirect:
+        from_path: Old path
+        status: Response
+        to_path: New path
       better_together/resource_permission:
         action: Action
         identifier: Identifier
@@ -620,6 +624,12 @@ en:
               must_be_true_for_share_domain: must be true for a share domain
             primary:
               already_taken_for_platform: has already been taken for this platform
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: must be a path starting with a slash or a full http or https
+                address
+              redirect_loop: leads back to itself through other redirects
         better_together/short_link:
           attributes:
             target_url:
@@ -644,16 +654,20 @@ en:
       better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
       better_together/content/events_block: Events
+      better_together/content/file_download_block: File Download
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Image Gallery
       better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
       better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
       better_together/content/people_block: People
+      better_together/content/plan_button_block: Plan Button
+      better_together/content/plan_catalog_block: Plan Catalog
       better_together/content/platform_block: Platform
       better_together/content/posts_block: Posts
       better_together/content/quote_block: Quote
@@ -699,6 +713,7 @@ en:
       better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
       better_together/post: Post
+      better_together/redirect: Redirect
       better_together/resource_permission: Resource Permission
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
@@ -912,6 +927,24 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      addresses:
+        add: Add address
+        added: Address added.
+        default: Default
+        default_set: Default billing address updated.
+        intro: Tax on your orders is worked out from your billing address. Your default
+          is offered first at checkout.
+        list_title: Your addresses
+        make_default: Make default
+        new_title: Add an address
+        none: You have no billing address yet.
+        refused:
+          incomplete: Choose a country and a state or province so tax can be worked
+            out.
+          invalid: That address could not be saved. Check the fields and try again.
+          missing: Enter an address.
+          not_found: That address was not found.
+        title: Billing addresses
       allowances:
         enforcement: Enforcement
         field_owner: Owner
@@ -951,6 +984,15 @@ en:
         title: Plans
       checkout:
         accept: I have read and accept %{title}
+        add_on_line: Add-on
+        add_ons_dropped: An extra you chose is no longer offered, so it was removed
+          from your order. Check the total before you continue.
+        add_ons_heading: Add to your order
+        add_ons_hint: Optional extras for this order. Update the order to add them.
+        add_ons_status:
+          one: Order updated. One extra selected. Total %{total}.
+          other: Order updated. %{count} extras selected. Total %{total}.
+          zero: Order updated. No extras selected. Total %{total}.
         address:
           choose: Billing address
           hint: Tax is worked out from where you are billed, so choose your country
@@ -973,6 +1015,9 @@ en:
         error_method_not_available: Choose one of the ways to pay that are available.
         error_not_ready: 'This purchase cannot be completed yet: the terms for it
           have not been set up. Please contact the people who run this platform.'
+        error_order_changed: The price or the extras on offer changed while you were
+          checking out. Nothing has been charged. Please review the total and place
+          the order again.
         error_parts_too_large: The amounts you entered cover the whole price. Leave
           some for the way chosen above, or choose it for the whole amount.
         error_refused: Your order could not be placed. Nothing has been charged. Please
@@ -993,6 +1038,7 @@ en:
         review_intro: Read these before you place your order. You have to accept them
           to continue.
         review_title: Review and accept
+        subtotal: Subtotal
         tax_note: Tax, if any, is worked out from your billing address and shown before
           you confirm.
         tax_note_new_address: Tax is worked out from the address you enter, and shown
@@ -1002,6 +1048,7 @@ en:
         unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        update_order: Update order
         view_agreement: View the agreement
       credit:
         any_purpose: Anything the platform sells
@@ -1210,6 +1257,9 @@ en:
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to
+        add_on_buy: Add
+        add_ons_heading: Extras for your plans
+        add_ons_hint: One-time extras for plans you already have.
         all_orders: All orders
         all_plans: All plans
         browse_plans: Browse plans
@@ -1221,9 +1271,31 @@ en:
         plans_heading: Active plans
         plans_none: You have no active plans.
         renews: Renews %{date}
+        settings_addresses: Billing addresses
+        settings_heading: Billing settings
+        settings_notifications: Billing notifications
         title: Billing and plans
         view_access: View my access
         view_credit: View credit
+      notification_preferences:
+        always_hint: These need your attention, so they are always shown in the app
+          and emailed.
+        always_title: Always sent
+        email_hint: Receipts, renewal reminders, plan changes and refund decisions.
+          Turning this off does not stop the urgent notices below.
+        email_label: Email me billing notices
+        intro: Choose which billing notices are also sent to your email. They always
+          appear in the app.
+        kinds:
+          cheque_bounced: A cheque did not clear
+          grace_ending: Extra time to pay is ending
+          hold_expiring: An unpaid order is about to expire
+          payment_action_required: A payment needs your action
+          payment_failed: A payment failed
+          renewal_overdue: A renewal is overdue
+        save: Save
+        saved: Notification settings saved.
+        title: Billing notifications
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1387,6 +1459,17 @@ en:
         refund_recorded:
           body: The seller recorded a refund for your order.
           title: Refund for order %{number}
+        refund_request_decided:
+          body: The seller answered your refund request. Open the order to read the
+            reply.
+          title: Your refund request for order %{number} was answered
+        refund_requested:
+          buyer:
+            body: Your refund request was sent to the seller.
+            title: Refund request for order %{number}
+          seller:
+            body: A buyer asked for a refund. Open the request to decide.
+            title: Refund requested for order %{number}
         renewal_credit_insufficient:
           buyer:
             body: Your %{plan} renewal for %{amount} is paid from store credit and
@@ -1578,8 +1661,14 @@ en:
         field_subtotal: Subtotal
         field_tax: Tax
         field_total: Total
+        filter_any: Any
+        filter_apply: Show
+        filter_clear: Clear filters
+        filter_status: Status
+        filter_year: Year
         index_title: My orders
         lines_heading: What was ordered
+        no_matching_orders: No orders match these filters.
         no_orders: You have no orders yet.
         no_payments: No payment has been made yet.
         no_sales: There are no orders yet.
@@ -1668,6 +1757,10 @@ en:
         title: What this plan includes
       plans:
         actions_heading: Actions
+        add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
+          with, and whose holders may buy it on its own later. Leave all unticked
+          to offer it with every plan.
+        add_on_targets_legend: Plans this add-on extends
         audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
           it: a person who is any of the ticked kinds can see and buy it.'
         audience_legend: Who may see and buy this plan
@@ -1684,6 +1777,9 @@ en:
         field_accepted_payment_methods_hint: Ways to pay outside a payment processor.
           Each still has to be turned on for the seller before buyers can use it.
         field_active: Active (visible to subscribers)
+        field_add_on: Add-on only
+        field_add_on_hint: Sold only as an extra on another plan's order, never on
+          its own. One-time, no included access.
         field_amount: Amount
         field_amount_hint: Type the price as you would write it, for example 45.00.
           Currencies without cents, such as JPY and KRW, take whole numbers.
@@ -1917,6 +2013,63 @@ en:
         ready: Ready
         title: Ready to sell?
         todo: 'Still to do:'
+      refund_requests:
+        accept_policy: Read and accept the refund policy before sending your request.
+        all: All
+        already_decided: This request has already been decided.
+        already_pending: There is already a refund request waiting on this order.
+        amount_hint: Leave empty to ask for everything that can be given back.
+        amount_invalid: That amount is more than can still be given back, or is not
+          positive.
+        amount_label: Amount to ask for
+        approve: Approve and give back
+        approved_amount: 'Approved: %{amount}'
+        approved_hint: Leave empty to give back what was asked for (or everything
+          possible).
+        approved_label: Amount to give back
+        ask_link: Ask for a refund
+        asked: Asked for
+        decided: Decision saved. The buyer has been told.
+        decline: Decline
+        decline_needs_note: Explain why the request is declined so the buyer can read
+          it.
+        details_label: Anything the seller should know
+        everything: Everything possible
+        heading: Refund requests
+        new_intro: Tell the seller why you want money back. They review it and answer
+          you here. Only payments the seller handles themselves, such as cash, cheque,
+          e-Transfer or store credit, can be asked for this way.
+        new_title: Ask for a refund on order %{number}
+        none: There are no refund requests.
+        order_link: Order
+        policy_accept: I have read and accept the %{title}
+        policy_accepted: You have already accepted the current refund policy.
+        policy_view: Read the refund policy
+        queue_intro: Buyers asking for money back on what this platform sells. Open
+          one to approve it, approve part of it or decline it.
+        queue_link: Refund requests
+        queue_title: Refund requests
+        reason_label: Reason
+        reasons:
+          cancelled_event: The event was cancelled
+          duplicate: I paid twice
+          error: There was a mistake
+          other: Something else
+          requested_by_buyer: I changed my mind
+        refundable: Up to %{amount} can still be given back.
+        reply_hint: The buyer reads this. Required when you decline.
+        reply_label: Reply to the buyer
+        sent: Your refund request was sent. You will be told what the seller decides.
+        show_title: Refund request for order %{number}
+        statuses:
+          approved: Approved
+          cancelled: Withdrawn
+          declined: Declined
+          partially_approved: Partly approved
+          pending: Waiting
+        submit: Send request
+        withdraw: Withdraw request
+        withdrawn: Your refund request was withdrawn.
       requirements:
         add: Add
         add_title: Add a requirement
@@ -2025,6 +2178,17 @@ en:
         field_through: Paid through
         index_title: Subscriptions
         invoice: Invoice %{number}
+        method_change_intro: Renewals are paid by %{method}. Choose another way for
+          later renewals. An invoice already made keeps its method.
+        method_change_label: Pay renewals by
+        method_change_none: There is no other way to pay renewals right now.
+        method_change_refused:
+          not_local: This subscription is renewed by its payment processor.
+          not_offered: That way of paying is not available for this plan.
+          unchanged: That is already the method renewals are paid by.
+        method_change_submit: Change method
+        method_change_title: Payment method
+        method_changed: Later renewals will be paid by the new method.
         none: You have no subscriptions.
         period_blocked: On hold
         period_lapsed: Lapsed
@@ -2034,6 +2198,40 @@ en:
         period_waived: Covered
         periods_caption: Each period of this subscription and its invoice
         periods_title: Periods and invoices
+        plan_change_credit_note: Prorated difference for a plan change
+        plan_change_credited: You are on the new plan. %{amount} was added to your
+          store credit.
+        plan_change_done: You are on the new plan.
+        plan_change_intro: Pick another plan and when it changes. From your next period,
+          nothing changes until then. Now, the rest of this period is prorated.
+        plan_change_invoiced: Invoice made for %{amount}. Your plan changes when it
+          is paid.
+        plan_change_label: New plan
+        plan_change_none: There is no other plan you can move to right now.
+        plan_change_now_hint: A dearer plan is invoiced for the difference and changes
+          once that is paid. A cheaper plan changes at once and the difference comes
+          back as store credit.
+        plan_change_pending: You will move to %{plan} when your next period starts
+          (after %{date}).
+        plan_change_pending_invoice: Your move to %{plan} happens when its invoice
+          is paid.
+        plan_change_refused:
+          different_schedule: That plan bills on a different schedule or currency,
+            so you cannot move to it from here.
+          not_available: That plan is not available.
+          not_running: This subscription cannot change plan right now.
+          over_limit: You are using more than that plan allows. Free some space first,
+            then try again.
+          same_plan: You are already on that plan.
+        plan_change_saved: Saved. Your plan changes when the next period starts.
+        plan_change_submit: Change plan
+        plan_change_title: Change plan
+        plan_change_view_invoice: View the invoice
+        plan_change_when_legend: When should it change?
+        plan_change_when_next: From my next period (no charge now)
+        plan_change_when_now: Now (prorated for the rest of this period)
+        plan_change_withdraw: Keep my current plan
+        plan_change_withdrawn: Your plan change was cancelled.
         resume: Keep my subscription
         resumed: Your subscription will continue.
         review_intro: The terms for this subscription changed. Accept them and we
@@ -2358,6 +2556,10 @@ en:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Create a new %{block} block
+        create_for_page: Create a new %{block} block for the page
+        icon: "%{block} icon"
       blocks:
         accordion_block:
           answer: Answer
@@ -2405,6 +2607,13 @@ en:
               scope_hint: Only your reviewed image uploads are available here.
               title: Choose from library
               view_uploads: View uploads and review statuses
+        file_download_block:
+          description_help: Short description (optional)
+          empty: This file is not available.
+          label_help: Link text (optional, defaults to the file name)
+          meta: "%{type}, %{size}"
+          open_inline: Open in the browser instead of downloading
+          select_prompt: Select a file
         hero:
           editor:
             background: Background
@@ -2421,6 +2630,16 @@ en:
           missing_url: No iframe URL configured.
           url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
             another trusted community-space embed.
+        image_gallery_block:
+          empty: No images to display.
+          heading_help: Heading shown above the gallery (optional)
+          images: Images
+          images_help: Choose image blocks in the order they should appear.
+          layout: Layout
+          layouts:
+            grid: Grid
+            masonry: Masonry
+          lightbox: Open images in a viewer when clicked
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2457,6 +2676,17 @@ en:
           select_prompt: "— Select a navigation area —"
         people_block:
           empty: No people to display.
+        plan_button_block:
+          create_label: Create a new %{type} block for the page
+          displays:
+            button: Button only
+            card: Card with price
+          empty: Choose a plan for this block to offer.
+          plan_hint: Pick one of this platform's active plans.
+        plan_catalog_block:
+          create_label: Create a new %{type} block for the page
+          empty: No plans are on offer right now.
+          item_limit_hint: How many plans to show, up to 24.
         posts_block:
           empty: No posts to display.
         resource_block:
@@ -3303,6 +3533,13 @@ en:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Close
+      counter: "{current} of {total}"
+      dialog_label: 'Image gallery: %{name}'
+      next: Next image
+      open_image: 'Open image %{current} of %{total}: %{name}'
+      previous: Previous image
     infrastructure:
       locations: Locations
     invitations:
@@ -4042,6 +4279,7 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        agreements: Agreements
         billing_agreement_requirements: Purchase terms
         billing_allowances: Allowances and usage
         billing_credit_accounts: Store credit accounts
@@ -4056,6 +4294,7 @@ en:
         communities: Communities
         content_blocks: Content Blocks
         events: Events
+        federation_hub: Federation Hub
         geography_continents: Continents
         geography_countries: Countries
         geography_maps: Maps
@@ -4066,19 +4305,24 @@ en:
         host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
+        hub: Hub
+        joatu_hub: Joatu Hub
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
+        oauth_applications: OAuth Applications
         pages: Pages
         people: People
         platform_connections: Platform Connections
         platforms: Platforms
+        posts: Posts
         reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
         safety_cases: Safety Review
         users: Users
+        webhook_endpoints: Webhook Endpoints
       visibility_strategies:
         authenticated: Signed-in users
         permission: Users with permission
@@ -4190,6 +4434,14 @@ en:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} joined as %{role} through %{domain}"
+          title: Trusted domain %{domain} granted membership
+        rate_limited:
+          body: The hourly limit for %{domain} was reached. New people stay pending
+            until you review them.
+          title: Trusted domain %{domain} reached its hourly limit
     oauth:
       applications:
         create:
@@ -4435,8 +4687,13 @@ en:
           disconnect it first if you want to connect a different account.
         email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs
           to a different user. Please sign out and sign in with the correct account.'
+        email_missing: Email not provided by %{provider}. Please make an email address
+          available to this application in your %{provider} account settings.
         failure: Failed to connect %{provider} account. Please try again.
         success: Successfully connected %{provider} account.
+        unverified_email_collision: An account with this email already exists, and
+          %{provider} has not verified the address. Sign in with your existing method,
+          then connect %{provider} from Settings.
       destroy:
         cannot_delete_last_oauth: Cannot disconnect your %{provider} account because
           you signed up using OAuth and don't have a password set. Please set a password
@@ -4615,6 +4872,73 @@ en:
         subtitle: Add a domain for %{platform_name}
         title: New Domain
       updated: Domain was successfully updated.
+    platform_identity_providers:
+      create:
+        created: Sign-in provider was added.
+      destroy:
+        destroyed: Sign-in provider was removed.
+      edit:
+        subtitle: OAuth sign-in providers for %{platform_name}
+        title: Edit %{provider}
+      form:
+        cancel: Cancel
+        client_id_label: Client ID
+        client_secret_hint: Stored encrypted and never shown again.
+        client_secret_keep: Leave blank to keep the current secret
+        client_secret_label: Client secret
+        create_btn: Add provider
+        domains_hint: Sign-in with this provider works only on the checked domains.
+          Each domain's callback URL must also be registered with the provider.
+        domains_label: Allowed domains
+        enabled_label: Enabled
+        issuer_hint: OpenID Connect only. The https URL of the identity provider (its
+          discovery document is read from it). It cannot be changed after the provider
+          is added, and each issuer can be added once per platform.
+        issuer_label: Issuer URL
+        label_hint: OpenID Connect only. Shown on the sign-in button. Defaults to
+          the issuer host.
+        label_label: Button label
+        scopes_hint: Leave blank to use the provider default.
+        scopes_label: Scopes
+        strategy_label: Provider
+        trust_verified_email_hint: Off by default. When on, an email this issuer marks
+          as verified can sign people in to an existing account with that address.
+          Turn on only for issuers that verify email addresses.
+        trust_verified_email_label: Trust this issuer's verified emails
+        update_btn: Update provider
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this sign-in provider?
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        env_description: These providers are set by environment variables and apply
+          to this platform's domains listed below. Secrets are never shown. Add a
+          provider row to manage a domain here instead.
+        env_note: Providers without a row here fall back to this server's environment
+          variables (for example GITHUB_CLIENT_ID).
+        env_serves: 'Serves: %{domains}'
+        env_serves_none: Every domain is claimed by a provider row below, so the environment
+          is not used.
+        env_title: Configured through the server environment
+        header_actions: Actions
+        header_client_id: Client ID
+        header_provider: Provider
+        header_secret: Client secret
+        header_status: Status
+        new_btn: Add provider
+        none: No sign-in providers are configured for this platform.
+        secret_missing: Missing
+        secret_set: Set
+        subtitle: OAuth sign-in providers for %{platform_name}
+        table_aria: Sign-in providers
+        title: Sign-in providers
+      new:
+        subtitle: OAuth sign-in providers for %{platform_name}
+        title: Add sign-in provider
+      update:
+        updated: Sign-in provider was updated.
     platform_invitation:
       acceptance_html: By registering for a user account below, you are accepting
         this invitation to join <strong>%{platform}</strong>.
@@ -4652,7 +4976,100 @@ en:
         accepted: Accepted
         expired: Expired
         pending: Pending
+    platform_trusted_domains:
+      created: Trusted domain was added.
+      destroyed: Trusted domain was removed. Existing accounts and memberships are
+        unchanged.
+      edit:
+        title: Edit trusted domain
+      events:
+        account_created: Account created
+        domain_added: Domain added
+        domain_removed: Domain removed
+        domain_updated: Domain changed
+        grant_rate_limited: Hourly limit reached, grant held for review
+        membership_granted: Membership granted
+        membership_request_approved: Membership request approved
+      form:
+        cancel: Cancel
+        domain_hint: Only the part after the @ sign, for example example.org. Public
+          mail providers such as gmail.com need the confirmation below.
+        domain_label: Email domain
+        enabled_label: Enabled
+        include_subdomains_label: Also trust subdomains (for example mail.example.org)
+        note_label: Note for other stewards (optional)
+        public_domain_label: I understand this is a public mail domain and anyone
+          can have an address there
+        role_ceiling_label: I understand that people with a verified address on this
+          domain receive this role automatically
+        role_hint: Community roles only. Platform and steward roles cannot be granted
+          by domain.
+        role_label: Community role granted
+        submit: Save trusted domain
+      index:
+        activity_event: Event
+        activity_heading: Recent activity
+        activity_none: No activity yet.
+        activity_person: Person
+        activity_via: Via
+        activity_when: When
+        back_to_platform: Back to platform
+        delete_btn: Remove
+        delete_confirm: Remove this trusted domain? Existing accounts and memberships
+          stay as they are.
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        explanation: People who sign in with a provider that verifies their email,
+          or who confirm their email after signing up, and whose address ends in a
+          trusted domain get membership with the chosen role without waiting for review.
+          Every grant is logged.
+        header_accounts: Accounts created
+        header_actions: Actions
+        header_domain: Domain
+        header_role: Role
+        header_status: Status
+        header_subdomains: Subdomains
+        new_btn: Add trusted domain
+        no_domains: No trusted domains yet.
+        subdomains_no: Exact match only
+        subdomains_yes: Included
+        subtitle: Email domains trusted by %{platform_name}
+        table_aria: Trusted email domains
+        title: Trusted domains
+      new:
+        subtitle: People with a verified address on this domain receive the chosen
+          role on %{platform_name}.
+        title: Add trusted domain
+      updated: Trusted domain was updated.
+      vias:
+        membership_request: Membership request
+        oauth: Sign-in provider
+        password_registration: Email sign-up
+        steward: Steward
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} cannot use that content type."
+          too_long: "%{slot} is too long (the limit is %{max} characters per language)."
+        footer_above:
+          hint: Shown above the site footer, for example a funder or disclaimer notice.
+          label: Above the footer
+        header_above:
+          hint: Shown above the site header, for example an announcement.
+          label: Above the header
+        hint: Optional content blocks shown in fixed places on every page of this
+          platform. Each language is separate; a missing language falls back to the
+          default language. Leave a slot empty to keep the standard layout.
+        not_found_headlines:
+          hint: One headline per line, up to 20. One is chosen at random when a page
+            is not found. Without any, the standard title is used.
+          label: 404 page headlines
+        not_found_message:
+          hint: Shown under the heading when a page is not found.
+          label: 404 page message
+        remove: Remove this content
+        title: Header, footer and 404 content
       form:
         allow_membership_requests: Allow membership requests
         allow_membership_requests_hint: Show a public membership request form on the
@@ -4669,12 +5086,46 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        csp_title: Security / CSP embeds
+        custom_css_hint: Advanced override. Styles added here load after the theme
+          and take precedence over it.
+        custom_css_title: Custom CSS
+        domains_after_save: Save the platform first, then manage its domains and sign-in
+          providers here.
+        domains_hint: Review the domains this platform answers on and the services
+          people use to sign in.
         feature_gates_hint: Choose which rollout stage each feature requires on this
           platform.
         feature_gates_title: Feature rollout gates
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+        integrations_empty: No integrations are installed.
+        integrations_env_fallback: Using the %{variable} environment variable. A value
+          saved here replaces it.
+        integrations_hint: Settings for services connected through extension gems.
+          Each platform keeps its own values.
+        integrations_secret_set: A value is saved. Leave this blank to keep it.
+        quota_defaults_hint: Starting limit for each new person, community and this
+          platform. Leave a field blank to use the default set in the application
+          configuration. Changing a value also updates existing quotas on this platform;
+          per-owner quota grants are not affected.
+        quota_defaults_title: Quota defaults
+        quota_kinds:
+          community: Community
+          person: Person
+          platform: Platform
+        quota_types:
+          ai_translation_tokens: AI LLM usage tokens per month
+          media_storage: Storage
+        quota_use_default: Use default (%{size})
+        trusted_domains:
+          after_save: Save the platform first, then add trusted email domains here.
+          heading: Trusted email domains
+          hint: Verified email addresses on these domains join with a set role without
+            waiting for review.
+          manage: Manage trusted domains
+          none: No trusted domains.
       index:
         provision_new_platform: Provision New Platform
       new:
@@ -4691,6 +5142,15 @@ en:
         title: Register External Platform
       show:
         new_invitation: New invitation
+      tabs:
+        access: Access and privacy
+        appearance: Appearance
+        details: Details
+        domains: Domains and sign-in
+        errors: errors on this tab
+        features: Features and quotas
+        integrations: Integrations
+        security: Security
     posts:
       authors: Authors
       back_to_posts: Back to Posts
@@ -4806,16 +5266,88 @@ en:
         usage: Usage
       updated: Quota grant updated.
     quotas:
+      errors:
+        not_local: must be local to this platform
       storage_limit_reached: You have reached your storage limit, so this file cannot
         be uploaded. Remove something or ask a steward about more storage.
       usage_meter:
         types:
-          ai_translation_tokens: AI Translation Tokens
+          ai_translation_tokens: AI LLM usage tokens
           media_storage: Storage
     rbac:
       nav:
         resource_permissions: Resource permissions
         roles: Roles
+    redirects:
+      created: Redirect was successfully added.
+      destroyed: Redirect was removed.
+      edit:
+        subtitle: Redirect for %{platform_name}
+        title: Edit %{from_path}
+      form:
+        active_label: Active
+        cancel: Cancel
+        create_btn: Add redirect
+        from_path_hint: The address visitors used, starting with a slash. Matching
+          ignores letter case, a trailing slash and any query string.
+        from_path_label: Old path
+        note_label: Note
+        preserve_query_label: Keep the query string when redirecting
+        status_label: Response
+        statuses:
+          s301: 301 Moved permanently
+          s302: 302 Found (temporary)
+          s307: 307 Temporary redirect
+          s308: 308 Permanent redirect
+          s410: 410 Gone
+        to_path_hint: A path on this site starting with a slash, or a full http or
+          https address. Leave blank only for 410 Gone.
+        to_path_label: New path or URL
+        update_btn: Update redirect
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this redirect?
+        edit_btn: Edit
+        gone_label: Gone (no new address)
+        header_actions: Actions
+        header_from: Old path
+        header_hits: Visits
+        header_status: Status
+        header_to: New path
+        import_btn: Import
+        inactive_label: inactive
+        new_btn: Add redirect
+        no_redirects: No redirects yet.
+        search_btn: Search
+        search_label: Search redirects
+        search_placeholder: Search by old path
+        subtitle: Old addresses that send visitors to a new place on %{platform_name}
+        table_aria: Redirects
+        title: Redirects
+      new:
+        subtitle: Add a redirect for %{platform_name}
+        title: New redirect
+      new_import:
+        back: Back to redirects
+        import_btn: Import
+        import_confirm: Import these redirects?
+        preview_btn: Preview
+        report_applied: Import finished
+        report_created: Created
+        report_error_line: 'Line %{row} (%{path}): %{message}'
+        report_preview: Preview (nothing was saved)
+        report_skipped: Skipped (already exist)
+        report_unchanged: Unchanged
+        report_updated: Updated
+        rows_hint: 'Write old path, new path and an optional status (301, 302, 307,
+          308 or 410), separated by commas. Lines starting with # are ignored. Preview
+          first; nothing is saved until you choose Import.'
+        rows_label: Redirects, one per line
+        subtitle: Add many redirects to %{platform_name} at once
+        title: Import redirects
+        upsert_label: Also update redirects that already exist
+      updated: Redirect was successfully updated.
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
       invalid_invitation: Invalid or expired invitation code. Please check your invitation
@@ -5955,6 +6487,9 @@ en:
               privacy, and time zone you choose.
             steward: A steward account is created with full management access to the
               new platform.
+  breadcrumbs:
+    home: Home
+    label: Breadcrumb
   community:
     create_failed: Create failed
     created: Created
@@ -6214,6 +6749,11 @@ en:
         submit: Submit
         terms_of_service:
           label: I agree to the Terms of Service
+        trusted_domains:
+          confirm_notice: Addresses at %{domains} join after you confirm your email.
+            Check your inbox once you have registered.
+          link: Sign up with a trusted email address
+          notice: Do you have an address at %{domains}?
         view: View
       signed_up: Welcome! You have signed up successfully.
       signed_up_but_inactive: You have signed up successfully. However, we could not
@@ -6283,8 +6823,14 @@ en:
       account_mismatch: must belong to the same account
       acknowledgement_required: must be accepted before this method can be turned
         on
+      add_on_cannot_have_grants: cannot be given to an add-on
+      add_on_cannot_renew: an add-on is bought once, not renewed
+      add_on_has_grants: an add-on cannot include anything of its own; put that on
+        a plan
+      add_on_locked_by_orders: cannot be changed once orders include this plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
+      already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
       cannot_be_the_host: cannot be the host platform
       confirmation: doesn't match %{attribute}
@@ -6292,6 +6838,7 @@ en:
         request a new one
       country_not_supported: is not available in %{country}
       currency_mismatch: must match the currency of its order
+      denied_for_trusted_domain: cannot be granted by an email domain
       empty: can't be empty
       equal_to: must be equal to %{count}
       even: must be even
@@ -6302,18 +6849,24 @@ en:
       greater_than_refundable: is more than can still be refunded
       hosted_local_billing_not_agreed: needs the hosted local billing agreements accepted
         first
+      immutable: cannot be changed once created; delete this provider and add a new
+        one
       immutable_after_processor_link: cannot be changed once the plan is linked to
         a processor price
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
+      invalid_characters: must not contain spaces or control characters
       invalid_pricing_tier: 'pricing tier ''%{tier}'' is not one of: %{allowed}'
       invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
       lookup_failed: could not be verified with the payment processor
       model_invalid: 'Validation failed: %{errors}'
+      must_be_a_primary_plan: must be a plan that is not an add-on
+      must_be_an_add_on: must be an add-on
       no_payment_method: needs an online processor or at least one other way to pay
+      not_a_community_role: must be a community role
       not_a_number: is not a number
       not_a_purchase_agreement: must be a purchase agreement
       not_an_amount: must be a plain figure such as 45.00
@@ -6328,13 +6881,20 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      not_the_buyer: can only be made by the buyer of the order
+      nothing_to_give_back: There is nothing on this order that can be given back
+        here.
       odd: must be odd
       one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}
       present: must be blank
       price_inactive: is archived at the payment processor
+      public_mail_domain: is a public mail provider; confirm to trust every address
+        on it
       recipient_missing: needs an email address or a phone number
       required: must exist
+      required_for_elevated_role: needs explicit confirmation before an email domain
+        can grant a role above basic member
       taken: has already been taken
       too_large: is too large
       too_long:
@@ -6696,16 +7256,21 @@ en:
       invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Account and tools
     billing: Billing
     conversations: Conversations
+    footer_legal_navigation: Site information
+    footer_navigation: Footer links
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Main
     my_profile: My Profile
     notifications_tooltip: Notifications
     search_tooltip: Search
     settings: Settings
     sign_in: Sign In
+    skip_to_content: Skip to main content
     toggle_navigation: Toggle navigation
     user_nav_tooltip: Account Menu
   navigation:
@@ -6875,8 +7440,10 @@ en:
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
         hosting_plan: Plan and usage
+        identity_providers: Sign-in providers
         platform_domains: Domains
         quota_grants: Quota grants
+        redirects: Redirects
         robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations
@@ -6917,6 +7484,7 @@ en:
     continent: Continent
     country: Country
     download_failed: Download failed
+    download_held: This file is still being checked for safety. Please try again soon.
     invitation: Invitation
     invitation_email: Invitation email
     member: Member
@@ -6941,6 +7509,7 @@ en:
     confirm_destroy: Confirm destroy
   search:
     button: Search
+    label: Search the site
     placeholder: Search...
   seed_catalog:
     billing_agreements:

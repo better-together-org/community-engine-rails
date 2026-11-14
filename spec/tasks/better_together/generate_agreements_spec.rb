@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'rake'
 
 # rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
-RSpec.describe 'better_together:generate:agreements', type: :task do
+RSpec.describe 'better_together:seed:agreements', type: :task do
   around do |example|
     previous_clear = ENV.delete('CLEAR')
     example.run
@@ -23,7 +23,15 @@ RSpec.describe 'better_together:generate:agreements', type: :task do
     Current.platform = nil
   end
 
-  let(:task) { Rake::Task['better_together:generate:agreements'] }
+  let(:task) { Rake::Task['better_together:seed:agreements'] }
+
+  it 'keeps better_together:generate:agreements as a deprecated alias' do
+    alias_task = Rake::Task['better_together:generate:agreements']
+    alias_task.reenable
+
+    expect { alias_task.invoke }.to output(/DEPRECATED: better_together:generate:agreements/).to_stderr
+    expect(BetterTogether::Agreement.find_by(identifier: 'content_publishing_agreement')).to be_present
+  end
 
   it 'preserves existing agreement participation by default while seeding missing agreements' do
     agreement = BetterTogether::Agreement.find_by!(identifier: 'privacy_policy')

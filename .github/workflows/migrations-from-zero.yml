@@ -1,0 +1,56 @@
+name: "Migrations from zero"
+
+# Runs every engine migration against an empty database with no schema file, the
+# path a host app takes when it migrates from the gem instead of installing copies.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "db/migrate/**"
+      - "lib/better_together/migration_helpers.rb"
+      - "lib/tasks/**"
+      - "bin/ci-migrate-from-zero"
+      - ".github/workflows/migrations-from-zero.yml"
+
+jobs:
+  migrate-from-zero:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/ce_from_zero"
+      REDIS_URL: "redis://localhost:6379/0"
+      SEARCH_BACKEND: "pg_search"
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install libvips
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          $APT update
+          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.12"
+          bundler-cache: true
+
+      - name: Migrate an empty database
+        run: bin/ci-migrate-from-zero

@@ -1,0 +1,48 @@
+{
+  "name": "billing_plan_change_form",
+  "device": "desktop",
+  "url": "/en/billing/subscriptions/5b1c3bff-7862-4e60-925e-490fe2485262",
+  "title": "Plan 9fe665 | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_plan_change",
+  "flow": "billing_plan_change_form",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plan_change_spec.rb",
+  "callouts": [
+    {
+      "selector": "#subscription-plan-change-when",
+      "title": "When it starts",
+      "bullets": [
+        "From the next period changes nothing until then. Now is prorated and billed as an invoice."
+      ],
+      "target": {
+        "x": 85.0,
+        "y": 617.0,
+        "width": 1270.0,
+        "height": 107.0,
+        "right": 1355.0,
+        "bottom": 724.0,
+        "center_x": 720.0,
+        "center_y": 670.5
+      },
+      "avoid": {
+        "x": 85.0,
+        "y": 617.0,
+        "width": 1270.0,
+        "height": 107.0,
+        "right": 1355.0,
+        "bottom": 724.0,
+        "center_x": 720.0,
+        "center_y": 670.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 744.0,
+        "width": 380,
+        "height": 184,
+        "score": 733.0
+      }
+    }
+  ]
+}

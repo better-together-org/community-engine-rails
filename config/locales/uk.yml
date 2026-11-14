@@ -401,6 +401,10 @@ uk:
         type: Тип
         valid_from: Дійсний з
         valid_until: Дійсний до
+      better_together/redirect:
+        from_path: Старий шлях
+        status: Відповідь
+        to_path: Новий шлях
       better_together/resource_permission:
         action: Дія
         identifier: Ідентифікатор
@@ -598,6 +602,12 @@ uk:
               must_be_true_for_share_domain: повинно бути правдою для домену поширення
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: має бути шляхом, що починається з похилої риски, або повною
+                адресою http чи https
+              redirect_loop: веде назад до себе через інші перенаправлення
         better_together/short_link:
           attributes:
             target_url:
@@ -622,16 +632,20 @@ uk:
       better_together/content/communities_block: Спільноти
       better_together/content/css: Користувацький CSS
       better_together/content/events_block: Події
+      better_together/content/file_download_block: Завантаження файлу
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
+      better_together/content/image_gallery_block: Галерея зображень
       better_together/content/link: Посилання
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
       better_together/content/navigation_area_block: Область навігації
       better_together/content/page_block: Блок сторінки
       better_together/content/people_block: Люди
+      better_together/content/plan_button_block: Кнопка плану
+      better_together/content/plan_catalog_block: Каталог планів
       better_together/content/platform_block: Платформа
       better_together/content/posts_block: Публікації
       better_together/content/quote_block: Цитата
@@ -677,6 +691,7 @@ uk:
       better_together/platform_domain: Домен платформи
       better_together/platform_invitation: Запрошення платформи
       better_together/post: Публікація
+      better_together/redirect: Перенаправлення
       better_together/resource_permission: Дозвіл ресурсу
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
@@ -892,6 +907,23 @@ uk:
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
+      addresses:
+        add: Додати адресу
+        added: Адресу додано.
+        default: Типова
+        default_set: Типову платіжну адресу оновлено.
+        intro: Податок на ваші замовлення розраховується за вашою платіжною адресою.
+          Типова адреса пропонується першою під час оплати.
+        list_title: Ваші адреси
+        make_default: Зробити типовою
+        new_title: Додати адресу
+        none: У вас ще немає платіжної адреси.
+        refused:
+          incomplete: Виберіть країну та штат або провінцію, щоб розрахувати податок.
+          invalid: Не вдалося зберегти цю адресу. Перевірте поля й спробуйте ще раз.
+          missing: Введіть адресу.
+          not_found: Адресу не знайдено.
+        title: Платіжні адреси
       allowances:
         enforcement: Застосування
         field_owner: Власник
@@ -930,6 +962,18 @@ uk:
         title: Плани
       checkout:
         accept: Я прочитав(ла) і приймаю «%{title}»
+        add_on_line: Додаток
+        add_ons_dropped: Додаток, який ви обрали, більше не пропонується, тому його
+          вилучено із замовлення. Перевірте суму, перш ніж продовжити.
+        add_ons_heading: Додати до замовлення
+        add_ons_hint: Додаткові позиції за бажанням. Оновіть замовлення, щоб додати
+          їх.
+        add_ons_status:
+          few: 'Замовлення оновлено. Вибрано додатків: %{count}. Разом %{total}.'
+          many: 'Замовлення оновлено. Вибрано додатків: %{count}. Разом %{total}.'
+          one: Замовлення оновлено. Вибрано один додаток. Разом %{total}.
+          other: 'Замовлення оновлено. Вибрано додатків: %{count}. Разом %{total}.'
+          zero: Замовлення оновлено. Додатки не вибрано. Разом %{total}.
         address:
           choose: Платіжна адреса
           hint: Податок розраховується за місцем виставлення рахунку, тому оберіть
@@ -952,6 +996,8 @@ uk:
         error_method_not_available: Виберіть один із доступних способів оплати.
         error_not_ready: 'Цю покупку поки не можна завершити: умови для неї не налаштовано.
           Зверніться до тих, хто керує цією платформою.'
+        error_order_changed: Ціна або доступні додатки змінилися під час оформлення.
+          Нічого не списано. Перевірте суму й оформіть замовлення ще раз.
         error_parts_too_large: Введені суми покривають усю ціну. Залиште частину для
           способу, обраного вище, або оберіть його на всю суму.
         error_refused: Не вдалося оформити замовлення. Нічого не списано. Спробуйте
@@ -972,6 +1018,7 @@ uk:
         review_intro: Прочитайте це перед оформленням замовлення. Щоб продовжити,
           їх потрібно прийняти.
         review_title: Перегляньте та прийміть
+        subtotal: Проміжна сума
         tax_note: Податок, якщо він застосовується, розраховується за вашою платіжною
           адресою й показується перед підтвердженням.
         tax_note_new_address: Податок розраховується за введеною адресою і відображається
@@ -982,6 +1029,7 @@ uk:
           покупки.
         unavailable_not_enabled: Наразі тут недоступно.
         unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
+        update_order: Оновити замовлення
         view_agreement: Переглянути угоду
       credit:
         any_purpose: Усе, що продає платформа
@@ -1189,6 +1237,9 @@ uk:
       hub:
         access_count: 'Активних: %{count}'
         access_heading: До чого ви маєте доступ
+        add_on_buy: Додати
+        add_ons_heading: Додатки до ваших планів
+        add_ons_hint: Одноразові додатки до планів, які ви вже маєте.
         all_orders: Усі замовлення
         all_plans: Усі плани
         browse_plans: Переглянути плани
@@ -1200,9 +1251,31 @@ uk:
         plans_heading: Активні плани
         plans_none: У вас немає активних планів.
         renews: Поновлюється %{date}
+        settings_addresses: Платіжні адреси
+        settings_heading: Налаштування оплати
+        settings_notifications: Сповіщення про оплату
         title: Платежі та плани
         view_access: Переглянути мій доступ
         view_credit: Переглянути кредит
+      notification_preferences:
+        always_hint: Вони потребують вашої уваги, тому завжди показуються в застосунку
+          та надсилаються поштою.
+        always_title: Надсилаються завжди
+        email_hint: Квитанції, нагадування про поновлення, зміни плану та рішення
+          щодо повернень. Вимкнення не зупиняє термінові сповіщення нижче.
+        email_label: Надсилати мені сповіщення про оплату поштою
+        intro: Виберіть, які сповіщення про оплату також надсилати на вашу пошту.
+          Вони завжди з'являються в застосунку.
+        kinds:
+          cheque_bounced: Чек не було погашено
+          grace_ending: Додатковий час на оплату закінчується
+          hold_expiring: Неоплачене замовлення скоро спливе
+          payment_action_required: Платіж потребує вашої дії
+          payment_failed: Платіж не пройшов
+          renewal_overdue: Поновлення прострочене
+        save: Зберегти
+        saved: Налаштування сповіщень збережено.
+        title: Сповіщення про оплату
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1364,6 +1437,18 @@ uk:
         refund_recorded:
           body: Продавець записав повернення коштів за вашим замовленням.
           title: Повернення коштів за замовлення %{number}
+        refund_request_decided:
+          body: Продавець відповів на ваш запит на повернення коштів. Відкрийте замовлення,
+            щоб прочитати відповідь.
+          title: На ваш запит щодо замовлення %{number} відповіли
+        refund_requested:
+          buyer:
+            body: Ваш запит на повернення коштів надіслано продавцю.
+            title: Запит на повернення коштів за замовлення %{number}
+          seller:
+            body: Покупець попросив повернути кошти. Відкрийте запит, щоб ухвалити
+              рішення.
+            title: Запит на повернення коштів за замовлення %{number}
         renewal_credit_insufficient:
           buyer:
             body: Ваше продовження %{plan} на суму %{amount} оплачується кредитом
@@ -1552,8 +1637,14 @@ uk:
         field_subtotal: Проміжна сума
         field_tax: Податок
         field_total: Разом
+        filter_any: Будь-який
+        filter_apply: Показати
+        filter_clear: Скинути фільтри
+        filter_status: Статус
+        filter_year: Рік
         index_title: Мої замовлення
         lines_heading: Що замовлено
+        no_matching_orders: Жодне замовлення не відповідає цим фільтрам.
         no_orders: У вас ще немає замовлень.
         no_payments: Жодного платежу ще не здійснено.
         no_sales: Замовлень ще немає.
@@ -1640,6 +1731,10 @@ uk:
         title: Що входить до цього плану
       plans:
         actions_heading: Дії
+        add_on_targets_hint: Лише для додатка. Позначте плани, з якими він пропонується
+          і власники яких можуть купити його окремо пізніше. Без позначок він пропонується
+          з усіма планами.
+        add_on_targets_legend: Плани, які розширює цей додаток
         audience_hint: 'Залиште обидва поля без позначки для всіх. Позначте одне або
           обидва, щоб обмежити: кожен, хто належить до позначених типів, може бачити
           й купувати його.'
@@ -1657,6 +1752,9 @@ uk:
         field_accepted_payment_methods_hint: Способи оплати поза платіжним процесором.
           Кожен потрібно ще ввімкнути для продавця, перш ніж покупці зможуть ним скористатися.
         field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
+        field_add_on: Лише додаток
+        field_add_on_hint: Продається лише як додаток до замовлення іншого плану,
+          ніколи окремо. Одноразово, без включеного доступу.
         field_amount: Сума
         field_amount_hint: Введіть ціну так, як ви її записали б, наприклад 45,00.
           Валюти без копійок, як-от JPY і KRW, приймають цілі числа.
@@ -1891,6 +1989,62 @@ uk:
         ready: Готово
         title: Готові продавати?
         todo: 'Ще треба зробити:'
+      refund_requests:
+        accept_policy: Прочитайте та прийміть політику повернення коштів, перш ніж
+          надсилати запит.
+        all: Усі
+        already_decided: Щодо цього запиту вже ухвалено рішення.
+        already_pending: Для цього замовлення вже очікує запит на повернення коштів.
+        amount_hint: Залиште порожнім, щоб попросити все, що можна повернути.
+        amount_invalid: Ця сума більша за ту, що ще можна повернути, або не є додатною.
+        amount_label: Сума, яку ви просите
+        approve: Схвалити й повернути
+        approved_amount: 'Схвалено: %{amount}'
+        approved_hint: Залиште порожнім, щоб повернути запитане (або все можливе).
+        approved_label: Сума до повернення
+        ask_link: Попросити повернення коштів
+        asked: Запитано
+        decided: Рішення збережено. Покупця повідомлено.
+        decline: Відхилити
+        decline_needs_note: Поясніть, чому запит відхилено, щоб покупець міг це прочитати.
+        details_label: Що має знати продавець
+        everything: Усе можливе
+        heading: Запити на повернення коштів
+        new_intro: 'Розкажіть продавцю, чому ви хочете повернення коштів. Він розгляне
+          запит і відповість вам тут. Таким способом можна просити лише про платежі,
+          які продавець обробляє сам: готівку, чек, переказ або кредит у магазині.'
+        new_title: Попросити повернення коштів за замовлення %{number}
+        none: Запитів на повернення коштів немає.
+        order_link: Замовлення
+        policy_accept: 'Я прочитав(ла) і приймаю: %{title}'
+        policy_accepted: Ви вже прийняли чинну політику повернення коштів.
+        policy_view: Прочитати політику повернення коштів
+        queue_intro: Покупці, які просять повернути кошти за те, що продає ця платформа.
+          Відкрийте запит, щоб схвалити його, схвалити частково або відхилити.
+        queue_link: Запити на повернення коштів
+        queue_title: Запити на повернення коштів
+        reason_label: Причина
+        reasons:
+          cancelled_event: Подію скасовано
+          duplicate: Я заплатив(ла) двічі
+          error: Сталася помилка
+          other: Інше
+          requested_by_buyer: Я передумав(ла)
+        refundable: Ще можна повернути до %{amount}.
+        reply_hint: Покупець це прочитає. Обов’язково, якщо ви відхиляєте.
+        reply_label: Відповідь покупцю
+        sent: Ваш запит на повернення коштів надіслано. Вам повідомлять про рішення
+          продавця.
+        show_title: Запит на повернення коштів за замовлення %{number}
+        statuses:
+          approved: Схвалено
+          cancelled: Відкликано
+          declined: Відхилено
+          partially_approved: Схвалено частково
+          pending: Очікує
+        submit: Надіслати запит
+        withdraw: Відкликати запит
+        withdrawn: Ваш запит на повернення коштів відкликано.
       requirements:
         add: Додати
         add_title: Додати вимогу
@@ -1998,6 +2152,17 @@ uk:
         field_through: Сплачено до
         index_title: Підписки
         invoice: Рахунок %{number}
+        method_change_intro: Поновлення сплачуються через %{method}. Виберіть інший
+          спосіб для наступних поновлень. Уже виставлений рахунок зберігає свій спосіб.
+        method_change_label: Сплачувати поновлення через
+        method_change_none: Наразі немає іншого способу сплати поновлень.
+        method_change_refused:
+          not_local: Цю підписку поновлює її платіжний процесор.
+          not_offered: Цей спосіб оплати недоступний для цього плану.
+          unchanged: Поновлення вже сплачуються цим способом.
+        method_change_submit: Змінити спосіб
+        method_change_title: Спосіб оплати
+        method_changed: Наступні поновлення сплачуватимуться новим способом.
         none: У вас немає підписок.
         period_blocked: Призупинено
         period_lapsed: Спливло
@@ -2007,6 +2172,42 @@ uk:
         period_waived: Покрито
         periods_caption: Кожен період цієї підписки та його рахунок
         periods_title: Періоди та рахунки
+        plan_change_credit_note: Пропорційна різниця за зміну плану
+        plan_change_credited: Ви на новому плані. %{amount} додано до вашого кредиту
+          магазину.
+        plan_change_done: Ви на новому плані.
+        plan_change_intro: Оберіть інший план і коли він зміниться. З наступного періоду,
+          до того нічого не змінюється. Зараз, решта цього періоду розраховується
+          пропорційно.
+        plan_change_invoiced: Виставлено рахунок на %{amount}. Ваш план зміниться
+          після оплати.
+        plan_change_label: Новий план
+        plan_change_none: Наразі немає іншого плану, на який можна перейти.
+        plan_change_now_hint: Дорожчий план виставляється на різницю й змінюється
+          після оплати. Дешевший план змінюється одразу, а різниця повертається як
+          кредит магазину.
+        plan_change_pending: Ви перейдете на %{plan}, коли почнеться наступний період
+          (після %{date}).
+        plan_change_pending_invoice: Перехід на %{plan} відбудеться після оплати його
+          рахунку.
+        plan_change_refused:
+          different_schedule: Цей план має інший графік оплати або валюту, тож перейти
+            на нього звідси не можна.
+          not_available: Цей план недоступний.
+          not_running: Ця підписка зараз не може змінити план.
+          over_limit: Ви використовуєте більше, ніж дозволяє той план. Спершу звільніть
+            місце, потім спробуйте знову.
+          same_plan: Ви вже на цьому плані.
+        plan_change_saved: Збережено. Ваш план зміниться, коли почнеться наступний
+          період.
+        plan_change_submit: Змінити план
+        plan_change_title: Змінити план
+        plan_change_view_invoice: Переглянути рахунок
+        plan_change_when_legend: Коли змінити?
+        plan_change_when_next: З мого наступного періоду (без оплати зараз)
+        plan_change_when_now: Зараз (пропорційно до решти періоду)
+        plan_change_withdraw: Залишити мій поточний план
+        plan_change_withdrawn: Зміну плану скасовано.
         resume: Зберегти мою підписку
         resumed: Вашу підписку буде продовжено.
         review_intro: Умови цієї підписки змінилися. Прийміть їх, і ми створимо наступний
@@ -2340,6 +2541,10 @@ uk:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Створити новий блок «%{block}»
+        create_for_page: Створити новий блок «%{block}» для сторінки
+        icon: Піктограма «%{block}»
       blocks:
         accordion_block:
           answer: Answer
@@ -2388,6 +2593,13 @@ uk:
               scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
               title: Вибрати з бібліотеки
               view_uploads: Переглянути завантаження та статуси перевірки
+        file_download_block:
+          description_help: Короткий опис (необов'язково)
+          empty: Цей файл недоступний.
+          label_help: Текст посилання (необов'язково, за замовчуванням назва файлу)
+          meta: "%{type}, %{size}"
+          open_inline: Відкрити в браузері замість завантаження
+          select_prompt: Виберіть файл
         hero:
           editor:
             background: Тло
@@ -2405,6 +2617,17 @@ uk:
           missing_url: URL iframe не налаштовано.
           url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
             або інше довірене вбудовування зі спільнотного простору.
+        image_gallery_block:
+          empty: Немає зображень для показу.
+          heading_help: Заголовок над галереєю (необов’язково)
+          images: Зображення
+          images_help: Оберіть блоки зображень у тому порядку, в якому вони мають
+            відображатися.
+          layout: Макет
+          layouts:
+            grid: Сітка
+            masonry: Мозаїка
+          lightbox: Відкривати зображення у переглядачі за кліком
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2441,6 +2664,17 @@ uk:
           select_prompt: "— Виберіть область навігації —"
         people_block:
           empty: Немає людей для відображення.
+        plan_button_block:
+          create_label: Створити новий блок %{type} для сторінки
+          displays:
+            button: Лише кнопка
+            card: Картка з ціною
+          empty: Виберіть план, який пропонуватиме цей блок.
+          plan_hint: Виберіть один з активних планів цієї платформи.
+        plan_catalog_block:
+          create_label: Створити новий блок %{type} для сторінки
+          empty: Наразі немає доступних планів.
+          item_limit_hint: Скільки планів показувати, до 24.
         posts_block:
           empty: Немає публікацій для відображення.
         resource_block:
@@ -3331,6 +3565,13 @@ uk:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Закрити
+      counter: "{current} з {total}"
+      dialog_label: 'Галерея зображень: %{name}'
+      next: Наступне зображення
+      open_image: 'Відкрити зображення %{current} з %{total}: %{name}'
+      previous: Попереднє зображення
     infrastructure:
       locations: Locations
     invitations:
@@ -4078,6 +4319,7 @@ uk:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        agreements: Угоди
         billing_agreement_requirements: Умови покупки
         billing_allowances: Квоти та використання
         billing_credit_accounts: Рахунки кредиту магазину
@@ -4087,34 +4329,40 @@ uk:
         billing_sales: Продажі
         billing_subscribers: Підписники
         billing_tax_registrations: Податкові реєстрації
-        calendars: Calendars
-        calls_for_interest: Calls for Interest
-        communities: Communities
-        content_blocks: Content Blocks
-        events: Events
-        geography_continents: Continents
-        geography_countries: Countries
-        geography_maps: Maps
-        geography_regions: Regions
+        calendars: Календарі
+        calls_for_interest: Заклики до зацікавлення
+        communities: Спільноти
+        content_blocks: Блоки вмісту
+        events: Події
+        federation_hub: Центр федерації
+        geography_continents: Континенти
+        geography_countries: Країни
+        geography_maps: Карти
+        geography_regions: Регіони
         geography_settlements: Населені пункти
-        geography_states: States
-        host_dashboard: Host Dashboard
-        host_dashboard_membership_review: Membership Review
-        host_dashboard_platform_connection_review: Federation Review
-        host_dashboard_safety_review: Safety Review
-        joatu_offers: Offers
-        joatu_requests: Requests
-        metrics_reports: Metrics Reports
-        navigation_areas: Navigation Areas
-        pages: Pages
-        people: People
+        geography_states: Штати
+        host_dashboard: Панель керування хоста
+        host_dashboard_membership_review: Перегляд членства
+        host_dashboard_platform_connection_review: Перегляд федерації
+        host_dashboard_safety_review: Перегляд безпеки
+        hub: Центр
+        joatu_hub: Центр Joatu
+        joatu_offers: Пропозиції
+        joatu_requests: Запити
+        metrics_reports: Звіти метрик
+        navigation_areas: Області навігації
+        oauth_applications: Застосунки OAuth
+        pages: Сторінки
+        people: Люди
         platform_connections: Підключення платформ
-        platforms: Platforms
+        platforms: Платформи
+        posts: Публікації
         reports: Звіти
-        resource_permissions: Resource Permissions
-        roles: Roles
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
         safety_cases: Огляд безпеки
-        users: Users
+        users: Користувачі
+        webhook_endpoints: Кінцеві точки вебхуків
       visibility_strategies:
         authenticated: Авторизовані користувачі
         permission: Користувачі з дозволом
@@ -4226,6 +4474,14 @@ uk:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} приєднався(-лась) як %{role} через %{domain}"
+          title: Довірений домен %{domain} надав членство
+        rate_limited:
+          body: Досягнуто погодинного ліміту для %{domain}. Нові люди залишаються
+            в очікуванні, доки ви їх не розглянете.
+          title: Довірений домен %{domain} досяг погодинного ліміту
     oauth:
       applications:
         create:
@@ -4479,9 +4735,14 @@ uk:
         email_mismatch: 'Неможливо підключити обліковий запис %{provider}: електронна
           пошта %{email} належить іншому користувачу. Будь ласка, вийдіть з системи
           і увійдіть з правильним обліковим записом.'
+        email_missing: "%{provider} не надав електронну адресу. Зроби адресу доступною
+          для цього застосунку в налаштуваннях облікового запису %{provider}."
         failure: Не вдалося підключити обліковий запис %{provider}. Будь ласка, спробуйте
           ще раз.
         success: Обліковий запис %{provider} успішно підключено.
+        unverified_email_collision: Обліковий запис з цією електронною адресою вже
+          існує, а %{provider} не підтвердив її. Увійдіть звичним способом, а потім
+          підключіть %{provider} у Налаштуваннях.
       destroy:
         cannot_delete_last_oauth: Неможливо від'єднати ваш обліковий запис %{provider},
           оскільки ви зареєструвалися за допомогою OAuth і не маєте встановленого
@@ -4665,6 +4926,74 @@ uk:
         subtitle: Додати домен для %{platform_name}
         title: Новий домен
       updated: Домен успішно оновлено.
+    platform_identity_providers:
+      create:
+        created: Постачальника входу додано.
+      destroy:
+        destroyed: Постачальника входу видалено.
+      edit:
+        subtitle: Постачальники входу OAuth для %{platform_name}
+        title: Редагувати %{provider}
+      form:
+        cancel: Скасувати
+        client_id_label: ID клієнта
+        client_secret_hint: Зберігається в зашифрованому вигляді й більше не показується.
+        client_secret_keep: Залиште порожнім, щоб зберегти поточний секрет
+        client_secret_label: Секрет клієнта
+        create_btn: Додати постачальника
+        domains_hint: Вхід через цього постачальника працює лише на позначених доменах.
+          URL зворотного виклику кожного домену також має бути зареєстрований у постачальника.
+        domains_label: Дозволені домени
+        enabled_label: Увімкнено
+        issuer_hint: Лише OpenID Connect. URL https постачальника ідентифікації (з
+          нього читається документ виявлення). Його не можна змінити після додавання,
+          і кожного емітента можна додати лише раз на платформу.
+        issuer_label: URL емітента
+        label_hint: Лише OpenID Connect. Показується на кнопці входу. За замовчуванням
+          це хост емітента.
+        label_label: Текст кнопки
+        scopes_hint: Залиште порожнім, щоб використати типові значення постачальника.
+        scopes_label: Області доступу
+        strategy_label: Постачальник
+        trust_verified_email_hint: Вимкнено за замовчуванням. Якщо ввімкнено, електронна
+          адреса, яку цей емітент позначає як підтверджену, може увійти в наявний
+          обліковий запис із цією адресою. Вмикайте лише для емітентів, які перевіряють
+          адреси.
+        trust_verified_email_label: Довіряти підтвердженим адресам цього емітента
+        update_btn: Оновити постачальника
+      index:
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цього постачальника входу?
+        disabled_label: Вимкнено
+        edit_btn: Редагувати
+        enabled_label: Увімкнено
+        env_description: Цих постачальників задано змінними середовища, і вони діють
+          для доменів цієї платформи, наведених нижче. Секрети ніколи не показуються.
+          Додайте запис постачальника, щоб керувати доменом тут.
+        env_note: Постачальники без запису тут використовують змінні середовища сервера
+          (наприклад, GITHUB_CLIENT_ID).
+        env_serves: 'Обслуговує: %{domains}'
+        env_serves_none: Усі домени закріплені за записами постачальників нижче, тому
+          середовище не використовується.
+        env_title: Налаштовано через середовище сервера
+        header_actions: Дії
+        header_client_id: ID клієнта
+        header_provider: Постачальник
+        header_secret: Секрет клієнта
+        header_status: Стан
+        new_btn: Додати постачальника
+        none: Для цієї платформи не налаштовано постачальників входу.
+        secret_missing: Відсутній
+        secret_set: Задано
+        subtitle: Постачальники входу OAuth для %{platform_name}
+        table_aria: Постачальники входу
+        title: Постачальники входу
+      new:
+        subtitle: Постачальники входу OAuth для %{platform_name}
+        title: Додати постачальника входу
+      update:
+        updated: Постачальника входу оновлено.
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.
@@ -4701,7 +5030,101 @@ uk:
         accepted: Прийнято
         expired: Закінчився термін
         pending: Очікує
+    platform_trusted_domains:
+      created: Довірений домен додано.
+      destroyed: Довірений домен видалено. Наявні облікові записи та членства не змінюються.
+      edit:
+        title: Редагувати довірений домен
+      events:
+        account_created: Обліковий запис створено
+        domain_added: Домен додано
+        domain_removed: Домен видалено
+        domain_updated: Домен змінено
+        grant_rate_limited: Досягнуто погодинного ліміту, надання чекає на розгляд
+        membership_granted: Членство надано
+        membership_request_approved: Запит на членство схвалено
+      form:
+        cancel: Скасувати
+        domain_hint: Лише частина після знака @, наприклад example.org. Для публічних
+          поштових сервісів, як-от gmail.com, потрібне підтвердження нижче.
+        domain_label: Домен електронної пошти
+        enabled_label: Увімкнено
+        include_subdomains_label: Довіряти також піддоменам (наприклад mail.example.org)
+        note_label: Примітка для інших стюардів (необов'язково)
+        public_domain_label: Я розумію, що це публічний поштовий домен і будь-хто
+          може мати там адресу
+        role_ceiling_label: Я розумію, що люди з підтвердженою адресою в цьому домені
+          автоматично отримують цю роль
+        role_hint: Лише ролі спільноти. Ролі платформи та стюарда не можна надавати
+          за доменом.
+        role_label: Надана роль спільноти
+        submit: Зберегти довірений домен
+      index:
+        activity_event: Подія
+        activity_heading: Остання активність
+        activity_none: Активності ще немає.
+        activity_person: Особа
+        activity_via: Через
+        activity_when: Коли
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей довірений домен? Наявні облікові записи та членства
+          залишаться без змін.
+        disabled_label: Вимкнено
+        edit_btn: Редагувати
+        enabled_label: Увімкнено
+        explanation: Люди, які входять через провайдера, що підтверджує пошту, або
+          підтверджують пошту після реєстрації, і чия адреса закінчується довіреним
+          доменом, отримують членство з обраною роллю без очікування розгляду. Кожне
+          надання записується в журнал.
+        header_accounts: Створено облікових записів
+        header_actions: Дії
+        header_domain: Домен
+        header_role: Роль
+        header_status: Статус
+        header_subdomains: Піддомени
+        new_btn: Додати довірений домен
+        no_domains: Довірених доменів ще немає.
+        subdomains_no: Лише точний збіг
+        subdomains_yes: Включено
+        subtitle: Довірені поштові домени %{platform_name}
+        table_aria: Довірені поштові домени
+        title: Довірені домени
+      new:
+        subtitle: Люди з підтвердженою адресою в цьому домені отримують обрану роль
+          на %{platform_name}.
+        title: Додати довірений домен
+      updated: Довірений домен оновлено.
+      vias:
+        membership_request: Запит на членство
+        oauth: Провайдер входу
+        password_registration: Реєстрація поштою
+        steward: Стюард
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} не підтримує цей тип вмісту."
+          too_long: "%{slot} задовгий (ліміт становить %{max} символів на мову)."
+        footer_above:
+          hint: Показується над підвалом сайту, наприклад повідомлення про фінансувальників
+            або застереження.
+          label: Над підвалом
+        header_above:
+          hint: Показується над заголовком сайту, наприклад оголошення.
+          label: Над заголовком
+        hint: Необов'язкові блоки вмісту, що показуються у фіксованих місцях на кожній
+          сторінці цієї платформи. Кожна мова окрема; відсутня мова повертається до
+          мови за замовчуванням. Залиште місце порожнім, щоб зберегти стандартний
+          макет.
+        not_found_headlines:
+          hint: Один заголовок на рядок, до 20. Один обирається випадково, коли сторінку
+            не знайдено. Без заголовків використовується стандартний.
+          label: Заголовки сторінки 404
+        not_found_message:
+          hint: Показується під заголовком, коли сторінку не знайдено.
+          label: Повідомлення сторінки 404
+        remove: Видалити цей вміст
+        title: Вміст заголовка, підвалу та сторінки 404
       form:
         allow_membership_requests: Дозволити запити на членство
         allow_membership_requests_hint: Показує публічну форму запиту на членство
@@ -4718,12 +5141,48 @@ uk:
           завантажувати зображення. Виберіть довірені джерела або введіть новий hostname/джерело
           й натисніть Enter.
         csp_img_src_text_label: Дозволені зовнішні джерела зображень
+        csp_title: Безпека / вбудовування CSP
+        custom_css_hint: Розширене налаштування. Стилі, додані тут, завантажуються
+          після теми та мають над нею перевагу.
+        custom_css_title: Власний CSS
+        domains_after_save: Спочатку збережіть платформу, а потім керуйте тут її доменами
+          та провайдерами входу.
+        domains_hint: Перегляньте домени, на яких відповідає ця платформа, та сервіси
+          входу.
         feature_gates_hint: Виберіть, який етап розгортання потрібен для кожної функції
           на цій платформі.
         feature_gates_title: Контролі розгортання функцій
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
+        integrations_empty: Інтеграцій не встановлено.
+        integrations_env_fallback: Використовується змінна середовища %{variable}.
+          Збережене тут значення замінює її.
+        integrations_hint: Налаштування сервісів, підключених через розширення. Кожна
+          платформа зберігає власні значення.
+        integrations_secret_set: Значення збережено. Залиште поле порожнім, щоб зберегти
+          його.
+        quota_defaults_hint: Початковий ліміт для кожної нової особи, спільноти та
+          цієї платформи. Залиште поле порожнім, щоб використати значення з конфігурації
+          застосунку. Зміна значення також оновлює наявні квоти цієї платформи; індивідуальні
+          надання квот не змінюються.
+        quota_defaults_title: Квоти за замовчуванням
+        quota_kinds:
+          community: Спільнота
+          person: Особа
+          platform: Платформа
+        quota_types:
+          ai_translation_tokens: Токени використання LLM ШІ на місяць
+          media_storage: Сховище
+        quota_use_default: Використовувати значення за замовчуванням (%{size})
+        trusted_domains:
+          after_save: Спершу збережіть платформу, потім додайте тут довірені поштові
+            домени.
+          heading: Довірені поштові домени
+          hint: Підтверджені адреси цих доменів приєднуються із заданою роллю без
+            очікування розгляду.
+          manage: Керувати довіреними доменами
+          none: Довірених доменів немає.
       index:
         provision_new_platform: Налаштувати нову платформу
       new:
@@ -4739,6 +5198,15 @@ uk:
         title: Зареєструвати зовнішню платформу
       show:
         new_invitation: Нове запрошення
+      tabs:
+        access: Доступ і приватність
+        appearance: Вигляд
+        details: Деталі
+        domains: Домени та вхід
+        errors: помилок на цій вкладці
+        features: Функції та квоти
+        integrations: Інтеграції
+        security: Безпека
     posts:
       authors: Автори
       back_to_posts: Назад до постів
@@ -4856,16 +5324,89 @@ uk:
         usage: Використання
       updated: Грант квоти оновлено.
     quotas:
+      errors:
+        not_local: має бути локальним для цієї платформи
       storage_limit_reached: Ви досягли ліміту сховища, тому цей файл не можна завантажити.
         Видаліть щось або попросіть адміністратора про більше місця.
       usage_meter:
         types:
-          ai_translation_tokens: Токени перекладу ШІ
+          ai_translation_tokens: Токени використання LLM ШІ
           media_storage: Зберігання
     rbac:
       nav:
         resource_permissions: Дозволи ресурсів
         roles: Ролі
+    redirects:
+      created: Перенаправлення успішно додано.
+      destroyed: Перенаправлення видалено.
+      edit:
+        subtitle: Перенаправлення для %{platform_name}
+        title: Редагування %{from_path}
+      form:
+        active_label: Активне
+        cancel: Скасувати
+        create_btn: Додати перенаправлення
+        from_path_hint: Адреса, яку використовували відвідувачі, починається з похилої
+          риски. Порівняння не враховує регістр, кінцеву риску та рядок запиту.
+        from_path_label: Старий шлях
+        note_label: Примітка
+        preserve_query_label: Зберігати рядок запиту під час перенаправлення
+        status_label: Відповідь
+        statuses:
+          s301: 301 Переміщено назавжди
+          s302: 302 Знайдено (тимчасово)
+          s307: 307 Тимчасове перенаправлення
+          s308: 308 Постійне перенаправлення
+          s410: 410 Видалено
+        to_path_hint: Шлях на цьому сайті, що починається з похилої риски, або повна
+          адреса http чи https. Залиште порожнім лише для 410 Видалено.
+        to_path_label: Новий шлях або URL
+        update_btn: Оновити перенаправлення
+      index:
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити це перенаправлення?
+        edit_btn: Редагувати
+        gone_label: Видалено (нової адреси немає)
+        header_actions: Дії
+        header_from: Старий шлях
+        header_hits: Відвідування
+        header_status: Стан
+        header_to: Новий шлях
+        import_btn: Імпортувати
+        inactive_label: неактивне
+        new_btn: Додати перенаправлення
+        no_redirects: Перенаправлень ще немає.
+        search_btn: Шукати
+        search_label: Пошук перенаправлень
+        search_placeholder: Пошук за старим шляхом
+        subtitle: Старі адреси, що спрямовують відвідувачів на нове місце на %{platform_name}
+        table_aria: Перенаправлення
+        title: Перенаправлення
+      new:
+        subtitle: Додати перенаправлення для %{platform_name}
+        title: Нове перенаправлення
+      new_import:
+        back: Назад до перенаправлень
+        import_btn: Імпортувати
+        import_confirm: Імпортувати ці перенаправлення?
+        preview_btn: Попередній перегляд
+        report_applied: Імпорт завершено
+        report_created: Створено
+        report_error_line: 'Рядок %{row} (%{path}): %{message}'
+        report_preview: Попередній перегляд (нічого не збережено)
+        report_skipped: Пропущено (вже існують)
+        report_unchanged: Без змін
+        report_updated: Оновлено
+        rows_hint: 'Напишіть старий шлях, новий шлях і необов’язковий код (301, 302,
+          307, 308 або 410) через коми. Рядки, що починаються з #, ігноруються. Спершу
+          зробіть попередній перегляд; нічого не зберігається, доки ви не виберете
+          Імпортувати.'
+        rows_label: Перенаправлення, по одному в рядку
+        subtitle: Додати багато перенаправлень до %{platform_name} одразу
+        title: Імпорт перенаправлень
+        upsert_label: Також оновити наявні перенаправлення
+      updated: Перенаправлення успішно оновлено.
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
@@ -6013,6 +6554,9 @@ uk:
               та часовим поясом, які ви виберете.
             steward: Створюється обліковий запис відповідальної особи з повним доступом
               до керування новою платформою.
+  breadcrumbs:
+    home: Головна
+    label: Навігаційний ланцюжок
   community:
     create_failed: Створення не вдалося
     created: Створено
@@ -6298,6 +6842,11 @@ uk:
         submit: Надіслати
         terms_of_service:
           label: Я погоджуюся з Умовами використання
+        trusted_domains:
+          confirm_notice: Адреси в %{domains} приєднуються після підтвердження пошти.
+            Перевірте свою скриньку після реєстрації.
+          link: Зареєструватися з довіреною поштою
+          notice: Маєте адресу в %{domains}?
         view: Переглянути
       signed_up: Ласкаво просимо! Ви успішно зареєструвалися.
       signed_up_but_inactive: Ви успішно зареєструвалися. Проте ми не змогли авторизувати
@@ -6368,8 +6917,13 @@ uk:
       accepted: має бути прийнято
       account_mismatch: має належати тому самому рахунку
       acknowledgement_required: потрібно прийняти, перш ніж увімкнути цей спосіб
+      add_on_cannot_have_grants: не можна надати додатку
+      add_on_cannot_renew: додаток купується один раз і не поновлюється
+      add_on_has_grants: додаток не може нічого включати сам; додайте це до плану
+      add_on_locked_by_orders: не можна змінити, коли замовлення вже містять цей план
       after_start: має бути пізніше за початок
       already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
+      already_pending: Для цього замовлення вже очікує запит на повернення коштів.
       blank: не може бути пустим
       cannot_be_the_host: не може бути платформою-хостом
       confirmation: не співпадає з %{attribute}
@@ -6377,6 +6931,7 @@ uk:
         запросіть новий
       country_not_supported: недоступно в %{country}
       currency_mismatch: має збігатися з валютою замовлення
+      denied_for_trusted_domain: не може надаватися поштовим доменом
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -6387,19 +6942,25 @@ uk:
       greater_than_refundable: більше, ніж ще можна повернути
       hosted_local_billing_not_agreed: потребує попереднього прийняття угод про локальний
         білінг
+      immutable: не можна змінити після створення; видаліть цього провайдера та додайте
+        нового
       immutable_after_processor_link: не можна змінити після прив’язки плану до ціни
         в процесорі
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: неправильний
+      invalid_characters: не повинно містити пробілів або керівних символів
       invalid_pricing_tier: 'рівень ціноутворення ''%{tier}'' не входить до: %{allowed}'
       invalid_url: не є дійсною URL-адресою
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       lookup_failed: не вдалося перевірити в платіжному процесорі
       model_invalid: 'Перевірка не вдалася: %{errors}'
+      must_be_a_primary_plan: має бути планом, який не є додатком
+      must_be_an_add_on: має бути додатком
       no_payment_method: потребує онлайн-процесора або принаймні ще одного способу
         оплати
+      not_a_community_role: має бути роллю спільноти
       not_a_number: не є числом
       not_a_purchase_agreement: має бути угодою про покупку
       not_an_amount: має бути простим числом, наприклад 45,00
@@ -6415,13 +6976,19 @@ uk:
         many: "%{count} помилок заборонили збереження цього %{resource}:"
         one: '1 помилка заборонила збереження цього %{resource}:'
         other: "%{count} помилок заборонили збереження цього %{resource}:"
+      not_the_buyer: може подати лише покупець замовлення
+      nothing_to_give_back: У цьому замовленні немає нічого, що можна повернути тут.
       odd: має бути непарним
       one_time_single: має бути 1 для одноразової ціни
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
       price_inactive: архівовано в платіжному процесорі
+      public_mail_domain: є публічним поштовим сервісом; підтвердьте, щоб довіряти
+        всім його адресам
       recipient_missing: потрібна адреса електронної пошти або номер телефону
       required: має існувати
+      required_for_elevated_role: потребує явного підтвердження, перш ніж поштовий
+        домен зможе надати роль вищу за базового учасника
       taken: вже зайнято
       too_large: завелика
       too_long:
@@ -6813,16 +7380,21 @@ uk:
       invalid_parameters: Недійсні параметри
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Обліковий запис та інструменти
     billing: Платежі
     conversations: Conversations
+    footer_legal_navigation: Інформація про сайт
+    footer_navigation: Посилання внизу сторінки
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Головна
     my_profile: Мій профіль
     notifications_tooltip: Сповіщення
     search_tooltip: Пошук
     settings: Налаштування
     sign_in: Увійти
+    skip_to_content: Перейти до основного вмісту
     toggle_navigation: Переключити навігацію
     user_nav_tooltip: Меню облікового запису
   navigation:
@@ -6994,8 +7566,10 @@ uk:
         feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
         hosting_plan: План і використання
+        identity_providers: Постачальники входу
         platform_domains: Домени
         quota_grants: Гранти квоти
+        redirects: Перенаправлення
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
@@ -7036,6 +7610,7 @@ uk:
     continent: Континент
     country: Країна
     download_failed: Завантаження не вдалося
+    download_held: Цей файл ще перевіряється на безпеку. Спробуйте ще раз пізніше.
     invitation: Запрошення
     invitation_email: Електронна пошта запрошення
     member: Учасник
@@ -7060,6 +7635,7 @@ uk:
     confirm_destroy: Підтвердіть видалення
   search:
     button: Пошук
+    label: Пошук на сайті
     placeholder: Пошук...
   seed_catalog:
     billing_agreements:

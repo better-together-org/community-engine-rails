@@ -51,6 +51,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
 - [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
+- [Quota Default Limits](developers/systems/quotas_defaults.md) - YAML-driven starting quotas, per-platform overrides, local-owner gate
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
 - [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
 - [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
@@ -88,6 +89,9 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Foundation and Processor Adapters](billing/processor-adapters.md) - Vendor-neutral billing core, host configuration and the adapter contract
 - [Billing Notifications](billing/notifications.md) - Who is told what about orders, payments and billing operations, never twice, never with payment details
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
+- [Billing Plan Change](billing/plan_change.md) - A payer moves a subscription to another plan from the next period, with a downgrade guard on usage
+- [Billing Refund Requests](billing/refund_requests.md) - A buyer asks for money back, a steward approves, part-approves or declines with a reply, and approval reuses the ordinary refund record
+- [Billing Account Polish](billing/account_polish.md) - Order filters, changing a subscription's payment method, a billing address editor and billing email preferences
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
 - [Billing Entitlements and Quota Allowances](billing/entitlements_and_allowances.md) - What a plan gives (roles, feature access, quota allowances), one derivation from Pay's status, what is taken away at a lapse and what never is
@@ -235,6 +239,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Production** - [`production/`](production/)
 *Deployment and production environment documentation*
 - [Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
+- [Host Setup Script](production/host_setup_script.md) - Preparing a server with `bin/prod/host-setup.sh`
 - [Multi-Platform Deployment](production/multi_platform_deployment.md) - Running multiple platforms on a single instance
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide

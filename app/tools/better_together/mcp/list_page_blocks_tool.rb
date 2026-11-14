@@ -97,8 +97,16 @@ module BetterTogether
              BetterTogether::Content::EventsBlock,
              BetterTogether::Content::PostsBlock
           "#{block.block_name} — limit #{block.item_limit}"
+        when BetterTogether::Content::PlanCatalogBlock
+          "plans — limit #{block.item_limit}"
+        when BetterTogether::Content::PlanButtonBlock
+          "plan_id=#{block.plan_id.presence || '(none)'} — #{block.display_as}"
         when BetterTogether::Content::NavigationAreaBlock
           "nav_area_id=#{block.navigation_area_id}"
+        when BetterTogether::Content::FileDownloadBlock
+          "upload_id=#{block.upload_id}"
+        when BetterTogether::Content::ImageGalleryBlock
+          "images=#{block.parsed_image_ids.size} layout=#{block.layout}"
         when BetterTogether::Content::MermaidDiagram
           block.respond_to?(:diagram_source_en) ? block.diagram_source_en.to_s.truncate(80) : ''
         when BetterTogether::Content::Css

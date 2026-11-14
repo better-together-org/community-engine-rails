@@ -27,12 +27,17 @@ module BetterTogether
 
       def temp_id_for(model, temp_id: SecureRandom.uuid) = model.persisted? ? model.id : temp_id
 
+      # Tags and attributes an Html block may carry. Tables and disclosure
+      # widgets are allowed so editors can publish data tables and FAQs.
+      BLOCK_HTML_TAGS = %w[p br strong em b i ul ol li a span h1 h2 h3 h4 h5 h6 img figure figcaption blockquote pre
+                           code div nav section details summary hr
+                           table caption thead tbody tfoot tr th td colgroup col].freeze
+      BLOCK_HTML_ATTRIBUTES = %w[href src alt style title class target rel id role scope colspan rowspan headers
+                                 span open aria-label aria-current aria-labelledby aria-describedby aria-hidden].freeze
+
       # Sanitize HTML content for safe rendering in custom blocks
       def sanitize_block_html(html)
-        allowed_tags = %w[p br strong em b i ul ol li a span h1 h2 h3 h4 h5 h6 img figure figcaption blockquote pre
-                          code div nav]
-        allowed_attrs = %w[href src alt style title class target rel aria-label aria-current aria-labelledby aria-hidden]
-        sanitize(html.to_s, tags: allowed_tags, attributes: allowed_attrs)
+        sanitize(html.to_s, tags: BLOCK_HTML_TAGS, attributes: BLOCK_HTML_ATTRIBUTES)
       end
 
       # Very basic CSS sanitizer: strips dangerous patterns

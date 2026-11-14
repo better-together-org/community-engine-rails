@@ -12,7 +12,8 @@ RSpec.describe BetterTogether::SeedCatalog::BillingAgreementsCatalog do
   before do
     host_platform.billing_agreement_requirements.destroy_all
     BetterTogether::Agreement.where(platform: host_platform,
-                                    identifier: %w[subscription_agreement one_time_purchase_agreement offline_payment_terms]).destroy_all
+                                    identifier: %w[subscription_agreement one_time_purchase_agreement offline_payment_terms
+                                                   refund_policy]).destroy_all
   end
 
   it 'is registered beside the geography and tax catalogs' do
@@ -31,8 +32,9 @@ RSpec.describe BetterTogether::SeedCatalog::BillingAgreementsCatalog do
     expect(described_class.plant(:billing_purchase_agreements)).to be(true)
 
     expect(described_class.planted?(:billing_purchase_agreements)).to be(true)
-    expect(BetterTogether::Agreement.where(identifier: %w[subscription_agreement one_time_purchase_agreement offline_payment_terms],
-                                           lifecycle_state: 'draft').count).to eq(3)
+    expect(BetterTogether::Agreement.where(identifier: %w[subscription_agreement one_time_purchase_agreement offline_payment_terms
+                                                          refund_policy],
+                                           lifecycle_state: 'draft').count).to eq(4)
     expect { described_class.plant(:billing_purchase_agreements) }.not_to(change(BetterTogether::Agreement, :count))
   end
 

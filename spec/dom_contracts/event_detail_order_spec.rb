@@ -35,7 +35,8 @@ RSpec.describe 'Event detail ordering', type: :request do # rubocop:disable RSpe
 
   it 'orders the event card' do
     get better_together.events_path(locale:)
-    card = Nokogiri::HTML(response.body).at_css('.event-card')
+    href = better_together.event_path(event, locale:)
+    card = Nokogiri::HTML(response.body).css('.event-card').find { |node| node.at_css("a[href='#{href}']") }
 
     expect(in_order?(card, ['.event-datetime', '.event-location'])).to be(true)
   end

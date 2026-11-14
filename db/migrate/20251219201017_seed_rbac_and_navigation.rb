@@ -7,13 +7,8 @@ class SeedRbacAndNavigation < ActiveRecord::Migration[7.2]
 
     puts 'Seeding new RBAC roles, permissions, and navigation items...'
 
-    load BetterTogether::Engine.root.join('lib', 'tasks', 'better_together', 'seed_rbac_and_navigation.rake')
-
-    begin
-      Rake::Task['better_together:seed:rbac_and_navigation'].invoke
-    rescue RuntimeError
-      Rake::Task['app:better_together:seed:rbac_and_navigation'].invoke
-    end
+    run_engine_rake_task('better_together:seed:rbac_and_navigation', file: 'seed_rbac_and_navigation.rake',
+                                                                     skip_when_empty: %i[better_together_platforms])
   end
 
   def down

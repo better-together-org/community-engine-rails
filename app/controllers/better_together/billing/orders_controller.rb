@@ -13,9 +13,13 @@ module BetterTogether
       before_action :set_order, only: %i[show pay checkout_return]
       after_action :verify_authorized
 
-      def index
+      def index # rubocop:disable Metrics/AbcSize
         authorize BetterTogether::Billing::Order
-        @orders = policy_scope(billing_owner.billing_orders).newest_first.page(params[:page]).per(PER_PAGE)
+        everything = policy_scope(billing_owner.billing_orders)
+        @status = params[:status].presence_in(Order::STATUSES)
+        @year = params[:year].to_s[/\A\d{4}\z/]&.to_i
+        @years = years_of(everything)
+        @orders = filtered(everything).newest_first.page(params[:page]).per(PER_PAGE)
       end
 
       def show
@@ -45,6 +49,17 @@ module BetterTogether
       end
 
       private
+
+      def filtered(scope)
+        scope = scope.with_status(@status) if @status
+        @year ? scope.created_in_year(@year) : scope
+      end
+
+      # The years the buyer has orders in, newest first, for the year filter.
+      def years_of(scope)
+        first = scope.minimum(:created_at)
+        first ? (first.year..Time.current.year).to_a.reverse : []
+      end
 
       # Which processor payment to pay when an order has several waiting; only one of this order's own.
       def chosen_payment = (@order.payments.find(params[:payment_id]) if params[:payment_id].present?)

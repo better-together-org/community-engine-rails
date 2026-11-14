@@ -1,0 +1,48 @@
+{
+  "name": "billing_subscription_method_change",
+  "device": "mobile",
+  "url": "/en/billing/subscriptions/c1187ca7-d15f-4868-9b96-f719f7a84c44",
+  "title": "Plan 4d5b25 | Test Host Community",
+  "locale": "en",
+  "role": "buyer",
+  "feature_set": "billing_account_polish",
+  "flow": "billing_subscription_method_change",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_account_polish_spec.rb",
+  "callouts": [
+    {
+      "selector": "#subscription-method-change",
+      "title": "Change how you pay",
+      "bullets": [
+        "Pick another method for the next renewal."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 496.390625,
+        "width": 461.0,
+        "height": 271.0,
+        "right": 473.0,
+        "bottom": 767.390625,
+        "center_x": 242.5,
+        "center_y": 631.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 496.390625,
+        "width": 461.0,
+        "height": 271.0,
+        "right": 473.0,
+        "bottom": 767.390625,
+        "center_x": 242.5,
+        "center_y": 631.890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 318.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 496.390625
+      }
+    }
+  ]
+}

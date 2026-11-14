@@ -114,6 +114,19 @@ RSpec.describe BetterTogether::Billing::Notifier do
       expect { notify('payment_failed') }.to change(ActionMailer::Base.deliveries, :count).by(1)
     end
 
+    it 'does not email an ordinary notice once billing emails are turned off in the billing preferences' do
+      buyer.update!(notify_billing_by_email: false)
+
+      expect { notify('order_paid') }.not_to(change(ActionMailer::Base.deliveries, :count))
+      expect(inbox(buyer).count).to eq(1)
+    end
+
+    it 'still emails a critical notice when billing emails are turned off in the billing preferences' do
+      buyer.update!(notify_billing_by_email: false)
+
+      expect { notify('payment_failed') }.to change(ActionMailer::Base.deliveries, :count).by(1)
+    end
+
     it 'sends the app message either way' do
       buyer.update!(notify_by_email: false)
 

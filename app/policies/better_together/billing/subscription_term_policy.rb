@@ -15,6 +15,8 @@ module BetterTogether
       def cancel? = payer?
       def resume? = payer?
       def accept_agreements? = payer?
+      def change_plan? = payer?
+      def change_method? = payer?
 
       # Stewards.
       def index? = manage_billing?

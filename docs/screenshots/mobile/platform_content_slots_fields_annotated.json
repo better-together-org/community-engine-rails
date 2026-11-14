@@ -1,0 +1,49 @@
+{
+  "name": "platform_content_slots_fields_annotated",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_content_slots",
+  "flow": "platform_content_slots_fields_annotated",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_content_slots_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-content-slot-field-footer-above",
+      "title": "Content slots",
+      "bullets": [
+        "Same editor as every other block",
+        "Leave empty for the standard layout"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 441.578125,
+        "width": 461.0,
+        "height": 373.1875,
+        "right": 473.0,
+        "bottom": 814.765625,
+        "center_x": 242.5,
+        "center_y": 628.171875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 441.578125,
+        "width": 461.0,
+        "height": 373.1875,
+        "right": 473.0,
+        "bottom": 814.765625,
+        "center_x": 242.5,
+        "center_y": 628.171875
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 834.77,
+        "width": 270.0,
+        "height": 184,
+        "score": 442.234375
+      }
+    }
+  ]
+}

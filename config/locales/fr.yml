@@ -401,6 +401,10 @@ fr:
         type: Type
         valid_from: Valide à partir de
         valid_until: Valide jusqu'à
+      better_together/redirect:
+        from_path: Ancien chemin
+        status: Réponse
+        to_path: Nouveau chemin
       better_together/resource_permission:
         action: Action
         identifier: Identifiant
@@ -610,6 +614,12 @@ fr:
               must_be_true_for_share_domain: doit être vrai pour un domaine de partage
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: doit être un chemin commençant par une barre oblique ou une
+                adresse http ou https complète
+              redirect_loop: ramène à elle-même par d'autres redirections
         better_together/short_link:
           attributes:
             target_url:
@@ -634,16 +644,20 @@ fr:
       better_together/content/communities_block: Communautés
       better_together/content/css: CSS Personnalisé
       better_together/content/events_block: Événements
+      better_together/content/file_download_block: Téléchargement de fichier
       better_together/content/hero: Héros
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Galerie d'images
       better_together/content/link: Lien
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagramme Mermaid
       better_together/content/navigation_area_block: Zone de navigation
       better_together/content/page_block: Blocage de Pages
       better_together/content/people_block: Personnes
+      better_together/content/plan_button_block: Bouton de forfait
+      better_together/content/plan_catalog_block: Catalogue des forfaits
       better_together/content/platform_block: Plateforme
       better_together/content/posts_block: Publications
       better_together/content/quote_block: Citation
@@ -689,6 +703,7 @@ fr:
       better_together/platform_domain: Domaine de plateforme
       better_together/platform_invitation: Invitation à la Plateforme
       better_together/post: Publication
+      better_together/redirect: Redirection
       better_together/resource_permission: Autorisation des Ressources
       better_together/role: Rôle
       better_together/role_resource_permission: Autorisation des Ressources de Rôle
@@ -911,6 +926,25 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      addresses:
+        add: Ajouter l'adresse
+        added: Adresse ajoutée.
+        default: Par défaut
+        default_set: Adresse de facturation par défaut mise à jour.
+        intro: La taxe sur vos commandes est calculée selon votre adresse de facturation.
+          Votre adresse par défaut est proposée en premier au paiement.
+        list_title: Vos adresses
+        make_default: Définir par défaut
+        new_title: Ajouter une adresse
+        none: Vous n'avez pas encore d'adresse de facturation.
+        refused:
+          incomplete: Choisissez un pays et une province ou un état pour calculer
+            la taxe.
+          invalid: Cette adresse n'a pas pu être enregistrée. Vérifiez les champs
+            et réessayez.
+          missing: Saisissez une adresse.
+          not_found: Cette adresse est introuvable.
+        title: Adresses de facturation
       allowances:
         enforcement: Application
         field_owner: Propriétaire
@@ -950,6 +984,16 @@ fr:
         title: Forfaits
       checkout:
         accept: J’ai lu et j’accepte %{title}
+        add_on_line: Complément
+        add_ons_dropped: Un complément que vous aviez choisi n'est plus proposé et
+          a été retiré de votre commande. Vérifiez le total avant de continuer.
+        add_ons_heading: Ajouter à votre commande
+        add_ons_hint: Compléments facultatifs pour cette commande. Mettez la commande
+          à jour pour les ajouter.
+        add_ons_status:
+          one: Commande mise à jour. Un complément sélectionné. Total %{total}.
+          other: Commande mise à jour. %{count} compléments sélectionnés. Total %{total}.
+          zero: Commande mise à jour. Aucun complément sélectionné. Total %{total}.
         address:
           choose: Adresse de facturation
           hint: La taxe est calculée selon le lieu de facturation ; choisissez donc
@@ -974,6 +1018,9 @@ fr:
         error_not_ready: 'Cet achat ne peut pas être effectué pour le moment : les
           conditions n’ont pas été configurées. Veuillez contacter les personnes qui
           gèrent cette plateforme.'
+        error_order_changed: Le prix ou les compléments proposés ont changé pendant
+          votre commande. Rien n'a été débité. Vérifiez le total et passez de nouveau
+          la commande.
         error_parts_too_large: Les montants saisis couvrent tout le prix. Laissez-en
           une part au mode choisi ci-dessus, ou choisissez-le pour la totalité.
         error_refused: Votre commande n’a pas pu être passée. Rien n’a été débité.
@@ -994,6 +1041,7 @@ fr:
         review_intro: Lisez ces documents avant de passer votre commande. Vous devez
           les accepter pour continuer.
         review_title: Lire et accepter
+        subtotal: Sous-total
         tax_note: La taxe, le cas échéant, est calculée selon votre adresse de facturation
           et affichée avant la confirmation.
         tax_note_new_address: La taxe est calculée selon l'adresse que vous saisissez
@@ -1004,6 +1052,7 @@ fr:
           pour cet achat.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        update_order: Mettre la commande à jour
         view_agreement: Lire l’entente
       credit:
         any_purpose: Tout ce que la plateforme vend
@@ -1215,6 +1264,9 @@ fr:
       hub:
         access_count: 'Actifs : %{count}'
         access_heading: Ce à quoi vous avez accès
+        add_on_buy: Ajouter
+        add_ons_heading: Options pour vos forfaits
+        add_ons_hint: Options ponctuelles pour les forfaits que vous avez déjà.
         all_orders: Toutes les commandes
         all_plans: Tous les forfaits
         browse_plans: Voir les forfaits
@@ -1226,9 +1278,32 @@ fr:
         plans_heading: Forfaits actifs
         plans_none: Vous n’avez aucun forfait actif.
         renews: Renouvellement le %{date}
+        settings_addresses: Adresses de facturation
+        settings_heading: Paramètres de facturation
+        settings_notifications: Notifications de facturation
         title: Facturation et forfaits
         view_access: Voir mes accès
         view_credit: Voir le crédit
+      notification_preferences:
+        always_hint: 'Ces avis demandent votre attention : ils sont toujours affichés
+          dans l''application et envoyés par courriel.'
+        always_title: Toujours envoyés
+        email_hint: Reçus, rappels de renouvellement, changements de forfait et décisions
+          de remboursement. Désactiver cette option n'arrête pas les avis urgents
+          ci-dessous.
+        email_label: M'envoyer les avis de facturation par courriel
+        intro: Choisissez quels avis de facturation sont aussi envoyés à votre courriel.
+          Ils apparaissent toujours dans l'application.
+        kinds:
+          cheque_bounced: Un chèque n'a pas été encaissé
+          grace_ending: Le délai supplémentaire de paiement se termine
+          hold_expiring: Une commande impayée va bientôt expirer
+          payment_action_required: Un paiement demande votre action
+          payment_failed: Un paiement a échoué
+          renewal_overdue: Un renouvellement est en retard
+        save: Enregistrer
+        saved: Paramètres de notification enregistrés.
+        title: Notifications de facturation
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1399,6 +1474,18 @@ fr:
         refund_recorded:
           body: Le vendeur a enregistré un remboursement pour votre commande.
           title: Remboursement de la commande %{number}
+        refund_request_decided:
+          body: Le vendeur a répondu à votre demande de remboursement. Ouvrez la commande
+            pour lire la réponse.
+          title: Votre demande de remboursement pour la commande %{number} a reçu
+            une réponse
+        refund_requested:
+          buyer:
+            body: Votre demande de remboursement a été envoyée au vendeur.
+            title: Demande de remboursement pour la commande %{number}
+          seller:
+            body: Un acheteur a demandé un remboursement. Ouvrez la demande pour décider.
+            title: Remboursement demandé pour la commande %{number}
         renewal_credit_insufficient:
           buyer:
             body: Votre renouvellement de %{plan} de %{amount} se paie avec votre
@@ -1601,8 +1688,14 @@ fr:
         field_subtotal: Sous-total
         field_tax: Taxe
         field_total: Total
+        filter_any: Tous
+        filter_apply: Afficher
+        filter_clear: Effacer les filtres
+        filter_status: Statut
+        filter_year: Année
         index_title: Mes commandes
         lines_heading: Ce qui a été commandé
+        no_matching_orders: Aucune commande ne correspond à ces filtres.
         no_orders: Vous n'avez pas encore de commande.
         no_payments: Aucun paiement n'a encore été effectué.
         no_sales: Il n'y a pas encore de commande.
@@ -1692,6 +1785,10 @@ fr:
         title: Ce que comprend ce forfait
       plans:
         actions_heading: Actions
+        add_on_targets_hint: Utilisé seulement pour une option. Cochez les forfaits
+          avec lesquels elle est proposée et dont les titulaires peuvent l'acheter
+          seule plus tard. Ne cochez rien pour la proposer avec tous les forfaits.
+        add_on_targets_legend: Forfaits que cette option prolonge
         audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
           une ou les deux pour le limiter : toute personne de l’un des types cochés
           peut le voir et l’acheter.'
@@ -1711,6 +1808,9 @@ fr:
           de paiement. Chacun doit encore être activé pour le vendeur avant que les
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
+        field_add_on: Option seulement
+        field_add_on_hint: Vendue uniquement en supplément sur la commande d'un autre
+          forfait, jamais seule. Paiement unique, sans accès inclus.
         field_amount: Montant
         field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
           Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
@@ -1959,6 +2059,67 @@ fr:
         ready: Prêt
         title: Prêt à vendre ?
         todo: 'Reste à faire :'
+      refund_requests:
+        accept_policy: Lisez et acceptez la politique de remboursement avant d'envoyer
+          votre demande.
+        all: Toutes
+        already_decided: Cette demande a déjà fait l'objet d'une décision.
+        already_pending: Une demande de remboursement est déjà en attente sur cette
+          commande.
+        amount_hint: Laissez vide pour demander tout ce qui peut être remboursé.
+        amount_invalid: Ce montant dépasse ce qui peut encore être remboursé, ou n'est
+          pas positif.
+        amount_label: Montant demandé
+        approve: Approuver et rembourser
+        approved_amount: 'Approuvé : %{amount}'
+        approved_hint: Laissez vide pour rembourser ce qui est demandé (ou tout ce
+          qui est possible).
+        approved_label: Montant à rembourser
+        ask_link: Demander un remboursement
+        asked: Demandé
+        decided: Décision enregistrée. L'acheteur a été informé.
+        decline: Refuser
+        decline_needs_note: Expliquez pourquoi la demande est refusée afin que l'acheteur
+          puisse le lire.
+        details_label: Ce que le vendeur doit savoir
+        everything: Tout ce qui est possible
+        heading: Demandes de remboursement
+        new_intro: Dites au vendeur pourquoi vous voulez être remboursé. Il examine
+          la demande et vous répond ici. Seuls les paiements que le vendeur gère lui-même,
+          comme l'argent comptant, le chèque, le virement Interac ou le crédit en
+          magasin, peuvent être demandés ainsi.
+        new_title: Demander un remboursement pour la commande %{number}
+        none: Il n'y a aucune demande de remboursement.
+        order_link: Commande
+        policy_accept: 'J''ai lu et j''accepte : %{title}'
+        policy_accepted: Vous avez déjà accepté la politique de remboursement actuelle.
+        policy_view: Lire la politique de remboursement
+        queue_intro: Acheteurs qui demandent un remboursement sur ce que cette plateforme
+          vend. Ouvrez une demande pour l'approuver, l'approuver en partie ou la refuser.
+        queue_link: Demandes de remboursement
+        queue_title: Demandes de remboursement
+        reason_label: Motif
+        reasons:
+          cancelled_event: L'événement a été annulé
+          duplicate: J'ai payé deux fois
+          error: Il y a eu une erreur
+          other: Autre chose
+          requested_by_buyer: J'ai changé d'avis
+        refundable: Jusqu'à %{amount} peuvent encore être remboursés.
+        reply_hint: L'acheteur la lit. Obligatoire si vous refusez.
+        reply_label: Réponse à l'acheteur
+        sent: Votre demande de remboursement a été envoyée. Vous serez informé de
+          la décision du vendeur.
+        show_title: Demande de remboursement pour la commande %{number}
+        statuses:
+          approved: Approuvée
+          cancelled: Retirée
+          declined: Refusée
+          partially_approved: Approuvée en partie
+          pending: En attente
+        submit: Envoyer la demande
+        withdraw: Retirer la demande
+        withdrawn: Votre demande de remboursement a été retirée.
       requirements:
         add: Ajouter
         add_title: Ajouter une exigence
@@ -2072,6 +2233,20 @@ fr:
         field_through: Payé jusqu’au
         index_title: Abonnements
         invoice: Facture %{number}
+        method_change_intro: Les renouvellements sont payés par %{method}. Choisissez
+          un autre mode pour les prochains renouvellements. Une facture déjà émise
+          garde son mode.
+        method_change_label: Payer les renouvellements par
+        method_change_none: Il n'y a pas d'autre mode de paiement des renouvellements
+          pour le moment.
+        method_change_refused:
+          not_local: Cet abonnement est renouvelé par son processeur de paiement.
+          not_offered: Ce mode de paiement n'est pas offert pour ce forfait.
+          unchanged: Les renouvellements sont déjà payés par ce mode.
+        method_change_submit: Changer de mode
+        method_change_title: Mode de paiement
+        method_changed: Les prochains renouvellements seront payés avec le nouveau
+          mode.
         none: Vous n'avez aucun abonnement.
         period_blocked: En suspens
         period_lapsed: Expiré
@@ -2081,6 +2256,42 @@ fr:
         period_waived: Couvert
         periods_caption: Chaque période de cet abonnement et sa facture
         periods_title: Périodes et factures
+        plan_change_credit_note: Différence au prorata pour un changement de forfait
+        plan_change_credited: Vous êtes sur le nouveau forfait. %{amount} a été ajouté
+          à votre crédit de magasin.
+        plan_change_done: Vous êtes sur le nouveau forfait.
+        plan_change_intro: Choisissez un autre forfait et le moment du changement.
+          À partir de la prochaine période, rien ne change d'ici là. Maintenant, le
+          reste de la période est calculé au prorata.
+        plan_change_invoiced: Facture de %{amount} établie. Votre forfait change dès
+          qu'elle est payée.
+        plan_change_label: Nouveau forfait
+        plan_change_none: Aucun autre forfait n'est disponible pour le moment.
+        plan_change_now_hint: Un forfait plus cher est facturé pour la différence
+          et change une fois la facture payée. Un forfait moins cher change aussitôt
+          et la différence est rendue en crédit de magasin.
+        plan_change_pending: Vous passerez à %{plan} au début de votre prochaine période
+          (après le %{date}).
+        plan_change_pending_invoice: Votre passage à %{plan} aura lieu dès que sa
+          facture sera payée.
+        plan_change_refused:
+          different_schedule: Ce forfait est facturé selon un autre calendrier ou
+            une autre devise, vous ne pouvez donc pas y passer d'ici.
+          not_available: Ce forfait n'est pas disponible.
+          not_running: Cet abonnement ne peut pas changer de forfait pour le moment.
+          over_limit: Vous utilisez plus que ce que permet ce forfait. Libérez d'abord
+            de l'espace, puis réessayez.
+          same_plan: Vous avez déjà ce forfait.
+        plan_change_saved: Enregistré. Votre forfait change au début de la prochaine
+          période.
+        plan_change_submit: Changer de forfait
+        plan_change_title: Changer de forfait
+        plan_change_view_invoice: Voir la facture
+        plan_change_when_legend: Quand le changement doit-il avoir lieu ?
+        plan_change_when_next: À partir de ma prochaine période (aucun frais maintenant)
+        plan_change_when_now: Maintenant (au prorata du reste de la période)
+        plan_change_withdraw: Garder mon forfait actuel
+        plan_change_withdrawn: Votre changement de forfait a été annulé.
         resume: Conserver mon abonnement
         resumed: Votre abonnement continuera.
         review_intro: Les conditions de cet abonnement ont changé. Acceptez-les et
@@ -2410,6 +2621,10 @@ fr:
     contacts:
       add: Ajouter un contact
     content:
+      block_picker:
+        create: Créer un nouveau bloc %{block}
+        create_for_page: Créer un nouveau bloc %{block} pour la page
+        icon: Icône %{block}
       blocks:
         accordion_block:
           answer: Answer
@@ -2463,6 +2678,13 @@ fr:
                 ici.
               title: Choisir depuis la bibliothèque
               view_uploads: Voir les téléversements et leurs statuts de révision
+        file_download_block:
+          description_help: Brève description (facultatif)
+          empty: Ce fichier n'est pas disponible.
+          label_help: Texte du lien (facultatif, par défaut le nom du fichier)
+          meta: "%{type}, %{size}"
+          open_inline: Ouvrir dans le navigateur au lieu de télécharger
+          select_prompt: Sélectionner un fichier
         hero:
           editor:
             background: Arrière-plan
@@ -2481,6 +2703,16 @@ fr:
           missing_url: Aucune URL d'iframe configurée.
           url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
             ou une autre intégration de confiance d'un espace communautaire.
+        image_gallery_block:
+          empty: Aucune image à afficher.
+          heading_help: Titre affiché au-dessus de la galerie (facultatif)
+          images: Images
+          images_help: Choisissez les blocs d'image dans l'ordre souhaité.
+          layout: Disposition
+          layouts:
+            grid: Grille
+            masonry: Mosaïque
+          lightbox: Ouvrir les images dans une visionneuse au clic
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2518,6 +2750,17 @@ fr:
           select_prompt: "— Sélectionner une zone de navigation —"
         people_block:
           empty: Aucune personne à afficher.
+        plan_button_block:
+          create_label: Créer un nouveau bloc %{type} pour la page
+          displays:
+            button: Bouton seulement
+            card: Carte avec prix
+          empty: Choisissez un forfait à proposer dans ce bloc.
+          plan_hint: Choisissez l'un des forfaits actifs de cette plateforme.
+        plan_catalog_block:
+          create_label: Créer un nouveau bloc %{type} pour la page
+          empty: Aucun forfait n'est offert pour le moment.
+          item_limit_hint: Nombre de forfaits à afficher, jusqu'à 24.
         posts_block:
           empty: Aucune publication à afficher.
         resource_block:
@@ -3387,6 +3630,13 @@ fr:
         no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
           demande pour voir des correspondances.
         suggested_matches: Correspondances suggérées
+    image_gallery:
+      close: Fermer
+      counter: "{current} sur {total}"
+      dialog_label: 'Galerie d''images : %{name}'
+      next: Image suivante
+      open_image: 'Ouvrir l''image %{current} sur %{total} : %{name}'
+      previous: Image précédente
     infrastructure:
       locations: Emplacements
     invitations:
@@ -4148,6 +4398,7 @@ fr:
       new:
         title: Nouvel élément de navigation pour %{name}
       route_names:
+        agreements: Accords
         billing_agreement_requirements: Conditions d’achat
         billing_allowances: Quotas et utilisation
         billing_credit_accounts: Comptes de crédit en magasin
@@ -4162,6 +4413,7 @@ fr:
         communities: Communautés
         content_blocks: Blocs de contenu
         events: Événements
+        federation_hub: Hub de fédération
         geography_continents: Continents
         geography_countries: Pays
         geography_maps: Cartes
@@ -4172,19 +4424,24 @@ fr:
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
+        hub: Hub
+        joatu_hub: Hub Joatu
         joatu_offers: Offres
         joatu_requests: Requêtes
         metrics_reports: Rapports de métriques
         navigation_areas: Zones de navigation
+        oauth_applications: Applications OAuth
         pages: Pages
         people: Personnes
         platform_connections: Connexions de plateforme
         platforms: Plateformes
+        posts: Publications
         reports: Signalements
         resource_permissions: Permissions des ressources
         roles: Rôles
         safety_cases: Revue de sécurité
         users: Utilisateurs
+        webhook_endpoints: Points de terminaison webhook
       visibility_strategies:
         authenticated: Utilisateurs connectés
         permission: Utilisateurs avec permission
@@ -4296,6 +4553,14 @@ fr:
           in the safety review queue
         title: New safety report requires review
       time_ago: il y a %{time}
+      trusted_domain_grant:
+        granted:
+          body: "%{person} a adhéré comme %{role} via %{domain}"
+          title: Le domaine de confiance %{domain} a accordé une adhésion
+        rate_limited:
+          body: La limite horaire de %{domain} a été atteinte. Les nouvelles personnes
+            restent en attente jusqu'à votre examen.
+          title: Le domaine de confiance %{domain} a atteint sa limite horaire
     oauth:
       applications:
         create:
@@ -4553,8 +4818,14 @@ fr:
         email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
           %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
           vous connecter avec le bon compte.'
+        email_missing: "%{provider} n'a pas fourni d'adresse e-mail. Rends une adresse
+          e-mail disponible pour cette application dans les paramètres de ton compte
+          %{provider}."
         failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
         success: Compte %{provider} connecté avec succès.
+        unverified_email_collision: Un compte existe déjà avec cet e-mail et %{provider}
+          n'a pas vérifié l'adresse. Connectez-vous avec votre méthode habituelle,
+          puis associez %{provider} depuis les Paramètres.
       destroy:
         cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
           car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
@@ -4740,6 +5011,77 @@ fr:
         subtitle: Ajouter un domaine pour %{platform_name}
         title: Nouveau domaine
       updated: Le domaine a été mis à jour avec succès.
+    platform_identity_providers:
+      create:
+        created: Le fournisseur de connexion a été ajouté.
+      destroy:
+        destroyed: Le fournisseur de connexion a été supprimé.
+      edit:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Modifier %{provider}
+      form:
+        cancel: Annuler
+        client_id_label: ID client
+        client_secret_hint: Stocké chiffré et jamais réaffiché.
+        client_secret_keep: Laisser vide pour conserver le secret actuel
+        client_secret_label: Secret client
+        create_btn: Ajouter le fournisseur
+        domains_hint: La connexion avec ce fournisseur ne fonctionne que sur les domaines
+          cochés. L'URL de rappel de chaque domaine doit aussi être enregistrée auprès
+          du fournisseur.
+        domains_label: Domaines autorisés
+        enabled_label: Activé
+        issuer_hint: OpenID Connect uniquement. L'URL https du fournisseur d'identité
+          (son document de découverte y est lu). Elle ne peut pas être modifiée après
+          l'ajout, et chaque émetteur ne peut être ajouté qu'une fois par plateforme.
+        issuer_label: URL de l'émetteur
+        label_hint: OpenID Connect uniquement. Affiché sur le bouton de connexion.
+          Par défaut, l'hôte de l'émetteur.
+        label_label: Libellé du bouton
+        scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
+        scopes_label: Portées
+        strategy_label: Fournisseur
+        trust_verified_email_hint: Désactivé par défaut. Si activé, un courriel que
+          cet émetteur marque comme vérifié peut connecter à un compte existant avec
+          cette adresse. À activer seulement pour les émetteurs qui vérifient les
+          adresses courriel.
+        trust_verified_email_label: Faire confiance aux courriels vérifiés de cet
+          émetteur
+        update_btn: Mettre à jour le fournisseur
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce fournisseur de connexion ?
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        env_description: Ces fournisseurs sont définis par des variables d'environnement
+          et s'appliquent aux domaines de cette plateforme indiqués ci-dessous. Les
+          secrets ne sont jamais affichés. Ajoute une ligne de fournisseur pour gérer
+          un domaine ici.
+        env_note: Les fournisseurs sans ligne ici utilisent les variables d'environnement
+          du serveur (par exemple GITHUB_CLIENT_ID).
+        env_serves: 'Dessert : %{domains}'
+        env_serves_none: Tous les domaines sont réclamés par une ligne de fournisseur,
+          l'environnement n'est donc pas utilisé.
+        env_title: Configurés par l'environnement du serveur
+        header_actions: Actions
+        header_client_id: ID client
+        header_provider: Fournisseur
+        header_secret: Secret client
+        header_status: Statut
+        new_btn: Ajouter un fournisseur
+        none: Aucun fournisseur de connexion n'est configuré pour cette plateforme.
+        secret_missing: Manquant
+        secret_set: Défini
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        table_aria: Fournisseurs de connexion
+        title: Fournisseurs de connexion
+      new:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Ajouter un fournisseur de connexion
+      update:
+        updated: Le fournisseur de connexion a été mis à jour.
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -4780,7 +5122,104 @@ fr:
         accepted: Accepté
         expired: Expiré
         pending: En attente
+    platform_trusted_domains:
+      created: Le domaine de confiance a été ajouté.
+      destroyed: Le domaine de confiance a été supprimé. Les comptes et adhésions
+        existants ne changent pas.
+      edit:
+        title: Modifier le domaine de confiance
+      events:
+        account_created: Compte créé
+        domain_added: Domaine ajouté
+        domain_removed: Domaine supprimé
+        domain_updated: Domaine modifié
+        grant_rate_limited: Limite horaire atteinte, attribution en attente d'examen
+        membership_granted: Adhésion accordée
+        membership_request_approved: Demande d'adhésion approuvée
+      form:
+        cancel: Annuler
+        domain_hint: Uniquement la partie après l'arobase, par exemple example.org.
+          Les fournisseurs publics comme gmail.com exigent la confirmation ci-dessous.
+        domain_label: Domaine de courriel
+        enabled_label: Activé
+        include_subdomains_label: Faire aussi confiance aux sous-domaines (par exemple
+          mail.example.org)
+        note_label: Note pour les autres stewards (facultatif)
+        public_domain_label: Je comprends qu'il s'agit d'un domaine de courriel public
+          et que n'importe qui peut y avoir une adresse
+        role_ceiling_label: Je comprends que les personnes ayant une adresse vérifiée
+          sur ce domaine reçoivent automatiquement ce rôle
+        role_hint: Rôles de communauté uniquement. Les rôles de plateforme et de steward
+          ne peuvent pas être accordés par domaine.
+        role_label: Rôle de communauté accordé
+        submit: Enregistrer le domaine de confiance
+      index:
+        activity_event: Événement
+        activity_heading: Activité récente
+        activity_none: Aucune activité pour le moment.
+        activity_person: Personne
+        activity_via: Par
+        activity_when: Quand
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce domaine de confiance ? Les comptes et adhésions
+          existants restent inchangés.
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        explanation: Les personnes qui se connectent avec un fournisseur vérifiant
+          leur courriel, ou qui confirment leur courriel après l'inscription, et dont
+          l'adresse se termine par un domaine de confiance obtiennent l'adhésion avec
+          le rôle choisi sans attendre d'examen. Chaque attribution est journalisée.
+        header_accounts: Comptes créés
+        header_actions: Actions
+        header_domain: Domaine
+        header_role: Rôle
+        header_status: Statut
+        header_subdomains: Sous-domaines
+        new_btn: Ajouter un domaine de confiance
+        no_domains: Aucun domaine de confiance pour le moment.
+        subdomains_no: Correspondance exacte seulement
+        subdomains_yes: Inclus
+        subtitle: Domaines de courriel de confiance de %{platform_name}
+        table_aria: Domaines de courriel de confiance
+        title: Domaines de confiance
+      new:
+        subtitle: Les personnes ayant une adresse vérifiée sur ce domaine reçoivent
+          le rôle choisi sur %{platform_name}.
+        title: Ajouter un domaine de confiance
+      updated: Le domaine de confiance a été mis à jour.
+      vias:
+        membership_request: Demande d'adhésion
+        oauth: Fournisseur de connexion
+        password_registration: Inscription par courriel
+        steward: Steward
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} ne peut pas utiliser ce type de contenu."
+          too_long: "%{slot} est trop long (la limite est de %{max} caractères par
+            langue)."
+        footer_above:
+          hint: Affiché au-dessus du pied de page du site, par exemple un avis de
+            bailleur de fonds ou une clause de non-responsabilité.
+          label: Au-dessus du pied de page
+        header_above:
+          hint: Affiché au-dessus de l'en-tête du site, par exemple une annonce.
+          label: Au-dessus de l'en-tête
+        hint: Blocs de contenu facultatifs affichés à des endroits fixes sur chaque
+          page de cette plateforme. Chaque langue est distincte; une langue manquante
+          revient à la langue par défaut. Laissez un emplacement vide pour conserver
+          la mise en page standard.
+        not_found_headlines:
+          hint: Un titre par ligne, jusqu'à 20. Un titre est choisi au hasard lorsqu'une
+            page est introuvable. Sans titre, le titre standard est utilisé.
+          label: Titres de la page 404
+        not_found_message:
+          hint: Affiché sous le titre lorsqu'une page est introuvable.
+          label: Message de la page 404
+        remove: Supprimer ce contenu
+        title: Contenu de l'en-tête, du pied de page et de la page 404
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
         allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
@@ -4799,12 +5238,49 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        csp_title: Sécurité / intégrations CSP
+        custom_css_hint: Réglage avancé. Les styles ajoutés ici se chargent après
+          le thème et ont priorité sur lui.
+        custom_css_title: CSS personnalisé
+        domains_after_save: Enregistrez d'abord la plateforme, puis gérez ici ses
+          domaines et ses fournisseurs de connexion.
+        domains_hint: Consultez les domaines sur lesquels cette plateforme répond
+          et les services de connexion utilisés.
         feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
           fonctionnalité sur cette plateforme.
         feature_gates_title: Contrôles de déploiement des fonctionnalités
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
+        integrations_empty: Aucune intégration n'est installée.
+        integrations_env_fallback: La variable d'environnement %{variable} est utilisée.
+          Une valeur enregistrée ici la remplace.
+        integrations_hint: Réglages des services connectés par des extensions. Chaque
+          plateforme garde ses propres valeurs.
+        integrations_secret_set: Une valeur est enregistrée. Laissez ce champ vide
+          pour la conserver.
+        quota_defaults_hint: Limite initiale pour chaque nouvelle personne, communauté
+          et pour cette plateforme. Laissez un champ vide pour utiliser la valeur
+          de la configuration de l'application. Modifier une valeur met aussi à jour
+          les quotas existants de cette plateforme ; les octrois de quota par propriétaire
+          ne sont pas touchés.
+        quota_defaults_title: Quotas par défaut
+        quota_kinds:
+          community: Communauté
+          person: Personne
+          platform: Plateforme
+        quota_types:
+          ai_translation_tokens: Jetons d'utilisation de LLM IA par mois
+          media_storage: Stockage
+        quota_use_default: Utiliser la valeur par défaut (%{size})
+        trusted_domains:
+          after_save: Enregistrez d'abord la plateforme, puis ajoutez ici les domaines
+            de courriel de confiance.
+          heading: Domaines de courriel de confiance
+          hint: Les adresses vérifiées de ces domaines adhèrent avec un rôle défini
+            sans attendre d'examen.
+          manage: Gérer les domaines de confiance
+          none: Aucun domaine de confiance.
       index:
         provision_new_platform: Provisionner une nouvelle plateforme
       new:
@@ -4820,6 +5296,15 @@ fr:
         title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
+      tabs:
+        access: Accès et confidentialité
+        appearance: Apparence
+        details: Détails
+        domains: Domaines et connexion
+        errors: erreurs dans cet onglet
+        features: Fonctionnalités et quotas
+        integrations: Intégrations
+        security: Sécurité
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
@@ -4938,17 +5423,92 @@ fr:
         usage: Utilisation
       updated: Dérogation de quota mise à jour.
     quotas:
+      errors:
+        not_local: doit être local à cette plateforme
       storage_limit_reached: Vous avez atteint votre limite de stockage; ce fichier
         ne peut pas être téléversé. Supprimez quelque chose ou demandez plus de stockage
         à un intendant.
       usage_meter:
         types:
-          ai_translation_tokens: Jetons de traduction IA
+          ai_translation_tokens: Jetons d'utilisation de LLM IA
           media_storage: Stockage
     rbac:
       nav:
         resource_permissions: Autorisations de ressources
         roles: Rôles
+    redirects:
+      created: La redirection a été ajoutée.
+      destroyed: La redirection a été supprimée.
+      edit:
+        subtitle: Redirection pour %{platform_name}
+        title: Modifier %{from_path}
+      form:
+        active_label: Active
+        cancel: Annuler
+        create_btn: Ajouter la redirection
+        from_path_hint: L'adresse utilisée par les visiteurs, commençant par une barre
+          oblique. La correspondance ignore la casse, la barre finale et la chaîne
+          de requête.
+        from_path_label: Ancien chemin
+        note_label: Note
+        preserve_query_label: Conserver la chaîne de requête lors de la redirection
+        status_label: Réponse
+        statuses:
+          s301: 301 Déplacée définitivement
+          s302: 302 Trouvée (temporaire)
+          s307: 307 Redirection temporaire
+          s308: 308 Redirection permanente
+          s410: 410 Disparue
+        to_path_hint: Un chemin de ce site commençant par une barre oblique, ou une
+          adresse http ou https complète. Laissez vide seulement pour 410 Disparue.
+        to_path_label: Nouveau chemin ou URL
+        update_btn: Mettre à jour la redirection
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer cette redirection ?
+        edit_btn: Modifier
+        gone_label: Disparue (aucune nouvelle adresse)
+        header_actions: Actions
+        header_from: Ancien chemin
+        header_hits: Visites
+        header_status: Statut
+        header_to: Nouveau chemin
+        import_btn: Importer
+        inactive_label: inactive
+        new_btn: Ajouter une redirection
+        no_redirects: Aucune redirection pour l'instant.
+        search_btn: Rechercher
+        search_label: Rechercher des redirections
+        search_placeholder: Rechercher par ancien chemin
+        subtitle: Anciennes adresses qui envoient les visiteurs vers un nouvel emplacement
+          sur %{platform_name}
+        table_aria: Redirections
+        title: Redirections
+      new:
+        subtitle: Ajouter une redirection pour %{platform_name}
+        title: Nouvelle redirection
+      new_import:
+        back: Retour aux redirections
+        import_btn: Importer
+        import_confirm: Importer ces redirections ?
+        preview_btn: Aperçu
+        report_applied: Importation terminée
+        report_created: Créées
+        report_error_line: 'Ligne %{row} (%{path}) : %{message}'
+        report_preview: Aperçu (rien n'a été enregistré)
+        report_skipped: Ignorées (existent déjà)
+        report_unchanged: Inchangées
+        report_updated: Mises à jour
+        rows_hint: 'Écrivez l''ancien chemin, le nouveau chemin et un statut facultatif
+          (301, 302, 307, 308 ou 410), séparés par des virgules. Les lignes commençant
+          par # sont ignorées. Faites d''abord un aperçu ; rien n''est enregistré
+          avant de choisir Importer.'
+        rows_label: Redirections, une par ligne
+        subtitle: Ajouter plusieurs redirections à %{platform_name} en une fois
+        title: Importer des redirections
+        upsert_label: Mettre aussi à jour les redirections existantes
+      updated: La redirection a été mise à jour.
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
       invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
@@ -6128,6 +6688,9 @@ fr:
               la description, la confidentialité et le fuseau horaire que vous choisissez.
             steward: Un compte de responsable est créé avec un accès de gestion complet
               à la nouvelle plateforme.
+  breadcrumbs:
+    home: Accueil
+    label: Fil d'Ariane
   community:
     create_failed: Échec de la création
     created: Créé
@@ -6391,6 +6954,11 @@ fr:
         submit: Soumettre
         terms_of_service:
           label: J'accepte les Conditions d'Utilisation
+        trusted_domains:
+          confirm_notice: Les adresses de %{domains} adhèrent après la confirmation
+            de votre courriel. Vérifiez votre boîte de réception une fois inscrit.
+          link: S'inscrire avec un courriel de confiance
+          notice: Avez-vous une adresse chez %{domains} ?
         view: Voir
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
@@ -6462,8 +7030,16 @@ fr:
       accepted: doit être accepté(e)
       account_mismatch: doit appartenir au même compte
       acknowledgement_required: doit être accepté avant que ce mode puisse être activé
+      add_on_cannot_have_grants: ne peut pas être donné à un complément
+      add_on_cannot_renew: un complément s'achète une fois, il ne se renouvelle pas
+      add_on_has_grants: un complément ne peut rien inclure en propre; mettez-le sur
+        un forfait
+      add_on_locked_by_orders: ne peut plus être modifié dès que des commandes incluent
+        ce forfait
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
+      already_pending: Une demande de remboursement est déjà en attente sur cette
+        commande.
       blank: doit être rempli(e)
       cannot_be_the_host: ne peut pas être la plateforme hôte
       confirmation: ne concorde pas avec %{attribute}
@@ -6471,6 +7047,7 @@ fr:
         demander un(e) autre
       country_not_supported: n'est pas disponible en %{country}
       currency_mismatch: doit correspondre à la devise de sa commande
+      denied_for_trusted_domain: ne peut pas être accordé par un domaine de courriel
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
@@ -6481,11 +7058,14 @@ fr:
       greater_than_refundable: dépasse ce qui peut encore être remboursé
       hosted_local_billing_not_agreed: exige d'abord les accords de facturation locale
         hébergée
+      immutable: ne peut pas être modifié après la création ; supprimez ce fournisseur
+        et ajoutez-en un nouveau
       immutable_after_processor_link: ne peut plus être modifié une fois le plan lié
         à un prix du processeur
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_characters: ne doit pas contenir d'espaces ni de caractères de contrôle
       invalid_pricing_tier: 'le niveau de tarification « %{tier} » ne figure pas parmi
         : %{allowed}'
       invalid_url: n'est pas une URL valide
@@ -6493,8 +7073,11 @@ fr:
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
+      must_be_a_primary_plan: doit être un forfait qui n'est pas une option
+      must_be_an_add_on: doit être une option
       no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
         de paiement
+      not_a_community_role: doit être un rôle de communauté
       not_a_number: n'est pas un nombre
       not_a_purchase_agreement: doit être une entente d’achat
       not_an_amount: doit être un nombre simple comme 45,00
@@ -6510,13 +7093,19 @@ fr:
         one: 'une erreur a empêché ce (cet ou cette) %{resource} d’être enregistré(e) :'
         other: "%{count} erreurs ont empêché ce (cet ou cette) %{resource} d’être
           enregistré(e) :"
+      not_the_buyer: ne peut être faite que par l'acheteur de la commande
+      nothing_to_give_back: Rien sur cette commande ne peut être remboursé ici.
       odd: doit être impair
       one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
       present: doit être vide
       price_inactive: est archivé chez le processeur de paiement
+      public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
+        confiance à toutes ses adresses
       recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
       required: doit exister
+      required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
+        de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
       too_large: est trop grand
       too_long:
@@ -6885,16 +7474,21 @@ fr:
       invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
+    account_navigation: Compte et outils
     billing: Facturation
     conversations: Conversations
+    footer_legal_navigation: Informations sur le site
+    footer_navigation: Liens de pied de page
     host_mgmt_tooltip: Gestion de l'hôte
     locale_switcher_tooltip: Changer de langue
     log_out: Se déconnecter
+    main_navigation: Principale
     my_profile: Mon profil
     notifications_tooltip: Notifications
     search_tooltip: Rechercher
     settings: Paramètres
     sign_in: Se connecter
+    skip_to_content: Aller au contenu principal
     toggle_navigation: Basculer la navigation
     user_nav_tooltip: Menu du compte
   navigation:
@@ -7067,8 +7661,10 @@ fr:
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
         hosting_plan: Forfait et utilisation
+        identity_providers: Fournisseurs de connexion
         platform_domains: Domaines
         quota_grants: Dérogations de quota
+        redirects: Redirections
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage
         title: Opérations de la plateforme
@@ -7109,6 +7705,8 @@ fr:
     continent: Continent
     country: Pays
     download_failed: Échec du téléchargement
+    download_held: Ce fichier est encore en cours de vérification de sécurité. Veuillez
+      réessayer bientôt.
     invitation: Invitation
     invitation_email: E-mail d'invitation
     member: Membre
@@ -7133,6 +7731,7 @@ fr:
     confirm_destroy: Confirmer la destruction
   search:
     button: Rechercher
+    label: Rechercher sur le site
     placeholder: Rechercher...
   seed_catalog:
     billing_agreements:

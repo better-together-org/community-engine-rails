@@ -24,7 +24,8 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
     { 'better_together/billing/plans' => :plan, 'better_together/billing/catalog' => :plan,
       'better_together/billing/orders' => :order, 'better_together/billing/sales' => :order,
       'better_together/billing/credit_accounts' => :account, 'better_together/billing/subscriptions' => :term,
-      'better_together/billing/subscribers' => :term, 'better_together/billing/events' => :event }
+      'better_together/billing/subscribers' => :term, 'better_together/billing/events' => :event,
+      'better_together/billing/sale_refund_requests' => :refund_request }
   end
   # What each list must show for the steward's own platform (proves the page is not simply empty).
   let(:listed) do
@@ -50,7 +51,11 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
                                                     code_digest: BetterTogether::Billing::Promotion.digest_for(SecureRandom.hex(10)))
     create(:better_together_billing_tax_registration, platform:, country_iso: 'CA')
     event = create(:better_together_billing_event, platform:, processing_status: 'failed', event_type: "fake.invoice.#{tag.downcase}")
-    { plan:, order:, offline:, promotion:, event:, term: seed_term(platform, plan),
+    # Only isolation matters here, so the order need not be one that can really be refunded.
+    refund_request = BetterTogether::Billing::RefundRequest.new(order:, platform_id: platform.id, requester: person, currency: order.currency,
+                                                                reason: 'other', amount_cents: 1000, details: "Refund #{tag}")
+    refund_request.save!(validate: false)
+    { plan:, order:, offline:, promotion:, event:, refund_request:, term: seed_term(platform, plan),
       account: credit.find_account(platform:, holder:, currency: 'USD'),
       requirement: create(:better_together_billing_agreement_requirement, platform:),
       report: BetterTogether::Metrics::BillingReport.create!(platform:, creator: person, filters: { 'owner' => 'all', 'interval' => 'month' }) }

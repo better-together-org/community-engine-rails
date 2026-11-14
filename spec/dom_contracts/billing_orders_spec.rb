@@ -25,7 +25,8 @@ RSpec.describe 'Billing orders DOM contract', :as_platform_manager, type: :reque
   it 'exposes the buyer\'s list' do
     get "/#{locale}/billing/orders"
 
-    expect_ids('billing-orders-page', 'billing-orders-table', dom_id.dom_id(order))
+    expect_ids('billing-orders-page', 'billing-orders-table', dom_id.dom_id(order), 'billing-orders-filters', 'billing-orders-filter-status',
+               'billing-orders-filter-year', 'billing-orders-filter-btn')
     expect(response.body).to include('billing-order-status-badge')
   end
 

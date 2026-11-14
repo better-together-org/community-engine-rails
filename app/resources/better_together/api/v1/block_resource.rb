@@ -76,7 +76,8 @@ module BetterTogether
                        :display_style, :item_limit, :show_view_more_link, :view_more_url,
                        :community_scope_id, :resource_ids,
                        :event_scope, :posts_scope,
-                       :checklist_id, :navigation_area_id,
+                       :checklist_id, :navigation_area_id, :upload_id, :open_inline,
+                       :image_ids, :lightbox,
                        :template_path,
                        :diagram_source, :theme, :auto_height,
                        :markdown_file_path, :auto_sync_from_file,
@@ -87,7 +88,8 @@ module BetterTogether
         # attribute() — JSONAPI-Resources 0.10.x checks `unless method_defined?` for
         # both, so our guards are preserved and unguarded delegation is never installed.
         %w[en fr es uk].each do |locale|
-          %i[markdown_source heading cta_text content attribution attribution_url alt_text caption diagram_source].each do |base|
+          %i[markdown_source heading cta_text content attribution attribution_url alt_text caption
+             diagram_source label description].each do |base|
             full = :"#{base}_#{locale}"
             define_method(full) { @model.respond_to?(full) ? @model.public_send(full) : nil }
             define_method(:"#{full}=") { |v| @model.public_send(:"#{full}=", v) if @model.respond_to?(:"#{full}=") }
@@ -149,7 +151,7 @@ module BetterTogether
             video_url caption aspect_ratio
             display_style item_limit show_view_more_link view_more_url
             community_scope_id resource_ids event_scope posts_scope
-            checklist_id navigation_area_id template_path
+            checklist_id navigation_area_id upload_id open_inline image_ids lightbox template_path
             diagram_source theme auto_height markdown_file_path auto_sync_from_file
             html_content cta_url
             markdown_source_en markdown_source_fr markdown_source_es markdown_source_uk
@@ -157,6 +159,7 @@ module BetterTogether
             cta_text_en cta_text_fr cta_text_es cta_text_uk
             content_en content_fr content_es content_uk
             attribution_en attribution_fr attribution_es attribution_uk
+            label_en label_fr label_es label_uk description_en description_fr description_es description_uk
             attribution_url_en attribution_url_fr attribution_url_es attribution_url_uk
             media_data media_filename background_image_data background_image_filename
             alt_text_en alt_text_fr alt_text_es alt_text_uk
@@ -193,14 +196,18 @@ module BetterTogether
       CommunitiesBlockResource    = BlockResource
       CssResource                 = BlockResource
       EventsBlockResource         = BlockResource
+      FileDownloadBlockResource   = BlockResource
       HeroResource                = BlockResource
       HtmlResource                = BlockResource
+      ImageGalleryBlockResource   = BlockResource
       IframeBlockResource         = BlockResource
       ImageResource               = BlockResource
       MarkdownResource            = BlockResource
       MermaidDiagramResource      = BlockResource
       NavigationAreaBlockResource = BlockResource
       PeopleBlockResource         = BlockResource
+      PlanButtonBlockResource     = BlockResource
+      PlanCatalogBlockResource    = BlockResource
       PostsBlockResource          = BlockResource
       QuoteBlockResource          = BlockResource
       RichTextResource            = BlockResource

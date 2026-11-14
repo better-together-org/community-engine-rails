@@ -19,6 +19,8 @@ module BetterTogether
       def show
         authorize @term
         @gate = agreement_gate if @term.periods.exists?(status: 'needs_agreement')
+        @plan_options = Subscriptions::ChangePlan.options(@term)
+        @method_options = Subscriptions::ChangeMethod.options(@term)
       end
 
       def cancel
@@ -35,6 +37,30 @@ module BetterTogether
         redirect_to billing_subscription_path(@term, locale: I18n.locale), alert: t('better_together.billing.subscriptions.cannot_resume')
       end
 
+      # Choose another plan from the next period.
+      def change_plan
+        authorize @term
+        plan = billing_owner.billing_plans.sold_by_platform.find(params[:plan_id])
+        params[:when] == 'now' ? change_now(plan) : change_next(plan)
+      rescue Subscriptions::ChangePlan::Refused => e
+        redirect_to show_path, alert: t("better_together.billing.subscriptions.plan_change_refused.#{e.code}")
+      end
+
+      def withdraw_plan_change
+        authorize @term, :change_plan?
+        Subscriptions::ChangePlan.withdraw(term: @term)
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_withdrawn')
+      end
+
+      # Later renewals are paid another way.
+      def change_method
+        authorize @term
+        Subscriptions::ChangeMethod.call(term: @term, method: params[:payment_method])
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.method_changed')
+      rescue Subscriptions::ChangeMethod::Refused => e
+        redirect_to show_path, alert: t("better_together.billing.subscriptions.method_change_refused.#{e.code}")
+      end
+
       # The payer accepts the agreements that changed; the renewal invoice is made at once.
       def accept_agreements
         authorize @term
@@ -49,6 +75,22 @@ module BetterTogether
       end
 
       private
+
+      def show_path = billing_subscription_path(@term, locale: I18n.locale)
+
+      # Moves now: a cheaper plan at once (with credit back), a dearer one once the invoice for the difference is paid.
+      def change_next(plan)
+        Subscriptions::ChangePlan.request(term: @term, plan:)
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_saved')
+      end
+
+      def change_now(plan)
+        outcome = Subscriptions::ChangePlan.now(term: @term, plan:)
+        amount = helpers.billing_amount(outcome.amount_cents, @term.currency)
+        key = { invoiced: 'plan_change_invoiced', credited: 'plan_change_credited' }.fetch(outcome.mode, 'plan_change_done')
+        target = outcome.mode == :invoiced ? billing_order_path(outcome.order, locale: I18n.locale) : show_path
+        redirect_to target, notice: t("better_together.billing.subscriptions.#{key}", amount:)
+      end
 
       def own_terms
         billing_owner.billing_subscription_terms.local

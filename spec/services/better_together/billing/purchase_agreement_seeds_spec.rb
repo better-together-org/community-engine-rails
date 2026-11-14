@@ -9,10 +9,11 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
   let!(:host_platform) { configure_host_platform }
   let(:other_platform) { create(:better_together_platform) }
 
-  it 'seeds the three purchase agreements as drafts with placeholder text, so nothing can be sold by accident' do
+  it 'seeds the purchase agreements as drafts with placeholder text, so nothing can be sold by accident' do
     agreements = described_class.call(host_platform)
 
-    expect(agreements.keys).to contain_exactly('subscription_agreement', 'one_time_purchase_agreement', 'offline_payment_terms')
+    expect(agreements.keys).to contain_exactly('subscription_agreement', 'one_time_purchase_agreement', 'offline_payment_terms',
+                                               'refund_policy')
     agreements.each_value do |agreement|
       expect(agreement).to have_attributes(lifecycle_state: 'draft', agreement_kind: 'transactional_agreement', protected: true,
                                            requires_reacceptance: true, required_for: 'none', platform_id: host_platform.id)
@@ -53,7 +54,8 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
     second = described_class.call(host_platform)
 
     expect(second.transform_values(&:lifecycle_state)).to eq(
-      'subscription_agreement' => 'active', 'one_time_purchase_agreement' => 'draft', 'offline_payment_terms' => 'draft'
+      'subscription_agreement' => 'active', 'one_time_purchase_agreement' => 'draft', 'offline_payment_terms' => 'draft',
+      'refund_policy' => 'draft'
     )
   end
 
@@ -72,8 +74,9 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
 
     expect(BetterTogether::Seed.find_by(identifier: 'billing_purchase_agreements'))
       .to have_attributes(type: 'BetterTogether::Seed', version: '1.0')
-    expect(described_class.data.fetch(:agreements).pluck(:identifier)).to contain_exactly('subscription_agreement',
-                                                                                          'one_time_purchase_agreement', 'offline_payment_terms')
+    expect(described_class.data.fetch(:agreements).pluck(:identifier)).to contain_exactly(
+      'subscription_agreement', 'one_time_purchase_agreement', 'offline_payment_terms', 'refund_policy'
+    )
     expect(described_class.data.fetch(:requirements).size).to eq(7)
     subscription = BetterTogether::Agreement.billing_record('subscription_agreement', platform: host_platform)
     expect(subscription.title(locale: :fr)).to eq("Accord d'abonnement")

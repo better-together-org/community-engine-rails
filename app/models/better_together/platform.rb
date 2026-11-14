@@ -10,6 +10,7 @@ module BetterTogether
     include PlatformFederationStatus
     include PlatformCspConfiguration
     include PlatformCssBlockManagement
+    include PlatformContentSlots
     include PlatformMembershipDisplay
     include Creatable
     include Identifier
@@ -91,7 +92,10 @@ module BetterTogether
     validate :oauth_issuer_url_ssrf_safe
     validate :require_publishing_agreement_for_public_network_visibility
 
+    validate :integration_settings_valid
+
     after_initialize :set_default_requires_invitation, if: :new_record?
+    after_commit :apply_quota_default_limits, on: :update, if: :saved_change_to_quota_default_limits?
     after_update :sync_host_community_privacy, if: -> { host? && saved_change_to_privacy? }
     before_validation :apply_platform_registry_defaults
 
@@ -107,7 +111,8 @@ module BetterTogether
                        software_variant network_visibility connection_bootstrap_state
                        federation_protocol oauth_issuer_url search_query_analytics_enabled
                        search_query_analytics_mode contributors_display_visibility
-                       feature_gate_rollouts] }
+                       feature_gate_rollouts],
+          quota_default_limits: {} }
       ] + super
     end
 
@@ -124,6 +129,12 @@ module BetterTogether
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
+    has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
+                                           dependent: :destroy
+    has_many :platform_trusted_domains, class_name: '::BetterTogether::PlatformTrustedDomain',
+                                        dependent: :destroy, inverse_of: :platform
+    has_many :trusted_domain_events, class_name: '::BetterTogether::TrustedDomainEvent', dependent: :delete_all
     has_many :outgoing_platform_connections,
              class_name: '::BetterTogether::PlatformConnection',
              foreign_key: :source_platform_id,
@@ -152,6 +163,7 @@ module BetterTogether
                                              dependent: :restrict_with_error
     has_many :billing_offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', dependent: :restrict_with_error
     has_many :billing_orders, class_name: 'BetterTogether::Billing::Order', dependent: :restrict_with_error
+    has_many :billing_refund_requests, class_name: 'BetterTogether::Billing::RefundRequest', dependent: :restrict_with_error
     has_many :billing_promotions, class_name: 'BetterTogether::Billing::Promotion', dependent: :restrict_with_error
     has_many :billing_subscription_terms, class_name: 'BetterTogether::Billing::SubscriptionTerm', dependent: :restrict_with_error
     has_many :billing_processor_settings, class_name: 'BetterTogether::Billing::ProcessorSetting',
@@ -240,6 +252,11 @@ module BetterTogether
       external?
     end
 
+    # The trusted domain that lets this verified email register without an invitation, or nil.
+    def trusted_domain_for(email, verified:)
+      BetterTogether::PlatformTrustedDomain.match(platform: self, email:, verified:)
+    end
+
     def membership_requests_enabled_for?(community = primary_community)
       allow_membership_requests? && (community&.membership_requests_enabled?(platform: self) || false)
     end
@@ -253,6 +270,59 @@ module BetterTogether
       normalized = value.respond_to?(:to_h) ? value.to_h : value
       sanitized = sanitize_feature_gate_rollouts(normalized)
       self.settings = settings.merge('feature_gate_rollouts' => sanitized)
+    end
+
+    # Per-platform override of the initial quota limits, { 'media_storage' =>
+    # { 'person' => bytes, ... } }. Blank/absent means "inherit" (see Quotas::Defaults).
+    def quota_default_limits
+      raw = settings&.fetch('quota_default_limits', {})
+      raw.is_a?(Hash) ? raw.deep_stringify_keys : {}
+    end
+
+    def quota_default_limits=(value)
+      normalized = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value
+      self.settings = settings.merge('quota_default_limits' => BetterTogether::Quotas::Defaults.sanitize_overrides(normalized))
+    end
+
+    # Values for settings declared through BetterTogether.register_platform_setting, as
+    # { 'group' => { 'field' => value } }. Unregistered keys are never stored.
+    def integration_settings
+      raw = settings&.fetch('integrations', {})
+      raw.is_a?(Hash) ? raw.deep_stringify_keys : {}
+    end
+
+    def integration_settings=(value)
+      incoming = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value.to_h
+      merged = integration_settings
+      incoming.each do |group, fields|
+        next unless fields.respond_to?(:each_pair)
+
+        fields.each_pair { |field, raw| assign_integration_value(merged, "#{group}.#{field}", raw) }
+      end
+      self.settings = settings.merge('integrations' => merged)
+    end
+
+    # The effective value: the stored one, else the host-only environment fallback, else the default.
+    def integration_setting(key)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return unless definition
+
+      stored = integration_settings.dig(definition.group, definition.field)
+      return stored unless stored.nil? || stored == ''
+
+      env_value = integration_setting_env_value(definition)
+      env_value.nil? ? definition.default : env_value
+    end
+
+    # :platform, :env or :default, so the form can say where the value comes from.
+    def integration_setting_source(key)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return :default unless definition
+
+      stored = integration_settings.dig(definition.group, definition.field)
+      return :platform unless stored.nil? || stored == ''
+
+      integration_setting_env_value(definition).nil? ? :default : :env
     end
 
     def feature_rollout_for(feature_key)
@@ -301,6 +371,31 @@ module BetterTogether
         .validate_each(self, :host_url, host_url)
     end
 
+    def assign_integration_value(target, key, raw)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return unless definition
+      # A blank secret field means "keep the stored secret".
+      return if definition.secret && raw.blank?
+
+      target[definition.group] = (target[definition.group] || {}).merge(definition.field => definition.cast(raw))
+    end
+
+    def integration_setting_env_value(definition)
+      return unless host? && definition.env_fallback.present?
+
+      ENV[definition.env_fallback].presence
+    end
+
+    def integration_settings_valid
+      integration_settings.each do |group, fields|
+        fields.each do |field, value|
+          definition = BetterTogether::PlatformSettingsRegistry.find("#{group}.#{field}")
+          message = definition&.error_for(value)
+          errors.add(:integration_settings, "#{definition.label || definition.key}: #{message}") if message
+        end
+      end
+    end
+
     def oauth_issuer_url_ssrf_safe
       return if oauth_issuer_url.blank?
 
@@ -318,6 +413,17 @@ module BetterTogether
         actor: Current.agent,
         target_network_visibility: network_visibility
       )
+    end
+
+    def saved_change_to_quota_default_limits?
+      before, after = saved_change_to_settings
+      (before || {})['quota_default_limits'] != (after || {})['quota_default_limits']
+    end
+
+    def apply_quota_default_limits
+      return unless local_hosted?
+
+      BetterTogether::Quotas::ApplyPlatformDefaultsJob.perform_later(id)
     end
 
     def sanitize_feature_gate_rollouts(value)

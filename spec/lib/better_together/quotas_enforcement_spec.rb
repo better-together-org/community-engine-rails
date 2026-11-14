@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::Quotas do
 
   let!(:host_platform) { configure_host_platform }
   let(:owner) { create(:better_together_person) }
-  let(:limit) { BetterTogether::Quotas::Types::MediaStorage::PERSON_DEFAULT_BYTES }
+  let(:limit) { BetterTogether::Quotas::Defaults.for(type: :media_storage, owner:) }
 
   def quota = BetterTogether::Quota.find_by!(owner:, quota_type: 'media_storage')
 

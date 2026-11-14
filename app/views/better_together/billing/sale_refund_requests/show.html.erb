@@ -1,0 +1,62 @@
+<% request = @refund_request %>
+<% order = request.order %>
+<% content_for :page_title do %>
+  <%= t('better_together.billing.refund_requests.show_title', number: order.number) %>
+<% end %>
+
+<div id="<%= dom_id(request, :show_page) %>" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_refund_requests_path(locale: I18n.locale), edit_path: nil %>
+  <h1 class="mb-3"><%= t('better_together.billing.refund_requests.show_title', number: order.number) %></h1>
+
+  <dl id="<%= dom_id(request, :details) %>" class="row">
+    <dt class="col-sm-3"><%= t('better_together.billing.orders.field_buyer') %></dt>
+    <dd class="col-sm-9"><%= request.requester.name %></dd>
+    <dt class="col-sm-3"><%= t('better_together.billing.refund_requests.reason_label') %></dt>
+    <dd class="col-sm-9"><%= t("better_together.billing.refund_requests.reasons.#{request.reason}") %></dd>
+    <dt class="col-sm-3"><%= t('better_together.billing.refund_requests.asked') %></dt>
+    <dd class="col-sm-9"><%= request.amount_cents ? billing_amount(request.amount_cents, request.currency) : t('better_together.billing.refund_requests.everything') %></dd>
+    <dt class="col-sm-3"><%= t('better_together.billing.orders.field_status') %></dt>
+    <dd id="<%= dom_id(request, :status) %>" class="col-sm-9"><%= t("better_together.billing.refund_requests.statuses.#{request.status}") %></dd>
+    <% if request.details.present? %>
+      <dt class="col-sm-3"><%= t('better_together.billing.refund_requests.details_label') %></dt>
+      <dd id="<%= dom_id(request, :buyer_details) %>" class="col-sm-9"><%= simple_format(h(request.details)) %></dd>
+    <% end %>
+    <dt class="col-sm-3"><%= t('better_together.billing.refund_requests.order_link') %></dt>
+    <dd class="col-sm-9"><%= link_to order.number, billing_sale_path(order, locale: I18n.locale) %></dd>
+  </dl>
+
+  <% if request.pending? %>
+    <% refundable = BetterTogether::Billing::RefundRequest.refundable_cents_for(order) %>
+    <%= form_with url: decide_billing_refund_request_path(request, locale: I18n.locale), method: :post, id: 'billing-refund-decision-form',
+                  class: 'card card-body' do %>
+      <p id="billing-refund-decision-refundable" class="mb-3">
+        <%= t('better_together.billing.refund_requests.refundable', amount: billing_amount(refundable, order.currency)) %>
+      </p>
+      <div class="mb-3">
+        <%= label_tag :approved_amount, t('better_together.billing.refund_requests.approved_label'), class: 'form-label' %>
+        <%= text_field_tag :approved_amount, nil, id: 'billing-refund-decision-amount', class: 'form-control', inputmode: 'decimal',
+                                                  autocomplete: 'off', 'aria-describedby': 'billing-refund-decision-amount-hint' %>
+        <div id="billing-refund-decision-amount-hint" class="form-text"><%= t('better_together.billing.refund_requests.approved_hint') %></div>
+      </div>
+      <div class="mb-3">
+        <%= label_tag :decision_note, t('better_together.billing.refund_requests.reply_label'), class: 'form-label' %>
+        <%= text_area_tag :decision_note, nil, id: 'billing-refund-decision-note', class: 'form-control', rows: 3,
+                                               maxlength: BetterTogether::Billing::RefundRequest::DETAILS_LIMIT %>
+        <div class="form-text"><%= t('better_together.billing.refund_requests.reply_hint') %></div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <%= button_tag t('better_together.billing.refund_requests.approve'), type: 'submit', name: 'outcome', value: 'approve',
+                                                                              id: 'billing-refund-approve-btn', class: 'btn btn-primary' %>
+        <%= button_tag t('better_together.billing.refund_requests.decline'), type: 'submit', name: 'outcome', value: 'decline',
+                                                                             id: 'billing-refund-decline-btn', class: 'btn btn-outline-danger' %>
+      </div>
+    <% end %>
+  <% else %>
+    <% if request.approved_amount_cents %>
+      <p id="<%= dom_id(request, :approved) %>"><%= t('better_together.billing.refund_requests.approved_amount', amount: billing_amount(request.approved_amount_cents, request.currency)) %></p>
+    <% end %>
+    <% if request.decision_note.present? %>
+      <blockquote id="<%= dom_id(request, :reply) %>" class="border-start ps-3"><%= request.decision_note %></blockquote>
+    <% end %>
+  <% end %>
+</div>

@@ -62,6 +62,7 @@ module BetterTogether
                                        dependent: :restrict_with_error
       has_many :documents, class_name: 'BetterTogether::Billing::OrderDocument', inverse_of: :order, dependent: :destroy
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
+      has_many :refund_requests, class_name: 'BetterTogether::Billing::RefundRequest', inverse_of: :order, dependent: :restrict_with_error
       has_many :offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :order,
                                   dependent: :restrict_with_error
 
@@ -94,6 +95,11 @@ module BetterTogether
       scope :expired_holds, -> { where(status: OPEN_STATUSES).where(arel_table[:expires_at].lt(Time.current)) }
       scope :bought_by, ->(person) { where(buyer_id: person.id) }
       scope :newest_first, -> { order(created_at: :desc) }
+      scope :with_status, ->(status) { where(status:) }
+      scope :created_in_year, lambda { |year|
+        start = Time.utc(year.to_i, 1, 1)
+        where(created_at: start...start.next_year)
+      }
 
       # The invoice or receipt PDF that is current, if one has been made.
       def invoice_document = documents.current.of_kind(:invoice).first
