@@ -2303,12 +2303,14 @@ en:
         people_block:
           empty: No people to display.
         plan_button_block:
+          create_label: Create a new %{type} block for the page
           displays:
             button: Button only
             card: Card with price
           empty: Choose a plan for this block to offer.
           plan_hint: Pick one of this platform's active plans.
         plan_catalog_block:
+          create_label: Create a new %{type} block for the page
           empty: No plans are on offer right now.
           item_limit_hint: How many plans to show, up to 24.
         posts_block:

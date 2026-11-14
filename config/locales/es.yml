@@ -2311,12 +2311,14 @@ es:
         people_block:
           empty: No hay personas para mostrar.
         plan_button_block:
+          create_label: Crear un nuevo bloque %{type} para la página
           displays:
             button: Solo el botón
             card: Tarjeta con precio
           empty: Elija un plan para ofrecer en este bloque.
           plan_hint: Elija uno de los planes activos de esta plataforma.
         plan_catalog_block:
+          create_label: Crear un nuevo bloque %{type} para la página
           empty: No hay planes disponibles por ahora.
           item_limit_hint: Cuántos planes mostrar, hasta 24.
         posts_block:

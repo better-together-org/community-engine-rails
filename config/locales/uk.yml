@@ -2287,12 +2287,14 @@ uk:
         people_block:
           empty: Немає людей для відображення.
         plan_button_block:
+          create_label: Створити новий блок %{type} для сторінки
           displays:
             button: Лише кнопка
             card: Картка з ціною
           empty: Виберіть план, який пропонуватиме цей блок.
           plan_hint: Виберіть один з активних планів цієї платформи.
         plan_catalog_block:
+          create_label: Створити новий блок %{type} для сторінки
           empty: Наразі немає доступних планів.
           item_limit_hint: Скільки планів показувати, до 24.
         posts_block:

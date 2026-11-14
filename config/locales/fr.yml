@@ -2358,12 +2358,14 @@ fr:
         people_block:
           empty: Aucune personne à afficher.
         plan_button_block:
+          create_label: Créer un nouveau bloc %{type} pour la page
           displays:
             button: Bouton seulement
             card: Carte avec prix
           empty: Choisissez un forfait à proposer dans ce bloc.
           plan_hint: Choisissez l'un des forfaits actifs de cette plateforme.
         plan_catalog_block:
+          create_label: Créer un nouveau bloc %{type} pour la page
           empty: Aucun forfait n'est offert pour le moment.
           item_limit_hint: Nombre de forfaits à afficher, jusqu'à 24.
         posts_block:
