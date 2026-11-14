@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::Entitlements::QuotaAllowances do
   include_context 'with entitlement fixtures'
+  include_context 'with billing switched on'
 
   def entitlement_with_allowance(beneficiary, amount, status: 'active')
     # Each on its own plan: a person can have one live entitlement per plan.
@@ -70,5 +71,28 @@ RSpec.describe BetterTogether::Billing::Entitlements::QuotaAllowances do
     quota = BetterTogether::Quota.find_by!(owner: buyer, quota_type: 'media_storage')
     expect(quota.limit).to eq(BetterTogether::Quotas::Type.find('media_storage').default_limit(buyer))
     expect(quota.quota_usages.sum(:amount)).to eq(100)
+  end
+
+  describe 'with billing switched off' do
+    around do |example|
+      previous = ENV.delete('BT_BILLING_ENABLED')
+      example.run
+    ensure
+      ENV['BT_BILLING_ENABLED'] = previous if previous
+    end
+
+    it 'answers without touching the entitlement tables' do
+      entitlement_with_allowance(buyer, 500)
+      community = create(:better_together_community)
+      queries = []
+      callback = ->(*, payload) { queries << payload[:sql] if payload[:sql].match?(/billing_entitlement/) }
+
+      ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') do
+        expect(described_class.amount(owner: buyer, type: 'media_storage')).to eq(0)
+        expect(described_class.pool?(owner: community, type: 'media_storage')).to be(false)
+      end
+
+      expect(queries).to be_empty
+    end
   end
 end

@@ -12,8 +12,9 @@
 # Processor webhooks. Not localized and not behind sign-in: the processor calls
 # this endpoint, and Pay verifies the request signature.
 #
-# Mounted only when a processor gem is installed (Pay draws its webhook routes
-# only then, so without one there is nothing to receive). And only the webhook
+# Mounted only when the host switched billing on (BT_BILLING_ENABLED) and a processor gem is installed
+# (Pay draws its webhook routes only then, so without one there is nothing to receive). With billing
+# off the address is not mounted at all and answers 404. And only the webhook
 # endpoints are reachable: Pay's engine also serves GET /payments/:id, an
 # unauthenticated page that calls the processor API with the host's key for a
 # caller-supplied id. Community Engine's checkout is processor-hosted and does not
@@ -23,7 +24,8 @@
 # The constraint sees the path AFTER the mount point: a mounted app's `path_info` is
 # rewritten to the remainder before constraints run, so '/pay/webhooks/stripe' arrives
 # as '/webhooks/stripe'. Testing for '/pay/webhooks/' here would 404 every webhook.
-if [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
+if BetterTogether::Billing::Configuration.requested? &&
+   [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
   mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/webhooks/') }
 end
 

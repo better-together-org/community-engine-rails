@@ -5,6 +5,7 @@ require 'rails_helper'
 # A one-time plan: given when the order is paid, taken away if it is refunded.
 RSpec.describe BetterTogether::Billing::Entitlements::Sync, 'for a paid order' do # rubocop:disable RSpec/SpecFilePathFormat, RSpec/DescribeMethod
   include_context 'with entitlement fixtures'
+  include_context 'with billing switched on'
 
   let(:once_plan) do
     create(:better_together_billing_plan, :one_time, processor: nil, processor_price_id: nil, processor_product_id: nil, amount_cents: 2000,
