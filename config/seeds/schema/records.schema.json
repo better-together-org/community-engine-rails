@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://communityengine.app/schemas/seed-packet/2.0/records.schema.json",
+  "title": "Seed packet record file (records/*.yml)",
+  "type": "object",
+  "required": ["version", "type", "records"],
+  "properties": {
+    "version": { "type": "string", "pattern": "^2\\.[0-9]+$" },
+    "type": { "$ref": "#/$defs/type_name" },
+    "records": { "type": "array", "items": { "$ref": "#/$defs/record" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "type_name": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "key": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,254}$" },
+    "locale": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$" },
+    "reference": {
+      "oneOf": [
+        { "type": "string", "pattern": "^[a-z][a-z0-9_]*:[^\\s].*$" },
+        {
+          "type": "object",
+          "required": ["type", "key"],
+          "properties": {
+            "type": { "$ref": "#/$defs/type_name" },
+            "key": { "$ref": "#/$defs/key" },
+            "scope": { "enum": ["packet", "platform"] }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "file": {
+      "type": "object",
+      "required": ["attachment", "blob", "filename", "content_type", "checksum"],
+      "properties": {
+        "attachment": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "blob": { "type": "string", "pattern": "^blobs/[0-9a-f]{64}$" },
+        "filename": { "type": "string", "minLength": 1, "pattern": "^[^/\\\\]+$" },
+        "content_type": { "type": "string", "pattern": "^[a-z0-9.+-]+/[A-Za-z0-9.+-]+$" },
+        "checksum": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "alt": { "type": "object" },
+        "license": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "required": ["key"],
+      "properties": {
+        "key": { "$ref": "#/$defs/key" },
+        "attributes": { "type": "object" },
+        "translations": {
+          "type": "object",
+          "patternProperties": { "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$": { "type": "object" } },
+          "additionalProperties": false
+        },
+        "refs": { "type": "object", "additionalProperties": { "$ref": "#/$defs/reference" } },
+        "files": { "type": "array", "items": { "$ref": "#/$defs/file" } },
+        "position": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  }
+}
