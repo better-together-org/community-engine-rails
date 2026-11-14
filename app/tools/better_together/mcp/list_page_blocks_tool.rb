@@ -73,7 +73,7 @@ module BetterTogether
       end
 
       # Returns a brief human-readable summary of the block's content
-      # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       def block_summary(block)
         case block
         when BetterTogether::Content::Markdown
@@ -112,7 +112,6 @@ module BetterTogether
           block.identifier.presence || block.block_name
         end
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
     end
   end
 end

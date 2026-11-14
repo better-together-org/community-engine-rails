@@ -19,7 +19,7 @@ class MyJob < BetterTogether::ApplicationJob
   end
 end
 
-# rubocop:todo RSpec/RepeatedExampleGroupDescription
+# rubocop:todo-next RSpec/RepeatedExampleGroupDescription
 RSpec.describe MyJob do # rubocop:todo RSpec/MultipleDescribes, RSpec/RepeatedExampleGroupDescription
   include ActiveJob::TestHelper
 
@@ -55,7 +55,6 @@ RSpec.describe MyJob do # rubocop:todo RSpec/MultipleDescribes, RSpec/RepeatedEx
     perform_enqueued_jobs { job }
   end
 end
-# rubocop:enable RSpec/RepeatedExampleGroupDescription
 
 # As of RSpec 3.4.0 we now have #have_enqueued_job
 # https://www.relishapp.com/rspec/rspec-rails/v/3-5/docs/matchers/have-enqueued-job-matcher

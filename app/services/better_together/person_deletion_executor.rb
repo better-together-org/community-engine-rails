@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Executes the mixed-policy GDPR deletion flow for reviewed account deletion requests.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PersonDeletionExecutor
     # Raised when the person is the only steward of their platform.
     class LastStewardError < StandardError; end
@@ -27,7 +27,7 @@ module BetterTogether
       @reviewer_notes = reviewer_notes
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def call
       raise LastStewardError, 'last platform steward cannot be deleted' if person.last_platform_steward?
 
@@ -57,11 +57,10 @@ module BetterTogether
       )
       raise
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def build_audit(inventory)
       BetterTogether::PersonPurgeAudit.create!(
         person:,
@@ -80,7 +79,6 @@ module BetterTogether
         execution_snapshot: { 'destroyed_entries' => [] }
       )
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def approve_request_if_needed!
       return unless person_deletion_request.pending?
@@ -91,7 +89,7 @@ module BetterTogether
       )
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def execute_inventory(inventory)
       processed = {}
       destroyed_entries = []
@@ -128,7 +126,6 @@ module BetterTogether
         anonymized_person_id: person.id.to_s
       }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def scrub_request_text!
       person_deletion_request.update!(
@@ -137,5 +134,4 @@ module BetterTogether
       )
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

@@ -33,7 +33,7 @@ module BetterTogether
     # Fallback to find resource by slug translations when not found in current locale
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_resource_instance # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # 1. Try translated slug lookup across locales to avoid DB-specific issues with friendly_id history
       @resource ||= find_by_translatable
@@ -68,7 +68,6 @@ module BetterTogether
       instance_variable_set("@#{resource_name}", @resource)
       @resource
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 

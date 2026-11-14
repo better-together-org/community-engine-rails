@@ -296,9 +296,8 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
       before do
         # Mock the strategy and OAuth2 token behavior
-        # rubocop:todo RSpec/VerifiedDoubles
+        # rubocop:todo-next RSpec/VerifiedDoubles
         allow(integration).to receive_messages(strategy: double('strategy', client: double('client')), current_token: double('token'))
-        # rubocop:enable RSpec/VerifiedDoubles
         allow(integration.current_token).to receive(:refresh!).and_return(mock_oauth_token)
       end
 

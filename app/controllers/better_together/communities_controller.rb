@@ -10,9 +10,8 @@ module BetterTogether
 
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/ClassLength
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/ClassLength
     prepend_before_action :set_community_for_privacy_check, only: [:show]
     prepend_before_action :process_community_invitation_token, only: %i[show]

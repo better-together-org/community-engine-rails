@@ -33,7 +33,7 @@ module BetterTogether
         nil
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
+      # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
       def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil,
                              identity_platform: nil, trust_verified_email: false,
                              membership_platform: nil)
@@ -112,14 +112,13 @@ module BetterTogether
         # This handles both: matched by email OR currently signed-in user
         link_integration_to_user(person_platform_integration, user)
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
 
       # Finds existing user or returns nil for new OAuth sign-in
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @param current_user [User, nil] the currently signed-in user
       # @return [User, nil] existing user or nil
       # @raise [ArgumentError] if OAuth email belongs to different user than current_user
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
       def self.find_or_initialize_user(auth, current_user, membership_platform = nil)
         oauth_email = auth.dig('info', 'email') || auth.dig(:info, :email)
 
@@ -151,7 +150,6 @@ module BetterTogether
         scope = scope.where(platform_id: membership_platform.id) if membership_platform
         scope.first
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
       private_class_method :find_or_initialize_user
 
       # Sets up a new user from OAuth data

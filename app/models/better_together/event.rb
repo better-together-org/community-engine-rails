@@ -2,7 +2,7 @@
 
 module BetterTogether
   # A Schedulable Event
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class Event < PlatformRecord
     include Attachments::Images
     include Base64ImageInput
@@ -546,5 +546,4 @@ module BetterTogether
       errors.add(:base, 'One or more recurrence exception dates could not be understood')
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
