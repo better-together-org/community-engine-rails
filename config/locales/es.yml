@@ -1144,6 +1144,23 @@ es:
       preferences: Preferencias de cookies
       save: Guardar mis opciones
       saved: Sus opciones de privacidad se guardaron.
+      settings:
+        analytics_help: Ayudan a la plataforma a entender cómo se usa el sitio.
+        device_note: Tus elecciones siguen a tu cuenta y se aplican cada vez que inicias
+          sesión.
+        essential: Cookies esenciales (siempre activas)
+        essential_help: Necesarias para iniciar sesión, mantener el sitio seguro y
+          recordar estas elecciones.
+        marketing_help: Miden y personalizan la comunicación.
+        none: Esta plataforma no usa actualmente cookies opcionales, así que no hay
+          nada que elegir. Las cookies esenciales siempre están activas.
+        not_decided: Aún no has elegido. Mientras tanto solo se usan cookies esenciales.
+        not_stored: Guardado en este dispositivo, pero no pudimos guardarlo en tu
+          cuenta. Inténtalo de nuevo.
+        outdated: Esta plataforma cambió los consentimientos que solicita desde tu
+          última elección. Elige de nuevo.
+        saved_on: Tus elecciones se guardaron el %{date}.
+        withdraw_all: Retirar todo el consentimiento opcional
       title: Sus opciones de privacidad
     contact_details:
       contact_information: Información de contacto
@@ -1455,6 +1472,57 @@ es:
       sidebar:
         conversations: Conversaciones
         new: Nuevo
+    cookie_policy:
+      categories:
+        analytics:
+          description: Nos ayudan a entender cómo se usa la plataforma para mejorarla.
+          title: Cookies de análisis
+        marketing:
+          description: Miden y personalizan la comunicación.
+          title: Cookies de marketing
+      choices_optional: Las cookies opcionales están desactivadas hasta que las aceptes.
+        Puedes cambiar o retirar tu elección en cualquier momento con el botón de
+        preferencias de cookies o, al iniciar sesión, desde tu configuración.
+      columns:
+        duration: Duración
+        name: Nombre de la cookie
+        purpose: Finalidad
+        type: Tipo
+      core:
+        consent:
+          cookies:
+            consent: Guarda tus elecciones de consentimiento (análisis y marketing)
+              y la versión de la política que respondiste
+          description: Recuerdan tus elecciones para no preguntarte en cada visita.
+          title: Tus elecciones de cookies
+        durations:
+          consent_days: 180 días, renovados en cada visita
+          session: Sesión
+          session_inactivity: Sesión (6 horas de inactividad)
+          two_weeks: 2 semanas
+        session:
+          cookies:
+            csrf: Token de seguridad que protege contra ataques de falsificación de
+              solicitudes entre sitios (CSRF)
+            remember: Te mantiene conectado cuando eliges «Recordarme» al iniciar
+              sesión
+            session: Mantiene tu sesión y guarda datos temporales como tokens de invitación,
+              idioma y ajustes de depuración
+          description: Mantienen tu sesión iniciada y protegen la plataforma contra
+            solicitudes falsificadas.
+          title: Inicio de sesión y seguridad
+      last_updated: 'Última actualización:'
+      manage_choices: Gestiona tus elecciones de cookies en tu configuración
+      optional_intro: Las siguientes cookies opcionales solo se usan si las aceptas.
+        Puedes cambiar de opinión en cualquier momento con el botón de preferencias
+        de cookies o, al iniciar sesión, desde tu configuración.
+      party:
+        first: Propia
+        third: De terceros
+      privacy_link: Información de privacidad de %{provider}
+      third_party_listed: Esta plataforma usa los servicios de terceros indicados
+        abajo. Solo establecen cookies o almacenamiento del navegador como se describe.
+      version: versión de la política %{version}
     default_member_name: Miembro
     device_permissions:
       location:
@@ -4240,6 +4308,10 @@ es:
           description: Gestione usuarios que ha bloqueado para que no interactúen
             con usted.
           title: Personas Bloqueadas
+        cookie_consent:
+          description: Elige qué cookies opcionales puede usar esta plataforma. Tu
+            elección se guarda en tu cuenta.
+          title: Consentimiento de cookies
         developer:
           apps:
             client_id_label: ID de Cliente
@@ -4361,6 +4433,7 @@ es:
         tabs:
           account: Cuenta
           blocked_people: Personas Bloqueadas
+          cookie_consent: Consentimiento de cookies
           developer: Desarrollador
           device_permissions: Permisos del Dispositivo
           integrations: Integraciones

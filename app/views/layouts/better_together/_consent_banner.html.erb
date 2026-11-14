@@ -5,7 +5,10 @@
            class="bt-consent"
            aria-labelledby="consent-banner-title"
            data-controller="better_together--consent"
-           data-better_together--consent-reload-value="<%= consent_gated_snippets?(host_platform) %>">
+           data-better_together--consent-reload-value="<%= consent_gated_snippets?(host_platform) %>"
+           data-better_together--consent-policy-version-value="<%= consent_policy_version %>"
+           data-better_together--consent-days-value="<%= BetterTogether::Consent::COOKIE_DAYS %>"
+           <% if user_signed_in? %>data-better_together--consent-persist-url-value="<%= better_together.settings_cookie_consent_path(locale: I18n.locale) %>"<% end %>>
     <div id="consent-banner" class="bt-consent__banner card shadow" data-better_together--consent-target="banner" <%= 'hidden' if decided %>>
       <div class="card-body">
         <h2 id="consent-banner-title" class="h5"><%= t('better_together.consent.title') %></h2>
@@ -17,7 +20,7 @@
           <fieldset>
             <legend class="h6"><%= t('better_together.consent.choices_legend') %></legend>
             <p class="small text-muted"><%= t('better_together.consent.essential_note') %></p>
-            <% %w[analytics marketing].each do |category| %>
+            <% consent_categories_in_use.each do |category| %>
               <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="consent-<%= category %>"
                        data-better_together--consent-target="<%= category %>" <%= 'checked' if consent_granted?(category) %>>

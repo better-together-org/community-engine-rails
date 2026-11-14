@@ -1145,6 +1145,23 @@ fr:
       preferences: Préférences des cookies
       save: Enregistrer mes choix
       saved: Vos choix de confidentialité ont été enregistrés.
+      settings:
+        analytics_help: Aident la plateforme à comprendre comment le site est utilisé.
+        device_note: Vos choix suivent votre compte et sont appliqués à chaque connexion.
+        essential: Témoins essentiels (toujours actifs)
+        essential_help: Nécessaires pour vous connecter, sécuriser le site et mémoriser
+          ces choix.
+        marketing_help: Mesurent et personnalisent la communication.
+        none: 'Cette plateforme n''utilise actuellement aucun témoin facultatif :
+          il n''y a rien à choisir. Les témoins essentiels sont toujours actifs.'
+        not_decided: Vous n'avez pas encore fait de choix. D'ici là, seuls les témoins
+          essentiels sont utilisés.
+        not_stored: Enregistré sur cet appareil, mais impossible de l'enregistrer
+          sur votre compte. Veuillez réessayer.
+        outdated: Cette plateforme a modifié les consentements demandés depuis votre
+          dernier choix. Veuillez choisir à nouveau.
+        saved_on: Vos choix ont été enregistrés le %{date}.
+        withdraw_all: Retirer tous les consentements facultatifs
       title: Vos choix de confidentialité
     contact_details:
       contact_information: Informations de contact
@@ -1463,6 +1480,60 @@ fr:
       sidebar:
         conversations: Conversations
         new: Nouveau
+    cookie_policy:
+      categories:
+        analytics:
+          description: Ils nous aident à comprendre comment la plateforme est utilisée
+            afin de l'améliorer.
+          title: Témoins d'analyse
+        marketing:
+          description: Ils mesurent et personnalisent la communication.
+          title: Témoins de marketing
+      choices_optional: Les témoins facultatifs sont désactivés tant que vous ne les
+        acceptez pas. Vous pouvez modifier ou retirer votre choix à tout moment avec
+        le bouton des préférences de témoins ou, une fois connecté, dans vos paramètres.
+      columns:
+        duration: Durée
+        name: Nom du témoin
+        purpose: Objet
+        type: Type
+      core:
+        consent:
+          cookies:
+            consent: Conserve vos choix de consentement (analyse et marketing) et
+              la version de la politique à laquelle vous avez répondu
+          description: Mémorisent vos choix pour que nous ne vous les redemandions
+            pas à chaque visite.
+          title: Vos choix de témoins
+        durations:
+          consent_days: 180 jours, renouvelés à chaque visite
+          session: Session
+          session_inactivity: Session (6 heures d'inactivité)
+          two_weeks: 2 semaines
+        session:
+          cookies:
+            csrf: Jeton de sécurité qui protège contre les attaques de type falsification
+              de requête intersite (CSRF)
+            remember: Vous garde connecté lorsque vous choisissez « Se souvenir de
+              moi » à la connexion
+            session: Maintient votre session de connexion et conserve des données
+              temporaires comme les jetons d'invitation, la langue et les réglages
+              de débogage
+          description: Ils vous gardent connecté et protègent la plateforme contre
+            les requêtes falsifiées.
+          title: Connexion et sécurité
+      last_updated: 'Dernière mise à jour :'
+      manage_choices: Gérer vos choix de témoins dans vos paramètres
+      optional_intro: Les témoins facultatifs suivants ne sont utilisés que si vous
+        les acceptez. Vous pouvez changer d'avis à tout moment avec le bouton des
+        préférences de témoins ou, une fois connecté, dans vos paramètres.
+      party:
+        first: Interne
+        third: Tiers
+      privacy_link: Informations sur la confidentialité de %{provider}
+      third_party_listed: Cette plateforme utilise les services tiers énumérés ci-dessous.
+        Ils ne déposent de témoins ou de stockage de navigateur que de la façon décrite.
+      version: version de la politique %{version}
     default_member_name: Membre
     device_permissions:
       location:
@@ -4274,6 +4345,10 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        cookie_consent:
+          description: Choisissez les témoins facultatifs que cette plateforme peut
+            utiliser. Votre choix est enregistré dans votre compte.
+          title: Consentement aux témoins
         developer:
           apps:
             client_id_label: ID Client
@@ -4397,6 +4472,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          cookie_consent: Consentement aux témoins
           developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations

@@ -53,6 +53,10 @@
           <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
           <%= t('.tabs.preferences') %>
         </button>
+        <button class="nav-link text-start" id="cookie-consent-tab" data-bs-toggle="pill" data-bs-target="#cookie-consent" type="button" role="tab" aria-controls="cookie-consent" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-cookie-bite me-2" aria-hidden="true"></i>
+          <%= t('.tabs.cookie_consent') %>
+        </button>
         <button class="nav-link text-start" id="my-data-tab" data-bs-toggle="pill" data-bs-target="#my-data" type="button" role="tab" aria-controls="my-data" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
           <%= t('.tabs.my_data') %>
@@ -218,6 +222,21 @@
 
             <!-- Self-contained preference fields -->
             <%= render 'better_together/people/preferences_self_contained', person: current_user.person %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cookie Consent Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="cookie-consent" role="tabpanel" aria-labelledby="cookie-consent-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-cookie-bite me-2" aria-hidden="true"></i>
+              <%= t('.cookie_consent.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.cookie_consent.description') %></p>
+
+            <%= render 'better_together/settings/cookie_consent', person: current_user.person %>
           </div>
         </div>
       </div>

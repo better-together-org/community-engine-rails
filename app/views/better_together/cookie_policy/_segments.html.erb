@@ -1,0 +1,38 @@
+<%# Renders registered cookie policy segments for one group of categories. %>
+<%# locals: (segments:, heading_level: 3, prefix: 'cookie-policy') %>
+<% segments.each do |segment| %>
+  <section id="<%= prefix %>-segment-<%= segment.key.to_s.dasherize %>" class="mb-4">
+    <%= content_tag("h#{heading_level}", segment.title, id: "#{prefix}-segment-#{segment.key.to_s.dasherize}-title") %>
+    <% if segment.description.present? %><p><%= segment.description %></p><% end %>
+    <% if segment.cookies.any? %>
+      <div class="table-responsive my-3">
+        <table class="table table-bordered" aria-labelledby="<%= prefix %>-segment-<%= segment.key.to_s.dasherize %>-title">
+          <thead>
+            <tr>
+              <th scope="col"><%= t('better_together.cookie_policy.columns.name') %></th>
+              <th scope="col"><%= t('better_together.cookie_policy.columns.purpose') %></th>
+              <th scope="col"><%= t('better_together.cookie_policy.columns.type') %></th>
+              <th scope="col"><%= t('better_together.cookie_policy.columns.duration') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% segment.cookies.each do |cookie| %>
+              <tr>
+                <td><code><%= cookie.name %></code></td>
+                <td><%= cookie.purpose %></td>
+                <td>
+                  <%= cookie.third_party? ? t('better_together.cookie_policy.party.third') : t('better_together.cookie_policy.party.first') %>
+                  <% if cookie.provider.present? %><br><span class="text-muted small"><%= cookie.provider %></span><% end %>
+                </td>
+                <td><%= cookie.duration %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+    <% if segment.privacy_url.present? %>
+      <p><%= link_to t('better_together.cookie_policy.privacy_link', provider: segment.title), segment.privacy_url, target: '_blank', rel: 'noopener noreferrer' %></p>
+    <% end %>
+  </section>
+<% end %>
