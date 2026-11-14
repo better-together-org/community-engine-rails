@@ -97,7 +97,8 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportsController, :as_platfo
     end
 
     it 'enqueues TrackDownloadJob when file is attached' do
-      expect(BetterTogether::Metrics::TrackDownloadJob).to have_received(:perform_later)
+      # The report is a Struct fake that ActiveJob cannot serialize, so the job class must stay stubbed.
+      expect(BetterTogether::Metrics::TrackDownloadJob).to have_received(:perform_later) # rubocop:todo RSpecRails/ReceivePerformLater
         .with(fake_report, 'report.csv', 'text/csv', kind_of(Integer), I18n.locale.to_s, kind_of(String), true)
     end
 
