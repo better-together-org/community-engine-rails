@@ -11,6 +11,9 @@ module BetterTogether
     def index
       authorize @platform.platform_trusted_domains.build
       @trusted_domains = @platform.platform_trusted_domains.includes(:role).order(:domain)
+      @account_counts = TrustedDomainEvent.where(platform: @platform, event_type: 'account_created')
+                                          .group(:platform_trusted_domain_id).count
+      @recent_events = @platform.trusted_domain_events.includes(:subject, :actor).newest_first.limit(20)
     end
 
     def new

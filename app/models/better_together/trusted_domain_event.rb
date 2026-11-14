@@ -6,7 +6,7 @@ module BetterTogether
   class TrustedDomainEvent < ApplicationRecord
     EVENT_TYPES = %w[
       domain_added domain_updated domain_removed
-      account_created membership_granted membership_request_approved
+      account_created membership_granted membership_request_approved grant_rate_limited
     ].freeze
     VIAS = %w[oauth password_registration membership_request steward].freeze
 

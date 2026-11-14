@@ -25,6 +25,7 @@
             <th scope="col"><%= t('.header_domain') %></th>
             <th scope="col"><%= t('.header_role') %></th>
             <th scope="col"><%= t('.header_subdomains') %></th>
+            <th scope="col"><%= t('.header_accounts') %></th>
             <th scope="col"><%= t('.header_status') %></th>
             <th scope="col"><span class="visually-hidden"><%= t('.header_actions') %></span></th>
           </tr>
@@ -35,6 +36,7 @@
               <td><code><%= trusted_domain.domain %></code></td>
               <td><%= trusted_domain.role&.name %></td>
               <td><%= trusted_domain.include_subdomains? ? t('.subdomains_yes') : t('.subdomains_no') %></td>
+              <td><%= @account_counts.fetch(trusted_domain.id, 0) %></td>
               <td><%= trusted_domain.enabled? ? t('.enabled_label') : t('.disabled_label') %></td>
               <td class="text-end">
                 <div id="<%= dom_id(trusted_domain, :actions) %>" class="btn-group btn-group-sm" role="group">
@@ -53,6 +55,38 @@
   <% else %>
     <div id="no-trusted-domains" class="alert alert-secondary"><%= t('.no_domains') %></div>
   <% end %>
+
+  <section id="trusted-domain-activity" class="mt-4" aria-labelledby="trusted-domain-activity-heading">
+    <h2 id="trusted-domain-activity-heading" class="h5"><%= t('.activity_heading') %></h2>
+    <% if @recent_events.any? %>
+      <div class="table-responsive">
+        <table id="trusted-domain-activity-table" class="table table-sm" aria-label="<%= t('.activity_heading') %>">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('.activity_when') %></th>
+              <th scope="col"><%= t('.activity_event') %></th>
+              <th scope="col"><%= t('.header_domain') %></th>
+              <th scope="col"><%= t('.activity_person') %></th>
+              <th scope="col"><%= t('.activity_via') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_events.each do |event| %>
+              <tr id="<%= dom_id(event) %>">
+                <td><%= l(event.created_at, format: :short) %></td>
+                <td><%= t("better_together.platform_trusted_domains.events.#{event.event_type}") %></td>
+                <td><code><%= event.domain %></code></td>
+                <td><%= (event.subject || event.actor)&.name %></td>
+                <td><%= event.via.present? ? t("better_together.platform_trusted_domains.vias.#{event.via}") : '' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p id="no-trusted-domain-activity" class="text-muted"><%= t('.activity_none') %></p>
+    <% end %>
+  </section>
 
   <div class="mt-3">
     <%= link_to t('.back_to_platform'), platform_path(@platform), class: 'btn btn-outline-secondary' %>

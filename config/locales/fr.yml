@@ -2937,6 +2937,14 @@ fr:
           in the safety review queue
         title: New safety report requires review
       time_ago: il y a %{time}
+      trusted_domain_grant:
+        granted:
+          body: "%{person} a adhéré comme %{role} via %{domain}"
+          title: Le domaine de confiance %{domain} a accordé une adhésion
+        rate_limited:
+          body: La limite horaire de %{domain} a été atteinte. Les nouvelles personnes
+            restent en attente jusqu'à votre examen.
+          title: Le domaine de confiance %{domain} a atteint sa limite horaire
     oauth:
       applications:
         create:
@@ -3504,6 +3512,14 @@ fr:
         existants ne changent pas.
       edit:
         title: Modifier le domaine de confiance
+      events:
+        account_created: Compte créé
+        domain_added: Domaine ajouté
+        domain_removed: Domaine supprimé
+        domain_updated: Domaine modifié
+        grant_rate_limited: Limite horaire atteinte, attribution en attente d'examen
+        membership_granted: Adhésion accordée
+        membership_request_approved: Demande d'adhésion approuvée
       form:
         cancel: Annuler
         domain_hint: Uniquement la partie après l'arobase, par exemple example.org.
@@ -3522,6 +3538,12 @@ fr:
         role_label: Rôle de communauté accordé
         submit: Enregistrer le domaine de confiance
       index:
+        activity_event: Événement
+        activity_heading: Activité récente
+        activity_none: Aucune activité pour le moment.
+        activity_person: Personne
+        activity_via: Par
+        activity_when: Quand
         back_to_platform: Retour à la plateforme
         delete_btn: Supprimer
         delete_confirm: Supprimer ce domaine de confiance ? Les comptes et adhésions
@@ -3533,6 +3555,7 @@ fr:
           leur courriel, ou qui confirment leur courriel après l'inscription, et dont
           l'adresse se termine par un domaine de confiance obtiennent l'adhésion avec
           le rôle choisi sans attendre d'examen. Chaque attribution est journalisée.
+        header_accounts: Comptes créés
         header_actions: Actions
         header_domain: Domaine
         header_role: Rôle
@@ -3550,6 +3573,11 @@ fr:
           le rôle choisi sur %{platform_name}.
         title: Ajouter un domaine de confiance
       updated: Le domaine de confiance a été mis à jour.
+      vias:
+        membership_request: Demande d'adhésion
+        oauth: Fournisseur de connexion
+        password_registration: Inscription par courriel
+        steward: Steward
     platforms:
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
