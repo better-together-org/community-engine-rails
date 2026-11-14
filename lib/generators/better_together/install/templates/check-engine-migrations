@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Fails when engine migrations were copied into the host (gem mode runs them in place).
+set -euo pipefail
+shopt -s nullglob
+copied=(db/migrate/*.better_together.rb)
+if [ "${#copied[@]}" -gt 0 ]; then
+  echo "Copied engine migrations found (${#copied[@]}). Remove them or install with --migrations=install:" >&2
+  printf '  %s\n' "${copied[@]}" >&2
+  exit 1
+fi
+echo "No copied engine migrations."
