@@ -521,13 +521,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
-                member do
-                  put :resend
-                end
+                put :resend, on: :member
               end
               resources :storage_configurations, except: %i[show] do
                 member do
                   put :activate
+                  post :test_connection
                 end
               end
               resources :platform_domains, except: %i[show]

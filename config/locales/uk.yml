@@ -3592,6 +3592,16 @@ uk:
         title: Зареєструвати зовнішню платформу
       show:
         new_invitation: Нове запрошення
+      storage_tab:
+        bucket: Контейнер
+        description: Де зберігаються файли, завантажені на цю платформу. Коли активна
+          конфігурація сховища, файли зберігаються в окремому контейнері платформи.
+        health: Стан з’єднання
+        manage: Керувати конфігураціями сховища
+        service_type: Тип сервісу
+        shared_default: Типове налаштування інсталяції
+        source: Активна конфігурація
+        title: Сховище файлів
       tabs:
         access: Доступ і приватність
         appearance: Вигляд
@@ -3601,6 +3611,7 @@ uk:
         features: Функції та квоти
         integrations: Інтеграції
         security: Безпека
+        storage: Сховище
     posts:
       authors: Автори
       back_to_posts: Назад до постів
@@ -4374,15 +4385,15 @@ uk:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "«%{name}» тепер сховище файлів цієї платформи. Нові
+        завантаження використовують його одразу; наявні файли залишаються на місці."
+      activated_with_restart: "«%{name}» активовано. Нові завантаження використовують
+        її одразу; інші процеси підхоплять її приблизно за 30 секунд."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'З’єднання з «%{name}» не вдалося: %{message}'
+      connection_ok: З’єднання з «%{name}» успішне.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -4391,15 +4402,21 @@ uk:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Помилка
+        ok: Справне
+        unknown: Не перевірено
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: Активувати цю конфігурацію? Нові завантаження використовують
+          її одразу, а інші процеси підхоплять її приблизно за 30 секунд. Наявні файли
+          залишаються на старому сховищі; міграція блобів виконується окремо вручну.
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
-        activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+        activation_restart_note: Активація нової конфігурації негайно перемикає сховище
+          в поточному процесі. Інші процеси застосунку підхоплять зміну приблизно
+          за 30 секунд.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -4418,6 +4435,7 @@ uk:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: Стан
         header_name: Name
         header_status: Status
         header_type: Type
@@ -4430,6 +4448,7 @@ uk:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Перевірити з’єднання
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive

@@ -53,23 +53,18 @@ module BetterTogether
       env_storage_config
     end
 
-    # Registers this resolver's service with Active Storage so Rails can use it.
-    # Call this from an initializer (once per platform or once globally from env).
-    #
-    # Currently unused — config/initializers/storage.rb and
-    # StorageConfigurationsController#activate both bypass this and reassign
-    # ActiveStorage::Blob.service/services directly for the host platform only
-    # (see the acute-fix note in StorageConfigurationsController#activate).
-    # This is the intended seam for a future per-tenant storage architecture:
-    # registering each platform's config as its own named service here, then
-    # resolving per-request/per-attachment instead of one process-wide default.
+    # Returns the Active Storage service for this resolver, building it on first use. A platform
+    # config resolves through BetterTogether::Storage::TenantRegistry; env names come from storage.yml.
     def register!
-      key = service_name
-      return if ActiveStorage::Blob.service.try(:name) == key.to_s
-      return if ActiveStorage::Service.send(:lookup_registry).key?(key.to_s)
+      ActiveStorage::Blob.services.fetch(service_name)
+    end
 
-      config = to_active_storage_config
-      ActiveStorage::Service.configure(key, config)
+    # Makes this resolver's service the process default for blobs created without a platform
+    # (jobs, console). Rebuilds a platform config's service so changed credentials take effect.
+    def rebind_default!
+      registry = ActiveStorage::Blob.services
+      registry.forget(service_name) if registry.respond_to?(:forget)
+      ActiveStorage::Blob.service = register!
     end
 
     # Summarises the effective configuration (without secrets) for display in admin UI.

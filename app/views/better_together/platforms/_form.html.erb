@@ -52,6 +52,8 @@
   tab_error_counts = platform_form_tab_error_counts(platform)
   active_tab = platform_form_active_tab(tab_error_counts)
   tab_ids = platform_form_tab_ids
+  show_storage_tab = platform.persisted? && policy(BetterTogether::StorageConfiguration.new(platform:)).index?
+  tab_ids << 'storage' if show_storage_tab
 %>
 
 <%= form_with(model: platform, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
@@ -412,6 +414,12 @@
           </div>
         <% end %>
       </div>
+
+      <% if show_storage_tab %>
+        <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'storage' %>" id="platform-storage" role="tabpanel" aria-labelledby="platform-storage-tab">
+          <%= render 'better_together/platforms/storage_tab', platform: %>
+        </div>
+      <% end %>
 
       <% if tab_ids.include?('integrations') %>
         <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'integrations' %>" id="platform-integrations" role="tabpanel" aria-labelledby="platform-integrations-tab">

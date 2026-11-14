@@ -251,4 +251,31 @@ RSpec.describe BetterTogether::StorageResolver do # rubocop:todo RSpec/MultipleM
       end
     end
   end
+
+  describe '#rebind_default!' do
+    let(:config) { create(:better_together_storage_configuration) }
+    let(:platform) { config.platform.tap { |p| p.update!(storage_configuration_id: config.id) } }
+
+    around do |example|
+      original = ActiveStorage::Blob.service
+      example.run
+    ensure
+      ActiveStorage::Blob.service = original
+    end
+
+    it "makes the platform's service the process default" do
+      described_class.new(platform).rebind_default!
+
+      expect(ActiveStorage::Blob.service.name.to_s).to eq(config.storage_key)
+    end
+  end
+
+  describe '#register!' do
+    it 'returns the configured service for a platform config' do
+      config = create(:better_together_storage_configuration)
+      platform = config.platform.tap { |p| p.update!(storage_configuration_id: config.id) }
+
+      expect(described_class.new(platform).register!.name.to_s).to eq(config.storage_key)
+    end
+  end
 end

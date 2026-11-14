@@ -6,7 +6,7 @@ module BetterTogether
   # Requires manage_platform permission (enforced via route constraint + Pundit).
   class StorageConfigurationsController < ApplicationController
     before_action :set_platform
-    before_action :set_storage_configuration, only: %i[show edit update destroy activate]
+    before_action :set_storage_configuration, only: %i[show edit update destroy activate test_connection]
     after_action :verify_authorized
 
     # GET /host/platforms/:platform_id/storage_configurations
@@ -78,24 +78,29 @@ module BetterTogether
 
       @platform.update!(storage_configuration_id: @storage_configuration.id)
 
-      if @platform.host?
-        rebind_active_storage_service(@platform.reload)
-        touch_restart_txt
-        notice = t('better_together.storage_configurations.activated_with_restart',
-                   name: @storage_configuration.name)
-      else
-        # Per-tenant storage isolation isn't implemented yet — every platform still
-        # shares the host's ActiveStorage backend until a tenant admin's own config
-        # is actually routed. Only the host's own activation may rebind the shared
-        # service; a tenant admin's activation is saved for when isolation ships,
-        # not silently applied to everyone else's uploads in the meantime.
-        notice = t('better_together.storage_configurations.activated_pending_multi_tenant_support',
-                   name: @storage_configuration.name)
-      end
+      # Every platform's uploads route to its own service. Only the host also sets the process
+      # default, which jobs and console blobs without a platform use.
+      StorageResolver.new(@platform.reload).register!
+      key = @platform.host? ? 'activated_with_restart' : 'activated_for_platform'
+      rebind_active_storage_service(@platform) if @platform.host?
+      notice = t("better_together.storage_configurations.#{key}", name: @storage_configuration.name)
 
       redirect_to platform_storage_configurations_path(@platform),
                   status: :see_other,
                   notice: notice
+    end
+
+    # POST /host/platforms/:platform_id/storage_configurations/:id/test_connection
+    # Writes, reads and deletes a probe object and records the outcome on the configuration.
+    def test_connection
+      authorize @storage_configuration, :test_connection?
+
+      result = @storage_configuration.test_connection!
+      key = result.ok? ? 'connection_ok' : 'connection_failed'
+      message = t("better_together.storage_configurations.#{key}",
+                  name: @storage_configuration.name, message: result.message)
+      redirect_to platform_storage_configurations_path(@platform), status: :see_other,
+                                                                   (result.ok? ? :notice : :alert) => message
     end
 
     private
@@ -125,24 +130,10 @@ module BetterTogether
       p
     end
 
-    # Signals Puma (and other process managers) to restart workers by touching
-    # tmp/restart.txt so they pick up the new storage binding on their next cycle.
-    def touch_restart_txt
-      FileUtils.touch(Rails.root.join('tmp', 'restart.txt'))
-    rescue StandardError => e
-      Rails.logger.warn("[StorageConfigurationsController] Could not touch tmp/restart.txt: #{e.message}")
-    end
-
-    # Rebinds the Active Storage service in this process immediately after activation
-    # so new uploads use the updated config without waiting for a restart.
-    # Other processes pick it up on their next restart (triggered by touch_restart_txt).
+    # Rebinds the process default for the host platform so new uploads without a platform use it
+    # immediately. Other processes pick the change up through the registry's periodic refresh.
     def rebind_active_storage_service(platform)
-      resolver = StorageResolver.new(platform)
-      service_name = resolver.service_name
-      service = ActiveStorage::Service.build(service_name, configurator: nil,
-                                                           **resolver.to_active_storage_config)
-      ActiveStorage::Blob.service = service
-      ActiveStorage::Blob.services[service_name.to_s] = service
+      StorageResolver.new(platform).rebind_default!
     end
   end
 end
