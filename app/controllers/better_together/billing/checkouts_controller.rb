@@ -13,22 +13,24 @@ module BetterTogether
       include CheckoutTaxPreview
 
       before_action :set_plan
+      before_action :set_add_ons
       before_action :set_choices
       after_action :verify_authorized
 
       def new
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        @gate = build_gate if @method || @plan.free?
+        @gate = build_gate if @method || @free_order
         load_billing_details
       end
 
       def create
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        return render_again(:method_not_available) unless @method || @plan.free?
-        return render_again(@address_error) unless address_ok?
-        return render_again(:parts_too_large) if parts_too_large?
+        return redirect_to billing_order_path(placed_order_id, locale: I18n.locale) if placed_order_id
+
+        reason = early_refusal
+        return render_again(reason) if reason
 
         @gate = build_gate
         return render_again(:not_ready) unless @gate.ready?
@@ -45,9 +47,9 @@ module BetterTogether
         @renew_with = chosen_renewal_method
       end
 
-      # A free plan has no tax to work out, so it asks for no billing address either.
+      # An order that costs nothing has no tax to work out, so it asks for no billing address either.
       def load_billing_details
-        return if @plan.free?
+        return if @free_order
 
         load_addresses
         load_tax_preview
@@ -63,25 +65,46 @@ module BetterTogether
 
       def platform_plans = billing_owner.billing_plans.sold_by_platform
 
+      # The plan being bought: a primary plan, or an add-on the buyer may buy on its own because they hold a plan it extends.
       def set_plan
         @plan = platform_plans.active.find(params[:plan_id])
-        render_not_found unless policy(@plan).purchase?
+        render_not_found unless @plan.add_on? ? policy(@plan).buy_alone? : policy(@plan).purchase?
+      end
+
+      # The extras offered on this plan's order, and the ones the buyer ticked.
+      def set_add_ons
+        @available_add_ons = offered_add_ons
+        chosen = Array(params[:add_on_ids]).map(&:to_s)
+        @add_ons = @available_add_ons.select { |add_on| chosen.include?(add_on.id) }
+        # Ticked earlier but no longer offered: the buyer is told rather than left with a quietly changed order.
+        @dropped_add_ons = chosen - @add_ons.map(&:id)
+        @purchasables = [@plan, *@add_ons]
+        @order_cents = @purchasables.sum(&:amount_cents)
+        @free_order = @purchasables.all?(&:free?)
+      end
+
+      # Only add-ons this buyer may buy, in the plan's currency.
+      def offered_add_ons
+        return [] if @plan.add_on?
+
+        platform_plans.active.add_ons_for(@plan).where(currency: @plan.currency).order(:amount_cents, :identifier)
+                      .select { |add_on| policy(add_on).purchase? }
       end
 
       def set_choices
         @purpose = Checkout::Methods.new(platform: billing_owner, plan: @plan).purpose
-        @choices = Checkout::Methods.call(platform: billing_owner, plan: @plan, buyer: current_user.person)
+        @choices = Checkout::Methods.call(platform: billing_owner, plan: @plan, buyer: current_user.person, add_ons: @add_ons)
       end
 
       # Only a method this plan offers and the platform has switched on.
       def chosen_method
-        return if @plan.free?
+        return if @free_order
 
         @choices.find { |choice| choice.available? && choice.name == params[:payment_method].to_s }&.name
       end
 
       def build_gate
-        Checkout::AgreementGate.new(platform: billing_owner, purpose: @purpose, signer: current_user.person, purchasables: [@plan],
+        Checkout::AgreementGate.new(platform: billing_owner, purpose: @purpose, signer: current_user.person, purchasables: @purchasables,
                                     payment_method: [@method, *@parts.map { |part| part[:payment_method] }].compact)
       end
 
@@ -116,17 +139,50 @@ module BetterTogether
         @gate.missing.all? { |agreement| params[helpers.agreement_acceptance_param_name(agreement)] == '1' }
       end
 
+      # Why the order cannot go ahead before the agreements are looked at, if it cannot.
+      def early_refusal
+        return :method_not_available unless @method || @free_order
+        return :order_changed if order_changed?
+        return @address_error unless address_ok?
+
+        :parts_too_large if parts_too_large?
+      end
+
+      # The total the buyer saw when they ticked extras. If an add-on was withdrawn or repriced since, they confirm again.
+      def order_changed?
+        @dropped_add_ons.any? || (params[:expected_total_cents].present? && params[:expected_total_cents].to_i != @order_cents)
+      end
+
+      # A form token is good for one order: repeating the submit (double click, back and resend) lands on the order already placed.
+      def placed_order_id
+        token = params[:checkout_token].presence
+        token && session.dig(:billing_checkout_orders, token)
+      end
+
+      def remember_placed_order(order)
+        token = params[:checkout_token].presence or return
+        placed = (session[:billing_checkout_orders] ||= {})
+        placed[token] = order.id
+        placed.shift while placed.size > 20
+      end
+
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
-        order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose, line_items: [{ purchasable: @plan }],
+        order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose,
+                                   line_items: @purchasables.map { |purchasable| { purchasable: } },
                                    renewal_payment_method: @renew_with, billing_address: @address, **how_to_pay)
-        redirect_to billing_order_path(order, locale: I18n.locale), notice: t('better_together.billing.checkout.placed')
+        redirect_after_place(order)
       rescue Orders::Place::Refused, Checkout::AgreementGate::NotReady => e
         Rails.logger.warn("[billing] checkout refused: #{e.class}")
         render_again(:refused)
       end
 
-      def address_ok? = @plan.free? || choose_address
+      def redirect_after_place(order)
+        remember_placed_order(order)
+        redirect_to billing_order_path(order, locale: I18n.locale), notice: t('better_together.billing.checkout.placed')
+      end
+
+      def address_ok? = @free_order || choose_address
 
       # The buyer's billing address: one of theirs, or a new one typed in. Every order that costs something needs one with a chosen
       # country and state; a free one needs none.
@@ -141,7 +197,7 @@ module BetterTogether
 
       # Parts asked for, with the chosen way taking the rest; or just the chosen way, which pays the whole of it.
       def how_to_pay
-        return {} if @plan.free?
+        return {} if @free_order
         return { payment_method: @method } if @parts.empty?
 
         { payments: [*@parts, { payment_method: @method }] }

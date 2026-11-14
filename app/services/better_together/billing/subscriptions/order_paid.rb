@@ -22,12 +22,17 @@ module BetterTogether
           return unless order.paid?
 
           term = renewing_term
-          return Renew.call(term:, order:, paid_at: PaidTime.for(order)) if term
+          return start_or_nothing unless term
 
-          Start.call(order:) if Start.startable?(order)
+          plan_change?(term) ? ChangePlan.paid(term:, order:) : Renew.call(term:, order:, paid_at: PaidTime.for(order))
         end
 
         private
+
+        def start_or_nothing = (Start.call(order:) if Start.startable?(order))
+
+        # The invoice for a move to another plan right now, not a period's invoice.
+        def plan_change?(term) = term.pending_plan_order_id == order.id
 
         attr_reader :order
 

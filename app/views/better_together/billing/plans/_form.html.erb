@@ -219,6 +219,30 @@
     <div class="form-text" id="billing-plan-listed-hint"><%= t('better_together.billing.plans.field_listed_hint') %></div>
   </div>
 
+  <div class="mb-4" id="billing-plan-add-on-group">
+    <div class="form-check">
+      <%= form.check_box :add_on, class: 'form-check-input', id: 'billing_plan_add_on', aria: { describedby: 'billing-plan-add-on-hint' } %>
+      <%= form.label :add_on, t('better_together.billing.plans.field_add_on'), class: 'form-check-label' %>
+    </div>
+    <div class="form-text" id="billing-plan-add-on-hint"><%= t('better_together.billing.plans.field_add_on_hint') %></div>
+  </div>
+
+  <% target_choices = BetterTogether::Billing::Plan.primary.sold_by_platform.where(platform_id: billing_plan.platform_id || Current.platform&.id)
+                                                   .where.not(id: billing_plan.id).order(:identifier) %>
+  <% if target_choices.any? %>
+    <fieldset class="mb-4" id="billing-plan-add-on-targets">
+      <legend class="h6"><%= t('better_together.billing.plans.add_on_targets_legend') %></legend>
+      <% target_choices.each do |target| %>
+        <div class="form-check">
+          <%= check_box_tag 'billing_plan[target_plan_ids][]', target.id, billing_plan.target_plan_ids.include?(target.id), class: 'form-check-input',
+                                                                                                              id: dom_id(target, :add_on_target) %>
+          <%= label_tag dom_id(target, :add_on_target), target.name, class: 'form-check-label' %>
+        </div>
+      <% end %>
+      <div class="form-text" id="billing-plan-add-on-targets-hint"><%= t('better_together.billing.plans.add_on_targets_hint') %></div>
+    </fieldset>
+  <% end %>
+
   <fieldset class="mb-4" id="billing-plan-audience">
     <legend class="h6"><%= t('better_together.billing.plans.audience_legend') %></legend>
     <% %i[restricted_to_members restricted_to_subscribers].each do |field| %>

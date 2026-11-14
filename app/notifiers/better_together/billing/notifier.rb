@@ -81,7 +81,11 @@ module BetterTogether
 
         # A critical notice is emailed even to someone who turned emails off; the rest follow the choice.
         def send_email?
-          event.address_for(recipient).present? && (event.critical? || recipient_has_email?)
+          event.address_for(recipient).present? && (event.critical? || (recipient_has_email? && billing_email_wanted?))
+        end
+
+        def billing_email_wanted?
+          !recipient.respond_to?(:notification_preferences) || recipient.notification_preferences.fetch('notify_billing_by_email', true)
         end
       end
 

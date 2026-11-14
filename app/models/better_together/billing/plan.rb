@@ -67,7 +67,8 @@ module BetterTogether
       # Not held by any processor, so editable at any time; a change applies from the next renewal.
       RENEWAL_FIELDS = %i[grace_days renewal_lead_days].freeze
       # Not synced to the processor, so a steward can change it whether or not the plan is linked.
-      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers].freeze
+      # Local settings that may change after a price is linked: where the plan is shown, who may buy it, and whether it is an add-on.
+      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers add_on].freeze
       MAX_GRACE_DAYS = 90
       MAX_LEAD_DAYS = 60
 
@@ -90,6 +91,13 @@ module BetterTogether
       has_many :plan_grants, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::PlanGrant', inverse_of: :plan,
                                                                    dependent: :restrict_with_error
       has_many :entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
+
+      # For a primary plan: the add-ons set to extend it. For an add-on: the plans it extends (none means every primary plan).
+      has_many :add_on_links, class_name: 'BetterTogether::Billing::PlanAddOn', foreign_key: :plan_id, inverse_of: :plan,
+                              dependent: :destroy
+      has_many :target_links, class_name: 'BetterTogether::Billing::PlanAddOn', foreign_key: :add_on_id, inverse_of: :add_on,
+                              dependent: :destroy
+      has_many :target_plans, through: :target_links, source: :plan
 
       before_validation :normalize_payment_fields
 
@@ -116,7 +124,9 @@ module BetterTogether
       validate :product_not_used_by_another_platform
       validate :eligible_owner_types_are_billable
       validate :pricing_tier_within_known_values
+      validate :add_on_is_a_plain_extra
 
+      before_validation :clear_targets_unless_add_on
       before_validation :prepare_new_plan, on: :create
       before_validation :load_linked_price, on: :create
       after_commit :enqueue_processor_sync, on: %i[create update]
@@ -124,6 +134,15 @@ module BetterTogether
       scope :active, -> { where(active: true) }
       # What the public catalog shows: bought-able plans a steward chose to list.
       scope :listed, -> { active.where(listed: true) }
+      # An add-on is only sold on another plan's order; the plans people buy by themselves are the primary ones.
+      scope :add_on, -> { where(add_on: true) }
+      scope :primary, -> { where(add_on: false) }
+      # The add-ons offered with `plan`: those set to extend it, and those that extend every plan (no links).
+      scope :add_ons_for, lambda { |plan|
+        add_on.where(id: PlanAddOn.where(plan_id: plan.id).select(:add_on_id))
+              .or(add_on.where.not(id: PlanAddOn.select(:add_on_id)))
+      }
+
       scope :unrestricted, -> { where(restricted_to_members: false, restricted_to_subscribers: false) }
 
       # The plans a person may see and buy, given what they are to the platform (see Plans::Audience): the unrestricted ones, and
@@ -140,7 +159,7 @@ module BetterTogether
       # accept also depends on what is locked; see #permitted_update_attributes.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
         [*with_locales(DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS), *RENEWAL_FIELDS, *LISTING_FIELDS,
-         { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+         { target_plan_ids: [] }, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       # Each translated field as one attribute per supported language (name_en, name_fr, ...); the others as they are.
@@ -163,7 +182,7 @@ module BetterTogether
         fields = DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS + (linked? ? [] : PRE_LINK_FIELDS)
         [*self.class.with_locales(fields.reject do |field|
           locked_field?(field)
-        end), *RENEWAL_FIELDS, *LISTING_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+        end), *RENEWAL_FIELDS, *LISTING_FIELDS, { target_plan_ids: [] }, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       def restricted? = restricted_to_members || restricted_to_subscribers
@@ -455,6 +474,29 @@ module BetterTogether
         configured = Array(metadata['eligible_billable_owner_types']).compact_blank
         unknown = configured - self.class.assignable_owner_types
         errors.add(:base, :unknown_owner_types, types: unknown.join(', ')) if unknown.any?
+      end
+
+      # An add-on is a plain one-off extra: it does not renew and includes nothing of its own (what a plan gives is a plan's).
+      # Only an add-on extends other plans; ticking targets and then un-ticking add-on leaves none behind.
+      def clear_targets_unless_add_on
+        self.target_plan_ids = [] if !add_on? && target_links.any?
+      end
+
+      def add_on_is_a_plain_extra
+        return unless add_on?
+
+        errors.add(:add_on, :add_on_cannot_renew) if recurring?
+        add_on_persisted_errors if persisted?
+      end
+
+      def add_on_persisted_errors
+        errors.add(:add_on, :add_on_has_grants) if plan_grants.exists?
+        errors.add(:add_on, :add_on_locked_by_orders) if add_on_changed? && referenced_by_order_lines?
+      end
+
+      # Whether any order line already points at this plan; a change of kind would rewrite what those buyers bought.
+      def referenced_by_order_lines?
+        BetterTogether::Billing::LineItem.exists?(purchasable: self)
       end
 
       def pricing_tier_within_known_values

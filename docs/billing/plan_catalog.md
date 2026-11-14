@@ -228,3 +228,38 @@ Both draw the same card as the catalog page: `billing/catalog/_plan_card` (one p
 What a visitor sees is decided by the policy, the same as the catalog page. The catalog block lists `PlanPolicy::CatalogScope` (listed, active, platform-sold, and for the visitor's audience). The button block shows its plan only when `PlanPolicy#offer?` is true: billing is on, the plan is active and on this platform, and the visitor qualifies for its audience. An unlisted plan can be offered by a button; a members-only plan is never shown to a visitor who is not a member. Neither block uses a fragment cache, because the result depends on who is looking.
 
 Screenshots: `docs/screenshots/{desktop,mobile}/billing_plan_catalog_block.*` and `billing_plan_button_block.*`.
+
+## Add-ons on a checkout
+
+A plan marked **Add-on only** (steward form checkbox `billing_plan_add_on`) is a plain extra sold on another plan's order. It never appears in the catalog, on plan blocks, or as a plan to buy on its own (`PlanPolicy#catalog_show?` and `#offer?` refuse it, `CatalogScope` leaves it out, and checkout answers 404 for it as the plan).
+
+Rules, enforced by `Plan` and `PlanGrant` validations:
+
+- one-time only (`add_on_cannot_renew`);
+- nothing included: a plan with grants cannot become an add-on (`add_on_has_grants`) and a grant cannot be added to one (`add_on_cannot_have_grants`).
+
+Checkout shows the add-ons this buyer may buy, in the plan's currency, as a form of checkboxes (`billing-checkout-add-ons`). Ticking one and choosing **Update order** adds a line to the summary and to the subtotal, and the tax preview prices every line. The ticked ids ride along as `add_on_ids[]` through the payment method form and the final POST, and `Orders::Place` creates one line item per purchasable.
+
+How the extras behave:
+
+- The one primary plan drives the order's purpose, the subscription term (`Subscriptions::Start.plan_line`) and the entitlement, so add-ons never change what the buyer is entitled to.
+- Add-ons are paid by local methods only (cash, cheque, e-Transfer): a processor prices from its own price ids, so an order with an extra offers only the methods the platform settles itself.
+- An order whose plan and add-ons are all free needs no payment method or billing address.
+
+### Which plans an add-on extends, and buying it later
+
+A steward ticks the plans an add-on extends on its form (`billing-plan-add-on-targets`); each tick is a `PlanAddOn` link. An add-on with no links extends every primary plan.
+
+- **At a plan's checkout** only the add-ons that extend that plan (or all plans) are offered (`Plan.add_ons_for`).
+- **On its own, later** (`PlanPolicy#buy_alone?`): checkout accepts an add-on as the plan when the buyer qualifies for its audience and *holds* a plan it extends. With no links, holding any primary plan of the platform is enough. A buyer who holds nothing gets 404.
+- **What "holds" means** (`Plans::Holdings`): a live entitlement, a live subscription the person pays for, or a one-time order that is paid or part refunded. Refunded or cancelled orders and lapsed subscriptions hold nothing. Add-ons themselves are never held.
+- **What the order does:** an add-on-only order is one-time, paid by a local method, and gives no entitlement and starts no subscription (`Subscriptions::Start.single_plan` is nil for it).
+- **Where buyers find it:** the billing hub lists "Extras for your plans" with an Add button into checkout.
+
+Not tied together: the add-on order does not record which plan order it extends, and refunding or lapsing the plan later does not touch the add-on order. Deferred: add-ons that carry their own entitlements or quotas (needs per-line entitlements), buying for a community (`on_behalf_of`), and guest checkout.
+
+![Extras on the billing page](../screenshots/desktop/billing_hub_add_ons.png)
+![Add-on target plans on the plan form](../screenshots/desktop/billing_add_on_targets_form.png)
+
+![Checkout with an add-on](../screenshots/desktop/billing_checkout_add_ons.png)
+![Checkout with an add-on, mobile](../screenshots/mobile/billing_checkout_add_ons.png)

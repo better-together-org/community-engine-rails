@@ -13,6 +13,7 @@ The agreement text itself is not decided here. The platform ships **draft placeh
 | `subscription_agreement` | subscriptions and memberships | the purchase is for a plan that renews |
 | `one_time_purchase_agreement` | one-time purchases, event tickets, exchanges | any other purchase |
 | `offline_payment_terms` | what cash, a cheque or an e-transfer cannot do | the buyer pays by cash, cheque or e-transfer |
+| `refund_policy` | when and how a refund can be asked for, and what comes back | a buyer sends a refund request (see [Refund requests](refund_requests.md)); not tied to a purchase |
 
 **They are seeded as drafts with placeholder text**, and seeding again never touches an agreement a steward has edited or activated. Until each is reviewed and set to `active`, nothing can be sold: checkout shows that the purchase "cannot be completed yet" and offers no way to accept a draft. This is deliberate, so placeholder legal text never goes live by accident. A platform with no purchase agreement at all fails closed in the same way.
 

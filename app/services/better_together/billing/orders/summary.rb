@@ -33,9 +33,11 @@ module BetterTogether
         end
 
         def self.for_preview(preview)
-          item = Item.new(description: preview.plan.purchasable_description, quantity: 1, amount_cents: preview.plan.amount_cents,
-                          tax_lines: preview.tax_lines)
-          new(currency: preview.plan.currency, items: [item], total_cents: preview.total_cents)
+          items = preview.purchasables.each_with_index.map do |purchasable, index|
+            Item.new(description: purchasable.purchasable_description, quantity: 1, amount_cents: purchasable.amount_cents,
+                     tax_lines: preview.tax_lines_for(index))
+          end
+          new(currency: preview.plan.currency, items:, total_cents: preview.total_cents)
         end
 
         # `items` respond to description, quantity, amount_cents and tax_lines; a tax line responds to label, rate,

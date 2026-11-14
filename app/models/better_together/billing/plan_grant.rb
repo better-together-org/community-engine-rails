@@ -19,6 +19,7 @@ module BetterTogether
       validates :kind, inclusion: { in: ->(_) { Entitlements::Registry.kinds } }
       validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :parameters_valid
+      validate :plan_is_not_an_add_on
 
       # The handler for this grant, ready to apply.
       def handler = Entitlements::Registry.handler_for(self)
@@ -29,6 +30,10 @@ module BetterTogether
 
       def normalize
         self.parameters = parameters.to_h.stringify_keys.transform_values { |value| value.is_a?(String) ? value.strip : value }
+      end
+
+      def plan_is_not_an_add_on
+        errors.add(:plan, :add_on_cannot_have_grants) if plan&.add_on?
       end
 
       def parameters_valid

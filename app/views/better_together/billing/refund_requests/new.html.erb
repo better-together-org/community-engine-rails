@@ -1,0 +1,62 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.refund_requests.new_title', number: @order.number) %>
+<% end %>
+
+<div id="billing-refund-request-page" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_order_path(@order, locale: I18n.locale), edit_path: nil %>
+  <h1 class="mb-2"><%= t('better_together.billing.refund_requests.new_title', number: @order.number) %></h1>
+  <p class="text-body-secondary mb-3"><%= t('better_together.billing.refund_requests.new_intro') %></p>
+
+  <% if @error.present? %>
+    <div id="billing-refund-request-error" class="alert alert-danger" role="alert"><%= @error %></div>
+  <% end %>
+
+  <% refundable = BetterTogether::Billing::RefundRequest.refundable_cents_for(@order) %>
+  <%= form_with url: billing_order_refund_requests_path(@order, locale: I18n.locale), method: :post, id: 'billing-refund-request-form',
+                class: 'card card-body' do %>
+    <p id="billing-refund-request-refundable" class="mb-3">
+      <%= t('better_together.billing.refund_requests.refundable', amount: billing_amount(refundable, @order.currency)) %>
+    </p>
+    <div class="mb-3">
+      <%= label_tag :reason, t('better_together.billing.refund_requests.reason_label'), class: 'form-label' %>
+      <%= select_tag :reason,
+                     options_for_select(BetterTogether::Billing::RefundRequest::BUYER_REASONS.map { |r| [t("better_together.billing.refund_requests.reasons.#{r}"), r] }, params[:reason]),
+                     id: 'billing-refund-request-reason', class: 'form-select' %>
+    </div>
+    <div class="mb-3">
+      <%= label_tag :amount, t('better_together.billing.refund_requests.amount_label'), class: 'form-label' %>
+      <%= text_field_tag :amount, params[:amount], id: 'billing-refund-request-amount', class: 'form-control', inputmode: 'decimal',
+                                                   autocomplete: 'off', 'aria-describedby': 'billing-refund-request-amount-hint' %>
+      <div id="billing-refund-request-amount-hint" class="form-text"><%= t('better_together.billing.refund_requests.amount_hint') %></div>
+    </div>
+    <div class="mb-3">
+      <%= label_tag :details, t('better_together.billing.refund_requests.details_label'), class: 'form-label' %>
+      <%= text_area_tag :details, params[:details], id: 'billing-refund-request-details', class: 'form-control', rows: 4,
+                                                    maxlength: BetterTogether::Billing::RefundRequest::DETAILS_LIMIT %>
+    </div>
+    <% if @policy_gate&.required? %>
+      <% policy = @policy_gate.agreement %>
+      <div class="mb-3" id="billing-refund-policy">
+        <h2 class="h6"><%= policy.title %></h2>
+        <p class="small text-body-secondary mb-1" id="billing-refund-policy-summary"><%= policy.description %></p>
+        <%# The shared agreement modal (layouts/better_together/_agreement_modal_shell). The box stays locked until it has been read to the end. %>
+        <%= link_to t('better_together.billing.refund_requests.policy_view'), agreement_path(policy, locale: I18n.locale),
+                    class: 'agreement-modal-link', role: 'button', id: 'billing-refund-policy-view',
+                    data: { agreement_identifier: policy.identifier } %>
+        <% if @policy_gate.missing? %>
+          <div class="form-check mt-2">
+            <%= check_box_tag agreement_acceptance_param_name(policy), '1', false, class: 'form-check-input agreement-checkbox', required: true,
+                                data: { agreement_identifier: policy.identifier }, aria: { describedby: 'billing-refund-policy-summary', disabled: 'true' },
+                                id: 'billing-refund-policy-accept' %>
+            <%= label_tag 'billing-refund-policy-accept', t('better_together.billing.refund_requests.policy_accept', title: policy.title), class: 'form-check-label' %>
+          </div>
+        <% else %>
+          <p class="small text-success mb-0" id="billing-refund-policy-accepted"><%= t('better_together.billing.refund_requests.policy_accepted') %></p>
+        <% end %>
+      </div>
+    <% end %>
+    <div>
+      <%= submit_tag t('better_together.billing.refund_requests.submit'), id: 'billing-refund-request-submit', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>
