@@ -41,6 +41,11 @@ RSpec.describe BetterTogether::Billing::Credit::Grant do
     expect(host_platform.billing_credit_accounts.where(holder: steward).sum(:balance_cents)).to eq(0)
   end
 
+  it 'refuses a steward grant above the configured maximum, but not a system grant' do
+    expect { grant(amount_cents: 100_001) }.to raise_error(BetterTogether::Billing::Credit::Refused, /maximum/)
+    expect(grant(origin: 'promotion', actor: nil, amount_cents: 100_001, idempotency_key: 'promo-1')).to be_persisted
+  end
+
   it 'refuses nothing, a negative amount, an unknown origin and a steward grant with no steward' do
     [{ amount_cents: 0 }, { amount_cents: -5 }, { origin: 'gift' }, { actor: nil }, { idempotency_key: '' }].each do |attrs|
       expect { grant(**attrs) }.to raise_error(BetterTogether::Billing::Credit::Refused)

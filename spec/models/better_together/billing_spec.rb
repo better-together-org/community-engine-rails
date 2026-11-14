@@ -55,6 +55,25 @@ module BetterTogether
         expect(described_class.enabled?(other_platform, env:)).to be(false)
       end
 
+      it 'is never enabled or configurable for a hosted platform that has not accepted the hosted agreements (CONF-01)' do
+        # Written past validation: a row that predates the gate, or one made by hand, must still not sell.
+        other_platform.billing_processor_settings.new(processor: 'cash', enabled: true, acknowledge: true,
+                                                      settings: { 'instructions' => 'At the hall' }).save!(validate: false)
+
+        expect(described_class.enabled?(other_platform, env:)).to be(false)
+        expect(described_class.configurable?(other_platform, env:)).to be(false)
+        expect(described_class.configurable?(host_platform, env:)).to be(true)
+      end
+
+      it 'is enabled and configurable for a hosted platform once it accepted the agreements and turned a method on' do
+        grant_hosted_billing(other_platform)
+        other_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                          settings: { 'instructions' => 'At the hall' })
+
+        expect(described_class.configurable?(other_platform, env:)).to be(true)
+        expect(described_class.enabled?(other_platform, env:)).to be(true)
+      end
+
       it 'can be configured before any method is on, but only when the host asked for billing' do
         expect(described_class.configurable?(host_platform, env:)).to be(true)
         expect(described_class.configurable?(host_platform, env: env.merge('BT_BILLING_ENABLED' => 'false'))).to be(false)

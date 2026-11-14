@@ -5,7 +5,7 @@ module BetterTogether
     # Reminds payers of a renewal invoice that is still unpaid, a week and a day before the period ends, and
     # warns them a day before the grace runs out. Each stage is sent once however often this runs (the
     # notification's dedupe key names the period and the stage). A maintenance sweep: the only cross-tenant
-    # read, acting on one record at a time.
+    # read, acting on one record at a time. A suspended hosted platform is skipped (see HostedBilling).
     class RemindRenewalsJob < ApplicationJob
       STAGES = { 'week' => 7.days, 'day' => 1.day }.freeze
       GRACE_WARNING = 1.day
@@ -18,6 +18,8 @@ module BetterTogether
 
       def remind(term_id)
         term = BetterTogether::Billing::SubscriptionTerm.find(term_id)
+        return unless BetterTogether::Billing::HostedBilling.permits?(term.platform, :billing)
+
         period = reminded_period(term)
         return unless period
 

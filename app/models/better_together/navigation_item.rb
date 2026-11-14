@@ -53,6 +53,13 @@ module BetterTogether
       billing_plans: 'billing_plans_url',
       billing_processor_settings: 'billing_processor_settings_url',
       billing_sales: 'billing_sales_url',
+      billing_events: 'billing_events_url',
+      billing_subscribers: 'billing_subscribers_url',
+      billing_tax_registrations: 'billing_tax_registrations_url',
+      billing_agreement_requirements: 'billing_agreement_requirements_url',
+      billing_promotions: 'billing_promotions_url',
+      billing_credit_accounts: 'billing_credit_accounts_url',
+      billing_allowances: 'billing_allowances_url',
       billing_hosted_billing: 'billing_hosted_billing_url',
       billing_hosted_platforms: 'billing_hosted_platforms_url'
     }
@@ -60,13 +67,20 @@ module BetterTogether
     # Items whose target only exists when a subsystem is switched on for the platform.
     # Without it a platform that has not set billing up would show a link to a page that
     # answers 404.
-    ROUTE_AVAILABILITY = {
-      'billing_plans_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) },
-      'billing_processor_settings_url' => ->(platform) { BetterTogether::Billing.configurable?(platform) },
-      'billing_sales_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) },
+    BILLING_ENABLED_ROUTES = %w[
+      billing_plans_url billing_sales_url billing_subscribers_url billing_tax_registrations_url
+      billing_agreement_requirements_url billing_promotions_url billing_credit_accounts_url billing_allowances_url
+    ].freeze
+
+    ROUTE_AVAILABILITY = BILLING_ENABLED_ROUTES.index_with do
+      ->(platform) { BetterTogether::Billing.enabled?(platform) }
+    end.merge(
+      'billing_processor_settings_url' => ->(platform) { BetterTogether::Billing.configurable?(platform) }
+    ).merge(
+      'billing_events_url' => ->(platform) { platform.host? && BetterTogether::Billing.configurable?(platform) },
       'billing_hosted_billing_url' => ->(platform) { BetterTogether::Billing::HostedBilling.page_available?(platform, host: false) },
       'billing_hosted_platforms_url' => ->(platform) { BetterTogether::Billing::HostedBilling.page_available?(platform, host: true) }
-    }.freeze
+    ).freeze
 
     belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, touch: true

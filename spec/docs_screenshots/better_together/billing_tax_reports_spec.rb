@@ -99,4 +99,20 @@ RSpec.describe 'Documentation screenshots for the billing tax reports', # ruboco
       scroll_to(find('#billing-reports-table'), align: :center)
     end
   end
+
+  it 'captures the new report form with its paid and invoice bases' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_tax_reports_new', device: :both, metadata: metadata('billing_tax_reports_new'),
+                                 callouts: [{ id: 'basis', selector: '#billing-report-basis', title: 'Report basis',
+                                              avoid_container_selector: '#billing-report-form',
+                                              bullets: ['Paid counts payments when received.', 'Invoice counts orders when invoiced.'] }]
+    ) do
+      capybara_login_as_platform_manager
+      # In place, as a person sees it: the form opens in the reports section of the metrics page.
+      visit "/#{I18n.default_locale}/host/metrics/billing_reports"
+      find('#billing-report-new-link').click
+      expect(page).to have_css('turbo-frame#new_billing_report #billing-report-basis')
+      scroll_to(find('#billing-report-basis'), align: :center)
+    end
+  end
 end

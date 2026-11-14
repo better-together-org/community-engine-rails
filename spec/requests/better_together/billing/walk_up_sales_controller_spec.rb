@@ -137,12 +137,90 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
       expect(sent_mail.flat_map(&:to)).to include('odalys@example.test')
     end
 
-    it 'does not make a second person for an email that already belongs to one, and invites no one' do
-      expect { post path, params: params.except(:buyer_id).merge(buyer_name: 'Someone', buyer_email: buyer.email) }
-        .not_to change(BetterTogether::Person, :count)
+    context 'when the email typed belongs to an existing account' do
+      let(:typed) { params.except(:buyer_id).merge(buyer_name: 'Someone', buyer_email: account_email) }
+      let(:account_email) { account.email }
 
-      expect(BetterTogether::Billing::Order.order(:created_at).last.buyer).to eq(buyer)
-      expect(BetterTogether::CommunityInvitation.count).to eq(0)
+      before do
+        %w[platform_member community_member].each do |id|
+          kind = id == 'platform_member' ? :platform_role : :community_role
+          create(:better_together_role, kind, identifier: id) unless BetterTogether::Role.exists?(identifier: id)
+        end
+      end
+
+      context 'when that person is a member of this platform' do
+        let(:account) { buyer }
+
+        it 'refuses, says to pick them from the member list, and records nothing' do
+          expect { post path, params: typed }.not_to change(BetterTogether::Billing::Order, :count)
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(response.body).to include(I18n.t('better_together.billing.walk_up.error_member_email', locale:))
+          expect(BetterTogether::CommunityInvitation.count).to eq(0)
+        end
+      end
+
+      context 'when that account is not a member of this platform' do
+        let(:account) { other_buyer }
+
+        before { account }
+
+        it 'sells to a guest for this sale only and never touches the existing account' do
+          expect { deliver_now { post path, params: typed.merge(payment_received: '1') } }
+            .to change(BetterTogether::Person, :count).by(1)
+
+          order = BetterTogether::Billing::Order.order(:created_at).last
+          guest = order.buyer
+          expect(guest).not_to eq(account)
+          expect(guest).to have_attributes(name: 'Someone', platform_id: host_platform.id)
+          expect(guest.user).to be_nil
+          expect(guest.email_addresses).to be_empty
+          expect(order.buyer_email).to eq(account.email)
+          expect(BetterTogether::Billing::Order.where(buyer: account)).to be_empty
+          expect(BetterTogether::Billing::OrderAgreementAcceptance.where(signer_id: account.id)).to be_empty
+          expect(BetterTogether::AgreementParticipant.where(participant: account)).to be_empty
+          expect(order.agreement_acceptances.map(&:signer_id).uniq).to eq([guest.id])
+          expect(BetterTogether::CommunityInvitation.count).to eq(0)
+          expect(BetterTogether::PersonPlatformMembership.where(member: guest)).to be_empty
+        end
+
+        it 'does not show the guest in the people search of this or another platform' do
+          post path, params: typed
+          guest = BetterTogether::Billing::Order.order(:created_at).last.buyer
+
+          get better_together.billing_people_path(locale:, search: 'Someone'), as: :json
+
+          expect(response.body).not_to include(guest.id)
+          expect(BetterTogether::Person.for_platform(create(:better_together_platform))).not_to include(guest)
+        end
+
+        it 'gives the steward the same outcome as for an email nobody has' do
+          post path, params: typed
+          guest_redirect = response.location.sub(%r{/sales/[^/?]+}, '/sales/X')
+          guest_notice = flash[:notice]
+
+          post path, params: typed.merge(buyer_name: 'Odalys Fortier', buyer_email: 'nobody-has-this@example.test')
+
+          expect(response).to have_http_status(:found)
+          expect(response.location.sub(%r{/sales/[^/?]+}, '/sales/X')).to eq(guest_redirect)
+          expect(flash[:notice]).to eq(guest_notice).and eq(I18n.t('better_together.billing.walk_up.placed', locale:))
+        end
+      end
+    end
+
+    it 'invites a steward\'s new buyers only up to the daily cap, and refuses with a clear message after' do
+      allow(BetterTogether::Billing::Configuration).to receive(:walk_up_invitation_cap).and_return(1)
+      %w[platform_member community_member].each do |id|
+        kind = id == 'platform_member' ? :platform_role : :community_role
+        create(:better_together_role, kind, identifier: id) unless BetterTogether::Role.exists?(identifier: id)
+      end
+      fresh = params.except(:buyer_id).merge(buyer_name: 'Odalys Fortier')
+
+      post path, params: fresh.merge(buyer_email: 'first@example.test')
+      expect { post path, params: fresh.merge(buyer_email: 'second@example.test') }.not_to change(BetterTogether::Billing::Order, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t('better_together.billing.walk_up.error_invitation_cap', locale:))
     end
 
     it 'invites no one and makes no one when the sale is refused' do

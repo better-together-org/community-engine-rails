@@ -6,30 +6,44 @@ module BetterTogether
     # carries a token that becomes the grant's idempotency key. A steward cannot give themselves credit.
     class CreditGrantsController < ApplicationController
       include OwnerScoped
+      include PersonLookup
 
       after_action :verify_authorized
 
       def create
         authorize BetterTogether::Billing::CreditAccount, :grant?
-        holder = BetterTogether::Person.find_by(id: params[:person_id])
+        holder = find_platform_person(params[:person_id])
         lot = holder && grant(holder)
-        return back(:alert, 'grant_refused') unless lot
+        return back(:alert, lot_refusal) unless lot
 
         redirect_to billing_credit_account_path(lot.account, locale: I18n.locale), notice: t('better_together.billing.credit.granted')
       end
 
       private
 
-      def back(kind, key)
-        redirect_to billing_credit_accounts_path(locale: I18n.locale, person_id: params[:person_id]),
-                    kind => t("better_together.billing.credit.#{key}")
+      def back(kind, message)
+        redirect_to billing_credit_accounts_path(locale: I18n.locale, person_id: params[:person_id]), kind => message
       end
+
+      # The same message for a non-member and an unknown id, so a refusal never says whether the person exists.
+      def lot_refusal
+        return t('better_together.billing.credit.grant_refused') unless over_maximum?
+
+        t('better_together.billing.credit.grant_too_large', maximum: helpers.billing_amount(maximum_minor, currency))
+      end
+
+      def over_maximum? = amount_minor.to_i > maximum_minor
+
+      def currency = params[:currency].to_s.upcase
+
+      def amount_minor = Currency.to_minor(params[:amount], currency)
+
+      def maximum_minor = Configuration.max_credit_grant_minor(currency)
 
       def grant(holder)
         return if params[:token].to_s.strip.blank?
 
-        currency = params[:currency].to_s.upcase
-        cents = Currency.to_minor(params[:amount], currency)
+        cents = amount_minor
         return unless cents&.positive? && Plan::SUPPORTED_CURRENCY_CODES.include?(currency)
 
         Credit::Grant.call(**grant_attributes(holder, currency, cents))

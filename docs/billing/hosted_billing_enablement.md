@@ -25,6 +25,9 @@ Acceptance is recorded with `AgreementAcceptanceRecorder`: the platform is the p
 - `Billing.compute_enabled?` and `Billing.configurable?`: the billing agreement.
 - `Configuration.context_for`: a local method has a context for a hosted platform only with both agreements.
 - `ProcessorSetting` validation: a local method cannot be switched on without both (`hosted_local_billing_not_agreed`).
+- Checkout, sales and every owner-scoped billing screen answer 404 through `Billing.enabled?`, so a suspended platform cannot sell.
+- Webhooks are attributed only to a platform that has a processor context, which a vendor processor gives to the host alone.
+- The recurring subscription jobs (advance, generate renewals, renewal reminders) skip a hosted platform whose `permits?(:billing)` is false. Sweeps that only release holds or expire unpaid orders keep running, so nothing stays locked.
 
 ## Screens
 

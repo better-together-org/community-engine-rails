@@ -22,14 +22,14 @@
       <div class="form-text" id="billing-tax-registration-place-hint"><%= t('better_together.billing.tax_registrations.field_place_hint') %></div>
     </div>
     <div class="col-md-6">
-      <%= form.label :status, t('better_together.billing.tax_registrations.field_status'), class: 'form-label' %>
+      <%= form.label :status, t('better_together.billing.tax_registrations.field_status'), class: 'form-label', for: 'billing-tax-registration-status' %>
       <%= form.select :status,
                       BetterTogether::Billing::TaxRegistration::STATUSES.map { |s| [t("better_together.billing.tax_registrations.statuses.#{s}"), s] },
                       {}, class: 'form-select', id: 'billing-tax-registration-status' %>
       <div class="form-text"><%= t('better_together.billing.tax_registrations.field_status_hint') %></div>
     </div>
     <div class="col-md-6">
-      <%= form.label :prices_include_tax, t('better_together.billing.tax_registrations.field_prices'), class: 'form-label' %>
+      <%= form.label :prices_include_tax, t('better_together.billing.tax_registrations.field_prices'), class: 'form-label', for: 'billing-tax-registration-prices' %>
       <%= form.select :prices_include_tax,
                       [[t('better_together.billing.tax_registrations.prices.default'), ''],
                        [t('better_together.billing.tax_registrations.prices.included'), 'true'],
@@ -39,19 +39,19 @@
       <div class="form-text"><%= t('better_together.billing.tax_registrations.field_prices_hint') %></div>
     </div>
     <div class="col-md-6">
-      <%= form.label :registration_number, t('better_together.billing.tax_registrations.field_number'), class: 'form-label' %>
+      <%= form.label :registration_number, t('better_together.billing.tax_registrations.field_number'), class: 'form-label', for: 'billing-tax-registration-number' %>
       <%= form.text_field :registration_number, value: nil, class: 'form-control', autocomplete: 'off',
                                                 placeholder: persisted ? t('better_together.billing.tax_registrations.number_kept') : nil,
                                                 id: 'billing-tax-registration-number' %>
       <div class="form-text"><%= t('better_together.billing.tax_registrations.field_number_hint') %></div>
     </div>
     <div class="col-md-6">
-      <%= form.label :effective_from, t('better_together.billing.tax_registrations.field_from'), class: 'form-label' %>
+      <%= form.label :effective_from, t('better_together.billing.tax_registrations.field_from'), class: 'form-label', for: 'billing-tax-registration-from' %>
       <%= form.date_field :effective_from, value: registration.effective_from&.to_date, class: 'form-control', required: true,
                                            id: 'billing-tax-registration-from' %>
     </div>
     <div class="col-md-6">
-      <%= form.label :effective_to, t('better_together.billing.tax_registrations.field_to'), class: 'form-label' %>
+      <%= form.label :effective_to, t('better_together.billing.tax_registrations.field_to'), class: 'form-label', for: 'billing-tax-registration-to' %>
       <%= form.date_field :effective_to, value: registration.effective_to&.to_date, class: 'form-control',
                                          'aria-describedby': 'billing-tax-registration-to-hint',
                                          id: 'billing-tax-registration-to' %>

@@ -82,6 +82,15 @@ RSpec.describe 'Billing plans DOM contract', :as_platform_manager, type: :reques
     expect(response.body).not_to include('name="billing_plan[amount_cents]"')
   end
 
+  it 'exposes the price field of a plan that is not linked yet, with its hint' do
+    unlinked = create(:better_together_billing_plan, :unlinked, amount_cents: 4500)
+
+    get "/#{locale}/billing/plans/#{unlinked.id}/edit"
+
+    expect_ids('billing-plan-price-fields', 'billing_plan_amount', 'billing-plan-amount-hint', 'billing-plan-submit')
+    expect(response.body).to include('aria-describedby="billing-plan-amount-hint"')
+  end
+
   it 'exposes the snapshot frame contents' do
     get "/#{locale}/billing/plans/#{plan.id}/snapshot"
 

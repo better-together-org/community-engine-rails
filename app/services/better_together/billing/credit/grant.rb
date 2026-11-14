@@ -59,10 +59,15 @@ module BetterTogether
           raise Refused, problem if problem
         end
 
+        def over_steward_maximum?
+          origin == 'steward_grant' && amount_cents > Configuration.max_credit_grant_minor(currency)
+        end
+
         def problems
           [[idempotency_key.blank?, 'a grant needs a key'],
            [!amount_cents.positive?, 'a grant must be more than nothing'],
            [actor.present? && actor == holder, 'nobody can give themselves credit'],
+           [over_steward_maximum?, 'a grant is over the maximum a steward may give'],
            [CreditLot::ORIGINS.exclude?(origin), 'that is not a way credit is granted'],
            [origin == 'steward_grant' && actor.nil?, 'a steward grant needs the steward who made it']]
         end

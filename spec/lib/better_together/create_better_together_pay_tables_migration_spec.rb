@@ -32,6 +32,27 @@ RSpec.describe 'Create Better Together Pay tables migration' do # rubocop:disabl
     expect { migration.up }.to raise_error(CreateBetterTogetherPayTables::ForeignPayTablesError, /pay_merchants/)
   end
 
+  it 'tells an operator what to do about Pay tables it refuses to touch' do
+    connection.execute('ALTER TABLE pay_merchants DROP COLUMN platform_id CASCADE')
+
+    expect { migration.up }.to raise_error(
+      CreateBetterTogetherPayTables::ForeignPayTablesError,
+      /Pay's own migrations.*DROP TABLE.*db:migrate again.*stop: adopting them needs a data migration/m
+    )
+  end
+
+  it 'does not treat its own tables as foreign: a re-run changes nothing' do
+    expect { migration.up }.not_to(change { platform_tables.map { |table| connection.columns(table).map(&:name) } })
+  end
+
+  it 'refuses to roll back while any Pay table holds rows, and keeps them' do
+    connection.execute("INSERT INTO pay_webhooks (id, processor, created_at, updated_at) VALUES (gen_random_uuid(), 'stripe', NOW(), NOW())")
+
+    expect { migration.down }.to raise_error(ActiveRecord::IrreversibleMigration, /pay_webhooks contain rows.*delete payment data/)
+    expect(connection.select_value('SELECT COUNT(*) FROM pay_webhooks')).to eq(1)
+    expect(connection.table_exists?(:pay_customers)).to be true
+  end
+
   it 'uses uuid keys like every other Community Engine table' do
     (platform_tables + [:pay_webhooks]).each do |table|
       expect(column(table, :id).sql_type).to eq('uuid')

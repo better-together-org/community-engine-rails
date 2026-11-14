@@ -1,0 +1,48 @@
+{
+  "name": "billing_plan_price_error",
+  "device": "desktop",
+  "url": "/en/billing/plans/466a06df-585b-4b9a-895c-63cef92d9be7/edit",
+  "title": "Edit Billing Plan — Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plan_price_error",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plan_price_entry_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-errors",
+      "title": "Why it was refused",
+      "bullets": [
+        "What was typed stays in the field, so it can be fixed."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 240.0,
+        "width": 1296.0,
+        "height": 58.0,
+        "right": 1360.5,
+        "bottom": 298.0,
+        "center_x": 712.5,
+        "center_y": 269.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 240.0,
+        "width": 1296.0,
+        "height": 58.0,
+        "right": 1360.5,
+        "bottom": 298.0,
+        "center_x": 712.5,
+        "center_y": 269.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 318.0,
+        "width": 380,
+        "height": 132,
+        "score": 1159.0
+      }
+    }
+  ]
+}

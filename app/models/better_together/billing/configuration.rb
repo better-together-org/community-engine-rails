@@ -10,7 +10,11 @@ module BetterTogether
       # Raised when a feature needs a host-supplied value that is not set.
       class MissingConfigurationError < StandardError; end
 
+      DEFAULT_WALK_UP_INVITATION_CAP = 20
+
       REQUIRED_KEYS = %w[PAY_BUSINESS_NAME PAY_BUSINESS_ADDRESS PAY_SUPPORT_EMAIL].freeze
+
+      DEFAULT_MAX_CREDIT_GRANT = '1000'
 
       class << self
         def value(key, env = ENV)
@@ -36,6 +40,19 @@ module BetterTogether
           value('BT_BILLING_DEFAULT_CURRENCY', env)&.upcase
         end
 
+        # The most one steward grant may give, in minor units of `code`. BT_BILLING_MAX_CREDIT_GRANT is
+        # in major units (default 1000); anything that is not a plain positive amount falls back to it.
+        def max_credit_grant_minor(code, env = ENV)
+          minor = Currency.to_minor(value('BT_BILLING_MAX_CREDIT_GRANT', env), code)
+          minor&.positive? ? minor : Currency.to_minor(DEFAULT_MAX_CREDIT_GRANT, code)
+        end
+
+        # Most community invitations one steward can cause through walk-up sales in a day (BT_BILLING_WALK_UP_INVITATIONS_PER_DAY).
+        def walk_up_invitation_cap(env = ENV)
+          cap = value('BT_BILLING_WALK_UP_INVITATIONS_PER_DAY', env).to_i
+          cap.positive? ? cap : DEFAULT_WALK_UP_INVITATION_CAP
+        end
+
         # Required by features that must send a country to the processor.
         def default_country(env = ENV)
           value('BT_BILLING_DEFAULT_COUNTRY', env)&.upcase
@@ -52,16 +69,19 @@ module BetterTogether
         # host's processor account.
         #
         # A method outside a vendor (cash, cheque, e-transfer) has no credentials. It has a
-        # context for a platform (or one of its sellers) only while a steward has it enabled
+        # context for the host platform (or one of its sellers) only while a steward has it enabled
         # (see ProcessorSetting), so it is installed for everyone and on for no one by default.
         def context_for(platform, processor, seller: nil)
           return if platform.nil? || Billing.processor_names.map(&:to_s).exclude?(processor.to_s)
 
+          # A method outside a vendor is for the host, or for a hosted platform whose agreements are in force and not suspended.
           if Billing.local_method?(processor)
             return unless HostedBilling.permits?(platform, :local)
 
             return setting_context(platform, processor, seller)
           end
+
+          # A vendor processor's credentials are the host's: only the host platform has a context for it.
           return unless platform.host?
 
           ProcessorContext.new(platform:, processor:)

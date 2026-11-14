@@ -109,6 +109,16 @@ RSpec.describe BetterTogether::Billing::Subscriptions::GenerateRenewal do
     expect(generate_renewal(term, at: inside_lead + 1.day)).to have_attributes(status: 'pending')
   end
 
+  it 'does not invoice a locally renewed subscription on a platform that is not the host, even with its method on' do
+    term
+    host_platform.update_columns(host: false) # rubocop:disable Rails/SkipsModelValidations
+
+    period = generate_renewal(term, at: inside_lead)
+
+    expect(period).to have_attributes(status: 'blocked', order: nil)
+    expect(period.blocked_reason).to be_present
+  end
+
   it 'still renews a plan that is no longer for sale' do
     term
     sub_plan.update_columns(active: false) # rubocop:disable Rails/SkipsModelValidations

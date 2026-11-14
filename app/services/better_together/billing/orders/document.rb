@@ -177,7 +177,8 @@ module BetterTogether
                                                                                                 precision: Currency.exponent(currency))
         end
 
-        def date(time) = time ? I18n.l(time.to_date, format: :long) : nil
+        # The date in the document's own zone, the same one the attached XML and JSON use.
+        def date(time) = time ? I18n.l(time.in_time_zone(ActiveSupport::TimeZone[time_zone]).to_date, format: :long) : nil
 
         def doc_text(key, **) = I18n.t("better_together.billing.document.#{key}", **)
 

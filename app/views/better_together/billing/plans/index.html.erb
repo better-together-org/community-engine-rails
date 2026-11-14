@@ -24,7 +24,7 @@
               <th scope="col"><%= t('better_together.billing.plans.field_identifier') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_name') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_billing_interval') %></th>
-              <th scope="col"><%= t('better_together.billing.plans.field_amount_cents') %></th>
+              <th scope="col"><%= t('better_together.billing.plans.field_amount') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_active') %></th>
               <th scope="col"><%= t('better_together.billing.plans.sync_status_heading') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_pricing_tier') %></th>
@@ -64,7 +64,7 @@
                                     billing_plan_path(plan, locale: I18n.locale),
                                     method: :patch,
                                     params: { billing_plan: { active: !plan.active? } },
-                                    class: plan.active? ? 'btn btn-outline-warning btn-sm' : 'btn btn-outline-success btn-sm',
+                                    class: plan.active? ? 'btn btn-outline-danger btn-sm' : 'btn btn-outline-success btn-sm',
                                     data: { turbo_confirm: plan.active? ? t('better_together.billing.plans.deactivate_confirm') : nil } %>
                     <% end %>
                   </div>

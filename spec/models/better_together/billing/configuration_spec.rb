@@ -47,6 +47,12 @@ module BetterTogether
         expect(described_class.default_country(env)).to eq('US')
       end
 
+      it 'caps one steward credit grant, 1000 in major units unless configured' do
+        expect(described_class.max_credit_grant_minor('USD', {})).to eq(100_000)
+        expect(described_class.max_credit_grant_minor('JPY', { 'BT_BILLING_MAX_CREDIT_GRANT' => '5000' })).to eq(5000)
+        expect(described_class.max_credit_grant_minor('USD', { 'BT_BILLING_MAX_CREDIT_GRANT' => 'lots' })).to eq(100_000)
+      end
+
       it 'raises when a feature requires a country that is not configured' do
         expect { described_class.require_default_country!({}) }
           .to raise_error(Configuration::MissingConfigurationError, /BT_BILLING_DEFAULT_COUNTRY/)
@@ -124,7 +130,16 @@ module BetterTogether
           expect(described_class.processors_for(host_platform)).to be_empty
         end
 
-        it 'has one for any platform that turned it on, with no credentials' do
+        it 'has one for the host platform that turned it on, with no credentials' do
+          enable_method(host_platform)
+
+          context = described_class.context_for(host_platform, :cash)
+
+          expect(context).to have_attributes(platform: host_platform, processor: :cash, source: :setting, credentials: nil)
+          expect(described_class.processors_for(host_platform)).to eq([:cash])
+        end
+
+        it 'has one for a hosted platform that holds the hosted agreements and turned it on, with no credentials' do
           grant_hosted_billing(other_platform)
           enable_method(other_platform)
 
@@ -132,6 +147,15 @@ module BetterTogether
 
           expect(context).to have_attributes(platform: other_platform, processor: :cash, source: :setting, credentials: nil)
           expect(described_class.processors_for(other_platform)).to eq([:cash])
+        end
+
+        it 'has none for a hosted platform that has not accepted the agreements, even with the method turned on' do
+          # Written past validation: a row that predates the gate must still have no context.
+          other_platform.billing_processor_settings.new(processor: 'cash', enabled: true, acknowledge: true,
+                                                        settings: { 'instructions' => 'At the hall' }).save!(validate: false)
+
+          expect(described_class.context_for(other_platform, :cash)).to be_nil
+          expect(described_class.processors_for(other_platform)).to be_empty
         end
 
         it 'does not give the host platform a method another platform turned on' do
@@ -163,7 +187,7 @@ module BetterTogether
           enable_method(other_platform)
 
           expect(described_class.context_for(other_platform, :fake)).to be_nil
-          expect(described_class.context_for(other_platform, :cash)).to be_present
+          expect(described_class.context_for(host_platform, :cash)).to be_nil
         end
       end
 

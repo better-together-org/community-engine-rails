@@ -39,17 +39,20 @@
   <% if @holder %>
     <section id="billing-credit-holder" class="mb-4">
       <h2 class="h5"><%= @holder.name %></h2>
-      <%= form_with url: billing_credit_grants_path(locale: I18n.locale), method: :post, id: 'billing-credit-grant-form', class: 'card card-body mb-4' do %>
+      <%= form_with url: billing_credit_grants_path(locale: I18n.locale), method: :post, id: 'billing-credit-grant-form', class: 'card card-body mb-4',
+                                                                                             data: billing_grant_confirm_data(@holder) do %>
         <%= hidden_field_tag :person_id, @holder.id %>
         <%= hidden_field_tag :token, SecureRandom.hex(8) %>
         <div class="row g-2">
           <div class="col-md-3">
             <%= label_tag 'billing-credit-grant-amount', t('better_together.billing.credit.grant_amount'), class: 'form-label' %>
-            <%= text_field_tag :amount, nil, id: 'billing-credit-grant-amount', class: 'form-control', inputmode: 'decimal', autocomplete: 'off', required: true %>
+            <%= text_field_tag :amount, nil, id: 'billing-credit-grant-amount', class: 'form-control', inputmode: 'decimal', autocomplete: 'off', required: true,
+                                                                    data: { 'better-together--billing-confirm-target': 'amount', action: 'input->better-together--billing-confirm#update' } %>
           </div>
           <div class="col-md-2">
             <%= label_tag 'billing-credit-grant-currency', t('better_together.billing.credit.grant_currency'), class: 'form-label' %>
-            <%= select_tag :currency, options_for_select(BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES), id: 'billing-credit-grant-currency', class: 'form-select' %>
+            <%= select_tag :currency, options_for_select(BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES), id: 'billing-credit-grant-currency', class: 'form-select',
+                                                                      data: { 'better-together--billing-confirm-target': 'currency', action: 'change->better-together--billing-confirm#update' } %>
           </div>
           <div class="col-md-3">
             <%= label_tag 'billing-credit-grant-expires', t('better_together.billing.credit.grant_expires'), class: 'form-label' %>
