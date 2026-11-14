@@ -36,6 +36,7 @@ RSpec.describe 'layouts/better_together/application' do
     allow(view).to receive(:render).with('layouts/better_together/flash_messages').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/extra_page_content_bottom').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/footer').and_return('')
+    allow(view).to receive(:render).with('layouts/better_together/consent_banner').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/mobile_bar').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/custom_body_javascript').and_return('')
     # Helpers / routes added to the layout on this branch:
