@@ -706,8 +706,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
 
     # Catch-all route
+    # A bare `Accept: */*` (curl, many crawlers) negotiates to Mime::ALL, not HTML.
     get '*path', to: 'pages#show', as: 'render_page', constraints: lambda { |req|
-      !req.xhr? && req.format.html?
+      !req.xhr? && (req.format.html? || req.format == Mime::ALL)
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
