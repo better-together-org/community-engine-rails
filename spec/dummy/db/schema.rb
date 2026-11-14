@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2470,13 +2470,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
     t.jsonb "payload", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "platform_id"
     t.index ["creator_id"], name: "by_better_together_seeds_creator"
-    t.index ["identifier"], name: "index_better_together_seeds_on_identifier", unique: true
     t.index ["origin"], name: "index_better_together_seeds_on_origin", using: :gin
     t.index ["payload"], name: "index_better_together_seeds_on_payload", using: :gin
+    t.index ["platform_id"], name: "index_better_together_seeds_on_platform_id"
     t.index ["privacy"], name: "by_better_together_seeds_privacy"
     t.index ["seedable_type", "seedable_id"], name: "index_better_together_seeds_on_seedable"
-    t.index ["type", "identifier"], name: "index_better_together_seeds_on_type_and_identifier", unique: true
+    t.index ["type", "identifier", "platform_id"], name: "index_better_together_seeds_platform_type_and_identifier", unique: true, where: "(platform_id IS NOT NULL)"
+    t.index ["type", "identifier"], name: "index_better_together_seeds_global_type_and_identifier", unique: true, where: "(platform_id IS NULL)"
   end
 
   create_table "better_together_short_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3156,6 +3158,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
   add_foreign_key "better_together_safety_notes", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_safety_notes", "better_together_safety_cases", column: "safety_case_id"
   add_foreign_key "better_together_seed_plantings", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_seeds", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_short_links", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_sitemaps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
