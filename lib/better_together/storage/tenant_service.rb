@@ -12,6 +12,13 @@ module BetterTogether
         platform&.active_storage_configuration&.storage_key
       end
 
+      # The platform that owns a tenant service name, or nil for any other service.
+      def owner_platform_id(service_name)
+        return unless TenantRegistry.tenant_key?(service_name)
+
+        StorageConfiguration.where(id: service_name.to_s.delete_prefix(TenantRegistry::PREFIX)).pick(:platform_id)
+      end
+
       def current_service_name
         service_name_for(::Current.platform)
       end

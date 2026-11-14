@@ -591,6 +591,10 @@ uk:
               inclusion: "%{value} не є підтримуваним постачальником OAuth"
             uid:
               taken: вже пов'язано з іншим обліковим записом
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} має недопустиме значення"
         better_together/platform_domain:
           attributes:
             active:
@@ -979,6 +983,15 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    color_mode:
+      announce:
+        auto: 'Режим кольорів: автоматичний, за налаштуваннями пристрою.'
+        dark: 'Режим кольорів: темний.'
+        light: 'Режим кольорів: світлий.'
+      auto: Авто
+      dark: Темний
+      label: Режим кольорів
+      light: Світлий
     comment_config:
       hints:
         permission: Визначає, хто може публікувати нові коментарі.
@@ -2978,6 +2991,14 @@ uk:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} приєднався(-лась) як %{role} через %{domain}"
+          title: Довірений домен %{domain} надав членство
+        rate_limited:
+          body: Досягнуто погодинного ліміту для %{domain}. Нові люди залишаються
+            в очікуванні, доки ви їх не розглянете.
+          title: Довірений домен %{domain} досяг погодинного ліміту
     oauth:
       applications:
         create:
@@ -3080,6 +3101,32 @@ uk:
         new_person: New person
       notification_preferences: Message notification preferences
       preferences:
+        appearance:
+          color_mode:
+            hint: Автоматичний відповідає налаштуванню вашого пристрою. Світлий і
+              темний залишаються такими, як ви обрали.
+            title: Режим кольору
+          contrast_note: 'Примітка: у цій темі є пари кольорів із контрастом нижче
+            WCAG AA. Оберіть іншу тему, якщо текст важко читати.'
+          description: Оберіть, як цей сайт виглядає для вас. Ваш вибір діє на кожному
+            пристрої, де ви входите в систему.
+          platform_theme: Використовувати тему платформи
+          preview_button: Кнопка
+          preview_card: Картка на смузі розділу
+          preview_footer: Посилання внизу сторінки
+          preview_heading: Приклад заголовка
+          preview_label: Попередній перегляд вигляду
+          preview_link: посиланням
+          preview_site_name: Ваш сайт
+          preview_state: 'Попередній перегляд: %{theme}, режим %{mode}. Кожен вибір
+            зберігається окремо.'
+          preview_text: Текст із
+          theme:
+            hint: Оберіть одну з доступних тем або тему, яку обрала ця платформа.
+            title: Тема
+          themes_disabled: Ця платформа використовує одну тему для всіх. Режим кольору
+            нижче ви все одно можете обрати.
+          title: Вигляд
         language:
           title: Мова
         messaging:
@@ -3526,7 +3573,101 @@ uk:
         accepted: Прийнято
         expired: Закінчився термін
         pending: Очікує
+    platform_trusted_domains:
+      created: Довірений домен додано.
+      destroyed: Довірений домен видалено. Наявні облікові записи та членства не змінюються.
+      edit:
+        title: Редагувати довірений домен
+      events:
+        account_created: Обліковий запис створено
+        domain_added: Домен додано
+        domain_removed: Домен видалено
+        domain_updated: Домен змінено
+        grant_rate_limited: Досягнуто погодинного ліміту, надання чекає на розгляд
+        membership_granted: Членство надано
+        membership_request_approved: Запит на членство схвалено
+      form:
+        cancel: Скасувати
+        domain_hint: Лише частина після знака @, наприклад example.org. Для публічних
+          поштових сервісів, як-от gmail.com, потрібне підтвердження нижче.
+        domain_label: Домен електронної пошти
+        enabled_label: Увімкнено
+        include_subdomains_label: Довіряти також піддоменам (наприклад mail.example.org)
+        note_label: Примітка для інших стюардів (необов'язково)
+        public_domain_label: Я розумію, що це публічний поштовий домен і будь-хто
+          може мати там адресу
+        role_ceiling_label: Я розумію, що люди з підтвердженою адресою в цьому домені
+          автоматично отримують цю роль
+        role_hint: Лише ролі спільноти. Ролі платформи та стюарда не можна надавати
+          за доменом.
+        role_label: Надана роль спільноти
+        submit: Зберегти довірений домен
+      index:
+        activity_event: Подія
+        activity_heading: Остання активність
+        activity_none: Активності ще немає.
+        activity_person: Особа
+        activity_via: Через
+        activity_when: Коли
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей довірений домен? Наявні облікові записи та членства
+          залишаться без змін.
+        disabled_label: Вимкнено
+        edit_btn: Редагувати
+        enabled_label: Увімкнено
+        explanation: Люди, які входять через провайдера, що підтверджує пошту, або
+          підтверджують пошту після реєстрації, і чия адреса закінчується довіреним
+          доменом, отримують членство з обраною роллю без очікування розгляду. Кожне
+          надання записується в журнал.
+        header_accounts: Створено облікових записів
+        header_actions: Дії
+        header_domain: Домен
+        header_role: Роль
+        header_status: Статус
+        header_subdomains: Піддомени
+        new_btn: Додати довірений домен
+        no_domains: Довірених доменів ще немає.
+        subdomains_no: Лише точний збіг
+        subdomains_yes: Включено
+        subtitle: Довірені поштові домени %{platform_name}
+        table_aria: Довірені поштові домени
+        title: Довірені домени
+      new:
+        subtitle: Люди з підтвердженою адресою в цьому домені отримують обрану роль
+          на %{platform_name}.
+        title: Додати довірений домен
+      updated: Довірений домен оновлено.
+      vias:
+        membership_request: Запит на членство
+        oauth: Провайдер входу
+        password_registration: Реєстрація поштою
+        steward: Стюард
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} не підтримує цей тип вмісту."
+          too_long: "%{slot} задовгий (ліміт становить %{max} символів на мову)."
+        footer_above:
+          hint: Показується над підвалом сайту, наприклад повідомлення про фінансувальників
+            або застереження.
+          label: Над підвалом
+        header_above:
+          hint: Показується над заголовком сайту, наприклад оголошення.
+          label: Над заголовком
+        hint: Необов'язкові блоки вмісту, що показуються у фіксованих місцях на кожній
+          сторінці цієї платформи. Кожна мова окрема; відсутня мова повертається до
+          мови за замовчуванням. Залиште місце порожнім, щоб зберегти стандартний
+          макет.
+        not_found_headlines:
+          hint: Один заголовок на рядок, до 20. Один обирається випадково, коли сторінку
+            не знайдено. Без заголовків використовується стандартний.
+          label: Заголовки сторінки 404
+        not_found_message:
+          hint: Показується під заголовком, коли сторінку не знайдено.
+          label: Повідомлення сторінки 404
+        remove: Видалити цей вміст
+        title: Вміст заголовка, підвалу та сторінки 404
       form:
         allow_membership_requests: Дозволити запити на членство
         allow_membership_requests_hint: Показує публічну форму запиту на членство
@@ -3577,6 +3718,14 @@ uk:
           ai_translation_tokens: Токени використання LLM ШІ на місяць
           media_storage: Сховище
         quota_use_default: Використовувати значення за замовчуванням (%{size})
+        trusted_domains:
+          after_save: Спершу збережіть платформу, потім додайте тут довірені поштові
+            домени.
+          heading: Довірені поштові домени
+          hint: Підтверджені адреси цих доменів приєднуються із заданою роллю без
+            очікування розгляду.
+          manage: Керувати довіреними доменами
+          none: Довірених доменів немає.
       index:
         provision_new_platform: Налаштувати нову платформу
       new:
@@ -3592,6 +3741,16 @@ uk:
         title: Зареєструвати зовнішню платформу
       show:
         new_invitation: Нове запрошення
+      storage_tab:
+        bucket: Контейнер
+        description: Де зберігаються файли, завантажені на цю платформу. Коли активна
+          конфігурація сховища, файли зберігаються в окремому контейнері платформи.
+        health: Стан з’єднання
+        manage: Керувати конфігураціями сховища
+        service_type: Тип сервісу
+        shared_default: Типове налаштування інсталяції
+        source: Активна конфігурація
+        title: Сховище файлів
       tabs:
         access: Доступ і приватність
         appearance: Вигляд
@@ -3601,6 +3760,127 @@ uk:
         features: Функції та квоти
         integrations: Інтеграції
         security: Безпека
+        storage: Сховище
+      theme:
+        allow_user_themes: Дозволити кожному обирати власну тему
+        allow_user_themes_hint: Якщо увімкнено, користувачі, що увійшли в систему,
+          можуть обрати будь-яку доступну тему у своїх налаштуваннях. Якщо вимкнено,
+          усі бачать тему платформи. Кожен завжди може обрати свій режим кольору (автоматичний,
+          світлий або темний).
+        apply: Застосувати тему
+        clear: Очистити всі поля теми
+        colors:
+          accent: Акцентний колір
+          accent_dark: Акцентний колір (темний, для тексту)
+          band: Тло смуг розділів
+          body_text: Основний текст
+          footer_bg: Тло підвалу
+          footer_link: Посилання підвалу
+          link: Колір посилань
+          navbar_bg: Тло навігації
+          navbar_link: Текст і посилання навігації
+          page_bg: Тло сторінки
+          primary: Основний колір
+          primary_text: Текст на основних кнопках
+        contrast_aaa: Відповідає AAA
+        contrast_fail: Нижче AA, важко читати
+        contrast_hint: Співвідношення оновлюються під час введення. Звичайний текст
+          потребує щонайменше 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} на %{background}"
+        contrast_pass: Відповідає AA
+        contrast_title: Перевірка контрасту
+        current_image: 'Поточний: %{name}'
+        dark_color_label: 'Темний: %{color}'
+        dark_logo_hint: Необов'язково. Показується в темному режимі замість логотипа
+          сайту. Якщо порожньо, використовується логотип сайту.
+        dark_logo_label: Логотип для темного режиму
+        dark_mode_disabled: Вимкнено (лише світлий)
+        dark_mode_enabled: Увімкнено
+        dark_mode_label: Темний режим
+        dark_source_custom: Задати власні
+        dark_source_derive: Обчислити автоматично
+        dark_source_label: Темні кольори
+        default_mode_label: Типово для нових відвідувачів
+        default_option: Типово
+        favicon_hint: Невеликий квадратний PNG, SVG або ICO, що показується на вкладці
+          браузера.
+        favicon_label: Фавікон
+        font_label: Шрифт
+        fonts:
+          georgia: Georgia (із засічками)
+          monospace: Моноширинний
+          system: Системний без засічок
+          tahoma: Tahoma
+        header_banner_hint: Широке зображення для заголовка. Доступне темі як --bts-header-banner.
+        header_banner_label: Банер заголовка
+        hint: Задайте основні кольори, шрифт і стиль кутів. Залиште поле порожнім,
+          щоб зберегти типове значення. Власний CSS нижче все ще може перевизначити
+          ці налаштування.
+        images_title: Зображення
+        logo_hint: Показується на панелі навігації. Це логотип спільноти платформи.
+        logo_label: Логотип сайту
+        mode_summary_fail: "%{mode}: пар нижче AA: %{count}."
+        mode_summary_ok: "%{mode}: усі пари відповідають AA."
+        modes_hint: Відвідувачі можуть обирати Авто, Світлий або Темний. Темні кольори
+          застосовуються до кожного кольору, заданого вище. Залиште їх похідними або
+          вкажіть власні.
+        modes_title: Світлий і темний режим
+        picker_blank: Оберіть тему для перегляду
+        picker_label: Почати з теми
+        presets:
+          cool:
+            description: Глибокий бірюзовий на м'якому тлі з більш округлими кутами.
+            name: Прохолодна
+          dark:
+            description: Світлий текст на темній сторінці для слабкого освітлення.
+            name: Темна
+          high_contrast:
+            description: Чорний, білий і жовтий із найсильнішим контрастом і прямими
+              кутами.
+            name: Високий контраст
+          neutral:
+            description: Спокійний синій на білому. Надійний варіант із сильним контрастом.
+            name: Нейтральна світла
+          warm:
+            description: Земляна іржа та крем із шрифтом із засічками.
+            name: Тепла
+        preview_alert: Інформаційне повідомлення виглядає так.
+        preview_badge: Нове
+        preview_band: Смуга розділу для виділеного вмісту
+        preview_card_text: Картки використовують тло сторінки та акцентну рамку.
+        preview_card_title: Картка
+        preview_footer_link: Посилання підвалу
+        preview_heading: Заголовок у вашій темі
+        preview_hint: Приклад сторінки, що оновлюється під час вибору теми чи зміни
+          кольору. Нічого не зберігається, доки ви не збережете платформу.
+        preview_input_label: Поле форми
+        preview_input_value: Приклад тексту
+        preview_label: Перегляд теми
+        preview_link: прикладом посилання
+        preview_mode_label: Режим кольорів перегляду
+        preview_nav_one: Події
+        preview_nav_two: Про нас
+        preview_primary: Основна дія
+        preview_secondary: Додаткова дія
+        preview_site_name: Ваша платформа
+        preview_text: Основний текст лежить на тлі сторінки, із
+        preview_title: Перегляд
+        radii:
+          large: Великі
+          medium: Середні
+          none: Прямі
+          small: Малі
+        radius_label: Заокруглення кутів
+        remove: Прибрати
+        reset: Повернути збережені значення
+        status_applied: Тему %{name} застосовано до полів. Збережіть платформу, щоб
+          залишити її.
+        status_current: 'Поточна тема: %{name}'
+        status_custom: 'Поточна тема: власні кольори'
+        status_none: Тему не задано, використано типові значення платформи
+        status_previewing: Перегляд теми %{name}. Ще не застосовано.
+        title: Тема
+        white: біла сторінка
     posts:
       authors: Автори
       back_to_posts: Назад до постів
@@ -4374,15 +4654,15 @@ uk:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "«%{name}» тепер сховище файлів цієї платформи. Нові
+        завантаження використовують його одразу; наявні файли залишаються на місці."
+      activated_with_restart: "«%{name}» активовано. Нові завантаження використовують
+        її одразу; інші процеси підхоплять її приблизно за 30 секунд."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'З’єднання з «%{name}» не вдалося: %{message}'
+      connection_ok: З’єднання з «%{name}» успішне.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -4391,15 +4671,21 @@ uk:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Помилка
+        ok: Справне
+        unknown: Не перевірено
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: Активувати цю конфігурацію? Нові завантаження використовують
+          її одразу, а інші процеси підхоплять її приблизно за 30 секунд. Наявні файли
+          залишаються на старому сховищі; міграція блобів виконується окремо вручну.
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
-        activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+        activation_restart_note: Активація нової конфігурації негайно перемикає сховище
+          в поточному процесі. Інші процеси застосунку підхоплять зміну приблизно
+          за 30 секунд.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -4418,6 +4704,7 @@ uk:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: Стан
         header_name: Name
         header_status: Status
         header_type: Type
@@ -4430,6 +4717,7 @@ uk:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Перевірити з’єднання
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
@@ -5234,6 +5522,11 @@ uk:
         submit: Надіслати
         terms_of_service:
           label: Я погоджуюся з Умовами використання
+        trusted_domains:
+          confirm_notice: Адреси в %{domains} приєднуються після підтвердження пошти.
+            Перевірте свою скриньку після реєстрації.
+          link: Зареєструватися з довіреною поштою
+          notice: Маєте адресу в %{domains}?
         view: Переглянути
       signed_up: Ласкаво просимо! Ви успішно зареєструвалися.
       signed_up_but_inactive: Ви успішно зареєструвалися. Проте ми не змогли авторизувати
@@ -5307,6 +5600,7 @@ uk:
       confirmation: не співпадає з %{attribute}
       confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
         запросіть новий
+      denied_for_trusted_domain: не може надаватися поштовим доменом
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -5324,6 +5618,7 @@ uk:
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       model_invalid: 'Перевірка не вдалася: %{errors}'
+      not_a_community_role: має бути роллю спільноти
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
       not_found: не знайдено
@@ -5336,7 +5631,11 @@ uk:
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
+      public_mail_domain: є публічним поштовим сервісом; підтвердьте, щоб довіряти
+        всім його адресам
       required: має існувати
+      required_for_elevated_role: потребує явного підтвердження, перш ніж поштовий
+        домен зможе надати роль вищу за базового учасника
       taken: вже зайнято
       too_long:
         few: занадто довгий (максимум %{count} символи)

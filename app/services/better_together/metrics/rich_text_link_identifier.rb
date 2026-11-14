@@ -17,7 +17,7 @@ module BetterTogether
         @rich_texts = rich_texts
       end
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable-next Metrics/MethodLength
       def call
         texts = rich_texts || ActionText::RichText.includes(:record).where.not(body: nil)
         valid_count = 0
@@ -39,7 +39,6 @@ module BetterTogether
 
         { valid: valid_count, invalid: invalid_count }
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -52,7 +51,7 @@ module BetterTogether
         []
       end
 
-      # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       def process_rich_text(rich_text)
         valid_count = 0
         invalid_count = 0
@@ -87,9 +86,8 @@ module BetterTogether
 
         [valid_count, invalid_count]
       end
-      # rubocop:enable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
 
-      # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       def persist_link_and_rich_text_link(rich_text, link, index, canonical_host, uri_obj)
         bt_link = BetterTogether::Content::Link.find_or_initialize_by(url: link)
         bt_link.host ||= canonical_host
@@ -152,7 +150,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
 
       def parse_uri(link)
         URI.parse(link)

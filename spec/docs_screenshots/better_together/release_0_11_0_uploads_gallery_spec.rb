@@ -88,7 +88,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def capture_uploads_gallery
     slug = ENV.fetch('UPLOADS_GALLERY_SLUG', 'release_0_11_0_uploads_gallery')
 
@@ -107,9 +107,8 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
     expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{slug}.png")
     expect(result[:mobile]).to end_with("docs/screenshots/mobile/#{slug}.png")
   end
-  # rubocop:enable Metrics/AbcSize
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def capture_block_image_library
     slug = ENV.fetch('BLOCK_IMAGE_LIBRARY_SLUG', 'release_0_11_0_block_image_library')
 
@@ -130,7 +129,6 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
     expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{slug}.png")
     expect(result[:mobile]).to end_with("docs/screenshots/mobile/#{slug}.png")
   end
-  # rubocop:enable Metrics/AbcSize
 
   def wait_for_loaded_images(selector, minimum:)
     expect(page).to have_css(selector, minimum:, wait: 10)

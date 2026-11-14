@@ -18,6 +18,8 @@ require 'better_together/profiling'
 require 'better_together/storage_resolver'
 require 'better_together/storage/tenant_registry'
 require 'better_together/storage/tenant_service'
+require 'better_together/storage/usage'
+require 'better_together/storage/platform_blobs'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
@@ -282,6 +284,16 @@ module BetterTogether
         app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
         # Mirrors config/initializers/fast_mcp.rb, which mounts MCP from the same variable.
         app.config.mcp.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development? || Rails.env.test?).to_s == 'true'
+      end
+    end
+
+    # to_prepare re-runs after code reloads, so host themes survive the registry class being reloaded.
+    initializer 'better_together.host_platform_themes' do |app|
+      app.config.to_prepare do
+        path = Rails.root.join('config/platform_themes.yml')
+        if path.exist? && path != BetterTogether::PlatformThemeConfig::THEMES_PATH
+          BetterTogether::PlatformThemeConfig.register_themes_from(path)
+        end
       end
     end
 

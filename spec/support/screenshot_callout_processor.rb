@@ -51,7 +51,7 @@ module BetterTogether # :nodoc:
       ::Vips.block_untrusted(true) if defined?(::Vips) && ::Vips.respond_to?(:block_untrusted)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def prepare_callouts(callouts, image_path:)
       image = Vips::Image.new_from_file(image_path.to_s, access: :sequential)
       placed_boxes = []
@@ -69,7 +69,6 @@ module BetterTogether # :nodoc:
         normalized.merge(target:, avoid:, placement:)
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def normalize_callout(callout)
       target = symbolize_hash(callout[:target] || callout['target'])
@@ -87,7 +86,7 @@ module BetterTogether # :nodoc:
       hash.to_h.transform_keys(&:to_sym)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def clip_rect(rect, image_width, image_height)
       return if rect.blank?
 
@@ -108,10 +107,9 @@ module BetterTogether # :nodoc:
         center_y: y + (height / 2.0)
       }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    # rubocop:disable Metrics/ParameterLists
+    # rubocop:disable-next Metrics/ParameterLists
     def best_placement(target, avoid, image_width, image_height, title, bullets, placed_boxes = [], placed_targets = [])
       box_width = (image_width * (image_width < 700 ? 0.54 : 0.28)).clamp(MIN_BOX_WIDTH, MAX_BOX_WIDTH)
       box_height = estimate_box_height(box_width, title, bullets)
@@ -162,10 +160,9 @@ module BetterTogether # :nodoc:
       candidates.max_by { |candidate| candidate[:score] } ||
         fallback_placement(box_width, box_height, image_width, image_height, target, avoid, placed_boxes, placed_targets)
     end
-    # rubocop:enable Metrics/ParameterLists
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
     def placement_candidate(side:, position:, box:, image:, avoid:, free_space:, placed_boxes: [], placed_targets: [])
       clamped_x = clamp(position[:x], BOX_MARGIN, image[:width] - box[:width] - BOX_MARGIN)
       clamped_y = clamp(position[:y], BOX_MARGIN, image[:height] - box[:height] - BOX_MARGIN)
@@ -193,9 +190,8 @@ module BetterTogether # :nodoc:
         score: free_space
       }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
     def fallback_placement(width, height, image_width, image_height, target, avoid, placed_boxes = [], placed_targets = [])
       placements = [
         { side: 'right', x: avoid[:right] + TARGET_GAP, y: BOX_MARGIN },
@@ -222,9 +218,8 @@ module BetterTogether # :nodoc:
       grid_scan_placement(width, height, image_width, image_height, avoid, placed_boxes, placed_targets) ||
         stack_placement(width, height, image_height, placed_boxes)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
     def grid_scan_placement(width, height, image_width, image_height, avoid, placed_boxes, placed_targets = [])
       x_anchors = [
         BOX_MARGIN,
@@ -245,7 +240,6 @@ module BetterTogether # :nodoc:
       end
       nil
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
     def stack_placement(width, height, image_height, placed_boxes)
       stack_y = (placed_boxes.map { |b| b[:y] + b[:height] }.max || BOX_MARGIN) + 20
@@ -258,14 +252,13 @@ module BetterTogether # :nodoc:
       }
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def rect_overlap?(source_rect, target_rect)
       source_rect[:x] < (target_rect[:x] + target_rect[:width]) &&
         (source_rect[:x] + source_rect[:width]) > target_rect[:x] &&
         source_rect[:y] < (target_rect[:y] + target_rect[:height]) &&
         (source_rect[:y] + source_rect[:height]) > target_rect[:y]
     end
-    # rubocop:enable Metrics/AbcSize
 
     def estimate_box_height(box_width, title, bullets)
       title_lines = wrap_text(title.to_s, chars_per_line(box_width, TITLE_FONT_SIZE)).size
@@ -330,7 +323,7 @@ module BetterTogether # :nodoc:
       "<rect #{attrs} rx=\"18\" fill=\"rgba(248, 251, 255, 0.96)\" stroke=\"#0d6efd\" stroke-width=\"4\" />"
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def connector_points(target, placement)
       case placement[:side]
       when 'right'
@@ -343,9 +336,8 @@ module BetterTogether # :nodoc:
         [{ x: target[:center_x], y: target[:bottom] }, { x: placement[:x] + (placement[:width] / 2.0), y: placement[:y] }]
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def callout_text_svg(callout)
       placement = callout[:placement]
       x = placement[:x] + BOX_PADDING
@@ -373,7 +365,6 @@ module BetterTogether # :nodoc:
 
       %(<text fill="#082c61" font-family="Inter, Arial, sans-serif">#{lines.join}</text>)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def escape_text(text)
       ERB::Util.html_escape(text.to_s)

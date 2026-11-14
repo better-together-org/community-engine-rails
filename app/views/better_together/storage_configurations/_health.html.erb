@@ -1,0 +1,11 @@
+<%# locals: (config:) %>
+<% if config.health_status.blank? || config.health_status == 'unknown' %>
+  <span class="text-muted"><%= t('better_together.storage_configurations.health.unknown') %></span>
+<% else %>
+  <span class="badge <%= config.health_status == 'ok' ? 'bg-success' : 'bg-danger' %>">
+    <%= t("better_together.storage_configurations.health.#{config.health_status}") %>
+  </span>
+  <% if config.health_checked_at %>
+    <small class="text-muted d-block"><%= l(config.health_checked_at, format: :short) %></small>
+  <% end %>
+<% end %>

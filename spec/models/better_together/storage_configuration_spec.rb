@@ -145,4 +145,89 @@ RSpec.describe BetterTogether::StorageConfiguration do
       expect(described_class.s3_services).not_to include(local)
     end
   end
+
+  describe 'bucket uniqueness across platforms' do
+    let(:first) { create(:better_together_storage_configuration, :s3_compatible) }
+
+    it 'rejects the same endpoint and bucket on another platform', :aggregate_failures do
+      other = build(:better_together_storage_configuration, :s3_compatible, endpoint: "#{first.endpoint.upcase}/")
+
+      expect(other).not_to be_valid
+      expect(other.errors[:bucket]).to be_present
+    end
+
+    it 'allows the same bucket name on a different endpoint' do
+      first
+      other = build(:better_together_storage_configuration, :s3_compatible, endpoint: 'http://other.example.test:3900')
+
+      expect(other).to be_valid
+    end
+
+    it 'allows a second configuration on the same platform' do
+      other = build(:better_together_storage_configuration, :s3_compatible, platform: first.platform)
+
+      expect(other).to be_valid
+    end
+  end
+
+  describe 'endpoint safety' do
+    let(:tenant) { create(:better_together_platform, host: false) }
+
+    it 'rejects a private endpoint on a tenant platform' do
+      config = build(:better_together_storage_configuration, :s3_compatible, platform: tenant,
+                                                                             endpoint: 'http://169.254.169.254')
+
+      expect(config).not_to be_valid
+    end
+
+    it 'allows an internal endpoint on the host platform' do
+      host = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+      config = build(:better_together_storage_configuration, :s3_compatible, platform: host,
+                                                                             endpoint: 'http://10.0.0.5:3900')
+
+      expect(config).to be_valid
+    end
+  end
+
+  describe '#test_connection!' do
+    it 'records a healthy result', :aggregate_failures do
+      config = create(:better_together_storage_configuration)
+
+      expect(config.test_connection!).to be_ok
+      expect(config.reload).to have_attributes(health_status: 'ok', health_message: 'ok')
+      expect(config.health_checked_at).to be_present
+    end
+
+    it 'records a failure' do
+      config = create(:better_together_storage_configuration)
+      allow(ActiveStorage::Service::DiskService).to receive(:new).and_raise(IOError)
+
+      config.test_connection!
+
+      expect(config.reload.health_status).to eq('failed')
+    end
+  end
+
+  describe '#rotate_credentials!' do
+    let(:config) { create(:better_together_storage_configuration, :s3_compatible) }
+
+    it 'keeps the old keys when the new pair fails the connection test', :aggregate_failures do
+      failed = BetterTogether::Storage::ConnectionTest::Result.new(false, 'access_denied')
+      allow(BetterTogether::Storage::ConnectionTest).to receive(:new).and_return(instance_double(BetterTogether::Storage::ConnectionTest,
+                                                                                                 call: failed))
+
+      expect(config.rotate_credentials!(access_key_id: 'new', secret_access_key: 'new')).to be(false)
+      expect(config.reload.access_key_id).to eq('GKtest123456789')
+      expect(config.errors[:base]).to be_present
+    end
+
+    it 'stores the new keys after a passing test', :aggregate_failures do
+      ok = BetterTogether::Storage::ConnectionTest::Result.new(true, 'ok')
+      allow(BetterTogether::Storage::ConnectionTest).to receive(:new).and_return(instance_double(BetterTogether::Storage::ConnectionTest,
+                                                                                                 call: ok))
+
+      expect(config.rotate_credentials!(access_key_id: 'new-id', secret_access_key: 'new-secret')).to be(true)
+      expect(config.reload).to have_attributes(access_key_id: 'new-id', health_status: 'ok')
+    end
+  end
 end

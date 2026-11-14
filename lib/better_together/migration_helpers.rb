@@ -69,7 +69,7 @@ module BetterTogether
     # @param prefix [String, nil] (Optional) Prefix for the table name, default is 'better_together'.
     #                              Can be set to nil or false to disable prefixing.
     # @param block [Block] Additional configuration block for table columns.
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def create_bt_membership_table(table_name, member_type:, joinable_type:, id: :uuid, **options)
       # Handle the prefix for the table name
       member_table_name =
@@ -105,6 +105,5 @@ module BetterTogether
         yield(bt) if block_given?
       end
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end
