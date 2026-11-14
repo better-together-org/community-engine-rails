@@ -1,0 +1,16 @@
+---
+title: Posts index scoped to a community
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I read the posts of one community.
+callouts:
+- :id: filters
+  :title: Filters
+  :description: Collapsible at every width when embedded.
+- :id: list
+  :title: Community posts
+  :description: Scoped by community_id.
+accessibility_notes: The filter toggle is a native button with aria-expanded and aria-controls.
+slug: framed_indexes_posts
+device: mobile

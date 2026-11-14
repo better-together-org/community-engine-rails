@@ -9,7 +9,7 @@ module BetterTogether
     def create
       current_user.person.person_deletion_requests.create!(
         requested_at: Time.current,
-        requested_reason: params.dig(:person_deletion_request, :requested_reason)
+        requested_reason: deletion_request_params[:requested_reason]
       )
 
       redirect_to edit_user_registration_path(locale: I18n.locale),
@@ -32,6 +32,10 @@ module BetterTogether
 
     def set_person_deletion_request
       @person_deletion_request = current_user.person.person_deletion_requests.active.find(params[:id])
+    end
+
+    def deletion_request_params
+      params.require(:person_deletion_request).permit(:requested_reason)
     end
   end
 end

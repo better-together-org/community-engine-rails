@@ -39,14 +39,47 @@ RSpec.describe BetterTogether::Person do
     end
   end
 
+  describe '#optimized_cover_image' do
+    let(:person) { described_class.allocate }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      stubbed_cover_image = cover_image
+      person.define_singleton_method(:cover_image) { stubbed_cover_image }
+    end
+
+    context 'when the cover image is a PNG' do
+      let(:content_type) { 'image/png' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_png).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(person.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+
+    context 'when the cover image is a JPEG' do
+      let(:content_type) { 'image/jpeg' }
+
+      it 'returns the JPEG variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_jpeg).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(person.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+  end
+
   describe 'community action network identity helpers' do
-    it 'exposes governed agent metadata for people' do
-      expect(person.governed_agent?).to be(true)
-      expect(person.governed_agent_type).to eq('person')
-      expect(person.governed_agent_identifier).to eq(person.identifier)
-      expect(person.governed_agent_display_name).to eq(person.name)
-      expect(person.governed_agent_key).to eq("person:#{person.identifier}")
-      expect(person.governed_agent_label).to eq("#{person.name} (person)")
+    it 'exposes agent identity metadata for people' do
+      expect(person.agent?).to be(true)
+      expect(person.agent_type).to eq('person')
+      expect(person.agent_identifier).to eq(person.identifier)
+      expect(person.agent_display_name).to eq(person.name)
+      expect(person.agent_key).to eq("person:#{person.identifier}")
+      expect(person.agent_label).to eq("#{person.name} (person)")
     end
   end
 
@@ -119,9 +152,11 @@ RSpec.describe BetterTogether::Person do
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') { |a| a.title = 'Terms of Service' } }
 
       before do
-        allow(BetterTogether::Agreement).to receive(:exists?)
-          .with(identifier: 'code_of_conduct')
-          .and_return(false)
+        # unaccepted_required_agreements scopes via Agreement.required_for_registration
+        # (a DB query), not Agreement.exists?, so simulate "code_of_conduct isn't
+        # required" by excluding it from that scope directly.
+        BetterTogether::Agreement.where(identifier: 'code_of_conduct')
+                                 .update_all(required_for: BetterTogether::Agreement::REQUIRED_FOR_VALUES[:none]) # rubocop:disable Rails/SkipsModelValidations
       end
 
       it 'returns only privacy_policy and terms_of_service' do
@@ -206,6 +241,26 @@ RSpec.describe BetterTogether::Person do
       association = described_class.reflect_on_association(:oauth_applications)
       expect(association).to be_present
       expect(association.options[:dependent]).to eq(:destroy)
+    end
+  end
+
+  describe '#block_between?' do
+    let(:person) { create(:better_together_person) }
+    let(:other) { create(:better_together_person) }
+
+    it 'is false without a block' do
+      expect(person.block_between?(other)).to be(false)
+    end
+
+    it 'is true in both directions once either person blocks the other', :aggregate_failures do
+      create(:person_block, blocker: person, blocked: other)
+
+      expect(person.block_between?(other)).to be(true)
+      expect(other.block_between?(person)).to be(true)
+    end
+
+    it 'is false for nil' do
+      expect(person.block_between?(nil)).to be(false)
     end
   end
 end

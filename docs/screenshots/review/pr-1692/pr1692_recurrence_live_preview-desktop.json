@@ -1,0 +1,83 @@
+{
+  "name": "pr1692_recurrence_live_preview",
+  "device": "desktop",
+  "url": "/en/events/new",
+  "title": "Flatley-Kris",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "recurrence_calendar_ux",
+  "flow": "event_recurrence_preview",
+  "source_spec": "./spec/docs_screenshots/better_together/recurrence_calendar_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#recurrence-preview-summary",
+      "title": "Plain-English rule summary",
+      "bullets": [
+        "Confirms the whole configuration at a glance instead of parsing 5 separate fields."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 1000.0,
+        "width": 966.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 1024.0,
+        "center_x": 885.0,
+        "center_y": 1012.0
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 1000.0,
+        "width": 966.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 1024.0,
+        "center_x": 885.0,
+        "center_y": 1012.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 695.0,
+        "y": 764.0,
+        "width": 380,
+        "height": 216,
+        "score": 1000.0
+      }
+    },
+    {
+      "selector": "#recurrence-preview-occurrences",
+      "title": "Real upcoming occurrence dates",
+      "bullets": [
+        "The preview endpoint existed before this PR but was never actually wired to any field — every interaction silently did nothing."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 1032.0,
+        "width": 966.0,
+        "height": 72.0,
+        "right": 1368.0,
+        "bottom": 1104.0,
+        "center_x": 885.0,
+        "center_y": 1068.0
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 1032.0,
+        "width": 966.0,
+        "height": 72.0,
+        "right": 1368.0,
+        "bottom": 1104.0,
+        "center_x": 885.0,
+        "center_y": 1068.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 695.0,
+        "y": 1124.0,
+        "width": 380,
+        "height": 242,
+        "score": 357.0
+      }
+    }
+  ]
+}

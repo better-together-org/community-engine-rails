@@ -9,6 +9,10 @@ module BetterTogether
     included do
       skip_before_action :check_platform_setup
       skip_before_action :check_platform_privacy
+      # A wizard step must never become the post sign-in return location: a
+      # completed wizard redirects to sign-in, which would send a signed-in
+      # user straight back to the step in an endless redirect loop.
+      skip_before_action :store_user_location!
       before_action :determine_wizard_outcome
     end
 
@@ -27,7 +31,7 @@ module BetterTogether
       end
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def find_or_create_wizard_step(force_next: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # If wizard_step_definition_id is in params (from route defaults), use that specific step
       # But NOT when force_next is true (e.g., after completing a step)
@@ -53,7 +57,6 @@ module BetterTogether
         wizard_step.wizard_step_definition = step_definition
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def mark_current_step_as_completed
       wizard_step = find_or_create_wizard_step

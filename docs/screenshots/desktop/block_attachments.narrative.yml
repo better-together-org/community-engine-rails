@@ -1,0 +1,15 @@
+---
+title: 'Rich text: image and video blocks as attachments'
+audience:
+- member
+- content_editor
+- developer
+journey_step: As a reader, I see the photos and videos an author embedded in a post.
+callouts:
+- :id: attached_image
+  :title: Image block
+  :description: The post stores a signed reference to the block, not pasted HTML.
+accessibility_notes: Images carry alt text, falling back to the caption; the video
+  iframe has a title.
+slug: block_attachments
+device: desktop

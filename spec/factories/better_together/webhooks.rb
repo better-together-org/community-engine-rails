@@ -15,6 +15,10 @@ module BetterTogether # :nodoc:
       events { [] }
 
       association :person, factory: :better_together_person
+      # Default to the host platform — PlatformRecordPolicy::Scope filters by
+      # Current.platform, so a webhook endpoint on a random unrelated
+      # platform is invisible to the currently-scoped test session.
+      platform { Current.platform || BetterTogether::Platform.find_by(host: true) || create(:better_together_platform) }
 
       trait :inactive do
         active { false }
@@ -52,6 +56,11 @@ module BetterTogether # :nodoc:
       attempts { 0 }
 
       association :webhook_endpoint, factory: :better_together_webhook_endpoint
+      # platform_id is a plain denormalized column (see WebhookDelivery model
+      # comment), not a declared `belongs_to :platform` association — derive
+      # it from the endpoint to satisfy the platform_matches_endpoint
+      # validation by default.
+      platform_id { webhook_endpoint.platform_id }
 
       trait :delivered do
         status { 'delivered' }

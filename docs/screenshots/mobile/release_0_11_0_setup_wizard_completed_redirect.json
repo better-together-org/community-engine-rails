@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_setup_wizard_completed_redirect",
+  "device": "mobile",
+  "url": "/en/users/sign-in",
+  "title": "Sign In | Test Host Community",
+  "locale": "en",
+  "feature_set": "setup_wizard",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_setup_wizard_spec.rb"
+}

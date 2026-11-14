@@ -1,0 +1,17 @@
+---
+title: Platform Show — Platform Operations card
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager viewing my platform's About tab, I find "Domains"
+  alongside the other platform-operations links.
+callouts:
+- :id: domains_operations_link
+  :title: Domains entry point
+  :description: Routes to the new platform_domains index for this platform; only shown
+    when PlatformDomainPolicy#index? passes for the signed-in manager on this platform.
+accessibility_notes: Rendered as a standard Bootstrap outline button alongside its
+  siblings, same focus/contrast treatment as the existing operations links.
+slug: platform_domains_show_page_entry_point
+device: desktop

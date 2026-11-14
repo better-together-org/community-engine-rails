@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/SpecFilePathFormat
 RSpec.describe BetterTogether do
   around do |example|
     original_registry = described_class.adapter_registry
@@ -76,13 +76,36 @@ RSpec.describe BetterTogether do
       adapter = instance_double(Proc)
       allow(adapter).to receive(:call).and_return(vectors: [0.1, 0.2])
 
-      described_class.register_embedding_adapter(:borgberry, adapter)
+      described_class.register_embedding_adapter(:local_model, adapter)
 
-      result = described_class.embed_text('hello', provider: 'borgberry', model: 'embed-small')
+      result = described_class.embed_text('hello', provider: 'local_model', model: 'embed-small')
 
       expect(result).to eq(vectors: [0.1, 0.2])
-      expect(adapter).to have_received(:call).with('hello', provider: 'borgberry', model: 'embed-small')
+      expect(adapter).to have_received(:call).with('hello', provider: 'local_model', model: 'embed-small')
+    end
+  end
+
+  describe '.llm_available?' do
+    let(:platform) { create(:platform) }
+
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('BETTER_TOGETHER_LLM_PROVIDER', 'openai').and_return('openai')
+      create(:robot, :global, identifier: 'translation', provider: 'openai', default_model: nil)
+    end
+
+    it 'returns true for the translation robot when OpenAI credentials are present' do
+      allow(ENV).to receive(:fetch).with('OPENAI_API_KEY', nil).and_return('test-openai-key')
+      allow(ENV).to receive(:fetch).with('OPENAI_ACCESS_TOKEN', nil).and_return(nil)
+
+      expect(described_class.llm_available?(identifier: 'translation', platform:)).to be(true)
+    end
+
+    it 'returns false for the translation robot when OpenAI credentials are absent' do
+      allow(ENV).to receive(:fetch).with('OPENAI_API_KEY', nil).and_return(nil)
+      allow(ENV).to receive(:fetch).with('OPENAI_ACCESS_TOKEN', nil).and_return(nil)
+
+      expect(described_class.llm_available?(identifier: 'translation', platform:)).to be(false)
     end
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat

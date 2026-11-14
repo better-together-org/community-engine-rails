@@ -11,9 +11,18 @@ module BetterTogether
       #
       # Host apps must override +validate_captcha_if_enabled?+ to enforce captcha.
       class MembershipRequestsController < BetterTogether::Api::ApplicationController
+        include BetterTogether::BotProtectedSubmissions
+
         skip_before_action :authenticate_api_user!, only: :create, raise: false
 
-        def create
+        def create # rubocop:todo Metrics/MethodLength
+          membership_request = BetterTogether::Joatu::MembershipRequest.new
+          unless bot_protected_submission_valid?(form_id: :membership_request_api, resource: membership_request)
+            return render json: {
+              errors: [{ title: membership_request.errors.full_messages.first }]
+            }, status: :unprocessable_entity
+          end
+
           unless validate_captcha_if_enabled?
             return render json: {
               errors: [{ title: I18n.t(

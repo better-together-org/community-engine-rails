@@ -12,19 +12,11 @@ module BetterTogether
         css_classes String, default: 'my-5'
       end
 
-      def as_indexed_json(_options = {})
-        {
-          id:,
-          identifier:,
-          localized_content: indexed_localized_content
-        }
-      end
-
+      # Plain-text content per locale, HTML stripped, for search indexing.
       def indexed_localized_content
-        self.class.localized_attribute_list.map do |attr|
-          value = public_send(attr)&.to_plain_text
-          value.gsub(/\n+/, ' ').strip if value.present?
-        end.compact
+        I18n.available_locales.filter_map do |locale|
+          Mobility.with_locale(locale) { content&.to_plain_text.presence }
+        end
       end
     end
   end

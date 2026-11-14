@@ -92,12 +92,21 @@ module BetterTogether # :nodoc:
 
         context 'with missing optional fields' do
           let(:minimal_event) do
+            # Event requires at least one event_host (built from `creator` via
+            # `set_host` before_validation), so `creator: nil` on create is
+            # rejected ("Event hosts host must exist"). To exercise the
+            # nil-creator branch of GoogleCalendarJson, create the event with
+            # a valid creator/host first, then null out `creator_id` directly
+            # to simulate the real-world case where the creating person has
+            # since been deleted (creator_id set null) while the event and
+            # its already-persisted event_hosts remain.
             create(:better_together_event,
                    name: 'Minimal Event',
                    starts_at: 1.day.from_now,
                    ends_at: 1.day.from_now + 1.hour,
-                   description: nil,
-                   creator: nil)
+                   description: nil).tap do |event|
+              event.update_column(:creator_id, nil) # rubocop:todo Rails/SkipsModelValidations
+            end
           end
 
           it 'handles nil description' do

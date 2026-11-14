@@ -1,0 +1,48 @@
+{
+  "name": "settlement_weather_history",
+  "device": "mobile",
+  "url": "/en/g/settlements/settlement-4",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "weather",
+  "flow": "history",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_weather_spec.rb",
+  "callouts": [
+    {
+      "selector": "#weather-history-data",
+      "title": "Same values as a table",
+      "bullets": [
+        "Every chart has a text alternative."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 852.46875,
+        "width": 427.0,
+        "height": 24.0,
+        "right": 456.0,
+        "bottom": 876.46875,
+        "center_x": 242.5,
+        "center_y": 864.46875
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 852.46875,
+        "width": 427.0,
+        "height": 24.0,
+        "right": 456.0,
+        "bottom": 876.46875,
+        "center_x": 242.5,
+        "center_y": 864.46875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 668.47,
+        "width": 270.0,
+        "height": 164,
+        "score": 852.46875
+      }
+    }
+  ]
+}

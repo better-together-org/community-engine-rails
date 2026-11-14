@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :metrics_share, class: 'BetterTogether::Metrics::Share', aliases: [:share] do
     url { Faker::Internet.url(path: "/#{Faker::Internet.slug}") }
-    platform { %w[email facebook bluesky linkedin pinterest reddit whatsapp].sample }
+    platform_name { %w[email facebook bluesky linkedin pinterest reddit whatsapp].sample }
     platform_id { BetterTogether::Platform.find_by(host: true)&.id || association(:better_together_platform, :host).id }
     shared_at { Faker::Time.between(from: 15.days.ago, to: 1.day.ago) }
     locale { I18n.default_locale.to_s }

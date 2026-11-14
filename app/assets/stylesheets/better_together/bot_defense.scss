@@ -1,0 +1,11 @@
+// Visually hides the bot-defense honeypot trap element from sighted users
+// while keeping it in the DOM for screen reader/bot detection purposes.
+// This must not use `display: none` or `visibility: hidden` as some bots skip such fields.
+.better-together-bot-defense-trap {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

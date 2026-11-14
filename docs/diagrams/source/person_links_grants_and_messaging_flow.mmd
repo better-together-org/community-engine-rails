@@ -1,0 +1,23 @@
+flowchart TD
+    subgraph Messaging
+        A[Member sends MessageRequest with a note] --> B{message_requests gate on and no pending request?}
+        B -- No --> X[Rejected]
+        B -- Yes --> C[Recipient inbox: pending]
+        C -- accept! --> D[Status accepted, responded_at set]
+        D --> E[PersonMessagingGrant: recipient grants sender]
+        D --> F[Opening Conversation created with the note as first message]
+        C -- decline! --> G[Status declined]
+        H[Invitation accepted] --> I[PersonMessagingGrant: invitee grants inviter]
+        J[Opted in via receive_messages_from_members, or platform steward] --> K[Conversation participant allowed]
+        E --> K
+        I --> K
+    end
+    subgraph Cross-platform links
+        L[Joatu PersonLinkRequest accepted] --> M[PersonLink active on an active PlatformConnection]
+        N[Joatu PersonAccessGrantRequest accepted] --> O[PersonLink found or activated]
+        O --> P[PersonAccessGrant active, profile read allowed by default]
+        M --> P
+        P --> Q{allows_scope? profile_read, private_posts, pages, events, messages}
+        R[PersonLink revoke!] --> S[All its grants revoked]
+        T[Joatu ConnectionRequest accepted] --> U[PlatformConnection active, peer by default]
+    end

@@ -1,0 +1,16 @@
+flowchart TD
+    A[Share button on a post, page, event or community] --> B[POST short_links/ensure with linkable_type and linkable_id]
+    B --> C{Linkable type in Shortlinkable.included_in_models?}
+    C -- No --> X[400 Bad Request]
+    C -- Yes --> D[authorize linkable show?]
+    D --> E{Existing short link active and unexpired?}
+    E -- Yes --> G[Reuse it]
+    E -- No --> F[create_short_link! with target_url, platform, creator]
+    F --> G
+    G --> H[Turbo stream replaces the share button with the short URL]
+    I[Visitor opens platform share URL /s/code] --> J{ShortLink found for Current.platform and active and unexpired?}
+    J -- No --> K[404]
+    J -- Yes --> L[Enqueue TrackShortLinkVisitJob]
+    L --> M[ShortLinkVisit row: anonymized IP, bot flag, referrer]
+    J -- Yes --> N[Increment click_count]
+    N --> O[302 to target_url, X-Robots-Tag noindex]

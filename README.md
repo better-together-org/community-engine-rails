@@ -12,6 +12,10 @@ This project embodies our vision of a world where collaboration leads to greater
 
 This project is the core community building portion of the Better Together platform.
 
+![A Community Engine community page with a branded banner, a request-to-join control, tabs for About, Posts and Events, and share buttons](docs/screenshots/desktop/community_access_mode_request_to_join.png)
+
+Community Engine 0.11.0 adds multi-tenant platforms, federation, member data rights, stronger safety and privacy controls, and a larger content toolkit. See the [0.11.0 release notes](docs/releases/0.11.0.md).
+
 ## Documentation
 
 For system overviews, flows, and diagrams, see the docs index:
@@ -60,33 +64,39 @@ end
 Add this gem to your Gemfile:
 
 ```ruby
-gem 'better_together', '~> 0.8.0',
+gem 'better_together', '~> 0.11.0',
     github: 'better-together-org/community-engine-rails',
     branch: 'main'
 ```
 
-Include `pundit_resources` in your Gemfile from our GitHub repository
+Include the forks CE needs in your Gemfile (check the engine's Gemfile for the current list):
 
 ```ruby
-gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'main'
+gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'master'
+gem 'storext', github: 'better-together-org/storext'
 ```
 
-Run the engine installer. This will create an initializer to allow you to customize the engine, such as setting your own user class.
+Start from a fresh Rails app that uses PostgreSQL with PostGIS, sprockets (remove `propshaft` if present; `--asset-pipeline=sprockets` is ignored by some Rails versions) and UUID primary keys:
 
-```bash
-rails g better_together:install
+```yaml
+# config/database.yml
+default: &default
+  adapter: postgis
 ```
 
-Install the migrations. This will run a rake task to copy over the migrations from the better_together engine.
+Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
 
 ```bash
-rails better_together:install:migrations
+rails g better_together:install            # engine migrations run from the gem (default)
+rails g better_together:install --migrations=install   # copy migrations into db/migrate instead
 ```
 
-Run the migrations. This will set up the database tables required to run the better_together engine.
+If you use Action Text, run `rails action_text:install` before the engine migrations and delete its copied migration; CE ships its own Action Text tables.
+
+Create and migrate the database. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
 
 ```bash
-rails db:migrate
+rails db:create db:migrate
 ```
 
 ## Development: Getting Started
@@ -102,20 +112,26 @@ bin/dc build
 Bundle the gems:
 
 ```bash
-bin/dc-run app bundle
+bin/dc-run bundle
 ```
 
 Setup the database:
 
 ```bash
-bin/dc-run app rails db:setup
+bin/dc-run rails db:setup
 ```
 
 Run the RSpec tests:
 
 ```bash
-bin/dc-run app rspec
+bin/dc-run rspec
 ```
+
+Troubleshooting:
+
+- `bin/dc-run rails db:create` only creates the databases. It does not load schema or run migrations.
+- If you have already run `db:create`, run `bin/dc-run rails db:migrate` or `bin/dc-run rails db:setup` before `bin/dc-run rails db:seed`.
+- Fresh worktrees may not include ignored files such as `spec/dummy/config/master.key`, so local setup must not depend on that file being present.
 
 ## Contributing
 

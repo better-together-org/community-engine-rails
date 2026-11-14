@@ -14,6 +14,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :people
   # NOTE: Relationship routes omitted until all related resources exist
 
+  # Short Links
+  jsonapi_resources :short_links
+
   # Communities
   jsonapi_resources :communities
   # NOTE: Relationship routes omitted until all related resources exist
@@ -29,23 +32,6 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Conversations
   jsonapi_resources :conversations, only: %i[index show create update]
-
-  # E2E encryption: prekey management + encrypted key backup
-  resources :people, only: [] do
-    member do
-      get  :prekey_bundle,    to: 'prekeys#prekey_bundle'
-      put  :register_prekeys, to: 'prekeys#register_prekeys'
-      get  :key_backup,       to: 'prekeys#key_backup'
-      put  :key_backup,       to: 'prekeys#save_key_backup'
-    end
-  end
-
-  # E2E encryption: conversation-scoped participant prekey bundles
-  resources :conversations, only: [] do
-    member do
-      get :participant_prekey_bundles, to: 'conversations#participant_prekey_bundles'
-    end
-  end
 
   # Messages (create-only for sending, index/show for reading)
   jsonapi_resources :messages, only: %i[index show create]
@@ -66,8 +52,14 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Metrics (custom summary endpoint, read-only)
   get 'metrics/summary', to: 'metrics_summary#show'
 
+  # Quotas (read-only - usage/limit numbers an external poller or dashboard reads)
+  jsonapi_resources :quotas, only: %i[index show]
+  jsonapi_resources :quota_usages, only: %i[index show]
+  jsonapi_resources :quota_balances, only: %i[index show]
+
   # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :authorships
   jsonapi_resources :page_blocks
 
   # Content Blocks (all STI types — filter by page_id or type)
@@ -76,6 +68,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
+  jsonapi_resources :robots, only: %i[index show create update]
 
   # Geography (read-only)
   jsonapi_resources :geography_continents, only: %i[index show]
@@ -92,6 +85,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_requests
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/cancel', to: 'joatu_agreements#cancel'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 
   # Membership requests — create is public (unauthenticated); read/manage require auth

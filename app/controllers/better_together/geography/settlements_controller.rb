@@ -3,9 +3,9 @@
 module BetterTogether
   module Geography
     class SettlementsController < FriendlyResourceController # rubocop:todo Style/Documentation
-      before_action :set_geography_settlement, only: %i[show edit update destroy]
+      before_action :set_geography_settlement, only: %i[show weather edit update destroy]
       before_action :authorize_geography_settlement,
-                    only: %i[show edit update destroy]
+                    only: %i[show weather edit update destroy]
       after_action :verify_authorized, except: :index
 
       # GET /geography/settlements
@@ -17,7 +17,23 @@ module BetterTogether
       end
 
       # GET /geography/settlements/1
-      def show; end
+      # The communities located here, through the viewer's policy scope so visibility never widens.
+      def show
+        @located_communities = policy_scope(::BetterTogether::Community)
+                               .located_in(@geography_settlement)
+                               .with_translations
+                               .order(:identifier)
+        @weather_location = weather_location_for(@geography_settlement)
+      end
+
+      # GET /geography/settlements/1/weather
+      # The weather panel, loaded into the settlement page's Weather tab. Reads stored rows only.
+      def weather
+        @weather_location = weather_location_for(@geography_settlement)
+        return render_not_found if @weather_location.nil?
+
+        @weather_panel = ::BetterTogether::Weather::SettlementPanel.new(@weather_location)
+      end
 
       # GET /geography/settlements/new
       def new
@@ -77,6 +93,11 @@ module BetterTogether
 
       private
 
+      def weather_location_for(settlement)
+        ::BetterTogether::Weather::Location.enabled.includes(:source, :current_condition)
+                                           .find_by(settlement: settlement)
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_geography_settlement
         @geography_settlement = set_resource_instance
@@ -100,7 +121,7 @@ module BetterTogether
 
       # Only allow a list of trusted parameters through.
       def geography_settlement_params
-        params.fetch(:geography_settlement, {})
+        params.require(:geography_settlement).permit(*resource_class.permitted_attributes)
       end
     end
   end

@@ -1,0 +1,18 @@
+---
+title: Federation Hub -- Personal Panel
+audience:
+- member
+- developer
+journey_step: As a member, I visit the Federation Hub to see which of my content is
+  set to federate, and confirm my per-item overrides took effect.
+callouts:
+- :id: recent_items
+  :title: Recently updated content
+  :description: Each item shows its current federation_visibility badge.
+- :id: visibility_counts
+  :title: Federation visibility counts
+  :description: A quick tally by tri-state value across the member's own content.
+accessibility_notes: Counts use a <dl> with labelled <dt>/<dd> pairs; badges are text,
+  not color-only.
+slug: federation_hub_personal_panel
+device: desktop

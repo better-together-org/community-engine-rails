@@ -19,7 +19,17 @@ module BetterTogether
     encrypts :refresh_token
 
     belongs_to :person
+    # Not PlatformScoped: isolation here is by person/user ownership, not by
+    # platform — a person's OAuth integrations are theirs regardless of which
+    # tenant they're viewing from. PersonPlatformIntegrationPolicy's index/show
+    # scope by `user_id == current user`, not by Current.platform. `platform`
+    # instead identifies the external OAuth provider itself (a `Platform`
+    # record with `external: true`, e.g. "Github"). The omniauth callback
+    # looks identities up by `provider`, `uid` and `local_platform`.
     belongs_to :platform
+    # The local platform this identity was linked on. The same provider account (provider + uid)
+    # is a separate identity on each platform, so sign-in never matches across platforms.
+    belongs_to :local_platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :user
 
     # Destroy notification events when integration is removed
@@ -30,10 +40,10 @@ module BetterTogether
     after_destroy :clear_notification_caches
 
     validates :provider, presence: true, inclusion: {
-      in: PROVIDERS.keys.map(&:to_s)
+      in: (PROVIDERS.keys + BetterTogether::IdentityProviders.keys).map(&:to_s).uniq
     }
     validates :uid, presence: true, uniqueness: {
-      scope: :provider
+      scope: %i[provider platform_id local_platform_id]
     }
     validates :user, presence: true
     validates :access_token, presence: { on: :create }
@@ -132,7 +142,7 @@ module BetterTogether
     end
     private_class_method :extract_profile_url
 
-    def self.update_or_initialize(person_platform_integration, auth, platform: nil)
+    def self.update_or_initialize(person_platform_integration, auth, platform: nil, local_platform: nil)
       attributes = attributes_from_omniauth(auth)
 
       # Find the external OAuth platform based on the provider
@@ -141,6 +151,7 @@ module BetterTogether
 
       # Allow manual platform override (for backward compatibility)
       attributes[:platform] = platform if platform.present?
+      attributes[:local_platform] = local_platform if local_platform.present? && person_platform_integration.blank?
 
       if person_platform_integration.present?
         person_platform_integration.update(attributes)
@@ -151,8 +162,8 @@ module BetterTogether
       person_platform_integration
     end
 
-    # rubocop:disable Metrics/MethodLength
-    private_class_method def self.find_external_platform_for_provider(provider)
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
+    def self.find_external_platform_for_provider(provider)
       # Map OAuth provider names to platform identifiers
       provider_mapping = {
         'github' => 'github',
@@ -162,7 +173,8 @@ module BetterTogether
         'twitter' => 'twitter'
       }
 
-      platform_identifier = provider_mapping[provider.to_s]
+      platform_identifier = provider_mapping[provider.to_s] ||
+                            BetterTogether::IdentityProviders.find(provider)&.platform_identifier
       return nil unless platform_identifier
 
       # Find or create the external platform for this OAuth provider
@@ -175,9 +187,11 @@ module BetterTogether
         platform.host = false
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     private_class_method def self.platform_url_for_provider(identifier)
+      registered = BetterTogether::IdentityProviders.registry.values.find { |p| p.platform_identifier == identifier }
+      return registered.platform_url if registered
+
       {
         'github' => 'https://github.com',
         'google' => 'https://accounts.google.com',

@@ -10,11 +10,10 @@ RSpec.describe 'BetterTogether::Api::V1::Uploads', :no_auth do
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
   before do
-    stub_const('BetterTogether::PlatformDomain', Class.new do
-      def self.resolve(_hostname)
-        nil
-      end
-    end)
+    # Narrow method stub, not a full class replacement — stub_const'ing the
+    # whole model breaks its real belongs_to/has_many associations used
+    # elsewhere (e.g. Platform#platform_domains via factory callbacks).
+    allow(BetterTogether::PlatformDomain).to receive(:resolve).and_return(nil)
   end
 
   describe 'GET /api/v1/uploads' do

@@ -1,0 +1,21 @@
+---
+title: Recurrence form — live preview
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer, I see the exact dates this rule produces before saving,
+  instead of finding out after the fact.
+callouts:
+- :id: preview_summary
+  :title: Plain-English rule summary
+  :description: RecurrenceHelper#recurrence_attrs_summary, rendered server-side in
+    the same partial as the occurrence list.
+- :id: preview_occurrences
+  :title: Real upcoming occurrence dates
+  :description: Every field now has a data-action wired to a debounced fetch; previously
+    only frequency/end_type called updateVisibility, never updatePreview.
+accessibility_notes: The preview container has role="status" aria-live="polite" so
+  updates are announced to screen readers.
+slug: pr1692_recurrence_live_preview
+device: desktop

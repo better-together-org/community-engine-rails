@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   include Devise::Test::IntegrationHelpers
 
   let(:user) { create(:user, :confirmed) }
-  let!(:person) { create(:better_together_person, user: user) }
+  let(:person) { user.person }
   let(:checklist) { create(:better_together_checklist) }
   let(:items) { create_list(:better_together_checklist_item, 3, checklist: checklist) }
 
@@ -19,9 +19,8 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   # rubocop:todo RSpec/MultipleExpectations
   it 'returns empty record when none exists and can create a completion' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
-    # rubocop:todo Layout/LineLength
+    # rubocop:todo-next Layout/LineLength
     get "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{checklist.id}/checklist_items/#{items.first.id}/person_checklist_item"
-    # rubocop:enable Layout/LineLength
     expect(response).to have_http_status(:ok)
     expect(JSON.parse(response.body)['completed_at']).to be_nil
 
@@ -45,9 +44,8 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
     # rubocop:todo RSpec/MultipleExpectations
     it 'returns 404 for show action' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
-      # rubocop:todo Layout/LineLength
+      # rubocop:todo-next Layout/LineLength
       get "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{invalid_id}/checklist_items/#{items.first.id}/person_checklist_item"
-      # rubocop:enable Layout/LineLength
       expect(response).to have_http_status(:not_found)
       data = JSON.parse(response.body)
       expect(data['error']).to eq('Checklist not found')

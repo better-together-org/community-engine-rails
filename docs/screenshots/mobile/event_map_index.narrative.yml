@@ -1,0 +1,19 @@
+---
+title: Events Index — Aggregate Location Map
+audience:
+- community_organizer
+- platform_organizer
+- developer
+journey_step: As a community organizer browsing events, I see at a glance where events
+  are happening across the platform, not just as a list.
+callouts:
+- :id: events_map
+  :title: EventCollectionMap
+  :description: 'New STI subtype: BetterTogether::Geography::EventCollectionMap <
+    LocatableMap. It queries every event with an assigned location and flattens their
+    individual leaflet_points into one collection, the same pattern already used by
+    CommunityCollectionMap on the communities index.'
+accessibility_notes: Marker popups use the event name as visible link text, satisfying
+  link- purpose-in-context for screen reader users.
+slug: event_map_index
+device: mobile

@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title') %></h1>
+  <p class="text-muted"><%= t('.subtitle', platform_name: @platform.name) %></p>
+
+  <%= render 'form', platform_domain: @platform_domain %>
+</div>

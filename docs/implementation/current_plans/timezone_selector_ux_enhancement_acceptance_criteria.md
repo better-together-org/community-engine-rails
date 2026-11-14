@@ -1,5 +1,9 @@
 # TDD Acceptance Criteria: Timezone Selector UX Enhancement
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-24. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document transforms the timezone selector UX improvement plan into stakeholder-focused acceptance criteria using Test-Driven Development (TDD) principles. The implementation enhances timezone selection with SlimSelect search functionality, priority zones, continent-based grouping, and improved display formatting.

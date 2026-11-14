@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Infrastructure
-    class BuildingPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+    class BuildingPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
       def index?
         user.present?
       end
@@ -25,7 +25,7 @@ module BetterTogether
 
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
-          scope.order(created_at: :desc)
+          platform_scoped.order(created_at: :desc)
         end
       end
     end

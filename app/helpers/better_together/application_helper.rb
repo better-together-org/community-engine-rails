@@ -26,6 +26,25 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
+    # rubocop:disable-next Style/ArgumentsForwarding
+    def storage_proxy_url_for(attachment, **options)
+      return unless attachment.present?
+
+      media_url_options = default_url_options.except(:locale, 'locale')
+      request_base_url = request&.base_url
+
+      url_builder_options = {
+        url_options: media_url_options,
+        **options
+      }
+      url_builder_options[:base_url] = request_base_url if request_base_url.present?
+
+      BetterTogether::MediaUrlBuilder.proxy_url_for(
+        attachment,
+        **url_builder_options
+      )
+    end
+
     # Returns the base path configured for BetterTogether.
     def base_path
       ::BetterTogether.base_path
@@ -39,7 +58,7 @@ module BetterTogether
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity
-      @current_identity ||= current_person
+      @current_identity ||= current_person || (respond_to?(:current_robot) ? current_robot : nil)
     end
 
     # Retrieves the current person associated with the signed-in user.
@@ -50,26 +69,48 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
-    # Generates a short-lived Devise JWT for the current web-session user so that
-    # in-browser JavaScript can call Devise JWT-protected API endpoints (e.g.
-    # /api/v1/people/:id/key_backup) without re-authenticating via the API.
-    # Returns nil when no user is signed in or JWT generation fails.
-    def current_user_api_token
-      return nil unless user_signed_in? && current_user
+    # Path to the signed-in person's own profile. Falls back to the id when the person has no
+    # slug in the current locale, so one missing slug translation cannot break every page's nav.
+    def current_person_profile_path
+      person_my_profile_path(person_id: current_person.slug.presence || current_person.id)
+    end
 
-      Warden::JWTAuth::UserEncoder.new.call(current_user, :api_user, nil).first
-    rescue Devise::MissingWarden, StandardError
-      # Devise::MissingWarden is raised in view specs where the Warden
-      # middleware is not present in the stack.
+    # current_user/user_signed_in? need Warden, which isn't present in two render
+    # contexts this engine actually uses: Comment/Message's broadcast_append_later_to
+    # (a bare renderer, no request/session) and Devise-less view/helper specs. Every
+    # helper that needed to tolerate that used to add its own
+    # `rescue Devise::MissingWarden` — ContentActionsHelper, CommentsHelper,
+    # PeopleHelper, and this method's own former version all duplicated it
+    # independently. Centralized here so call sites just use the safe accessor and
+    # never need their own rescue for this specific case.
+    def safe_current_user
+      return nil unless respond_to?(:user_signed_in?)
+
+      current_user if user_signed_in?
+    rescue Devise::MissingWarden
       nil
     end
 
-    def e2ee_messaging_enabled?
-      ::BetterTogether.e2ee_messaging_enabled?
+    def safe_current_person
+      return nil unless respond_to?(:user_signed_in?)
+
+      current_person
+    rescue Devise::MissingWarden
+      nil
     end
 
-    def e2ee_messaging_enabled_for?(person = current_person)
-      e2ee_messaging_enabled? && person.present?
+    # Generates a short-lived, signed token proving the client actually rendered a page
+    # from this app recently, embedded via a <meta> tag and attached by JS
+    # (trix-extensions/richtext.js) to every ActiveStorage direct-upload request. Raises
+    # the bar above bare CSRF (which only proves *some* page was rendered, not
+    # specifically an upload-capable one) without requiring authentication, since this
+    # endpoint is used from pre-auth pages (sign-up, host-setup wizard) by design.
+    def direct_upload_authorization_token
+      Rails.application.message_verifier(:direct_upload).generate(
+        { path: request.path, iat: Time.current.to_i }, expires_in: 30.minutes
+      )
+    rescue StandardError
+      nil
     end
 
     def default_url_options
@@ -80,6 +121,18 @@ module BetterTogether
       return false unless current_person.present?
 
       current_person.permitted_to?(permission_identifier)
+    end
+
+    def feature_enabled?(feature_key, actor: current_person || current_robot, platform: Current.platform, record: nil)
+      BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:, record:)
+    rescue KeyError
+      false
+    end
+
+    def contributor_display_visible_for?(record)
+      return false unless record.respond_to?(:contributors_display_visible?)
+
+      record.contributors_display_visible?
     end
 
     def help_banner_hidden?(banner_id)
@@ -97,6 +150,30 @@ module BetterTogether
       render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
     end
 
+    def agreement_lifecycle_badge_class(agreement)
+      return 'bg-secondary' unless agreement.respond_to?(:lifecycle_state)
+
+      case agreement.lifecycle_state
+      when 'draft' then 'bg-warning text-dark'
+      when 'retired' then 'bg-secondary'
+      else 'bg-success'
+      end
+    end
+
+    def agreement_acceptance_badge_class(agreement_participant)
+      return 'bg-secondary' unless agreement_participant.present?
+      return 'bg-warning text-dark' if agreement_participant.stale_for_agreement?
+
+      'bg-success'
+    end
+
+    def agreement_acceptance_state_label(agreement_participant)
+      return 'Pending' unless agreement_participant.present?
+      return 'Needs review' if agreement_participant.stale_for_agreement?
+
+      'Accepted'
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
     # check_platform_privacy, SEO helpers, and layout partials on every request).
@@ -112,10 +189,20 @@ module BetterTogether
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
       @host_community ||= host_platform.community ||
-                          # rubocop:todo Layout/LineLength
+                          # rubocop:todo-next Layout/LineLength
                           ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
-                          # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
+    end
+
+    # Returns the preferred public email for the host community, if any.
+    def host_community_primary_email
+      contact_detail = host_community.contact_detail
+      return unless contact_detail
+
+      public_emails = contact_detail.email_addresses.privacy_public.to_a
+      primary = public_emails.find(&:primary_flag?)
+
+      primary&.email || public_emails.first&.email
     end
 
     # Returns the proxied URL for the host community logo if attached.
@@ -128,7 +215,7 @@ module BetterTogether
                      host_community.logo
                    end
 
-      rails_storage_proxy_url(attachment)
+      storage_proxy_url_for(attachment)
     end
 
     # Sets a translated meta description for the current view. Provide the
@@ -144,17 +231,17 @@ module BetterTogether
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
     # from translations and fall back to the Open Graph description when set.
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                content_for(:meta_description) # rubocop:todo Layout/IndentationWidth
+                      meta_content_for(:meta_description)
                     elsif content_for?(:og_description)
-                      content_for(:og_description)
+                      meta_content_for(:og_description)
                     else
                       t('meta.default_description', platform_name: host_platform.name)
                     end
 
-      keywords = content_for?(:meta_keywords) ? content_for(:meta_keywords) : nil
+      keywords = content_for?(:meta_keywords) ? meta_content_for(:meta_keywords) : nil
 
       tags = []
       tags << tag.meta(name: 'description', content: description)
@@ -162,7 +249,6 @@ module BetterTogether
 
       safe_join(tags, "\n")
     end
-    # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
       # Prevent indexing when debug mode is enabled
@@ -176,40 +262,89 @@ module BetterTogether
       tag.meta(name: 'robots', content: meta_content)
     end
 
+    def render_provider_head_tags
+      fragments = ::BetterTogether.head_tag_providers.values.filter_map do |provider|
+        fragment = provider.call(self)
+        fragment.presence
+      end
+
+      safe_join(fragments, "\n")
+    end
+
+    OG_TYPES = %w[website article profile book].freeze
+
+    # Reads a content_for value as single-line text. Views capture ERB blocks,
+    # so the raw value carries the indentation and newlines around the content.
+    def meta_content_for(name)
+      content_for(name).to_s.squish
+    end
+
+    # Open Graph type for the page. Views may set `content_for :og_type` to one
+    # of OG_TYPES; anything else falls back to "website".
+    def og_type
+      requested = content_for?(:og_type) ? meta_content_for(:og_type) : nil
+      OG_TYPES.include?(requested) ? requested : 'website'
+    end
+
+    # Absolute share-image URL: a view-provided image, else the host community logo.
+    def og_image_url
+      url = content_for?(:og_image) ? meta_content_for(:og_image) : host_community_logo_url
+      return url if url.blank? || url.start_with?('http://', 'https://')
+
+      "#{request.base_url}/#{url.delete_prefix('/')}"
+    end
+
+    # og:image plus width, height and alt when views provide them
+    # (`content_for :og_image_width`, `:og_image_height`, `:og_image_alt`).
+    def og_image_meta_tags(image_url)
+      tags = [tag.meta(property: 'og:image', content: image_url)]
+      { width: :og_image_width, height: :og_image_height, alt: :og_image_alt }.each do |suffix, key|
+        value = content_for?(key) ? meta_content_for(key) : nil
+        tags << tag.meta(property: "og:image:#{suffix}", content: value) if value.present?
+      end
+      tags
+    end
+
+    # Width and height recorded in an attachment blob's metadata, as the
+    # content_for-ready strings used by og_image_meta_tags.
+    def og_image_dimensions(attachment)
+      metadata = attachment.blob&.metadata || {}
+      { width: metadata['width'], height: metadata['height'] }.compact_blank.transform_values(&:to_s)
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-             content_for(:og_title) # rubocop:todo Layout/IndentationWidth
+                   meta_content_for(:og_title)
                  elsif content_for?(:page_title)
-                   t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
+                   t('og.page.title', title: meta_content_for(:page_title), platform_name: host_platform.name)
                  else
                    t('og.default_title', platform_name: host_platform.name)
                  end
 
       og_description = if content_for?(:og_description)
-                         content_for(:og_description)
+                         meta_content_for(:og_description)
                        else
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? canonicalize_url(content_for(:og_url)) : canonical_current_url
+      og_url = content_for?(:og_url) ? canonicalize_url(meta_content_for(:og_url)) : canonical_current_url
 
-      og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
+      og_image = og_image_url
 
       tags = []
       tags << tag.meta(property: 'og:title', content: og_title)
       tags << tag.meta(property: 'og:description', content: og_description)
       tags << tag.meta(property: 'og:url', content: og_url)
-      tags << tag.meta(property: 'og:image', content: og_image) if og_image.present?
+      tags.concat(og_image_meta_tags(og_image)) if og_image.present?
       tags << tag.meta(property: 'og:site_name', content: host_platform.name)
-      tags << tag.meta(property: 'og:type', content: 'website')
+      tags << tag.meta(property: 'og:type', content: og_type)
 
       safe_join(tags, "\n")
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Generates a canonical link tag for the current request.
@@ -218,7 +353,7 @@ module BetterTogether
     # the host and locale are ensured by prefixing with `base_url_with_locale`.
     def canonical_link_tag
       canonical_url = if content_for?(:canonical_url)
-                        explicit_or_canonical_url(content_for(:canonical_url))
+                        explicit_or_canonical_url(meta_content_for(:canonical_url))
                       else
                         canonical_current_url
                       end
@@ -248,10 +383,11 @@ module BetterTogether
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
     def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
+        url_options_with_locale = engine_url_options_with_locale
         if args.any? && args.first.is_a?(Hash)
-          args = [args.first.merge(default_url_options)]
+          args = [args.first.merge(url_options_with_locale)]
         else
-          args << default_url_options
+          args << url_options_with_locale
         end
         BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
       elsif main_app_url_helper?(method)
@@ -259,6 +395,13 @@ module BetterTogether
       else
         super
       end
+    end
+
+    # In host-app controllers the view class's own default_url_options (from the
+    # main app routes) can shadow this module's, dropping :locale. Engine routes
+    # are /:locale/..., so a record passed positionally would then be read as the locale.
+    def engine_url_options_with_locale
+      default_url_options.reverse_merge(locale: I18n.locale)
     end
 
     def respond_to_missing?(method, include_private = false)
@@ -297,11 +440,12 @@ module BetterTogether
     def canonicalize_url(url)
       return url if url.blank?
 
-      uri = URI.parse(url.to_s)
+      url = url.to_s.strip
+      uri = URI.parse(url)
       path = extract_canonical_path(uri, url)
       build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
     rescue URI::InvalidURIError
-      build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+      build_url_for_path(base_url_with_locale, normalize_relative_path(url))
     end
 
     def uri_query_string(uri)
@@ -362,7 +506,7 @@ module BetterTogether
     # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
     # Value is the IANA identifier: "America/New_York"
     # Returns array of [display_name, iana_identifier] pairs
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def iana_timezone_options_for_select
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -384,11 +528,10 @@ module BetterTogether
       zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
            .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Returns commonly used timezone options sorted by UTC offset
     # Used for the "Common Timezones" priority optgroup
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def priority_timezone_options
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -412,7 +555,6 @@ module BetterTogether
       priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
                     .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Returns timezone options grouped by continent/region, excluding priority zones
     # Each group is sorted by UTC offset (ascending), then alphabetically
@@ -478,7 +620,7 @@ module BetterTogether
     # @param options [Hash] Standard Rails select options (include_blank, prompt, etc.)
     # @param html_options [Hash] HTML options for the select tag
     # @return [String] HTML select element with SlimSelect integration
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def iana_time_zone_select(form, attribute, selected_or_priority = nil, options = {}, html_options = {})
       # Determine selected timezone from various sources
       selected = if selected_or_priority.is_a?(String)
@@ -518,7 +660,6 @@ module BetterTogether
         merged_html_options
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def friendly_timezone_label(tz_id)
       rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }

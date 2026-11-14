@@ -1,0 +1,16 @@
+%% render.orientation: portrait
+flowchart TD
+  A[Operator reviews bot-safety posture] --> B{Is built-in baseline enough?}
+  B -->|Yes| C[Use CE default protections]
+  B -->|No| D{Need stronger human verification?}
+  D -->|Yes| E[Add Turnstile via host-app captcha seam]
+  D -->|No| F[Keep baseline and improve operational review]
+  C --> G[Monitor sign-up request and report abuse]
+  E --> G
+  F --> G
+  G --> H{Need machine access?}
+  H -->|Yes| I[Provision explicit robot token and scopes]
+  H -->|No| J[Keep human-only access path]
+  I --> K[Audit scope use and keep least privilege]
+  J --> K
+

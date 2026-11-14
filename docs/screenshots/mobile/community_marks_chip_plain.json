@@ -1,0 +1,11 @@
+{
+  "name": "community_marks_chip_plain",
+  "device": "mobile",
+  "url": "/en/posts",
+  "title": "Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_marks",
+  "flow": "chip_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/community_marks_spec.rb"
+}

@@ -72,7 +72,7 @@ We do **not** sell your personal information. We may share data only in these ci
 ### Account Management
 - **Email preferences** - Choose which notifications you receive
 - **Privacy levels** - Set content as public or private
-- **Profile visibility** - Control who can view your profile
+- **Profile visibility** - Currently set by platform administrators; ask them to change it. Self-service control is planned
 - **Delete account** - Request account deletion (with data retention policies)
 
 ### Rights by Jurisdiction
@@ -116,23 +116,22 @@ Depending on your location, you may have additional rights under:
 
 ### Default Configuration
 By default, the platform **does not include**:
-- Google Analytics or similar trackers
+- Third-party analytics trackers or similar browser-based telemetry
 - Social media tracking pixels
 - Advertising networks
 - Behavioral analytics tools
 
 ### Optional Integrations
 Platform hosts may choose to add:
-- **Analytics tools** - For usage insights (with consent)
+- **Third-party telemetry or analytics tools** - Only if the host separately enables and discloses them
 - **Error tracking** - For debugging (server-side only)
 - **Communication services** - For email delivery
 
 **If third-party services are enabled, platform hosts must:**
 - Update this privacy policy
 - Add cookie/consent banners
-- Configure IP anonymization
 - Obtain appropriate consent
-- Provide opt-out mechanisms
+- Provide any provider-specific controls required by law
 
 ## Cookies and Tracking
 
@@ -141,9 +140,9 @@ Platform hosts may choose to add:
 - **Security cookies** - Prevent cross-site attacks
 - **Language preference** - Remember your locale setting
 
-### Optional Cookies
-- **Analytics cookies** - Only if enabled by platform host
-- **Preference cookies** - Remember your customization choices
+### Host-Added Optional Cookies
+- **Third-party service cookies** - Only if enabled by the platform host
+- **Other browser storage** - May be used by host-added services and should be described by that host
 
 You can control cookies through your browser settings.
 

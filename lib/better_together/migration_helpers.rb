@@ -5,6 +5,44 @@
 module BetterTogether
   # Reusable migration helpers to configure common table structures
   module MigrationHelpers
+    # Invokes an engine rake task from a migration, in the engine's own dummy app
+    # (tasks namespaced under app:) and in a host app that runs migrations from the gem.
+    # The rake file is loaded only when the task is not already defined.
+    # skip_when_empty: table(s) the task migrates; with no rows (a database built from
+    # zero) the task is skipped, so it never loads models whose columns do not exist yet.
+    def run_engine_rake_task(task_name, file: nil, skip_when_empty: nil)
+      return if no_rows_to_migrate?(skip_when_empty)
+
+      require 'rake'
+      Rake::Task.define_task(:environment) unless Rake::Task.task_defined?('environment')
+      load_engine_rake_file(file) if file && engine_rake_task_name(task_name).nil?
+
+      name = engine_rake_task_name(task_name) || raise(ArgumentError, "Rake task #{task_name} is not defined")
+      Rake::Task[name].reenable
+      Rake::Task[name].invoke
+    end
+
+    def no_rows_to_migrate?(tables)
+      tables.present? && Array(tables).none? { |table| table_has_rows?(table) }
+    end
+
+    def engine_rake_task_name(task_name)
+      [task_name, "app:#{task_name}"].find { |name| Rake::Task.task_defined?(name) }
+    end
+
+    def table_has_rows?(table)
+      table_exists?(table) && select_value("SELECT 1 FROM #{quote_table_name(table)} LIMIT 1").present?
+    end
+
+    def load_engine_rake_file(file)
+      root = BetterTogether::Engine.root
+      name = file.to_s.delete_prefix('tasks/')
+      path = %w[lib/tasks lib/tasks/better_together].map { |dir| root.join(dir, name) }.find(&:exist?)
+      raise ArgumentError, "Rake file #{file} not found in the engine" unless path
+
+      load path
+    end
+
     # Creates a table with a standardized structure and naming convention.
     # @param table_name [Symbol, String] The base name of the table.
     # @param pk_index_prefix [String, nil] (Optional) Prefix for the primary key index.
@@ -31,7 +69,7 @@ module BetterTogether
     # @param prefix [String, nil] (Optional) Prefix for the table name, default is 'better_together'.
     #                              Can be set to nil or false to disable prefixing.
     # @param block [Block] Additional configuration block for table columns.
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def create_bt_membership_table(table_name, member_type:, joinable_type:, id: :uuid, **options)
       # Handle the prefix for the table name
       member_table_name =
@@ -67,6 +105,5 @@ module BetterTogether
         yield(bt) if block_given?
       end
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

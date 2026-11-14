@@ -10,7 +10,7 @@ module BetterTogether # :nodoc:
     include BetterTogether::Engine.routes.url_helpers
 
     # Setup or update a single host platform and return a platform-steward user
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def configure_host_platform
       # Reuse existing host platform if present, don't try to create a new one
       # Use find_or_create_by with rescue to handle race conditions in parallel tests
@@ -68,12 +68,12 @@ module BetterTogether # :nodoc:
       if platform_steward_role
         membership = host_platform.person_platform_memberships.find_or_initialize_by(member: platform_steward.person)
         membership.role ||= platform_steward_role
+        membership.status = 'active'
         membership.save! if membership.new_record? || membership.changed?
       end
 
       host_platform
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def capybara_login_as_platform_steward
       capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')
@@ -139,7 +139,7 @@ module BetterTogether # :nodoc:
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name
       fill_in 'user[person_attributes][identifier]', with: person.identifier
-      fill_in 'user[person_attributes][description]', with: person.description
+      fill_in_trix_field('user[person_attributes][description]', with: person.description)
 
       # Check agreement checkboxes. The view renders checkbox ids/names as
       # `terms_of_service_agreement` and `privacy_policy_agreement`. Older
@@ -163,6 +163,7 @@ module BetterTogether # :nodoc:
         check 'user_accept_code_of_conduct'
       end
 
+      satisfy_bot_defense_minimum_wait(:registration)
       click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)

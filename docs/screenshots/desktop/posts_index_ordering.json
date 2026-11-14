@@ -1,9 +1,8 @@
 {
   "name": "posts_index_ordering",
   "device": "desktop",
-  "url": "http://127.0.0.1:33207/en/posts",
+  "url": "/en/posts",
   "title": "Posts | Test Host Community",
-  "captured_at": "2026-04-02T20:54:56Z",
   "locale": "en",
   "role": "guest",
   "feature_set": "posts",

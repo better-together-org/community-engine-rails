@@ -6,6 +6,7 @@ This guide helps elected community leaders manage their communities effectively 
 - [Community Management Overview](community_management.md) - Creating, configuring, and managing your community
 
 ## Moderation and Engagement
+- [Membership and Reporting Protection](membership_and_reporting_protection.md) - What built-in anti-bot protection now covers and what still needs human review
 - [Escalation Procedures](../shared/escalation_matrix.md) - When to involve platform organizers
 - [Roles and Permissions](../shared/roles_and_permissions.md) - Authority and responsibilities
 

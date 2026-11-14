@@ -2,7 +2,7 @@
 
 module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
-  class NavigationItem < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class NavigationItem < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Identifier
     include Positioned
     include Protected
@@ -21,6 +21,7 @@ module BetterTogether
       content_blocks: 'content_blocks_url',
       communities: 'communities_url',
       events: 'events_url',
+      federation_hub: 'federation_hub_url',
       geography_continents: 'geography_continents_url',
       geography_countries: 'geography_countries_url',
       geography_maps: 'geography_maps_url',
@@ -28,6 +29,9 @@ module BetterTogether
       geography_regions: 'geography_regions_url',
       geography_settlements: 'geography_settlements_url',
       host_dashboard: 'host_dashboard_url',
+      host_dashboard_membership_review: 'host_dashboard_membership_review_url',
+      host_dashboard_platform_connection_review: 'host_dashboard_platform_connection_review_url',
+      host_dashboard_safety_review: 'host_dashboard_safety_review_url',
       hub: 'hub_url',
       joatu_hub: 'joatu_hub_url',
       joatu_offers: 'joatu_offers_url',
@@ -39,8 +43,11 @@ module BetterTogether
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
+      platform_connections: 'platform_connections_url',
+      reports: 'reports_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
+      safety_cases: 'safety_cases_url',
       users: 'users_url',
       webhook_endpoints: 'webhook_endpoints_url'
     }
@@ -75,11 +82,16 @@ module BetterTogether
 
     translates :title, type: :string
 
-    slugged :title
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    # Leaving this default (true) adds a second, unscoped uniqueness validator
+    # on the same column, which rejects legitimate same-slug records on
+    # different platforms even though Identifier's own scoping would allow it.
+    slugged :title, slug_uniqueness: false
 
     validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
-              format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
+              format: { with: %r{\A((http|https)://.+|#.*|/+[\w/-]*)\z}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
@@ -94,7 +106,6 @@ module BetterTogether
     validate :permission_identifier_requires_non_public_privacy
 
     before_validation :set_default_visibility_strategy
-    before_validation :set_default_privacy
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
@@ -140,6 +151,8 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
+          # Built-in seeded pages only -- see Page#seed_privacy_ceiling_exempt.
+          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end
@@ -158,6 +171,8 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
+          # Built-in seeded pages only -- see Page#seed_privacy_ceiling_exempt.
+          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end
@@ -203,10 +218,6 @@ module BetterTogether
 
     def set_default_visibility_strategy
       self.visibility_strategy ||= 'authenticated'
-    end
-
-    def set_default_privacy
-      self.privacy ||= 'public'
     end
 
     def title(options = {})
@@ -303,6 +314,18 @@ module BetterTogether
 
     def visible?
       visible
+    end
+
+    # Transient (non-persisted) flag, same pattern and rationale as
+    # Page#seed_privacy_ceiling_exempt: builder/seed code sets this on a
+    # nav item linking to a built-in public page (About, FAQ, legal/policy
+    # pages, contributor agreements) so it isn't rejected by the platform's
+    # privacy ceiling. Deliberately not tied to `protected?`, which is
+    # reused for unrelated purposes elsewhere.
+    attr_accessor :seed_privacy_ceiling_exempt
+
+    def privacy_ceiling_exempt?
+      super || seed_privacy_ceiling_exempt
     end
 
     private

@@ -26,10 +26,16 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   options.add_argument("--user-data-dir=#{user_data_dir}")
   options.add_argument("--remote-debugging-port=#{remote_debugging_port}")
 
+  # A hung chromedriver otherwise blocks each command for the 60s default; fail the attempt sooner.
+  http_client = Selenium::WebDriver::Remote::Http::Default.new(
+    read_timeout: Integer(ENV.fetch('SELENIUM_READ_TIMEOUT', 45))
+  )
+
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    options: options
+    options: options,
+    http_client: http_client
   )
 end
 
@@ -69,5 +75,13 @@ RSpec.configure do |config|
     host = Capybara.server_host || '127.0.0.1'
     port = Capybara.server_port
     Capybara.asset_host = "http://#{host}:#{port}"
+  end
+end
+
+# Quit every browser the run started, so none outlives the suite (a leaked Chrome per session once hung a host).
+RSpec.configure do |config|
+  config.after(:suite) do
+    Capybara.send(:session_pool).each_value { |session| session.driver.quit if session.driver.respond_to?(:quit) }
+    Capybara.reset_sessions!
   end
 end

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Enforces the publishing agreement requirement before governed agents make
-  # records broadly public.
+  # records visible to the community or broader public.
   class PublicVisibilityGate
     AGREEMENT_IDENTIFIER = 'content_publishing_agreement'
 
@@ -13,6 +13,12 @@ module BetterTogether
     end
 
     class << self
+      # Seeding and builders are system operations, not a person publishing content, so
+      # they run without an acting agent (the gate allows an agent-less write).
+      def as_system(&)
+        ::Current.set(agent: nil, &)
+      end
+
       def allow!(record:, actor:, target_privacy: nil, target_published_at: nil, target_network_visibility: nil)
         result = evaluate(record:, actor:, target_privacy:, target_published_at:, target_network_visibility:)
         return result if result.allowed?
@@ -40,9 +46,9 @@ module BetterTogether
       def error_message_for(reason)
         case reason
         when :missing_publishing_agreement
-          'The content publishing agreement must be accepted before this can be made public.'
+          'The content publishing agreement must be accepted before this can be published.'
         else
-          'This record cannot be made public.'
+          'This record cannot be published.'
         end
       end
 
@@ -52,6 +58,7 @@ module BetterTogether
         requested_published_at = target_published_at.nil? ? record.try(:published_at) : target_published_at
 
         requested_privacy == 'public' ||
+          requested_privacy == 'community' ||
           requested_network_visibility == 'public' ||
           public_publication_requested?(record, requested_published_at)
       end

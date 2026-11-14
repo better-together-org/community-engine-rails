@@ -24,12 +24,30 @@ RSpec.describe BetterTogether::PersonLinkPolicy do
     expect(target_policy.revoke?).to be(false)
   end
 
-  it 'scopes links to participants only' do
-    other_link = create(:better_together_person_link)
+  describe 'Scope' do
+    let(:source_platform) { person_link.platform_connection.source_platform }
 
-    resolved = BetterTogether::PersonLinkPolicy::Scope.new(user, BetterTogether::PersonLink.all).resolve
+    it 'scopes links to participants on the current platform' do
+      other_link = create(:better_together_person_link)
 
-    expect(resolved).to include(person_link)
-    expect(resolved).not_to include(other_link)
+      Current.platform = source_platform
+      resolved = BetterTogether::PersonLinkPolicy::Scope.new(user, BetterTogether::PersonLink.all).resolve
+
+      expect(resolved).to include(person_link)
+      expect(resolved).not_to include(other_link)
+    ensure
+      Current.platform = nil
+    end
+
+    it 'excludes participant links from other platform connections when platform changes' do
+      other_platform = create(:better_together_platform, host: false)
+      Current.platform = other_platform
+
+      resolved = BetterTogether::PersonLinkPolicy::Scope.new(user, BetterTogether::PersonLink.all).resolve
+
+      expect(resolved).not_to include(person_link)
+    ensure
+      Current.platform = nil
+    end
   end
 end

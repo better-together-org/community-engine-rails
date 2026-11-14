@@ -1,0 +1,10 @@
+{
+  "name": "person_links_show",
+  "device": "mobile",
+  "url": "/en/person-links/4b99af7e-38d0-43d6-b4a6-60e94e170a6d",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "person_links",
+  "source_spec": "./spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+}

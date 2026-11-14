@@ -4,6 +4,34 @@ module BetterTogether
   module Search
     # Minimal contract for pluggable search backends.
     class BaseBackend
+      def audit_report_labels
+        {
+          collection: 'Search Stores',
+          identifier: 'Store',
+          documents: 'Searchable Records',
+          size: 'Store Size'
+        }
+      end
+
+      def audit_capabilities
+        {
+          store_size: false,
+          existence_checks: false
+        }
+      end
+
+      def audit_store_identifier(entry)
+        entry.model_name
+      end
+
+      def audit_search_mode(_entry)
+        backend_key.to_s
+      end
+
+      def audit_store_exists?(entry)
+        index_exists?(entry)
+      end
+
       def backend_key
         raise NotImplementedError
       end

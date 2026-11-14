@@ -273,35 +273,91 @@ end
 
 #### Location Selector Controller (Stimulus)
 
-**Dynamic Location Forms**
+The event location picker is a single mixed-search SlimSelect combobox that
+searches every `Geography::Placeable` type at once (see the "Location Selector
+Deep Dive" in `docs/developers/systems/events_system.md`). `Address` is the only
+type creatable inline from the form; `Building`, `Settlement`, `Region`, `Floor`,
+and `Room` are chosen from the existing set only.
+
 ```javascript
 // app/javascript/controllers/better_together/location_selector_controller.js
 export default class extends Controller {
   static targets = [
-    "typeSelector",
-    "simpleLocation", 
-    "addressLocation",
-    "buildingLocation"
+    "locationSelect",        // the SlimSelect combobox
+    "locationIdField",       // hidden - existing structured pick
+    "locationTypeField",     // hidden - existing structured pick
+    "simpleNameField",       // hidden - free-typed simple location
+    "newRecordBlock",        // the inline "new address" <fieldset>
+    "newRecordQuery", "cancelNewRecordButton", "announcement"
   ]
-  
-  toggleLocationType(event) {
-    const selectedType = event.target.value
-    this.hideAllLocationTypes()
-    
-    switch(selectedType) {
-      case 'simple':
-        this.showSimpleLocation()
-        break
-      case 'address':
-        this.showAddressLocation()
-        break
-      case 'building':
-        this.showBuildingLocation()
-        break
-    }
-  }
+
+  // change on the picker: split "ClassName:id" into the hidden fields, or write
+  // the simple name field for free text.
+  applyLocationSelection() { /* ... */ }
+
+  // better_together--slim-select:create - the user picked a "Create new address"
+  // or "Use my typed text" row in the dropdown.
+  revealNewRecord(event) { /* reveal + focus the inline address fieldset */ }
+  cancelNewRecord() { /* hide, clear, return focus to the combobox */ }
 }
 ```
+
+## Address geography links
+
+An address can be linked to the geography records it was entered against through three optional foreign keys on `better_together_addresses`: `country_id`, `state_id` and `settlement_id` (`on_delete: :nullify`). The string columns `country_name`, `state_province_name` and `city_name` stay as the free-text fallback for places that are not geography records yet.
+
+```mermaid
+flowchart TD
+  subgraph Form["Address form"]
+    A["Country select"] --> B["State select\n(narrowed by country)"]
+    B --> C["Settlement select\n(narrowed by state)"]
+    A --> T["Use typed text row"]
+    B --> T
+    C --> T
+  end
+
+  subgraph Lookup["LocationsController#geography"]
+    L["Geography::AddressLookup\n(name search, any locale, capped)"]
+  end
+
+  A -. search .-> L
+  B -. search .-> L
+  C -. search .-> L
+
+  subgraph Save["Address save"]
+    P["country_id / state_id / settlement_id\n(optional FKs)"]
+    S["Geography::AddressLinks\nderive parents, overwrite string columns,\nvalidate state in country, settlement in state"]
+    X["country_name / state_province_name / city_name\n(free-text fallback)"]
+  end
+
+  A -->|record chosen| P
+  B -->|record chosen| P
+  C -->|record chosen| P
+  T -->|no record| X
+  P --> S --> X
+
+  subgraph Existing["Existing addresses"]
+    R["better_together:geography:backfill_address_links\n(run by migration 20261109150100)"] --> M["Resolved locatable_locations placements"]
+    M --> P
+  end
+
+```
+
+**Diagram Files:**
+- [Mermaid Source](../../diagrams/source/address_geography_links_flow.mmd)
+- [PNG Export](../../diagrams/exports/png/address_geography_links_flow.png)
+- [SVG Export](../../diagrams/exports/svg/address_geography_links_flow.svg)
+
+Rules (`Geography::AddressLinks`):
+
+- A chosen record is authoritative: on save it overwrites the matching string column. When no record is chosen, typed text is kept.
+- A chosen settlement fills in its state and country, and a chosen state its country, when the typed parent text is blank or matches that record (case-insensitive). Typed parent text that disagrees with the chosen child is rejected with a validation error on `state_province_name` or `country_name` naming the expected value; nothing is silently replaced.
+- A state must belong to the chosen country, and a settlement to the chosen state and country.
+- `address.country`, `address.state` and `address.settlement` return the explicit link first, then the placement resolved by `HierarchyResolutionJob` (the `Locatable::Many` readers), so existing callers keep working.
+
+The address form's selects search `GET /locations/geography?level=country|state|settlement` (`LocationsController#geography`, backed by `Geography::AddressLookup`). States are narrowed by `country_id` and settlements by `state_id`; results are capped at 25 and match the name in any locale. The `better_together--address-geography` Stimulus controller sets the hidden id field when a record is picked, or clears it and fills the string column when the typed-text row is chosen, and clears the levels below when a parent changes. `slim_select_controller` gained `ajax.dependsOn` (query parameter to the id of the field that narrows this select).
+
+Existing addresses are linked from their resolved placements by `rake better_together:geography:backfill_address_links` (`Geography::AddressLinkBackfill`), which migration `20261109150100` runs. It only fills empty links and never overwrites one, so it is safe to re-run.
 
 ## Configuration Options
 
@@ -525,6 +581,33 @@ invalid_coords = Space.where(
    - Review spatial indexes
    - Optimize query patterns
    - Check cache configuration
+
+### Boundary Import
+
+`Geography::Space#boundary` (multi polygon, SRID 4326) is filled by an admin-run task, never on a request path and
+never at seed time (the seed only carries point coordinates):
+
+```bash
+bin/rails better_together:geography:import_boundaries                    # everything still missing
+LEVEL=settlement IDENTIFIER=corner-brook bin/rails better_together:geography:import_boundaries
+DRY_RUN=1 LEVEL=settlement bin/rails better_together:geography:import_boundaries   # list, fetch nothing
+FORCE=1 THRESHOLD=0.0001 IDENTIFIER=corner-brook bin/rails better_together:geography:import_boundaries
+```
+
+`BoundaryFetcher` decides what to ask Nominatim, most exact first:
+
+1. The OpenStreetMap object already recorded in `space.metadata['boundary_source']` (`osm_type`, `osm_id`) is fetched
+   by id (`/lookup`, `NominatimOsmLookup`), so a re-import returns the same feature.
+2. Otherwise a name search with the parents appended ("Corner Brook, Newfoundland and Labrador, Canada"), taking the
+   first result with polygon geometry and preferring an administrative boundary over other polygons.
+
+Polygons are simplified by Nominatim (`polygon_threshold`, degrees; default 0.0005, about 50 m; set
+`NOMINATIM_POLYGON_THRESHOLD` or `THRESHOLD`) so a stored boundary is a few KB. When Nominatim has only a point (or
+nothing) for a record, `metadata['boundary_source']['status']` is set to `no_polygon` and later runs skip it until
+`FORCE=1`. Requests are serial, one per 1.1 seconds in production, with in-process retries.
+
+Boundaries are what `HierarchyResolutionJob` uses (`ST_Covers`) to place geocoded addresses and buildings at
+settlement, region, state and country level.
 
 ### Debugging Tools
 

@@ -1,5 +1,9 @@
 # Event Reminder UX Enhancement Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-17. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## ⚠️ COLLABORATIVE REVIEW REQUIRED
 
 **This implementation plan must be reviewed collaboratively before implementation begins. The plan creator should:**

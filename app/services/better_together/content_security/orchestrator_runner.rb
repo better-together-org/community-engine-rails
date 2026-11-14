@@ -20,10 +20,9 @@ module BetterTogether
         raise Error, 'Content safety orchestrator command is not configured.' if command_tokens.blank?
 
         input_path = write_payload(payload)
-        stdout, stderr, status = Open3.capture3(*command_tokens, '--input-json', input_path.to_s, '--format', 'json')
-        raise Error, failure_message(stderr, stdout) unless status.success?
-
-        JSON.parse(stdout)
+        JSON.parse(run_command(input_path))
+      rescue Errno::ENOENT => e
+        raise Error, "Content safety orchestrator failed: #{e.message}"
       rescue JSON::ParserError => e
         raise Error, "Content safety orchestrator returned invalid JSON: #{e.message}"
       ensure
@@ -48,6 +47,13 @@ module BetterTogether
         FileUtils.mkdir_p(path.dirname)
         path.write(JSON.pretty_generate(payload))
         path
+      end
+
+      def run_command(input_path)
+        stdout, stderr, status = Open3.capture3(*command_tokens, '--input-json', input_path.to_s, '--format', 'json')
+        raise Error, failure_message(stderr, stdout) unless status.success?
+
+        stdout
       end
 
       def failure_message(stderr, stdout)

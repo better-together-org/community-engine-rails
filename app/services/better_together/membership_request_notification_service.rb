@@ -5,6 +5,9 @@ module BetterTogether
   class MembershipRequestNotificationService # rubocop:todo Metrics/ClassLength
     COMMUNITY_REVIEWER_ROLES = %w[community_manager community_administrator].freeze
     PLATFORM_REVIEWER_ROLES = %w[platform_manager platform_administrator].freeze
+    DIGEST_WINDOW = 15.minutes
+    DIGEST_THRESHOLD = 3
+    DIGEST_EMAIL_COOLDOWN = 30.minutes
 
     def initialize(membership_request)
       @membership_request = membership_request
@@ -12,10 +15,11 @@ module BetterTogether
 
     def notify_submission
       reviewer_recipients.each do |reviewer|
-        BetterTogether::MembershipRequestSubmittedNotifier.with(
-          record: @membership_request,
-          membership_request: @membership_request
-        ).deliver_later(reviewer)
+        if digest_requests_for(reviewer).size >= DIGEST_THRESHOLD
+          deliver_digest_notification(reviewer)
+        else
+          deliver_individual_notification(reviewer)
+        end
       end
     end
 
@@ -153,6 +157,118 @@ module BetterTogether
         @membership_request,
         locale: I18n.locale
       )
+    end
+
+    def community_review_url
+      return unless community&.persisted?
+
+      BetterTogether::Engine.routes.url_helpers.community_membership_requests_url(
+        community,
+        locale: I18n.locale
+      )
+    end
+
+    def digest_requests_for(_reviewer)
+      return [] unless community
+
+      BetterTogether::Joatu::MembershipRequest
+        .where(target: community, status: 'open')
+        .where(created_at: DIGEST_WINDOW.ago..)
+        .order(created_at: :desc)
+        .to_a
+    end
+
+    def deliver_individual_notification(reviewer)
+      return if submission_notification_exists?(reviewer)
+
+      BetterTogether::MembershipRequestSubmittedNotifier.with(
+        record: @membership_request,
+        membership_request: @membership_request
+      ).deliver_later(reviewer)
+    end
+
+    def deliver_digest_notification(reviewer)
+      recent_requests = digest_requests_for(reviewer)
+      return if recent_requests.empty?
+
+      send_email = digest_email_allowed?(reviewer)
+      remove_submission_notifications(reviewer)
+      remove_digest_notifications(reviewer)
+
+      BetterTogether::MembershipRequestDigestNotifier.with(
+        digest_notifier_params(recent_requests, send_email)
+      ).deliver_later(reviewer)
+    end
+
+    def submission_notification_exists?(reviewer)
+      unread_notifications_for(reviewer).any? do |notification|
+        notification.event.type == 'BetterTogether::MembershipRequestSubmittedNotifier' &&
+          notification_matches_request?(notification, @membership_request)
+      end
+    end
+
+    def remove_submission_notifications(reviewer)
+      notification_ids = unread_notifications_for(reviewer).filter_map do |notification|
+        notification.id if notification.event.type == 'BetterTogether::MembershipRequestSubmittedNotifier' &&
+                           notification_matches_community?(notification, community)
+      end
+
+      Noticed::Notification.where(id: notification_ids).destroy_all if notification_ids.any?
+    end
+
+    def remove_digest_notifications(reviewer)
+      notification_ids = unread_notifications_for(reviewer).filter_map do |notification|
+        notification.id if notification.event.type == 'BetterTogether::MembershipRequestDigestNotifier' &&
+                           notification_matches_community?(notification, community)
+      end
+
+      Noticed::Notification.where(id: notification_ids).destroy_all if notification_ids.any?
+    end
+
+    def unread_notifications_for(reviewer)
+      Noticed::Notification
+        .includes(:event)
+        .where(recipient: reviewer, read_at: nil)
+    end
+
+    def notification_matches_request?(notification, membership_request)
+      params = notification.event.params.with_indifferent_access
+      params[:membership_request]&.id == membership_request.id ||
+        params[:membership_request_id] == membership_request.id
+    end
+
+    def notification_matches_community?(notification, target_community)
+      params = notification.event.params.with_indifferent_access
+      params[:community]&.id == target_community.id ||
+        params[:community_id] == target_community.id ||
+        params[:membership_request]&.target_id == target_community.id
+    end
+
+    def digest_email_allowed?(reviewer)
+      last_digest_notification = Noticed::Notification
+                                 .includes(:event)
+                                 .where(recipient: reviewer)
+                                 .order(created_at: :desc)
+                                 .detect do |notification|
+        notification.event.type == 'BetterTogether::MembershipRequestDigestNotifier' &&
+          notification_matches_community?(notification, community)
+      end
+
+      return true if last_digest_notification.blank?
+
+      last_digest_notification.created_at <= DIGEST_EMAIL_COOLDOWN.ago
+    end
+
+    def digest_notifier_params(recent_requests, send_email)
+      {
+        record: community,
+        community:,
+        membership_request_ids: recent_requests.map(&:id),
+        request_count: recent_requests.size,
+        requestor_names: recent_requests.filter_map { |request| request.requestor_name.presence || request.creator&.name }.uniq.first(5),
+        review_url: community_review_url,
+        send_email:
+      }
     end
   end
 end

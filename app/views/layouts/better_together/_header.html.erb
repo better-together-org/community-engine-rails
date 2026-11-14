@@ -1,15 +1,16 @@
 <!-- Navbar -->
-<div id="main-nav" class="container-fluid shadow-sm" data-controller="better_together--nav-height">
-  <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark pb-0 justify-content-center">
+<header id="main-nav" class="container-fluid shadow-sm" data-controller="better_together--nav-height">
+  <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark pb-0 justify-content-center" aria-label="<%= t('navbar.account_navigation') %>">
     <%= render 'layouts/better_together/navbar_brand' %>
 
-    <ul id="primary-nav" class="navbar-nav text-center ms-auto flex-row align-items-center gap-2 gap-md-3">
-      <!-- Social Media Accounts (visible on large screens) -->
-      <div id="social-media-icons">
-        <% cache nav_fragment_cache_key('header_social_media') do %>
-          <%= render_host_community_social_media_accounts %>
-        <% end %>
-      </div>
+    <!-- Social Media Accounts (visible on large screens) -->
+    <div id="social-media-icons" class="ms-auto ms-sm-2">
+      <% cache nav_fragment_cache_key('header_social_media') do %>
+        <%= render_host_community_social_media_accounts %>
+      <% end %>
+    </div>
+
+    <ul id="primary-nav" class="navbar-nav text-center flex-row align-items-center gap-2 gap-md-3">
 
       <%= yield :editor_status if content_for? :editor_status %>
 
@@ -36,7 +37,7 @@
     <% end %>
   </nav>
 
-  <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0 bt-underline-nav">
+  <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0 bt-underline-nav" aria-label="<%= t('navbar.main_navigation') %>">
     <div class="collapse justify-content-center navbar-collapse align-content-center" id="headerNav">
       <!-- Right-aligned nav items -->
       <%= cache nav_fragment_cache_key('platform_header_nav', nav_areas: [platform_header_nav_area]) do %>
@@ -52,4 +53,4 @@
     </div>
   </div>
 
-</div>
+</header>

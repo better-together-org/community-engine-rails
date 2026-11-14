@@ -128,6 +128,49 @@ module BetterTogether # :nodoc:
         expect(helper.sanitize_block_html(html)).to eq(html)
       end
 
+      it 'keeps a labelled navigation landmark such as an accessible breadcrumb' do
+        html = '<nav aria-label="Breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/en/ships">Ships</a></li>' \
+               '<li class="breadcrumb-item active" aria-current="page">MIRA BAY</li></ol></nav>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<nav aria-label="Breadcrumb">', 'aria-current="page"', '</nav>')
+      end
+
+      it 'still strips event handlers and unsafe protocols from navigation markup' do
+        sanitized = helper.sanitize_block_html('<nav onclick="x()" aria-label="Menu"><a href="javascript:alert(1)">Go</a></nav>')
+
+        expect(sanitized).not_to include('onclick')
+        expect(sanitized).not_to include('javascript:')
+        expect(sanitized).to include('aria-label="Menu"')
+      end
+
+      it 'keeps an accessible data table with scope, colspan and caption' do
+        html = '<table class="table" id="species"><caption>Species</caption><thead><tr><th scope="col">Name</th>' \
+               '<th scope="col" colspan="2">Notes</th></tr></thead><tbody><tr><th scope="row">Morel</th>' \
+               '<td>Spring</td><td rowspan="2">Rare</td></tr></tbody></table>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<table class="table" id="species">', '<caption>Species</caption>',
+                                     'scope="col"', 'colspan="2"', 'rowspan="2"', 'scope="row"')
+      end
+
+      it 'keeps section, details and summary, id and role' do
+        html = '<section id="faq" role="region" aria-label="FAQ"><details open><summary>Q</summary><p>A</p></details></section>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<section id="faq" role="region" aria-label="FAQ">', '<details open>',
+                                     '<summary>Q</summary>')
+      end
+
+      it 'still strips scripts, handlers and javascript links from table markup' do
+        sanitized = helper.sanitize_block_html(
+          '<table onclick="x()"><tr><td><a href="javascript:alert(1)">x</a><script>alert(1)</script></td></tr></table>'
+        )
+
+        expect(sanitized).not_to include('onclick', 'javascript:', '<script')
+        expect(sanitized).to include('<table>')
+      end
+
       it 'removes iframe tags so embeds must use dedicated block types' do
         html = '<p>Before</p><iframe src="https://forms.btsdev.ca/s/example" title="Survey"></iframe><p>After</p>'
         sanitized = helper.sanitize_block_html(html)

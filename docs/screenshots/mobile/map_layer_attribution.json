@@ -1,0 +1,48 @@
+{
+  "name": "map_layer_attribution",
+  "device": "mobile",
+  "url": "/en/communities",
+  "title": "Communities | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "map_layer_attribution",
+  "flow": "map_layer_attribution",
+  "source_spec": "./spec/docs_screenshots/better_together/map_layer_attribution_spec.rb",
+  "callouts": [
+    {
+      "selector": ".leaflet-control-attribution",
+      "title": "Layer attribution",
+      "bullets": [
+        "The credit comes from the layer itself and shows only while the layer is on the map."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 655.796875,
+        "width": 461.0,
+        "height": 33.59375,
+        "right": 473.0,
+        "bottom": 689.390625,
+        "center_x": 242.5,
+        "center_y": 672.59375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 655.796875,
+        "width": 461.0,
+        "height": 33.59375,
+        "right": 473.0,
+        "bottom": 689.390625,
+        "center_x": 242.5,
+        "center_y": 672.59375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 425.8,
+        "width": 270.0,
+        "height": 210,
+        "score": 655.796875
+      }
+    }
+  ]
+}

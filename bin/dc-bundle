@@ -1,3 +1,16 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-./bin/dc-run bundle $@
+# Commands that write to the gem volume (root-owned) run as root, then hand the files back to the host user.
+case "${1:-}" in
+  install|update|add|remove|lock)
+    repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    # shellcheck source=./docker-compose-env.sh
+    source "$repo_root/bin/docker-compose-env.sh"
+    "$repo_root/bin/dc" run --rm --no-deps --user root app bash -c \
+      'bundle "$@"; status=$?; chown -R "$DC_UID:$DC_GID" /community-engine/Gemfile* /community-engine/*.gemspec 2>/dev/null; exit $status' _ "$@"
+    ;;
+  *)
+    ./bin/dc-run bundle "$@"
+    ;;
+esac

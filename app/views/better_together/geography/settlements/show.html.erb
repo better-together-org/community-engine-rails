@@ -1,39 +1,99 @@
 <div class="container">
-  <div class="card">
-    <div class="card-body">
-      <h3 class="card-title mb-3"><%= @geography_settlement.name %></h3>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Name:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.name %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Description:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.description %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Slug:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.slug %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.protected ? 'Yes' : 'No' %></div>
-      </div>
+
+  <div class="geography-settlement-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <%= cover_image_tag(@geography_settlement) %>
+
     </div>
   </div>
 
-  <div class="mt-3">
-    <% if policy(@geography_settlement).edit? %>
-      <%= link_to "Edit this settlement", edit_geography_settlement_path(@geography_settlement), class: "btn btn-primary me-2" %>
-    <% end %>
-    
-    <%= link_to "See all settlements", geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
-    
-    <% if policy(@geography_settlement).destroy? %>
-      <%= button_to "Destroy this settlement", [@geography_settlement], method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
-    <% end %>
+  <div class="geography-settlement-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="geography-settlement-name mt-3"><%= @geography_settlement.name %></h1>
+      </div>  
+    </div>
   </div>
+
+
+  <div class="mt-3 pb-4">
+    <% if policy(@geography_settlement).edit? %>
+      <%= link_to t('.edit-settlement'), edit_geography_settlement_path(@geography_settlement), class: "btn btn-primary me-2" %>
+    <% end %>
+
+    <%= link_to t('.view-all-settlements'), geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
+  </div>
+
+  <%= render 'better_together/geography/settlements/header_extra', settlement: @geography_settlement %>
+
+  <!-- geography_settlement tabbed section: About, Posts, Events and Communities, plus any host tabs -->
+  <section class="card tabbed-section" id="settlement-tabbed-section" data-controller="better_together--tabs">
+    <div class="card-header">
+      <!-- Navigation tabs -->
+      <%# Initialize the active tab state with accessible attributes %>
+      <%= content_tag :div, id: 'geography-settlement', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria: { label: t('.sections_aria') } do %>
+        <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
+        <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'posts', selected: 'false' }, tabindex: '-1' %>
+        <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'events', selected: 'false' }, tabindex: '-1' %>
+        <% if @located_communities.present? %>
+          <%= link_to t('globals.tabs.communities'), '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'communities', selected: 'false' }, tabindex: '-1' %>
+        <% end %>
+        <% if @weather_location.present? %>
+          <%= link_to t('globals.tabs.weather'), '#weather', class: 'nav-link', id: 'weather-tab', data: { bs_toggle: 'tab', bs_target: '#weather', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'weather', selected: 'false' }, tabindex: '-1' %>
+        <% end %>
+        <%= render 'better_together/geography/settlements/tab_links_extra', settlement: @geography_settlement %>
+      <% end %>
+    </div>
+
+    <%# Tabbed content using Bootstrap tab panes so nav links activate panes correctly %>
+    <div class="card-body" id="geography-settlementSections" role="tabpanel">
+      <div class="tab-content">
+        <!-- Person About Tab Pane -->
+        <div id="about" class="nav-tab-pane tab-pane fade show active" role="tabpanel" aria-labelledby="about-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row mb-3">
+                <div class="col-md-12"><%= @geography_settlement.description %></div>
+              </div>
+              <%= render 'better_together/geography/settlements/about_extra', settlement: @geography_settlement %>
+            </div>
+          </div>
+        </div>
+
+        <%# Posts and events located here: the posts and events indexes scoped to this settlement, loaded when the tab is first shown. %>
+        <div id="posts" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="posts-tab">
+          <%= turbo_frame_tag 'settlement-posts', src: posts_path(settlement: @geography_settlement.identifier, locale: I18n.locale), loading: :lazy, target: '_top' do %>
+            <p class="text-muted"><%= t('.posts_loading') %></p>
+          <% end %>
+        </div>
+
+        <div id="events" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="events-tab">
+          <%= turbo_frame_tag 'settlement-events', src: events_path(settlement: @geography_settlement.identifier, locale: I18n.locale), loading: :lazy, target: '_top' do %>
+            <p class="text-muted"><%= t('.events_loading') %></p>
+          <% end %>
+        </div>
+
+        <% if @located_communities.present? %>
+          <div id="communities" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="communities-tab">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4" id="settlement-communities">
+              <%= render partial: 'better_together/communities/community', collection: @located_communities, as: :community %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @weather_location.present? %>
+          <%# Weather: the panel for this settlement, loaded when the tab is first shown. Stored data only, no live source calls. %>
+          <div id="weather" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="weather-tab">
+            <%= turbo_frame_tag 'settlement-weather', src: weather_geography_settlement_path(@geography_settlement, locale: I18n.locale), loading: :lazy do %>
+              <p class="text-muted"><%= t('.weather_loading') %></p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= render 'better_together/geography/settlements/tab_panes_extra', settlement: @geography_settlement %>
+      </div>
+    </div>
+  </section>
+
 </div>

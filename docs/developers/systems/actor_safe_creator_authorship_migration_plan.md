@@ -73,7 +73,7 @@ Because of those constraints, a single-step polymorphic rewrite would be too ris
 
 ### Phase 1: Shared governed-agent identity seam
 
-This phase is now started through the `GovernedAgent` concern.
+This phase is now started through the `Agentic` concern.
 
 Goals:
 

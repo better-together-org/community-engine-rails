@@ -7,11 +7,11 @@ require 'rails_helper'
 # All actions require manage_platform permission (enforced via route constraint + Pundit).
 RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-  let(:platform) do
-    create(:better_together_platform,
-           identifier: "platform-#{SecureRandom.hex(6)}",
-           host_url: "http://platform-#{SecureRandom.hex(6)}.test")
-  end
+  let(:regular_user) { create(:better_together_user, :confirmed) }
+  # Host platform — :as_platform_manager grants its role on the host platform
+  # specifically, so per-platform-scoped authorization requires the resource
+  # under test to actually be on that same platform.
+  let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
   def index_path
     platform_storage_configurations_path(platform, locale:)
@@ -57,6 +57,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       get index_path
       expect(response.body).not_to include(other_config.name)
     end
+
+    it 'redirects signed-in non-managers away from index' do
+      sign_in regular_user
+
+      get index_path
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   # ---------------------------------------------------------------------------
@@ -76,6 +84,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
     it 'includes the service_type field' do
       get new_path
       expect(response.body).to include('storage_configuration[service_type]')
+    end
+
+    it 'redirects signed-in non-managers away from new' do
+      sign_in regular_user
+
+      get new_path
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -277,8 +293,62 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       # I18n value contains single quotes which Rails HTML-escapes to &#39;
       # in the rendered flash partial; use expect_html_content so Nokogiri
       # decodes entities before the string comparison.
+      #
+      # The controller's activate action sets the notice from the
+      # `activated_with_restart` key (it also touches restart.txt and rebinds
+      # the active storage service so other app processes pick up the
+      # change) - not the older, simpler `activated` key this spec was still
+      # asserting against.
       expect_html_content(
-        I18n.t('better_together.storage_configurations.activated', name: config.name)
+        I18n.t('better_together.storage_configurations.activated_with_restart', name: config.name)
+      )
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # PUT activate for a tenant (non-host) platform — acute storage-isolation fix
+  # ---------------------------------------------------------------------------
+  describe 'PUT activate on a tenant platform does not rebind shared ActiveStorage service' do
+    let(:tenant_platform) do
+      create(:better_together_platform,
+             identifier: "tenant-#{SecureRandom.hex(6)}",
+             host_url: "http://tenant-#{SecureRandom.hex(6)}.test")
+    end
+    let!(:tenant_config) do
+      create(:better_together_storage_configuration, platform: tenant_platform, name: 'Tenant Store')
+    end
+    let(:tenant_steward) { create(:better_together_user, :confirmed) }
+
+    before do
+      role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+      BetterTogether::PersonPlatformMembership.create!(
+        joinable: tenant_platform, member: tenant_steward.person, role: role, status: 'active'
+      )
+      sign_in tenant_steward
+    end
+
+    it 'authorizes the tenant steward for their own platform config' do
+      expect(
+        BetterTogether::StorageConfigurationPolicy.new(tenant_steward, tenant_config).activate?
+      ).to be true
+    end
+
+    it 'saves the configuration as the platform active storage without rebinding the shared service' do
+      expect_any_instance_of(BetterTogether::StorageConfigurationsController) # rubocop:disable RSpec/AnyInstance
+        .not_to receive(:rebind_active_storage_service)
+
+      put activate_platform_storage_configuration_path(tenant_platform, tenant_config, locale:)
+
+      expect(response).to have_http_status(:see_other)
+      expect(tenant_platform.reload.storage_configuration_id).to eq(tenant_config.id)
+    end
+
+    it 'shows the pending-multi-tenant-support notice instead of the restart notice' do
+      put activate_platform_storage_configuration_path(tenant_platform, tenant_config, locale:)
+      follow_redirect!
+
+      expect_html_content(
+        I18n.t('better_together.storage_configurations.activated_pending_multi_tenant_support', name: tenant_config.name)
       )
     end
   end

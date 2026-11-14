@@ -11,15 +11,15 @@ module BetterTogether
 
     # GET /host/platforms/:platform_id/storage_configurations
     def index
-      authorize StorageConfiguration
+      authorize @platform.storage_configurations.build
       @storage_configurations = @platform.storage_configurations.order(created_at: :asc)
       @resolver = StorageResolver.new(@platform)
     end
 
     # GET /host/platforms/:platform_id/storage_configurations/new
     def new
-      authorize StorageConfiguration
       @storage_configuration = @platform.storage_configurations.build(service_type: 'local')
+      authorize @storage_configuration
     end
 
     # GET /host/platforms/:platform_id/storage_configurations/:id/edit
@@ -77,12 +77,25 @@ module BetterTogether
       authorize @storage_configuration, :activate?
 
       @platform.update!(storage_configuration_id: @storage_configuration.id)
-      rebind_active_storage_service(@platform.reload)
+
+      if @platform.host?
+        rebind_active_storage_service(@platform.reload)
+        touch_restart_txt
+        notice = t('better_together.storage_configurations.activated_with_restart',
+                   name: @storage_configuration.name)
+      else
+        # Per-tenant storage isolation isn't implemented yet — every platform still
+        # shares the host's ActiveStorage backend until a tenant admin's own config
+        # is actually routed. Only the host's own activation may rebind the shared
+        # service; a tenant admin's activation is saved for when isolation ships,
+        # not silently applied to everyone else's uploads in the meantime.
+        notice = t('better_together.storage_configurations.activated_pending_multi_tenant_support',
+                   name: @storage_configuration.name)
+      end
 
       redirect_to platform_storage_configurations_path(@platform),
                   status: :see_other,
-                  notice: t('better_together.storage_configurations.activated',
-                            name: @storage_configuration.name)
+                  notice: notice
     end
 
     private
@@ -112,9 +125,17 @@ module BetterTogether
       p
     end
 
+    # Signals Puma (and other process managers) to restart workers by touching
+    # tmp/restart.txt so they pick up the new storage binding on their next cycle.
+    def touch_restart_txt
+      FileUtils.touch(Rails.root.join('tmp', 'restart.txt'))
+    rescue StandardError => e
+      Rails.logger.warn("[StorageConfigurationsController] Could not touch tmp/restart.txt: #{e.message}")
+    end
+
     # Rebinds the Active Storage service in this process immediately after activation
     # so new uploads use the updated config without waiting for a restart.
-    # Other processes pick it up on their next restart (e.g. touch tmp/restart.txt).
+    # Other processes pick it up on their next restart (triggered by touch_restart_txt).
     def rebind_active_storage_service(platform)
       resolver = StorageResolver.new(platform)
       service_name = resolver.service_name

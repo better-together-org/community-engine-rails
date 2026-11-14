@@ -2,15 +2,18 @@
 
 ## Overview
 
-PR 1479 turns search backend selection into an adapterized runtime concern
-instead of hard-wiring Community Engine to Elasticsearch alone.
+Search backend selection is an adapterized runtime concern. Core ships two
+backends and no external search service; additional backends register through
+the shared adapter registry.
 
-The new design allows CE to:
+Since 0.11.0 CE:
 
-- keep Elasticsearch as the default backend when it is available
-- support a database fallback when a host app does not want a separate search cluster
-- support a Postgres-native `pg_search` backend for hosts that want search without Elasticsearch
-- resolve search backends through the shared adapter registry so host apps can override or extend search behavior
+- uses the Postgres-native `pg_search` backend by default (`SEARCH_BACKEND` defaults to `pg_search`)
+- keeps a `database` backend as the no-extension fallback
+- no longer depends on `elasticsearch-model` or `elasticsearch-rails`; Elasticsearch lives in the optional
+  [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch) extension gem, which
+  registers an `elasticsearch` backend with the same registry
+- resolves search backends through the shared adapter registry so host apps and extension gems can override or extend search behavior
 
 This is primarily an architecture and deployment-flexibility change rather than
 a user-facing UI feature.
@@ -27,11 +30,13 @@ a user-facing UI feature.
 
 ## Runtime Architecture
 
-The search subsystem now has three first-class backend modes:
+Core has two first-class backend modes:
 
-1. `elasticsearch`
+1. `pg_search` (default)
 2. `database`
-3. `pg_search`
+
+Extension gems add more. With `better_together-elasticsearch` installed, an `elasticsearch` key is registered as well.
+If `SEARCH_BACKEND` names a key with no registered adapter, `BetterTogether::Search` falls back to `pg_search`, then `database`.
 
 `BetterTogether::Search` resolves the configured backend key, ensures the
 default search adapters are registered, and instantiates the selected backend
@@ -47,17 +52,19 @@ Diagrams:
 
 ## Backend Responsibilities
 
-### Elasticsearch backend
+### Elasticsearch (extension gem)
 
-- remains the default configured backend
-- keeps the existing index-backed search path for hosts that already rely on it
+- not part of core; install `better_together-elasticsearch` and set `SEARCH_BACKEND=elasticsearch`
+- the gem owns the client configuration, indexing callbacks and jobs, and the model document concerns
+  (see its README for `register_model_document`)
+- core only exposes the generic search backend registry and the searchable-model registry the gem plugs into
 
 ### Database backend
 
 - provides a no-extra-infrastructure fallback
 - scores records using normalized text extracted from indexed payloads
 - behaves as a no-op backend for index lifecycle methods so CE can still call
-  indexing hooks safely when Elasticsearch is not in use
+  indexing hooks safely when no index-backed backend is in use
 
 ### PgSearch backend
 
@@ -70,24 +77,30 @@ switch.
 
 ## Model Integration
 
-Searchable models now declare their backend-neutral search contract through
+Searchable models declare their backend-neutral search contract through
 `BetterTogether::Searchable`.
 
 That concern now owns:
 
-- Elasticsearch model wiring and index callbacks
 - the shared `searchable ...` DSL for pg_search-backed model configuration
 - the backend-facing query hook used by `PgSearchBackend`
 - the default searchable model registry entry used by `Search::Registry`
 
-`Page` and `Post` were migrated first, and the same contract now also covers:
+The registry (`BetterTogether::Search::Registry`) currently contains these models:
 
+- `BetterTogether::Page`
+- `BetterTogether::Post`
 - `BetterTogether::Event`
 - `BetterTogether::Community`
 - `BetterTogether::Joatu::Offer`
 - `BetterTogether::Joatu::Request`
 - `BetterTogether::Checklist`
 - `BetterTogether::CallForInterest`
+
+A host model that includes `Searchable` without declaring a backend (`searchable pg_search: { ... }` or the fallback
+payload) silently drops out of search. Host models migrating from Elasticsearch must replace
+the Elasticsearch `settings index: default_elasticsearch_index` and `mappings` declarations (`default_elasticsearch_index` no longer exists in core). `as_indexed_json` stays as the plain-text payload used by the database fallback. See the
+[host upgrade guide](../../releases/0.11.0_host_upgrade_guide.md).
 
 The shared search contract now distinguishes between:
 
@@ -144,5 +157,5 @@ Reviewers should treat this as:
 
 - a new backend-selection architecture
 - a shared searchable-model contract instead of model-local pg_search wiring
-- a safer fallback strategy for hosts without Elasticsearch
+- a safe default for hosts that do not run a separate search service
 - an incremental migration path toward Postgres-native search with policy-scope filtering at render time

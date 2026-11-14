@@ -38,6 +38,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
                                  expires_at: 1.hour.from_now.to_i
                                },
                                extra: {
+                                 all_emails: [{ email: 'test@example.com', primary: true, verified: true }],
                                  raw_info: {
                                    html_url: 'https://github.com/testuser',
                                    login: 'testuser'
@@ -81,9 +82,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
       end.to change(BetterTogether.user_class, :count).by(1)
                                                       .and change(BetterTogether::Person, :count).by(1)
                                                                                                  .and change(
-                                                                                                   # rubocop:todo Layout/LineLength
+                                                                                                   # rubocop:todo-next Layout/LineLength
                                                                                                    BetterTogether::PersonPlatformIntegration, :count
-                                                                                                   # rubocop:enable Layout/LineLength
                                                                                                  ).by(1)
     end
 

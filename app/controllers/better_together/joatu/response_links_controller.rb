@@ -30,6 +30,11 @@ module BetterTogether
         source = source_klass.with_translations.includes(:categories, :address, creator: :string_translations).find_by(id: source_id) # rubocop:disable Layout/LineLength
         return redirect_back fallback_location: joatu_hub_path, alert: 'Source not found' unless source
 
+        # A source from someone with a block between you is treated as not found.
+        if helpers.current_person&.block_between?(source.creator)
+          return redirect_back fallback_location: joatu_hub_path, alert: 'Source not found'
+        end
+
         # Only allow creating responses against sources that are open or already matched
         if source.respond_to?(:status) && !%w[open matched].include?(source.status)
           return redirect_back fallback_location: joatu_hub_path,

@@ -1,0 +1,19 @@
+---
+title: Events Index — Aggregate Map Including a Room-Located Event
+audience:
+- community_organizer
+- platform_organizer
+- developer
+journey_step: As a community organizer browsing events, a meetup located in a specific
+  room inside a building shows up on the map exactly like any other located event.
+callouts:
+- :id: events_map
+  :title: Fixed in this PR
+  :description: 'EventCollectionMap.records'' eager-load hash now covers both shapes
+    in one preload — [:space, { building: :space }] — so Rails only applies each entry
+    to the polymorphic subtypes that actually have a matching reflection, instead
+    of requiring every Placeable type to expose the same :space association.'
+accessibility_notes: Marker popups use the event name as visible link text, satisfying
+  link- purpose-in-context for screen reader users.
+slug: event_map_index_room_location
+device: mobile

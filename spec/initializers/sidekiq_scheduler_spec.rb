@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'Sidekiq Scheduler Configuration' do
   let(:engine_schedule_path) { BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml') }
   let(:host_schedule_path) do
@@ -66,6 +66,27 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
 
       it 'uses notifications queue' do
         expect(job['queue']).to eq('notifications')
+      end
+
+      it 'has a description' do
+        expect(job['description']).to be_present
+      end
+    end
+
+    describe 'sitemap refresh job configuration' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+      let(:job) { schedule['better_together:sitemap_refresh_daily'] }
+
+      it 'has correct cron schedule' do
+        expect(job['cron']).to eq('0 2 * * *')
+      end
+
+      it 'has correct job class' do
+        expect(job['class']).to eq('BetterTogether::SitemapRefreshScanJob')
+      end
+
+      it 'uses maintenance queue' do
+        expect(job['queue']).to eq('maintenance')
       end
 
       it 'has a description' do
@@ -221,7 +242,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       end
 
       it 'ensures queue names are valid' do
-        valid_queues = %w[default metrics notifications events maintenance platform_sync]
+        valid_queues = %w[default metrics notifications events maintenance platform_sync weather]
         engine_schedule.each do |job_name, job_config|
           expect(valid_queues).to include(job_config['queue']),
                                   "Job #{job_name} uses invalid queue: #{job_config['queue']}"
@@ -259,7 +280,10 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       it 'event reminder job class is defined' do
         expect(defined?(BetterTogether::EventReminderScanJob)).to be_truthy
       end
+
+      it 'sitemap refresh scan job class is defined' do
+        expect(defined?(BetterTogether::SitemapRefreshScanJob)).to be_truthy
+      end
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

@@ -12,8 +12,8 @@ module BetterTogether # :nodoc:
 
     describe '#perform' do
       before do
-        # Clear existing scheduled jobs
         clear_enqueued_jobs
+        Rails.cache.clear
       end
 
       it 'schedules reminder notifications at appropriate intervals' do
@@ -23,48 +23,51 @@ module BetterTogether # :nodoc:
       end
 
       it 'schedules 24-hour reminder' do
-        reminder_time = event.starts_at - 24.hours
+        reminder_time = event.local_starts_at - 24.hours
 
         job.perform(event.id)
 
         expect(EventReminderJob).to have_been_enqueued
-          .with(event.id)
+          .with(event.id, '24_hours', reminder_time.iso8601)
           .at(reminder_time)
       end
 
       it 'schedules 1-hour reminder' do
-        reminder_time = event.starts_at - 1.hour
+        reminder_time = event.local_starts_at - 1.hour
 
         job.perform(event.id)
 
         expect(EventReminderJob).to have_been_enqueued
-          .with(event.id)
+          .with(event.id, '1_hour', reminder_time.iso8601)
           .at(reminder_time)
       end
 
       it 'schedules start-time reminder' do
+        reminder_time = event.local_starts_at
+
         job.perform(event.id)
 
         expect(EventReminderJob).to have_been_enqueued
-          .with(event.id)
-          .at(event.starts_at)
+          .with(event.id, 'start_time', reminder_time.iso8601)
+          .at(reminder_time)
       end
 
       context 'when event starts soon' do
         let(:soon_event) { create(:event, :with_attendees, starts_at: 30.minutes.from_now) }
 
         it 'only schedules future reminders' do
+          reminder_time = soon_event.local_starts_at
+
           job.perform(soon_event.id)
 
           expect(EventReminderJob).to have_been_enqueued
-            .with(soon_event.id)
-            .at(soon_event.starts_at)
+            .with(soon_event.id, 'start_time', reminder_time.iso8601)
+            .at(reminder_time)
         end
 
         it 'does not schedule past reminders' do
           job.perform(soon_event.id)
 
-          # Should not schedule 24-hour or 1-hour reminders for events starting in 30 minutes
           expect(EventReminderJob).to have_been_enqueued.exactly(1).times
         end
       end
@@ -109,39 +112,31 @@ module BetterTogether # :nodoc:
 
       context 'timezone handling' do
         it 'uses event local timezone for scheduling reminders' do
-          # Event in Tokyo at 6:00 PM JST (future date)
-          tokyo_event = create(:event, :with_attendees,
-                               timezone: 'Asia/Tokyo',
-                               starts_at: 30.hours.from_now) # Future time
+          tokyo_event = create(:event, :with_attendees, timezone: 'Asia/Tokyo', starts_at: 30.hours.from_now)
 
           job.perform(tokyo_event.id)
 
-          # Verify reminders were scheduled
-          expect(EventReminderJob).to have_been_enqueued.with(tokyo_event.id).exactly(3).times
+          expect(EventReminderJob).to have_been_enqueued.exactly(3).times
         end
 
         it 'schedules reminders correctly for events in different timezones' do
-          # Event in New York at 2:00 PM EST (future date)
-          ny_event = create(:event, :with_attendees,
-                            timezone: 'America/New_York',
-                            starts_at: 30.hours.from_now) # Future time
+          ny_event = create(:event, :with_attendees, timezone: 'America/New_York', starts_at: 30.hours.from_now)
 
           job.perform(ny_event.id)
 
-          # Verify 3 reminders (24h, 1h, start time) were scheduled
-          expect(EventReminderJob).to have_been_enqueued.with(ny_event.id).exactly(3).times
+          expect(EventReminderJob).to have_been_enqueued.exactly(3).times
         end
 
         it 'handles DST transitions correctly' do
-          # Event after DST transition (spring forward)
-          # March 10, 2024: 2:00 AM → 3:00 AM EDT
-          event_after_dst = create(:event, :with_attendees,
-                                   timezone: 'America/New_York',
-                                   starts_at: Time.zone.parse('2024-03-15 14:00 EDT'))
+          event_after_dst = create(
+            :event,
+            :with_attendees,
+            timezone: 'America/New_York',
+            starts_at: Time.zone.parse('2024-03-15 14:00 EDT')
+          )
 
           job.perform(event_after_dst.id)
 
-          # 24-hour reminder should be at 2:00 PM EDT on March 14
           expected_24h = event_after_dst.local_starts_at - 24.hours
           expect(expected_24h.hour).to eq(14)
           expect(expected_24h.day).to eq(14)
@@ -158,12 +153,10 @@ module BetterTogether # :nodoc:
 
     describe 'retry and error handling' do
       it 'has retry configuration' do
-        # Check that retry configuration exists (may be empty if not configured)
         expect(described_class).to respond_to(:retry_on)
       end
 
       it 'discards non-retryable errors' do
-        # Check that discard configuration exists (may be empty if not configured)
         expect(described_class).to respond_to(:discard_on)
       end
     end
@@ -181,17 +174,35 @@ module BetterTogether # :nodoc:
       let(:past_time) { 2.hours.ago }
 
       it 'schedules jobs for future times' do
-        job.send(:schedule_future_reminder?, event.id, future_time)
+        job.send(:schedule_future_reminder?, event, 'start_time', future_time)
 
         expect(EventReminderJob).to have_been_enqueued
-          .with(event.id)
+          .with(event.id, 'start_time', future_time.iso8601)
           .at(future_time)
       end
 
       it 'does not schedule jobs for past times' do
-        job.send(:schedule_future_reminder?, event.id, past_time)
+        job.send(:schedule_future_reminder?, event, 'start_time', past_time)
 
         expect(EventReminderJob).not_to have_been_enqueued
+      end
+
+      it 'does not schedule the same reminder twice across repeated scans' do
+        freeze_time do
+          job.perform(event.id)
+
+          first_pass_jobs = enqueued_jobs.select do |enqueued_job|
+            enqueued_job[:job] == BetterTogether::EventReminderJob
+          end
+
+          job.perform(event.id)
+
+          second_pass_jobs = enqueued_jobs.select do |enqueued_job|
+            enqueued_job[:job] == BetterTogether::EventReminderJob
+          end
+
+          expect(second_pass_jobs).to eq(first_pass_jobs)
+        end
       end
     end
   end

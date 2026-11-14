@@ -86,6 +86,7 @@ en:
         media_settings: Media settings
         page_blocks: Page blocks
         pages: Pages
+        privacy: Privacy
       better_together/content/image:
         accessibility_attributes: Accessibility attributes
         content_settings: Content settings
@@ -222,6 +223,11 @@ en:
         conversation: :activerecord.models.conversation
         lock_version: Lock version
         sender: :activerecord.models.sender
+      better_together/message_request:
+        note: Message
+        recipient_id: Recipient
+        sender_id: Sender
+        status: Status
       better_together/navigation_area:
         identifier: Identifier
         lock_version: Lock version
@@ -328,6 +334,7 @@ en:
         notification_mentions: Notification mentions
         notifications: Notifications
         notify_by_email: Receive email notifications
+        notify_on_comments: Notify me about comments
         person_community_memberships: Person community memberships
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
@@ -345,6 +352,9 @@ en:
         lock_version: Lock version
         member: :activerecord.models.member
         role: :activerecord.models.role
+      better_together/person_messaging_grant:
+        grantee_id: Grantee
+        grantor_id: Grantor
       better_together/person_platform_membership:
         joinable: :activerecord.models.joinable
         lock_version: Lock version
@@ -368,6 +378,11 @@ en:
         text_translations: Text translations
         time_zone: Time zone
         url: Url
+      better_together/platform_domain:
+        active: Active
+        hostname: Hostname
+        primary_flag: Primary domain
+        share_domain: Share domain
       better_together/platform_invitation:
         accepted_at: Accepted at
         community_role: :activerecord.models.community_role
@@ -386,6 +401,10 @@ en:
         type: Type
         valid_from: Valid from
         valid_until: Valid until
+      better_together/redirect:
+        from_path: Old path
+        status: Response
+        to_path: New path
       better_together/resource_permission:
         action: Action
         identifier: Identifier
@@ -544,6 +563,11 @@ en:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/content/iframe_block:
+          attributes:
+            iframe_url:
+              csp_not_allowed: URL origin is not in the platform's allowed embed sources
+                — add the origin in Platform settings or contact a developer
         better_together/event:
           attributes:
             event_hosts:
@@ -562,6 +586,13 @@ en:
                 person, target person, and active platform connection
             target:
               must_be_person: must be a person
+        better_together/message_request:
+          attributes:
+            recipient_id:
+              cannot_request_self: cannot send a message request to yourself
+            sender_id:
+              already_pending: you already have a pending message request to this
+                person
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -572,6 +603,10 @@ en:
           attributes:
             recipient_person:
               must_match_grantee: must match the access grant grantee person
+        better_together/person_messaging_grant:
+          attributes:
+            grantee_id:
+              cannot_grant_self: cannot grant messaging permission to yourself
         better_together/person_platform_integration:
           attributes:
             provider:
@@ -582,8 +617,20 @@ en:
           attributes:
             active:
               must_be_true_for_primary: must be true for a primary domain
+              must_be_true_for_share_domain: must be true for a share domain
             primary:
               already_taken_for_platform: has already been taken for this platform
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: must be a path starting with a slash or a full http or https
+                address
+              redirect_loop: leads back to itself through other redirects
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: is not a valid URL
+              invalid_scheme: must use http or https
     models:
       action_text/encrypted_rich_text: Encrypted Rich Text
       action_text/rich_text: Rich Text
@@ -603,10 +650,12 @@ en:
       better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
       better_together/content/events_block: Events
+      better_together/content/file_download_block: File Download
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Image Gallery
       better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
@@ -658,6 +707,7 @@ en:
       better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
       better_together/post: Post
+      better_together/redirect: Redirect
       better_together/resource_permission: Resource Permission
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
@@ -675,6 +725,10 @@ en:
       noticed/event: event
       noticed/notification: notification
   attributes:
+    federation_visibility_list:
+      federate: Always federate
+      no_federate: Never federate
+      platform_default: Use platform default
     privacy_list:
       community: Community
       private: Private
@@ -701,8 +755,16 @@ en:
             here.
           open: People can create an account and join without waiting for approval.
       form:
-        community_help: Choose whether people join right away or ask to join first.
+        community_help: Choose whether this community is invitation-only or may allow
+          membership requests.
+        community_invitation_help: Communities default to invitation-only. Turn this
+          off only when you intentionally want self-service joins or membership requests.
+        community_invitation_only: Require an invitation before someone can join this
+          community
         community_requests: Require people to request access before becoming members
+        community_requests_hint: Community membership requests stay closed unless
+          both this community and the platform allow requests, and invitation-only
+          access is turned off.
         platform_help: Choose whether people can create an account directly or need
           an invitation first.
         platform_invitation_help: Invitations can prefill email addresses and assign
@@ -721,6 +783,11 @@ en:
       address: Address
       city_name: City
       country_name: Country
+      geography:
+        country: Country
+        settlement: City or settlement
+        state: State or province
+        use_typed_text: Use "%{q}" as typed
       label: Label
       labels:
         billing: Billing
@@ -742,13 +809,26 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      accept: I agree
+      accept_action:
+        accepted: Agreement accepted.
+        ineligible_flow: This agreement cannot be accepted from this flow.
+        no_participant: No participant is available for agreement acceptance.
+      accept_error: Unable to record agreement acceptance right now.
+      accepted: Accepted
+      accepting: Saving...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
       form:
+        active_for_consent: Active for consent
+        agreement_kind: Agreement kind
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
         page_label: Linked Page (optional)
+        required_for: Required for
       no_terms: No terms defined.
       notice:
         body: Please view the full agreement before accepting.
@@ -764,6 +844,8 @@ en:
         accepted_via: Accepted via %{method}
         agreement_revision: Agreement revision %{timestamp}
         pending: pending
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Agreement
       status:
@@ -803,6 +885,24 @@ en:
         view_agreement: View Agreement
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Override the platform default for pages in this community, or inherit
+          the platform setting.
+        page: Choose whether this page shows contributor bylines on public-facing
+          views, or inherits the community/platform setting.
+        platform: Sets the default byline visibility for pages and posts unless a
+          community or record overrides it.
+        post: Choose whether this post shows contributor bylines on public-facing
+          views, or inherits the platform setting.
+      labels:
+        community: Community contributor display
+        platform: Default contributor display
+        record: Contributor display
+      options:
+        'false': Hide contributor bylines
+        inherit: Inherit
+        'true': Show contributor bylines
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -817,12 +917,28 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    bot_defense:
+      errors:
+        expired_challenge: Security verification expired. Please reload the form and
+          try again.
+        generic: Security verification failed. Please try again.
+        honeypot_triggered: Security verification failed. Please try again.
+        invalid_challenge: Security verification expired. Please reload the form and
+          try again.
+        replayed_challenge: This security check has already been used. Please reload
+          the form and try again.
+        submitted_too_quickly: Please take a moment to review your submission before
+          sending it.
+      trap_label: Leave this field blank
     buildings:
       add: Add
       title: Buildings
     calendars:
       default_description: Default calendar for %<community_name>s
+      no_events: No events scheduled
+      past_events: Past events
       personal_calendar_name: "%{name}'s Personal Calendar"
+      upcoming_events: Upcoming events
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -883,6 +999,43 @@ en:
         completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
+    comment_config:
+      hints:
+        permission: Controls who is allowed to post new comments.
+        visibility: Controls who can see the comment thread.
+      labels:
+        permission: Who can comment
+        visibility: Who can see comments
+      permission_options:
+        community: Community members only
+        disabled: Nobody (comments disabled)
+        inherit: Anyone who can view this
+      visibility_options:
+        community: Community members only
+        inherit: Anyone who can view this
+    comment_mailer:
+      added:
+        greeting: Hello %{recipient_name},
+        intro: 'You have a new comment on your content:'
+        signature_html: "— The %{platform} team"
+        subject: You have a new comment
+        view_link: View comment
+    comments:
+      accept_agreement_link: accept the content publishing agreement
+      delete: Delete comment
+      deleted_author: Former member
+      denial_reasons:
+        community_required: Only community members can comment on this post.
+        disabled: Comments are disabled for this post.
+      form:
+        error_summary: This comment could not be posted
+        label: Add a comment
+        placeholder: Write a comment…
+        submit: Post comment
+      publishing_agreement_required_html: You must %{link} before you can comment.
+      report: Report comment
+      section_heading: Comments
+      sign_in_to_comment: Sign in to join the conversation.
     communities:
       form:
         allow_membership_requests: Allow membership requests
@@ -890,16 +1043,59 @@ en:
           this community when the configured access model allows it.
       index:
         new_btn_text: New Community
+      membership_review:
+        description:
+          one: "%{community_name} has 1 open membership request ready for review."
+          other: "%{community_name} has %{count} open membership requests ready for
+            review."
+        heading: Membership request review
+        open_requests_badge:
+          one: 1 open request
+          other: "%{count} open requests"
+        review_link: Review requests
       new:
         title: Communities
       none-yet: None-yet
+      quota_usage_tab:
+        description: How much of this community's storage allowance is currently in
+          use.
+        none: This community has no recorded usage yet.
+        title: Usage
       show:
-        create_event: Create an Event
+        about:
+          no_description: No description available.
+        actions:
+          destroy_aria: Delete community
+          edit_aria: Edit community
+        events:
+          loading: Loading events...
+        map_aria: Map of %{name}
+        members:
+          add_member_modal:
+            close: Close
+            select_person: Select Person *
+            select_person_prompt: Select a person
+            select_role: Select Role *
+            submit: Add
+            title: Add New Member
+        posts:
+          loading: Loading posts...
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
+        sections_aria: Community sections
       tabs:
         buildings: Buildings
         contact_details: Contact details
         details: Details
         images: Images
+        posts: Posts
     community_invitations_mailer:
       invite:
         about: About
@@ -952,11 +1148,23 @@ en:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Create a new %{block} block
+        create_for_page: Create a new %{block} block for the page
+        icon: "%{block} icon"
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: No items configured.
           items_json_help: JSON array of objects with "question" and "answer" keys.
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
+        attachment_preview:
+          image: 'Image: %{caption}'
+          opens_in_new_tab: "(opens in a new tab)"
+          video: 'Video: %{url}'
         checklist_block:
           not_found: Checklist not found.
           select_prompt: "— Select a checklist —"
@@ -975,10 +1183,34 @@ en:
           open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        fields:
+          block:
+            identifier_hint: An optional identifier makes this block easier to find
+              later. Use no spaces and keep it under 100 characters.
+            identifier_placeholder: "(optional)"
+            privacy_hint: Choose who can see this block. Blocks on a public page should
+              be Public.
+          image:
+            library:
+              empty: No reviewed image uploads are available in your library yet.
+              empty_hint: Upload an image first, or switch to the person who uploaded
+                it.
+              open: Choose from library
+              scope_hint: Only your reviewed image uploads are available here.
+              title: Choose from library
+              view_uploads: View uploads and review statuses
+        file_download_block:
+          description_help: Short description (optional)
+          empty: This file is not available.
+          label_help: Link text (optional, defaults to the file name)
+          meta: "%{type}, %{size}"
+          open_inline: Open in the browser instead of downloading
+          select_prompt: Select a file
         hero:
           editor:
             background: Background
             cta_button: CTA Button
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Please provide a valid URL starting with http:// or https://.
             heading_color: Heading Color
             overlay_color: Overlay Color
@@ -990,6 +1222,22 @@ en:
           missing_url: No iframe URL configured.
           url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
             another trusted community-space embed.
+        image_gallery_block:
+          empty: No images to display.
+          heading_help: Heading shown above the gallery (optional)
+          images: Images
+          images_help: Choose image blocks in the order they should appear.
+          layout: Layout
+          layouts:
+            grid: Grid
+            masonry: Masonry
+          lightbox: Open images in a viewer when clicked
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -1028,12 +1276,19 @@ en:
             the community scope and ordering.
           resource_ids_placeholder: Leave blank to show latest records
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: JSON array of objects with "label", "value", and optional
             "icon" (Font Awesome class) keys.
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Default template
           host_community_contact_details: Host community contact details
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: No video URL configured.
           title: YouTube video player
           url_help: Accepts YouTube, Vimeo, or any direct embed URL.
@@ -1092,6 +1347,24 @@ en:
         restricted:
           message: "%{filename} is currently restricted while a reviewer checks it."
           title: Attachment restricted
+    contributions:
+      form:
+        add: Add contributor
+        contributor: Contributor
+        contributor_type: Contributor type
+        description: Assign people or robots to this record with explicit contribution
+          roles.
+        entry_help: Choose a contributor type, contributor, and role.
+        heading: Contributors
+        new_entry: New contributor
+        person: Person
+        preview_heading: Preview contributor attribution
+        preview_hint: This is how the contributor byline will appear when contributor
+          display is on. It reflects your last save, not unsaved changes below.
+        remove: Remove contributor
+        robot: Robot
+        role: Role
+        select_contributor: Select contributor
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -1174,28 +1447,6 @@ en:
         denied: Denied
         granted: Granted
         unknown: Unknown
-    e2e:
-      form:
-        status_active: "E2E active 🔒"
-        status_error: E2E unavailable
-        status_waiting: Waiting for participant keys…
-      message:
-        decrypt_error: "[Could not decrypt message]"
-        decrypting: "🔒 Decrypting…"
-      modal:
-        cancel: Cancel
-        ok: OK
-        passphrase_label: Passphrase
-        title: Secure Messaging
-      session:
-        confirm_fresh_identity_message: Restore failed. Generate a fresh identity?
-          Old encrypted messages will remain inaccessible.
-        passphrase_backup_message: Set a backup passphrase (min 12 chars). Leave blank
-          to skip.
-        passphrase_restore_message: Encrypted key backup found. Enter your passphrase
-          to restore, or leave blank to generate a fresh identity.
-        server_error_message: Could not reach the key backup server. Please reload
-          and try again.
     email_addresses:
       add: Add Email Address
       email: Email
@@ -1257,6 +1508,11 @@ en:
           idle: Idle
           running: Running
           succeeded: Succeeded
+    errors:
+      only_one_primary: can only be set for one record%{scope_suffix}
+      privacy:
+        exceeds_context_bounds: cannot be more open than '%{max}' — the platform or
+          community settings prevent this level of visibility
     event_invitations:
       index:
         invite_member: Invite member
@@ -1337,13 +1593,14 @@ en:
         when: When
     events:
       actions:
-        create_new_address: Create new address
-        create_new_building: Create new building
-        create_new_short: New
+        create_new: Create new %{model}
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
       date_and_time: Date & Time
+      delete_event: Delete Event
+      edit_event: Edit Event
+      form_errors_heading: 'The following errors occurred:'
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
@@ -1351,13 +1608,14 @@ en:
         duration_minutes: How long the event will last. Changes automatically when
           start or end time changes.
         ends_at: When the event concludes. Updates automatically when duration changes.
-        location: Where attendees will meet for this event
-        location_name: Name of the venue or meeting place
+        location: Search for an existing address, building, or place. If it is not
+          listed, choose "Create new address" or use your typed text as a custom name.
         name: A clear, descriptive title for your event
-        select_address: Select address
-        select_building: Select building
         slug: URL-friendly identifier for this event
         starts_at: When the event begins. All times are in the timezone selected above.
+        status: Draft events are visible only to you, your co-hosts, and platform
+          managers. Confirm the event to publish it to the events list; cancel it
+          to mark it as called off.
         timezone: The timezone where this event will take place
       hosted_by: Hosted By
       hosts:
@@ -1390,24 +1648,46 @@ en:
           24_hours: 'Reminder: %{event_name} starts in 24 hours'
           at_start: "%{event_name} is starting now"
         view_details_url: View details url
+      index:
+        new_btn_text: New Event
+        result_count:
+          one: "%{count} event"
+          other: "%{count} events"
+        toggle_filters: Filters
       labels:
         duration_minutes: Duration
         ends_at: Ends at
         location: Location
-        location_name: Location name
-        location_type: Location type
         privacy: Privacy
-        select_address: Select address
-        select_building: Select building
         starts_at: Starts at
+        status: Status
         timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      list_form:
+        categories_label: Categories
+        clear_filters: Clear Filters
+        filters: Filter Events
+        order_by_label: Order By
+        order_latest: Latest
+        order_newest: Newest
+        order_oldest: Oldest
+        order_soonest: Soonest
+        past_label: Past events
+        per_page_label: Events Per Page
+        recurring_all: All
+        recurring_label: Recurring
+        recurring_one_time_only: One-time only
+        recurring_only: Recurring only
+        search_button: Search
+        search_label: Search
+        search_placeholder: Search by name or description...
+        status_all: All
+        status_cancelled: Cancelled
+        status_confirmed: Confirmed
+        status_draft: Draft
+        status_label: Status
       location: Location
-      location_types:
-        address: Address
-        building: Building
-        simple: Simple
       login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
@@ -1420,15 +1700,23 @@ en:
       not_saved:
         one: 'There was an error while saving %{resource}:'
         other: 'There were %{count} errors while saving %{resource}:'
+      occurrences:
+        cancelled_badge: Cancelled
+        comment_saved: Comment saved
+        invalid_date: That date isn't valid.
+        override_saved: Session updated
+        rsvp_cancelled_for_date: RSVP for %{date} cancelled
+        rsvp_saved_for_date: RSVP for %{date} saved
       odd: must be odd
       other_than: must be other than %{count}
-      placeholders:
-        location_name: Location name
       present: must be blank
-      prompts:
-        select_address: Select address
-        select_building: Select building
       recurrence:
+        actions:
+          add_exception_date: Add exception date
+          clear: Clear
+          remove_exception_date: Remove this exception date
+          select_all: Select all
+          select_weekdays: Weekdays (Mon–Fri)
         end_types:
           after_count: After occurrences
           never: Never
@@ -1437,25 +1725,52 @@ en:
           count: Number of times this event should repeat
           end_type: How the recurrence should end
           ends_on: The last date this event will occur
-          exception_dates: Dates when this event should NOT occur (comma-separated,
-            YYYY-MM-DD format)
+          exception_dates: Dates when this event should NOT occur
           frequency: How often this event repeats
           interval: Repeat every N periods (e.g., every 2 weeks)
+          month_option: Choose whether this repeats on the same date each month/year,
+            or the same weekday position (like the 3rd Tuesday)
           preview_placeholder: Select recurrence options to see upcoming dates
           weekdays: Days of the week when this event occurs
         labels:
           count: Number of occurrences
           end_type: Ends
           ends_on: End date
+          exception_date_single: Exception date
           exception_dates: Exception dates
           frequency: Repeats
           interval: Repeat every
+          month_option: Repeat by
           preview: Upcoming occurrences
           weekdays: Repeat on
-        placeholders:
-          exception_dates: 2025-01-15, 2025-02-20
+        month_options:
+          day_of_month: Same day of the month
+          day_of_week: Same weekday position (e.g. 3rd Tuesday)
+        notes:
+          applies_to_series: Changes here apply to the entire recurring series, not
+            a single occurrence.
+          exception_date_removed: Exception date removed
+        preview:
+          error: Unable to preview this recurrence — check the end date or occurrence
+            count
+          no_occurrences: No upcoming occurrences in the next year
         prompts:
           select_frequency: Does not repeat
+        summary:
+          every: Every %{count} %{unit}
+          for_count:
+            one: for %{count} occurrence
+            other: for %{count} occurrences
+          on_days: on %{days}
+          on_weekday_position: on the same weekday each month
+          until: until %{date}
+        units:
+          daily: day(s)
+          monthly: month(s)
+          weekly: week(s)
+          yearly: year(s)
+        warnings:
+          never_ends: This event will repeat indefinitely, with no end date.
       register: Register
       relationship:
         calendar: Calendar event
@@ -1472,6 +1787,35 @@ en:
       rsvp_saved: RSVP saved
       rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
       save_event: Save Event
+      series:
+        disposed: Series updated.
+        disposition:
+          cancel_legend: Cancel the series
+          cancel_sessions: Cancel the upcoming dates too
+          cancel_submit: Cancel series
+          delete_legend: Delete the series
+          delete_sessions: Delete the dates too
+          delete_submit: Delete series
+          explain: This series has %{count} dates. Say what happens to them before
+            cancelling or deleting it.
+          open: Cancel or delete this series
+          promote_sessions: Keep the dates as separate events
+        no_sessions: No dates have been added to this series yet.
+        other_dates: Other dates
+        part_of: Part of %{name}
+        part_of_run:
+          one: Part of a series of %{count} date
+          other: Part of a series of %{count} dates
+        sessions_heading: Dates
+        show_all_dates:
+          one: Show %{count} more date
+          other: Show %{count} more dates
+      show:
+        map_label: Map of %{name}
+      statuses:
+        cancelled: Cancelled
+        confirmed: Confirmed
+        draft: Draft
       tabs:
         details: Details
         hosts: Hosts
@@ -1495,6 +1839,124 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feature_access_grants:
+      created: Feature access grant created.
+      edit:
+        title: Edit Feature Access Grant
+      form:
+        access_level: Access level
+        current_rollout: Current rollout
+        expires_at: Expires at
+        feature: Feature
+        notes: Notes
+        person: Person
+        person_prompt: Search for a person
+        unknown_rollout: Unknown / retired feature
+      index:
+        description: Grant beta or alpha access to specific people without broadening
+          their platform role permissions.
+        empty: No explicit feature access grants have been created for this platform
+          yet.
+        new: New grant
+        revoke: Revoke
+        revoke_confirm: Revoke this feature access grant?
+        title: Feature Access Grants
+      new:
+        title: New Feature Access Grant
+      revoked: Feature access grant revoked.
+      status:
+        active: Active
+        revoked: Inactive
+      table:
+        access_level: Access level
+        actions: Actions
+        expires_at: Expires
+        feature: Feature
+        granted_by: Granted by %{name}
+        no_expiry: No expiry
+        person: Person
+        status: Status
+      updated: Feature access grant updated.
+    federatable:
+      grant_statuses:
+        allowed: Always federate
+        denied: Never federate
+        platform_default: Use platform default
+      hints:
+        federation_content_grants: Override federation for this item on one specific
+          connection, without changing the general federation visibility above.
+        federation_visibility: Override this platform's federation settings for this
+          specific item. "Use platform default" follows your account-wide federation
+          preference and each connection's content-sharing settings.
+      labels:
+        federation_content_grants: Federation per connection
+        federation_visibility: Federation visibility
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: 'Skipped %{model_name} %{record_id}: identifier
+            conflict on %{identifier}'
+          skipped_missing_source_platform: 'Skipped %{model_name} %{record_id}: could
+            not determine source platform'
+          title: Backfilling federated mirrored identifiers
+      ingest:
+        errors:
+          connection_required: connection is required
+          seeds_payload_too_large: Seeds payload too large (%{count} > %{max_count}).
+            Use FederatedContentPullJob for large batches.
+        sync_summary:
+          one: Federated ingest completed with 1 mirrored content conflict
+          other: Federated ingest completed with %{count} mirrored content conflicts
+      mirroring:
+        content_types:
+          event: event
+          page: page
+          post: post
+        errors:
+          not_authorized: "%{content_type} mirroring not authorized: %{reason}"
+    federation_hub:
+      activity:
+        back_to_hub: Back to Federation Hub
+        filters:
+          any_content_type: Any content type
+          any_direction: Any direction
+          apply: Filter
+          content_type: Content type
+          direction: Direction
+          incoming: Incoming
+          outgoing: Outgoing
+        keys:
+          platform_connection_sync_failed: Sync failed
+          platform_connection_sync_started: Sync started
+          platform_connection_sync_succeeded: Sync succeeded
+        no_activity: No federation activity yet.
+        page_title: Federation Activity
+      connection_health_card:
+        active_badge:
+          one: 1 active connection
+          other: "%{count} active connections"
+        failed_badge:
+          one: 1 connection with failed sync
+          other: "%{count} connections with failed sync"
+        pending_badge:
+          one: 1 pending connection
+          other: "%{count} pending connections"
+        review_link: Review connections
+        title: Connected platforms
+        total_badge:
+          one: 1 total connection
+          other: "%{count} total connections"
+        view_all_connections: View all connections
+      index:
+        page_title: Federation Hub
+        view_activity: View activity
+      my_content_panel:
+        edit_preference: Change this
+        federate_content_off: Federation disabled for your content
+        federate_content_on: Federation enabled for your content
+        no_recent_items: You haven't created any federatable content yet.
+        recent_items: Recently updated
+        title: My content federation status
     feedback_routing:
       audience:
         community_stewards: responsible community stewards
@@ -1577,14 +2039,47 @@ en:
       locatable_location:
         errors:
           no_location_source: Must specify either a name or location
+      place_scoped_index:
+        events_heading: Events in %{name}
+        posts_heading: Posts in %{name}
       regions:
         index:
           title: Regions
+        show:
+          settlements_heading: Settlements in %{name}
       settlements:
+        edit:
+          heading: Editing settlement
+          page_title: Edit %{name} | %{resources}
         index:
+          description: Cities, towns, villages, hamlets, Indigenous communities and
+            other named places.
+          new: New settlement
           title: Settlements
+        new:
+          back: Back to settlements
+          heading: New settlement
+        show:
+          destroy: Destroy Settlement
+          edit-settlement: Edit Settlement
+          events_loading: Loading events...
+          posts_loading: Loading posts...
+          sections_aria: Settlement sections
+          view-all-settlements: View All Settlements
+          weather_loading: Loading weather
+        toolbar:
+          back_to_geography_settlements: Back to Settlements
+          save_geography_settlement: Save Settlement
+          view_geography_settlement: View Settlement
+      states:
+        show:
+          settlements_tab: Settlements
     global:
       add: Add
+    globals:
+      tabs:
+        details: Details
+        images: Images
     governance:
       robot_author: Robot author
     host_nav:
@@ -1619,6 +2114,13 @@ en:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Close
+      counter: "{current} of {total}"
+      dialog_label: 'Image gallery: %{name}'
+      next: Next image
+      open_image: 'Open image %{current} of %{total}: %{name}'
+      previous: Previous image
     infrastructure:
       locations: Locations
     invitations:
@@ -1664,6 +2166,7 @@ en:
       invitee: Invitee
       invitee_email: Email
       invitee_type: Invitee Type
+      invitee_unavailable: This person cannot be invited.
       login_to_respond: Please log in to respond to your invitation.
       no_invitations: No invitations found
       no_role: No role
@@ -1687,8 +2190,11 @@ en:
     joatu:
       agreements:
         accept: Accept
+        cancel: Cancel Agreement
+        cancel_confirm: Cancel this agreement?
         create:
           success: Success
+        fulfill: Mark Fulfilled
         index:
           title: Agreements
         offer: Offer
@@ -1698,6 +2204,9 @@ en:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Agreement Family
+          agreement_type: Agreement Type
+          decision_made_at: Decision Recorded
           details: Details
           open_platform_connections: Open Platform Connections
           platform_connection: Platform Connection
@@ -1709,6 +2218,7 @@ en:
       categories:
         index:
           new_btn_text: New Category
+      exchange_unavailable: This exchange is not available.
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review
@@ -1745,6 +2255,9 @@ en:
         my_offers: My Offers
         my_requests: My Requests
         none: No matches found right now.
+        recent_offers: Recent Offers
+        recent_requests: Recent Requests
+        sign_in: Sign in
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
         title: Potential Matches
@@ -1759,7 +2272,7 @@ en:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Mutual Aid
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1832,10 +2345,25 @@ en:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: New Joatu match
+        subject: New mutual aid match
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
+    locations:
+      picker:
+        announcements:
+          cancelled: New address cancelled. Returned to the location search field.
+          creating: Creating a new address. Fill in the address fields below, then
+            save.
+        cancel_new_address: Cancel new address
+        create_new: Create new %{model}
+        hint: Search for an existing address, building, or settlement (a city, town,
+          village, hamlet, Indigenous community or other named place). If it is not
+          listed, choose "Create new address" or use your typed text as a custom name.
+        label: Location
+        new_address_legend: New address
+        new_named_with_query: 'Create new %{model}: "%{q}"'
+        use_typed_name: Use "%{q}" as a custom location name
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
@@ -1886,6 +2414,18 @@ en:
         signature_html: Best regards,<br /> The %{community_name} Team
         signature_text: Best regards, The %{community_name} Team
         subject: Your membership request for %{community_name} was declined
+      digest:
+        greeting: Hello %{name},
+        message:
+          one: 1 new membership request now needs review for %{community_name}.
+          other: "%{count} new membership requests now need review for %{community_name}."
+        requestors_label: Recent applicants
+        review_requests: Review membership requests
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject:
+          one: 1 membership request needs review for %{community_name}
+          other: "%{count} membership requests need review for %{community_name}"
       submitted:
         greeting: Hello %{name},
         message: "%{requestor_name} asked to join %{community_name}."
@@ -1945,6 +2485,35 @@ en:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    message_requests:
+      accepted: Message request accepted. A new conversation has been started.
+      declined: Message request declined.
+      index:
+        accept_btn: Accept
+        accept_confirm: Accept this message request and start a conversation?
+        ago: ago
+        decline_btn: Decline
+        none_pending: You have no pending message requests.
+        title: Message Requests
+        wants_to_message_you: would like to message you
+      modal_intro: Send %{name} a brief note explaining why you'd like to connect.
+        They can choose to accept and start a conversation, or decline.
+      note_label: Why would you like to connect?
+      note_placeholder: Introduce yourself and explain why you'd like to start a conversation.
+      request_pending: Request pending
+      send_request_btn: Send Message Request
+      sent: Your message request has been sent.
+      show:
+        accept_btn: Accept & Start Conversation
+        back: Back to Requests
+        decline_btn: Decline
+        from_label: 'From:'
+        note_label: 'Note:'
+        title: Message Request
+      statuses:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
     messages:
       form:
         placeholder: Type your message...
@@ -2087,6 +2656,7 @@ en:
           medium_results: Medium
           no_results: No results
           result_quality: Avg results per search
+        loading: Loading...
         search_health:
           backend: Backend
           db_count: DB Count
@@ -2123,7 +2693,6 @@ en:
       shares_controller:
         error_tracking: 'Error tracking share:'
         failed_tracking: Failed to track share.
-        ga_not_initialized: Google Analytics not initialized.
         unsupported_platform: 'Unsupported platform: %{platform}'
       user_account_reports_controller:
         create:
@@ -2220,11 +2789,13 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        agreements: Agreements
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities
         content_blocks: Content Blocks
         events: Events
+        federation_hub: Federation Hub
         geography_continents: Continents
         geography_countries: Countries
         geography_maps: Maps
@@ -2232,27 +2803,57 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_membership_review: Membership Review
+        host_dashboard_platform_connection_review: Federation Review
+        host_dashboard_safety_review: Safety Review
+        hub: Hub
+        joatu_hub: Joatu Hub
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
+        oauth_applications: OAuth Applications
         pages: Pages
         people: People
+        platform_connections: Platform Connections
         platforms: Platforms
+        posts: Posts
+        reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
+        safety_cases: Safety Review
         users: Users
+        webhook_endpoints: Webhook Endpoints
       visibility_strategies:
         authenticated: Signed-in users
         permission: Users with permission
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
+    new_platform_setup_steps:
+      already_completed: This platform has already been set up.
+      create_domain:
+        flash:
+          please_address_errors: Please address the errors below.
+      create_invite_members:
+        flash:
+          invitation_sent: Invitation sent to %{email}.
+          please_address_errors: Please address the errors below.
+      create_platform_identity:
+        flash:
+          please_address_errors: Please address the errors below.
+      create_steward_account:
+        flash:
+          please_address_errors: Please address the errors below.
+      success_message: Your new platform has been provisioned successfully.
     not_found:
       description: The page you are looking for might have been removed, had its name
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} commented on your content"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2264,6 +2865,9 @@ en:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: '"%{title}" is now set to %{current_visibility}'
+        title: 'Federation setting updated: %{current_visibility}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -2271,6 +2875,9 @@ en:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
           title: Agreement created
+        agreement_status_changed:
+          body: The agreement between "%{offer}" and "%{request}" was %{status}.
+          title: Agreement %{status}
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       membership_created:
@@ -2285,6 +2892,11 @@ en:
       membership_request_declined:
         body: Your request to join %{community_name} was declined
         title: Membership request declined for %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} asked to join %{community_name}"
         title: New membership request for %{community_name}
@@ -2303,7 +2915,34 @@ en:
         body: A new %{provider} account integration was connected on %{created_at}
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} joined as %{role} through %{domain}"
+          title: Trusted domain %{domain} granted membership
+        rate_limited:
+          body: The hourly limit for %{domain} was reached. New people stay pending
+            until you review them.
+          title: Trusted domain %{domain} reached its hourly limit
     oauth:
       applications:
         create:
@@ -2377,11 +3016,8 @@ en:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
-        new_release_package_draft: New Release Package Draft
         search_by_slug: Search by slug...
         search_by_title: Search by title...
-      release_package_draft:
-        created: 'Private release package draft created. Companion draft post: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2423,6 +3059,9 @@ en:
           title: Notifications
         time_zone:
           title: Time Zone
+      show:
+        memberships:
+          showing_count: Showing %{shown} of %{total}
       submit:
         save: Save
       tabs:
@@ -2549,8 +3188,13 @@ en:
           disconnect it first if you want to connect a different account.
         email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs
           to a different user. Please sign out and sign in with the correct account.'
+        email_missing: Email not provided by %{provider}. Please make an email address
+          available to this application in your %{provider} account settings.
         failure: Failed to connect %{provider} account. Please try again.
         success: Successfully connected %{provider} account.
+        unverified_email_collision: An account with this email already exists, and
+          %{provider} has not verified the address. Sign in with your existing method,
+          then connect %{provider} from Settings.
       destroy:
         cannot_delete_last_oauth: Cannot disconnect your %{provider} account because
           you signed up using OAuth and don't have a password set. Please set a password
@@ -2682,6 +3326,120 @@ en:
         suspend_confirm: Suspend this connection? Federation and sync will pause.
         sync_cursor: Sync Cursor
         sync_status: Sync Status
+    platform_domains:
+      cancel: Cancel
+      cannot_destroy_primary: Cannot delete the primary domain. Set another domain
+        as primary first.
+      created: Domain was successfully added.
+      destroyed: Domain was successfully removed.
+      edit:
+        subtitle: Domain for %{platform_name}
+        title: Edit %{hostname}
+      form:
+        active_field_label: Active
+        custom_domain_hint_html: A custom domain needs a DNS record (CNAME or A) pointed
+          at this platform's edge server, and its own TLS certificate. See the multi-platform
+          deployment guide for the exact DNS/TLS steps.
+        hostname_hint: The hostname visitors will use to reach this platform. No scheme
+          (no https://) and no trailing slash.
+        hostname_placeholder: e.g. tenant-a.example.com or app.clientdomain.example
+        kind_custom_label: Use my own domain
+        kind_subdomain_label: Use a subdomain of %{host_apex}
+        primary_flag_label: Primary domain
+        share_domain_label: Share domain (used in generated share links)
+        subdomain_hint: Only the part before .%{host_apex} — the full hostname is
+          filled in automatically.
+        subdomain_label_field: Subdomain
+      index:
+        active_label: Active
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this domain?
+        edit_btn: Edit
+        header_actions: Actions
+        header_hostname: Hostname
+        header_primary: Primary
+        header_share: Share
+        header_status: Status
+        inactive_label: Inactive
+        new_btn: Add Domain
+        no_domains: No domains configured yet.
+        primary_badge: Primary
+        share_badge: Share domain
+        subtitle: Hostnames and aliases for %{platform_name}
+        table_aria: Platform domains
+        title: Domains
+      new:
+        subtitle: Add a domain for %{platform_name}
+        title: New Domain
+      updated: Domain was successfully updated.
+    platform_identity_providers:
+      create:
+        created: Sign-in provider was added.
+      destroy:
+        destroyed: Sign-in provider was removed.
+      edit:
+        subtitle: OAuth sign-in providers for %{platform_name}
+        title: Edit %{provider}
+      form:
+        cancel: Cancel
+        client_id_label: Client ID
+        client_secret_hint: Stored encrypted and never shown again.
+        client_secret_keep: Leave blank to keep the current secret
+        client_secret_label: Client secret
+        create_btn: Add provider
+        domains_hint: Sign-in with this provider works only on the checked domains.
+          Each domain's callback URL must also be registered with the provider.
+        domains_label: Allowed domains
+        enabled_label: Enabled
+        issuer_hint: OpenID Connect only. The https URL of the identity provider (its
+          discovery document is read from it). It cannot be changed after the provider
+          is added, and each issuer can be added once per platform.
+        issuer_label: Issuer URL
+        label_hint: OpenID Connect only. Shown on the sign-in button. Defaults to
+          the issuer host.
+        label_label: Button label
+        scopes_hint: Leave blank to use the provider default.
+        scopes_label: Scopes
+        strategy_label: Provider
+        trust_verified_email_hint: Off by default. When on, an email this issuer marks
+          as verified can sign people in to an existing account with that address.
+          Turn on only for issuers that verify email addresses.
+        trust_verified_email_label: Trust this issuer's verified emails
+        update_btn: Update provider
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this sign-in provider?
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        env_description: These providers are set by environment variables and apply
+          to this platform's domains listed below. Secrets are never shown. Add a
+          provider row to manage a domain here instead.
+        env_note: Providers without a row here fall back to this server's environment
+          variables (for example GITHUB_CLIENT_ID).
+        env_serves: 'Serves: %{domains}'
+        env_serves_none: Every domain is claimed by a provider row below, so the environment
+          is not used.
+        env_title: Configured through the server environment
+        header_actions: Actions
+        header_client_id: Client ID
+        header_provider: Provider
+        header_secret: Client secret
+        header_status: Status
+        new_btn: Add provider
+        none: No sign-in providers are configured for this platform.
+        secret_missing: Missing
+        secret_set: Set
+        subtitle: OAuth sign-in providers for %{platform_name}
+        table_aria: Sign-in providers
+        title: Sign-in providers
+      new:
+        subtitle: OAuth sign-in providers for %{platform_name}
+        title: Add sign-in provider
+      update:
+        updated: Sign-in provider was updated.
     platform_invitation:
       acceptance_html: By registering for a user account below, you are accepting
         this invitation to join <strong>%{platform}</strong>.
@@ -2719,7 +3477,100 @@ en:
         accepted: Accepted
         expired: Expired
         pending: Pending
+    platform_trusted_domains:
+      created: Trusted domain was added.
+      destroyed: Trusted domain was removed. Existing accounts and memberships are
+        unchanged.
+      edit:
+        title: Edit trusted domain
+      events:
+        account_created: Account created
+        domain_added: Domain added
+        domain_removed: Domain removed
+        domain_updated: Domain changed
+        grant_rate_limited: Hourly limit reached, grant held for review
+        membership_granted: Membership granted
+        membership_request_approved: Membership request approved
+      form:
+        cancel: Cancel
+        domain_hint: Only the part after the @ sign, for example example.org. Public
+          mail providers such as gmail.com need the confirmation below.
+        domain_label: Email domain
+        enabled_label: Enabled
+        include_subdomains_label: Also trust subdomains (for example mail.example.org)
+        note_label: Note for other stewards (optional)
+        public_domain_label: I understand this is a public mail domain and anyone
+          can have an address there
+        role_ceiling_label: I understand that people with a verified address on this
+          domain receive this role automatically
+        role_hint: Community roles only. Platform and steward roles cannot be granted
+          by domain.
+        role_label: Community role granted
+        submit: Save trusted domain
+      index:
+        activity_event: Event
+        activity_heading: Recent activity
+        activity_none: No activity yet.
+        activity_person: Person
+        activity_via: Via
+        activity_when: When
+        back_to_platform: Back to platform
+        delete_btn: Remove
+        delete_confirm: Remove this trusted domain? Existing accounts and memberships
+          stay as they are.
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        explanation: People who sign in with a provider that verifies their email,
+          or who confirm their email after signing up, and whose address ends in a
+          trusted domain get membership with the chosen role without waiting for review.
+          Every grant is logged.
+        header_accounts: Accounts created
+        header_actions: Actions
+        header_domain: Domain
+        header_role: Role
+        header_status: Status
+        header_subdomains: Subdomains
+        new_btn: Add trusted domain
+        no_domains: No trusted domains yet.
+        subdomains_no: Exact match only
+        subdomains_yes: Included
+        subtitle: Email domains trusted by %{platform_name}
+        table_aria: Trusted email domains
+        title: Trusted domains
+      new:
+        subtitle: People with a verified address on this domain receive the chosen
+          role on %{platform_name}.
+        title: Add trusted domain
+      updated: Trusted domain was updated.
+      vias:
+        membership_request: Membership request
+        oauth: Sign-in provider
+        password_registration: Email sign-up
+        steward: Steward
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} cannot use that content type."
+          too_long: "%{slot} is too long (the limit is %{max} characters per language)."
+        footer_above:
+          hint: Shown above the site footer, for example a funder or disclaimer notice.
+          label: Above the footer
+        header_above:
+          hint: Shown above the site header, for example an announcement.
+          label: Above the header
+        hint: Optional content blocks shown in fixed places on every page of this
+          platform. Each language is separate; a missing language falls back to the
+          default language. Leave a slot empty to keep the standard layout.
+        not_found_headlines:
+          hint: One headline per line, up to 20. One is chosen at random when a page
+            is not found. Without any, the standard title is used.
+          label: 404 page headlines
+        not_found_message:
+          hint: Shown under the heading when a page is not found.
+          label: 404 page message
+        remove: Remove this content
+        title: Header, footer and 404 content
       form:
         allow_membership_requests: Allow membership requests
         allow_membership_requests_hint: Show a public membership request form on the
@@ -2736,9 +3587,48 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        csp_title: Security / CSP embeds
+        custom_css_hint: Advanced override. Styles added here load after the theme
+          and take precedence over it.
+        custom_css_title: Custom CSS
+        domains_after_save: Save the platform first, then manage its domains and sign-in
+          providers here.
+        domains_hint: Review the domains this platform answers on and the services
+          people use to sign in.
+        feature_gates_hint: Choose which rollout stage each feature requires on this
+          platform.
+        feature_gates_title: Feature rollout gates
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+        integrations_empty: No integrations are installed.
+        integrations_env_fallback: Using the %{variable} environment variable. A value
+          saved here replaces it.
+        integrations_hint: Settings for services connected through extension gems.
+          Each platform keeps its own values.
+        integrations_secret_set: A value is saved. Leave this blank to keep it.
+        quota_defaults_hint: Starting limit for each new person, community and this
+          platform. Leave a field blank to use the default set in the application
+          configuration. Changing a value also updates existing quotas on this platform;
+          per-owner quota grants are not affected.
+        quota_defaults_title: Quota defaults
+        quota_kinds:
+          community: Community
+          person: Person
+          platform: Platform
+        quota_types:
+          ai_translation_tokens: AI LLM usage tokens per month
+          media_storage: Storage
+        quota_use_default: Use default (%{size})
+        trusted_domains:
+          after_save: Save the platform first, then add trusted email domains here.
+          heading: Trusted email domains
+          hint: Verified email addresses on these domains join with a set role without
+            waiting for review.
+          manage: Manage trusted domains
+          none: No trusted domains.
+      index:
+        provision_new_platform: Provision New Platform
       new:
         back: Back
         host_url_hint: The root URL of the external platform instance.
@@ -2753,6 +3643,15 @@ en:
         title: Register External Platform
       show:
         new_invitation: New invitation
+      tabs:
+        access: Access and privacy
+        appearance: Appearance
+        details: Details
+        domains: Domains and sign-in
+        errors: errors on this tab
+        features: Features and quotas
+        integrations: Integrations
+        security: Security
     posts:
       authors: Authors
       back_to_posts: Back to Posts
@@ -2762,10 +3661,46 @@ en:
       delete: Delete Record
       edit: Edit Post
       edit_post: Edit Post
+      hints:
+        privacy_limited_by_community: Some privacy options are disabled because this
+          community is not public. Posts here can only be visible to community members
+          or the author.
+        privacy_limited_by_platform: Some privacy options are disabled because the
+          platform is not public. Posts can only be visible to community members or
+          the author.
       index:
+        map_unavailable: Map view is not available for posts without location data.
         new_btn_text: New Post
+        result_count:
+          one: "%{count} post"
+          other: "%{count} posts"
+        table_headers:
+          authors: Authors
+          categories: Categories
+          community: Community
+          published: Published
+          title: Title
+        toggle_filters: Filters
       labels:
         privacy: Privacy
+      list_form:
+        authors_label: Authors
+        authors_placeholder: Select authors...
+        categories_label: Categories
+        clear_filters: Clear Filters
+        filters: Filter Posts
+        order_by_label: Order By
+        order_newest: Newest First (default)
+        order_oldest: Oldest First
+        per_page_label: Posts Per Page
+        privacy_all: All
+        privacy_community: Community
+        privacy_label: Privacy
+        privacy_private: Private
+        privacy_public: Public
+        search_button: Search
+        search_label: Search
+        search_placeholder: Search by title or content...
       new_post: New Post
       none_body: There are no posts to show right now.
       none_title: No posts yet
@@ -2775,10 +3710,143 @@ en:
       updated_on_short: Updated
       view_post: View Post
     primary: Primary
+    privacy:
+      hints:
+        privacy_limited_by_community: Some privacy options are disabled because this
+          community is not public. Content here can only be visible to community members
+          or the author.
+        privacy_limited_by_platform: Some privacy options are disabled because the
+          platform is not public. Content can only be visible to community members
+          or the author.
+    quota_grants:
+      created: Quota grant created.
+      edit:
+        title: Edit Quota Grant
+      form:
+        community: Community (if owner type is Community)
+        community_prompt: Select a community
+        expires_at: Expires at
+        expires_at_hint: Leave blank for a grant that never expires.
+        limit: Limit
+        owner: Owner
+        owner_hint: Only the field matching the owner type above is used.
+        owner_type: Owner type
+        owner_type_community: Community
+        owner_type_person: Person
+        person: Person (if owner type is Person)
+        person_prompt: Search for a person
+        quota_type: Quota type
+        reason: Reason
+      index:
+        description: See who is using how much, and grant an owner a higher limit
+          without changing the platform default.
+        grant_override: Grant override
+        grants_empty: No quota grants have been created for this platform yet.
+        grants_title: Existing grants
+        new: New grant
+        overview_empty: No usage recorded on this platform yet.
+        overview_title: Usage overview (busiest first)
+        revoke: Revoke
+        revoke_confirm: Revoke this quota grant?
+        title: Quota Grants
+      new:
+        title: New Quota Grant
+      revoked: Quota grant revoked.
+      status:
+        active: Active
+        expired: Expired
+      table:
+        actions: Actions
+        expires_at: Expires
+        granted_by: Granted by %{name}
+        limit: Limit
+        no_expiry: No expiry
+        owner: Owner
+        quota_type: Quota type
+        status: Status
+        usage: Usage
+      updated: Quota grant updated.
+    quotas:
+      errors:
+        not_local: must be local to this platform
+      usage_meter:
+        types:
+          ai_translation_tokens: AI LLM usage tokens
+          media_storage: Storage
     rbac:
       nav:
         resource_permissions: Resource permissions
         roles: Roles
+    redirects:
+      created: Redirect was successfully added.
+      destroyed: Redirect was removed.
+      edit:
+        subtitle: Redirect for %{platform_name}
+        title: Edit %{from_path}
+      form:
+        active_label: Active
+        cancel: Cancel
+        create_btn: Add redirect
+        from_path_hint: The address visitors used, starting with a slash. Matching
+          ignores letter case, a trailing slash and any query string.
+        from_path_label: Old path
+        note_label: Note
+        preserve_query_label: Keep the query string when redirecting
+        status_label: Response
+        statuses:
+          s301: 301 Moved permanently
+          s302: 302 Found (temporary)
+          s307: 307 Temporary redirect
+          s308: 308 Permanent redirect
+          s410: 410 Gone
+        to_path_hint: A path on this site starting with a slash, or a full http or
+          https address. Leave blank only for 410 Gone.
+        to_path_label: New path or URL
+        update_btn: Update redirect
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this redirect?
+        edit_btn: Edit
+        gone_label: Gone (no new address)
+        header_actions: Actions
+        header_from: Old path
+        header_hits: Visits
+        header_status: Status
+        header_to: New path
+        import_btn: Import
+        inactive_label: inactive
+        new_btn: Add redirect
+        no_redirects: No redirects yet.
+        search_btn: Search
+        search_label: Search redirects
+        search_placeholder: Search by old path
+        subtitle: Old addresses that send visitors to a new place on %{platform_name}
+        table_aria: Redirects
+        title: Redirects
+      new:
+        subtitle: Add a redirect for %{platform_name}
+        title: New redirect
+      new_import:
+        back: Back to redirects
+        import_btn: Import
+        import_confirm: Import these redirects?
+        preview_btn: Preview
+        report_applied: Import finished
+        report_created: Created
+        report_error_line: 'Line %{row} (%{path}): %{message}'
+        report_preview: Preview (nothing was saved)
+        report_skipped: Skipped (already exist)
+        report_unchanged: Unchanged
+        report_updated: Updated
+        rows_hint: 'Write old path, new path and an optional status (301, 302, 307,
+          308 or 410), separated by commas. Lines starting with # are ignored. Preview
+          first; nothing is saved until you choose Import.'
+        rows_label: Redirects, one per line
+        subtitle: Add many redirects to %{platform_name} at once
+        title: Import redirects
+        upsert_label: Also update redirects that already exist
+      updated: Redirect was successfully updated.
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
       invalid_invitation: Invalid or expired invitation code. Please check your invitation
@@ -2845,6 +3913,7 @@ en:
         pending_copy: This case is still in progress. A moderator may follow up based
           on your consent settings.
         reported_record: Reported record
+        reported_record_unavailable: This content is no longer available.
         status: Current status
         summary: Case summary
         title: Safety report
@@ -2870,6 +3939,62 @@ en:
         none: No roles assigned
     resources:
       membership_request: Membership request
+    robots:
+      created: Robot was successfully created.
+      destroyed: Robot was successfully deleted.
+      edit:
+        subtitle: Adjust provider, model, prompt, and runtime flags for this platform
+          robot.
+        title: Edit %{name} for %{platform_name}
+      form:
+        assume_model_exists: Assume model exists
+        assume_model_exists_help: Keep this enabled only when the provider/model path
+          is known to exist.
+        cancel: Cancel
+      index:
+        back_to_platform: Back to Platform
+        delete: Delete
+        delete_confirm: Delete %{name}?
+        edit: Edit
+        global_read_only: Global fallback
+        new_robot: Add Robot
+        scope: Scope
+        status: Status
+        subtitle: Manage platform-specific robots and inherited global fallbacks from
+          one place.
+        title: LLM Robots for %{platform_name}
+      new:
+        subtitle: Create a platform-scoped robot override. Credentials stay in environment
+          configuration.
+        title: New Robot for %{platform_name}
+      readiness:
+        configured: Configured
+        credentials_help: OpenAI-backed robots continue to use the deployment environment
+          for credentials.
+        hidden: Hidden
+        missing: Missing
+        no_translation_robot: No translation robot resolves for this platform.
+        openai_credentials: OpenAI Credentials
+        ready: Ready
+        shown: Shown
+        translation_provider: Translation Provider
+        translation_ui: Translation UI
+        translation_ui_help: Translation controls render only when the resolved translation
+          robot has an available provider.
+        unavailable: Unavailable
+      scope_labels:
+        global_fallback: Global fallback
+        platform_override: Platform override
+      statuses:
+        active: Active
+        inactive: Inactive
+        inactive_translation: Inactive translation robot
+        provider_ready: Provider available
+        provider_unavailable: Provider unavailable
+        translation_not_selected: Not the effective translation robot for this platform
+        translation_ui_disabled: Translation UI hidden for this platform
+        translation_ui_enabled: Translation UI enabled for this platform
+      updated: Robot was successfully updated.
     roles:
       index:
         new_role: New role
@@ -3066,6 +4191,32 @@ en:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Review the permissions you have granted to linked people,
+                  and the permissions they have granted back to you.
+                open_link: Open access grants
+                title: Access grants
+              linked_seeds:
+                description: Browse synchronized data shared through your approved
+                  platform links.
+                open_link: Open linked seeds
+                title: Linked seeds
+              person_links:
+                description: Review the people and federated connections currently
+                  linked to your account.
+                open_link: Open linked people
+                title: Linked people
+              person_seeds:
+                description: Open your portable seed exports for advanced portability
+                  and interoperability workflows.
+                open_link: Open portable seed exports
+                title: Portable seed exports
+            description: Reach your linked people, access grants, synchronized data,
+              and portable exports from one place.
+            open_link: Open
+            title: Data sharing and portability
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -3089,11 +4240,18 @@ en:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: This export could not be prepared. Please request a new export.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Completed
+              failed: Failed
+              pending: Pending
+              processing: Processing
+            table_caption: Recent account export requests
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
@@ -3131,7 +4289,14 @@ en:
           platform: Platform
           preferences: Preferences
           privacy: Privacy
+          usage: Usage
         title: Settings
+        usage:
+          description: How much of your storage and other quota-governed limits you
+            are currently using.
+          title: Usage
+      usage:
+        none: You have no recorded usage yet.
     setup_wizard_steps:
       already_completed: This platform has already been set up. Please sign in to
         manage your platform.
@@ -3144,16 +4309,49 @@ en:
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
+      copy_short_link: Copy short link
       default_title: Check this out!
       facebook: Share on Facebook
+      get_short_link: Get short link
       linkedin: Share on LinkedIn
       pinterest: Pin
       reddit: Share on Reddit
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_chip:
+        label: Community
+        title: Posted in the %{community} community
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
+      event_status_level: 'Event status: %{status}'
+      event_status_tooltip: 'Event status: %{status}'
+      map:
+        buttons:
+          geolocate: Geolocate Me
+          map: Map
+          satellite: Satellite
+        geolocation:
+          denied: Location access is blocked. Allow it for this site in your browser
+            settings and try again.
+          located: Showing your location.
+          locating: Finding your location...
+          timeout: Finding your location took too long. Try again.
+          unavailable: Your location could not be determined. Check that location
+            services are on and try again.
+          unsupported: Your browser does not support location.
+          you_are_here: You are here
+        show_on_map: Show on the map
       privacy_level: 'Privacy: %{privacy}'
       privacy_tooltip: This content is %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Repeats: %{summary}'
+      recurring_badge_label: Repeats
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -3161,6 +4359,47 @@ en:
         name: Enter a name (at least one locale must be filled)
         slug: URL‑friendly identifier (unique across locales)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Edit Short Link
+      form:
+        back: Back to Short Links
+        code: Short Code (leave blank to auto-generate)
+        code_hint: Lowercase letters, numbers, and hyphens only
+        expires_at: Expires At (optional)
+        save: Save
+        status: Status
+        target_url: Target URL
+        view: View
+      index:
+        copy_url: Copy short URL
+        delete: Delete short link
+        edit: Edit short link
+        empty: No short links yet.
+        new_btn: New Short Link
+        page_title: Short Links
+        table:
+          clicks: Clicks
+          code: Code
+          expires: Expires
+          status: Status
+          target: Target URL
+          title: Title
+        view: View short link
+      new:
+        page_title: New Short Link
+      show:
+        back: Back to Short Links
+        clicks: Total Clicks
+        copy: Copy
+        created_at: Created
+        delete: Delete
+        edit: Edit
+        expires_at: Expires At
+        page_title: Short Link
+        short_url: Short URL
+        status: Status
+        target_url: Target URL
     social_media_accounts:
       add: Add Social Media Account
       handle: Handle
@@ -3176,6 +4415,12 @@ en:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
+        selected storage configuration. Per-tenant storage isolation isn't available
+        yet — file uploads across the whole installation continue to use the shared/host
+        storage backend until multi-tenant storage support ships."
+      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
+        Other app processes will pick up the change on their next restart."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
@@ -3189,11 +4434,23 @@ en:
         is set.
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: Activate this configuration? The current process rebinds
+          immediately. Other app processes require a restart to pick up the change.
+          Existing files stay on the old backend — blob migration is a separate manual
+          step.
+        activation_blob_migration_note: Existing files remain on the previous backend.
+          Blob migration between backends is a manual operator step and is not performed
+          automatically.
+        activation_restart_note: Activating a new configuration rebinds storage in
+          the current process immediately. Other app processes will pick up the change
+          on their next restart (tmp/restart.txt has been touched).
+        activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
+        asset_host_label: Asset Host (ASSET_HOST)
         back_to_platform: Back to Platform
         bucket_label: Bucket
+        cdn_host_label: CDN Host (FOG_HOST)
         delete_btn: Delete
         delete_confirm: Delete this storage configuration?
         edit_btn: Edit
@@ -3219,7 +4476,7 @@ en:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -3237,6 +4494,7 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+        translation_unavailable: Translation is not currently available for this platform.
     uploads:
       content_security:
         badge:
@@ -3253,6 +4511,16 @@ en:
           review_required: This upload is being reviewed before it can be inserted
             into rich text or shared.
       index:
+        filter_group_aria: Filter uploads by review status
+        filters:
+          all: All (%{count})
+          clean: Ready (%{count})
+          restricted: Restricted (%{count})
+          review_required: Under review (%{count})
+        review_status_description: Review counts are shown here to help you quickly
+          find approved, held, or restricted uploads.
+        review_status_heading: Review status
+        sort_by_aria: Sort uploads by
         storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:
@@ -3271,7 +4539,95 @@ en:
         calendar: Calendar
         card: Card
         list: List
+        map: Map
         table: Table
+    weather:
+      panel:
+        current:
+          dew_point: Dew point
+          feels_like: Feels like
+          gusts: Gusts
+          heading: Current conditions
+          humidity: Humidity
+          observed: Observed %{time}
+          pressure: Pressure
+          sun: Sun
+          sun_times: Sunrise %{rise}, sunset %{set}
+          unavailable: Current conditions are not available right now.
+          visibility: Visibility
+          wind: Wind
+        daily:
+          caption: Forecast by day and night
+          chance: Chance of precipitation
+          conditions: Conditions
+          empty: The 7-day forecast is not available right now.
+          heading: 7-day forecast
+          high: High %{value}
+          low: Low %{value}
+          period: Period
+          temperature: Temperature
+        disclaimer: Weather information is provided for convenience and may be delayed
+          or incomplete. In an emergency, follow official local guidance and warnings.
+        history:
+          axis:
+            celsius: Temperature (°C)
+            kmh: Wind (km/h)
+            mm: Precipitation (mm)
+          chart_alt:
+            precipitation: Bar chart of daily precipitation for the past 14 days.
+              The same values are in the table below.
+            temperature: Line chart of the daily high, low and mean temperature for
+              the past 14 days. The same values are in the table below.
+            wind: Line chart of the daily peak wind speed and gust for the past 14
+              days. The same values are in the table below.
+          charts:
+            precipitation: Precipitation
+            temperature: Temperature
+            wind: Wind
+          columns:
+            date: Date
+          description: Recorded daily weather for this settlement, from stored observations.
+          empty: No past weather has been recorded for this settlement yet.
+          heading: Past 14 days
+          series:
+            precip_mm: Precipitation
+            snow_cm: Snowfall
+            temperature_max_c: Daily high
+            temperature_mean_c: Daily mean
+            temperature_min_c: Daily low
+            wind_gust_kmh: Peak gust
+            wind_speed_kmh: Peak wind speed
+          show_table: Show the recorded values as a table
+          so_far: so far
+          table_caption: Recorded daily weather for the past 14 days and today so
+            far
+          unreported:
+            precipitation: This weather station does not report precipitation.
+            temperature: No temperature readings are recorded for this period.
+            wind: No wind readings are recorded for this period.
+        hourly:
+          chance: Precipitation %{value}%
+          empty: The hourly forecast is not available right now.
+          heading: Next 24 hours
+          scroll_label: Hourly forecast, scrolls sideways
+        licence: data licence
+        never: not yet
+        no_data: Weather information is not available for this settlement yet.
+        not_reported: Not reported
+        source_error: The weather source could not be reached on the last update.
+          The information shown may be out of date.
+        stale: These conditions were last updated %{time} and may be out of date.
+        summary:
+          heading: Weather now
+          view_full: See the full weather
+        units:
+          celsius: "%{value} °C"
+          cm: "%{value} cm"
+          km: "%{value} km"
+          kmh: "%{value} km/h"
+          kpa: "%{value} kPa"
+          mm: "%{value} mm"
+          percent: "%{value}%"
     webhook_endpoints:
       actions_aria: Webhook actions
       active_help: Enable or disable webhook delivery for this endpoint.
@@ -3438,6 +4794,201 @@ en:
             have a home base where everyone can gather and collaborate.
           progress:
             step: Step 1 of 2
+      new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Add Domain & Continue
+            skip: Skip For Now
+          current_domain_html: Your platform is currently reachable at <strong>%{hostname}</strong>.
+            Adding an extra domain below is optional.
+          custom_domain_hint_html: A custom domain needs a DNS record (CNAME or A)
+            pointed at this platform's edge server, and its own TLS certificate. See
+            the multi-platform deployment guide for the exact DNS/TLS steps.
+          fields:
+            hostname:
+              help: The hostname visitors will use to reach this domain. No scheme
+                (no https://) and no trailing slash.
+              label: Hostname
+              placeholder: e.g. tenant-a.example.com
+            share_domain:
+              label: Share domain (used in generated share links)
+          hero:
+            subtitle: Give this platform an easy-to-remember address, or point your
+              own domain at it.
+            title: Add a Domain (Optional)
+          intro: This step is optional — you can always add or change domains later
+            from the platform's admin settings.
+          kind_custom_label: Use my own domain
+          kind_subdomain_label: Use a subdomain of %{host_apex}
+          progress:
+            step_name: Domain
+          subdomain_hint: Only the part before .%{host_apex} — the full hostname is
+            filled in automatically.
+          subdomain_label_field: Subdomain
+        errors:
+          header_plural: "%{count} errors prevented this from being saved:"
+        invite_members:
+          buttons:
+            continue: Continue
+            send_invite: Send Invite
+          fields:
+            invitee_email:
+              help: They'll receive an email invitation to join this platform as a
+                member.
+              label: Email address
+              placeholder: friend@example.com
+          hero:
+            subtitle: Invite the first people to join this community. You can always
+              invite more later.
+            title: Invite Members (Optional)
+          intro: This step is optional — you can invite one or more people now, or
+            skip it and invite members later from the platform's admin settings.
+          progress:
+            step_name: Invite members
+          sent_invitations:
+            heading: Invitations sent so far
+            status:
+              accepted: Accepted
+              pending: Pending
+        platform_identity:
+          buttons:
+            next: Next Step
+          fields:
+            description:
+              help: This helps visitors understand what this platform is all about.
+              label: How would you describe this platform?
+              placeholder: A place where neighbors and friends support each other.
+            host_url:
+              help: This will be the platform's web address — its front door on the
+                internet. You can add subdomain aliases or a custom domain later.
+              label: Where can people find this platform online?
+              placeholder: https://tenant.example.com
+            name:
+              help: This name will appear at the top of the platform and welcome everyone
+                who arrives.
+              label: What should we call this platform?
+              placeholder: 'Example: The Community Hall'
+            privacy:
+              help: Choose whether this space is open to the public or invitation-only.
+              label: Who can visit this space?
+            time_zone:
+              help: This helps keep events and notifications in sync for everyone
+                on this platform.
+              label: Which time zone should this platform use?
+          hero:
+            subtitle: Let's create a welcoming home for this community to connect,
+              share, and thrive.
+            title: Platform Identity
+          intro: A strong platform starts with a solid foundation. Let's begin by
+            filling in a few details.
+          progress:
+            step_name: Platform identity
+        progress:
+          nav_label: New platform setup steps
+          step: Step %{current} of %{total}
+        review_and_launch:
+          buttons:
+            launch: Launch Platform
+          hero:
+            subtitle: One last look before your new platform goes live.
+            title: Review & Launch
+          intro: Here's a summary of everything you've set up so far. You can go back
+            and edit any section below before launching.
+          progress:
+            step_name: Review & launch
+          sections:
+            domain:
+              additional_label: 'Additional domains:'
+              edit: Edit domain
+              none: No additional domain has been added yet.
+              primary: This platform is reachable at %{hostname}.
+              title: Domain
+            invited_members:
+              edit: Edit invited members
+              entry: "%{email} (%{status})"
+              none: No additional members have been invited yet.
+              status:
+                accepted: Accepted
+                pending: Pending
+              title: Invited Members
+            platform_identity:
+              edit: Edit platform identity
+              fields:
+                description: Description
+                host_url: Web address
+                name: Name
+                privacy: Privacy
+                time_zone: Time zone
+              title: Platform Identity
+            steward_account:
+              edit: Edit steward account
+              none: No steward account has been created yet.
+              summary: "%{name} (%{email})"
+              title: Steward Account
+        steward_account:
+          buttons:
+            submit: Create Steward Account
+          fields:
+            description:
+              help: Introduce yourself to the community. Why are you starting this
+                platform? What's your vision?
+              label: Short Bio
+            email:
+              help: This will be the steward's primary login and how the platform
+                contacts them.
+              label: Email Address
+            identifier:
+              help: A unique handle (no spaces). This will appear in the steward's
+                profile URL and mentions.
+              label: Username
+            name:
+              help: The steward's real name or the name they want the community to
+                recognize them by.
+              label: Full Name
+            password:
+              help: The password must be at least %{min_length} characters long. Use
+                a mix of upper and lowercase letters, numbers, and symbols for extra
+                security.
+              label: Password
+            password_confirmation:
+              label: Confirm Password
+          hero:
+            subtitle: This is the first account on the new platform and gives full
+              control to manage settings, content, and members.
+            title: Create the Steward Account
+          intro: Let's set up the platform's steward account. This will be their personal
+            login and public profile as the platform's first steward.
+          profile_section:
+            help: These details will be visible to other members of the platform.
+              They can be edited later.
+            title: Steward Profile
+          progress:
+            step_name: Steward account
+        welcome:
+          buttons:
+            next: Next Step
+          fields:
+            locale:
+              help: Choose the language for the rest of this wizard.
+              label: Language
+          hero:
+            subtitle: This wizard provisions a brand-new tenant platform in a few
+              short steps.
+            title: Let's Set Up a New Platform
+          intro: Here's what's about to happen.
+          progress:
+            step_name: Welcome
+          what_happens_next:
+            domain: A domain is registered from the host URL you provide — subdomain
+              aliases or a custom domain can be added afterward from the platform's
+              Domains page.
+            identity: A new platform record is created with the name, description,
+              privacy, and time zone you choose.
+            steward: A steward account is created with full management access to the
+              new platform.
+  breadcrumbs:
+    home: Home
+    label: Breadcrumb
   community:
     create_failed: Create failed
     created: Created
@@ -3671,6 +5222,10 @@ en:
           enter your invitation code in the field below to access the registration
           form.
         invitation_required: Invitation Required
+        membership_request_heading: Request membership instead
+        membership_request_help_html: If you do not have an invitation yet, you can
+          send a membership request for <strong>%{community}</strong>. A community
+          reviewer can approve it and invite you into the platform.
         password:
           help: Use a strong password for your account security.
           label: Password
@@ -3693,6 +5248,11 @@ en:
         submit: Submit
         terms_of_service:
           label: I agree to the Terms of Service
+        trusted_domains:
+          confirm_notice: Addresses at %{domains} join after you confirm your email.
+            Check your inbox once you have registered.
+          link: Sign up with a trusted email address
+          notice: Do you have an address at %{domains}?
         view: View
       signed_up: Welcome! You have signed up successfully.
       signed_up_but_inactive: You have signed up successfully. However, we could not
@@ -3764,6 +5324,7 @@ en:
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
+      denied_for_trusted_domain: cannot be granted by an email domain
       empty: can't be empty
       equal_to: must be equal to %{count}
       even: must be even
@@ -3771,13 +5332,17 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      immutable: cannot be changed once created; delete this provider and add a new
+        one
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
+      invalid_characters: must not contain spaces or control characters
       invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
       model_invalid: 'Validation failed: %{errors}'
+      not_a_community_role: must be a community role
       not_a_number: is not a number
       not_an_integer: must be an integer
       not_found: not found
@@ -3788,7 +5353,11 @@ en:
       odd: must be odd
       other_than: must be other than %{count}
       present: must be blank
+      public_mail_domain: is a public mail provider; confirm to trust every address
+        on it
       required: must exist
+      required_for_elevated_role: needs explicit confirmation before an email domain
+        can grant a role above basic member
       taken: has already been taken
       too_long:
         one: is too long (maximum is %{count} character)
@@ -3803,6 +5372,8 @@ en:
         one: is the wrong length (should be %{count} character)
         other: is the wrong length (should be %{count} characters)
     models:
+      address_geography_conflict: 'Typed text conflicts with the selected place: it
+        should be "%{selected}".'
       address_missing_type: Address must be either physical, postal, or both.
       better_together/navigation_item:
         attributes:
@@ -3850,6 +5421,8 @@ en:
     joatu:
       agreement:
         accepted: Agreement accepted
+        cancelled: Agreement cancelled.
+        fulfilled: Agreement fulfilled.
         rejected: Agreement rejected
       response_links:
         offer_created: Offer created in response to request.
@@ -3874,6 +5447,7 @@ en:
     cancel: Cancel
     clear: Clear
     clear_filter: Clear filter
+    close: Close
     confirm_delete: Are you sure you want to delete this record?
     create: Create
     declined: Declined
@@ -3917,10 +5491,18 @@ en:
     tabs:
       about: About
       attendees: Attendees
+      communities: Communities
       contact: Contact
       events: Events
+      federation: Federation
       invitations: Invitations
       members: Members
+      posts: Posts
+      roles_and_permissions: Roles & Permissions
+      safety: Safety
+      sessions: Sessions
+      usage: Usage
+      weather: Weather
     to: To
     'true': true
     undo_clear: Undo Clear
@@ -3931,6 +5513,7 @@ en:
     visible: Visible
     'yes': 'Yes'
   helpers:
+    cancel: Cancel
     close: Close
     errors:
       heading: Form Errors
@@ -3944,6 +5527,9 @@ en:
         profile_image: Profile image
       event:
         cover_image: Cover image
+      geography:
+        settlement:
+          cover_image: Cover image
       images:
         cover_image: Cover image
       person:
@@ -3956,6 +5542,7 @@ en:
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
+        notify_on_comments: Send an email when someone comments on your content.
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.
@@ -4004,13 +5591,101 @@ en:
       infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
+    membership_review:
+      anonymous_requester: Anonymous requester
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      page_title: Membership Review
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      page_title: Federation review
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
       total_resources: Total resources
       view_all: View All
+    safety_review:
+      description: Review the current safety queue from the host dashboard. There
+        are %{open_cases} open cases and %{visible_reports} visible reports in scope.
+      heading: Safety review queue
+      open_cases_badge:
+        one: 1 open case
+        other: "%{count} open cases"
+      page_title: Safety review
+      review_queue_link: Open review queue
+      summary:
+        content_review_items: Content review items
+        participant_updates: Participant updates
+        retaliation_risk: Retaliation risk
+        unassigned_cases: Needs assignment
+      summary_label: Safety review summary
+      urgent_cases_badge:
+        one: 1 urgent case
+        other: "%{count} urgent cases"
+      view_reports_link: Review submitted reports
+      visible_reports_badge:
+        one: 1 visible report
+        other: "%{count} visible reports"
   invitations:
     calculating: Calculating
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Back to top
+        copyright: "%{community_name} © %{year}. All rights reserved."
   locale_name: English
   locales:
     en: English
@@ -4035,15 +5710,20 @@ en:
       invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Account and tools
     conversations: Conversations
+    footer_legal_navigation: Site information
+    footer_navigation: Footer links
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Main
     my_profile: My Profile
     notifications_tooltip: Notifications
     search_tooltip: Search
     settings: Settings
     sign_in: Sign In
+    skip_to_content: Skip to main content
     toggle_navigation: Toggle navigation
     user_nav_tooltip: Account Menu
   navigation:
@@ -4051,6 +5731,7 @@ en:
       community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
+      federation_hub: Federation Hub
       posts: Posts
   navigation_item:
     form_hints:
@@ -4168,6 +5849,72 @@ en:
     actions:
       host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
+    show:
+      about:
+        access: 'Access:'
+        identifier: 'Identifier:'
+        protected: 'Protected:'
+        protected_no: 'No'
+        protected_yes: 'Yes'
+        time_zone: 'Time Zone:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Delete platform
+        edit_aria: Edit platform
+        show_aria: Show platform
+        view_host_dashboard_aria: View host dashboard
+      federation:
+        connection_status: Status
+        description: Review the federation and platform connections currently linked
+          to %{platform}.
+        direction:
+          incoming: Incoming connection
+          outgoing: Outgoing connection
+        empty_state: No federation connections involve this platform yet.
+        new_connection: New Connection
+        open_connections: Open Connections
+        summary:
+          active: Active
+          pending: Pending
+          total: Total Connections
+        title: Federation Connections
+        view_connection: View Connection
+      members:
+        add_member_modal:
+          close: Close
+          search_placeholder: Search for people...
+          select_person: Select Person *
+          select_role: Select Platform Role *
+          submit: Add
+          title: Add New Platform Member
+      operations:
+        description: Open host-level operations for this platform without relying
+          on route knowledge alone.
+        feature_access_grants: Feature access grants
+        host_dashboard: Host Dashboard
+        identity_providers: Sign-in providers
+        platform_domains: Domains
+        quota_grants: Quota grants
+        redirects: Redirects
+        robot_management: Manage LLM robots
+        storage_configurations: Manage storage
+        title: Platform operations
+      safety:
+        description: Review incoming reports, active safety cases, and participant-visible
+          follow-ups for %{platform}.
+        review_queue: Open Review Queue
+        summary:
+          content_review_items: Content Review Items
+          open_cases: Open Cases
+          participant_updates: Participant Updates
+          repeated_reports: Repeated Reportables
+          retaliation_risk_cases: Retaliation Risk
+          unassigned_cases: Needs Assignment
+          urgent_cases: Urgent
+          visible_reports: Visible Reports
+        title: Safety Review
+        view_reports: Review Submitted Reports
+      sections_aria: Platform sections
   pundit:
     errors:
       create: You are not authorized to create this %{resource}.
@@ -4189,6 +5936,7 @@ en:
     continent: Continent
     country: Country
     download_failed: Download failed
+    download_held: This file is still being checked for safety. Please try again soon.
     invitation: Invitation
     invitation_email: Invitation email
     member: Member
@@ -4213,7 +5961,40 @@ en:
     confirm_destroy: Confirm destroy
   search:
     button: Search
+    label: Search the site
     placeholder: Search...
+  seed_catalog:
+    geography:
+      categories:
+        continents: Continents
+        countries: Countries
+        provinces: Provinces & Territories
+        regions: Regions
+        settlements: Settlements
+      description: Continents, countries, provinces/territories, regions, and settlements
+        (cities, towns, villages, hamlets, Indigenous communities and other named
+        places) used to place locations in the geography hierarchy.
+      label: Geography Reference Data
+    index:
+      actions: Actions
+      category: Category
+      description: Install curated reference data on demand, one category at a time
+        or all at once.
+      missing_prerequisites: Plant %{prerequisites} first
+      not_planted: Not planted
+      plant: Plant
+      plant_all: Plant All
+      plant_category: Plant %{category}
+      planted: Planted
+      status: Status
+      title: Seed Catalog
+    plant:
+      missing_prerequisites: "%{category} requires %{prerequisites} to be planted
+        first."
+      success: "%{category} planted."
+      unknown_category: Unknown category.
+    plant_all:
+      success: "%{catalog} fully planted."
   seeds:
     actions:
       destroy: Destroy seed

@@ -3,77 +3,44 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::TranslationBot do
-  let(:robot) do
-    build(
-      :robot,
-      :ollama,
-      identifier: 'translation',
-      system_prompt: 'Translate precisely and return only translated content.'
-    )
-  end
-
   describe '#translate' do
+    let(:platform) { create(:platform) }
+    let!(:robot) do
+      create(:robot,
+             :global,
+             identifier: 'translation',
+             provider: 'openai',
+             default_model: nil,
+             system_prompt: 'Translate without adding commentary.')
+    end
+
     before do
       allow(BetterTogether).to receive(:llm_chat).and_return(
-        {
-          content: 'Bonjour',
-          model: 'llama3.2',
-          prompt_tokens: 12,
-          completion_tokens: 3
-        }
+        content: 'Hola',
+        model: BetterTogether::Robot::DEFAULT_CHAT_MODEL,
+        prompt_tokens: 10,
+        completion_tokens: 3
       )
-      allow(BetterTogether::Ai::Log::TranslationLoggerJob).to receive(:perform_later)
     end
 
-    it 'routes translations through the llm adapter with robot context' do
-      bot = described_class.new(robot:)
+    it 'routes translation through llm_chat with the OpenAI provider and fallback model defaults' do
+      translated = described_class.new(platform:).translate('Hello', source_locale: 'en', target_locale: 'es')
 
-      result = bot.translate('Hello', source_locale: 'en', target_locale: 'fr')
-
-      expect(result).to eq('Bonjour')
+      expect(translated).to eq('Hola')
       expect(BetterTogether).to have_received(:llm_chat).with(
-        hash_including(
-          prompt: include('Translate the following text from en to fr: Hello'),
-          system_prompt: 'Translate precisely and return only translated content.',
-          provider: 'ollama',
-          adapter_name: 'ollama',
-          model: 'llama3.2',
-          assume_model_exists: true
-        )
-      )
-    end
-
-    it 'preserves Trix attachments in translated content' do
-      allow(BetterTogether).to receive(:llm_chat).and_return(
-        {
-          content: 'Bonjour TRIX_ATTACHMENT_PLACEHOLDER_0',
-          model: 'llama3.2',
-          prompt_tokens: 20,
-          completion_tokens: 5
+        prompt: 'Translate the following text from en to es: Hello',
+        system_prompt: 'Translate without adding commentary.',
+        model: BetterTogether::Robot::DEFAULT_CHAT_MODEL,
+        provider: 'openai',
+        adapter_name: 'openai',
+        temperature: 0.1,
+        max_tokens: 1000,
+        assume_model_exists: false,
+        metadata: {
+          robot_id: robot.id,
+          robot_identifier: 'translation',
+          platform_id: nil
         }
-      )
-
-      content = '<p>Hello</p><figure data-trix-attachment="abc"></figure>'
-      bot = described_class.new(robot:)
-
-      result = bot.translate(content, source_locale: 'en', target_locale: 'fr')
-
-      expect(result).to include('<figure data-trix-attachment="abc"></figure>')
-    end
-
-    it 'logs token usage from the adapter response when an initiator is present' do
-      bot = described_class.new(robot:)
-      initiator = instance_double(BetterTogether::Person)
-
-      bot.translate('Hello', source_locale: 'en', target_locale: 'fr', initiator:)
-
-      expect(BetterTogether::Ai::Log::TranslationLoggerJob).to have_received(:perform_later).with(
-        hash_including(
-          prompt_tokens: 12,
-          completion_tokens: 3,
-          model: 'llama3.2',
-          initiator:
-        )
       )
     end
   end

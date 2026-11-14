@@ -1,0 +1,10 @@
+{
+  "name": "message_requests_show",
+  "device": "mobile",
+  "url": "/en/message_requests/de5c7838-170a-413b-b73f-7db986fb513a",
+  "title": "Message Request | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "message_requests",
+  "source_spec": "./spec/docs_screenshots/better_together/message_requests_spec.rb"
+}

@@ -56,7 +56,7 @@ module BetterTogether
         {
           id: post.id,
           title: post.title,
-          excerpt: post.content.to_plain_text.truncate(
+          excerpt: BetterTogether::Seeds::SafeRichText.plain_text_for(post, :content)&.truncate(
             Rails.application.config.mcp.excerpt_length
           ),
           published_at: post.published_at&.iso8601,

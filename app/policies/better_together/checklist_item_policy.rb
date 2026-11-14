@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ChecklistItemPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ChecklistItemPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def show?
       ChecklistPolicy.new(user, record.checklist).show?
     end
@@ -23,16 +23,16 @@ module BetterTogether
       ChecklistPolicy.new(user, record.checklist).update?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
-        result = scope.with_translations.order(created_at: :desc)
+        result = platform_scoped(scope.with_translations.order(created_at: :desc))
 
         table = scope.arel_table
 
         if scope.ancestors.include?(BetterTogether::Privacy)
           query = visible_privacy_query(table)
 
-          if permitted_to?('manage_platform')
+          if permitted_to?('manage_platform', current_platform)
             query = query.or(table[:privacy].eq('private'))
           elsif agent
             if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?

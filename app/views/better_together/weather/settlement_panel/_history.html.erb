@@ -1,0 +1,67 @@
+<%# locals: (panel:) -%>
+<% series = panel.history %>
+<section id="weather-history" class="mb-4" aria-labelledby="weather-history-heading"
+         data-controller="better-together--weather-charts"
+         data-better-together--weather-charts-series-value="<%= weather_chart_data(series).to_json %>"
+         data-better-together--weather-charts-labels-value="<%= weather_chart_labels.to_json %>"
+         data-better-together--weather-charts-units-value="<%= { celsius: t('better_together.weather.panel.history.axis.celsius'), mm: t('better_together.weather.panel.history.axis.mm'), kmh: t('better_together.weather.panel.history.axis.kmh') }.to_json %>">
+  <h2 id="weather-history-heading" class="h4"><%= t('better_together.weather.panel.history.heading') %></h2>
+  <p class="text-muted"><%= t('better_together.weather.panel.history.description') %></p>
+
+  <% if series.empty? %>
+    <p id="weather-history-empty" class="text-muted"><%= t('better_together.weather.panel.history.empty') %></p>
+  <% else %>
+    <% BetterTogether::WeatherHelper::CHART_MEASURES.each_key do |name| %>
+      <% reported = weather_chart_reported?(series, name) %>
+      <div id="weather-chart-<%= name %>-card" class="card mb-3">
+        <div class="card-body">
+          <h3 class="h5 card-title"><%= t("better_together.weather.panel.history.charts.#{name}") %></h3>
+          <% if reported %>
+            <div style="position: relative; height: 16rem;">
+              <canvas id="weather-chart-<%= name %>" role="img"
+                      aria-label="<%= t("better_together.weather.panel.history.chart_alt.#{name}") %>"
+                      data-better-together--weather-charts-target="<%= name %>"></canvas>
+            </div>
+          <% else %>
+            <p id="weather-chart-<%= name %>-unreported" class="text-muted mb-0"><%= t("better_together.weather.panel.history.unreported.#{name}") %></p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <details id="weather-history-data" class="mb-2">
+      <summary><%= t('better_together.weather.panel.history.show_table') %></summary>
+      <div class="table-responsive mt-2">
+        <table id="weather-history-table" class="table table-sm">
+          <caption class="visually-hidden"><%= t('better_together.weather.panel.history.table_caption') %></caption>
+          <thead>
+            <tr>
+              <th scope="col"><%= t('better_together.weather.panel.history.columns.date') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.temperature_max_c') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.temperature_min_c') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.temperature_mean_c') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.precip_mm') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.snow_cm') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.wind_speed_kmh') %></th>
+              <th scope="col"><%= t('better_together.weather.panel.history.series.wind_gust_kmh') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% series.days.reverse_each do |day| %>
+              <tr class="weather-history-day" data-date="<%= day.date.iso8601 %>">
+                <th scope="row"><%= weather_day_label(day.date, partial: day.partial?) %></th>
+                <td><%= weather_value(day.temperature_max_c, :celsius, digits: 1) %></td>
+                <td><%= weather_value(day.temperature_min_c, :celsius, digits: 1) %></td>
+                <td><%= weather_value(day.temperature_mean_c, :celsius, digits: 1) %></td>
+                <td><%= weather_value(day.precip_mm, :mm, digits: 1) %></td>
+                <td><%= weather_value(day.snow_cm, :cm, digits: 1) %></td>
+                <td><%= weather_value(day.wind_speed_kmh, :kmh) %></td>
+                <td><%= weather_value(day.wind_gust_kmh, :kmh) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  <% end %>
+</section>

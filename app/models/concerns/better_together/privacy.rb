@@ -13,6 +13,7 @@ module BetterTogether
 
     included do
       include ::TranslateEnum
+      include PrivacyCeilingValidatable
 
       attribute :privacy, :string
       enum :privacy, PRIVACY_LEVELS, prefix: :privacy
@@ -42,15 +43,21 @@ module BetterTogether
     private
 
     def require_publishing_agreement_for_public_visibility
-      return unless privacy_public?
+      return unless privacy_public? || privacy_community?
       return unless new_record? || will_save_change_to_privacy?
-      return if respond_to?(:external?) && external?
+      # External and federated-mirror records carry a privacy decision made
+      # elsewhere; the origin already ran this gate. See PrivacyCeilingValidatable.
+      return if externally_governed_privacy?
 
       BetterTogether::PublicVisibilityGate.allow!(
         record: self,
-        actor: Current.governed_agent,
+        actor: Current.agent,
         target_privacy: privacy
       )
+    end
+
+    def externally_governed_privacy?
+      (respond_to?(:external?) && external?) || (respond_to?(:mirrored?) && mirrored?)
     end
   end
 end

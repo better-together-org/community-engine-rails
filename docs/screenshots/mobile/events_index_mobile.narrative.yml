@@ -1,0 +1,14 @@
+---
+title: Events Index — mobile collapsed filters
+audience:
+- community_member
+- developer
+journey_step: As a mobile visitor, I expand the filters only when I need them, keeping
+  the event list front and centre.
+callouts:
+- :id: filter_toggle
+  :title: Filters toggle
+  :description: 'aria-expanded/aria-controls wired to the #events-filter-sidebar collapse.'
+accessibility_notes: Toggle is a native button; collapse state is exposed via aria-expanded.
+slug: events_index_mobile
+device: mobile

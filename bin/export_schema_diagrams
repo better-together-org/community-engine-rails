@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Regenerates every whole-schema diagram from spec/dummy/db/schema.rb:
+#   1. db/community-engine-db.dbml                     (scripts/export_schema_dbml.rb, no database needed)
+#   2. docs/diagrams/exports/{svg,png}/ce_full_schema_erd.*  (DBML -> Graphviz -> SVG -> PNG)
+#   3. the subsystem ERDs under docs/diagrams/source and their exports (Rails reflections, needs the dev
+#      container database); skipped with --skip-subsystems.
+#
+# --since=REF scopes step 3 to only the subsystems whose own model/controller files
+# changed since that git ref, leaving every other subsystem's exports untouched on disk
+# (see bin/export_subsystem_diagrams and scripts/export_subsystem_diagrams.rb). Omit it
+# for a full regen - what CI's staleness check always uses.
+#
+# Run after any migration or schema.rb change; CI (schema-diagrams.yml) fails when these are stale.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+SKIP_SUBSYSTEMS=0
+SUBSYSTEM_ARGS=()
+for arg in "$@"; do
+  case "$arg" in
+    --skip-subsystems) SKIP_SUBSYSTEMS=1 ;;
+    --since=*) SUBSYSTEM_ARGS+=("$arg") ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
+    *) echo "Unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
+
+TOOLS_DIR="${SCHEMA_DIAGRAM_TOOLS_DIR:-tmp/schema-diagram-tools}"
+if [ ! -x "$TOOLS_DIR/node_modules/.bin/dbml-renderer" ]; then
+  mkdir -p "$TOOLS_DIR"
+  [ -f "$TOOLS_DIR/package.json" ] || echo '{"name":"schema-diagram-tools","private":true}' > "$TOOLS_DIR/package.json"
+  # Pinned: the exports are compared byte for byte in CI.
+  PUPPETEER_SKIP_DOWNLOAD=1 npm install --prefix "$TOOLS_DIR" --no-audit --no-fund --no-save \
+    @softwaretechnik/dbml-renderer@1.0.31 @aduh95/viz.js@3.4.0 puppeteer-core@24.2.1
+fi
+
+ruby scripts/export_schema_dbml.rb
+node scripts/render_schema_diagram.cjs "$TOOLS_DIR" db/community-engine-db.dbml \
+  docs/diagrams/exports/svg/ce_full_schema_erd.svg docs/diagrams/exports/png/ce_full_schema_erd.png
+
+if [ "$SKIP_SUBSYSTEMS" = "0" ]; then
+  bin/export_subsystem_diagrams "${SUBSYSTEM_ARGS[@]}"
+fi

@@ -1,0 +1,82 @@
+flowchart TD
+
+  %% Form input
+  FORM[Recurrence tab\n_recurrence_fields.html.erb] --> FREQ[Select frequency\ndaily/weekly/monthly/yearly]
+  FREQ --> INT[Set interval]
+  INT --> FTYPE{Frequency?}
+
+  FTYPE -->|weekly| WKDAYS[Weekday checkboxes\ndefault = event's own start weekday]
+  WKDAYS --> SHORT[Shortcut buttons\nMon-Fri / Select all / Clear]
+
+  FTYPE -->|monthly or yearly| MOPT[Month option radio\nday_of_month vs day_of_week]
+
+  FTYPE -->|any| ETYPE{End type}
+  ETYPE -->|never| WARN[Never-ends warning shown]
+  ETYPE -->|until| UNTIL[ends_on date field]
+  ETYPE -->|count| COUNT[count number field]
+
+  SHORT --> LIVE
+  MOPT --> LIVE
+  UNTIL --> LIVE
+  COUNT --> LIVE
+  WARN --> LIVE
+
+  %% Live preview (Stimulus)
+  LIVE[recurrence_controller.js\ndebounced 300ms] --> FETCH[GET /events/recurrence_preview]
+  FETCH --> PREVACTION[EventsController#recurrence_preview]
+  PREVACTION --> BUILDER
+
+  %% Shared schedule builder
+  BUILDER[RecurrenceScheduleBuilder\nshared by preview + create/update] --> RULE[Build IceCube::Rule]
+  RULE --> MONTHRULE{month_option == day_of_week?}
+  MONTHRULE -->|yes| POSCALC[week_of_month_position\nlast-occurrence fallback = -1]
+  MONTHRULE -->|no| PLAINRULE[Rule.day of month]
+  POSCALC --> ENDCOND
+  PLAINRULE --> ENDCOND
+
+  ENDCOND[Apply end condition] --> ENDVALID{until/count present?}
+  ENDVALID -->|blank + required| ENDERR[end_condition_error set\nsurfaced as validation error]
+  ENDVALID -->|present| SCHEDULE[IceCube::Schedule built]
+
+  SCHEDULE --> EXDATES[Apply exception_dates\nrepeatable date rows]
+  EXDATES --> EXVALID{all dates parse?}
+  EXVALID -->|no| EXERR[exception_dates_error set\nsurfaced as validation error]
+  EXVALID -->|yes| OCCUR[Compute occurrences]
+
+  OCCUR --> SUMMARY[recurrence_attrs_summary\nplain-English sentence]
+  SUMMARY --> PREVIEWPANEL[_recurrence_preview.html.erb\nsummary + occurrence list]
+
+  %% Save path
+  PREVACTION -.->|preview only, no persist| PREVIEWPANEL
+  ENDERR -.-> SAVEERR
+  EXERR -.-> SAVEERR
+  SCHEDULE --> SAVEPATH[EventsController#create/update]
+  SAVEPATH --> TZORDER[convert_datetime_params_to_event_timezone\nruns BEFORE process_recurrence_attributes]
+  TZORDER --> PERSIST[Recurrence#rule persisted as IceCube YAML]
+
+  SAVEERR[Validation errors on :base] --> FORMERRORS[_form.html.erb\ngeneral errors block]
+
+  %% Calendar grid rendering
+  PERSIST --> CALSHOW[CalendarsController#show]
+  CALSHOW --> GRID[calendars/show.html.erb\nmonth/week/day simple_calendar]
+  GRID --> DAYPARTIAL[_calendar_day_events.html.erb\nrenders yielded day_events]
+  DAYPARTIAL --> LISTS[Upcoming / past event lists]
+
+  %% Edit round-trip
+  PERSIST -.->|edit| REBUILD[Recurrence#weekdays/#month_option\nreverse-derived from stored rule]
+  REBUILD -.-> FORM
+
+  %% Styling
+  classDef input fill:#e3f2fd
+  classDef js fill:#f3e5f5
+  classDef builder fill:#e8f5e8
+  classDef error fill:#ffebee
+  classDef persist fill:#fff3e0
+  classDef display fill:#f9fbe7
+
+  class FORM,FREQ,INT,FTYPE,WKDAYS,SHORT,MOPT,ETYPE,WARN,UNTIL,COUNT input
+  class LIVE,FETCH,PREVACTION js
+  class BUILDER,RULE,MONTHRULE,POSCALC,PLAINRULE,ENDCOND,SCHEDULE,EXDATES,OCCUR,SUMMARY builder
+  class ENDVALID,ENDERR,EXVALID,EXERR,SAVEERR,FORMERRORS error
+  class SAVEPATH,TZORDER,PERSIST,REBUILD persist
+  class PREVIEWPANEL,CALSHOW,GRID,DAYPARTIAL,LISTS display

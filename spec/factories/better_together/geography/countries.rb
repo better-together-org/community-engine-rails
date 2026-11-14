@@ -20,7 +20,8 @@ FactoryBot.define do
     end
     protected { false }
 
-    association :community, factory: :better_together_community
+    # See continents.rb factory for why privacy: 'public' is explicit here.
+    association :community, factory: :better_together_community, privacy: 'public'
 
     trait :protected do
       protected { true }

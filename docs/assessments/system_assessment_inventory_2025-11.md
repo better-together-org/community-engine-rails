@@ -1,5 +1,9 @@
 # Better Together Community Engine - System Assessment Inventory
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Generated:** November 5, 2025  
 **Based On:** Architectural Analysis 2025-11  
 **Purpose:** Track assessment coverage for all 15 major systems

@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_area_policy.rb
 
 module BetterTogether
-  class NavigationAreaPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class NavigationAreaPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true
     end
@@ -34,8 +34,9 @@ module BetterTogether
 
     private
 
-    def platform_navigation_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+    def platform_navigation_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
   end
 end

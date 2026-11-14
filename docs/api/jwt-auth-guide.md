@@ -17,7 +17,7 @@ See the [OAuth Integration Guide](oauth-integration-guide.md) for the full autho
 
 ```bash
 # Authorization Code flow — exchange code for token
-POST /oauth/token
+POST /api/oauth/token
 {
   "grant_type": "authorization_code",
   "code": "AUTHORIZATION_CODE",

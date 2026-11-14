@@ -51,4 +51,26 @@ RSpec.describe BetterTogether::Metrics::TrackPageViewJob do
       expect(described_class.new.queue_name).to eq('metrics')
     end
   end
+
+  describe 'cross-platform viewer context' do
+    let(:federated_platform) { create(:better_together_platform, :public, host: false) }
+    let(:federated_page) { create(:better_together_page, platform: federated_platform) }
+    let(:viewer_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+    let(:locale) { 'en' }
+
+    it "derives platform from the pageable's own platform, not the viewer's current platform context" do
+      described_class.new.perform(federated_page, locale, viewer_platform.id, false)
+
+      page_view = BetterTogether::Metrics::PageView.last
+      expect(page_view.platform).to eq(federated_platform)
+      expect(page_view.platform).not_to eq(viewer_platform)
+    end
+
+    it 'falls back to the passed platform_id when the pageable has none of its own (e.g. Platform itself)' do
+      described_class.new.perform(viewer_platform, locale, viewer_platform.id, false)
+
+      page_view = BetterTogether::Metrics::PageView.last
+      expect(page_view.platform).to eq(viewer_platform)
+    end
+  end
 end

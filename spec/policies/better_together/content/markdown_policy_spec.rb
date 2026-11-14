@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   let(:manager_user) { create(:better_together_user, :platform_steward) }
   let(:normal_user) { create(:better_together_user) }
-  let(:markdown_block) { create(:content_markdown) }
+  let(:markdown_block) { create(:content_markdown, privacy: 'private') }
 
   describe '#index?' do
     subject { described_class.new(user, markdown_block).index? }
@@ -150,8 +150,8 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   end
 
   describe 'Scope' do
-    let!(:markdown_block1) { create(:content_markdown) } # rubocop:todo RSpec/IndexedLet
-    let!(:markdown_block2) { create(:content_markdown) } # rubocop:todo RSpec/IndexedLet
+    let!(:markdown_block1) { create(:content_markdown, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
+    let!(:markdown_block2) { create(:content_markdown, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
     context 'when user is a platform manager' do
       let(:user) { manager_user }
@@ -165,9 +165,17 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
     context 'when user is a normal user' do
       let(:user) { normal_user }
 
-      it 'returns all markdown blocks (filtering happens in policy methods)' do
+      it 'excludes private blocks the user has no path to' do
         scope = described_class::Scope.new(user, BetterTogether::Content::Markdown.all).resolve
-        expect(scope).to include(markdown_block1, markdown_block2)
+        expect(scope).not_to include(markdown_block1, markdown_block2)
+      end
+
+      it 'includes public blocks' do
+        markdown_block1.update_columns(privacy: 'public')
+
+        scope = described_class::Scope.new(user, BetterTogether::Content::Markdown.all).resolve
+        expect(scope).to include(markdown_block1)
+        expect(scope).not_to include(markdown_block2)
       end
     end
   end

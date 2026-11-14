@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_platform_connections_index",
+  "device": "mobile",
+  "url": "/en/platform_connections",
+  "title": "Platform Connections | Community Engine Host",
+  "locale": "en",
+  "feature_set": "release_0_11_0_federation_platform",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

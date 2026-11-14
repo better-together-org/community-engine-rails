@@ -32,7 +32,7 @@
                       } %>
   </div>
   <!-- Image preview container (empty initially) -->
-  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= attachment.url if attachment.attached? %>">
+  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= storage_proxy_url_for(attachment) if attachment.attached? %>">
     <!-- The image preview will be dynamically inserted here -->
   </div>
 </div>

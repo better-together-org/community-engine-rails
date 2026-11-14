@@ -1,5 +1,9 @@
 # Metrics Retention System - Design Decisions Document
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-09. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** January 8, 2026  
 **Status:** Design Review  
 **Sprint:** Metrics Improvements P0/P1

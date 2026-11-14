@@ -1,5 +1,9 @@
 # Community & Social System Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document outlines the implementation plan for the essential missing features identified in the Community & Social System documentation. The plan prioritizes user safety, administrative tools, and core social functionality needed for a functional community platform.

@@ -43,8 +43,8 @@ module BetterTogether
         {
           id: post.id,
           title: post.title,
-          content: post.content.to_s,
-          excerpt: post.content.to_plain_text.truncate(
+          content: BetterTogether::Seeds::SafeRichText.trix_html_for(post, :content),
+          excerpt: BetterTogether::Seeds::SafeRichText.plain_text_for(post, :content)&.truncate(
             Rails.application.config.mcp.excerpt_length
           ),
           slug: post.slug,

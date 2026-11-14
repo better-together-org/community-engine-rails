@@ -93,7 +93,7 @@ All metrics support date-range filtering and locale-specific breakdowns, with CS
 
 ## Search & Notifications & Caching
 
-- **Search**: Full-text search powered by Elasticsearch, indexing pages, posts, people, and events with faceted filtering support.
+- **Search**: Full-text search powered by Postgres (`pg_search`) across pages, posts, events, communities, Joatu offers and requests, checklists and calls for interest. Elasticsearch is available as an optional extension gem.
 - **Notifications**:
   - **Email**: Configurable notification templates for actions such as invitations, mentions, and password resets.
   - **In-app**: Real-time alerts delivered via ActionCable with both ephemeral toast messages and persistent notification feeds.

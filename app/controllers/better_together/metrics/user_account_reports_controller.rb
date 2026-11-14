@@ -3,7 +3,7 @@
 module BetterTogether
   module Metrics
     # Controller for creating and downloading User Account reports
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class UserAccountReportsController < ApplicationController
       include PlatformContext
 
@@ -31,7 +31,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/AbcSize
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/BlockLength
+      # rubocop:todo-next Metrics/BlockLength
       def create
         authorize %i[metrics user_account_report], :create?,
                   policy_class: BetterTogether::Metrics::UserAccountReportPolicy
@@ -40,7 +40,8 @@ module BetterTogether
           from_date: params.dig(:metrics_user_account_report, :filters, :from_date),
           to_date: params.dig(:metrics_user_account_report, :filters, :to_date),
           file_format: params.dig(:metrics_user_account_report, :file_format) || 'csv',
-          creator: helpers.current_person
+          creator: helpers.current_person,
+          platform: metrics_platform
         }
 
         @user_account_report = BetterTogether::Metrics::UserAccountReport.create_and_generate!(**opts)
@@ -104,12 +105,11 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/BlockLength
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def download
         authorize @user_account_report, :download?
 
@@ -134,10 +134,9 @@ module BetterTogether
 
         redirect_to metrics_user_account_reports_path, alert: t('resources.download_failed')
       end
-      # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/BlockLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength, Metrics/BlockLength
       def destroy
         authorize @user_account_report, :destroy?
 
@@ -178,7 +177,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/BlockLength
 
       private
 
@@ -186,6 +184,5 @@ module BetterTogether
         @user_account_report = BetterTogether::Metrics::UserAccountReport.find(params[:id])
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

@@ -1,0 +1,21 @@
+---
+title: Events Index — recurring event badge and filter
+audience:
+- community_member
+- event_organizer
+- platform_manager
+- developer
+journey_step: As a community member browsing events, I can tell at a glance which
+  events repeat, and filter the list to just recurring (or just one-time) events.
+callouts:
+- :id: recurring_filter
+  :title: Recurring / one-time filter
+  :description: EventsSearchFilter#filter_by_recurring — a plain AR left_joins(:recurrence),
+    no raw SQL.
+- :id: recurring_badge
+  :title: '"Repeats" badge'
+  :description: BadgesHelper#recurring_badge; tooltip/aria-label built from RecurrenceHelper#format_recurrence_rule.
+accessibility_notes: Badge conveys meaning via text, not color; filter control has
+  an explicit <label for> association.
+slug: pr1717_events_index_repeating_badge
+device: desktop

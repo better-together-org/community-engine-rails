@@ -3,7 +3,7 @@
 module BetterTogether
   module Geography
     # Spatial representations of data
-    class Map < ApplicationRecord
+    class Map < PlatformRecord
       include Creatable # Tracks the Creator of the record
       include FriendlySlug # Generates friendly slugs for URLs
       include Identifier # Adds unique identifier functionality
@@ -60,6 +60,11 @@ module BetterTogether
         mappable&.leaflet_points || []
       end
 
+      # Data layers (with their attribution) the mappable draws on its map.
+      def layers
+        mappable.respond_to?(:map_layers) ? MapLayer.resolve(mappable.map_layers) : []
+      end
+
       def spaces_for_leaflet
         spaces.map(&:to_leaflet_point).compact.to_json
       end
@@ -84,6 +89,3 @@ module BetterTogether
     end
   end
 end
-
-require_dependency 'better_together/geography/community_map'
-require_dependency 'better_together/geography/community_collection_map'

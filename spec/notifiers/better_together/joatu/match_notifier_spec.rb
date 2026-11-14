@@ -20,4 +20,15 @@ RSpec.describe BetterTogether::Joatu::MatchNotifier do
     offer_creator.notifications.unread.update_all(read_at: Time.current)
     expect { notifier.deliver(offer_creator) }.to change { offer_creator.notifications.count }.by(1)
   end
+
+  it 'stamps platform_id from the offer record even with no Current.platform (async delivery)' do # rubocop:disable RSpec/MultipleExpectations
+    expect(Current.platform).to be_nil
+
+    notifier = described_class.with(offer:, request:, record: offer)
+    notifier.deliver(offer_creator)
+
+    notification = offer_creator.notifications.last
+    expect(notification.platform_id).to eq(offer.platform_id)
+    expect(notification.platform_id).to be_present
+  end
 end

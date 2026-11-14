@@ -8,10 +8,11 @@ Better Together provides OAuth 2.0 via [Doorkeeper](https://github.com/doorkeepe
 
 | Concept | Value |
 |---------|-------|
-| Authorization endpoint | `GET /oauth/authorize` |
-| Token endpoint | `POST /oauth/token` |
-| Token introspect endpoint | `POST /oauth/introspect` |
-| Token revoke endpoint | `POST /oauth/revoke` |
+| Authorization endpoint | `GET /api/oauth/authorize` |
+| Token endpoint | `POST /api/oauth/token` |
+| Token introspect endpoint | `POST /api/oauth/introspect` |
+| Token revoke endpoint | `POST /api/oauth/revoke` |
+| Token info endpoint | `GET /api/oauth/token/info` |
 | Grant flows | `authorization_code`, `client_credentials` |
 | Default scope | `read` |
 
@@ -63,7 +64,7 @@ Navigate to **Host Dashboard → OAuth Applications** (`/host/oauth_applications
 **Step 1 — Redirect user to authorization endpoint:**
 
 ```
-GET /oauth/authorize
+GET /api/oauth/authorize
   ?response_type=code
   &client_id=YOUR_CLIENT_ID
   &redirect_uri=https://yourapp.example.com/callback
@@ -74,7 +75,7 @@ GET /oauth/authorize
 **Step 2 — Exchange code for token:**
 
 ```http
-POST /oauth/token
+POST /api/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=authorization_code
@@ -104,7 +105,7 @@ Response:
 Used for server-to-server integrations without a user context.
 
 ```http
-POST /oauth/token
+POST /api/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=client_credentials
@@ -129,7 +130,7 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 ## Revoking a Token
 
 ```http
-POST /oauth/revoke
+POST /api/oauth/revoke
 Content-Type: application/x-www-form-urlencoded
 
 token=ACCESS_TOKEN

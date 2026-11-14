@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
   let(:person) { user.person }
   let(:reviewer) { create(:better_together_person) }
   let!(:owned_community) { create(:better_together_community, creator: person, protected: true) }
-  let!(:platform) { create(:better_together_platform) }
+  let!(:platform) { create(:better_together_platform, :public) }
   let!(:deletion_request) { create(:better_together_person_deletion_request, person:) }
 
   before do
@@ -65,5 +65,60 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
     expect(audit.execution_snapshot.fetch('destroyed_entries')).not_to be_empty
     expect(audit.execution_snapshot.fetch('verification').values).to all(include('completed' => true))
     expect(enqueued_jobs.map { |job| job[:job] }).not_to include(BetterTogether::CleanupNotificationsJob)
+  end
+
+  it "erases the person's quota ledger and drops them as actor on other owners' usage" do
+    other_community = create(:better_together_community)
+    BetterTogether::Quotas.settle!(type: 'media_storage', owner: person, amount: 100, idempotency_key: 'hd:own')
+    shared = BetterTogether::Quotas.settle!(
+      type: 'media_storage', owner: other_community, actor: person, amount: 50, idempotency_key: 'hd:shared'
+    )
+    quota_id = BetterTogether::Quota.find_by(owner: person).id
+    clear_enqueued_jobs
+
+    described_class.call(person:, person_deletion_request: deletion_request, reviewed_by: reviewer, reason: 'quota')
+
+    expect(BetterTogether::Quota.where(id: quota_id)).to be_empty
+    expect(BetterTogether::QuotaUsage.where(quota_id:)).to be_empty
+    expect(BetterTogether::QuotaBalance.where(quota_id:)).to be_empty
+    expect(BetterTogether::QuotaUsage.find(shared.id).actor_id).to be_nil
+  end
+
+  it "captures the deletion request's platform on the audit before both are destroyed" do
+    federated_platform = create(:better_together_platform, :public, host: false)
+    deletion_request.update!(platform: federated_platform)
+    clear_enqueued_jobs
+
+    audit = described_class.call(
+      person:,
+      person_deletion_request: deletion_request,
+      reviewed_by: reviewer,
+      reason: 'platform capture check'
+    )
+
+    expect(audit.platform_id).to eq(federated_platform.id)
+    expect(audit.person_deletion_request_id).to be_nil
+  end
+
+  it "falls back to the person's platform when there is no person_deletion_request" do
+    federated_platform = create(:better_together_platform, :public, host: false)
+    person.update!(platform: federated_platform)
+    clear_enqueued_jobs
+
+    audit = described_class.call(
+      person:,
+      person_deletion_request: nil,
+      reviewed_by: reviewer,
+      reason: 'direct automated deletion'
+    )
+
+    expect(audit.platform_id).to eq(federated_platform.id)
+  end
+
+  it 'surfaces the original error rather than masking it with failure bookkeeping' do
+    executor = described_class.new(person:, person_deletion_request: deletion_request, reviewed_by: reviewer)
+    allow(executor).to receive(:execute_inventory).and_raise(RuntimeError, 'inventory exploded')
+
+    expect { executor.call }.to raise_error(RuntimeError, 'inventory exploded')
   end
 end

@@ -1,5 +1,9 @@
 # Governance Bodies And Mandates
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** March 12, 2026  
 **Status:** Planning prerequisite  
 **Purpose:** Define the governance bodies, stewardship scopes, and corresponding CE role families for federated CE platforms

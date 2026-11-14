@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PhoneNumber < ApplicationRecord # rubocop:todo Style/Documentation
+  class PhoneNumber < PlatformRecord # rubocop:todo Style/Documentation
     include PrimaryFlag
     include Privacy
 

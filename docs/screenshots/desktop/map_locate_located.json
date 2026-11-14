@@ -1,0 +1,48 @@
+{
+  "name": "map_locate_located",
+  "device": "desktop",
+  "url": "/en/communities",
+  "title": "Communities | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "map_locate_feedback",
+  "flow": "map_locate_located",
+  "source_spec": "./spec/docs_screenshots/better_together/map_locate_feedback_spec.rb",
+  "callouts": [
+    {
+      "selector": "[data-geolocation-button]",
+      "title": "Located",
+      "bullets": [
+        "A check on a green button confirms the map is framed on the accuracy circle."
+      ],
+      "target": {
+        "x": 1204.890625,
+        "y": 210.0,
+        "width": 145.609375,
+        "height": 38.0,
+        "right": 1350.5,
+        "bottom": 248.0,
+        "center_x": 1277.6953125,
+        "center_y": 229.0
+      },
+      "avoid": {
+        "x": 1204.890625,
+        "y": 210.0,
+        "width": 145.609375,
+        "height": 38.0,
+        "right": 1350.5,
+        "bottom": 248.0,
+        "center_x": 1277.6953125,
+        "center_y": 229.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 268.0,
+        "width": 380,
+        "height": 158,
+        "score": 1209.0
+      }
+    }
+  ]
+}

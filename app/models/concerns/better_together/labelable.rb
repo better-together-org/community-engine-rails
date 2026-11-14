@@ -56,7 +56,15 @@ module BetterTogether
     end
 
     def text_label=(arg)
-      return if arg.present? && self.class::LABELS.include?(arg.to_sym)
+      # Forms submit both fields together, select_label first: when a real
+      # LABELS entry is chosen, select_label= already sets label correctly and
+      # the "Other" text field is submitted blank — skip clobbering that
+      # assignment with an empty string. But when select_label is still
+      # 'other' (no real LABELS entry won), a blank arg means the user
+      # cleared a previously-set custom label, which should actually clear
+      # it rather than leave the stale value in place.
+      return if arg.blank? && select_label != 'other'
+      return if self.class::LABELS.include?(arg.to_sym)
 
       self.label = arg
     end

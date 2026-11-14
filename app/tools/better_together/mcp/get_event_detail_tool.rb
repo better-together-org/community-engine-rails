@@ -47,7 +47,7 @@ module BetterTogether
         {
           id: event.id,
           name: event.name,
-          description: event.description.to_s,
+          description: BetterTogether::Seeds::SafeRichText.trix_html_for(event, :description),
           slug: event.slug,
           privacy: event.privacy,
           registration_url: event.registration_url,

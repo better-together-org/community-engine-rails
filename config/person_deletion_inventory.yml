@@ -71,14 +71,6 @@ entries:
     foreign_key: person_id
     action: destroy
 
-  - key: BetterTogether::OneTimePrekey#person
-    kind: model_reference
-    owner: person
-    model: BetterTogether::OneTimePrekey
-    association: person
-    foreign_key: person_id
-    action: destroy
-
   - key: BetterTogether::PersonBlock#blocker
     kind: model_reference
     owner: person
@@ -237,6 +229,24 @@ entries:
     action: destroy
     reverse_association: oauth_applications
 
+  - key: BetterTogether::AgentGrant#operator
+    kind: model_reference
+    owner: person
+    model: BetterTogether::AgentGrant
+    association: operator
+    foreign_key: operator_id
+    action: destroy
+    reverse_association: agent_grants
+
+  - key: BetterTogether::AgentGrant#granted_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::AgentGrant
+    association: granted_by
+    foreign_key: granted_by_id
+    action: retain
+    reverse_association: granted_agent_grants
+
   - key: BetterTogether::Report#reporter
     kind: model_reference
     owner: person
@@ -335,6 +345,30 @@ entries:
     reverse_association: created_communities
     concern: BetterTogether::CreatedRecords
 
+  - key: BetterTogether::PlatformTrustedDomain#created_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformTrustedDomain
+    association: created_by
+    foreign_key: created_by_id
+    action: anonymize
+
+  - key: BetterTogether::TrustedDomainEvent#actor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::TrustedDomainEvent
+    association: actor
+    foreign_key: actor_id
+    action: anonymize
+
+  - key: BetterTogether::TrustedDomainEvent#subject
+    kind: model_reference
+    owner: person
+    model: BetterTogether::TrustedDomainEvent
+    association: subject
+    foreign_key: subject_id
+    action: anonymize
+
   - key: BetterTogether::PlatformInvitation#inviter
     kind: model_reference
     owner: person
@@ -383,6 +417,68 @@ entries:
     foreign_key: initiator_id
     action: destroy
     reverse_association: ai_translation_logs
+
+  - key: BetterTogether::PersonMessagingGrant#grantor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonMessagingGrant
+    association: grantor
+    foreign_key: grantor_id
+    action: destroy
+    reverse_association: messaging_grants_given
+
+  - key: BetterTogether::PersonMessagingGrant#grantee
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonMessagingGrant
+    association: grantee
+    foreign_key: grantee_id
+    action: destroy
+    reverse_association: messaging_grants_received
+
+  - key: BetterTogether::FeatureAccessGrant#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::FeatureAccessGrant
+    association: person
+    foreign_key: person_id
+    action: destroy
+    reverse_association: feature_access_grants
+
+  - key: BetterTogether::FeatureAccessGrant#granted_by_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::FeatureAccessGrant
+    association: granted_by_person
+    foreign_key: granted_by_person_id
+    action: retain
+    reverse_association: granted_feature_access_grants
+
+  - key: BetterTogether::MessageRequest#sender
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MessageRequest
+    association: sender
+    foreign_key: sender_id
+    action: destroy
+    reverse_association: sent_message_requests
+
+  - key: BetterTogether::MessageRequest#recipient
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MessageRequest
+    association: recipient
+    foreign_key: recipient_id
+    action: destroy
+    reverse_association: received_message_requests
+
+  - key: BetterTogether::InboundEmailReplyToken#recipient
+    kind: model_reference
+    owner: person
+    model: BetterTogether::InboundEmailReplyToken
+    association: recipient
+    foreign_key: recipient_id
+    action: destroy
 
   - key: BetterTogether::Creatable#creator
     kind: creatable_creator_reference

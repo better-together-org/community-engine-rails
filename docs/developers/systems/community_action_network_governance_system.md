@@ -169,7 +169,6 @@ This governance layer does not replace current systems. It frames and extends th
 - [Agreements System Documentation](agreements_system.md)
 - [Public Publishing Agreement Gate System](public_publishing_agreement_gate_system.md)
 - [Robot Author Identity System](robot_author_identity_system.md)
-- [Release Package Publishing System](release_package_publishing_system.md)
 - [Actor-Safe Creator and Authorship Migration Plan](actor_safe_creator_authorship_migration_plan.md)
 - [PR 1494 Scope Consolidation](pr_1494_scope_consolidation.md)
 - [JOATU Public Visibility Hardening Plan](joatu_public_visibility_hardening_plan.md)
@@ -181,8 +180,7 @@ This system implies four major follow-on designs:
 1. a unified agreement/policy/legal model
 2. a first-class robot author identity model
 3. resource and rights visibility surfaces
-4. a private-draft release-package publishing workflow
-5. JOATU privacy and participant-safe exchange visibility
+4. JOATU privacy and participant-safe exchange visibility
 
 ## Status
 
@@ -194,11 +192,11 @@ Implemented portions include:
 - a broader governed contribution/authorship substrate
 - public publishing agreement gating
 - JOATU privacy hardening
-- structured citation, claim, and evidence foundations
 
 What remains incomplete is the full constitutional and workflow layer:
 
 - complete robot-native authorship and publishing UX
 - full review-state and challenge-path product surfaces
 - broader resource-governance visibility beyond the currently implemented governed records
-- a finalized release-package workflow built on top of these foundations
+- structured citation, claim, and evidence foundations — scoped out of this release; preserved on
+  `feature/claims-evidence-citation-governance-01100notes` for future work

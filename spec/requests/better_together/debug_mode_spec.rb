@@ -220,7 +220,7 @@ RSpec.describe 'Debug Mode Functionality' do
       get test_path, params: { debug: 'true' }
 
       # Verify robots meta tag prevents indexing
-      expect(response.body).to match(/<meta name="robots" content="noindex,nofollow"/)
+      expect(response.body).to include('<meta name="robots" content="noindex,nofollow"')
     end
 
     it 'allows normal caching when debug is disabled' do
@@ -234,7 +234,7 @@ RSpec.describe 'Debug Mode Functionality' do
       get test_path
 
       # Should have normal indexing permission
-      expect(response.body).to match(/<meta name="robots" content="index,follow"/)
+      expect(response.body).to include('<meta name="robots" content="index,follow"')
     end
   end
 end

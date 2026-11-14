@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_llm_robot_management_form",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/robots/35b13fdb-3ce7-4b14-88dd-a77df688b683/edit",
+  "title": "Edit Platform Translation Override for Test Host Community | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_llm_robot_management",
+  "flow": "robot_form",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_llm_robot_management_spec.rb"
+}

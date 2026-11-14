@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Prints "changed=true" when anything that affects the docs screenshots changed since the generated
+# screenshots were last committed, else "changed=false". Under GitHub Actions the same line is appended
+# to $GITHUB_OUTPUT, and the changed paths go to the step summary.
+#
+# Sources: views, assets, JavaScript, helpers, the English locale file, the docs screenshot specs and the
+# screenshot engine. Usage: bin/ci-docs-screenshots-changed
+set -euo pipefail
+
+SOURCES=(
+  app/views app/assets app/javascript app/helpers app/components
+  config/locales/en.yml
+  spec/docs_screenshots spec/support/capybara_screenshot_engine.rb spec/support/screenshot_callout_processor.rb
+)
+
+last_refresh="$(git log -1 --format=%H -- docs/screenshots/desktop docs/screenshots/mobile)"
+if [[ -z "${last_refresh}" ]]; then
+  changed_files="(no screenshots committed yet)"
+else
+  changed_files="$(git diff --name-only "${last_refresh}" HEAD -- "${SOURCES[@]}")"
+fi
+
+if [[ -n "${changed_files}" ]]; then result=true; else result=false; fi
+echo "changed=${result}"
+
+if [[ -n "${GITHUB_OUTPUT:-}" ]]; then echo "changed=${result}" >> "${GITHUB_OUTPUT}"; fi
+if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+  {
+    echo "### Docs screenshot sources"
+    echo
+    echo "Last screenshot commit: \`${last_refresh:-none}\`"
+    echo
+    if [[ "${result}" == "true" ]]; then
+      echo "Changed since then:"
+      echo
+      # shellcheck disable=SC2001,SC2016
+      echo "${changed_files}" | head -50 | sed 's/^/- `/;s/$/`/'
+    else
+      echo "No source changed since then."
+    fi
+  } >> "${GITHUB_STEP_SUMMARY}"
+fi

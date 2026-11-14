@@ -1,18 +1,127 @@
 <% content_for :page_title do %>
-  <%= resource_class.model_name.human.pluralize %>
+  <%= index_heading %>
 <% end %>
 
+<%# Inside a turbo-frame (a community page tab) the list lays out for the pane: filters stack above a card grid,
+    the heading is an h2 because the host page owns the h1, and links leave the frame. -%>
+<% frame_id = index_frame_id %>
+<%= content_tag(frame_id ? :'turbo-frame' : :div, id: frame_id, target: ('_top' if frame_id)) do %>
 <div class="container my-3">
-  <div class="d-flex justify-content-between align-items-center">
-    <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %>
-      <%= link_to new_post_path, class: 'btn btn-primary', 'aria-label' => 'Add Post' do %>
-        <i class="fas fa-plus"></i> <%= t('.new_btn_text', default: 'New Post') %>
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <%= content_tag(frame_id ? :h2 : :h1, index_heading, class: 'mb-0') %>
+    <div class="d-flex align-items-center gap-2">
+      <% if @available_view_types.size > 1 %>
+        <%= render 'better_together/shared/view_switcher',
+                   view_key: 'index_view',
+                   active_view: @view_type,
+                   available_views: @available_view_types,
+                   update_path: view_preferences_path(locale: I18n.locale) %>
       <% end %>
-    <% end %>
-  </div>
 
-  <div id="posts" class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-    <%= render(@posts) || render('empty') %>
+      <% if policy(resource_class).create? %>
+        <%= link_to new_post_path(community_id: params[:community_id]), class: 'btn btn-primary',
+                    'aria-label' => t('.new_btn_text', default: 'New Post') do %>
+          <i class="fas fa-plus"></i> <%= t('.new_btn_text', default: 'New Post') %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% if policy(resource_class).create? %>
+    <%= render 'better_together/shared/publishing_agreement_notice' %>
+  <% end %>
+
+  <div class="row">
+    <!-- Filter Sidebar -->
+    <div class="<%= frame_id ? 'col-12' : 'col-lg-3' %> mb-4">
+      <button id="posts-filter-toggle" class="btn btn-outline-secondary <%= 'd-lg-none' unless frame_id %> mb-2 sidebar-toggle" type="button"
+              data-bs-toggle="collapse" data-bs-target="#posts-filter-sidebar"
+              aria-expanded="false" aria-controls="posts-filter-sidebar">
+        <i class="fas fa-filter" aria-hidden="true"></i> <%= t('.toggle_filters') %>
+      </button>
+      <div id="posts-filter-sidebar" class="collapse <%= 'd-lg-block' unless frame_id %> sidebar">
+        <%= render 'list_form' %>
+      </div>
+    </div>
+
+    <!-- Posts List -->
+    <div class="<%= frame_id ? 'col-12' : 'col-lg-9' %>">
+
+      <!-- Pagination -->
+      <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
+        <nav class="d-flex justify-content-center">
+          <%= paginate @posts %>
+        </nav>
+      <% end %>
+
+      <!-- Result Count -->
+      <% if @posts.any? && @posts.respond_to?(:total_count) %>
+        <div class="mb-3">
+          <small class="text-muted">
+            <%= t('better_together.posts.index.result_count', count: @posts.total_count) %>
+          </small>
+        </div>
+      <% end %>
+
+      <% if @posts.any? %>
+        <% case @view_type %>
+        <% when 'table' %>
+          <div id="posts-table" class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead>
+                <tr>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.title') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.community') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.categories') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.authors') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.published') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: 'post_table_row', collection: @posts, as: :post %>
+              </tbody>
+            </table>
+          </div>
+        <% when 'list' %>
+          <ul id="posts-list" class="list-group">
+            <%= render partial: 'post_list_item', collection: @posts, as: :post %>
+          </ul>
+        <% when 'calendar' %>
+          <div id="posts-calendar" class="d-flex flex-column gap-3">
+            <% posts_by_date = @posts.group_by { |post| (post.published_at || post.created_at).to_date } %>
+            <% posts_by_date.each do |date, posts| %>
+              <section class="border rounded-3 p-3 bg-body-tertiary">
+                <h2 class="h6 text-uppercase text-muted mb-3"><%= l(date, format: :long) %></h2>
+                <ul class="list-group">
+                  <%= render partial: 'post_list_item', collection: posts, as: :post %>
+                </ul>
+              </section>
+            <% end %>
+          </div>
+        <% when 'map' %>
+          <div id="posts-map" class="d-flex flex-column gap-3">
+            <div class="alert alert-info" role="status">
+              <%= t('better_together.posts.index.map_unavailable') %>
+            </div>
+            <ul class="list-group">
+              <%= render partial: 'post_list_item', collection: @posts, as: :post %>
+            </ul>
+          </div>
+        <% else %>
+          <div id="posts" class="<%= frame_id ? 'frame-card-grid' : 'row row-cols-1 row-cols-md-2' %>">
+            <%= render @posts %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= render('empty') %>
+      <% end %>
+
+      <!-- Pagination -->
+      <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
+        <nav class="d-flex justify-content-center">
+          <%= paginate @posts %>
+        </nav>
+      <% end %>
+    </div>
   </div>
 </div>
+<% end %>

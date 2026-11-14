@@ -96,13 +96,15 @@ module BetterTogether
     end
 
     def build_message(notification)
-      {
-        title:,
-        body:,
-        identifier:,
-        url:,
-        unread_count: notification.recipient.notifications.unread.count
-      }
+      I18n.with_locale(locale_for_notification(notification)) do
+        {
+          title:,
+          body:,
+          identifier:,
+          url:,
+          unread_count: notification.recipient.notifications.unread.count
+        }
+      end
     end
 
     def email_params(notification)

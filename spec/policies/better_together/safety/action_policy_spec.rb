@@ -11,7 +11,8 @@ RSpec.describe BetterTogether::Safety::ActionPolicy do
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership = host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.update!(status: 'active') unless membership.active?
   end
 
   let(:platform_manager) { create(:better_together_user, :confirmed, :platform_manager) }
@@ -27,7 +28,7 @@ RSpec.describe BetterTogether::Safety::ActionPolicy do
     expect(described_class.new(safety_reviewer, action_record).create?).to be true
   end
 
-  it 'denies default platform managers without explicit safety authority' do
-    expect(described_class.new(platform_manager, action_record).create?).to be false
+  it 'allows default platform managers/stewards (manage_platform_safety is now a default grant)' do
+    expect(described_class.new(platform_manager, action_record).create?).to be true
   end
 end

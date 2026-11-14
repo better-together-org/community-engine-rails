@@ -16,6 +16,12 @@ module BetterTogether
 
     notification_methods do
       delegate :event, :changed_attributes, to: :params
+
+      def should_notify?
+        event.present? && changed_attributes.present? &&
+          (!recipient.respond_to?(:notification_preferences) ||
+           recipient.notification_preferences.fetch('event_updates', true))
+      end
     end
 
     def target_event = params[:event]
@@ -38,26 +44,14 @@ module BetterTogether
              default: '%<event_name>s has been updated: %<changes>s')
     end
 
-    def build_message(_notification)
-      { title:, body: }
+    def build_message(notification)
+      I18n.with_locale(locale_for_notification(notification)) do
+        { title:, body: }
+      end
     end
 
     def email_params(_notification)
       { event: target_event, changed_attributes: }
-    end
-
-    notification_methods do
-      def recipient_has_email?
-        recipient.respond_to?(:email) && recipient.email.present? &&
-          (!recipient.respond_to?(:notification_preferences) ||
-           recipient.notification_preferences.fetch('notify_by_email', true))
-      end
-
-      def should_notify?
-        event.present? && changed_attributes.present? &&
-          (!recipient.respond_to?(:notification_preferences) ||
-           recipient.notification_preferences.fetch('event_updates', true))
-      end
     end
   end
 end

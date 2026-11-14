@@ -26,5 +26,12 @@ RSpec.configure do |config|
     if defined?(BetterTogether::ApplicationHelper)
       view.extend(BetterTogether::ApplicationHelper)
     end
+
+    # Make person-related helpers available on the view (e.g., `mention_profile_path`),
+    # needed by shared partials like _agent_authors that render person mentions
+    # outside a people/ controller context.
+    if defined?(BetterTogether::PeopleHelper)
+      view.extend(BetterTogether::PeopleHelper)
+    end
   end
 end

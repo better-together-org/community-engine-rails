@@ -43,7 +43,7 @@ RSpec.describe BetterTogether::NotificationsController, :as_user do
 
     it 'returns HTML content' do
       get "/#{I18n.default_locale}/notifications/dropdown"
-      expect(response.content_type).to match(%r{text/html})
+      expect(response.content_type).to include('text/html')
     end
 
     it 'caches the response based on max updated_at' do

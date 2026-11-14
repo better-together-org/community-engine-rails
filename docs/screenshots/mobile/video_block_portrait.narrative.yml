@@ -1,0 +1,15 @@
+---
+title: 'Video block: vertical (9:16) videos'
+audience:
+- member
+- content_editor
+- developer
+journey_step: As an editor, I embed a vertical video and it is not stretched across
+  the page.
+callouts:
+- :id: portrait_video
+  :title: Vertical video
+  :description: The 9x16 ratio keeps a vertical video narrow and centred.
+accessibility_notes: Markup is unchanged apart from a modifier class on the figure.
+slug: video_block_portrait
+device: mobile

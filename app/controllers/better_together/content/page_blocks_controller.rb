@@ -13,13 +13,18 @@ module BetterTogether
 
         @page_block.build_block(type: params[:block_type]) # Build the new PageBlock and associated Block
 
+        # A block added through the page builder starts at the page's privacy so
+        # editors don't have to bump every block from the 'private' default to
+        # match a community/public page. Standalone block creation
+        # (Content::BlocksController#new) keeps the model's 'private' default.
+        @page_block.block.privacy = @page.privacy if @page.respond_to?(:privacy)
+
         respond_to do |format|
           format.html
           format.turbo_stream do
             render turbo_stream: turbo_stream.append('blocks-list',
-                                                     # rubocop:todo Layout/LineLength
+                                                     # rubocop:todo-next Layout/LineLength
                                                      partial: 'better_together/content/page_blocks/form_fields', locals: { page_block: @page_block })
-            # rubocop:enable Layout/LineLength
           end
         end
       end

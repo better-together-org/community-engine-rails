@@ -11,6 +11,7 @@ module BetterTogether
       store_attributes :content_data do
         markdown_file_path String
         auto_sync_from_file Boolean, default: false
+        active_source String, default: 'inline'
       end
 
       validate :markdown_source_or_file_path_present
@@ -20,6 +21,7 @@ module BetterTogether
       # Load file content before validation if file path changed
       before_validation :load_file_into_source,
                         if: -> { markdown_file_path_changed? && auto_sync_from_file? }
+      before_save :sync_active_source
 
       # Define permitted attributes for controller strong parameters
       def self.permitted_attributes
@@ -28,8 +30,8 @@ module BetterTogether
 
       # Get markdown content from either source or file
       def content
-        return markdown_source if markdown_source.present? && !auto_sync_from_file?
-        return load_markdown_file_for_current_locale if markdown_file_path.present?
+        return load_markdown_file_for_current_locale if active_source == 'file' && markdown_file_path.present?
+        return markdown_source if markdown_source.present?
 
         ''
       end
@@ -57,18 +59,6 @@ module BetterTogether
         BetterTogether::MarkdownRendererService.new(content, {}).render_plain_text
       end
 
-      # Provide indexed JSON representation for search
-      def as_indexed_json(_options = {})
-        {
-          id:,
-          localized_content: I18n.available_locales.index_with do |locale|
-            I18n.with_locale(locale) do
-              rendered_plain_text
-            end
-          end
-        }
-      end
-
       # Check if content contains mermaid diagrams
       def contains_mermaid?
         return false if content.blank?
@@ -78,6 +68,10 @@ module BetterTogether
       end
 
       private
+
+      def sync_active_source
+        self.active_source = markdown_file_path.present? && auto_sync_from_file? ? 'file' : 'inline'
+      end
 
       def markdown_source_or_file_path_present
         return if markdown_source.present? || markdown_file_path.present?

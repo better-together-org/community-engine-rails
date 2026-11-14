@@ -1,0 +1,11 @@
+{
+  "name": "settlement_pages_index_plain",
+  "device": "desktop",
+  "url": "/en/g/settlements",
+  "title": "Settlements | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settlement_page_tabs",
+  "flow": "index_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_page_tabs_spec.rb"
+}

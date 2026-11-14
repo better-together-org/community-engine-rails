@@ -32,7 +32,11 @@ RSpec.describe 'better_together/content/blocks/fields/_markdown.html.erb' do
     end
 
     context 'when referencing a markdown file' do
-      let(:block) { build(:content_markdown, markdown_source: nil, markdown_file_path: 'docs/example.md') }
+      # active_source only syncs from markdown_file_path via a before_save callback
+      # (sync_active_source) — this block is unsaved (build), so set it explicitly.
+      let(:block) do
+        build(:content_markdown, markdown_source: nil, markdown_file_path: 'docs/example.md', active_source: 'file')
+      end
 
       it 'keeps file inputs visible and inline inputs hidden' do
         render_fields(block)

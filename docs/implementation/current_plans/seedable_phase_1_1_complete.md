@@ -1,5 +1,9 @@
 # 🎯 Phase 1.1 Security Hardening - Implementation Complete
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-23. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## ✅ Implementation Summary
 
 Successfully implemented comprehensive security hardening for the Seedable system as outlined in Phase 1.1 of the implementation plan.

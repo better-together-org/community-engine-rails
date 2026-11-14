@@ -11,7 +11,8 @@ RSpec.describe BetterTogether::WebhookEndpointPolicy do
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership = host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.update!(status: 'active') unless membership.active?
   end
 
   let(:platform_api_user) { create(:better_together_user, :confirmed) }
@@ -112,8 +113,9 @@ RSpec.describe BetterTogether::WebhookEndpointPolicy do
   end
 
   describe 'Scope' do
-    let!(:manager_endpoint) { create(:better_together_webhook_endpoint, person: platform_api_user.person) }
-    let!(:owner_endpoint) { create(:better_together_webhook_endpoint, person: owner_user.person) }
+    let!(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+    let!(:manager_endpoint) { create(:better_together_webhook_endpoint, person: platform_api_user.person, platform: host_platform) }
+    let!(:owner_endpoint) { create(:better_together_webhook_endpoint, person: owner_user.person, platform: host_platform) }
 
     it 'returns all endpoints for explicit API managers' do
       scope = described_class::Scope.new(platform_api_user, BetterTogether::WebhookEndpoint)

@@ -56,7 +56,7 @@ class SeedPlatformMemberRoleBeforeHostBackfill < ActiveRecord::Migration[7.2]
       target: 'platform',
       resource_type: 'BetterTogether::Platform',
       protected: true,
-      position: 1
+      position: permission.position || next_position_for(ResourcePermission, 'BetterTogether::Platform')
     )
     permission.save! if permission.changed?
     upsert_slug!(permission, 'BetterTogether::ResourcePermission')

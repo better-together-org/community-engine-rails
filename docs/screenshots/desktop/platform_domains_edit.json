@@ -1,0 +1,10 @@
+{
+  "name": "platform_domains_edit",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/platform_domains/818c48d6-093c-4b33-bf47-e5af7d067abe/edit",
+  "title": "Edit app.clientdomain.example | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_domains",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+}

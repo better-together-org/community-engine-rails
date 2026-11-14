@@ -7,8 +7,10 @@ module BetterTogether
       # Returns the opposite type matches for a request or offer
       # - If given a Request -> returns matching Offers
       # - If given an Offer   -> returns matching Requests
+      # Candidates are restricted to the same platform as record - mutual aid
+      # matching does not cross tenant boundaries.
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/CyclomaticComplexity
+      # rubocop:todo-next Metrics/CyclomaticComplexity
       def self.match(record) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         offer_klass   = BetterTogether::Joatu::Offer
         request_klass = BetterTogether::Joatu::Request
@@ -16,7 +18,7 @@ module BetterTogether
 
         case record
         when request_klass
-          candidates = offer_klass.status_open
+          candidates = offer_klass.status_open.where(platform_id: record.platform_id)
           # Category overlap if any
           if record.category_ids.any?
             candidates = candidates.joins(:categories)
@@ -39,17 +41,16 @@ module BetterTogether
           join_sql = ActiveRecord::Base.send(
             :sanitize_sql_array,
             [
-              # rubocop:todo Layout/LineLength
+              # rubocop:todo-next Layout/LineLength
               "LEFT JOIN #{rl_klass.table_name} AS rl ON rl.source_type = ? AND rl.source_id = ? AND rl.response_type = ? AND rl.response_id = #{offer_klass.table_name}.id",
-              # rubocop:enable Layout/LineLength
               request_klass.name, record.id, offer_klass.name
             ]
           )
           candidates = candidates.joins(join_sql).where('rl.id IS NULL')
 
-          candidates.distinct
+          exclude_block_related(candidates, record).distinct
         when offer_klass
-          candidates = request_klass.status_open
+          candidates = request_klass.status_open.where(platform_id: record.platform_id)
           if record.category_ids.any?
             candidates = candidates.joins(:categories)
                                    .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })
@@ -69,21 +70,25 @@ module BetterTogether
           join_sql = ActiveRecord::Base.send(
             :sanitize_sql_array,
             [
-              # rubocop:todo Layout/LineLength
+              # rubocop:todo-next Layout/LineLength
               "LEFT JOIN #{rl_klass.table_name} AS rl ON rl.source_type = ? AND rl.source_id = ? AND rl.response_type = ? AND rl.response_id = #{request_klass.table_name}.id",
-              # rubocop:enable Layout/LineLength
               offer_klass.name, record.id, request_klass.name
             ]
           )
           candidates = candidates.joins(join_sql).where('rl.id IS NULL')
 
-          candidates.distinct
+          exclude_block_related(candidates, record).distinct
         else
           raise ArgumentError, "Unsupported record type: #{record.class.name}"
         end
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
+
+      # Counterparts created by someone who blocked, or was blocked by, the record's creator.
+      def self.exclude_block_related(candidates, record)
+        blocked_ids = record.creator&.block_related_person_ids
+        blocked_ids.blank? ? candidates : candidates.where.not(creator_id: blocked_ids)
+      end
     end
   end
 end

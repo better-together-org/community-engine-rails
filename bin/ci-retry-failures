@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""Re-run only the failed examples of one CI shard, as a last resort against flaky specs.
+
+Usage: bin/ci-retry-failures --results tmp/rspec_results_SUITE_shardN.json
+         [--retries 3] [--max-failed 25] [--retry-dir tmp/retry] [--flaky-dir tmp/flaky]
+
+Run it after prspec reported failures. It spends CI time only when a retry can plausibly help:
+  * no results file, zero examples, or load errors outside examples: stop (a crash is not a flake);
+  * more than --max-failed failed examples: stop (that is a broken change, not flakiness);
+  * a retry that fails the exact same set as the run before it: stop (deterministic failure).
+Otherwise the failed example ids are re-run (up to --retries times) in one rspec process per round,
+with output under --retry-dir so the aggregator's tmp/rspec_results_*_shard*.json glob never counts
+them twice. Examples that pass are flipped to passed in the results file, summary.failure_count and
+summary_line are recomputed, and each late pass is logged to --flaky-dir in the format of
+spec/support/retry_visibility.rb so bin/ci-flaky-report and CI_FAIL_ON_FLAKY keep working.
+
+CI_RETRY_COMMAND overrides the runner (default "bundle exec rspec"); it receives
+"--format json --out FILE --no-color ID..." and its exit status is ignored, only its JSON counts.
+Prints a markdown summary for $GITHUB_STEP_SUMMARY. Exit 0 when no failures remain, else 1.
+"""
+import argparse
+import json
+import os
+import shlex
+import subprocess
+import sys
+
+
+def load(path):
+    with open(path) as handle:
+        return json.load(handle)
+
+
+def failed_ids(results):
+    return [e["id"] for e in results["examples"] if e["status"] == "failed"]
+
+
+def describe(example):
+    exception = example.get("exception") or {}
+    message = (exception.get("message") or "").strip().splitlines()
+    return f"{exception.get('class', 'Error')}: {message[0] if message else ''}"[:220]
+
+
+def run_round(ids, out_path):
+    command = shlex.split(os.environ.get("CI_RETRY_COMMAND", "bundle exec rspec"))
+    command += ["--format", "json", "--out", out_path, "--no-color", *ids]
+    if os.path.exists(out_path):
+        os.remove(out_path)
+    subprocess.run(command, check=False)
+    if not os.path.exists(out_path):
+        return None
+    result = load(out_path)
+    summary = result.get("summary", {})
+    if summary.get("errors_outside_of_examples_count", 0) or not summary.get("example_count"):
+        return None
+    return result
+
+
+def record(flaky_dir, events):
+    os.makedirs(flaky_dir, exist_ok=True)
+    with open(os.path.join(flaky_dir, f"retry-{os.getpid()}.jsonl"), "a") as handle:
+        for event in events:
+            handle.write(json.dumps(event) + "\n")
+
+
+def event(kind, example, attempts, error):
+    return {
+        "event": kind,
+        "location": f"{example['file_path']}:{example['line_number']}",
+        "description": example["full_description"][:160],
+        "type": None,
+        "js": False,
+        "failed_attempts": attempts,
+        "error": error,
+    }
+
+
+def apply_passes(results, passed):
+    """Replace failed examples that passed on retry and refresh the summary."""
+    for index, example in enumerate(results["examples"]):
+        if example["id"] in passed:
+            results["examples"][index] = passed[example["id"]]
+    summary = results["summary"]
+    summary["failure_count"] = len(failed_ids(results))
+    results["summary_line"] = (
+        f"{summary['example_count']} examples, {summary['failure_count']} failures, {summary['pending_count']} pending"
+    )
+
+
+def parse():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--results", required=True)
+    parser.add_argument("--retries", type=int, default=3)
+    parser.add_argument("--max-failed", type=int, default=25)
+    parser.add_argument("--retry-dir", default="tmp/retry")
+    parser.add_argument("--flaky-dir", default="tmp/flaky")
+    return parser.parse_args()
+
+
+def main():
+    args = parse()
+    print("### Failure retry\n")
+    if not os.path.exists(args.results):
+        print(f"No results file at `{args.results}`: nothing to retry (hard crash).")
+        return 1
+    results = load(args.results)
+    summary = results.get("summary", {})
+    if summary.get("errors_outside_of_examples_count", 0) or not summary.get("example_count"):
+        print("Load errors or zero examples: not retrying, a crash is not a flake.")
+        return 1
+    remaining = failed_ids(results)
+    if not remaining:
+        print("No failed examples.")
+        return 0
+    if len(remaining) > args.max_failed:
+        print(f"{len(remaining)} failed examples exceeds --max-failed={args.max_failed}: not retrying.")
+        return 1
+
+    originals = {e["id"]: e for e in results["examples"] if e["id"] in remaining}
+    passed, rounds, stop = {}, 0, ""
+    os.makedirs(args.retry_dir, exist_ok=True)
+    while remaining and rounds < args.retries:
+        rounds += 1
+        result = run_round(remaining, os.path.join(args.retry_dir, f"round{rounds}.json"))
+        if result is None:
+            stop = f"round {rounds} produced no usable results"
+            break
+        now_passed = {e["id"]: e for e in result["examples"] if e["status"] == "passed"}
+        before = list(remaining)
+        remaining = [i for i in before if i not in now_passed]
+        for example_id in before:
+            if example_id in now_passed:
+                passed[example_id] = now_passed[example_id]
+        if remaining == before:
+            stop = f"round {rounds} failed the identical set: deterministic, stopped early"
+            break
+
+    record(args.flaky_dir, [
+        event("passed_after_retry", originals[i], rounds, describe(originals[i])) for i in passed
+    ])
+    apply_passes(results, passed)
+    with open(args.results, "w") as handle:
+        json.dump(results, handle)
+
+    print(f"{len(originals)} failed, {len(passed)} passed after retry, {len(remaining)} still failing "
+          f"({rounds} round(s)). {stop}\n")
+    print("| Outcome | Example |\n|---|---|")
+    for example_id, example in originals.items():
+        outcome = "passed after retry (flaky)" if example_id in passed else "still failing"
+        print(f"| {outcome} | `{example['file_path']}:{example['line_number']}` {example['full_description'][:80]} |")
+    return 1 if remaining else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

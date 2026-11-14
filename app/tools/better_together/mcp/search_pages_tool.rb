@@ -42,7 +42,7 @@ module BetterTogether
           id: page.id,
           title: page.title,
           slug: page.slug,
-          excerpt: page.content&.to_plain_text&.truncate(200),
+          excerpt: BetterTogether::Seeds::SafeRichText.plain_text_for(page, :content)&.truncate(200),
           privacy: page.privacy,
           published_at: page.published_at&.iso8601,
           url: BetterTogether::Engine.routes.url_helpers.page_path(page, locale: I18n.locale)

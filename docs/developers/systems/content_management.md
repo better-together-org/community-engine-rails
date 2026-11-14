@@ -206,7 +206,7 @@ timeline
 - CSS block cached with `host_platform.cache_key_with_version` in layouts.
 
 ## Search Indexing
-- Pages index title/slug (localized) and rich text block contents via `as_indexed_json` (Elasticsearch).
+- Pages index title/slug (localized) and rich text block contents via `as_indexed_json` (the plain-text payload used by the database fallback and the optional Elasticsearch extension gem; `Page` uses the fallback inside the `pg_search` backend).
 
 ## Presentation Helpers
 

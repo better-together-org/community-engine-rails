@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ContactDetailPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ContactDetailPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def create?
       true # Adjust as per your authorization logic
     end
@@ -10,7 +10,7 @@ module BetterTogether
       true # Adjust as per your authorization logic
     end
 
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
     end
   end
 end

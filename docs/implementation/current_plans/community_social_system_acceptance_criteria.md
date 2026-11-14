@@ -1,5 +1,9 @@
 # Test-Driven Development: Stakeholder Acceptance Criteria
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document defines stakeholder-focused acceptance criteria for implementing the Community & Social System features using Test-Driven Development (TDD). Each feature is broken down by stakeholder needs with specific, testable acceptance criteria.

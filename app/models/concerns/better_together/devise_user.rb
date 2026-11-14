@@ -12,11 +12,16 @@ module BetterTogether
 
       has_many :person_platform_integrations, dependent: :destroy
 
+      after_commit :grant_trusted_domain_memberships, if: :saved_change_to_confirmed_at?
+
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {})
-        person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
+      # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil,
+                             identity_platform: nil, trust_verified_email: false)
+        person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth,
+                                                                                     platform: identity_platform,
+                                                                                     local_platform:)
 
         # Check if integration already belongs to a different user
         if person_platform_integration.user.present? && current_user.present? &&
@@ -36,7 +41,10 @@ module BetterTogether
 
         # Check if current user already has a DIFFERENT integration for this provider
         if current_user.present? && person_platform_integration.new_record?
-          existing_integration = current_user.person_platform_integrations.find_by(provider: auth.provider)
+          existing = current_user.person_platform_integrations.where(provider: auth.provider, local_platform:)
+          # Issuer-based providers: one connection per issuer, so another issuer is a different identity
+          existing = existing.where(platform: identity_platform) if identity_platform
+          existing_integration = existing.first
           if existing_integration.present?
             provider_name = auth.provider.to_s.titleize
             raise ArgumentError,
@@ -49,26 +57,40 @@ module BetterTogether
         return person_platform_integration.user if person_platform_integration.user.present?
 
         user = find_or_initialize_user(auth, current_user)
+        verified = provider_verified_email?(auth, trust_verified_email:)
+
+        # Never attach a provider identity to an existing account on the strength of an unverified email
+        if user.present? && current_user.blank? && !verified
+          raise ArgumentError,
+                I18n.t('better_together.person_platform_integrations.create.unverified_email_collision',
+                       provider: auth.provider.to_s.titleize)
+        end
 
         if user.blank?
-          # No existing user - create new OAuth user
-          user = setup_new_oauth_user(new, auth)
+          # No existing user - create new OAuth user (confirmation required unless the provider verified the email)
+          user = setup_new_oauth_user(new, auth, verified:)
           assign_person_to_user(user, person_platform_integration, auth, invitations)
           return nil unless user.save
+
+          # Unverified signup: Devise sent its confirmation email; store no identity until the user confirms
+          return user unless verified
+        elsif current_user.blank?
+          # Verified provider email proves control of the address; an unconfirmed pre-existing account may have been
+          # pre-registered by someone else, so invalidate any password set before this point
+          rotate_password_for_unconfirmed(user)
         end
 
         # Link integration to existing or current user
         # This handles both: matched by email OR currently signed-in user
         link_integration_to_user(person_platform_integration, user)
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
       # Finds existing user or returns nil for new OAuth sign-in
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @param current_user [User, nil] the currently signed-in user
       # @return [User, nil] existing user or nil
       # @raise [ArgumentError] if OAuth email belongs to different user than current_user
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable-next Metrics/MethodLength
       def self.find_or_initialize_user(auth, current_user)
         oauth_email = auth.dig('info', 'email') || auth.dig(:info, :email)
 
@@ -97,22 +119,46 @@ module BetterTogether
         # Use case-insensitive lookup to match OAuth emails
         where('LOWER(email) = LOWER(?)', oauth_email).first
       end
-      # rubocop:enable Metrics/MethodLength
       private_class_method :find_or_initialize_user
 
       # Sets up a new user from OAuth data
       # @param user [User] the new user instance
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @return [User] the configured user
-      def self.setup_new_oauth_user(user, auth)
+      def self.setup_new_oauth_user(user, auth, verified: false)
         # Create as OauthUser subclass so we can identify OAuth-only accounts
         user = ::BetterTogether::OauthUser.new if user.new_record?
-        user.skip_confirmation!
+        user.skip_confirmation! if verified
         user.password = ::Devise.friendly_token[0, 20]
         user.attributes_from_auth(auth)
         user
       end
       private_class_method :setup_new_oauth_user
+
+      # Whether the provider asserts the auth email is verified (unknown providers are treated as unverified)
+      # Issuer-based providers (OpenID Connect) are trusted only when that issuer's configuration opts in.
+      def self.provider_verified_email?(auth, trust_verified_email: false)
+        provider = ::BetterTogether::IdentityProviders.find(auth.provider)
+        return false if provider.blank?
+        return false if provider.requires_issuer && !trust_verified_email
+
+        provider.verified_email?(auth)
+      end
+      private_class_method :provider_verified_email?
+
+      # The platform's trusted domain covering the provider-verified email in this OAuth result, or nil.
+      def self.trusted_domain_for_oauth(auth:, platform:, trust_verified_email: false)
+        email = auth.dig('info', 'email') || auth.dig(:info, :email)
+        verified = provider_verified_email?(auth, trust_verified_email:)
+        platform&.trusted_domain_for(email, verified:)
+      end
+
+      def self.rotate_password_for_unconfirmed(user)
+        return if user.confirmed?
+
+        user.update!(password: ::Devise.friendly_token[0, 20])
+      end
+      private_class_method :rotate_password_for_unconfirmed
 
       # Assigns person to user, either from invitation or new from OAuth
       # @param user [User] the user to assign person to
@@ -286,7 +332,8 @@ module BetterTogether
         email_from_auth = auth.dig('info', 'email') || auth.dig(:info, :email)
         if email_from_auth.blank?
           raise ArgumentError,
-                'Email not provided by OAuth provider. Please make your email public in your GitHub settings.'
+                I18n.t('better_together.person_platform_integrations.create.email_missing',
+                       provider: auth.provider.to_s.titleize.presence || 'the OAuth provider')
         end
 
         self.email = email_from_auth
@@ -320,6 +367,19 @@ module BetterTogether
 
         send_devise_notification(:reset_password_instructions, token, opts)
         token
+      end
+
+      # Runs when the address has just been confirmed. It counts as verified: a pending membership in a community whose
+      # platform trusts the address domain becomes active with the domain's role.
+      def grant_trusted_domain_memberships
+        return if person.blank?
+
+        person.person_community_memberships.pending.includes(:joinable).find_each do |membership|
+          trusted = membership.joinable&.primary_platform&.trusted_domain_for(email, verified: true)
+          next if trusted.blank?
+
+          BetterTogether::TrustedDomains::Grant.call(trusted_domain: trusted, person:, via: 'password_registration')
+        end
       end
 
       # Check if user signed up via OAuth and has never set a password

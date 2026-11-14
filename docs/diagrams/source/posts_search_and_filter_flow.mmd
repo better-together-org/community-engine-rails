@@ -1,0 +1,24 @@
+        flowchart LR
+            SearchBar[Shared search bar
+GET /search?q=...] --> SearchController[SearchController#search]
+            SearchController --> SearchBackend[BetterTogether::Search.backend]
+            SearchBackend --> PgSearchBackend[PgSearchBackend]
+            PgSearchBackend --> Registry[Search::Registry
+Page, Post, Event, Community,
+Joatu offers and requests,
+Checklist, CallForInterest]
+            Registry --> PostScope1[Post pg_search scope]
+            Registry --> PageScope[Page database fallback]
+            Registry --> OtherScopes[Other model scopes]
+            SearchController --> Results[Policy-filtered, paginated results
+10 per page]
+            SearchController --> Suggestions[Optional suggestions]
+
+            McpTool[MCP SearchPostsTool] --> PostScope[PostPolicy::Scope]
+            PostScope --> PostQuery[Translated title/body query
+published and accessible posts]
+            PostQuery --> McpResults[JSON post results]
+
+            BranchNote[No dedicated posts filter form
+on this branch]
+            Results --> BranchNote

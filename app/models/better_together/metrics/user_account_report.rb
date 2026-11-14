@@ -4,8 +4,8 @@ module BetterTogether
   module Metrics
     # Generates aggregate reports on user account creation and confirmation
     # Queries existing User data directly - no event tracking needed
-    # rubocop:disable Metrics/ClassLength
-    class UserAccountReport < ApplicationRecord
+    # rubocop:disable-next Metrics/ClassLength
+    class UserAccountReport < PlatformRecord
       # Associations
       belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :user_account_reports, optional: true
 
@@ -20,11 +20,12 @@ module BetterTogether
       default_scope { order(created_at: :desc) }
 
       # Class method to create and generate a report
-      def self.create_and_generate!(creator:, from_date: nil, to_date: nil, file_format: 'csv')
+      def self.create_and_generate!(creator:, platform: nil, from_date: nil, to_date: nil, file_format: 'csv')
         report = create!(
           filters: { from_date: from_date, to_date: to_date }.compact,
           file_format: file_format,
-          creator: creator
+          creator: creator,
+          platform: platform
         )
         report.generate!
         report
@@ -57,7 +58,7 @@ module BetterTogether
         from_date.beginning_of_day..to_date.end_of_day
       end
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def build_summary(date_range = nil)
         date_range ||= parse_date_range
         users_scope = BetterTogether::User.where(created_at: date_range)
@@ -76,9 +77,8 @@ module BetterTogether
           }
         }
       end
-      # rubocop:enable Metrics/AbcSize
 
-      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable-next Metrics/CyclomaticComplexity
       def build_daily_stats(date_range = nil) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         date_range ||= parse_date_range
         # Group by date for accounts created
@@ -111,9 +111,8 @@ module BetterTogether
           }
         end
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def build_registration_sources(date_range = nil)
         date_range ||= parse_date_range
         users_scope = BetterTogether::User.where(created_at: date_range)
@@ -167,9 +166,8 @@ module BetterTogether
           total: total
         }
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def build_locale_breakdown(date_range = nil)
         date_range ||= parse_date_range
         # Query locale from Person preferences JSONB column via Identifications
@@ -205,8 +203,6 @@ module BetterTogether
           }
         end.merge(total: total)
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

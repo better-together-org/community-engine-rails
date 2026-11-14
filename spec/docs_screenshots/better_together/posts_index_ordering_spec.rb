@@ -19,6 +19,7 @@ RSpec.describe 'Documentation screenshots for posts index ordering', :docs_scree
 
     create(
       :better_together_post,
+      platform: Current.platform,
       title: 'Evidence Older Post',
       content: 'This post should appear lower after the ordering fix.',
       privacy: 'public',
@@ -27,6 +28,7 @@ RSpec.describe 'Documentation screenshots for posts index ordering', :docs_scree
     )
     create(
       :better_together_post,
+      platform: Current.platform,
       title: 'Evidence Newer Post',
       content: 'This post should appear first after the ordering fix.',
       privacy: 'public',

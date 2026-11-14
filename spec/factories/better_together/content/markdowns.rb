@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :content_markdown, class: 'BetterTogether::Content::Markdown', aliases: [:markdown_block] do
+    privacy { 'public' }
     markdown_source { Faker::Markdown.random }
 
     trait :with_source do

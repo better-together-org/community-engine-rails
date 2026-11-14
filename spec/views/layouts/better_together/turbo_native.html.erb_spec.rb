@@ -32,7 +32,7 @@ RSpec.describe 'layouts/better_together/turbo_native' do
       csrf_meta_tags: '',
       csp_meta_tag: '',
       hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe,
-      request: double(original_url: 'http://test.host/current')
+      request: double(original_url: 'http://test.host/current', path: '/current')
     )
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
     allow(view).to receive(:base_url).and_return('http://test.host')
@@ -52,5 +52,24 @@ RSpec.describe 'layouts/better_together/turbo_native' do
 
     expect(rendered).to include('<link rel="alternate" hreflang="fr" href="/fr" />')
     expect(rendered).not_to include('<link rel="alternate" hreflang="en" href="/en" />')
+  end
+
+  it 'does not include remote CDN stylesheet links' do
+    render template: 'layouts/better_together/turbo_native'
+
+    expect(rendered).not_to include('https://unpkg.com/trix')
+    expect(rendered).not_to include('https://cdnjs.cloudflare.com/ajax/libs/slim-select')
+    expect(rendered).not_to include('https://unpkg.com/leaflet')
+  end
+
+  it 'renders the platform css block when the controller sits outside the engine namespace' do
+    css_block = BetterTogether::Content::Css.new(content: '.brand { color: red; }')
+    allow(view.host_platform).to receive(:css_block).and_return(css_block)
+    view.extend BetterTogether::Content::BlocksHelper
+    view.lookup_context.prefixes = ['host_app/things']
+
+    render template: 'layouts/better_together/turbo_native'
+
+    expect(rendered).to include('.brand')
   end
 end

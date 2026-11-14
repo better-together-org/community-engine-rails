@@ -3,9 +3,10 @@
 module BetterTogether
   # Sends email notifications for conversation activities
   class ConversationMailer < ApplicationMailer
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def new_message_notification # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       @message = params[:message]
+      @platform = @message.platform
       @conversation = @message.conversation
       @recipient = params[:recipient]
       @sender = @message.sender
@@ -30,6 +31,5 @@ module BetterTogether
       mail(to: @recipient.email,
            from:, subject:)
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :seed do
     desc 'Seed new roles, permissions, assignments, and navigation items'
@@ -13,6 +13,7 @@ namespace :better_together do
             seed_platform_analytics_viewer_role
             assign_metrics_permissions_to_platform_roles
             seed_platform_host_analytics_nav_item
+            seed_platform_host_dashboard_review_nav_items
             seed_platform_host_nav_visibility
             migrate_legacy_analytics_assignments
             remove_legacy_platform_analytics_permission
@@ -48,10 +49,9 @@ namespace :better_together do
         resource_type: 'BetterTogether::Platform',
         name: 'Platform Analytics Viewer',
         # rubocop:todo Lint/CopDirectiveSyntax
-        # rubocop:todo Lint/CopDirectiveSyntax
+        # rubocop:todo-next Lint/CopDirectiveSyntax
         description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
                      'reports without access to other platform management functions.'
-        # rubocop:enable Lint/CopDirectiveSyntax
         # rubocop:enable Lint/CopDirectiveSyntax
       )
       role.save! if role.changed?
@@ -95,6 +95,22 @@ namespace :better_together do
       analytics_item.save! if analytics_item.changed?
     end
 
+    def seed_platform_host_dashboard_review_nav_items
+      navigation_area = find_or_create_platform_host_nav_area
+      host_nav = find_or_create_platform_host_nav_item(navigation_area)
+
+      host_dashboard_review_nav_items.each do |item_attrs|
+        item = BetterTogether::NavigationItem.find_or_initialize_by(
+          identifier: item_attrs[:identifier],
+          navigation_area: navigation_area,
+          parent: host_nav
+        )
+
+        item.assign_attributes(item_attrs.except(:identifier))
+        item.save! if item.changed?
+      end
+    end
+
     def seed_platform_host_nav_visibility # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/MethodLength
       navigation_area = find_or_create_platform_host_nav_area
       host_nav = find_or_create_platform_host_nav_item(navigation_area)
@@ -113,7 +129,7 @@ namespace :better_together do
       nav_item_ids.each do |item_id|
         # Always find fresh to avoid any cached/stale state
         item = BetterTogether::NavigationItem.find(item_id)
-        permission_identifier = item.identifier == 'analytics' ? 'view_metrics_dashboard' : 'manage_platform'
+        permission_identifier = host_nav_permission_identifier_for(item)
         apply_nav_visibility(item, permission_identifier)
       rescue ActiveRecord::RecordInvalid
         next unless item.route_name&.include?('_path')
@@ -164,6 +180,68 @@ namespace :better_together do
         visibility_strategy: 'permission',
         permission_identifier: 'view_metrics_dashboard'
       }
+    end
+
+    # rubocop:todo-next Metrics/MethodLength
+    def host_dashboard_review_nav_items
+      [
+        {
+          identifier: 'host-dashboard',
+          title: 'Dashboard',
+          slug: 'host-dashboard',
+          position: 0,
+          item_type: 'link',
+          route_name: 'host_dashboard_url',
+          icon: 'gauge-high',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform'
+        },
+        {
+          identifier: 'host-dashboard-membership-review',
+          title: 'Membership Review',
+          slug: 'host-dashboard-membership-review',
+          position: 15,
+          item_type: 'link',
+          route_name: 'host_dashboard_membership_review_url',
+          icon: 'user-check',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform'
+        },
+        {
+          identifier: 'host-dashboard-platform-connection-review',
+          title: 'Federation Review',
+          slug: 'host-dashboard-platform-connection-review',
+          position: 20,
+          item_type: 'link',
+          route_name: 'host_dashboard_platform_connection_review_url',
+          icon: 'network-wired',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_network_connections'
+        },
+        {
+          identifier: 'host-dashboard-safety-review',
+          title: 'Safety Review',
+          slug: 'host-dashboard-safety-review',
+          position: 21,
+          item_type: 'link',
+          route_name: 'host_dashboard_safety_review_url',
+          icon: 'shield-heart',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform_safety'
+        }
+      ]
     end
 
     def shift_host_nav_positions_for_analytics(host_nav)
@@ -286,6 +364,19 @@ namespace :better_together do
       }
     end
 
+    def host_nav_permission_identifier_for(item)
+      case item.identifier
+      when 'analytics'
+        'view_metrics_dashboard'
+      when 'host-dashboard-safety-review'
+        'manage_platform_safety'
+      when 'host-dashboard-platform-connection-review'
+        'manage_network_connections'
+      else
+        'manage_platform'
+      end
+    end
+
     def seed_community_invitation_permission
       permission_attrs = {
         action: 'manage',
@@ -351,4 +442,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

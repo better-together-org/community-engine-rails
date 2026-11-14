@@ -5,7 +5,7 @@ module BetterTogether
   # These helpers build UI elements for locale tabs, translation dropdowns
   # and translation indicators used across the admin forms.
   module TranslatableFieldsHelper # rubocop:disable Metrics/ModuleLength
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
     def translatable_text_field_config(model:, scope:, temp_id:, attribute:, rows:, help_text:, input_options: {})
       resolved_temp_id = temp_id_for(model, temp_id:)
       input_options ||= {}
@@ -37,7 +37,6 @@ module BetterTogether
         data_attributes: data_attributes
       }
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
 
     def translatable_text_field_options(config, locale_attribute)
       options = config[:base_options].deep_dup
@@ -64,7 +63,7 @@ module BetterTogether
                        'data-better_together--translation-target' => 'tab') do
         content_tag(:div, class: 'input-group') do
           tab_button(locale, unique_locale_attribute, translation_present) +
-            (if BetterTogether.llm_available?(identifier: 'translation', platform: Current.platform)
+            (if BetterTogether.translation_available?(platform: Current.platform)
                render_translation_dropdown(locale, unique_locale_attribute, attribute, base_url,
                                            translation_present)
              end).to_s

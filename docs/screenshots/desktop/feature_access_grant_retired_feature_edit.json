@@ -1,0 +1,49 @@
+{
+  "name": "feature_access_grant_retired_feature_edit",
+  "device": "desktop",
+  "url": "/en/host/platforms/docs-feature-gate-platform-3136b9a5/feature_access_grants/d918e783-f6a9-438d-8fc0-f4fa34092c9d/edit",
+  "title": "Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "feature_access_grants_and_developer_settings",
+  "flow": "grant_edit_retired_feature",
+  "source_spec": "./spec/docs_screenshots/better_together/feature_access_grants_and_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "select[name=\"feature_access_grant[feature_key]\"]",
+      "title": "Retired feature fallback",
+      "bullets": [
+        "Persisted grants retain the removed feature key as a selectable option.",
+        "The form shows an explicit unknown or retired rollout state instead of raising."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 303.59375,
+        "width": 640.0,
+        "height": 38.0,
+        "right": 712.0,
+        "bottom": 341.59375,
+        "center_x": 392.0,
+        "center_y": 322.59375
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 303.59375,
+        "width": 640.0,
+        "height": 38.0,
+        "right": 712.0,
+        "bottom": 341.59375,
+        "center_x": 392.0,
+        "center_y": 322.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 202.0,
+        "y": 361.59,
+        "width": 380,
+        "height": 268,
+        "score": 1115.40625
+      }
+    }
+  ]
+}

@@ -15,7 +15,7 @@ module BetterTogether
         expect(described_class.ancestors).to include(BetterTogether::Content::ResourceBlockAttributes)
       end
 
-      it 'is content_addable' do
+      it 'is content_addable (0.11.0 content blocks ship unconditionally, not gated)' do
         expect(described_class.content_addable?).to be true
       end
 

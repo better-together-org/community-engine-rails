@@ -7,19 +7,33 @@ module BetterTogether
 
     protected
 
-    def find_by_translatable(translatable_type: translatable_resource_type, friendly_id: id_param)
+    # Scoped by default to resource_collection's ids (policy_scope, itself
+    # platform-scoped for platform-scoped resource types) so a slug that's
+    # reused across two different platforms (allowed — slug uniqueness is
+    # scoped to platform_id, not global) can't resolve to the wrong platform's
+    # record.
+    #
+    # Pass `collection:` explicitly when looking up a translatable_type that
+    # differs from this controller's own resource_class (e.g.
+    # NavigationItemsController resolving its parent NavigationArea) —
+    # resource_collection is scoped to THIS controller's resource_class, so
+    # reusing it for an unrelated model's slug lookup would restrict
+    # translatable_id to the wrong table's ids and never match.
+    def find_by_translatable(translatable_type: translatable_resource_type, friendly_id: id_param,
+                             collection: resource_collection)
       Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
         translatable_type:,
         key: 'slug',
         value: friendly_id,
-        locale: I18n.available_locales
+        locale: I18n.available_locales,
+        translatable_id: collection.select(:id)
       ).includes(:translatable).last&.translatable
     end
 
     # Fallback to find resource by slug translations when not found in current locale
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_resource_instance # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # 1. Try translated slug lookup across locales to avoid DB-specific issues with friendly_id history
       @resource ||= find_by_translatable
@@ -31,7 +45,8 @@ module BetterTogether
         translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
           translatable_type: resource_class.name,
           key: 'slug',
-          value: id_param
+          value: id_param,
+          translatable_id: resource_collection.select(:id)
         ).includes(:translatable).first
 
         @resource ||= translation&.translatable
@@ -47,20 +62,58 @@ module BetterTogether
         end
       end
 
-      render_not_found && return if @resource.nil?
+      return handle_resource_not_found if @resource.nil?
+      return if redirected_for_old_slug?
 
+      instance_variable_set("@#{resource_name}", @resource)
       @resource
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
+
+    # A record requested by a slug it no longer has (FriendlyId history) gets a permanent
+    # redirect to its current address. The record came from the policy-scoped collection,
+    # so nothing hidden is revealed. Runs before the action, which the redirect halts.
+    def redirected_for_old_slug?
+      path = old_slug_redirect_path
+      return false unless path
+
+      redirect_to [path, request.query_string.presence].compact.join('?'), status: :moved_permanently,
+                                                                           allow_other_host: false
+      true
+    end
+
+    def old_slug_redirect_path
+      return unless request.get? && action_name == 'show'
+
+      current = Redirects::SlugHistory.current_slug_for(@resource, id_param)
+      path = current && "#{request.path.delete_suffix(id_param.to_s)}#{ERB::Util.url_encode(current)}"
+      path if local_path?(path) && path != request.path
+    end
+
+    # Only a path on this site: it starts with one slash, never a scheme-relative or backslash form.
+    def local_path?(path)
+      path.present? && path.start_with?('/') && !path.start_with?('//', '/\\')
+    end
+
+    # Overridable hook for when the requested resource is absent from the
+    # policy-scoped resource_collection. Defaults to the standard 404.
+    # Subclasses may override this to distinguish "genuinely doesn't exist /
+    # isn't on this platform" from "exists but is excluded from the scope for
+    # some other reason" (e.g. redirecting unauthenticated guests to sign in
+    # for a private record, instead of a blanket 404), without changing the
+    # default behavior for every other resource type.
+    def handle_resource_not_found
+      render_not_found
+    end
 
     def translatable_resource_type
       resource_class.name
     end
 
     def set_metric_viewable
-      self.metric_viewable = resource_instance
+      set_resource_instance unless @resource&.persisted?
+      self.metric_viewable = @resource if @resource&.persisted?
     end
   end
 end

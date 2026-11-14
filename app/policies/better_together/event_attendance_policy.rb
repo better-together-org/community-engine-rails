@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for event attendance (RSVPs)
-  class EventAttendancePolicy < ApplicationPolicy
+  class EventAttendancePolicy < PlatformRecordPolicy
     def create?
       user.present? && event_allows_rsvp?
     end
@@ -23,6 +23,7 @@ module BetterTogether
     def event_allows_rsvp?
       event = record&.event || record
       return false unless event
+      return false if agent&.block_between?(event.creator)
 
       # Don't allow RSVP for draft events (no start date)
       event.scheduled?

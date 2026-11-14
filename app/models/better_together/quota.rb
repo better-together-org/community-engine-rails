@@ -1,0 +1,80 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  # A usage limit for one owner (Person, Community, or Platform) and one quota type.
+  # Rows are created lazily from each type's declared defaults the first time usage is
+  # attributed to an owner, following the same lazy-row pattern as CommentConfig.
+  class Quota < PlatformRecord
+    # No table_name override needed: config/initializers/inflections.rb pins
+    # "quota"/"quotas" as a regular pair, so Rails' default table-name inference
+    # already lands on "better_together_quotas".
+    belongs_to :owner, polymorphic: true
+
+    # :restrict_with_exception, not :destroy: quota_usages is an append-only ledger;
+    # nothing should ever be able to delete usage history as a side effect of deleting
+    # the quota row above it (and nothing in this phase deletes Quota rows at all).
+    has_many :quota_usages, dependent: :restrict_with_exception
+    has_many :quota_reservations, dependent: :destroy
+    has_many :quota_balances, dependent: :destroy
+
+    enum :period, { cumulative: 'cumulative', monthly: 'monthly', daily: 'daily' },
+         prefix: true, default: 'cumulative'
+    enum :status, { active: 'active', suspended: 'suspended' },
+         prefix: true, default: 'active'
+    # off/shadow/soft/hard. Still never evaluated as blocking as of Phase 5b:
+    # Quotas.check! is hardcoded permissive regardless of the value stored here.
+    # Flipping this column alone does nothing until check! gains real branching
+    # logic - not yet built. Reversibility is a separate, type-level flag
+    # (Quotas::Type#reversible?), not stored per-row, since it is a fact about
+    # the resource being metered, not this specific quota.
+    enum :enforcement_mode, { off: 'off', shadow: 'shadow', soft: 'soft', hard: 'hard' },
+         prefix: true, default: 'shadow'
+
+    validates :quota_type, presence: true, inclusion: { in: ->(_record) { BetterTogether::Quotas::Type.keys } }
+    validates :limit, presence: true, numericality: { greater_than_or_equal_to: 0 }
+    validates :owner_id, uniqueness: { scope: %i[owner_type quota_type] }
+    validate :owner_is_quota_owner
+    validate :owner_is_local
+
+    # The limit actually in effect: the highest active QuotaGrant for this owner+type,
+    # or the stored `limit` when no grant applies. Nothing in this phase reads this to
+    # make a blocking decision (Quotas.check! stays permissive); it exists so a later
+    # enforcement phase has a single, already-correct place to read from.
+    def effective_limit
+      QuotaGrant.for_owner_and_type(owner, quota_type).active.maximum(:limit) || limit
+    end
+
+    # The period_key for "right now", in the same format lib/better_together/quotas.rb's
+    # private period_key_for uses - mirrored here on the instance (via the already-resolved
+    # `period` attribute) rather than exposing that private module method.
+    def current_period_key
+      case period
+      when 'monthly' then Time.current.strftime('%Y-%m')
+      when 'daily' then Time.current.strftime('%Y-%m-%d')
+      else 'cumulative'
+      end
+    end
+
+    def current_balance
+      quota_balances.find_by(period_key: current_period_key)
+    end
+
+    private
+
+    # A direct module check rather than Owner.included_in_models, which eager-loads
+    # the whole app outside production on every call.
+    def owner_is_quota_owner
+      return if owner.is_a?(BetterTogether::Quotas::Owner)
+
+      errors.add(:owner_type, :inclusion, value: owner_type)
+    end
+
+    # Only local owners get quotas (see Quotas::Locality).
+    def owner_is_local
+      return unless owner.is_a?(BetterTogether::Quotas::Owner)
+      return if BetterTogether::Quotas::Locality.local_owner?(owner)
+
+      errors.add(:owner, I18n.t('better_together.quotas.errors.not_local', default: 'must be local to this platform'))
+    end
+  end
+end

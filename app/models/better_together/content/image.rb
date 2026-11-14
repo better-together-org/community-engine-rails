@@ -7,6 +7,8 @@ module BetterTogether
     # Allows the user to ceate and display image content
     class Image < Block
       include ::Storext.model
+      include Base64ImageInput
+      include AttachableBlock
 
       CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
 
@@ -14,13 +16,11 @@ module BetterTogether
 
       delegate :url, to: :media
 
-      translates :attribution, type: :string
-      translates :alt_text, type: :string
-      translates :caption, type: :string
+      # API clients send the image as base64 (media_data); the caption is then required, as it is the image's text.
+      accepts_base64_image :media_data, attachment: :media, filename_field: :media_filename, default_name: 'image'
+      validate :caption_required_for_api_images
 
-      store_attributes :media_settings do
-        attribution_url String, default: ''
-      end
+      translates :attribution, :alt_text, :caption, :attribution_url, type: :string
 
       validates :attribution_url,
                 format: {
@@ -35,7 +35,7 @@ module BetterTogether
                 content_type: CONTENT_TYPES,
                 size: { less_than: 100.megabytes, message: 'is too large' }
 
-      def self.content_addable?
+      def self.content_addable?(actor: nil) # rubocop:disable Lint/UnusedMethodArgument
         true
       end
 
@@ -43,25 +43,19 @@ module BetterTogether
         super + %i[media]
       end
 
-      def evidence_selector_options # rubocop:todo Metrics/MethodLength
-        super + [
-          {
-            value: "#{evidence_selector}:media",
-            label: "Image media: #{self}"
-          },
-          {
-            value: "#{evidence_selector}:caption",
-            label: "Image caption: #{self}"
-          },
-          {
-            value: "#{evidence_selector}:alt_text",
-            label: "Image alt text: #{self}"
-          },
-          {
-            value: "#{evidence_selector}:region:*",
-            label: 'Image region selector'
-          }
-        ]
+      # Human label for pickers: caption, then alt text, then the file name.
+      def picker_label
+        caption.presence || alt_text.presence || media.filename.to_s.presence || to_s
+      end
+
+      def attachable_plain_text_representation(_caption = nil)
+        caption.presence || '[Image]'
+      end
+
+      private
+
+      def caption_required_for_api_images
+        errors.add(:caption, :blank) if (media_data.present? || media_data_received?) && caption.blank?
       end
     end
   end

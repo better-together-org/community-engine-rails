@@ -1,0 +1,8 @@
+<% visible = visible_quotas(@quotas) %>
+<% if visible.any? %>
+  <% visible.each do |quota| %>
+    <%= render 'better_together/quotas/usage_meter', quota: quota %>
+  <% end %>
+<% else %>
+  <p class="text-muted mb-0"><%= t('.none') %></p>
+<% end %>

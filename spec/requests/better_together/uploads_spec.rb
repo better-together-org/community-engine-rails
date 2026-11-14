@@ -7,6 +7,27 @@ RSpec.describe 'BetterTogether::Uploads' do
   let(:user) { find_or_create_test_user('upload-reviewer@example.test', 'SecureTest123!@#') }
   let!(:upload) { create(:better_together_upload, creator: user.person, name: 'Held upload') }
 
+  around do |example|
+    original = BetterTogether.content_security
+
+    config = ActiveSupport::OrderedOptions.new
+    malware_scanning = ActiveSupport::OrderedOptions.new
+    malware_scanning.enabled = true
+    malware_scanning.engine = 'clamav'
+    malware_scanning.host = '127.0.0.1'
+    malware_scanning.port = 3310
+    malware_scanning.timeout = 1
+    malware_scanning.max_stream_bytes = 5.megabytes
+    malware_scanning.fail_mode = 'hold_until_clean'
+    malware_scanning.enabled_surfaces = ['uploads']
+    config.malware_scanning = malware_scanning
+
+    BetterTogether.content_security = config
+    example.run
+  ensure
+    BetterTogether.content_security = original
+  end
+
   before do
     upload.file.attach(io: StringIO.new('held upload'), filename: 'held.txt', content_type: 'text/plain')
     upload.save!

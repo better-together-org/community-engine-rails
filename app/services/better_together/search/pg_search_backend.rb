@@ -5,6 +5,18 @@ module BetterTogether
     # Postgres-native search backend backed by pg_search scopes where available,
     # with a database fallback for models that have not been upgraded yet.
     class PgSearchBackend < DatabaseBackend
+      def audit_store_identifier(entry)
+        return entry.search_scope_name.to_s if entry.pg_search_enabled?
+
+        super
+      end
+
+      def audit_search_mode(entry)
+        return 'pg_search' if entry.pg_search_enabled?
+
+        super
+      end
+
       def backend_key
         :pg_search
       end
@@ -27,7 +39,12 @@ module BetterTogether
       def pg_search_matches(entry, query)
         return score_matching_records(entry, normalize_terms(query)) unless entry.pg_search_enabled?
 
-        entry.search_relation(query).limit(50).map do |record|
+        # pg_search only selects the rank column when asked; without it every score is
+        # 0.0 and results tie-break on id, ignoring the model's weights and boosts.
+        relation = entry.search_relation(query)
+        relation = relation.with_pg_search_rank if relation.respond_to?(:with_pg_search_rank)
+
+        relation.limit(50).map do |record|
           {
             record:,
             score: record.try(:pg_search_rank).to_f

@@ -8,6 +8,16 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
   let(:locale) { I18n.default_locale }
   let!(:regular_user) { BetterTogether::User.find_by(email: 'user@example.test') }
   let(:person) { regular_user.person }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+
+  before do
+    host_platform.update!(feature_gate_rollouts: { 'developer_settings' => 'stable' })
+    Current.platform = host_platform
+  end
+
+  after do
+    Current.platform = nil
+  end
 
   describe 'access by authenticated regular users', :as_user do
     describe 'GET /settings/applications (index)' do
@@ -163,6 +173,14 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
         expect(response).to have_http_status(:not_found)
       end
 
+      it 'cannot update another user\'s app' do
+        patch better_together.personal_oauth_application_path(locale:, id: other_app.id),
+              params: { oauth_application: { name: 'Hijacked Name' } }
+
+        expect(response).to have_http_status(:not_found)
+        expect(other_app.reload.name).to eq("Other's App")
+      end
+
       it 'cannot delete another user\'s app' do
         delete better_together.personal_oauth_application_path(locale:, id: other_app.id)
         expect(response).to have_http_status(:not_found)
@@ -178,6 +196,32 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
 
     it 'blocks unauthenticated new form' do
       get better_together.new_personal_oauth_application_path(locale:)
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'developer settings gate', :as_user do
+    before do
+      host_platform.update!(feature_gate_rollouts: { 'developer_settings' => 'off' })
+    end
+
+    it 'blocks direct access to the personal OAuth applications index when the feature is off' do
+      get better_together.personal_oauth_applications_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'blocks direct creation when the feature is off' do
+      expect do
+        post better_together.personal_oauth_applications_path(locale:),
+             params: {
+               oauth_application: {
+                 name: 'Hidden App',
+                 redirect_uri: 'https://example.com/callback'
+               }
+             }
+      end.not_to change(BetterTogether::OauthApplication, :count)
+
       expect(response).to have_http_status(:not_found)
     end
   end

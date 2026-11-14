@@ -166,4 +166,30 @@ RSpec.describe BetterTogether::Content::Hero do
       expect(hero.background_image_file).to be_attached
     end
   end
+
+  describe 'background image CSS' do
+    let(:hero) { create(:content_hero, :with_background_image) }
+
+    before do
+      allow(BetterTogether::MediaUrlBuilder).to receive(:proxy_url_for)
+        .and_return('https://example.test/rails/active_storage/representations/proxy/abc--def/photo(1).jpg')
+    end
+
+    it 'wraps the proxy URL in double quotes so filenames with () or spaces stay valid CSS' do
+      expect(hero.block_styles[:background_image])
+        .to eq('url("https://example.test/rails/active_storage/representations/proxy/abc--def/photo(1).jpg")')
+    end
+
+    it 'keeps a freeform background_image value (e.g. a gradient) alongside the quoted url()' do
+      hero.update!(background_image: 'linear-gradient(black, white)')
+
+      expect(hero.block_styles[:background_image])
+        .to eq('url("https://example.test/rails/active_storage/representations/proxy/abc--def/photo(1).jpg"), ' \
+               'linear-gradient(black, white)')
+    end
+
+    it 'emits a valid background-image declaration in inline_block_styles' do
+      expect(hero.inline_block_styles).to include('background-image: url("https://example.test')
+    end
+  end
 end

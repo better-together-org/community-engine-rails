@@ -1,0 +1,24 @@
+---
+title: Event Form — Inline New Address Panel
+audience:
+- event_organizer
+- community_organizer
+- developer
+journey_step: As an event organizer, after choosing "Create new address" I fill in
+  the address right here instead of being sent to a separate address-management screen
+  first.
+callouts:
+- :id: new_address_panel
+  :title: Focus and state management
+  :description: revealNewRecord resets the picker, unhides and enables the fieldset,
+    prefills line1 from the typed term, sets the legend caption, and moves focus into
+    the fieldset. Picking an existing location or cancelling closes it, disables its
+    fields, and clears the hidden location fields so they never compete on submit.
+    On a validation error the fieldset is re-rendered open with the typed input preserved.
+accessibility_notes: The panel is a <fieldset>/<legend> region; focus moves into it
+  on reveal and back to the combobox on Cancel, and both transitions are announced
+  in a visually-hidden role="status" live region. The nested label and privacy selects
+  are not HTML "required" in this inline context, so a visible-but-untouched panel
+  never silently blocks the event form submit.
+slug: event_location_new_address_panel
+device: mobile

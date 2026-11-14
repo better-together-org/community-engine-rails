@@ -1,0 +1,13 @@
+---
+title: Session page
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I find the rest of the run.
+callouts:
+- :id: banner
+  :title: Banner
+  :description: Names the series only when the names differ.
+accessibility_notes: Links carry their text; the panel is a labelled fieldset.
+slug: event_series_session
+device: mobile

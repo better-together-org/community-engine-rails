@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether # :nodoc:
   RSpec.describe EventReminderNotifier do
-    let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:recipient) { double('Person', locale: nil) } # rubocop:todo RSpec/VerifiedDoubles
 
     let(:event_class) do
       Class.new do
@@ -37,9 +37,8 @@ module BetterTogether # :nodoc:
     end
 
     let(:event) { event_class.new(id: 42, name: 'Example Event', starts_at: 1.week.from_now) }
-    # rubocop:todo RSpec/VerifiedDoubles
+    # rubocop:todo-next RSpec/VerifiedDoubles
     let(:notification) { double('Notification', recipient: recipient, record: event) }
-    # rubocop:enable RSpec/VerifiedDoubles
 
     subject(:notifier) { described_class.new(record: event, params: { reminder_type: '24_hours' }) }
 
@@ -49,9 +48,8 @@ module BetterTogether # :nodoc:
 
     it 'includes unread notification count in message' do
       unread = double('Unread', count: 3) # rubocop:todo RSpec/VerifiedDoubles
-      # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo-next RSpec/VerifiedDoubles
       allow(recipient).to receive(:notifications).and_return(double('Notifications', unread: unread))
-      # rubocop:enable RSpec/VerifiedDoubles
       result = notifier.send(:build_message, notification)
 
       expect(result[:unread_count]).to eq(3)
@@ -68,6 +66,23 @@ module BetterTogether # :nodoc:
     it 'defaults reminder type when not provided' do
       notifier_without_type = described_class.new(record: event, params: {})
       expect(notifier_without_type.reminder_type).to eq('24_hours')
+    end
+
+    describe 'delivered notifications' do
+      let(:recipient) { create(:person) }
+      let(:event) { create(:event, :upcoming) }
+
+      it 'delegates target_event-dependent methods through the noticed event' do
+        expect do
+          described_class.with(record: event, reminder_type: '1_hour').deliver(recipient)
+        end.to change { recipient.notifications.count }.by(1)
+
+        notification = recipient.notifications.order(created_at: :desc).first
+
+        expect(notification.target_event).to eq(event)
+        expect(notification.reminder_type).to eq('1_hour')
+        expect(notification.should_notify?).to be(true)
+      end
     end
   end
 end

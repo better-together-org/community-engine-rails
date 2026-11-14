@@ -13,6 +13,29 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
   end
 
   describe '.match' do
+    context 'with person blocks' do
+      let(:request) { with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open')) }
+      let!(:offer) { with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open')) }
+
+      it 'matches when there is no block' do
+        expect(described_class.match(request)).to include(offer)
+      end
+
+      it 'omits offers from people the request creator blocked' do
+        create(:person_block, blocker: creator_a, blocked: creator_b)
+
+        expect(described_class.match(request)).not_to include(offer)
+      end
+
+      it 'omits requests from people who blocked the offer creator' do
+        create(:person_block, blocker: creator_a, blocked: creator_b)
+        offer_side = with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open'))
+        request
+
+        expect(described_class.match(offer_side)).not_to include(request)
+      end
+    end
+
     context 'pair-specific response link exclusion' do
       it 'excludes an offer only when a response link exists for that specific request->offer pair' do
         # rubocop:enable RSpec/MultipleExpectations
@@ -47,6 +70,25 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
       end
     end
 
+    context 'platform isolation' do
+      it 'excludes an otherwise-matching offer on a different platform' do
+        other_platform = create(:better_together_platform)
+        request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open'))
+        offer = with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open',
+                                                                   platform: other_platform))
+
+        expect(described_class.match(request)).not_to include(offer)
+      end
+
+      it 'still matches an offer on the same platform as the request' do
+        request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open'))
+        offer = with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open',
+                                                                   platform: request.platform))
+
+        expect(described_class.match(request)).to include(offer)
+      end
+    end
+
     context 'target wildcard behavior' do
       let(:target_person) { create(:better_together_person) }
 
@@ -54,9 +96,8 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
         request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open',
                                                                        target: target_person))
         offer   = with_category(create(:better_together_joatu_offer,   creator: creator_b, status: 'open',
-                                                                       # rubocop:todo Layout/LineLength
+                                                                       # rubocop:todo-next Layout/LineLength
                                                                        target_type: request.target_type, target_id: nil))
-        # rubocop:enable Layout/LineLength
 
         expect(described_class.match(request)).to include(offer)
       end

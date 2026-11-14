@@ -39,10 +39,12 @@ FactoryBot.define do
 
         next unless platform_steward_role
 
-        host_platform.person_platform_memberships.find_or_create_by!(
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(
           member: user.person,
           role: platform_steward_role
         )
+        membership.status = 'active'
+        membership.save!
       end
     end
 
@@ -62,10 +64,12 @@ FactoryBot.define do
         role = platform_steward_role || BetterTogether::Role.find_by(identifier: 'platform_manager')
         next unless role
 
-        host_platform.person_platform_memberships.find_or_create_by!(
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(
           member: user.person,
           role: role
         )
+        membership.status = 'active'
+        membership.save!
       end
     end
 
@@ -83,10 +87,12 @@ FactoryBot.define do
 
         next unless network_admin_role
 
-        host_platform.person_platform_memberships.find_or_create_by!(
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(
           member: user.person,
           role: network_admin_role
         )
+        membership.status = 'active'
+        membership.save!
       end
     end
 

@@ -2,6 +2,9 @@
 
 module BetterTogether
   class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    # #new builds an external platform and authorizes that itself; the inherited
+    # check would authorize a blank internal Platform (create_platform) instead.
+    skip_before_action :authorize_resource, only: :new
     before_action :set_platform, only: %i[show edit update destroy available_people]
     before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
@@ -22,22 +25,17 @@ module BetterTogether
       # Preload memberships with policy scope applied to prevent N+1 queries in view
       # Include comprehensive associations for members and roles to eliminate N+1 queries
       @platform_memberships = policy_scope(@platform.memberships_with_associations)
-      return unless helpers.current_person
-
-      @current_person_platform_membership = @platform.person_platform_memberships.find_by(
-        member: helpers.current_person
-      )
+      load_platform_connections if policy(::BetterTogether::PlatformConnection).index?
+      load_safety_review_summary if show_safety_review?
+      load_current_person_platform_memberships
     end
 
     # GET /platforms/:id/available_people
     def available_people # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @platform
 
-      # Exclude people who are already members
-      excluded_ids = @platform.person_platform_memberships.pluck(:member_id)
       people = ::BetterTogether::Person
                .joins(:user)
-               .where.not(id: excluded_ids)
                .where.not(better_together_users: { email: nil })
                .where.not(better_together_users: { confirmed_at: nil })
                .i18n
@@ -68,6 +66,8 @@ module BetterTogether
     def new
       @platform = ::BetterTogether::Platform.new(external: true)
       authorize @platform
+    rescue Pundit::NotAuthorizedError
+      render_not_found
     end
 
     def edit
@@ -143,17 +143,37 @@ module BetterTogether
         BetterTogether::Content::Css.extra_permitted_attributes +
         BetterTogether::Content::Css.localized_attribute_list }]
 
-      params.require(:platform).permit(
+      permitted = params.require(:platform).permit(
         permitted_attributes,
         *settings_attributes,
         *locale_attributes,
-        *css_block_attrs
+        *css_block_attrs,
+        *BetterTogether::PlatformContentSlots.permitted_attributes
       )
+      restrict_quota_default_limits(permitted)
+    end
+
+    # Byte quotas may only be set to a listed decimal storage step (or the configured default).
+    def restrict_quota_default_limits(permitted)
+      return permitted unless permitted.key?(:quota_default_limits)
+
+      permitted[:quota_default_limits] =
+        BetterTogether::Quotas::Defaults.restrict_to_storage_steps(permitted[:quota_default_limits].to_h)
+      permitted
     end
 
     # Adds a policy check for the platform
     def authorize_platform
       authorize @platform
+    end
+
+    def load_current_person_platform_memberships
+      return unless helpers.current_person
+
+      memberships = @platform.person_platform_memberships.includes(:role)
+      @current_person_platform_memberships = memberships.where(member: helpers.current_person)
+                                                        .order(Arel.sql("CASE WHEN status = 'active' THEN 0 ELSE 1 END"),
+                                                               :created_at)
     end
 
     def locale_attributes
@@ -174,11 +194,16 @@ module BetterTogether
       %i[
         requires_invitation
         allow_membership_requests
+        contributors_display_visibility
         software_variant
         network_visibility
         connection_bootstrap_state
         federation_protocol
         oauth_issuer_url
+      ] + [
+        { feature_gate_rollouts: {} },
+        { quota_default_limits: {} },
+        { integration_settings: {} }
       ]
     end
 
@@ -187,6 +212,8 @@ module BetterTogether
         csp_frame_ancestors_text
         csp_frame_src_text
         csp_img_src_text
+        csp_script_src_text
+        csp_connect_src_text
       ].map { |attribute| { attribute => [] } }
     end
 
@@ -236,6 +263,36 @@ module BetterTogether
           }
         ]
       )
+    end
+
+    def load_platform_connections
+      @show_platform_connections = true
+      @platform_connections = platform_connection_scope
+      @platform_connection_status_counts = Hash.new(0).merge(@platform_connections.unscope(:order).group(:status).count)
+    end
+
+    def show_safety_review?
+      policy(::BetterTogether::Safety::Case).index?
+    end
+
+    def load_safety_review_summary
+      @show_safety_review = true
+      report_scope = policy_scope(::BetterTogether::Report)
+
+      @safety_review_snapshot = ::BetterTogether::Safety::LocalReviewSnapshotService.new(
+        case_scope: policy_scope(::BetterTogether::Safety::Case),
+        report_scope:
+      ).call
+      @safety_review_report_count = report_scope.count
+    end
+
+    def platform_connection_scope
+      base_scope = policy_scope(::BetterTogether::PlatformConnection)
+
+      base_scope.where(source_platform: @platform)
+                .or(base_scope.where(target_platform: @platform))
+                .includes(:source_platform, :target_platform)
+                .order(updated_at: :desc)
     end
   end
 end

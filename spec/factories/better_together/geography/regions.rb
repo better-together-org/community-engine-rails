@@ -12,7 +12,8 @@ FactoryBot.define do
     sequence(:identifier) { |n| "region-#{n}" }
     protected { false }
 
-    association :community, factory: :better_together_community
+    # See continents.rb factory for why privacy: 'public' is explicit here.
+    association :community, factory: :better_together_community, privacy: 'public'
     association :country, factory: :geography_country
     association :state, factory: :geography_state
 

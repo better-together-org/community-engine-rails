@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module BetterTogether # :nodoc:
   RSpec.describe NavigationBuilder, type: :builder do
     before do
@@ -317,6 +317,8 @@ module BetterTogether # :nodoc:
           page = Page.find_by(identifier: 'about')
           expect(page).to be_present
           expect(page.title_en).to eq('About')
+          # Seeded informational pages are created public so guests can see them
+          # (the DB column default is 'private').
           expect(page.privacy).to eq('public')
           expect(page.protected).to be true
         end
@@ -333,7 +335,7 @@ module BetterTogether # :nodoc:
           expect(posts_item.position).to eq(1)
           expect(posts_item.item_type).to eq('link')
           expect(posts_item.visible).to be true
-          expect(posts_item.privacy).to eq('public')
+          expect(posts_item.privacy).to eq('private')
         end
 
         it 'creates events navigation item' do
@@ -491,7 +493,7 @@ module BetterTogether # :nodoc:
           described_class.build_better_together
 
           what_is_page = Page.find_by(identifier: 'better-together')
-          engine_page = Page.find_by(identifier: 'better-together-community-engine')
+          engine_page = Page.find_by(identifier: 'better-together/community-engine')
 
           expect(what_is_page).to be_present
           expect(what_is_page.title_en).to eq('What is Better Together?')
@@ -541,6 +543,20 @@ module BetterTogether # :nodoc:
           expect(accessibility_page).to be_present
           expect(contact_page).to be_present
         end
+
+        it "does not stomp an already-seeded contributor agreement page's customized privacy on rebuild" do
+          described_class.build_footer
+          agreement_page = Page.find_by(identifier: 'code_contributor_agreement')
+          agreement_page.update!(privacy: 'private')
+
+          # build_footer is designed to be re-run idempotently (see comment at its
+          # call site) — ensure_static_page! must find the existing page by
+          # identifier and leave its customized privacy alone rather than
+          # resetting it back to a hardcoded default.
+          described_class.build_footer
+
+          expect(agreement_page.reload.privacy).to eq('private')
+        end
       end
 
       describe '.create_unassociated_pages' do
@@ -580,4 +596,3 @@ module BetterTogether # :nodoc:
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

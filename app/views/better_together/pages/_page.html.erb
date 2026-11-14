@@ -3,14 +3,14 @@
     <% if policy(page).show? %>
       <%= link_to render_page_path(page) do %>
         <% if page.primary_image&.attached? %>
-          <%= image_tag rails_storage_proxy_url(page.primary_image), class: "card-img-top", alt: "#{page.title}" %>
+          <%= image_tag storage_proxy_url_for(page.primary_image), class: "card-img-top", alt: "#{page.title}" %>
         <% else %>
           <%= card_image_tag(page) %>
         <% end %>
       <% end %>
     <% else %>
       <% if page.primary_image&.attached? %>
-        <%= image_tag rails_storage_proxy_url(page.primary_image), class: "card-img-top", alt: "#{page.title}" %>
+        <%= image_tag storage_proxy_url_for(page.primary_image), class: "card-img-top", alt: "#{page.title}" %>
       <% else %>
         <%= card_image_tag(page) %>
       <% end %>

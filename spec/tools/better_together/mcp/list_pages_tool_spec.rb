@@ -5,7 +5,9 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Mcp::ListPagesTool, type: :model do
   let(:user) { create(:user) }
   let(:person) { user.person }
-  let!(:published_page) { create(:better_together_page, :published_public) }
+  # The tool lists the newest pages first and caps the list, so the pages asserted on are published now:
+  # a database holding older pages (the test database is not truncated between runs) must not push them out.
+  let!(:published_page) { create(:better_together_page, :published_public, published_at: Time.current) }
   let!(:unpublished_page) { create(:better_together_page, :unpublished) }
 
   before do
@@ -58,8 +60,8 @@ RSpec.describe BetterTogether::Mcp::ListPagesTool, type: :model do
 
     describe 'topic_slug filtering' do
       let!(:employment_category) { create(:category, identifier: 'employment') }
-      let!(:tagged_page) { create(:better_together_page, :published_public) }
-      let!(:other_page)  { create(:better_together_page, :published_public) }
+      let!(:tagged_page) { create(:better_together_page, :published_public, published_at: Time.current) }
+      let!(:other_page)  { create(:better_together_page, :published_public, published_at: Time.current) }
 
       before do
         BetterTogether::Categorization.create!(

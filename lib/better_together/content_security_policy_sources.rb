@@ -4,40 +4,67 @@ require 'uri'
 
 module BetterTogether
   # Computes CSP source lists, including an optional configured asset host origin.
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module ContentSecurityPolicySources
     module_function
 
     ORIGIN_SPLIT_PATTERN = /[\s,]+/
 
-    SCRIPT_SOURCES = [
-      :self,
-      :blob,
-      'https://cdn.jsdelivr.net',
-      'https://cdnjs.cloudflare.com',
-      'https://unpkg.com',
-      'https://ga.jspm.io'
-    ].freeze
+    SCRIPT_SOURCES = %i[self blob].freeze
 
-    STYLE_SOURCES = [
-      :self,
-      :unsafe_inline,
-      'https://cdn.jsdelivr.net',
-      'https://cdnjs.cloudflare.com',
-      'https://unpkg.com'
+    CONNECT_SOURCES = %i[self wss].freeze
+
+    STYLE_SOURCES = %i[self unsafe_inline].freeze
+
+    # Bundled Leaflet map controller (app/javascript/controllers/better_together/map_controller.js)
+    # loads these two tile providers unconditionally on every map instance via leaflet-providers:
+    # OpenStreetMap.Mapnik resolves to the bare host (CSP wildcard subdomains do not match it),
+    # and Esri.WorldImagery (the satellite toggle) resolves to server.arcgisonline.com.
+    DEFAULT_MAP_TILE_IMG_SOURCES = [
+      'https://*.tile.openstreetmap.org',
+      'https://tile.openstreetmap.org',
+      'https://server.arcgisonline.com'
     ].freeze
 
     IMG_SOURCES = [
       :self,
       :data,
       :blob,
-      'https://*.tile.openstreetmap.org'
+      *DEFAULT_MAP_TILE_IMG_SOURCES
     ].freeze
 
     FONT_SOURCES = %i[self data].freeze
 
-    def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
-      with_asset_host(SCRIPT_SOURCES, raw_asset_host)
+    def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_script_src = ENV.fetch('CSP_SCRIPT_SRC', nil))
+      env_sources = parse_origin_list(raw_script_src)
+      dynamic_sources = dynamic_platform_sources(:csp_script_src)
+      registered_sources = registered_sources_for(:script_src)
+
+      with_asset_host(SCRIPT_SOURCES + env_sources + dynamic_sources + importmap_script_sources + registered_sources,
+                      raw_asset_host)
+    end
+
+    # Every script CE or the host app loads from another origin is pinned in an importmap (CE's own
+    # mermaid and es-module-shims pins, plus whatever the host app pins), so the importmap is the source
+    # of truth: pinning a CDN package allow-lists its origin, and nothing needs to be repeated in the
+    # environment or in platform settings. Evaluated per request so host apps' pins are included.
+    def importmap_script_sources
+      [-> { BetterTogether::ContentSecurityPolicySources.importmap_origins }]
+    end
+
+    # Registered sources are read per request, not copied when the policy is built at boot: engines and
+    # host apps register from model classes and app initializers that load after CE's own initializer.
+    def registered_sources_for(directive)
+      [-> { BetterTogether.registered_content_security_policy_sources[directive].dup }]
+    end
+
+    def importmap_origins
+      return [] unless Rails.application.respond_to?(:importmap)
+
+      Rails.application.importmap.packages.values.filter_map { |package| origin_for_url(package.path) }.uniq
+    rescue StandardError => e
+      Rails.logger.warn("[BetterTogether::ContentSecurityPolicySources] importmap origins unavailable: #{e.class}")
+      []
     end
 
     def style_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
@@ -47,16 +74,26 @@ module BetterTogether
     def img_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_img_src = ENV.fetch('CSP_IMG_SRC', nil))
       env_sources = parse_origin_list(raw_img_src)
       dynamic_sources = dynamic_platform_sources(:csp_img_src)
+      registered_sources = registered_sources_for(:img_src)
 
-      with_asset_host(IMG_SOURCES + env_sources + dynamic_sources, raw_asset_host)
+      with_asset_host(IMG_SOURCES + env_sources + dynamic_sources + registered_sources, raw_asset_host)
     end
 
     def font_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
       with_asset_host(FONT_SOURCES, raw_asset_host)
     end
 
+    def connect_sources(raw_connect_src = ENV.fetch('CSP_CONNECT_SRC', nil))
+      env_sources = parse_origin_list(raw_connect_src)
+      dynamic_sources = dynamic_platform_sources(:csp_connect_src)
+      registered_sources = registered_sources_for(:connect_src)
+
+      CONNECT_SOURCES + env_sources + dynamic_sources + registered_sources
+    end
+
     def frame_sources(raw_frame_src = ENV.fetch('CSP_FRAME_SRC', nil))
-      [:self] + parse_origin_list(raw_frame_src) + dynamic_platform_sources(:csp_frame_src)
+      registered_sources = registered_sources_for(:frame_src)
+      [:self] + parse_origin_list(raw_frame_src) + dynamic_platform_sources(:csp_frame_src) + registered_sources
     end
 
     def frame_ancestor_sources(raw_frame_ancestors = ENV.fetch('CSP_FRAME_ANCESTORS', nil))
@@ -105,7 +142,7 @@ module BetterTogether
       origin_tokens(raw_value).reject { |origin| normalize_origin(origin) }.uniq
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def normalize_origin(origin)
       value = origin.to_s.strip
       return nil if value.empty?
@@ -121,7 +158,6 @@ module BetterTogether
     rescue URI::InvalidURIError
       nil
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def origin_for_url(value)
       url = value.to_s.strip
@@ -177,5 +213,4 @@ module BetterTogether
       resolved_platform || BetterTogether::Platform.find_by(host: true)
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

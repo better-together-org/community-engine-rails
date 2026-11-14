@@ -3,7 +3,7 @@
 
 <% inline_radio_id = "#{temp_id}_markdown_source_inline" %>
 <% file_radio_id = "#{temp_id}_markdown_source_file" %>
-<% inline_selected = block.markdown_file_path.blank? %>
+<% inline_selected = block.active_source != 'file' %>
 
 <div class="markdown-fields"
   data-controller="better-together--markdown-block better-together--dependent-fields"

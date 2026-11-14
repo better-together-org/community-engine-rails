@@ -18,14 +18,37 @@ module BetterTogether
     def call
       authorize_mirroring!
 
-      event = find_or_initialize_event
-      assign_attributes(event)
-      ensure_source_platform_host(event)
-      event.save!
-      event
+      with_stale_object_retry do
+        event = find_or_initialize_event
+        assign_attributes(event)
+        ensure_source_platform_host(event)
+        event.save!
+        event
+      rescue ActiveRecord::RecordNotUnique
+        # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
+        event = reload_after_concurrent_insert
+        assign_attributes(event)
+        ensure_source_platform_host(event)
+        event.save!
+        event
+      end
     end
 
     private
+
+    # Two overlapping syncs raced on UPDATE; reload and retry once rather
+    # than dropping the whole mirrored event.
+    def with_stale_object_retry
+      attempts = 0
+      begin
+        yield
+      rescue ActiveRecord::StaleObjectError
+        attempts += 1
+        raise unless attempts <= 1
+
+        retry
+      end
+    end
 
     attr_reader :connection, :remote_attributes, :remote_id, :preserve_remote_uuid, :source_updated_at
 
@@ -38,7 +61,7 @@ module BetterTogether
 
       return if result.allowed?
 
-      raise ArgumentError, "event mirroring not authorized: #{result.reason}"
+      raise ArgumentError, mirroring_not_authorized_message(result.reason)
     end
 
     def find_or_initialize_event
@@ -48,15 +71,42 @@ module BetterTogether
     end
 
     def find_or_initialize_event_by_source_id
-      ::BetterTogether::Event.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      ::BetterTogether::Event.find_or_initialize_by(platform: target_platform, source_id: remote_id)
     end
 
     def existing_event_with_remote_uuid
-      ::BetterTogether::Event.find_by(id: remote_id, platform: connection.target_platform)
+      ::BetterTogether::Event.find_by(id: remote_id, platform: target_platform)
     end
 
     def existing_event_by_source_id
-      ::BetterTogether::Event.find_by(platform: connection.target_platform, source_id: remote_id)
+      ::BetterTogether::Event.find_by(platform: target_platform, source_id: remote_id)
+    end
+
+    def reload_after_concurrent_insert
+      record = if mirror_with_remote_uuid?
+                 existing_event_with_remote_uuid || existing_event_by_source_id
+               else
+                 existing_event_by_source_id
+               end
+
+      return record if record
+
+      raise_uuid_collision_if_applicable!
+      raise ::ActiveRecord::RecordNotFound,
+            "Event not found after concurrent INSERT for remote_id=#{remote_id}"
+    end
+
+    # Raises RecordInvalid when an event with the remote UUID already exists under a
+    # different platform. This is a permanent cross-platform UUID collision, not a
+    # transient race; FederatedContentIngestService treats RecordInvalid with an
+    # identifier:taken error as a mirrored-identifier conflict and continues the batch.
+    def raise_uuid_collision_if_applicable!
+      return unless mirror_with_remote_uuid? && ::BetterTogether::Event.exists?(id: remote_id)
+
+      stub = ::BetterTogether::Event.new
+      stub.errors.add(:identifier, :taken,
+                      message: 'UUID conflicts with an existing event on another platform')
+      raise ::ActiveRecord::RecordInvalid, stub
     end
 
     def assign_attributes(event)
@@ -78,28 +128,42 @@ module BetterTogether
         name: remote_attributes[:name],
         description: remote_attributes[:description],
         identifier: normalized_identifier(record),
-        privacy: remote_attributes[:privacy].presence || 'public',
-        creator_id: remote_attributes[:creator_id],
-        platform: connection.target_platform,
+        privacy: normalized_privacy,
+        creator_id: local_creator_id,
+        platform: target_platform,
         source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
       }
     end
 
-    def ensure_source_platform_host(event)
-      return if event.event_hosts.any? { |hosting| hosting.host == connection.source_platform }
+    def resolve_local_creator(remote_id)
+      return nil if remote_id.blank?
 
-      event.event_hosts.build(host: connection.source_platform)
+      ::BetterTogether::Person.where(id: remote_id).pick(:id)
+    end
+
+    # Credits the platform this event actually originated on — the remote
+    # peer we're mirroring from — not literally connection.source_platform,
+    # which reflects who initiated the connection, not who's local.
+    def ensure_source_platform_host(event)
+      origin_platform = connection.remote_platform || connection.source_platform
+      return if event.event_hosts.any? { |hosting| hosting.host == origin_platform }
+
+      event.event_hosts.build(host: origin_platform)
     end
 
     def normalized_identifier(event)
       # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
       return event.identifier if event.persisted?
 
-      base = remote_attributes[:identifier].presence ||
-             "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-      identifier_or_namespaced(::BetterTogether::Event, base, event.id)
+      mirrored_identifier_for(
+        content_type: 'event',
+        remote_identifier: remote_attributes[:identifier],
+        remote_id:,
+        model_class: ::BetterTogether::Event,
+        exclude_id: event.id
+      )
     end
 
     def normalized_timezone
@@ -117,12 +181,27 @@ module BetterTogether
       Time.current
     end
 
+    def normalized_privacy
+      remote_attributes[:privacy].presence || 'public'
+    end
+
+    def local_creator_id
+      resolve_local_creator(remote_attributes[:creator_id])
+    end
+
+    # source_platform/target_platform reflect who initiated the connection,
+    # not who's local — mirrored content must be stored under the actual
+    # local platform, not literally connection.target_platform.
+    def target_platform
+      connection.local_platform || connection.target_platform
+    end
+
     def preserve_remote_uuid?
       preserve_remote_uuid
     end
 
     def effective_preserve_remote_uuid?
-      preserve_remote_uuid? && !shared_target_database?
+      preserve_remote_uuid? && !same_instance_connection?
     end
 
     def mirror_with_remote_uuid?
@@ -133,12 +212,16 @@ module BetterTogether
       connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
     end
 
-    def shared_target_database?
-      connection.target_platform.local_hosted?
-    end
-
     def uuid?(value)
       /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+    end
+
+    def mirroring_not_authorized_message(reason)
+      I18n.t(
+        'better_together.federation.mirroring.errors.not_authorized',
+        content_type: I18n.t('better_together.federation.mirroring.content_types.event'),
+        reason:
+      )
     end
   end
 end

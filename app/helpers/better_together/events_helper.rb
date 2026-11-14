@@ -2,7 +2,7 @@
 
 module BetterTogether
   # View helpers for events
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module EventsHelper
     # Return hosts for an event that the current user is authorized to view.
     # Keeps view markup small and centralizes the policy logic for testing.
@@ -10,6 +10,16 @@ module BetterTogether
       return [] unless event.respond_to?(:event_hosts)
 
       event.event_hosts.map { |eh| eh.host if policy(eh.host).show? }.compact
+    end
+
+    # Cache key for the event card fragment. The card draws each host's name and avatar, so the key carries the
+    # hosts' versions: editing a host (name, profile image) or changing who hosts refreshes the card without the
+    # event being saved. next_occurrence_at is refreshed with update_column, which does not touch updated_at.
+    # A session's card also names its series (when show_series), so the series' version is part of the key.
+    def event_card_cache_key(event, show_series: true)
+      host_versions = event.event_hosts.map { |event_host| event_host.host&.cache_key_with_version }
+      [event.cache_key_with_version, event.next_occurrence_at, host_versions, show_series,
+       event.parent_series&.cache_key_with_version]
     end
 
     # Intelligently displays event time based on duration and date span
@@ -23,17 +33,22 @@ module BetterTogether
     # rubocop:enable Layout/LineLength
     #
     # @param event [Event] The event object with starts_at and ends_at
+    # @param start_time [Time, nil] Override for event.starts_at — pass a
+    #   recurring event's (override-aware) next_occurrence_at here so cards
+    #   never show the stale original starts_at alongside a "Repeats" badge.
+    # @param end_time [Time, nil] Override for event.ends_at, paired with start_time:
     # @return [String] Formatted time display
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
-    def display_event_time(event) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      return '' unless event&.starts_at
+    # rubocop:todo-next Metrics/AbcSize
+    def display_event_time(event, start_time: nil, end_time: nil) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      raw_start = start_time || event&.starts_at
+      return '' unless raw_start
 
       # Convert times to event timezone for display
       event_tz = ActiveSupport::TimeZone[event.timezone] || Time.zone
-      start_time = event.starts_at.in_time_zone(event_tz)
-      end_time = event.ends_at&.in_time_zone(event_tz)
+      start_time = raw_start.in_time_zone(event_tz)
+      end_time = (end_time || event.ends_at)&.in_time_zone(event_tz)
       current_year = Time.current.year
 
       # Determine format based on whether year differs from current
@@ -53,9 +68,8 @@ module BetterTogether
         "#{l(start_time, format: start_format)} (#{duration_minutes} #{t('better_together.events.time.minutes')})"
       elsif duration_hours <= 5 && same_day
         # 1-5 hours, same day: show hours
-        # rubocop:todo Layout/LineLength
+        # rubocop:todo-next Layout/LineLength
         hours_text = duration_hours == 1 ? t('better_together.events.time.hour') : t('better_together.events.time.hours')
-        # rubocop:enable Layout/LineLength
         "#{l(start_time, format: start_format)} (#{duration_hours.to_i} #{hours_text})"
       elsif same_day
         # Same day, over 5 hours: show start and end times
@@ -77,7 +91,6 @@ module BetterTogether
         "#{l(start_time, format: start_format)} - #{l(end_time, format: end_format)}"
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
@@ -140,7 +153,7 @@ module BetterTogether
     # @param event [Event] The event object
     # @param max_avatars [Integer] Maximum number of avatars to show
     # @return [String] HTML for hosts display or empty string
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def event_hosts_display(event, max_avatars: 3)
       hosts = visible_event_hosts(event)
       return '' if hosts.empty?
@@ -164,7 +177,6 @@ module BetterTogether
         )
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # Returns the appropriate Font Awesome icon class for a host type
     # @param host_type_key [String] The underscored host type (e.g., 'person', 'community')
@@ -228,5 +240,4 @@ module BetterTogether
       datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

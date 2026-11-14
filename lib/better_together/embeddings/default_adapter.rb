@@ -10,8 +10,8 @@ module BetterTogether
         {
           vectors: response.vectors,
           model: response.model,
-          prompt_tokens: response.input_tokens.to_i,
-          provider: provider&.to_s,
+          prompt_tokens: response.tokens.input.to_i,
+          provider: options[:provider]&.to_s,
           raw_response: response
         }
       end

@@ -1,4 +1,11 @@
-
-<%= render 'better_together/shared/card', entity: community do %>
+<%# A community's logo, else its profile image (never both): a tile over the cover's top-left corner, or large in place of the cover when it has none. %>
+<% _kind, mark = community_mark(community) %>
+<% mark_only = mark.present? && !community.cover_image.attached? %>
+<%= render 'better_together/shared/card', entity: community, show_image: !mark_only,
+                                          card_classes: "hover-effect community-card#{' community-card--mark-only' if mark_only}" do %>
+  <% if mark.present? %>
+    <span class="community-card-mark<%= ' community-card-mark--cover' unless mark_only %>" id="<%= dom_id(community, :card_mark) %>">
+      <%= image_tag storage_proxy_url_for(mark), alt: '', loading: 'lazy' %>
+    </span>
+  <% end %>
 <% end %>
-

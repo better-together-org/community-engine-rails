@@ -31,6 +31,8 @@ RSpec.describe 'devise/shared/_omniauth_buttons' do
   end
 
   it 'renders the GitHub button when credentials are present' do
+    configure_host_platform
+    ensure_host_platform_domain
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return('client_id_123')
     allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('client_secret_456')

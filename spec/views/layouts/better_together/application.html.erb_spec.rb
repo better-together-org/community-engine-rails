@@ -23,9 +23,10 @@ RSpec.describe 'layouts/better_together/application' do
       csrf_meta_tags: '',
       csp_meta_tag: '',
       hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe,
-      request: double(original_url: 'http://test.host/current', user_agent: 'RSpec')
+      request: double(original_url: 'http://test.host/current', user_agent: 'RSpec', path: '/current')
     )
     allow(view).to receive(:metrics_body_tag).and_yield
+    view.define_singleton_method(:render_platform_content_slot) { |*| '' }
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
     allow(view).to receive(:render).and_call_original
     allow(view).to receive(:render).with('layouts/better_together/custom_head_javascript').and_return('')
@@ -39,7 +40,7 @@ RSpec.describe 'layouts/better_together/application' do
     # Helpers / routes added to the layout on this branch:
     allow(view).to receive_messages(stimulus_debug_enabled?: false, robots_meta_tag: '', sitemap_index_path: '/sitemap.xml',
                                     sitemap_path: '/sitemap.xml')
-    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host', e2ee_messaging_enabled?: false)
+    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host')
   end
 
   it 'renders canonical and hreflang links by default' do
@@ -58,15 +59,22 @@ RSpec.describe 'layouts/better_together/application' do
     expect(rendered).not_to include('<link rel="alternate" hreflang="en" href="/en" />')
   end
 
-  it 'does not mount E2EE bootstrap or modal in the global layout' do
-    person = build_stubbed(:person)
-    user = build_stubbed(:user, person: person)
-    allow(view).to receive_messages(current_user: user, e2ee_messaging_enabled?: true, current_user_api_token: 'jwt-token')
+  it 'does not include remote CDN stylesheet links' do
+    render template: 'layouts/better_together/application'
+
+    expect(rendered).not_to include('https://unpkg.com/trix')
+    expect(rendered).not_to include('https://cdnjs.cloudflare.com/ajax/libs/slim-select')
+    expect(rendered).not_to include('https://unpkg.com/leaflet')
+  end
+
+  it 'renders the platform css block when the controller sits outside the engine namespace' do
+    css_block = BetterTogether::Content::Css.new(content: '.brand { color: red; }')
+    allow(view.host_platform).to receive(:css_block).and_return(css_block)
+    view.extend BetterTogether::Content::BlocksHelper
+    view.lookup_context.prefixes = ['host_app/things']
 
     render template: 'layouts/better_together/application'
 
-    expect(rendered).to include('meta name="current-user-token" content="jwt-token"')
-    expect(rendered).not_to include('better-together--e2e-session')
-    expect(rendered).not_to include('e2ePassphraseModal')
+    expect(rendered).to include('.brand')
   end
 end

@@ -65,13 +65,14 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
   let(:devise_mapping) { Devise.mappings[:user] }
 
   # Helper to create GitHub auth hash with custom options
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def github_auth_hash(email: unique_email, uid: unique_oauth_uid, **)
     github_oauth_hash(email: email, uid: uid, **)
   end
-  # rubocop:enable Metrics/MethodLength
 
   before do
+    # New hosted platforms default to invitation-only; these flows cover open OAuth sign-up.
+    platform.update!(requires_invitation: false)
     request.host = 'localhost'
     @request.env['devise.mapping'] = devise_mapping # rubocop:todo RSpec/InstanceVariable
   end

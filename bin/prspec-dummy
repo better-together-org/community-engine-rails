@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: bin/prspec-dummy <spec-path> [additional prspec args]" >&2
+  exit 1
+fi
+
+exec ./bin/dc-run-dummy env RUBYLIB=/community-engine/spec bundle exec prspec "$@"

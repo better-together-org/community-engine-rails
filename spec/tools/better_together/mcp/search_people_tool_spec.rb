@@ -10,6 +10,9 @@ RSpec.describe BetterTogether::Mcp::SearchPeopleTool, type: :model do
   let!(:private_person) do
     create(:better_together_person, name: 'Bob Smith', identifier: 'bob-smith', privacy: 'private')
   end
+  let!(:name_only_person) do
+    create(:better_together_person, name: 'Carol Winters', identifier: 'cw-77', privacy: 'public')
+  end
 
   before do
     configure_host_platform
@@ -30,6 +33,12 @@ RSpec.describe BetterTogether::Mcp::SearchPeopleTool, type: :model do
       people = JSON.parse(result)
       names = people.map { |p| p['name'] }
       expect(names).to include('Alice Johnson')
+    end
+
+    it 'returns a profile url for people matched by name only' do
+      result = described_class.new.call(query: 'Winters')
+
+      expect(JSON.parse(result).map { |p| p['url'] }).to contain_exactly(end_with('/p/cw-77'))
     end
 
     it 'searches people by identifier' do
@@ -69,6 +78,26 @@ RSpec.describe BetterTogether::Mcp::SearchPeopleTool, type: :model do
       expect(person).to have_key('name')
       expect(person).to have_key('handle')
       expect(person).to have_key('url')
+    end
+
+    context 'when the user has directory access' do
+      before do
+        BetterTogether::AccessControlBuilder.seed_data
+        host_platform = BetterTogether::Platform.find_by!(host: true)
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+        membership.role ||= create(:better_together_role, :platform_role)
+        membership.role.assign_resource_permissions(['list_person'])
+        membership.status = :active
+        membership.save!
+        user.person.touch
+      end
+
+      it 'returns profile urls for private people matched by name only' do
+        create(:better_together_person, name: 'Dana Moriarty', identifier: 'dm-12', privacy: 'private')
+        urls = JSON.parse(described_class.new.call(query: 'Moriarty')).map { |p| p['url'] }
+
+        expect(urls).to contain_exactly(end_with('/p/dm-12'))
+      end
     end
   end
 end

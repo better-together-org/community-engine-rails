@@ -17,6 +17,8 @@ module BetterTogether
   # Host apps may override +validate_captcha_if_enabled?+ to add Turnstile or
   # other captcha validation (same pattern as UsersRegistrationsController).
   class MembershipRequestsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include BotProtectedSubmissions
+
     class_attribute :captcha_validation_proc, default: nil
 
     skip_before_action :authenticate_user!, only: %i[new create], raise: false
@@ -59,6 +61,20 @@ module BetterTogether
       )
       @membership_request.creator = helpers.current_person if helpers.current_person.present?
       authorize @membership_request
+
+      unless bot_protected_submission_valid?(form_id: :membership_request, resource: @membership_request)
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              'membership_request_form',
+              partial: 'better_together/membership_requests/form',
+              locals: { membership_request: @membership_request, community: @community }
+            ), status: :unprocessable_entity
+          end
+        end
+        return
+      end
 
       unless validate_captcha_if_enabled?
         handle_captcha_validation_failure(@membership_request)

@@ -12,16 +12,16 @@ All tasks are under the `better_together:generate` namespace:
 
 ```bash
 # List all navigation areas and items
-bin/dc-run rails better_together:generate:list_navigation
+bin/dc-run rails better_together:seed:list_navigation
 
 # Reset all navigation areas (preserves pages)
-bin/dc-run rails better_together:generate:reset_navigation
+bin/dc-run rails better_together:seed:reset_navigation
 
 # Reset specific navigation area
-bin/dc-run rails better_together:generate:reset_navigation_area[platform-header]
+bin/dc-run rails better_together:seed:reset_navigation_area[platform-header]
 
 # Full rebuild (DESTRUCTIVE - deletes pages too!)
-bin/dc-run rails better_together:generate:navigation_and_pages
+bin/dc-run rails better_together:seed:navigation_and_pages
 ```
 
 ## Detailed Methods
@@ -35,7 +35,7 @@ BetterTogether::NavigationBuilder.reset_navigation_areas
 
 **Rake Task:**
 ```bash
-bin/dc-run rails better_together:generate:reset_navigation
+bin/dc-run rails better_together:seed:reset_navigation
 ```
 
 **What it does:**
@@ -57,7 +57,7 @@ BetterTogether::NavigationBuilder.reset_navigation_area('platform-header')
 
 **Rake Task:**
 ```bash
-bin/dc-run rails better_together:generate:reset_navigation_area[platform-header]
+bin/dc-run rails better_together:seed:reset_navigation_area[platform-header]
 ```
 
 **Available slugs:**
@@ -76,7 +76,7 @@ bin/dc-run rails better_together:generate:reset_navigation_area[platform-header]
 
 **Rake Task:**
 ```bash
-bin/dc-run rails better_together:generate:list_navigation
+bin/dc-run rails better_together:seed:list_navigation
 ```
 
 **What it does:**
@@ -106,7 +106,7 @@ Area: Platform Header
 
 **Rake Task:**
 ```bash
-bin/dc-run rails better_together:generate:navigation_and_pages
+bin/dc-run rails better_together:seed:navigation_and_pages
 ```
 
 **What it does:**

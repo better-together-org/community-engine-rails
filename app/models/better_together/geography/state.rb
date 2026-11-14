@@ -4,7 +4,10 @@ module BetterTogether
   module Geography
     class State < ApplicationRecord # rubocop:todo Style/Documentation
       include Geospatial::One
+
+      geocodes_self
       include Identifier
+      include Privacy
       include Protected
       include PrimaryCommunity
 

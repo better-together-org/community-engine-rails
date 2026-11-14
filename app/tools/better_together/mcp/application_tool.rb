@@ -29,15 +29,16 @@ module BetterTogether
 
       protected
 
-      def with_current_governed_agent(actor = current_user&.person)
+      def with_current_agent(actor = current_user&.person)
         previous_person = Current.person
-        previous_governed_agent = Current.governed_agent
+        previous_agent = Current.agent
         Current.person = actor if actor.is_a?(BetterTogether::Person)
-        Current.governed_agent = actor
+        # Under an agent credential the robot stays the acting agent.
+        Current.agent = actor unless Current.token_actor
         yield
       ensure
         Current.person = previous_person
-        Current.governed_agent = previous_governed_agent
+        Current.agent = previous_agent
       end
 
       # Escape LIKE metacharacters (%, _) in user-supplied search queries
@@ -52,7 +53,7 @@ module BetterTogether
       # and ActionText (rich text content). Avoids raw SQL strings.
       # model_klass: the AR class (e.g. BetterTogether::Page)
       # Returns an AREL node suitable for use in .where()
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def translatable_content_search_condition(model_klass, query)
         sanitized = "%#{sanitize_like(query)}%"
         model_class_str = model_klass.to_s
@@ -91,7 +92,6 @@ module BetterTogether
           end
         )
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       # Log MCP tool invocations for audit and debugging.
       # Produces structured JSON entries tagged [MCP][tool] in Rails logs.

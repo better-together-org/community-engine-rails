@@ -1,0 +1,10 @@
+{
+  "name": "person_links_index",
+  "device": "desktop",
+  "url": "/en/person-links",
+  "title": "Community Engine Host",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "person_links",
+  "source_spec": "./spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+}

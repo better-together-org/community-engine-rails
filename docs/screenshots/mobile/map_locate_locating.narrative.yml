@@ -1,0 +1,15 @@
+---
+title: Locating
+audience:
+- visitor
+- developer
+journey_step: As a visitor, I can tell that the locate button is working and when
+  it has found me.
+callouts:
+- :id: locate_button
+  :title: Locating
+  :description: A spinning globe shows the position is being found.
+accessibility_notes: State is also exposed through aria-busy and the polite map status
+  message.
+slug: map_locate_locating
+device: mobile

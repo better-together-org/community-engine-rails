@@ -10,13 +10,16 @@ RSpec.describe 'Documentation screenshots for content security review states',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:host_platform) { configure_host_platform }
-  let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
-  let!(:platform_manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:host_platform) { configure_host_platform }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+  let(:platform_manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
+    # Content-security enrollment is off by default in the test environment; without this no
+    # ContentSecurity::Subject is created for attachments and the review states never render.
+    allow(BetterTogether::ContentSecurity::Configuration).to receive_messages(enabled?: true, enabled_for_surface?: true)
     Current.platform = host_platform
     BetterTogether::AccessControlBuilder.seed_data
   end
@@ -247,12 +250,11 @@ RSpec.describe 'Documentation screenshots for content security review states',
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:, status: 'active')
   end
 
   def png_data
-    # rubocop:disable Layout/LineLength
+    # rubocop:disable-next Layout/LineLength
     "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\b\x06\x00\x00\x00\x1F\x15\xC4\x89\x00\x00\x00\nIDATx\x9Cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xB4\x00\x00\x00\x00IEND\xAEB`\x82".b
-    # rubocop:enable Layout/LineLength
   end
 end

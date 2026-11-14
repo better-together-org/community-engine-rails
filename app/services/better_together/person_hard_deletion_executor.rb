@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Executes a full destructive cleanup for safe prelaunch account purges.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PersonHardDeletionExecutor
     DELETE_ONLY_CLASSES = [::BetterTogether::ConversationParticipant].freeze
     MEMBERSHIP_MODELS = [
@@ -25,37 +25,51 @@ module BetterTogether
       @reason = reason
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def call
       inventory = BetterTogether::PersonHardDeletionInventory.call(person:)
       audit = nil
 
-      ActiveRecord::Base.transaction do
-        approve_request_if_needed!
-        audit = build_audit(inventory)
-        prepare_owned_belongs_to_cycles!(inventory)
-        complete_audit!(audit, execute_inventory(inventory))
+      # The person is destroyed in this transaction; deferred belongs_to touches of it would
+      # run at commit against a stale/deleted row (Rails 8.1 raises StaleObjectError).
+      BetterTogether::Person.no_touching do
+        ActiveRecord::Base.transaction do
+          approve_request_if_needed!
+          audit = build_audit(inventory)
+          prepare_owned_belongs_to_cycles!(inventory)
+          complete_audit!(audit, execute_inventory(inventory))
+        end
       end
 
       audit.reload
     rescue StandardError => e
-      audit&.update!(
-        status: :failed,
-        error_message: e.message,
-        execution_snapshot: (audit.execution_snapshot || {}).merge('backtrace' => Array(e.backtrace).first(20)),
-        failed_at: Time.current
-      )
+      record_failure(audit, e)
       raise
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # Failure bookkeeping must never replace the error that caused the failure: the audit may
+    # already be rolled back or terminal (and PersonPurgeAudit is immutable once terminal).
+    def record_failure(audit, error)
+      return unless audit&.persisted? && audit.running?
+
+      audit.update!(
+        status: :failed,
+        error_message: error.message,
+        execution_snapshot: (audit.execution_snapshot || {}).merge('backtrace' => Array(error.backtrace).first(20)),
+        failed_at: Time.current
+      )
+    rescue StandardError => e
+      Rails.logger.error("PersonHardDeletionExecutor could not record failure: #{e.message}")
+    end
+
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def build_audit(inventory)
       BetterTogether::PersonPurgeAudit.create!(
         person:,
         person_deletion_request:,
+        platform_id: audit_platform_id,
         reviewed_by: persistent_reviewer,
         user_email_snapshot: person.user&.email,
         person_identifier_snapshot: person.identifier,
@@ -73,7 +87,10 @@ module BetterTogether
         }
       )
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def audit_platform_id
+      person_deletion_request&.platform_id || person&.platform_id
+    end
 
     def complete_audit!(audit, execution_snapshot)
       audit.update!(
@@ -155,7 +172,7 @@ module BetterTogether
       Array(entry.fetch(:ids)).reject { |id| processed[[model_class.name, id.to_s]] }
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def destroy_entry(entry, model_class, scoped_ids, processed)
       if delete_only_entry?(entry, model_class)
         cleanup_notifications_for_deleted_memberships(entry, model_class, scoped_ids)
@@ -178,7 +195,6 @@ module BetterTogether
         execution_methods: execution_methods.uniq
       )
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def delete_only_entry?(entry, model_class)
       entry.fetch(:action) == 'delete' || DELETE_ONLY_CLASSES.include?(model_class)
@@ -249,5 +265,4 @@ module BetterTogether
       target.instance_of?(entry_model(entry)) && Array(entry.fetch(:ids)).map(&:to_s).include?(target.id.to_s)
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

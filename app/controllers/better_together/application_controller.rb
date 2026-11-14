@@ -7,6 +7,7 @@ module BetterTogether
     include PublicActivity::StoreController
     include Pundit::Authorization
     include InvitationSessionManagement
+    include MentionPrefetch
     include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception
@@ -18,6 +19,7 @@ module BetterTogether
     before_action :set_locale
     around_action :set_time_zone
     before_action :store_user_location!, if: :storable_location?
+    before_action :authenticate_robot_request
     before_action :handle_debug_mode
     before_action :set_debug_headers
 
@@ -27,9 +29,7 @@ module BetterTogether
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
 
-    before_action do
-      Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
-    end
+    before_action :authorize_mini_profiler_if_enabled
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     rescue_from ActionController::RoutingError, with: :render_not_found
@@ -37,8 +37,10 @@ module BetterTogether
     rescue_from StandardError, with: :handle_error
 
     helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
-                  :turbo_native_app?, :view_preference
+                  :turbo_native_app?, :view_preference, :current_robot, :robot_authenticated?
     helper Rails.application.routes.mounted_helpers
+
+    attr_reader :current_robot
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -62,6 +64,14 @@ module BetterTogether
       bots.any? { |bot| user_agent&.include?(bot) }
     end
 
+    def authorize_mini_profiler_if_enabled
+      return unless BetterTogether::Profiling.enabled?
+      return unless defined?(Rack::MiniProfiler)
+      return unless current_user&.permitted_to?('manage_platform')
+
+      Rack::MiniProfiler.authorize_request
+    end
+
     def check_platform_setup
       host_platform = helpers.host_platform
 
@@ -72,7 +82,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Only proceed if there's an invitation token in the URL or already in the session.
       return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
@@ -105,12 +115,15 @@ module BetterTogether
         session.delete(:platform_invitation_expires_at)
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     def current_invitation
       @platform_invitation
+    end
+
+    def robot_authenticated?
+      current_robot.present?
     end
 
     def view_preference(key, default:, allowed:)
@@ -123,6 +136,7 @@ module BetterTogether
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
       return if current_user
+      return if current_robot
       return unless BetterTogether.user_class.any?
       return if valid_platform_invitation_token_present?
 
@@ -139,6 +153,10 @@ module BetterTogether
 
     private
 
+    def pundit_user
+      current_user || current_robot
+    end
+
     def with_current_platform_context
       set_current_platform_context
       yield
@@ -146,11 +164,14 @@ module BetterTogether
       reset_current_platform_context
     end
 
-    def set_current_platform_context
+    def set_current_platform_context # rubocop:todo Metrics/AbcSize
       Current.platform_domain = BetterTogether::PlatformDomain.resolve(request.host)
-      Current.platform = Current.platform_domain&.platform || BetterTogether::Platform.find_by(host: true)
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      Current.host_platform = host_platform
+      Current.platform = Current.platform_domain&.platform || host_platform
       Current.person = current_user&.person
-      Current.governed_agent = Current.person
+      Current.robot = current_robot
+      Current.agent = current_robot || Current.person
       ActiveStorage::Current.url_options = resolved_url_options
     end
 
@@ -196,6 +217,19 @@ module BetterTogether
       response.headers['Expires'] = '0'
     end
 
+    def authenticate_robot_request # rubocop:todo Metrics/AbcSize
+      return if current_user.present?
+
+      token = request.headers['X-Better-Together-Robot-Token'].to_s.presence
+      return unless token
+
+      platform = BetterTogether::PlatformDomain.resolve(request.host)&.platform || BetterTogether::Platform.find_by(host: true)
+      @current_robot = BetterTogether::Robot.authenticate_access_token(token, platform:)
+      return if @current_robot.present?
+
+      Rails.logger.warn("Rejected robot token for path=#{request.fullpath} ip=#{request.remote_ip}")
+    end
+
     def disallow_robots
       view_context.content_for(:meta_robots, 'noindex,nofollow')
     end
@@ -204,7 +238,7 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def user_not_authorized(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
@@ -233,9 +267,8 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       return render_not_found if exception.is_a?(ActiveRecord::RecordNotFound)
@@ -252,15 +285,15 @@ module BetterTogether
       # call error reporting
       error_reporting(exception)
 
+      return render_committed_format_error if response_format_already_committed?
+
       respond_to do |format|
         format.turbo_stream do
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
-          # rubocop:enable Layout/LineLength
           render turbo_stream: turbo_stream.replace('flash_messages',
-                                                    # rubocop:todo Layout/LineLength
+                                                    # rubocop:todo-next Layout/LineLength
                                                     partial: 'layouts/better_together/flash_messages', locals: { flash: })
-          # rubocop:enable Layout/LineLength
         end
         format.html do
           flash[:error] = exception.message
@@ -268,7 +301,21 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
+
+    # A prior render earlier in this request (e.g. EventsController#show's .ics
+    # branch calling render_event_ics, which sets response.content_type to
+    # text/calendar) already committed the response's media type to something
+    # outside html/turbo_stream. Re-negotiating with respond_to against that
+    # committed type raises ActionController::RespondToMismatchError instead
+    # of a clean error response, so skip straight to a plain response.
+    def response_format_already_committed?
+      media_type = response.media_type
+      media_type.present? && media_type != Mime[:html].to_s && media_type != Mime[:turbo_stream].to_s
+    end
+
+    def render_committed_format_error
+      head :internal_server_error
+    end
 
     def error_reporting(exception)
       BetterTogether.report_error(exception, context: error_reporting_context)
@@ -305,7 +352,12 @@ module BetterTogether
     def extract_locale_from_accept_language_header
       return unless request.env['HTTP_ACCEPT_LANGUAGE']
 
-      lg = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.to_sym
+      # scan returns [] (not nil) when the header doesn't start with two lowercase
+      # letters (e.g. "*", "EN-US", or an empty string -- all seen from bots) --
+      # `.first` is then nil, so guard before `.to_sym`.
+      lg = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first&.to_sym
+      return nil unless lg
+
       lg.in?(I18n.available_locales) ? lg : nil
     end
 
@@ -316,8 +368,19 @@ module BetterTogether
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
+      locale = valid_locale_or_default(locale)
+
       I18n.locale = locale
       session[:locale] = locale # Store the locale in the session
+    end
+
+    # Every source set_locale reads from except the accept-language header is unvalidated
+    # user input (or a value cached from it in the session) — an invalid locale raises
+    # I18n::InvalidLocale as an unhandled 500 before any controller logic runs.
+    def valid_locale_or_default(locale)
+      return locale if I18n.available_locales.map(&:to_s).include?(locale.to_s)
+
+      I18n.default_locale
     end
 
     # Set timezone for the duration of the request based on user/platform preferences

@@ -2,11 +2,9 @@
 
 module BetterTogether
   # Calls for interest allow communities to seek responses from parties interested in proposed initiatives
-  class CallForInterest < ApplicationRecord
+  class CallForInterest < PlatformRecord
     self.table_name = :better_together_calls_for_interest
 
-    include Citable
-    include Claimable
     include Creatable
     include Identifier
     include Privacy
@@ -15,9 +13,9 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
-    slugged :name
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    slugged :name, slug_uniqueness: false
 
     searchable pg_search: {
       against: [:identifier],
@@ -33,16 +31,14 @@ module BetterTogether
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200],
-                                          # rubocop:todo Layout/LineLength
+                                          # rubocop:todo-next Layout/LineLength
                                           saver: { strip: true, quality: 85, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-      # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 1200],
                                          saver: { strip: true, quality: 85, optimize_coding: true }, format: 'png'
 
       attachable.variant :optimized_card_jpeg, resize_to_limit: [1200, 300],
-                                               # rubocop:todo Layout/LineLength
+                                               # rubocop:todo-next Layout/LineLength
                                                saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-      # rubocop:enable Layout/LineLength
       attachable.variant :optimized_card_png, resize_to_limit: [1200, 300],
                                               saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
     end
@@ -88,10 +84,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif card_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        card_image.variant(:optimized_card_png).processed
+        card_image.variant(:optimized_card_png)
       else
         # Otherwise, use the optimized JPG variant
-        card_image.variant(:optimized_card_jpeg).processed
+        card_image.variant(:optimized_card_jpeg)
       end
     end
 
@@ -103,21 +99,11 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif cover_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        cover_image.variant(:optimized_png).processed
+        cover_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        cover_image.variant(:optimized_jpeg).processed
+        cover_image.variant(:optimized_jpeg)
       end
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description: description.present? ? search_text_value(description) : nil
-      }.compact.as_json
     end
 
     include ::BetterTogether::RemoveableAttachment

@@ -11,8 +11,18 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
   let(:base_storext_keys) { BetterTogether::Content::Block.storext_definitions.keys.map(&:to_s) }
   let(:internal_nonlocalized_fields) do
     {
-      'BetterTogether::Content::Html' => %w[html_content]
+      'BetterTogether::Content::Html' => %w[html_content],
+      # active_source is derived from the markdown_source_type radio choice via
+      # the sync_active_source before_save callback — never submitted directly.
+      'BetterTogether::Content::Markdown' => %w[active_source],
+      # Inherited from ResourceBlockAttributes but unused: the block renders a single
+      # navigation area, with no collection, paging, or "view all" link to configure.
+      'BetterTogether::Content::NavigationAreaBlock' => %w[display_style item_limit resource_ids
+                                                           community_scope_id show_view_more_link]
     }.freeze
+  end
+  let(:internal_localized_fields) do
+    { 'BetterTogether::Content::NavigationAreaBlock' => %w[view_more_url] }.freeze
   end
 
   before do
@@ -36,7 +46,9 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
   end
 
   def expected_localized_attributes_for(klass)
-    klass.respond_to?(:mobility_attributes) ? klass.mobility_attributes.map(&:to_s) : []
+    return [] unless klass.respond_to?(:mobility_attributes)
+
+    klass.mobility_attributes.map(&:to_s) - internal_localized_fields.fetch(klass.name, [])
   end
 
   def expected_nonlocalized_attributes_for(klass)
@@ -71,6 +83,31 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
         nontranslated_field_error = "#{klass.name} is missing non-translated field #{attribute}"
         expect(page).to have_css(%([name="#{scope}[#{attribute}]"]), visible: :all), nontranslated_field_error
       end
+    end
+  end
+
+  describe 'identifier + privacy fields' do
+    let(:block) { BetterTogether::Content::Html.new }
+
+    before do
+      BetterTogether::Content::Block.load_all_subclasses
+      render partial: 'better_together/content/blocks/fields/block', locals: { block:, scope:, temp_id: }
+    end
+
+    it 'renders both the identifier and privacy inputs the controllers permit' do
+      page = Capybara.string(rendered)
+
+      expect(page).to have_css(%([name="#{scope}[identifier]"]), visible: :all)
+      expect(page).to have_css(%(select[name="#{scope}[privacy]"]), visible: :all)
+    end
+
+    it 'offers every privacy level (ceiling is applied via disabled options, not removal)' do
+      page = Capybara.string(rendered)
+      select = page.find(%(select[name="#{scope}[privacy]"]), visible: :all)
+
+      expect(select).to have_css('option[value="private"]', visible: :all)
+      expect(select).to have_css('option[value="community"]', visible: :all)
+      expect(select).to have_css('option[value="public"]', visible: :all)
     end
   end
 end

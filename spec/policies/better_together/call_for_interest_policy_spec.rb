@@ -5,17 +5,18 @@ require 'rails_helper'
 RSpec.describe BetterTogether::CallForInterestPolicy do
   describe '#show?' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
-    let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
+    let(:scoped_platform) { create(:better_together_platform, community: scoped_community, privacy: 'public') }
     let(:scoped_event) { create(:event, platform: scoped_platform) }
     let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
-    let(:community_call) { create(:call_for_interest, :with_event, privacy: 'community', interestable: scoped_event) }
+    let(:community_call) { create(:call_for_interest, :with_event, privacy: 'community', interestable: scoped_event, platform: scoped_platform) }
 
     it 'allows community members to view community-scoped calls for interest' do
       user = create(:better_together_user)
       BetterTogether::PersonCommunityMembership.create!(
         joinable: scoped_community,
         member: user.person,
-        role: community_member_role
+        role: community_member_role,
+        status: 'active'
       )
 
       expect(described_class.new(user, community_call).show?).to be true
@@ -34,18 +35,20 @@ RSpec.describe BetterTogether::CallForInterestPolicy do
 
   describe 'Scope' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
-    let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
+    let(:scoped_platform) { create(:better_together_platform, community: scoped_community, privacy: 'public') }
     let(:scoped_event) { create(:event, platform: scoped_platform) }
     let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
-    let!(:public_call) { create(:call_for_interest, privacy: 'public') }
-    let!(:community_call) { create(:call_for_interest, :with_event, privacy: 'community', interestable: scoped_event) }
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let!(:public_call) { create(:call_for_interest, privacy: 'public', platform: host_platform) }
+    let!(:community_call) { create(:call_for_interest, :with_event, privacy: 'community', interestable: scoped_event, platform: host_platform) }
 
     it 'includes community-scoped calls for members' do
       user = create(:better_together_user)
       BetterTogether::PersonCommunityMembership.create!(
         joinable: scoped_community,
         member: user.person,
-        role: community_member_role
+        role: community_member_role,
+        status: 'active'
       )
 
       resolved = described_class::Scope.new(user, BetterTogether::CallForInterest).resolve
@@ -67,6 +70,27 @@ RSpec.describe BetterTogether::CallForInterestPolicy do
 
       expect(resolved).to include(public_call)
       expect(resolved).not_to include(community_call)
+    end
+  end
+
+  describe '#download? (attached media)' do
+    let(:viewer) { create(:better_together_user, :confirmed) }
+
+    it 'matches #show? for a public record, for anonymous and signed-in viewers', :aggregate_failures do
+      record = create(:better_together_call_for_interest, privacy: 'public')
+
+      [nil, viewer].each do |agent|
+        policy = described_class.new(agent, record)
+        expect(policy.download?).to eq(policy.show?)
+      end
+    end
+
+    it 'is refused to a signed-in viewer who cannot see a private record', :aggregate_failures do
+      record = create(:better_together_call_for_interest, privacy: 'private')
+      policy = described_class.new(viewer, record)
+
+      expect(policy.show?).to be false
+      expect(policy.download?).to be false
     end
   end
 end

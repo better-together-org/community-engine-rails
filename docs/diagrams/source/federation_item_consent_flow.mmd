@@ -1,0 +1,9 @@
+flowchart TD
+  A[Content export cursor runs for a PlatformConnection] --> B{Connection allows this content type?}
+  B -->|No, e.g. share_posts is false| Z[Excluded -- never reaches item-level check]
+  B -->|Yes| C{Item federation_visibility}
+  C -->|no_federate| D[Excluded -- hard opt-out always wins]
+  C -->|federate| E[Included -- bypasses creator's global preference]
+  C -->|platform_default| F{Creator federate_content?}
+  F -->|true, or creator is nil / system-owned| G[Included -- unchanged existing behavior]
+  F -->|false| H[Excluded -- unchanged existing behavior]

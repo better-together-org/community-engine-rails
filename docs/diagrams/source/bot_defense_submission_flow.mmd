@@ -1,0 +1,15 @@
+%% render.orientation: portrait
+flowchart TD
+  A[Protected form page render] --> B[Challenge service signs form proof]
+  B --> C[Rendered form carries hidden token and hidden trap field]
+  C --> D[Person completes sign-up membership request or report]
+  D --> E[Submission reaches protected controller]
+  E --> F{Proof valid and fresh?}
+  F -->|No| G[Reject submission with validation error]
+  F -->|Yes| H{Trap field empty and timing plausible?}
+  H -->|No| G
+  H -->|Yes| I{Nonce already used?}
+  I -->|Yes| G
+  I -->|No| J[Normal create path continues]
+  J --> K[Request saved and reviewed through normal workflow]
+

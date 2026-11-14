@@ -2,28 +2,69 @@
 
 module BetterTogether
   module ContentSecurity
-    # Applies content-security enforcement to shared blob proxy URLs.
+    # Determines public proxy and download access for content-security-scanned blobs.
     class BlobAccessPolicy
-      def self.public_proxy_allowed?(blob)
-        new(blob).public_proxy_allowed?
-      end
+      class << self
+        def public_proxy_allowed?(blob)
+          return true unless Configuration.enabled?
 
-      def initialize(blob)
-        @blob = blob
-      end
+          context = attachment_context_for(blob)
+          return item_for_context(blob, context)&.releasable? == true if context
 
-      def public_proxy_allowed?
-        return true if subjects.empty?
+          catch_all_releasable?(blob)
+        end
 
-        subjects.all?(&:publicly_serving_allowed?)
-      end
+        # Blobs attached only through undeclared models are gated by the catch-all
+        # surface: released once any Item for the blob is clean. Auth rules are not
+        # touched, this only withholds unscanned files.
+        def catch_all_releasable?(blob)
+          return true unless Configuration.enabled_for_surface?(AttachmentEnrollment::CATCH_ALL_SURFACE)
+          return true unless blob.attachments.includes(:record).any? { |a| AttachmentEnrollment.catch_all_attachment?(a) }
 
-      private
+          Item.where(blob_id: blob.id).any?(&:releasable?)
+        end
 
-      attr_reader :blob
+        def download_allowed_for_record?(record, attachment_name)
+          return true unless Configuration.enabled?
 
-      def subjects
-        @subjects ||= Subject.for_blob(blob).to_a
+          config = record.class.try(:scannable_attachment_config_for, attachment_name)
+          return true unless config
+          return false unless Configuration.enabled_for_surface?(config.fetch(:surface))
+
+          attachment = record.public_send(attachment_name)
+          return true unless attachment.attached?
+
+          item = Item.for_attachment(record, attachment_name).find_by(blob_id: attachment.blob_id)
+          item&.releasable? == true
+        end
+
+        def scannable_blob?(blob)
+          attachment_context_for(blob).present?
+        end
+
+        def attachment_context_for(blob)
+          blob.attachments.includes(:record).each do |attachment|
+            config = attachment.record.class.try(:scannable_attachment_config_for, attachment.name)
+            next unless config
+            next unless Configuration.enabled_for_surface?(config.fetch(:surface))
+
+            return { attachment: attachment, config: config }
+          end
+
+          nil
+        end
+
+        def item_for(blob)
+          context = attachment_context_for(blob)
+          item_for_context(blob, context) if context
+        end
+
+        private
+
+        def item_for_context(blob, context)
+          attachment = context.fetch(:attachment)
+          Item.for_attachment(attachment.record, attachment.name).find_by(blob_id: blob.id)
+        end
       end
     end
   end

@@ -1,0 +1,48 @@
+{
+  "name": "video_block_portrait",
+  "device": "desktop",
+  "url": "/en/pages/vertical-video",
+  "title": "Vertical video | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "video_block_portrait",
+  "flow": "video_block_portrait",
+  "source_spec": "./spec/docs_screenshots/better_together/video_block_portrait_spec.rb",
+  "callouts": [
+    {
+      "selector": ".iframe-block--portrait",
+      "title": "Vertical video",
+      "bullets": [
+        "9:16 frame, centred, at most 360px wide."
+      ],
+      "target": {
+        "x": 540.0,
+        "y": 200.0,
+        "width": 360.0,
+        "height": 640.0,
+        "right": 900.0,
+        "bottom": 840.0,
+        "center_x": 720.0,
+        "center_y": 520.0
+      },
+      "avoid": {
+        "x": 540.0,
+        "y": 200.0,
+        "width": 360.0,
+        "height": 640.0,
+        "right": 900.0,
+        "bottom": 840.0,
+        "center_x": 720.0,
+        "center_y": 520.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 860.0,
+        "width": 380,
+        "height": 132,
+        "score": 617.0
+      }
+    }
+  ]
+}

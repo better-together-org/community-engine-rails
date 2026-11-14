@@ -14,40 +14,38 @@
                    data: { controller: 'better_together--slim-select' } %>
   </div>
 
-  <div class="mb-3">
-    <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading'), class: 'form-label' %>
-    <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control', placeholder: 'Join our community' %>
-  </div>
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'heading' } %>
 
-  <div class="mb-3">
-    <%= label_tag "#{scope}[subheading]", BetterTogether::Content::Block.human_attribute_name('subheading', default: 'Subheading'), class: 'form-label' %>
-    <%= text_field_tag "#{scope}[subheading]", block.subheading, class: 'form-control' %>
-  </div>
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'subheading' } %>
 
-  <div class="mb-3">
-    <%= label_tag "#{scope}[body_text]", BetterTogether::Content::Block.human_attribute_name('body_text', default: 'Body Text'), class: 'form-label' %>
-    <%= text_area_tag "#{scope}[body_text]", block.body_text, class: 'form-control', rows: 3 %>
-  </div>
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'body_text', rows: 3 } %>
 
   <div class="row row-cols-1 row-cols-sm-2 mb-3">
     <div class="col mb-3">
-      <%= label_tag "#{scope}[primary_button_label]", BetterTogether::Content::Block.human_attribute_name('primary_button_label', default: 'Primary Button Label'), class: 'form-label' %>
-      <%= text_field_tag "#{scope}[primary_button_label]", block.primary_button_label, class: 'form-control', placeholder: 'Get started' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'primary_button_label',
+                           help_text: 'Button label (e.g., "Get started")' } %>
     </div>
     <div class="col mb-3">
-      <%= label_tag "#{scope}[primary_button_url]", BetterTogether::Content::Block.human_attribute_name('primary_button_url', default: 'Primary Button URL'), class: 'form-label' %>
-      <%= url_field_tag "#{scope}[primary_button_url]", block.primary_button_url, class: 'form-control', placeholder: 'https://...' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'primary_button_url',
+                           help_text: 'Link destination (https://...)' } %>
     </div>
   </div>
 
   <div class="row row-cols-1 row-cols-sm-2 mb-3">
     <div class="col mb-3">
-      <%= label_tag "#{scope}[secondary_button_label]", BetterTogether::Content::Block.human_attribute_name('secondary_button_label', default: 'Secondary Button Label'), class: 'form-label' %>
-      <%= text_field_tag "#{scope}[secondary_button_label]", block.secondary_button_label, class: 'form-control', placeholder: 'Learn more' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'secondary_button_label',
+                           help_text: 'Optional secondary button label' } %>
     </div>
     <div class="col mb-3">
-      <%= label_tag "#{scope}[secondary_button_url]", BetterTogether::Content::Block.human_attribute_name('secondary_button_url', default: 'Secondary Button URL'), class: 'form-label' %>
-      <%= url_field_tag "#{scope}[secondary_button_url]", block.secondary_button_url, class: 'form-control', placeholder: 'https://...' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'secondary_button_url',
+                           help_text: 'Optional secondary button link' } %>
     </div>
   </div>
 </div>

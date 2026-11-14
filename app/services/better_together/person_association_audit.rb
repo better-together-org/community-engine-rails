@@ -31,7 +31,7 @@ module BetterTogether
       manifest_entries.select { |entry| entry['reverse_association'].present? }
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def discovered_references
       Rails.application.eager_load!
 
@@ -50,7 +50,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     def covered_by_manifest?(reference)
       return true if manifest_specific_references.any? { |entry| entry.fetch('key') == reference.fetch(:key) }
@@ -84,7 +83,7 @@ module BetterTogether
     end
 
     def foreign_keys_for(klass)
-      klass.connection.foreign_keys(klass.table_name)
+      klass.with_connection { |conn| conn.foreign_keys(klass.table_name) }
     rescue StandardError
       []
     end

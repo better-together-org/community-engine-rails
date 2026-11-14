@@ -1,11 +1,11 @@
 # PIPEDA Compliance Updates
 
 **Date:** November 20, 2025  
-**Purpose:** Document PIPEDA-specific updates to privacy policy and cookie consent agreement
+**Purpose:** Document PIPEDA-specific updates to privacy policy and cookie consent agreement, aligned with the default Community Engine cookie model
 
 ## Overview
 
-Added comprehensive PIPEDA (Personal Information Protection and Electronic Documents Act) compliance information to both the Privacy Policy and Cookie Consent Agreement to meet Canadian federal privacy law requirements.
+Added comprehensive PIPEDA (Personal Information Protection and Electronic Documents Act) compliance information to both the Privacy Policy and Cookie Consent Agreement to meet Canadian federal privacy law requirements. These notes should now be read alongside the current product baseline: essential first-party cookies by default, internal privacy-focused metrics, and no built-in third-party analytics support.
 
 ## Files Updated
 
@@ -93,7 +93,7 @@ Added comprehensive PIPEDA (Personal Information Protection and Electronic Docum
 1. **Canadian Privacy Law Compliance (PIPEDA) Subsection**
    - Explains Cookie Policy as part of PIPEDA compliance
    - Lists specific PIPEDA requirements for cookies:
-     - Consent requirements (essential vs. optional)
+     - Consent requirements (essential first-party cookies vs. optional host-added third-party cookies)
      - Purpose identification
      - Access rights
      - Withdrawal procedures
@@ -102,7 +102,7 @@ Added comprehensive PIPEDA (Personal Information Protection and Electronic Docum
 2. **Your Rights Under PIPEDA**
    - Right to know what cookies collect and why
    - Right to access cookie information
-   - Right to withdraw consent for optional cookies
+   - Right to withdraw consent for optional host-added third-party cookies
    - Right to file complaints
 
 3. **Privacy Officer Contact Information**
@@ -151,7 +151,7 @@ Added comprehensive PIPEDA (Personal Information Protection and Electronic Docum
 These updates are documentation-only and require no backend changes to existing functionality.
 
 ### Existing Practices Already PIPEDA-Compliant
-- Platform already obtains meaningful consent through registration
+- Platform already documents the essential-cookie baseline and host responsibility for any optional third-party browser integrations
 - Security safeguards (encryption, access controls) already in place
 - User access and correction mechanisms already implemented
 - Data retention practices already documented
@@ -162,7 +162,7 @@ These updates are documentation-only and require no backend changes to existing 
 2. **Breach Response Plan**: Document internal procedures for breach assessment and notification
 3. **Staff Training**: Ensure team understands PIPEDA obligations
 4. **Vendor Agreements**: Review subprocessor contracts for PIPEDA compliance
-5. **Consent Audit**: Review all consent mechanisms to ensure PIPEDA compliance
+5. **Consent Audit**: Review any host-added third-party browser integrations to ensure PIPEDA-compliant consent and disclosure
 6. **Annual Review**: Schedule annual PIPEDA compliance review
 
 ## Comparison with Other Jurisdictions

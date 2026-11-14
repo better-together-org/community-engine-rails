@@ -3,7 +3,7 @@
 module BetterTogether
   # Builds a seed-backed account export package while leaving PersonDataExport
   # as the request/lifecycle wrapper.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PersonDataExportService
     Result = Data.define(:seed_record, :seed_hash, :account_data)
 
@@ -57,12 +57,12 @@ module BetterTogether
         :id,
         :identifier,
         :name,
-        :description,
         :privacy,
         :preferences,
         :notification_preferences,
         :email
       ).merge(
+        description: person.description.presence&.to_plain_text,
         created_at: person.created_at&.iso8601,
         updated_at: person.updated_at&.iso8601
       )
@@ -250,5 +250,4 @@ module BetterTogether
       end
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

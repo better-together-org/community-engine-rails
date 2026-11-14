@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Summarise examples that needed an rspec-rebound retry (tmp/flaky/*.jsonl) as markdown.
+
+Usage: bin/ci-flaky-report [dir]        (default: tmp/flaky)
+Input lines come from spec/support/retry_visibility.rb: one per failed attempt that was retried
+(event attempt_failed) and one when an example finally passed after retrying (passed_after_retry).
+Prints a markdown table for the CI job summary and, under GitHub Actions, one ::warning annotation per
+example (first 25). Exits 0 unless CI_FAIL_ON_FLAKY=true and an example passed only after a retry.
+"""
+import collections
+import glob
+import json
+import os
+import sys
+
+directory = sys.argv[1] if len(sys.argv) > 1 else "tmp/flaky"
+lines = []
+for path in sorted(glob.glob(os.path.join(directory, "*.jsonl"))):
+    with open(path) as handle:
+        lines.extend(json.loads(line) for line in handle if line.strip())
+
+if not lines:
+    print("### Retried examples\n\nNone: every example passed on its first attempt.")
+    sys.exit(0)
+
+by_example = collections.OrderedDict()
+for line in lines:
+    item = by_example.setdefault(line["location"], {"description": line["description"], "errors": [], "passed": False})
+    if line["event"] == "attempt_failed":
+        item["errors"].append(line.get("error") or "")
+    else:
+        item["passed"] = True
+
+late = {k: v for k, v in by_example.items() if v["passed"]}
+failed = {k: v for k, v in by_example.items() if not v["passed"]}
+print(f"### Retried examples\n\n{len(late)} passed only after a retry (flaky), {len(failed)} kept failing through the retries.\n")
+print("| Outcome | Example | Failed attempts | First error |")
+print("|---|---|---|---|")
+for location, item in sorted(by_example.items(), key=lambda kv: (not kv[1]["passed"], kv[0])):
+    outcome = "passed after retry" if item["passed"] else "failed after retries"
+    error = (item["errors"][0] if item["errors"] else "").replace("|", "\\|")
+    print(f"| {outcome} | `{location}` {item['description'][:70]} | {len(item['errors'])} | {error} |")
+
+if os.environ.get("GITHUB_ACTIONS") == "true":
+    for location, item in list(by_example.items())[:25]:
+        file, _, line = location.removeprefix("./").partition(":")
+        outcome = "passed after retry" if item["passed"] else "failed after retries"
+        first = (item["errors"][0] if item["errors"] else "").replace("\n", " ")
+        print(f"::warning file={file},line={line}::{outcome} ({len(item['errors'])} failed attempt(s)): {first}", file=sys.stderr)
+
+if os.environ.get("CI_FAIL_ON_FLAKY") == "true" and late:
+    print("\nCI_FAIL_ON_FLAKY is set: failing because examples passed only after a retry.", file=sys.stderr)
+    sys.exit(1)

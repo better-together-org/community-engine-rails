@@ -10,6 +10,9 @@ FactoryBot.define do
     privacy { 'private' }
     protected { false }
     locale { 'en' }
-    association :community, factory: :community
+    # :public — the base community factory defaults to 'private', which would
+    # make an overridden 'public'/'community' calendar privacy exceed its
+    # community's privacy ceiling (see PrivacyCeilingValidatable).
+    association :community, factory: %i[community public]
   end
 end

@@ -1,9 +1,8 @@
 {
   "name": "robot_authored_post_form",
   "device": "desktop",
-  "url": "http://127.0.0.1:36007/en/posts/robot-authored-post/edit",
+  "url": "/en/posts/robot-authored-post/edit",
   "title": "Edit Post | Test Host Community",
-  "captured_at": "2026-04-05T00:15:30Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "robot_authored_page_post_publishing",

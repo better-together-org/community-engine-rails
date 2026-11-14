@@ -1,0 +1,14 @@
+flowchart TD
+    A[Member submits a deletion request with an optional reason] --> B[PersonDeletionRequest pending]
+    B -- cancel in My data --> C[cancelled]
+    B --> D[Operator reviews and runs PersonDeletionExecutor or the hard_delete rake task]
+    D --> E[PersonDeletionInventory from config/person_deletion_inventory.yml]
+    E --> F[PersonPurgeAudit running: snapshots and inventory]
+    F --> G{Mode}
+    G -- Anonymizing --> H[Destroy inventory entries marked destroy]
+    H --> I[PersonDeletionAnonymizer: name, identifier, preferences reset, images purged]
+    G -- Hard delete --> J[PersonHardDeletionExecutor destroys the person and owned records in dependency order]
+    I --> K[Request approved, text scrubbed]
+    J --> K
+    K --> L[Audit completed with execution snapshot]
+    D -- any error --> M[Audit failed, backtrace kept, error re-raised]

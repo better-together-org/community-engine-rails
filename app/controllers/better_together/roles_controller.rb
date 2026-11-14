@@ -10,7 +10,7 @@ module BetterTogether
       # Assuming Role class is under the same namespace for consistency
       authorize resource_class # Add this to authorize action
       @roles = policy_scope(resource_class.with_translations)
-               .includes(:resource_permissions)
+               .includes(:resource_permissions, :platform)
                .order(:resource_type, :position, :identifier)
       @roles_by_resource_type = @roles.group_by(&:resource_type)
       @rbac_nav_counts = {
@@ -18,7 +18,7 @@ module BetterTogether
         resource_permissions: ::BetterTogether::ResourcePermission.count
       }
       @available_view_types = %w[card table]
-      @view_type = view_preference('roles_index', default: 'card', allowed: @available_view_types)
+      @view_type = view_preference('index_view', default: 'card', allowed: @available_view_types)
     end
 
     # GET /roles/1

@@ -4,10 +4,11 @@ require 'capybara'
 require 'fileutils'
 require 'json'
 require 'uri'
+require 'yaml'
 
 module BetterTogether # :nodoc:
   # Captures deterministic desktop and mobile screenshots for documentation specs.
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module CapybaraScreenshotEngine # :nodoc:
     extend self
 
@@ -15,17 +16,17 @@ module BetterTogether # :nodoc:
 
     SCREENSHOT_ROOT = BetterTogether::Engine.root.join('docs', 'screenshots').freeze
 
-    def capture(name, device: :both, metadata: {}, callouts: [], &)
+    def capture(name, device: :both, metadata: {}, callouts: [], narrative: nil, &)
       register_drivers
 
       devices_for(device).to_h do |current_device|
-        [current_device, capture_single(name, current_device, metadata:, callouts:, &)]
+        [current_device, capture_single(name, current_device, metadata:, callouts:, narrative:, &)]
       end
     end
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def register_drivers
       return if @registered
 
@@ -53,7 +54,6 @@ module BetterTogether # :nodoc:
 
       @registered = true
     end
-    # rubocop:enable Metrics/MethodLength
 
     def devices_for(device)
       return %i[desktop mobile] if device.nil? || device.to_sym == :both
@@ -61,8 +61,8 @@ module BetterTogether # :nodoc:
       [device.to_sym]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def capture_single(name, device, metadata:, callouts:)
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
+    def capture_single(name, device, metadata:, callouts:, narrative: nil)
       directory = SCREENSHOT_ROOT.join(device.to_s)
       FileUtils.mkdir_p(directory)
 
@@ -93,13 +93,20 @@ module BetterTogether # :nodoc:
         end
         File.write(json_path, JSON.pretty_generate(processed_metadata))
         normalize_artifact_permissions(json_path)
+        if narrative
+          yaml_path = directory.join("#{filename}.narrative.yml")
+          normalized_narrative = narrative.transform_keys(&:to_s)
+          normalized_narrative['slug'] ||= filename
+          normalized_narrative['device'] = device.to_s
+          File.write(yaml_path, YAML.dump(normalized_narrative))
+          normalize_artifact_permissions(yaml_path)
+        end
       ensure
         restore_sticky_elements
       end
 
       image_path.to_s
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def default_metadata(name, device)
       {
@@ -124,11 +131,12 @@ module BetterTogether # :nodoc:
       nil
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def collect_callout_targets(callouts)
       normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
       return [] if normalized.empty?
 
+      scroll_callout_targets_into_view(normalized.map { |callout| callout[:selector] })
       geometry_by_selector = fetch_callout_geometry(normalized)
       missing_selectors = normalized.map { |callout| callout[:selector] } - geometry_by_selector.keys
       if missing_selectors.any?
@@ -143,7 +151,6 @@ module BetterTogether # :nodoc:
         callout.merge(target: geometry[:target], avoid: geometry[:avoid])
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def normalize_callout(callout)
       {
@@ -160,6 +167,28 @@ module BetterTogether # :nodoc:
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # Geometry and the screenshot are both viewport-relative, so a target below the
+    # fold would be missed. Centre the targets in the viewport first when needed.
+    def scroll_callout_targets_into_view(selectors)
+      Capybara.page.execute_script(<<~JS, selectors)
+        (function(selectors) {
+          const rects = selectors
+            .map((selector) => document.querySelector(selector))
+            .filter(Boolean)
+            .map((element) => element.getBoundingClientRect());
+          if (!rects.length) return;
+
+          const top = Math.min(...rects.map((rect) => rect.top));
+          const bottom = Math.max(...rects.map((rect) => rect.bottom));
+          if (top >= 0 && bottom <= window.innerHeight) return;
+
+          const fits = (bottom - top) < window.innerHeight;
+          const focus = fits ? (top + bottom) / 2 : (rects[0].top + rects[0].bottom) / 2;
+          window.scrollBy({ top: focus - window.innerHeight / 2, behavior: 'instant' });
+        })(arguments[0]);
+      JS
+    end
+
     def fetch_callout_geometry(callouts)
       results = Capybara.page.evaluate_script(<<~JS, callouts)
         (function(targetCallouts) {
@@ -270,7 +299,7 @@ module BetterTogether # :nodoc:
       nil
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def hide_sticky_elements
       Capybara.page.execute_script(<<~JS)
         (function() {
@@ -280,9 +309,16 @@ module BetterTogether # :nodoc:
           style.innerHTML = '.__bt_docs_screenshot_hidden__ { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
           document.head.appendChild(style);
 
+          const preserveFixedElement = (element) => {
+            if (!element || !element.matches) return false;
+
+            return element.matches('.modal.show, .modal-backdrop.show, .modal-backdrop.fade.show') ||
+              !!element.closest('.modal.show');
+          };
+
           document.querySelectorAll('*').forEach((element) => {
             const computed = window.getComputedStyle(element);
-            if (computed.position === 'fixed' || computed.position === 'sticky') {
+            if ((computed.position === 'fixed' || computed.position === 'sticky') && !preserveFixedElement(element)) {
               element.classList.add('__bt_docs_screenshot_hidden__');
             }
           });
@@ -293,7 +329,6 @@ module BetterTogether # :nodoc:
     rescue StandardError
       nil
     end
-    # rubocop:enable Metrics/MethodLength
 
     def restore_sticky_elements
       Capybara.page.execute_script(<<~JS)
@@ -313,5 +348,4 @@ module BetterTogether # :nodoc:
       nil
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

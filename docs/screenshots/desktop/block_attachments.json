@@ -1,0 +1,48 @@
+{
+  "name": "block_attachments",
+  "device": "desktop",
+  "url": "/en/posts/sample-post-1",
+  "title": "Blocks inside a post | Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "block_attachments",
+  "flow": "block_attachments",
+  "source_spec": "./spec/docs_screenshots/better_together/block_attachments_spec.rb",
+  "callouts": [
+    {
+      "selector": ".post-content .attached-image figcaption",
+      "title": "Caption and credit",
+      "bullets": [
+        "Both come from the image block."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 891.5625,
+        "width": 1262.0,
+        "height": 43.375,
+        "right": 1343.5,
+        "bottom": 934.9375,
+        "center_x": 712.5,
+        "center_y": 913.25
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 891.5625,
+        "width": 1262.0,
+        "height": 43.375,
+        "right": 1343.5,
+        "bottom": 934.9375,
+        "center_x": 712.5,
+        "center_y": 913.25
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 739.56,
+        "width": 380,
+        "height": 132,
+        "score": 891.5625
+      }
+    }
+  ]
+}

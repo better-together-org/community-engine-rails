@@ -1,0 +1,10 @@
+{
+  "name": "platform_connections_show",
+  "device": "mobile",
+  "url": "/en/platform_connections/f7605801-cf76-4f88-aad5-5bf804283285",
+  "title": "Test Host Community → Valley Commons | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_connections",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+}

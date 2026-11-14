@@ -1,0 +1,82 @@
+{
+  "name": "platform_trusted_domains_new",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/trusted_domains/new",
+  "title": "Add trusted domain | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "trusted_domains",
+  "flow": "trusted_domains_new",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_trusted_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_trusted_domain_role_id",
+      "title": "Community role",
+      "bullets": [
+        "Only community roles are offered; platform and steward roles cannot be granted by domain."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 353.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 391.390625,
+        "center_x": 250.0,
+        "center_y": 372.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 82.0,
+        "width": 500.0,
+        "height": 703.390625,
+        "right": 500.0,
+        "bottom": 785.390625,
+        "center_x": 250.0,
+        "center_y": 433.6953125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 805.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 471.609375
+      }
+    },
+    {
+      "selector": "#platform_trusted_domain_role_ceiling_confirmed",
+      "title": "Role confirmation",
+      "bullets": [
+        "The steward confirms that everyone with a verified address receives this role."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 457.390625,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 28.0,
+        "bottom": 473.390625,
+        "center_x": 20.0,
+        "center_y": 465.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 82.0,
+        "width": 500.0,
+        "height": 703.390625,
+        "right": 500.0,
+        "bottom": 785.390625,
+        "center_x": 250.0,
+        "center_y": 433.6953125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 1023,
+        "width": 270.0,
+        "height": 210
+      }
+    }
+  ]
+}

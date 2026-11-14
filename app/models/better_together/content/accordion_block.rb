@@ -3,27 +3,30 @@
 module BetterTogether
   module Content
     # Renders a collapsible accordion of FAQ-style question/answer pairs.
-    # accordion_items_json stores a JSON array of {question:, answer:} objects.
+    # accordion_items_json stores a JSON array of {question:, answer:} objects, per locale.
     class AccordionBlock < Block
+      include Translatable
+
+      translates :heading, type: :string
+      translates :accordion_items_json, type: :text
+
       store_attributes :content_data do
-        heading               String, default: ''
-        accordion_items_json  String, default: '[]'
-        open_first            String, default: 'true'
+        open_first String, default: 'true'
+      end
+
+      after_initialize do |record|
+        record.accordion_items_json = '[]' if record.accordion_items_json.blank?
       end
 
       # Returns an array of item hashes with symbolized keys, or [] on parse failure.
       def parsed_accordion_items
-        JSON.parse(accordion_items_json).map(&:symbolize_keys)
+        JSON.parse(accordion_items_json.presence || '[]').map(&:symbolize_keys)
       rescue JSON::ParserError
         []
       end
 
       def open_first?
         open_first == 'true'
-      end
-
-      def self.content_addable?
-        true
       end
 
       def self.extra_permitted_attributes

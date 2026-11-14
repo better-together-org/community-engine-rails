@@ -1,0 +1,49 @@
+{
+  "name": "settlement_pages_index",
+  "device": "desktop",
+  "url": "/en/g/settlements",
+  "title": "Settlements | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settlement_page_tabs",
+  "flow": "index",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_page_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#settlements-description",
+      "title": "What a settlement is",
+      "bullets": [
+        "One line under the heading; translated per locale.",
+        "The table below is described by it for assistive technology."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 176.0,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 200.0,
+        "center_x": 720.0,
+        "center_y": 188.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 176.0,
+        "width": 1296.0,
+        "height": 191.0,
+        "right": 1368.0,
+        "bottom": 367.0,
+        "center_x": 720.0,
+        "center_y": 271.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 387.0,
+        "width": 380,
+        "height": 210,
+        "score": 1090.0
+      }
+    }
+  ]
+}

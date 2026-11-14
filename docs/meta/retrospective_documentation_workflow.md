@@ -1,5 +1,9 @@
 # Retrospective Documentation Workflow Guide
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-17. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Document Version:** 1.0  
 **Created:** January 12, 2026  
 **Based On:** PR #1149 Documentation Process

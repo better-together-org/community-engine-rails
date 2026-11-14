@@ -11,7 +11,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def index # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         # Eager-load translated attributes (string/text/rich text) and the
         # creator's string translations to avoid N+1 lookups when rendering
@@ -67,7 +67,6 @@ module BetterTogether
           @aggregated_request_matches = BetterTogether::Joatu::Request.none
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -106,7 +105,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def create # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         resource_instance(resource_params)
         authorize_resource
@@ -121,7 +120,7 @@ module BetterTogether
             if source_type == 'BetterTogether::Joatu::Request' && source_id.present?
               source = BetterTogether::Joatu::Request.find_by(id: source_id)
               if source
-                # rubocop:todo Metrics/BlockNesting
+                # rubocop:todo-next Metrics/BlockNesting
                 if source.respond_to?(:status) && !%w[open matched].include?(source.status)
                   Rails.logger.warn(
                     "Not creating response link: source #{source.id} status #{source.status} not respondable"
@@ -130,7 +129,6 @@ module BetterTogether
                   BetterTogether::Joatu::ResponseLink.create(source: source, response: @resource,
                                                              creator_id: helpers.current_person&.id)
                 end
-                # rubocop:enable Metrics/BlockNesting
               end
             end
 
@@ -157,7 +155,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -166,7 +163,7 @@ module BetterTogether
       # Build an offer prefilled from a source Request when source params are present
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def apply_source_prefill_offer(offer) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return unless offer
 
@@ -195,7 +192,6 @@ module BetterTogether
         offer.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
                                                creator_id: helpers.current_person&.id)
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -221,6 +217,28 @@ module BetterTogether
         rp = super
         rp[:creator_id] ||= helpers.current_person&.id
         rp
+      end
+
+      # A private Offer that's excluded from the policy-scoped resource_collection
+      # still exists on this platform — for an unauthenticated visitor that reads
+      # as "please sign in", not a blanket 404 (which would also incorrectly
+      # apply to genuinely missing offers / offers on another platform).
+      def handle_resource_not_found
+        return super if current_user.present? || current_robot.present?
+
+        offer = platform_scoped_record_ignoring_privacy
+        return super unless offer
+
+        redirect_to new_user_session_path(locale: I18n.locale)
+      end
+
+      def platform_scoped_record_ignoring_privacy
+        platform = Current.platform || Current.host_platform
+        return nil unless platform
+
+        resource_class.where(platform_id: platform.id).friendly.find(id_param)
+      rescue ActiveRecord::RecordNotFound, StandardError
+        nil
       end
 
       def apply_target_prefill_offer(offer)

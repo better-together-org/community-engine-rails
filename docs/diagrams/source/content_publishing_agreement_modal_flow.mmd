@@ -1,0 +1,19 @@
+flowchart TD
+  A[Signed-in publisher edits or creates public content] --> B[Submit publish form]
+  B --> C{Content would become public?}
+  C -- No --> D[Save without publishing agreement gate]
+  C -- Yes --> E[PublicVisibilityGate checks content publishing agreement]
+  E --> F{Already accepted?}
+  F -- Yes --> G[Save succeeds]
+  F -- No --> H[Render form error with modal launch link]
+  H --> I[Publisher opens content publishing agreement modal]
+  I --> J[Turbo frame loads seeded agreement page]
+  J --> K[Direct-accept footer shows Cancel and I agree]
+  K --> L{Scrolled through full agreement?}
+  L -- No --> M[I agree stays disabled]
+  L -- Yes --> N[I agree becomes enabled]
+  N --> O[POST /agreements/:id/accept]
+  O --> P[Acceptance recorder stores publish_modal consent]
+  P --> Q[Modal closes and launch button changes to Accepted]
+  Q --> R[Publisher re-submits form]
+  R --> G

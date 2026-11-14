@@ -1,0 +1,29 @@
+better_together:
+  version: "2.0"
+  seed:
+    type: "BetterTogether::Seed"
+    identifier: "example-minimal-packet"
+    created_by: "Community Engine"
+    created_at: "2026-11-13T00:00:00Z"
+    description: "A minimal protocol 2.0 packet with one page."
+    origin:
+      platforms: []
+      contributors: []
+      license: "CC0-1.0"
+  seed_pack:
+    schema_version: "1.0"
+    pack_type: "pages"
+    install_tier: "optional"
+    marketing_name: "Minimal Example Seed Pack"
+    selectable_in_setup_wizard: false
+    dependencies: []
+  packet:
+    id: "example-minimal-packet"
+    version: "1.0.0"
+    mode: "add_only"
+    default_locale: "en"
+    locales: ["en", "fr"]
+    unsupported_locale_policy: "skip"
+    records:
+      - "records/pages.yml"
+    manifest: "MANIFEST.json"

@@ -5,55 +5,69 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   let(:locale) { I18n.default_locale }
 
-  it 'renders index with evidence summaries when present' do
-    calendar = create('better_together/calendar', privacy: 'public')
-    create(:claim, claimable: calendar, statement: 'Calendars can expose evidence on listing surfaces.')
-    create(:citation, citeable: calendar, reference_key: 'calendar_index_summary', title: 'Calendar Index Summary')
-
-    get better_together.calendars_path(locale:)
-    expect(response).to have_http_status(:ok)
-    expect(response.body).to include('Evidence:')
-    expect(response.body).to include('Governance Bundle')
-  end
-
   context 'when viewing calendar show page' do
+    # The month grid defaults to the current month, so "2 days from now" lands
+    # outside it in the last two days of any month. The before block pins mid-month.
     let(:calendar) { create('better_together/calendar', privacy: 'public') }
     let(:upcoming_event) do
-      BetterTogether::Event.create!(
-        name: 'Upcoming',
-        starts_at: 2.days.from_now,
-        identifier: SecureRandom.uuid
-      )
+      create(:better_together_event,
+             name: 'Upcoming',
+             starts_at: 2.days.from_now,
+             identifier: SecureRandom.uuid)
     end
     let(:past_event) do
-      BetterTogether::Event.create!(
-        name: 'Past',
-        starts_at: 3.days.ago,
-        identifier: SecureRandom.uuid
-      )
+      create(:better_together_event,
+             name: 'Past',
+             starts_at: 3.days.ago,
+             # The factory's ends_at default (1.week.from_now + 2.hours) is
+             # independent of starts_at, so it must be overridden here too —
+             # otherwise this "past" event's ends_at stays in the future and
+             # Event.past never actually matches it.
+             ends_at: 3.days.ago + 1.hour,
+             identifier: SecureRandom.uuid)
     end
 
     before do
+      travel_to(Time.zone.local(2026, 3, 10, 12))
       BetterTogether::CalendarEntry.create!(calendar:, event: upcoming_event, starts_at: upcoming_event.starts_at)
       BetterTogether::CalendarEntry.create!(calendar:, event: past_event, starts_at: past_event.starts_at)
-
-      citation = create(:citation, citeable: calendar, title: 'Calendar charter', reference_key: 'calendar-charter')
-      claim = create(:claim, claimable: calendar, statement: 'This calendar reflects the community schedule.')
-      create(:evidence_link, claim:, citation:, relation_type: 'supports')
     end
 
-    it 'renders successfully with evidence sections' do
+    it 'renders successfully' do
       get better_together.calendar_path(calendar, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Claims and Supporting Evidence')
-      expect(response.body).to include('Evidence and Citations')
-      expect(response.body).to include('Calendar charter')
+    end
+
+    it 'renders the upcoming event inside its actual month-grid day cell, not just as a bare grid' do
+      # Regression test: the month/week/day calendar tabs used to render an
+      # empty grid — passed blocks never received or displayed day_events,
+      # so no event ever appeared no matter what was on the calendar.
+      #
+      # start_date pins the displayed month-grid to the one actually containing
+      # upcoming_event: simple_calendar's month grid only pads into the next
+      # month enough to complete its last week row, so without this, "today"
+      # being near month-end (e.g. the last day of a week-ending month) can
+      # leave a 2-days-from-now event just outside the default (today's month)
+      # grid entirely - a flake, not a product bug.
+      get better_together.calendar_path(calendar, locale:, start_date: upcoming_event.starts_at.to_date.iso8601)
+
+      expect(response).to have_http_status(:ok)
+      day_cell_id = "calendar-day-#{upcoming_event.starts_at.to_date.iso8601}-events"
+      expect_element_content("##{day_cell_id}", upcoming_event.name)
+    end
+
+    it 'surfaces upcoming and past events as visible lists on the page' do
+      get better_together.calendar_path(calendar, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect_element_content('#calendar-upcoming-events-list', upcoming_event.name)
+      expect_element_content('#calendar-past-events-list', past_event.name)
     end
   end
 
   describe 'GET /calendars/:id/feed' do
-    let(:community) { create(:community) }
+    let(:community) { create(:community, privacy: 'public') }
     let(:calendar) { create('better_together/calendar', community:, privacy: 'private') }
     let(:first_event) do
       create(:event,

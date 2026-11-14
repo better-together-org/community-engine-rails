@@ -1,0 +1,25 @@
+%% render.orientation: portrait
+flowchart TD
+  PAGE["Settlement show page\n(SettlementsController#show)"]
+
+  PAGE --> COMM["Communities tab\npolicy_scope(Community)\n.located_in(settlement)\nshown only when any are located here"]
+  PAGE --> LAZY["Posts and Events tabs\nlazy turbo-frames:\n/posts?settlement=identifier\n/events?settlement=identifier"]
+  PAGE --> HOOKS["Hook partials, empty in the engine:\nheader_extra, about_extra,\ntab_links_extra, tab_panes_extra"]
+
+  LAZY --> PSI1["PlaceScopedIndex\nprepended in PostsController\nand EventsController"]
+  PSI1 --> PSI2["load_scoped_place\nallow-listed param: settlement"]
+  PSI2 --> PSI3["policy_scope(Settlement)\n.find_by!(identifier)\nunknown or invisible place = 404"]
+  PSI3 --> PSI4["policy_scoped_resources\n.located_in(place)\nvisibility never widens"]
+
+  COMM --> SCOPE
+  PSI4 --> SCOPE
+
+  SCOPE["located_in(place)\nGeography::Locatable::LocatedIn"]
+  SCOPE --> DIRECT["direct:\nown location is the place\nor an address within it\n(LocationQueries)"]
+  SCOPE --> INHERIT["inherited:\nno explicit location, and the\ncommunity is located_in(place)"]
+
+  DIRECT --> EV["Event\n(Locatable::One)"]
+  DIRECT --> CO["Community\n(Locatable::LocatedIn)"]
+  DIRECT --> PO["Post\n(Locatable::LocatedIn)"]
+  INHERIT --> PO
+  PO -. "inherit_location_from\n:community" .-> CO

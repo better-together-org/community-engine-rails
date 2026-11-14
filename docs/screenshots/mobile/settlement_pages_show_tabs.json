@@ -1,0 +1,49 @@
+{
+  "name": "settlement_pages_show_tabs",
+  "device": "mobile",
+  "url": "/en/g/settlements/harbour-cove",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settlement_page_tabs",
+  "flow": "tabs",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_page_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#geography-settlement",
+      "title": "Tabs",
+      "bullets": [
+        "About, Posts, Events, plus Communities when any are located here.",
+        "Named for assistive technology with a translated aria-label."
+      ],
+      "target": {
+        "x": 21.0,
+        "y": 508.390625,
+        "width": 458.0,
+        "height": 41.0,
+        "right": 479.0,
+        "bottom": 549.390625,
+        "center_x": 250.0,
+        "center_y": 528.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 503.390625,
+        "width": 476.0,
+        "height": 116.0,
+        "right": 488.0,
+        "bottom": 619.390625,
+        "center_x": 250.0,
+        "center_y": 561.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 639.39,
+        "width": 270.0,
+        "height": 288,
+        "score": 637.609375
+      }
+    }
+  ]
+}

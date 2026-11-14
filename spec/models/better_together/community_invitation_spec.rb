@@ -60,6 +60,28 @@ RSpec.describe BetterTogether::CommunityInvitation do
     it 'changes status to accepted' do
       expect { invitation.accept!(invitee_person: person) }.to change { invitation.reload.status }.to('accepted')
     end
+
+    it 'creates an active community membership for the invitee' do
+      invitation.accept!(invitee_person: person)
+
+      membership = community.person_community_memberships.find_by!(member: person, role: role)
+      expect(membership.status).to eq('active')
+    end
+
+    it 'activates an existing pending membership for the invitee' do
+      membership = create(
+        :better_together_person_community_membership,
+        joinable: community,
+        member: person,
+        role: role,
+        status: 'pending'
+      )
+
+      expect { invitation.accept!(invitee_person: person) }
+        .not_to change(BetterTogether::PersonCommunityMembership, :count)
+
+      expect(membership.reload.status).to eq('active')
+    end
   end
 
   describe '#decline!' do

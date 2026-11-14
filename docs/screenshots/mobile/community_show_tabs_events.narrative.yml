@@ -1,0 +1,13 @@
+---
+title: Community page, Events tab
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I see the events a community hosts.
+callouts:
+- :id: events
+  :title: Events
+  :description: Loaded on first view.
+accessibility_notes: The frame heading is an h2 under the page h1.
+slug: community_show_tabs_events
+device: mobile

@@ -9,6 +9,10 @@ module BetterTogether
           new(connection:, cursor:, limit:).call
         end
 
+        def self.accessible?(**)
+          true
+        end
+
         def initialize(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           @connection = connection
           @cursor = cursor

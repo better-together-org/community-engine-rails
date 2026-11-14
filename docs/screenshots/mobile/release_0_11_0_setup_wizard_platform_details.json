@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_setup_wizard_platform_details",
+  "device": "mobile",
+  "url": "/en/w/setup_wizard/platform_details",
+  "title": "Better Together Community Engine",
+  "locale": "en",
+  "feature_set": "setup_wizard",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_setup_wizard_spec.rb"
+}

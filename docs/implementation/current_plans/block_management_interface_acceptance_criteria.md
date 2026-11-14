@@ -1,5 +1,9 @@
 # Block Management Interface - TDD Acceptance Criteria
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-23. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document defines stakeholder-focused acceptance criteria for implementing the Block Management Interface using Test-Driven Development (TDD). This feature enables users to manage their blocked users list with a comprehensive interface.

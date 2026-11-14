@@ -31,9 +31,9 @@ applyTo: "**/*.rb"
 - Never hard-code copy in code—use translation keys.
 - Send emails and notifications in the recipient’s locale.
 
-## Search (Elasticsearch)
-- Keep `as_indexed_json` lean but complete (include translated/plaintext rich text).
-- Trigger reindex jobs on relevant changes (after_commit).
+## Search
+- Include `BetterTogether::Searchable` and declare `searchable pg_search: { ... }` for models that should appear in search.
+- Keep `as_indexed_json` lean plain text; it feeds the database fallback and the optional Elasticsearch extension gem.
 
 ## Security & Privacy
 - Encrypt sensitive fields (AR Encryption); encrypt blobs via Active Storage.

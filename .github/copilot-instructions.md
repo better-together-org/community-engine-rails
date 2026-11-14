@@ -24,7 +24,7 @@ This repository uses a comprehensive system of instruction files:
    - `importmaps.instructions.md` - JavaScript module management (JS, importmap.rb)
    - `notifications-noticed.instructions.md` - Noticed gem patterns (Ruby)
    - `rails-engine.instructions.md` - Rails 7.1+ & engine conventions (Ruby)
-   - `search-elasticsearch.instructions.md` - Elasticsearch 7 integration (Ruby)
+   - `search.instructions.md` - pg_search-based search and the optional Elasticsearch extension gem (Ruby)
    - `security-encryption.instructions.md` - Security & Active Record Encryption (Ruby, ERB, JS)
    - `sidekiq-redis.instructions.md` - Background jobs & caching (job files, Redis, initializers)
    - `view-helpers.instructions.md` - Action View & helper patterns (ERB, Ruby, helpers)
@@ -36,7 +36,7 @@ This repository uses a comprehensive system of instruction files:
 **Build & Setup:**
 ```bash
 bin/dc build                    # Build Docker containers
-bin/dc up -d                    # Start services (Postgres, Redis, Elasticsearch)
+bin/dc up -d                    # Start services (Postgres, Redis)
 bin/dc-run rails db:prepare     # Setup/migrate database
 bin/parallel-setup              # Setup parallel test DBs (REQUIRED for prspec)
 ```
@@ -63,10 +63,14 @@ bin/dc-run bin/i18n                                         # I18n validation
 **Common Workflows:**
 - **Before coding**: Run `bin/dc-run bundle exec brakeman` to check for existing security issues
 - **During development**: Run specific tests with `prspec` to validate changes
-- **Before committing**: Run RuboCop and ensure tests pass
+- **Before committing** (MANDATORY):
+  1. Run `bin/dc-run bundle exec rubocop -A` and fix all offenses
+  2. Run `bin/dc-run bin/i18n health` and resolve all issues
+  3. Ensure all targeted tests pass
+  4. Verify no new security warnings from brakeman
 - **Documentation**: Run `bin/render_diagrams` after updating `.mmd` files
 
-> **Critical**: Always use `bin/dc-run` for commands that access database, Redis, or Elasticsearch. See AGENTS.md for complete command reference.
+> **Critical**: Always use `bin/dc-run` for commands that access the database or Redis. See AGENTS.md for complete command reference.
 
 ## Core Principles
 
@@ -85,7 +89,7 @@ bin/dc-run bin/i18n                                         # I18n validation
 ## Technology Stack
 
 - **Rails 7.1+** (engine & current hosts) – compatible with Rails 8 targets
-- **Ruby 3.3+**
+- **Ruby 3.4+**
 - **PostgreSQL (+ PostGIS, pgcrypto)**
 - **Redis** for caching & Sidekiq queues
 - **Sidekiq** for background jobs (queue namespaced, e.g. `:metrics`)
@@ -94,7 +98,7 @@ bin/dc-run bin/i18n                                         # I18n validation
 - **Trix / Action Text** for rich text
 - **Active Record Encryption** for sensitive fields; encrypted Active Storage files
 - **Mobility** for attribute translations
-- **Elasticsearch 7** via `elasticsearch-rails`
+- **Postgres-native search** via `pg_search` (Elasticsearch is the optional `better_together-elasticsearch` extension gem)
 - **Importmap-Rails** for JS deps (no bundler by default)
 - **Docker** containerized development environment - use `bin/dc-run` for all database-dependent commands
 - **Dokku** (Docker-based PaaS) for deployment; Cloudflare for DNS/DDoS/tunnels
@@ -187,6 +191,39 @@ getTranslation(key) {
 
 
 ## Coding Guidelines
+
+### Code Quality Checks (Pre-Commit Requirements)
+
+**MANDATORY**: Before committing any changes, ensure code passes all quality checks:
+
+#### 1. RuboCop Auto-Correct
+```bash
+bin/dc-run bundle exec rubocop -A
+```
+- Automatically fixes style violations and code quality issues
+- Must show `no offenses detected` before committing
+- If offenses remain after auto-correct, fix manually or justify with inline comments
+- Never commit code with RuboCop violations
+
+#### 2. I18n Health Check
+```bash
+bin/dc-run bin/i18n health
+```
+- Validates translation consistency across all locales (en, es, fr, uk)
+- Checks for missing keys, unused keys, and interpolation mismatches
+- Fix issues with:
+  - `bin/dc-run bin/i18n normalize` for formatting
+  - Add missing translations for all locales
+  - Remove or ignore unused keys appropriately
+- Never commit code that breaks i18n integrity
+
+#### 3. Security Scan
+```bash
+bin/dc-run bundle exec brakeman --quiet --no-pager
+```
+- Identifies security vulnerabilities before code review
+- Fix high-confidence warnings immediately
+- Review and address medium-confidence security-relevant warnings
 
 ### Accessibility Requirements (WCAG 2.1 AA)
 
@@ -286,7 +323,7 @@ All form inputs MUST use one of these accessible label patterns:
 - **Prefer `build_stubbed` for nil/timezone scenarios**: Use stubbed instances instead of mutating database constraints in setup.
 
 ### Docker Environment Usage
-- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL or Redis
 - **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
@@ -714,11 +751,11 @@ ls bin/dc*  # Should show: bin/dc, bin/dc-run, bin/dc-run-dummy
 chmod +x bin/dc*  # If needed
 ```
 
-**Problem: Elasticsearch not available**
+**Problem: search returns nothing or is unavailable**
 ```bash
-# Solution: Check Docker services and wait for ES to be ready
-bin/dc ps  # Should show elasticsearch running
-# Wait ~30 seconds for ES to fully start
+# Solution: check SEARCH_BACKEND (default pg_search) and run the audit
+bin/dc-run bundle exec rake better_together:search:audit
+# Only with SEARCH_BACKEND=elasticsearch (extension gem) is an Elasticsearch service required
 ```
 
 **Problem: Test database schema out of sync**

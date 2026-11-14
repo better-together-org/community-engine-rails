@@ -3,9 +3,7 @@
 module BetterTogether
   module Metrics
     # LinkClickReport records tracking instances of reports run against the BetterTogether::Metrics::LinkClick records.
-    class LinkClickReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
-      include PlatformScoped
-
+    class LinkClickReport < PlatformRecord # rubocop:todo Metrics/ClassLength
       # Associations
       belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :link_click_reports, optional: true
 
@@ -29,7 +27,7 @@ module BetterTogether
       # Generates the report data for LinkClick metrics.
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def generate_report! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
@@ -76,7 +74,6 @@ module BetterTogether
 
         self.report_data = generated_report
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -113,7 +110,7 @@ module BetterTogether
       # Helper method to generate the CSV file.
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def generate_csv_file # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
@@ -134,7 +131,7 @@ module BetterTogether
         end
         header << 'Page URL'
 
-        file_path = Rails.root.join('tmp', build_filename)
+        file_path = Rails.root.join('tmp', "#{SecureRandom.hex(8)}_#{build_filename}")
         CSV.open(file_path, 'w') do |csv|
           csv << header
 
@@ -153,12 +150,11 @@ module BetterTogether
 
         file_path
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
       # Builds a human-friendly filename based on the applied filters, the sort toggle, and the current time.
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def build_filename # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         filters_summary = []
         if filters['from_date'].present?
@@ -172,7 +168,6 @@ module BetterTogether
         timestamp = Time.current.strftime('%Y-%m-%d_%H%M%S')
         "LinkClickReport_#{timestamp}_#{filters_summary}_#{sorting_segment}.#{file_format}"
       end
-      # rubocop:enable Metrics/MethodLength
 
       #
       # Class Methods

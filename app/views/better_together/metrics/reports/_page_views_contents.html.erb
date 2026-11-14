@@ -56,7 +56,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="pageViewsChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @page_views_by_url_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.page_views_by_page') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.url') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.page_views') %>">
@@ -65,7 +65,8 @@
           <%= render 'datetime_filter',
               chart_type: 'pageViewsChart',
               data_url: page_views_by_url_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:page_views] %>
+              min_date: @min_dates[:page_views],
+              initial_data_loaded: false %>
 
           <%= render 'additional_filters',
               chart_type: 'pageViewsChart',
@@ -79,7 +80,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailyPageViewsChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @page_views_daily_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.daily_page_views') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.page_views') %>">
@@ -88,7 +89,8 @@
           <%= render 'datetime_filter',
               chart_type: 'dailyPageViewsChart',
               data_url: page_views_daily_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:page_views] %>
+              min_date: @min_dates[:page_views],
+              initial_data_loaded: false %>
 
           <%= render 'additional_filters',
               chart_type: 'dailyPageViewsChart',

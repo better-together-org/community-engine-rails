@@ -10,16 +10,22 @@ module BetterTogether
   class FederatedSyncScanJob < ApplicationJob
     LOCK_KEY = 'bt:federation:scan_lock'
     LOCK_TTL = 10.minutes.to_i
+    INACCESSIBLE_MESSAGE = 'source platform is not reachable for federated sync'
 
     queue_as :platform_sync
 
-    def perform(connection_limit: nil, pull_limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
+    def perform(connection_limit: nil, pull_limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT) # rubocop:disable Metrics/MethodLength
       acquired = Sidekiq.redis { |r| r.set(LOCK_KEY, job_id, nx: true, ex: LOCK_TTL) }
       return unless acquired
 
       begin
         connections = connection_limit ? eligible_connections.limit(connection_limit) : eligible_connections
         connections.find_each do |connection|
+          unless dispatchable_connection?(connection)
+            connection.mark_sync_failed!(message: inaccessible_message_for(connection))
+            next
+          end
+
           ::BetterTogether::FederatedContentPullJob.perform_later(
             platform_connection_id: connection.id,
             cursor: connection.sync_cursor.presence,
@@ -38,11 +44,36 @@ module BetterTogether
     def eligible_connections
       # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
       sharing_policies = Arel.sql("settings->>'content_sharing_policy' IN ('mirror_network_feed', 'mirrored_publish_back')")
+      # Exactly one side must be an external peer — same-instance connections (both sides
+      # local_hosted?, e.g. host<->tenant on this install) have no remote_platform for
+      # HttpAdapter to fetch from and aren't a real federation sync target.
+      exactly_one_external = Arel.sql(<<~SQL.squish)
+        (SELECT external FROM better_together_platforms WHERE id = better_together_platform_connections.source_platform_id)
+        != (SELECT external FROM better_together_platforms WHERE id = better_together_platform_connections.target_platform_id)
+      SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
       ::BetterTogether::PlatformConnection.active
                                           .content_read_capable
                                           .not_syncing
+                                          .due_for_sync
                                           .where(sharing_policies)
+                                          .where(exactly_one_external)
+    end
+
+    def dispatchable_connection?(connection)
+      resolution = ::BetterTogether::Federation::Transport::TransportResolver.call(connection:)
+      adapter_class = resolution.adapter_class
+      return true unless adapter_class.respond_to?(:accessible?)
+
+      adapter_class.accessible?(connection:)
+    end
+
+    def inaccessible_message_for(connection)
+      remote = connection.remote_platform || connection.source_platform
+      host = remote&.resolved_host_url.presence || remote&.host_url
+      return INACCESSIBLE_MESSAGE if host.blank?
+
+      "#{INACCESSIBLE_MESSAGE}: #{host}"
     end
 
     # Atomically release the Redis lock only if this job still owns it.

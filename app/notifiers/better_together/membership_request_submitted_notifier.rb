@@ -22,10 +22,6 @@ module BetterTogether
       membership_request.target if membership_request.target.is_a?(BetterTogether::Community)
     end
 
-    def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
-    end
-
     def title
       I18n.with_locale(locale) do
         I18n.t(
@@ -47,25 +43,19 @@ module BetterTogether
       end
     end
 
-    def build_message(_notification)
-      { title:, body:, url: review_path }
+    def build_message(notification)
+      I18n.with_locale(locale_for_notification(notification)) do
+        { title:, body:, url: review_path }
+      end
     end
 
-    def email_params(_notification)
-      { membership_request:, recipient:, review_url: review_url }
+    def email_params(notification)
+      { membership_request:, recipient: notification.recipient, review_url: review_url }
     end
 
     notification_methods do
       delegate :membership_request, :title, :body, :review_path, :email_params, to: :event
-
-      def recipient_has_email?
-        recipient.respond_to?(:email) && recipient.email.present? &&
-          (!recipient.respond_to?(:notification_preferences) ||
-           recipient.notification_preferences.fetch('notify_by_email', true))
-      end
     end
-
-    private
 
     def review_path
       return unless community&.persisted? && membership_request.persisted?

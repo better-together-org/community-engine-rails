@@ -95,4 +95,6 @@ RSpec.describe BetterTogether::Report do
     expect(duplicate).not_to be_valid
     expect(duplicate.errors[:reportable_id]).to be_present
   end
+
+  it_behaves_like 'platform scoped', factory: :report
 end

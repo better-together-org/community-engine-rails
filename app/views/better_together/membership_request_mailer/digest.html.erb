@@ -1,0 +1,20 @@
+<p><%= t('.greeting', name: @recipient_name) %></p>
+
+<p><%= t('.message', count: @request_count, community_name: @community_name) %></p>
+
+<% if @requestor_names.any? %>
+  <p><strong><%= t('.requestors_label') %></strong></p>
+  <ul>
+    <% @requestor_names.each do |requestor_name| %>
+      <li><%= requestor_name %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @review_url.present? %>
+  <p>
+    <%= link_to t('.review_requests'), @review_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>
+
+<p><%= t('.signature_html', community_name: @community_name) %></p>

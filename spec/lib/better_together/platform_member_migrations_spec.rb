@@ -58,6 +58,32 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
     expect(created_role.position).to eq(next_position)
   end
 
+  it 'uses the next available platform permission position when earlier slots are occupied' do
+    existing_permission = BetterTogether::ResourcePermission.find_by(identifier: 'read_platform')
+    if existing_permission
+      BetterTogether::RoleResourcePermission.where(resource_permission_id: existing_permission.id).delete_all
+      BetterTogether::ResourcePermission.where(id: existing_permission.id).delete_all
+    end
+
+    create(
+      :better_together_resource_permission,
+      identifier: 'existing_platform_permission',
+      action: 'manage',
+      target: 'platform',
+      resource_type: 'BetterTogether::Platform',
+      position: 1
+    )
+
+    next_position = BetterTogether::ResourcePermission.where(
+      resource_type: 'BetterTogether::Platform'
+    ).maximum(:position) + 1
+
+    expect { seed_migration.up }.not_to raise_error
+
+    created_permission = BetterTogether::ResourcePermission.find_by(identifier: 'read_platform')
+    expect(created_permission.position).to eq(next_position)
+  end
+
   it 'activates existing pending host-platform manager memberships' do
     manager_user = create(:better_together_user, :confirmed)
     membership = create(
@@ -92,6 +118,10 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
 
     expect(membership).to be_present
     expect(membership.status).to eq('active')
-    expect(membership.role.identifier).to eq(platform_manager_role.identifier)
+    # BackfillHostPlatformMemberships intentionally prefers platform_member (the
+    # access-preserving, non-admin role) over platform_steward/platform_manager —
+    # see the migration's own comment block: this backfill must never silently
+    # promote pre-existing people to an admin-tier role.
+    expect(membership.role.identifier).to eq(platform_member_role.identifier)
   end
 end

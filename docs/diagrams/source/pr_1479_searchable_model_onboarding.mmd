@@ -4,7 +4,7 @@ flowchart TD
     C --> D{Need native pg_search ranking?}
     D -- No --> E[Call searchable with no pg_search config]
     E --> F[Model is searchable through PgSearch adapter fallback]
-    D -- Yes --> G[Call searchable pg_search: {...}]
+    D -- Yes --> G["Call searchable pg_search: { ... }"]
     G --> H[Put only real DB columns in against:]
     H --> I[Let Searchable auto-merge translations]
     I --> J{Model has special SQL-backed associations worth ranking?}
@@ -14,7 +14,6 @@ flowchart TD
     L --> M
     F --> M
     M --> N[Model can surface in database and pg_search modes]
-    C --> O[Ensure ES payload includes the same user-meaningful content]
-    O --> P[Model can surface in Elasticsearch mode]
+    N --> O["Optional: register a document concern with the Elasticsearch extension gem"]
     N --> Q[Add targeted backend specs]
-    P --> Q
+    O --> Q

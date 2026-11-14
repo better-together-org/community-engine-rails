@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'better_together/content/blocks/_hero.html.erb' do
+  helper BetterTogether::ContentActionsHelper
+
   before do
     configure_host_platform
   end

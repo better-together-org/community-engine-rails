@@ -1,0 +1,31 @@
+<%# locals: (form:) %>
+<%# Country, state and settlement: each is a search over the geography records; picking one sets the hidden
+    *_id field and the server copies its name into the string column. "Use <typed text>" keeps free text in
+    the string column instead. The three *_name hidden fields are the existing string columns. %>
+<% scope = BetterTogether::AddressGeographyHelper::LOCALE_SCOPE %>
+<% levels = { country: :country_name, state: :state_province_name, settlement: :city_name } %>
+<div class="row address-geography-fields" id="<%= address_geography_select_id(form, :country).delete_suffix('_country_select') %>_geography"
+     data-controller="better_together--address-geography">
+  <% levels.each do |level, name_column| %>
+    <% select_id = address_geography_select_id(form, level) %>
+    <% initial = address_geography_initial_option(form.object, level) %>
+    <div class="col-6 col-xl-4 mb-3">
+      <%= label_tag select_id, t("#{scope}.#{level}"), class: 'form-label' %>
+      <%# Literal 'data-...' keys: a data: hash would dasherize the better_together-- Stimulus namespace. %>
+      <%= select_tag nil,
+          options_for_select(initial, initial.first&.last),
+          include_blank: true,
+          id: select_id,
+          class: 'form-select address-geography-select',
+          'data-controller': 'better_together--slim-select',
+          'data-better_together--address-geography-target': "#{level}Select",
+          'data-action': "change->better_together--address-geography#select",
+          'data-better_together--address-geography-level-param': level,
+          'data-better_together--slim-select-options-value': address_geography_slim_select_options(form, level).to_json %>
+      <%= form.hidden_field "#{level}_id", id: "#{select_id}_id",
+          'data-better_together--address-geography-target': "#{level}Id" %>
+      <%= form.hidden_field name_column, id: "#{select_id}_name",
+          'data-better_together--address-geography-target': "#{level}Name" %>
+    </div>
+  <% end %>
+</div>

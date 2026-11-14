@@ -8,12 +8,13 @@ module BetterTogether # :nodoc:
       it 'removes notifications and events for the specified record' do
         membership = create(:better_together_person_platform_membership, status: 'active')
 
-        # Verify notification was created
-        expect(Noticed::Notification.count).to eq(1)
-        expect(Noticed::Event.count).to eq(1)
-
-        notification = Noticed::Notification.last
-        event = notification.event
+        # Verify a notification/event was created for this specific membership.
+        # NOTE: total counts are not asserted here because the shared test database
+        # is not truncated between isolated spec runs, so unrelated leftover
+        # notifications may already exist. Scope lookups to this record instead.
+        event = Noticed::Event.find_by(record_type: membership.class.name, record_id: membership.id)
+        expect(event).to be_present
+        notification = event.notifications.sole
 
         # Store the membership info before destroying it
         record_type = membership.class.name
@@ -42,8 +43,9 @@ module BetterTogether # :nodoc:
       it 'logs cleanup activities' do
         membership = create(:better_together_person_platform_membership, status: 'active')
 
-        # Verify notification was created
-        expect(Noticed::Notification.count).to eq(1)
+        # Verify a notification was created for this specific membership (see note above
+        # about not asserting on global counts due to non-truncated shared test DB).
+        expect(Noticed::Event.exists?(record_type: membership.class.name, record_id: membership.id)).to be true
 
         record_type = membership.class.name
         record_id = membership.id

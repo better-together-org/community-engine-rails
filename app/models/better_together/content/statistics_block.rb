@@ -3,27 +3,30 @@
 module BetterTogether
   module Content
     # Renders a grid of impact statistics (label + value + optional icon).
-    # stats_json stores a JSON array of {label:, value:, icon:} objects.
+    # stats_json stores a JSON array of {label:, value:, icon:} objects, per locale.
     class StatisticsBlock < Block
+      include Translatable
+
       COLUMN_OPTIONS = %w[2 3 4].freeze
 
+      translates :heading, type: :string
+      translates :stats_json, type: :text
+
       store_attributes :content_data do
-        heading    String, default: ''
-        stats_json String, default: '[]'
-        columns    String, default: '3'
+        columns String, default: '3'
       end
 
       validates :columns, inclusion: { in: COLUMN_OPTIONS }
 
-      # Returns an array of stat hashes with symbolized keys, or [] on parse failure.
-      def parsed_stats
-        JSON.parse(stats_json).map(&:symbolize_keys)
-      rescue JSON::ParserError
-        []
+      after_initialize do |record|
+        record.stats_json = '[]' if record.stats_json.blank?
       end
 
-      def self.content_addable?
-        true
+      # Returns an array of stat hashes with symbolized keys, or [] on parse failure.
+      def parsed_stats
+        JSON.parse(stats_json.presence || '[]').map(&:symbolize_keys)
+      rescue JSON::ParserError
+        []
       end
 
       def self.extra_permitted_attributes

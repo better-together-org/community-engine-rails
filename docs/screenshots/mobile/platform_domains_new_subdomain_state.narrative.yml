@@ -1,0 +1,30 @@
+---
+title: Platform Domains — New (subdomain picker)
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager provisioning a new tenant, I choose "subdomain
+  of the host domain" and type just the label — the form fills in the full hostname
+  for me.
+callouts:
+- :id: kind_subdomain_radio
+  :title: Subdomain picker (default)
+  :description: The lower-friction path — no DNS/TLS work needed since it rides the
+    host domain's existing wildcard certificate and DNS record.
+- :id: subdomain_fields
+  :title: Live preview
+  :description: A Stimulus controller (better-together--platform-domain-form) computes
+    the full hostname client-side and writes it into the real hostname field on input.
+- :id: hostname_field
+  :title: Real hostname field
+  :description: Both the subdomain and custom-domain paths ultimately write the same
+    field — the distinction is presentation-only, not a data-model difference.
+- :id: submit_btn
+  :title: Create Domain
+  :description: Submits the form.
+accessibility_notes: Radio buttons and their labels use matching for/id pairs; the
+  live-updated hostname field is a standard text input, not aria-live (no screen-reader
+  announcement on preview update — noted as a follow-up consideration).
+slug: platform_domains_new_subdomain_state
+device: mobile

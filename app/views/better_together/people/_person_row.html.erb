@@ -1,7 +1,7 @@
 <tr id="<%= dom_id(person) %>" class="<%= dom_class(person) %>">
   <td><%= person.identifier %></td> <!-- Assuming `identifier` is a valid attribute -->
   <td><%= person.name %></td>
-  <td><%= person.description %></td>
+  <td><%= person.description.to_plain_text.truncate(100) %></td>
   <td><%= person.slug %></td>
   <td class="text-end">
     <% if policy(person).show? %>

@@ -14,8 +14,8 @@
         <% end %>
       <% end %>
     </div>
-    <div class="text-muted mt-2">
-      <% attendance_counts = event.event_attendances.group(:status).count %>
+    <div class="text-muted mt-2" id="event-rsvp-counts">
+      <% attendance_counts = event.event_attendances.visible_to(current_person).group(:status).count %>
       <% going_count = attendance_counts['going'] || 0 %>
       <% interested_count = attendance_counts['interested'] || 0 %>
       <small>

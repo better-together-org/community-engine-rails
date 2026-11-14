@@ -56,7 +56,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="sharesChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-data="<%= @shares_by_platform_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.shares_by_platform') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.platform') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.shares') %>">
@@ -65,7 +65,8 @@
           <%= render 'datetime_filter',
               chart_type: 'sharesChart',
               data_url: shares_by_platform_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:shares] %>
+              min_date: @min_dates[:shares],
+              initial_data_loaded: false %>
         </div>
 
         <div class="metrics-chart-block">
@@ -75,7 +76,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="sharesPerUrlPerPlatformChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @shares_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.shares_per_url_per_platform') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.url') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.shares') %>">
@@ -84,7 +85,8 @@
           <%= render 'datetime_filter',
               chart_type: 'sharesPerUrlPerPlatformChart',
               data_url: shares_by_url_and_platform_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:shares] %>
+              min_date: @min_dates[:shares],
+              initial_data_loaded: false %>
         </div>
       </div>
 

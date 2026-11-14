@@ -74,7 +74,7 @@ See [instructions/README.md](instructions/README.md) for complete list:
 - importmaps.instructions.md - JavaScript modules
 - notifications-noticed.instructions.md - Noticed gem
 - rails-engine.instructions.md - Rails 7.1+ conventions
-- search-elasticsearch.instructions.md - Elasticsearch 7
+- search.instructions.md - pg_search search and the optional Elasticsearch extension gem
 - security-encryption.instructions.md - Security practices
 - sidekiq-redis.instructions.md - Background jobs
 - view-helpers.instructions.md - Action View patterns

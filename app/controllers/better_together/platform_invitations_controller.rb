@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # rubocop:todo Metrics/ClassLength
+  # rubocop:todo-next Metrics/ClassLength
   class PlatformInvitationsController < ApplicationController # rubocop:todo Style/Documentation
+    include PerUserThrottling
+
+    throttle_per_user :invitation_create, only: :create
+
     before_action :set_platform
     before_action :set_platform_invitation, only: %i[destroy resend]
     after_action :verify_authorized
@@ -14,7 +18,7 @@ module BetterTogether
 
     # GET /platforms/:platform_id/platform_invitations
     def index # rubocop:todo Metrics/MethodLength
-      authorize BetterTogether::PlatformInvitation
+      authorize BetterTogether::PlatformInvitation.new(invitable: @platform)
 
       # Build filtered and sorted collection with pagination
       @platform_invitations = build_filtered_collection
@@ -286,5 +290,4 @@ module BetterTogether
       found_class || BetterTogether::PlatformInvitation
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

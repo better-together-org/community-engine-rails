@@ -37,8 +37,14 @@ module BetterTogether
 
     private
 
+    def target_platform
+      record.respond_to?(:platform) ? record.platform : nil
+    end
+
     def platform_manager?
-      user&.person&.permitted_to?('manage_platform')
+      return false unless agent.present? && target_platform.present?
+
+      agent.permitted_to?('manage_platform', target_platform) || agent.permitted_to?('manage_platform_settings', target_platform)
     end
   end
 end

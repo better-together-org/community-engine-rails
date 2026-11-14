@@ -112,6 +112,35 @@ flowchart TD
   - Delivery: Action Cable immediately; Email deferred (`wait 15.minutes`) and only if `send_email_notification?`.
   - Email dedupe grouping: one email per unread page per recipient (on-site notifications may still accumulate).
 
+### Notifiers added in 0.11.0
+
+All use Action Cable on the `notifications` queue; email is listed where the notifier sends it. "Reviewers" are people with the stated permission who are active members of the host platform.
+
+- CommentAddedNotifier (`app/notifiers/better_together/comment_added_notifier.rb`)
+  - Trigger: `CommentsController#notify_commentable_owners` after a comment is created.
+  - Recipients: the commentable's credited authors (`agent_authors`, else its creator), excluding the commenter.
+  - Delivery: Action Cable and email (`CommentMailer#added`), each only when the recipient allows comment notifications (`notify_on_comments`), email also needs an address.
+
+- MembershipRequestSubmittedNotifier, MembershipRequestDigestNotifier, MembershipRequestDeclinedNotifier (`membership_request_*_notifier.rb`)
+  - Trigger: `MembershipRequestNotificationService` (`notify_submission`, `notify_decline`).
+  - Recipients: community and platform reviewers of the request; the declined notifier goes to the requester.
+  - Delivery: Action Cable plus email through `MembershipRequestMailer` (`submitted`, `digest`). When a reviewer would receive three or more submissions within a 15 minute window they get one digest instead, and digest email is rate-limited by a 30 minute cooldown.
+
+- PlatformConnectionSubmittedNotifier, PlatformConnectionDigestNotifier, PlatformConnectionStatusNotifier (`platform_connection_*_notifier.rb`)
+  - Trigger: `PlatformConnectionNotificationService#notify_submission` and `#notify_status_change` (only for `active`, `suspended` and `blocked`).
+  - Recipients: host-platform members with `manage_network_connections` or `approve_network_connections`.
+  - Delivery: Action Cable. Three or more pending connections within 15 minutes become one digest (30 minute cooldown); the notification links to the connection or the connection list.
+
+- SafetyReportSubmittedNotifier, SafetyReportDigestNotifier (`safety_report_*_notifier.rb`)
+  - Trigger: `SafetyReportNotificationService#notify_submission` when a report is filed.
+  - Recipients: host-platform members with `manage_platform_safety`, never the reporter.
+  - Delivery: Action Cable. Three or more open-case reports within 15 minutes become one digest that counts urgent and retaliation-risk reports (30 minute cooldown). Notifications link to the safety case queue.
+
+- FederationVisibilityStatusNotifier (`federation_visibility_status_notifier.rb`)
+  - Trigger: `Federatable` after commit when an item's `federation_visibility` changes.
+  - Recipients: the item's creator.
+  - Delivery: Action Cable, linking to the item.
+
 ## Marking Notifications as Read
 
 - Concern: `BetterTogether::NotificationReadable` (`app/controllers/concerns/better_together/notification_readable.rb`)

@@ -1,6 +1,6 @@
-<div class="list-group-item d-flex justify-content-between align-items-center" id="<%= dom_id(attendance) %>">
+<div class="list-group-item d-flex justify-content-between align-items-center event-attendee" id="<%= dom_id(attendance) %>">
   <div>
-    <%= attendance.person.name %>
-    <small class="text-muted ms-2"><%= attendance.status %></small>
+    <span class="event-attendee-name"><%= attendance.person.name %></span>
+    <small class="event-attendee-status text-muted ms-2"><%= attendance.status %></small>
   </div>
 </div>

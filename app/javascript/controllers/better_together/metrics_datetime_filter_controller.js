@@ -6,12 +6,13 @@ export default class extends Controller {
   static values = {
     chartType: String,
     dataUrl: String,
-    minDate: String
+    minDate: String,
+    initialDataLoaded: Boolean
   }
   static outlets = ["better-together--metrics-charts"]
 
   connect() {
-    this.initialLoadComplete = false
+    this.initialLoadComplete = this.hasInitialDataLoadedValue && this.initialDataLoadedValue
     this.boundHandleTabShown = this.handleTabShown.bind(this)
     document.addEventListener('shown.bs.tab', this.boundHandleTabShown)
 

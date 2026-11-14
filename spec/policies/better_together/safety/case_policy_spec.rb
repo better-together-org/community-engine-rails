@@ -11,7 +11,8 @@ RSpec.describe BetterTogether::Safety::CasePolicy do
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership = host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.update!(status: 'active') unless membership.active?
   end
 
   let(:platform_manager) { create(:better_together_user, :confirmed, :platform_manager) }
@@ -30,10 +31,10 @@ RSpec.describe BetterTogether::Safety::CasePolicy do
     expect(policy.update?).to be true
   end
 
-  it 'denies default platform managers without explicit safety authority' do
+  it 'allows default platform managers/stewards (manage_platform_safety is now a default grant)' do
     policy = described_class.new(platform_manager, safety_case)
-    expect(policy.show?).to be false
-    expect(policy.update?).to be false
+    expect(policy.show?).to be true
+    expect(policy.update?).to be true
   end
 
   it 'denies reporters from viewing their own case' do

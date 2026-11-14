@@ -21,7 +21,8 @@ RSpec.describe BetterTogether::Metrics::LinkClickReportPolicy, type: :policy do
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -37,7 +38,8 @@ RSpec.describe BetterTogether::Metrics::LinkClickReportPolicy, type: :policy do
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -69,7 +71,8 @@ RSpec.describe BetterTogether::Metrics::LinkClickReportPolicy, type: :policy do
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -93,7 +96,8 @@ RSpec.describe BetterTogether::Metrics::LinkClickReportPolicy, type: :policy do
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -117,7 +121,8 @@ RSpec.describe BetterTogether::Metrics::LinkClickReportPolicy, type: :policy do
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 

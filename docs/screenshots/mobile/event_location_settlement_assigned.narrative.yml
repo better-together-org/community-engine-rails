@@ -1,0 +1,20 @@
+---
+title: Event Form — Settlement Already Assigned
+audience:
+- event_organizer
+- community_organizer
+- platform_organizer
+- developer
+journey_step: As an event organizer editing an existing event, I see which settlement
+  is currently assigned and can search for a different one without leaving the form.
+callouts:
+- :id: location_picker
+  :title: Splitting the composite value back apart
+  :description: location_selector_controller#applyLocationSelection splits a picked
+    composite value back into the plain location_id/location_type hidden fields LocatableLocation's
+    ordinary polymorphic assignment already expects — no change was needed to that
+    assignment path itself.
+accessibility_notes: The search combobox is keyboard-operable (type-ahead, arrow keys,
+  Enter to select) and exposes role="combobox" to assistive technology.
+slug: event_location_settlement_assigned
+device: mobile

@@ -3,7 +3,7 @@
 module BetterTogether
   module Seeds
     # Exports recipient-scoped private seeds for an active person access grant.
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class LinkedSeedExportService
       DEFAULT_LIMIT = 50
 
@@ -71,7 +71,7 @@ module BetterTogether
 
       def private_posts_for(grant, max)
         ::BetterTogether::Post.with_creator(grant.grantor_person)
-                              .where(platform_id: connection.source_platform_id)
+                              .where(platform_id: connection.local_platform&.id)
                               .privacy_private
                               .order(updated_at: :desc)
                               .limit(max)
@@ -80,7 +80,7 @@ module BetterTogether
 
       def private_pages_for(grant, max)
         ::BetterTogether::Page.with_creator(grant.grantor_person)
-                              .where(platform_id: connection.source_platform_id)
+                              .where(platform_id: connection.local_platform&.id)
                               .privacy_private
                               .order(updated_at: :desc)
                               .limit(max)
@@ -89,7 +89,7 @@ module BetterTogether
 
       def private_events_for(grant, max)
         ::BetterTogether::Event.with_creator(grant.grantor_person)
-                               .where(platform_id: connection.source_platform_id)
+                               .where(platform_id: connection.local_platform&.id)
                                .privacy_private
                                .order(updated_at: :desc)
                                .limit(max)
@@ -139,6 +139,5 @@ module BetterTogether
         [batch, next_cursor]
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

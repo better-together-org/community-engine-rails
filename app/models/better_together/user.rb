@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Authenticates the app user. Uses Devise.
-  class User < ApplicationRecord
+  class User < PlatformRecord
     include ::BetterTogether::DeviseUser
 
     # Include default devise modules. Others available are:
@@ -11,7 +11,7 @@ module BetterTogether
            :recoverable, :rememberable, :validatable, :confirmable,
            :jwt_authenticatable,
            jwt_revocation_strategy: JwtDenylist,
-           omniauth_providers: %i[github]
+           omniauth_providers: BetterTogether::IdentityProviders.keys
 
     has_one :person_identification,
             lambda {

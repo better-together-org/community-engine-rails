@@ -16,7 +16,6 @@ RSpec.describe BetterTogether::Searchable do
         },
         BetterTogether::Community => {
           string_translations: [:value],
-          text_translations: [:value],
           rich_text_translations: [:body]
         },
         BetterTogether::Checklist => {

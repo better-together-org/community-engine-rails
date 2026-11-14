@@ -1,0 +1,52 @@
+<%#
+  Federation Hub personal panel — always visible to any signed-in person.
+  Locals:
+    summary (Hash, required) — BetterTogether::FederationHub::PersonalContentSummaryService
+      result: { federate_content:, counts_by_visibility:, recent_items: }
+-%>
+<% summary ||= {} %>
+<% counts = summary[:counts_by_visibility] || {} %>
+<% recent_items = summary[:recent_items] || [] %>
+
+<section class="bt-federation-hub-my-content card mb-4"
+         aria-label="<%= t('.title', default: 'My content federation status') %>">
+  <div class="card-body">
+    <h2 class="card-title h5"><%= t('.title', default: 'My content federation status') %></h2>
+
+    <p class="mb-3">
+      <% if summary[:federate_content] %>
+        <span class="badge text-bg-success"><%= t('.federate_content_on', default: 'Federation enabled for your content') %></span>
+      <% else %>
+        <span class="badge text-bg-secondary"><%= t('.federate_content_off', default: 'Federation disabled for your content') %></span>
+      <% end %>
+      <%= link_to t('.edit_preference', default: 'Change this'), settings_path, class: 'small ms-2' %>
+    </p>
+
+    <dl class="row g-2 mb-3" id="federation-hub-visibility-counts">
+      <% %w[platform_default federate no_federate].each do |visibility| %>
+        <div class="col-12 col-sm-4">
+          <dt class="text-muted small">
+            <%= t("attributes.federation_visibility_list.#{visibility}") %>
+          </dt>
+          <dd class="h5 mb-0" id="federation-hub-count-<%= visibility.dasherize %>"><%= counts[visibility].to_i %></dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <% if recent_items.empty? %>
+      <p class="text-muted mb-0"><%= t('.no_recent_items', default: "You haven't created any federatable content yet.") %></p>
+    <% else %>
+      <h3 class="h6"><%= t('.recent_items', default: 'Recently updated') %></h3>
+      <ul class="list-unstyled mb-0" id="federation-hub-recent-items">
+        <% recent_items.each do |item| %>
+          <li class="d-flex justify-content-between align-items-center mb-1" id="<%= dom_id(item) %>">
+            <%= link_to item.to_s, item, class: 'text-decoration-none' %>
+            <span class="badge text-bg-light border">
+              <%= t("attributes.federation_visibility_list.#{item.federation_visibility}") %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</section>

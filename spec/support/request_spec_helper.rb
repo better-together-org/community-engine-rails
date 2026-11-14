@@ -63,11 +63,7 @@ module RequestSpecHelper # :nodoc:
   # rubocop:todo Metrics/PerceivedComplexity
   def logout
     # Clear session data completely
-    if respond_to?(:reset_session!)
-      # For feature specs (Capybara)
-      reset_session!
-    elsif respond_to?(:reset_session)
-      # For request specs
+    if respond_to?(:reset_session)
       reset_session
     end
 

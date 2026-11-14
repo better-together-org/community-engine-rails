@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Join model tracking which people block other people
-  class PersonBlock < ApplicationRecord
+  # Join model tracking which people block other people.
+  # Blocking is per-platform: person A can block person B on Platform 1
+  # without affecting their relationship on Platform 2.
+  class PersonBlock < PlatformRecord
     belongs_to :blocker, class_name: 'BetterTogether::Person'
     belongs_to :blocked, class_name: 'BetterTogether::Person'
 
-    validates :blocked_id, uniqueness: { scope: :blocker_id }
+    validates :blocked_id, uniqueness: { scope: %i[blocker_id platform_id] }
     validate :not_self
     validate :blocked_not_platform_manager
 

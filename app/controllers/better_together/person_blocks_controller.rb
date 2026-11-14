@@ -2,6 +2,10 @@
 
 module BetterTogether
   class PersonBlocksController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include PerUserThrottling
+
+    throttle_per_user :block_create, only: :create
+
     before_action :authenticate_user!
     before_action :set_person_block, only: :destroy
     after_action :verify_authorized
@@ -72,9 +76,8 @@ module BetterTogether
     end
 
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        # rubocop:todo Layout/IndentationWidth
-        @person_block = helpers.current_person.person_blocks.new(person_block_params)
-  # rubocop:enable Layout/IndentationWidth
+  # rubocop:todo-next Layout/IndentationWidth
+  @person_block = helpers.current_person.person_blocks.new(person_block_params)
 
   authorize @person_block # rubocop:todo Layout/IndentationConsistency
 

@@ -12,7 +12,12 @@ FactoryBot.define do
     sequence(:identifier) { |n| "continent-#{n}" }
     protected { false }
 
-    association :community, factory: :better_together_community
+    # Explicit privacy: 'public' -- the community factory defaults to 'private',
+    # which would cap this record's own privacy (default 'public') below the
+    # PrivacyCeilingValidatable ceiling. Real create_primary_community mirrors
+    # the parent's privacy automatically; the factory bypasses that path by
+    # supplying its own community, so it must match by hand.
+    association :community, factory: :better_together_community, privacy: 'public'
 
     trait :protected do
       protected { true }

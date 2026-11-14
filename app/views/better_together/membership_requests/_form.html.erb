@@ -10,6 +10,7 @@
       ) do |form| %>
 
     <%= render 'layouts/better_together/errors', object: membership_request %>
+    <%= bot_defense_fields(:membership_request) %>
 
     <div class="mb-3">
       <%= form.label :requestor_name,

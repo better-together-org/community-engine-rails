@@ -57,6 +57,11 @@ module BetterTogether
     scope :for_recipient, lambda { |person|
       where(grantee_person_id: person&.id)
     }
+    scope :for_platform, lambda { |platform|
+      where(
+        person_link_id: ::BetterTogether::PersonLink.for_platform(platform).select(:id)
+      )
+    }
 
     def activate!(accepted_at: Time.current)
       update!(status: :active, accepted_at:, revoked_at: nil)

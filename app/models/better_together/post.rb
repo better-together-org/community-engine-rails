@@ -1,35 +1,63 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # Represents a blog post
-  class Post < ApplicationRecord
+  class Post < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Attachments::Images
     include Authorable
     include BlockFilterable
-    include Claimable
     include FriendlySlug
     include Categorizable
-    include Citable
+    include Commentable
     include Creatable
+    include Federatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
     include Seedable
+    include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
+    include ::Storext.model
+    include CommunityAssignable
+    include CategoryIdentifiers
+    include PinnableTimestamps
+    include BlockAttachments
+    include Base64ImageInput
+
+    belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+
+    # located_in(place) works through the community: a post counts as located wherever its community is. Posts have
+    # no location row of their own in the engine (a host app may add one), so only the scope is included.
+    include Geography::Locatable::LocatedIn
+
+    inherit_location_from :community
 
     attachable_cover_image
+    accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
+                                            default_name: 'cover'
+
+    # Write-only: an existing block featured at the top of a new post, ahead of attachment_block_ids.
+    attr_accessor :video_block_id
+
+    validate :video_block_must_be_attachable, on: :create
+    after_save { self.video_block_id = nil }
 
     categorizable
 
-    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+    store_attributes :display_settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     translates :title, type: :string
     alias name title
     translates :content, backend: :action_text
-
-    settings index: default_elasticsearch_index
 
     slugged :title
 
@@ -50,6 +78,8 @@ module BetterTogether
               presence: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     scope :latest_first, lambda {
       order(
@@ -58,18 +88,41 @@ module BetterTogether
       )
     }
 
-    before_validation :assign_current_platform_if_available
+    def self.card_render_includes
+      includes = [
+        :string_translations,
+        { community: [:string_translations, { profile_image_attachment: :blob }] },
+        { cover_image_attachment: :blob },
+        { contributions: :author },
+        { categories: { cover_image_attachment: :blob } }
+      ]
+
+      rich_text_association = reflect_on_association(:rich_text_content)&.name
+      includes << rich_text_association if rich_text_association
+
+      includes
+    end
 
     # Automatically grant the post creator an authorship record only when no
     # explicit human or robot authors were selected during creation.
     after_commit :add_creator_as_author, on: :create
+
+    def self.extra_permitted_attributes
+      super + %i[contributors_display_visibility]
+    end
+
+    def self.permitted_attributes(id: false, destroy: false)
+      super + [
+        { comment_config_attributes: BetterTogether::CommentConfig.permitted_attributes(id:, destroy:) }
+      ]
+    end
 
     def to_s
       title
     end
 
     def mirrored?
-      source_id.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.external?
     end
 
     def preserved_remote_uuid?
@@ -93,26 +146,28 @@ module BetterTogether
 
     configure_attachment_cleanup
 
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {})
-      as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug', 'content')
-        end]
-      )
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.post_url(self, locale: I18n.locale)
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        content: content&.to_plain_text
+      }
     end
 
     private
 
-    def assign_current_platform_if_available
-      return unless has_attribute?(:platform_id)
-      return if platform_id.present?
+    def leading_attachment_ids
+      new_record? ? [video_block_id].compact_blank : []
+    end
 
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
+    def video_block_must_be_attachable
+      return if video_block_id.blank? || attachable_block(video_block_id)
+
+      errors.add(:video_block_id, :invalid)
     end
   end
 end

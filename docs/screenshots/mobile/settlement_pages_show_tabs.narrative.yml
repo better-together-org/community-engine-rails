@@ -1,0 +1,14 @@
+---
+title: Settlement page tabs
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I see what is happening in a settlement.
+callouts:
+- :id: tabs
+  :title: Tabs
+  :description: Host apps add tabs through the tab_links_extra and tab_panes_extra
+    hook partials.
+accessibility_notes: role=tablist with aria-controls and aria-labelledby pairs.
+slug: settlement_pages_show_tabs
+device: mobile

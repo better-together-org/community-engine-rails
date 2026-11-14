@@ -47,6 +47,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         person = BetterTogether::User.find_by(email: 'user@example.test').person
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
+          member.status = 'active'
         end
       end
 
@@ -84,6 +85,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         person = BetterTogether::User.find_by(email: 'user@example.test').person
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
+          member.status = 'active'
         end
       end
 
@@ -115,6 +117,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         view_only_role.role_resource_permissions.find_or_create_by!(resource_permission: view_permission)
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = view_only_role
+          member.status = 'active'
         end
       end
 
@@ -129,6 +132,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         person = BetterTogether::User.find_by(email: 'user@example.test').person
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
+          member.status = 'active'
         end
       end
 
@@ -249,6 +253,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         limited_role.role_resource_permissions.find_or_create_by!(resource_permission: create_permission)
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = limited_role
+          member.status = 'active'
         end
 
         # Generate the report file
@@ -274,6 +279,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         person = BetterTogether::User.find_by(email: 'user@example.test').person
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
+          member.status = 'active'
         end
 
         # Generate the report file
@@ -345,6 +351,7 @@ RSpec.describe 'Metrics RBAC Access Control' do
         person = BetterTogether::User.find_by(email: 'user@example.test').person
         platform.person_platform_memberships.find_or_create_by!(member: person) do |member|
           member.role = analytics_viewer_role
+          member.status = 'active'
         end
       end
 

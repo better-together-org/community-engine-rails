@@ -10,10 +10,36 @@ module BetterTogether
       :status,
       :generated_at,
       :entry_results,
-      :unmanaged_model_names
+      :unmanaged_model_names,
+      :report_labels,
+      :capabilities
     ) do
       def entries
         entry_results
+      end
+
+      def collection_label
+        report_labels&.fetch(:collection, 'Search Stores') || 'Search Stores'
+      end
+
+      def identifier_label
+        report_labels&.fetch(:identifier, 'Store') || 'Store'
+      end
+
+      def documents_label
+        report_labels&.fetch(:documents, 'Searchable Records') || 'Searchable Records'
+      end
+
+      def size_label
+        report_labels&.fetch(:size, 'Store Size') || 'Store Size'
+      end
+
+      def supports_store_size?
+        capabilities&.fetch(:store_size, false) || false
+      end
+
+      def supports_existence_checks?
+        capabilities&.fetch(:existence_checks, false) || false
       end
 
       def total_db_count
@@ -33,6 +59,10 @@ module BetterTogether
       end
 
       def as_json(*)
+        summary_json.merge(entries: entries.map(&:as_json))
+      end
+
+      def summary_json
         {
           backend:,
           configured:,
@@ -40,11 +70,12 @@ module BetterTogether
           status:,
           generated_at: generated_at.iso8601,
           unmanaged_model_names:,
+          report_labels:,
+          capabilities:,
           total_db_count:,
           total_document_count:,
           total_drift_count:,
-          healthy: healthy?,
-          entries: entries.map(&:as_json)
+          healthy: healthy?
         }
       end
     end

@@ -15,7 +15,7 @@ Rails.application.config.after_initialize do
   next unless defined?(ActiveStorage)
 
   # Skip if the database is unavailable (e.g. during asset precompile)
-  next unless ActiveRecord::Base.connection.table_exists?('better_together_platforms') rescue false # rubocop:disable Style/RescueModifier
+  next unless ActiveRecord::Base.with_connection { |conn| conn.table_exists?('better_together_platforms') } rescue false # rubocop:disable Style/RescueModifier
 
   host_platform = BetterTogether::Platform.find_by(host: true)
   resolver = BetterTogether::StorageResolver.new(host_platform)

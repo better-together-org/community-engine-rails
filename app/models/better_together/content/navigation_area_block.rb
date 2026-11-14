@@ -12,10 +12,6 @@ module BetterTogether
 
       validates :navigation_area_id, presence: true
 
-      def self.content_addable?
-        true
-      end
-
       def self.extra_permitted_attributes
         super + %i[navigation_area_id]
       end

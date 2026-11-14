@@ -1,0 +1,11 @@
+{
+  "name": "event_series_show_plain",
+  "device": "desktop",
+  "url": "/en/events/61d06233-892e-4ae1-8795-28ac8a5a98c2",
+  "title": "A Tribute to Fleetwood Mac | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_series",
+  "flow": "series_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb"
+}

@@ -1,5 +1,9 @@
 # Timezone Handling Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-17. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## 📊 Implementation Status
 
 **Phase 1: Foundation - Critical Fixes** ✅ **COMPLETE** (Completed: January 17, 2026)

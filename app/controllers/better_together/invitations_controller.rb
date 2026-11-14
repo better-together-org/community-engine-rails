@@ -4,11 +4,14 @@ module BetterTogether
   # Unified polymorphic controller for managing invitations across all invitable types
   # Handles both authenticated invitation management and token-based invitation acceptance
   class InvitationsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include PerUserThrottling
+
+    throttle_per_user :invitation_create, only: :create
+
     # Token-based invitation handling (public access)
     # rubocop:todo Metrics/ClassLength
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :find_invitation_by_token, only: %i[show accept decline]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/ClassLength
     skip_before_action :check_platform_privacy, if: -> { @invitation.present? }, only: %i[show accept decline]
 
@@ -92,7 +95,7 @@ module BetterTogether
       ensure_authenticated!
       return if performed?
 
-      person = helpers.current_person
+      person = current_user&.person || helpers.current_person
       return unless invitee_authorized?(person)
 
       process_invitation_acceptance(person)
@@ -156,7 +159,8 @@ module BetterTogether
       allowed = BetterTogether::Invitable.included_in_models.map(&:name)
       invitable_class = BetterTogether::SafeClassResolver.resolve!(
         "BetterTogether::#{invitable_type}",
-        allowed: allowed
+        allowed: allowed,
+        error_class: NameError
       )
 
       @invitable_resource = if invitable_class.respond_to?(:friendly)

@@ -1,0 +1,13 @@
+flowchart TD
+    A[Editor or agent intent] --> B{Surface}
+    B -- JSON:API --> C[BlocksController / PageBlocksController]
+    B -- MCP --> D[SearchPagesTool / SearchPostsTool]
+    B -- MCP --> E[UpdatePostTool / PublishPostTool]
+    C --> F[Content block and page block models]
+    D --> G[Policy-scoped content search]
+    E --> H[Post update / publish workflow]
+    F --> I[Pages and rendered content]
+    G --> I
+    H --> I
+    D --> J[MCP authentication + policy scope]
+    E --> J

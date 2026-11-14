@@ -29,16 +29,16 @@ module BetterTogether
     end
 
     def sync_primary_platform_domain!
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return unless self.class.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
       return if external?
 
       hostname = platform_hostname_from_host_url
       return if hostname.blank?
 
-      primary_domain = platform_domains.primary.first_or_initialize
+      primary_domain = platform_domains.where(primary_flag: true).first_or_initialize
       primary_domain.hostname = hostname
       primary_domain.active = true
-      primary_domain.primary = true
+      primary_domain.primary_flag = true
       primary_domain.save! if primary_domain.new_record? || primary_domain.changed?
     end
 

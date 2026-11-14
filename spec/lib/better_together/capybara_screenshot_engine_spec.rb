@@ -19,6 +19,7 @@ module BetterTogether # :nodoc:
           allow(Capybara).to receive(:reset_sessions!)
           allow(Capybara).to receive(:page).and_return(fake_page)
           allow(Capybara).to receive(:using_driver).and_yield
+          allow(fake_page).to receive(:execute_script)
           allow(fake_page).to receive(:evaluate_script).and_return(
             [
               {
@@ -57,6 +58,10 @@ module BetterTogether # :nodoc:
           expect(metadata['url']).to eq('/en/conversations/new')
           expect(metadata).not_to have_key('captured_at')
           expect(metadata['callouts'].size).to eq(1)
+          expect(fake_page).to have_received(:execute_script).with(
+            a_string_including('scrollBy'),
+            ['select[name="conversation[participant_ids][]"]']
+          )
           expect(fake_page).to have_received(:evaluate_script).with(
             anything,
             array_including(
@@ -85,6 +90,7 @@ module BetterTogether # :nodoc:
           allow(Capybara).to receive(:reset_sessions!)
           allow(Capybara).to receive(:page).and_return(fake_page)
           allow(Capybara).to receive(:using_driver).and_yield
+          allow(fake_page).to receive(:execute_script)
           allow(fake_page).to receive_messages(
             current_url: 'http://example.test/en/conversations/new',
             title: 'Test Host Community',

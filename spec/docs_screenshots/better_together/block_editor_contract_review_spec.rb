@@ -6,18 +6,19 @@ RSpec.describe 'Documentation screenshots for block editor contract review',
                :docs_screenshot, :js, :skip_host_setup, retry: 0, type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:checklist) { create(:better_together_checklist, title: 'PR 1490 Documentation Checklist') }
-  let!(:hero_page) do
+  let(:checklist) { create(:better_together_checklist, title: 'PR 1490 Documentation Checklist') }
+  let(:hero_page) do
     create(
       :better_together_page,
       title: 'PR 1490 Hero Docs Page',
       slug: 'pr-1490-hero-docs-page',
       identifier: 'pr-1490-hero-docs-page',
+      platform: BetterTogether::Platform.find_by!(host: true),
       protected: false,
       published_at: 1.day.ago
     )
   end
-  let!(:hero_block) do
+  let(:hero_block) do
     create(
       :content_hero,
       title: 'PR 1490 Hero Heading',

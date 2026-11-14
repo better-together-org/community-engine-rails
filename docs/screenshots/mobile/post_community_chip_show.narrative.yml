@@ -1,0 +1,14 @@
+---
+title: 'Post show page: community chip'
+audience:
+- member
+- content_editor
+- developer
+journey_step: As a reader of a post, I can see which community published it.
+callouts:
+- :id: community_chip
+  :title: Community chip
+  :description: Shown beside the privacy badge and date in the post byline.
+accessibility_notes: Same link and image treatment as the card chip.
+slug: post_community_chip_show
+device: mobile

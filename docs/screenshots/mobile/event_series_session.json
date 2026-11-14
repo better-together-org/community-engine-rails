@@ -1,0 +1,48 @@
+{
+  "name": "event_series_session",
+  "device": "mobile",
+  "url": "/en/events/8fb6cab3-cd73-4e05-a89e-e63f51f792d2",
+  "title": "Fleetwood Mac Tribute: Matinee | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_series",
+  "flow": "session",
+  "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb",
+  "callouts": [
+    {
+      "selector": "#series_banner_event_0b80dca7-a236-467a-8e29-9ef7fc07768a",
+      "title": "Series banner",
+      "bullets": [
+        "Links back to the series."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 546.78125,
+        "width": 461.0,
+        "height": 24.0,
+        "right": 473.0,
+        "bottom": 570.78125,
+        "center_x": 242.5,
+        "center_y": 558.78125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 546.78125,
+        "width": 461.0,
+        "height": 24.0,
+        "right": 473.0,
+        "bottom": 570.78125,
+        "center_x": 242.5,
+        "center_y": 558.78125
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 590.78,
+        "width": 270.0,
+        "height": 132,
+        "score": 686.21875
+      }
+    }
+  ]
+}

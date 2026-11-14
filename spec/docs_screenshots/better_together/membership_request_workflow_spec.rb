@@ -8,14 +8,14 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
                :skip_host_setup,
                retry: 0,
                type: :feature do
-  let!(:platform) do
+  let(:platform) do
     configure_host_platform.tap do |record|
       record.update!(privacy: 'private', requires_invitation: true, allow_membership_requests: true)
       record.primary_community.update!(allow_membership_requests: true)
     end
   end
-  let!(:community) { platform.primary_community }
-  let!(:community_manager_role) do
+  let(:community) { platform.primary_community }
+  let(:community_manager_role) do
     BetterTogether::Role.find_by(identifier: 'community_manager',
                                  resource_type: 'BetterTogether::Community') ||
       create(:better_together_role,
@@ -23,7 +23,7 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
              name: 'Community Manager',
              resource_type: 'BetterTogether::Community')
   end
-  let!(:manager) do
+  let(:manager) do
     create(:better_together_user, :confirmed, password: 'SecureTest123!@#').tap do |user|
       create(:better_together_person_community_membership,
              joinable: community,
@@ -31,7 +31,7 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
              role: community_manager_role)
     end
   end
-  let!(:open_request) do
+  let(:open_request) do
     create(:better_together_joatu_membership_request,
            target: community,
            requestor_name: 'Alex Applicant',
@@ -45,6 +45,7 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
   end
 
   it 'captures the private registration interstitial with membership request form' do
+    platform
     capture_docs_screenshot('membership_request_registration_interstitial') do
       visit '/en/users/sign-up'
 
@@ -55,6 +56,7 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
   end
 
   it 'captures the membership request review queue' do
+    open_request
     capture_docs_screenshot('membership_request_review_queue') do
       sign_in_for_docs_capture
       visit better_together.community_membership_requests_path(community, locale: I18n.default_locale)

@@ -1,5 +1,9 @@
 # Community Management System - Comprehensive Review and Improvements
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** November 5, 2025  
 **Version:** 1.0  
 **Status:** Draft - Awaiting Stakeholder Review  

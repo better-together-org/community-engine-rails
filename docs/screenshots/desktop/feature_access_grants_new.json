@@ -1,0 +1,10 @@
+{
+  "name": "feature_access_grants_new",
+  "device": "desktop",
+  "url": "/en/host/platforms/community-engine-host/feature_access_grants/new",
+  "title": "Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "feature_access_grants",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+}

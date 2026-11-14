@@ -36,13 +36,13 @@ module BetterTogether
 
     def bt_locale(table_name = nil)
       table_name ||= name
-      string  :locale,
-              limit: 5,
-              null: false,
-              index: {
-                name: "by_#{table_name}_locale"
-              },
-              default: I18n.default_locale
+      string :locale,
+             limit: 5,
+             null: false,
+             index: {
+               name: "by_#{table_name}_locale"
+             },
+             default: I18n.default_locale
     end
 
     # Adds location fields: iso_code with configurable length and format
@@ -91,6 +91,15 @@ module BetterTogether
       table_name ||= name
       # Adding privacy column
       string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }
+    end
+
+    # Adds 'federation_visibility' column giving a content item a per-item
+    # override (platform_default/federate/no_federate) on top of the
+    # connection-level and creator-level federation consent gates.
+    def bt_federation_visibility(table_name = nil, default: 'platform_default')
+      table_name ||= name
+      string :federation_visibility, null: false, default:, limit: 50,
+                                     index: { name: "by_#{table_name}_federation_visibility" }
     end
 
     # Adds 'resource_type' column to give ability to manage record resource_type

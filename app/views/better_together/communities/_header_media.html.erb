@@ -1,0 +1,9 @@
+<%# locals: (community:) -%>
+<%# Hook: the cover and the profile image in the page header. Host apps override this partial to show a logo instead. -%>
+<div class="cover-image-container" id="<%= dom_id(community, :cover) %>">
+  <%= cover_image_tag(community) %>
+</div>
+
+<div class="profile-image-wrapper" id="<%= dom_id(community, :profile_image) %>">
+  <%= profile_image_tag(community) %>
+</div>

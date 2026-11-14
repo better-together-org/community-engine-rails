@@ -25,6 +25,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [After You Report](end_users/after_you_report.md) - What happens after submission
 - [Privacy and Safety Preferences](end_users/privacy_and_safety_preferences.md) - Privacy and safety choices
 - [Emergency and Urgent Situations](end_users/emergency_and_urgent_situations.md) - Emergency boundary guidance
+- [Message Requests and Linked Access](end_users/message_requests_and_linked_access.md) - Message requests, messaging permissions, person links and access grants
 
 #### **Community Organizers** - [`community_organizers/`](community_organizers/)
 *People managing and growing communities*
@@ -35,12 +36,13 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
 - [README](platform_organizers/README.md) - Platform administration guide
-- [End-to-End Encryption Rollout](platform_organizers/e2e_encryption_rollout.md) - Encrypted-conversation rollout and support guide
 - [Embedded Content & CSP Controls](platform_organizers/embedded_content_and_csp.md) - Trusted iframe/video origin management
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
 - [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 - [Federation Privacy and Consent](platform_organizers/federation_privacy_and_consent.md) - Safe operation of platform-to-platform trust
+- [Short Links](platform_organizers/short_links.md) - Short share links, expiry and visit tracking
+- [Content Security and Malware Scanning](platform_organizers/content_security_and_malware_scanning.md) - ClamAV scanning, held uploads and review
 
 #### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
@@ -49,13 +51,12 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
 - [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
+- [Quota Default Limits](developers/systems/quotas_defaults.md) - YAML-driven starting quotas, per-platform overrides, local-owner gate
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
-- [Citation and Evidence Chain System](developers/systems/citation_evidence_chain_system.md) - Structured citations, claims, and evidence linking
 - [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
 - [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
 - [Public Publishing Agreement Gate System](developers/systems/public_publishing_agreement_gate_system.md) - Enforced agreement acceptance before governed public visibility
 - [PR 1494 Scope Consolidation](developers/systems/pr_1494_scope_consolidation.md) - Cut line for governed publishing, contribution, and evidence scope in PR 1494
-- [Release Package Publishing System](developers/systems/release_package_publishing_system.md) - Proposed CE-native workflow for governed release packages
 - [Robot Author Identity System](developers/systems/robot_author_identity_system.md) - Proposed model for truthful robot authorship on governed content
 - [Community Social System](developers/systems/community_social_system.md) - Social features
 - [Content Management](developers/systems/content_management.md) - Content creation and management
@@ -65,16 +66,27 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
 - [Federation System](developers/systems/federation_system.md) - Platform connections, scopes, and sync
 - [Geography System](developers/systems/geography_system.md) - Location and mapping
+- [Settlement naming and wording assessment](assessments/settlement_to_town_rename_assessment.md) - Why "Settlement" stays, where the gloss lives, and the edit-point map for a future rename
 - [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
+- [Settlement Weather](weather.md) - Weather sources, adapters, stored observation history and ingest jobs
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
-- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across Elasticsearch, database, and pg_search search modes
+- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across pg_search (default) and database search modes, with Elasticsearch as an optional extension gem
 - [Robot Authored Page And Post Publishing](developers/systems/robot_authored_page_post_publishing_system.md) - Narrow workflow for truthful robot bylines on pages and posts
 - [Security Protection System](developers/systems/security_protection_system.md) - Security measures
+- [Short Links System](developers/systems/short_links_system.md) - Short URLs, redirect, visit tracking
+- [Person Links, Access Grants and Messaging Permissions](developers/systems/person_links_grants_and_messaging_system.md) - Message requests, messaging grants, cross-platform person links
+- [Seed Catalog and Seed Plantings](developers/systems/seed_catalog_and_plantings_system.md) - On-demand reference data and planting audit records
+- [Event Recurrence and Occurrences](developers/systems/event_recurrence_and_occurrences_system.md) - Recurrence rules and lazily created occurrence overrides
+- [Event Series and Sessions](event-series-and-sessions-design.md) - Series that group the dates of a run, with the API and the cancel or delete choice
+- [Person Deletion Requests and Purge Audits](developers/systems/person_deletion_and_purge_audit_system.md) - Anonymizing and hard deletion with audit records
+- [Content Security Ingress System](developers/systems/content_security_ingress_system.md) - Attachment gating, malware scanning, review records
+- [Safety and Federation Review Workflow](developers/systems/safety_and_federation_review_workflow.md) - Reviewer surfaces, safety cases, actions and notes
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
 - [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
+- [Model Concerns Reference](reference/model_concerns_reference.md) - Concerns new or changed in 0.11.0
 - [Polymorphic and STI](developers/architecture/polymorphic_and_sti.md) - Database design patterns
 - [RBAC Overview](developers/architecture/rbac_overview.md) - Role-based access control
 
@@ -145,7 +157,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [Content Flow](diagrams/source/content_flow.mmd)
 - [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
-- [E2E Encrypted Conversation Flow](diagrams/source/e2e_encrypted_conversation_flow.mmd)
 - [Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
 - [Events Flow](diagrams/source/events_flow.mmd)
 - [Exchange Flow](diagrams/source/exchange_flow.mmd)
@@ -180,6 +191,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Production** - [`production/`](production/)
 *Deployment and production environment documentation*
 - [Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
+- [Host Setup Script](production/host_setup_script.md) - Preparing a server with `bin/prod/host-setup.sh`
+- [Multi-Platform Deployment](production/multi_platform_deployment.md) - Running multiple platforms on a single instance
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
 
@@ -196,9 +209,11 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Development setup and configuration*
 - [README](development/README.md) - Development resources overview
 - [Development Setup](development/dev-setup.md) - Local development guide
+- [Cloud Agent Session Environment](development/cloud_session_environment.md) - Running dev/test in Claude Code cloud sessions (`bin/cloud-session-env`)
 - [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
 - [Pull Request Evidence Standard](development/pull_request_evidence_standard.md) - Tiered evidence requirements for PR docs, diagrams, and screenshots
 - [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment
+- [Community Subtypes](development/community_subtypes.md) - Host app Community subtypes, role scoping and the Resourceful registry
 
 #### **Joatu Exchange System** - [`joatu/`](joatu/)
 *Specialized exchange/marketplace functionality*

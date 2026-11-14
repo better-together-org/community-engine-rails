@@ -1,0 +1,16 @@
+flowchart TD
+    A[Search request] --> B[SearchController]
+    B --> C[Search backend registry]
+    C --> P[PgSearchBackend]
+    P --> Q[pg_search scope execution]
+    P --> R[SQL-backed match scoring]
+    Q --> R
+    R --> V[Policy-scope filtering]
+    V --> F[Search results returned]
+    F --> G[TrackSearchQueryJob]
+    G --> H[SearchQueryCaptureService]
+    H --> I{Platform analytics mode}
+    I -- disabled --> J[Do not persist query text]
+    I -- hashed --> K[Persist sha256 query digest]
+    I -- full --> L[Persist normalized query text]
+    P --> N[Integration specs with pg_search scopes]

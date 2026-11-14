@@ -1,0 +1,191 @@
+name: Docs Screenshots
+
+# Weekly refresh of docs/screenshots. When any screenshot source changed since the generated screenshots
+# were last committed (views, assets, JavaScript, helpers, en.yml, the docs screenshot specs or the
+# screenshot engine), this runs the docs screenshot specs and opens one pull request with the new
+# screenshot files and the ones whose pixels really changed. Nothing is committed to main directly.
+#
+# Every run rewrites each tracked screenshot and sidecar (sub-pixel coordinates, random names and dates), so
+# bin/ci-docs-screenshots-select keeps only new files and PNGs that differ by more than the configured share
+# of pixels, and restores the rest.
+#
+# The branch and PR are created with the COMPAT_SYNC_TOKEN secret (fine-grained PAT owned by bts-robot,
+# see compat-branch-sync.yml) so the PR gets CI; GITHUB_TOKEN pushes do not trigger workflows.
+#
+# The specs need a single process on a clean database: Platform, Community and Wizard rows survive the
+# :deletion cleanup, and parallel workers would share one Chrome and Capybara server.
+
+on:
+  schedule:
+    - cron: "30 8 * * 1"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Run even when no screenshot source changed"
+        type: boolean
+        default: false
+      min_change_percent:
+        description: "Keep an updated PNG only when more than this percent of its pixels changed"
+        type: string
+        default: "1.0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-screenshots
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.sources.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Did any screenshot source change?
+        id: sources
+        run: bin/ci-docs-screenshots-changed
+
+  capture:
+    needs: check
+    if: needs.check.outputs.changed == 'true' || inputs.force == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: test
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      SEARCH_BACKEND: "pg_search"
+      RUN_DOCS_SCREENSHOTS: "1"
+      CAPYBARA_ARTIFACT_PATH: ${{ github.workspace }}/tmp/capybara-artifacts
+      GH_TOKEN: ${{ secrets.COMPAT_SYNC_TOKEN }}
+      MIN_CHANGE_PERCENT: ${{ inputs.min_change_percent || '1.0' }}
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Require sync token
+        shell: bash
+        run: |
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "::error::Secret COMPAT_SYNC_TOKEN is not set; the screenshot PR could not be opened with CI."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.COMPAT_SYNC_TOKEN }}
+
+      - name: Install libvips
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          $APT update
+          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.12"
+          bundler-cache: true
+
+      - name: Install Pillow
+        run: python3 -m pip install --user pillow
+
+      - name: Prepare the test database
+        run: |
+          rm -f spec/dummy/tmp/pids/server.pid
+          cd spec/dummy
+          bundle exec rake db:create db:schema:load
+
+      - name: Capture docs screenshots
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: bundle exec rspec spec/docs_screenshots --format progress
+
+      - name: Keep new and visibly changed screenshots
+        id: select
+        run: bin/ci-docs-screenshots-select --min-change-percent "${MIN_CHANGE_PERCENT}"
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs-screenshot-failure-artifacts
+          path: |
+            tmp/capybara-artifacts/
+            spec/dummy/log/test.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Open or update the screenshot PR
+        if: steps.select.outputs.kept != '0'
+        shell: bash
+        env:
+          NEW_COUNT: ${{ steps.select.outputs.new }}
+          UPDATED_COUNT: ${{ steps.select.outputs.updated }}
+        run: |
+          set -euo pipefail
+          branch="docs/screenshots-refresh"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "${branch}"
+          git add docs/screenshots/desktop docs/screenshots/mobile
+          if git diff --cached --quiet; then
+            echo "::notice::Nothing to commit."
+            exit 0
+          fi
+          git commit -m "docs: refresh screenshots (${NEW_COUNT} new, ${UPDATED_COUNT} updated)"
+          git push --force origin "${branch}"
+
+          body="$(cat <<EOF
+          ## Summary
+
+          Automated refresh of \`docs/screenshots\` from the docs screenshot specs: **${NEW_COUNT} new** and **${UPDATED_COUNT} updated** screenshots (each with its sidecar).
+
+          Updated screenshots are kept only when more than ${MIN_CHANGE_PERCENT}% of their pixels changed; the rest stay as committed. The run summary lists the files.
+
+          Review the images before merging: they are rendered from seeded test data, so check that each shows the intended state.
+
+          Generated by the \`Docs Screenshots\` workflow (run ${GITHUB_RUN_ID}).
+          EOF
+          )"
+
+          existing="$(gh pr list --base main --head "${branch}" --state open --json number --jq '.[0].number // empty')"
+          if [[ -n "${existing}" ]]; then
+            gh pr edit "${existing}" --body "${body}"
+            echo "::notice::Updated PR #${existing}"
+          else
+            gh pr create --base main --head "${branch}" \
+              --title "docs: refresh screenshots (${NEW_COUNT} new, ${UPDATED_COUNT} updated)" \
+              --body "${body}"
+          fi

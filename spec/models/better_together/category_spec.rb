@@ -16,9 +16,56 @@ module BetterTogether # :nodoc:
       end
     end
 
+    describe 'color' do
+      it 'is optional' do
+        expect(build(:category, color: nil)).to be_valid
+      end
+
+      it 'accepts a six digit hex value' do
+        expect(build(:category, color: '#0072B2')).to be_valid
+      end
+
+      it 'rejects anything else' do
+        %w[red #fff #0072B2ff url(x)].each do |value|
+          expect(build(:category, color: value)).not_to be_valid, value
+        end
+      end
+
+      it 'gives readable text for any background' do
+        %w[#ffffff #000000 #0072B2 #E69F00 #6b6b6b].each do |value|
+          text = build(:category, color: value).color_text
+          expect(ColorContrast.contrast_ratio(value, text)).to be >= 4.5
+        end
+      end
+
+      it 'has no text colour without a colour' do
+        expect(build(:category, color: nil).color_text).to be_nil
+      end
+    end
+
     describe 'associations' do
       it { is_expected.to have_many(:categorizations).dependent(:destroy) }
       it { is_expected.to have_many(:pages).through(:categorizations) }
+    end
+
+    describe 'privacy' do
+      it 'is exempt from the platform privacy ceiling' do
+        expect(build(:category).privacy_ceiling_exempt?).to be true
+      end
+
+      it 'stays public even under a private platform, reproducing CategoryBuilder seeding' do
+        # db/seeds.rb always creates the host platform with privacy: 'private'.
+        # Without the ceiling exemption, a freshly seeded public-by-default
+        # Category fails PrivacyCeilingValidatable on every db:seed. The suite's
+        # global seed_helper before-hook already creates the host platform for
+        # every example, so reuse it rather than creating a second :host record
+        # (Platform/Community both enforce only one host row).
+        host_platform = BetterTogether::Platform.find_by!(host: true)
+        host_platform.update_column(:privacy, 'private')
+        category = build(:category, platform: host_platform, privacy: 'public')
+
+        expect(category).to be_valid
+      end
     end
 
     describe 'validations' do
@@ -87,6 +134,42 @@ module BetterTogether # :nodoc:
       end
     end
 
+    describe '.used_by' do
+      it 'returns distinct categories used by a relation, alphabetically sorted' do
+        page1 = create(:page)
+        page2 = create(:page)
+        uncategorized_page = create(:page)
+        category_b = create(:category, name: 'Bravo')
+        category_a = create(:category, name: 'Alpha')
+        create(:categorization, category: category_b, categorizable: page1)
+        create(:categorization, category: category_a, categorizable: page2)
+
+        result = described_class.used_by(BetterTogether::Page.where(id: [page1.id, page2.id, uncategorized_page.id]))
+
+        expect(result).to eq([category_a, category_b])
+      end
+
+      it 'does not duplicate a category used by multiple records in the relation' do
+        page1 = create(:page)
+        page2 = create(:page)
+        category = create(:category)
+        create(:categorization, category:, categorizable: page1)
+        create(:categorization, category:, categorizable: page2)
+
+        result = described_class.used_by(BetterTogether::Page.where(id: [page1.id, page2.id]))
+
+        expect(result).to eq([category])
+      end
+
+      it 'returns an empty array when the relation has no categorized records' do
+        page = create(:page)
+
+        result = described_class.used_by(BetterTogether::Page.where(id: page.id))
+
+        expect(result).to eq([])
+      end
+    end
+
     describe 'identifier behavior' do
       it 'generates unique identifiers' do
         cat1 = create(:category)
@@ -109,5 +192,7 @@ module BetterTogether # :nodoc:
         expect(category.icon).to eq('fas fa-star')
       end
     end
+
+    it_behaves_like 'platform scoped identifier', factory: :category
   end
 end

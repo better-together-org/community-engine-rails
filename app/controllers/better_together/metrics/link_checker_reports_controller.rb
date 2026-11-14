@@ -30,7 +30,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/AbcSize
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/BlockLength
+      # rubocop:todo-next Metrics/BlockLength
       def create
         authorize %i[metrics link_checker_report], :create?,
                   policy_class: BetterTogether::Metrics::LinkCheckerReportPolicy
@@ -38,7 +38,9 @@ module BetterTogether
         opts = {
           from_date: params.dig(:metrics_link_checker_report, :filters, :from_date),
           to_date: params.dig(:metrics_link_checker_report, :filters, :to_date),
-          file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv'
+          file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv',
+          creator: helpers.current_person,
+          platform: metrics_platform
         }
 
         @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.create_and_generate!(**opts)
@@ -79,12 +81,11 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/BlockLength
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def download
         authorize @link_checker_report, :download?
 
@@ -109,7 +110,6 @@ module BetterTogether
 
         redirect_to metrics_link_checker_reports_path, alert: t('resources.download_failed')
       end
-      # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
       private

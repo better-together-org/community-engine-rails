@@ -7,6 +7,7 @@ module BetterTogether # rubocop:disable Style/Documentation
   end
 end
 
+require 'better_together/mcp/allowed_origins'
 require 'better_together/mcp/pundit_context'
 
 module BetterTogether # rubocop:disable Style/Documentation, Style/OneClassPerFile

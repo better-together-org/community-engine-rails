@@ -19,6 +19,6 @@
 
   <small class="form-text text-muted"><%= t('helpers.hint.images.cover_image') %></small>
 
-  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= form.object.cover_image.url if form.object.cover_image.attached? %>">
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(form.object.cover_image) if form.object.cover_image.attached? %>">
   </div>
 </div>

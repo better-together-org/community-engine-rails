@@ -1,0 +1,27 @@
+%% render.orientation: portrait
+flowchart TD
+  subgraph Import["Boundary import (new)"]
+    direction TB
+    A["geography_boundaries.rake"] --> B["BoundaryImportJob"]
+    B --> C[External boundary geometry source]
+    C --> D["Space#boundary\n(PostGIS polygon)"]
+  end
+
+  subgraph Backfill["One-time backfill (new)"]
+    direction TB
+    L["geography_backfill_placements.rake"] --> M[Existing places missing a hierarchy]
+  end
+
+  subgraph Resolution["Hierarchy resolution (new)"]
+    direction TB
+    D --> E["HierarchyResolutionJob"]
+    M --> E
+    E --> F["ST_Covers point-in-polygon test\n(Arel spatial DSL)"]
+    F --> G["resolve_country_by_iso_code"]
+    F --> H["resolve_state_by_name_similarity\n(pg_trgm fuzzy match)"]
+    F --> I["Settlement / Region\ncontainment lookup"]
+    G --> J["Locatable::Many::LEVELS\n(level -> model class map)"]
+    H --> J
+    I --> J
+    J --> K["Country / State / Region / Settlement\nlinked to the place"]
+  end

@@ -5,6 +5,8 @@
 <div class="container my-3">
   <h1><%= t('.title') %></h1>
 
+  <%= render 'better_together/geography/regions/index_extra', records: @geography_regions %>
+
   <div class="row">
     <div class="col">
       <table class="table">

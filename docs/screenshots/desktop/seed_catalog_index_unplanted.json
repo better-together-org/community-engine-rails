@@ -1,0 +1,157 @@
+{
+  "name": "seed_catalog_index_unplanted",
+  "device": "desktop",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog",
+  "flow": "seed_catalog_index",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plant-all-geography-btn",
+      "title": "Plant All",
+      "bullets": [
+        "Installs every category in one action -- equivalent to GeographyBuilder.build_if_missing.",
+        "Idempotent: safe to click even if some categories are already planted."
+      ],
+      "target": {
+        "x": 89.0,
+        "y": 289.0,
+        "width": 91.234375,
+        "height": 38.0,
+        "right": 180.234375,
+        "bottom": 327.0,
+        "center_x": 134.6171875,
+        "center_y": 308.0
+      },
+      "avoid": {
+        "x": 89.0,
+        "y": 289.0,
+        "width": 91.234375,
+        "height": 38.0,
+        "right": 180.234375,
+        "bottom": 327.0,
+        "center_x": 134.6171875,
+        "center_y": 308.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 200.23,
+        "y": 190.0,
+        "width": 380,
+        "height": 236,
+        "score": 1259.765625
+      }
+    },
+    {
+      "selector": ".continents-status-badge",
+      "title": "Category status",
+      "bullets": [
+        "Grey \"Not planted\" before the category has any records.",
+        "Coarse signal: checks for at least one record, not full seed-source coverage."
+      ],
+      "target": {
+        "x": 538.765625,
+        "y": 387.8125,
+        "width": 95.609375,
+        "height": 20.375,
+        "right": 634.375,
+        "bottom": 408.1875,
+        "center_x": 586.5703125,
+        "center_y": 398.0
+      },
+      "avoid": {
+        "x": 538.765625,
+        "y": 387.8125,
+        "width": 95.609375,
+        "height": 20.375,
+        "right": 634.375,
+        "bottom": 408.1875,
+        "center_x": 586.5703125,
+        "center_y": 398.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 654.38,
+        "y": 293.0,
+        "width": 380,
+        "height": 210,
+        "score": 805.625
+      }
+    },
+    {
+      "selector": "#plant-continents-btn",
+      "title": "Plant one category",
+      "bullets": [
+        "Installs just this category via GeographyBuilder's existing seed_continents/seed_countries/etc.",
+        "Packet-backed (lib/better_together/geography/seed_coordinates.yml): records land already geocoded, with zero live Nominatim calls in the common case."
+      ],
+      "target": {
+        "x": 1305.71875,
+        "y": 385.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 416.0,
+        "center_x": 1332.359375,
+        "center_y": 400.5
+      },
+      "avoid": {
+        "x": 1305.71875,
+        "y": 385.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 416.0,
+        "center_x": 1332.359375,
+        "center_y": 400.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 534,
+        "width": 380,
+        "height": 340,
+        "score": 0
+      }
+    },
+    {
+      "selector": "#plant-provinces-missing-prerequisites",
+      "title": "Prerequisite-blocked category",
+      "bullets": [
+        "New in this PR: Provinces requires Countries; Settlements requires Provinces.",
+        "The Plant button for a category with an unmet prerequisite is disabled, with this hint explaining what to plant first."
+      ],
+      "target": {
+        "x": 801.375,
+        "y": 481.0,
+        "width": 557.625,
+        "height": 21.0,
+        "right": 1359.0,
+        "bottom": 502.0,
+        "center_x": 1080.1875,
+        "center_y": 491.5
+      },
+      "avoid": {
+        "x": 801.375,
+        "y": 481.0,
+        "width": 557.625,
+        "height": 21.0,
+        "right": 1359.0,
+        "bottom": 502.0,
+        "center_x": 1080.1875,
+        "center_y": 491.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 890.19,
+        "y": 522.0,
+        "width": 380,
+        "height": 346,
+        "score": 955.0
+      }
+    }
+  ]
+}

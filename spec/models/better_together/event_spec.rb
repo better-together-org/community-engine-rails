@@ -4,6 +4,8 @@ require 'rails_helper'
 
 module BetterTogether # :nodoc:
   RSpec.describe Event do
+    include ActiveJob::TestHelper
+
     subject(:event) { build(:event) }
 
     describe 'associations' do
@@ -49,6 +51,23 @@ module BetterTogether # :nodoc:
       end
 
       it { is_expected.to validate_uniqueness_of(:source_id).scoped_to(:platform_id).allow_blank }
+    end
+
+    describe 'status enum' do
+      it 'defaults new events to draft (explicit publish step)' do
+        expect(described_class.new.status).to eq('draft')
+      end
+
+      it 'exposes draft, confirmed, and cancelled values' do
+        expect(described_class.statuses.values).to contain_exactly('draft', 'confirmed', 'cancelled')
+      end
+
+      it 'uses prefixed accessors so the timing-derived draft scope is preserved' do
+        event = build(:event, status: 'cancelled')
+
+        expect(event).to be_status_cancelled
+        expect(event.draft?).to be(false) # timing predicate: starts_at present
+      end
     end
 
     describe 'scopes' do
@@ -177,6 +196,16 @@ module BetterTogether # :nodoc:
             # Update ends_at to maintain validation, this should trigger both callbacks
             event_with_attendees.update!(ends_at: event_with_attendees.starts_at + 3.hours)
           end.to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
+        end
+
+        it 'does not reschedule reminders after a non-temporal update' do
+          event_with_attendees = create(:event, :upcoming, :with_attendees)
+
+          clear_enqueued_jobs
+
+          expect do
+            event_with_attendees.update!(name: 'Updated event name')
+          end.not_to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
         end
 
         it 'does not schedule for draft events' do
@@ -358,6 +387,66 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#leaflet_points' do
+        it 'returns an empty array when there is no location' do
+          event = build(:event)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns an empty array for a simple free-text location' do
+          event = build(:event, :with_simple_location)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns an empty array when the structured location has no geocoded space' do
+          event = create(:event, :with_address_location)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns a single leaflet point for a geocoded structured location' do
+          event = create(:event, :with_address_location)
+          address = event.location.location
+          create(:geography_geospatial_space, geospatial: address, space: create(:geography_space))
+          address.reload
+
+          points = event.leaflet_points
+
+          expect(points.size).to eq(1)
+          expect(points.first).to include(lat: 47.5615, lng: -52.7126)
+          expect(points.first[:popup_html]).to include(event.location.display_name)
+        end
+
+        it 'HTML-escapes the event name in the popup so it cannot inject markup/script content' do
+          malicious_name = "<img src=x onerror=alert('xss')>"
+          event = create(:event, :with_address_location, name: malicious_name)
+          address = event.location.location
+          create(:geography_geospatial_space, geospatial: address, space: create(:geography_space))
+          address.reload
+
+          popup_html = event.leaflet_points.first[:popup_html]
+
+          expect(popup_html).not_to include(malicious_name)
+          expect(popup_html).to include(ERB::Util.html_escape(malicious_name))
+        end
+      end
+
+      describe '#spaces' do
+        it 'returns an empty array when there is no location' do
+          event = build(:event)
+          expect(event.spaces).to eq([])
+        end
+
+        it 'returns the geocoded space for a structured location' do
+          event = create(:event, :with_address_location)
+          address = event.location.location
+          space = create(:geography_space)
+          create(:geography_geospatial_space, geospatial: address, space: space)
+          address.reload
+
+          expect(event.spaces).to eq([space])
+        end
+      end
+
       describe '#requires_reminder_scheduling?' do
         let(:event_with_attendees) { create(:event, :upcoming, :with_attendees) }
 
@@ -480,6 +569,34 @@ module BetterTogether # :nodoc:
         expect(mirrored_event).to be_preserved_remote_uuid
         expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
       end
+
+      it 'treats a synced event stored under the local platform as mirrored' do
+        mirrored_event = build(
+          :event,
+          platform: local_platform,
+          source_id: nil,
+          last_synced_at: Time.current
+        )
+
+        expect(mirrored_event).to be_mirrored
+      end
+    end
+
+    describe 'federation_visibility (Federatable)' do
+      it 'defaults to platform_default' do
+        expect(create(:event).federation_visibility).to eq('platform_default')
+      end
+
+      it 'accepts the federate and no_federate overrides' do
+        expect(create(:event, federation_visibility: 'federate')).to be_federation_visibility_federate
+        expect(create(:event, federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+      end
+
+      it 'reports an override only for federate/no_federate' do
+        expect(create(:event, federation_visibility: 'platform_default').federation_visibility_override?).to be false
+        expect(create(:event, federation_visibility: 'federate').federation_visibility_override?).to be true
+        expect(create(:event, federation_visibility: 'no_federate').federation_visibility_override?).to be true
+      end
     end
 
     describe 'delegation' do
@@ -516,6 +633,82 @@ module BetterTogether # :nodoc:
           location_hash = permitted_attrs.find { |attr| attr.is_a?(Hash) && attr.key?(:location_attributes) }
           expect(location_hash).to be_present
           expect(location_hash[:location_attributes]).to include(:creator_id, :name, :locatable_id, :locatable_type)
+        end
+      end
+    end
+
+    describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+      let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
+      let(:community_platform) { create(:better_together_platform, privacy: 'community') }
+      let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
+
+      let(:event_for) do
+        lambda { |platform:, privacy: 'public'|
+          build(:event, platform: platform, privacy: privacy)
+        }
+      end
+
+      context 'public platform' do
+        it 'allows public privacy' do
+          expect(event_for.call(platform: public_platform, privacy: 'public')).to be_valid
+        end
+
+        it 'allows community privacy' do
+          expect(event_for.call(platform: public_platform, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(event_for.call(platform: public_platform, privacy: 'private')).to be_valid
+        end
+      end
+
+      context 'community-privacy platform' do
+        it 'rejects public privacy' do
+          event = event_for.call(platform: community_platform, privacy: 'public')
+          expect(event).not_to be_valid
+          expect(event.errors[:privacy].join).to include('community')
+        end
+
+        it 'allows community privacy' do
+          expect(event_for.call(platform: community_platform, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(event_for.call(platform: community_platform, privacy: 'private')).to be_valid
+        end
+      end
+
+      context 'private platform' do
+        it 'rejects public privacy' do
+          event = event_for.call(platform: private_platform, privacy: 'public')
+          expect(event).not_to be_valid
+          expect(event.errors[:privacy].join).to include('community')
+        end
+
+        it 'allows community privacy' do
+          # A private/non-public platform's ceiling floors at 'community', not
+          # 'private' — members of a locked-down platform can still write
+          # community-scoped content (see PrivacyCeilingValidatable).
+          expect(event_for.call(platform: private_platform, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(event_for.call(platform: private_platform, privacy: 'private')).to be_valid
+        end
+      end
+
+      it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+        event = create(:event, platform: public_platform, privacy: 'public')
+        event.name = 'Updated name'
+        expect(event).to be_valid
+      end
+
+      context 'federated mirror (last_synced_at present)' do
+        it 'allows public privacy even under a private platform' do
+          event = event_for.call(platform: private_platform, privacy: 'public')
+          event.last_synced_at = Time.current
+
+          expect(event).to be_valid
         end
       end
     end

@@ -26,7 +26,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
   context 'as offer creator' do
     let(:user) { offer_creator }
 
-    it 'permits participant actions' do
+    it 'permits participant actions on a pending agreement' do # rubocop:todo RSpec/MultipleExpectations
       expect(policy.show?).to be(true)
       expect(policy.create?).to be(true)
       expect(policy.update?).to be(true)
@@ -34,18 +34,46 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.reject?).to be(true)
       expect(policy.destroy?).to be(true)
     end
+
+    it 'denies fulfill? and cancel? on a pending agreement' do # rubocop:todo RSpec/MultipleExpectations
+      expect(policy.fulfill?).to be(false)
+      expect(policy.cancel?).to be(false)
+    end
+
+    context 'when the agreement is accepted' do
+      before { agreement.update_columns(status: 'accepted') }
+
+      it 'permits fulfill? and cancel?' do # rubocop:todo RSpec/MultipleExpectations
+        expect(policy.fulfill?).to be(true)
+        expect(policy.cancel?).to be(true)
+      end
+    end
   end
 
   context 'as request creator' do
     let(:user) { request_creator }
 
-    it 'permits participant actions' do
+    it 'permits participant actions on a pending agreement' do # rubocop:todo RSpec/MultipleExpectations
       expect(policy.show?).to be(true)
       expect(policy.create?).to be(true)
       expect(policy.update?).to be(true)
       expect(policy.accept?).to be(true)
       expect(policy.reject?).to be(true)
       expect(policy.destroy?).to be(true)
+    end
+
+    it 'denies fulfill? and cancel? on a pending agreement' do # rubocop:todo RSpec/MultipleExpectations
+      expect(policy.fulfill?).to be(false)
+      expect(policy.cancel?).to be(false)
+    end
+
+    context 'when the agreement is accepted' do
+      before { agreement.update_columns(status: 'accepted') }
+
+      it 'permits fulfill? and cancel?' do # rubocop:todo RSpec/MultipleExpectations
+        expect(policy.fulfill?).to be(true)
+        expect(policy.cancel?).to be(true)
+      end
     end
   end
 
@@ -58,6 +86,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(false)
       expect(policy.accept?).to be(false)
       expect(policy.reject?).to be(false)
+      expect(policy.fulfill?).to be(false)
       expect(policy.destroy?).to be(false)
     end
 
@@ -78,6 +107,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
         expect(policy.update?).to be(false)
         expect(policy.accept?).to be(false)
         expect(policy.reject?).to be(false)
+        expect(policy.fulfill?).to be(false)
         expect(policy.destroy?).to be(false)
       end
     end
@@ -86,13 +116,22 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       let(:user) { network_admin }
       let(:agreement) { connection_agreement }
 
-      it 'permits network management and approval actions' do
+      it 'permits network management and approval actions' do # rubocop:todo RSpec/MultipleExpectations
         expect(policy.show?).to be(true)
         expect(policy.create?).to be(true)
         expect(policy.update?).to be(true)
         expect(policy.accept?).to be(true)
         expect(policy.reject?).to be(true)
+        expect(policy.fulfill?).to be(false) # connection agreements cannot be fulfilled
         expect(policy.destroy?).to be(true)
+      end
+
+      context 'when the connection agreement is accepted' do
+        before { connection_agreement.update_columns(status: 'accepted') }
+
+        it 'permits cancel?' do
+          expect(policy.cancel?).to be(true)
+        end
       end
     end
   end

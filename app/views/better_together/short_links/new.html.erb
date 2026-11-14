@@ -1,0 +1,8 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'New Short Link') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.page_title', default: 'New Short Link') %></h1>
+  <%= render 'form', short_link: @short_link %>
+</div>

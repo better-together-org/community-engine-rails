@@ -3,7 +3,7 @@
 <%- available_checklists = policy_scope(BetterTogether::Checklist).order(:created_at) %>
 <div class="checklist-block-fields">
   <%= render partial: 'better_together/content/blocks/fields/shared/resource_block_fields',
-             locals: { block:, scope:, temp_id: } %>
+             locals: { block:, scope:, temp_id:, resource_class: BetterTogether::Checklist } %>
 
   <div class="mb-3">
     <%= label_tag "#{scope}[checklist_id]", BetterTogether::Checklist.model_name.human, class: 'form-label' %>

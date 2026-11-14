@@ -30,16 +30,23 @@ module BetterTogether
 
         # Relationships
         has_one :user
-        has_many :communities, relation_name: :member_communities
-        has_many :person_community_memberships
+        # `include=` bypasses fetchable_fields and policy scopes, so these are not
+        # includable; use the memberships endpoint, which scopes by viewer.
+        has_many :communities, relation_name: :member_communities, allow_include: false
+        has_many :person_community_memberships, allow_include: false
         # TODO: Enable when corresponding resources are created
-        # has_many :conversations
         # has_many :person_blocks
         # has_many :blocked_people, class_name: 'Person'
+        # `has_many :conversations` (ConversationResource already exists) was tried and
+        # reverted: enabling it makes the relationships/related/include=conversations
+        # endpoints all return wrong data — conversation_participants join-row ids
+        # mislabeled as `conversations`, or empty resource objects — a pre-existing
+        # JSONAPI::Resources resolution bug for this has_many-through shape, not a
+        # config typo. Needs its own root-cause fix before re-enabling.
+        # has_many :conversations
 
         # Filters
         filter :privacy
-        filter :locale
         filter :identifier
 
         # Custom attribute methods
@@ -92,13 +99,25 @@ module BetterTogether
           creatable_fields(context)
         end
 
-        # Only expose email when the requesting user's person is available in context
+        # Contact details, preferences and community memberships are private to
+        # the person and to staff allowed to update them. Other viewers who can
+        # see the profile get the public attributes only.
+        PRIVATE_FIELDS = %i[
+          email locale time_zone receive_messages_from_members federate_content
+          notify_by_email show_conversation_details communities person_community_memberships
+        ].freeze
+
         def fetchable_fields
-          fields = super
-          unless context[:current_person].present?
-            fields -= [:email]
-          end
-          fields
+          return super if private_fields_visible?
+
+          super - PRIVATE_FIELDS
+        end
+
+        private
+
+        def private_fields_visible?
+          user = context[:current_user]
+          user.present? && PersonPolicy.new(user, @model).update?
         end
       end
     end

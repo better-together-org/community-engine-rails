@@ -1,0 +1,13 @@
+---
+title: Host mark
+audience:
+- community_member
+- developer
+journey_step: 'As a visitor, I recognise a community by its logo: host mark.'
+callouts:
+- :id: mark
+  :title: Host mark
+  :description: A hosting community shows its logo as a tile.
+accessibility_notes: Decorative marks have empty alt text; names stay in text.
+slug: community_marks_host
+device: desktop

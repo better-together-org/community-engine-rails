@@ -24,7 +24,10 @@ module BetterTogether
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       resource_instance(resource_params)
       authorize_resource
+
       return if performed?
+
+      record_optional_agreement_acceptances
 
       respond_to do |format|
         if @resource.save
@@ -54,6 +57,7 @@ module BetterTogether
 
     def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize_resource
+      record_optional_agreement_acceptances
 
       respond_to do |format| # rubocop:todo Metrics/BlockLength
         if @resource.update(resource_params)
@@ -164,6 +168,25 @@ module BetterTogether
 
     def permitted_attributes
       resource_class.permitted_attributes(id: true, destroy: true)
+    end
+
+    def record_optional_agreement_acceptances
+      person = helpers.current_person
+      return unless person.present?
+
+      agreement = BetterTogether::ChecksRequiredAgreements.public_publishing_agreement
+      return unless agreement.present?
+
+      param_name = helpers.agreement_acceptance_param_name(agreement)
+      return unless params[param_name] == '1'
+
+      BetterTogether::AgreementAcceptanceRecorder.record!(
+        agreement: agreement,
+        participant: person,
+        acceptance_method: :action_gate,
+        accepted_at: Time.current,
+        context: { request:, flow: action_name }
+      )
     end
   end
 end

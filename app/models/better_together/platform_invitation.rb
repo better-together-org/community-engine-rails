@@ -3,6 +3,8 @@
 module BetterTogether
   # Allows for platform managers to invite new people to register to the platform
   class PlatformInvitation < ApplicationRecord
+    include BlockAwareInvitation
+
     has_secure_token
 
     STATUS_VALUES = {

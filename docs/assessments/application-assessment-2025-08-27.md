@@ -1,5 +1,9 @@
 # Better Together Community Engine - Application Assessment
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-27 (last edited 2025-09-02). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Assessment Date:** August 27, 2025  
 **Branch:** feature/social-system  
 **Rails Version:** 7.2.2.2  

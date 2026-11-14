@@ -73,7 +73,7 @@
 
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="searchQueriesChart"
-                  data-chart-data="<%= {labels: [], values: [], avgResults: []}.to_json %>"
+                  data-chart-data="<%= @search_queries_by_term_chart_data.to_json %>"
                   data-results-thresholds="<%= (@result_levels || BetterTogether::Metrics::DEFAULT_RESULT_LEVELS).to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.search_queries_by_term') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.term') %>"
@@ -84,7 +84,8 @@
           <%= render 'datetime_filter',
               chart_type: 'searchQueriesChart',
               data_url: search_queries_by_term_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:search_queries] %>
+              min_date: @min_dates[:search_queries],
+              initial_data_loaded: false %>
         </div>
 
         <div class="metrics-chart-block">
@@ -94,7 +95,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="dailySearchQueriesChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-data="<%= @search_queries_daily_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.daily_search_queries') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.search_queries') %>">
@@ -103,7 +104,8 @@
           <%= render 'datetime_filter',
               chart_type: 'dailySearchQueriesChart',
               data_url: search_queries_daily_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:search_queries] %>
+              min_date: @min_dates[:search_queries],
+              initial_data_loaded: false %>
         </div>
       </div>
 

@@ -55,6 +55,13 @@ Quality rules for UI screenshots:
 - when the highlighted selector is only part of a larger card, panel, or toolbar, the screenshot spec should provide a broader container-avoidance selector so callout placement protects the whole component
 - when the highlighted control opens related UI such as a dropdown or popover, the screenshot spec should also protect that revealed UI with `avoid_selectors`
 - generated screenshots should be visually spot-checked before PR publication to confirm that callouts, overlays, and labels do not hide the evidence they are supposed to explain
+- **callout array order is placement priority order** — the placement algorithm is greedy; declare the most spatially constrained callout first (elements near edges or in dense regions have fewer viable directions and must claim their slot before centre elements do); a `score: 0` in the generated JSON sidecar means the callout fell back to a grid scan — move it earlier in the array
+
+DOM identifier requirements for UI/Workflow PRs:
+
+- every new or modified view must add stable `id` and/or semantic `class` attributes to all interactive and data-bearing elements per the [View DOM Identifier Standard](view_dom_identifier_standard.md)
+- screenshot spec `selector:` values must target stable IDs or semantic classes — structural pseudo-selectors (`nth-of-type`, `:first-of-type`, generic tag chains) are not permitted and will be flagged in code review
+- when the PR introduces a new model surface (index, show, form), add corresponding DOM contract specs under `spec/dom_contracts/` asserting the key IDs are present in the rendered page
 
 ## Significant PR Packet Rule
 

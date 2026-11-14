@@ -1,3 +1,8 @@
+
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 Goal:
 Conduct a comprehensive technical and UX review of the Events and Calendar system in this Ruby on Rails application.
 Assess correctness, scalability, maintainability, and usability — and propose concrete improvements across models, scheduling logic, UI, and integrations.

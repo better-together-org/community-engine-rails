@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Concern that when included allows model to become a member of joinables via memberships
-  module Member
+  module Member # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
     included do # rubocop:todo Metrics/BlockLength
@@ -35,11 +35,17 @@ module BetterTogether
         joinable_membership_classes << membership_class
       end
 
+      def self.expire_permission_cache_for_ids(ids)
+        ids.compact.uniq.each do |member_id|
+          Rails.cache.delete_matched("better_together/member/#{name}/#{member_id}/*")
+        end
+      end
+
       # Cache roles for the current instance
       def roles
         Rails.cache.fetch(cache_key_for(:roles), expires_in: 12.hours) do
           ::BetterTogether::Role.joins(:role_resource_permissions).where(
-            id: self.class.joinable_role_associations.flat_map { |assoc| send(assoc).pluck(:id) }
+            id: active_role_ids
           ).to_a
         end
       end
@@ -72,6 +78,11 @@ module BetterTogether
 
       # Permission check against cached resource permissions, with optional record
       def permitted_to?(permission_identifier, record = nil) # rubocop:todo Metrics/MethodLength
+        if credential_limited?
+          record = credential_target_for(record)
+          return false unless record
+        end
+
         Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier, record), expires_in: 12.hours) do
           permissions_by_identifier = resource_permissions.index_by(&:identifier)
 
@@ -89,6 +100,20 @@ module BetterTogether
 
       private
 
+      # While an agent credential limited to one community is acting for this
+      # member, every permission is evaluated against that community only.
+      def credential_limited?
+        Current.credential_community.present? && Current.person&.id == id
+      end
+
+      def credential_target_for(record)
+        community = Current.credential_community
+        return community if record.nil?
+
+        resolved = record.is_a?(BetterTogether::Community) ? record : record.try(:community)
+        record if resolved&.id == community.id
+      end
+
       # Global permission check
       def global_permission_granted?(resource_permission)
         role_resource_permissions.any? do |rrp|
@@ -102,7 +127,7 @@ module BetterTogether
         return false unless membership_class
 
         # Check if the member has a membership tied explicitly to the record
-        memberships = membership_class.where(
+        memberships = active_membership_relation_for(membership_class).where(
           member: self,
           joinable_id: record.id
         ).includes(:role)
@@ -122,11 +147,30 @@ module BetterTogether
         membership_class_name&.to_s&.classify&.constantize # rubocop:todo Style/SafeNavigationChainLength
       end
 
+      def active_role_ids
+        self.class.joinable_membership_classes.flat_map do |membership_class_name|
+          membership_class = membership_class_name.to_s.classify.constantize
+          active_membership_relation_for(membership_class).pluck(:role_id)
+        end.uniq
+      end
+
+      def active_membership_relation_for(membership_class)
+        relation = membership_class.where(member: self)
+        relation = relation.active if membership_class.respond_to?(:active)
+        relation
+      end
+
       # Generate a unique cache key for each instance and method
       def cache_key_for(method, identifier = nil, record = nil)
         base_key = "better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
         key = identifier ? "#{base_key}/#{identifier}" : base_key
         record ? "#{key}/#{record.class.name}/#{record.identifier}" : key
+      end
+
+      public
+
+      def expire_permission_cache!
+        self.class.expire_permission_cache_for_ids([id])
       end
     end
   end

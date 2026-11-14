@@ -16,6 +16,12 @@
   queue: "notifications"
   description: "Scan upcoming events and schedule per-event reminders"
 
+"better_together:event_next_occurrence_refresh_scan_hourly":
+  cron: "5 * * * *" # hourly at :05 UTC
+  class: "BetterTogether::EventNextOccurrenceRefreshScanJob"
+  queue: "maintenance"
+  description: "Advance next_occurrence_at for recurring events whose stored value has passed"
+
 "better_together:federated_sync_scan_hourly":
   cron: "15 * * * *" # hourly at :15 UTC
   class: "BetterTogether::FederatedSyncScanJob"
@@ -33,3 +39,33 @@
   class: "BetterTogether::FederationAccessTokenPurgeJob"
   queue: "maintenance"
   description: "Purge revoked and expired federation access tokens to prevent unbounded table growth"
+
+"better_together:sitemap_refresh_daily":
+  cron: "0 2 * * *" # daily at 02:00 UTC
+  class: "BetterTogether::SitemapRefreshScanJob"
+  queue: "maintenance"
+  description: "Regenerate per-platform XML sitemaps for all locally-hosted platforms"
+
+"better_together:quotas:reservation_sweep_5min":
+  cron: "*/5 * * * *" # every 5 minutes
+  class: "BetterTogether::Quotas::ReservationSweeperJob"
+  queue: "maintenance"
+  description: "Expire held quota reservations past their TTL, matching reserve!'s default 5-minute window"
+
+"better_together:weather:refresh_hourly":
+  cron: "10 * * * *" # hourly at :10 UTC
+  class: "BetterTogether::Weather::RefreshScanJob"
+  queue: "weather"
+  description: "Refresh current conditions and forecasts for every enabled weather location"
+
+"better_together:weather:backfill_daily":
+  cron: "30 6 * * *" # daily at 06:30 UTC
+  class: "BetterTogether::Weather::BackfillScanJob"
+  queue: "weather"
+  description: "Fill gaps in stored weather observations from the source history API"
+
+"better_together:weather:purge_daily":
+  cron: "45 4 * * *" # daily at 04:45 UTC
+  class: "BetterTogether::Weather::PurgeJob"
+  queue: "maintenance"
+  description: "Apply weather retention windows to observations and superseded forecasts"

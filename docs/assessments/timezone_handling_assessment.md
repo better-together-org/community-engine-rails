@@ -1,4 +1,9 @@
 # Timezone Handling Assessment
+
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-17 (last edited 2026-01-20). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Better Together Community Engine Rails Application
 
 **Assessment Date:** January 17, 2026  

@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
+# These are seed builder tasks, not Rails generators (see lib/generators for those).
+# They live under better_together:seed:*; better_together:generate:* remains as a deprecated
+# alias for one release.
 namespace :better_together do # rubocop:todo Metrics/BlockLength
-  namespace :generate do # rubocop:todo Metrics/BlockLength
+  known_tasks = Rake::Task.tasks.map(&:name)
+
+  namespace :seed do # rubocop:todo Metrics/BlockLength
     desc 'Generate access control'
     task access_control: :environment do
       BetterTogether::AccessControlBuilder.build(clear: true)
@@ -61,9 +66,9 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       BetterTogether::SetupWizardBuilder.build(clear: true)
     end
 
-    desc 'Generate default Agreement data'
+    desc 'Generate default Agreement data (set CLEAR=1 to rebuild from scratch)'
     task agreements: :environment do
-      BetterTogether::AgreementBuilder.build(clear: true)
+      BetterTogether::AgreementBuilder.build(clear: ENV['CLEAR'].to_s == '1')
     end
 
     desc 'Generate default event and Joatu categories'
@@ -93,6 +98,22 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       puts 'Generating external OAuth provider platforms...'
       BetterTogether::ExternalPlatformBuilder.build(clear: ENV['CLEAR'].to_s == '1')
       puts 'Done. External OAuth platforms are ready for authentication.'
+    end
+  end
+
+  Rake::Task.tasks.map(&:name).-(known_tasks).each do |full_name|
+    next unless full_name.start_with?('better_together:seed:')
+
+    task_name = full_name.delete_prefix('better_together:seed:')
+    seed_task = Rake::Task[full_name]
+    next if Rake::Task.task_defined?("better_together:generate:#{task_name}")
+
+    namespace :generate do
+      desc "Deprecated alias for better_together:seed:#{task_name}"
+      task task_name.to_sym, seed_task.arg_names => :environment do |_task, args|
+        warn "DEPRECATED: better_together:generate:#{task_name} is now better_together:seed:#{task_name}"
+        seed_task.invoke(*args.to_a)
+      end
     end
   end
 end

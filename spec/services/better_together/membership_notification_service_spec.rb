@@ -25,9 +25,14 @@ RSpec.describe BetterTogether::MembershipNotificationService do
           service.notify_creation_if_active
         end.to change(Noticed::Notification, :count).by(1)
 
-        notification = Noticed::Notification.last
+        # Scope to this membership's own event rather than the global `.last`
+        # notification: the shared test database is not truncated between
+        # (or even within, given after_commit-created records) examples, so
+        # unrelated leftover notifications may exist.
+        event = Noticed::Event.where(record: membership).last
+        notification = event.notifications.last
         expect(notification.recipient).to eq(membership.member)
-        expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+        expect(event.type).to eq('BetterTogether::MembershipCreatedNotifier')
       end
     end
 
@@ -64,9 +69,12 @@ RSpec.describe BetterTogether::MembershipNotificationService do
         service.notify_activation
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
+      # Scope to this membership's own event; see note above about not
+      # relying on the global `.last` notification.
+      event = Noticed::Event.where(record: membership).last
+      notification = event.notifications.last
       expect(notification.recipient).to eq(membership.member)
-      expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+      expect(event.type).to eq('BetterTogether::MembershipCreatedNotifier')
     end
 
     it 'does not deliver notification for other status changes' do
@@ -93,8 +101,10 @@ RSpec.describe BetterTogether::MembershipNotificationService do
         service.notify_role_update(old_role)
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
-      expect(notification.event.type).to eq('BetterTogether::MembershipUpdatedNotifier')
+      # Scope to this membership's own event; see note above about not
+      # relying on the global `.last` notification.
+      event = Noticed::Event.where(record: membership_with_role).last
+      expect(event.type).to eq('BetterTogether::MembershipUpdatedNotifier')
     end
 
     it 'sends email notification when email is present' do
@@ -136,8 +146,10 @@ RSpec.describe BetterTogether::MembershipNotificationService do
         service.notify_removal(member_data)
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
-      expect(notification.event.type).to eq('BetterTogether::MembershipRemovedNotifier')
+      # MembershipRemovedNotifier records against the joinable (not the
+      # membership); scope to it rather than the global `.last` notification.
+      event = Noticed::Event.where(record: member_data[:joinable]).last
+      expect(event.type).to eq('BetterTogether::MembershipRemovedNotifier')
     end
 
     it 'sends email notification when email is present' do

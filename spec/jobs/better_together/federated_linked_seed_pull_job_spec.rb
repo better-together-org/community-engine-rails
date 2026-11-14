@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::FederatedLinkedSeedPullJob do
+  subject(:job) { described_class.new }
+
   describe 'queueing' do
     it 'uses the platform_sync queue' do
       expect(described_class.new.queue_name).to eq('platform_sync')
@@ -34,13 +36,43 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob do
         next_cursor: 'private-cursor-2'
       )
     end
+    let(:lock_store) { {} }
+    let(:fake_redis) do
+      store = lock_store
+
+      Object.new.tap do |redis|
+        redis.define_singleton_method(:set) do |key, value, **options|
+          return false if options[:nx] && store.key?(key)
+
+          store[key] = { value:, ex: options[:ex] }
+          true
+        end
+
+        redis.define_singleton_method(:call) do |command, _script, _key_count, key, owner|
+          return 0 unless command == 'EVAL'
+          return 0 unless store[key]&.fetch(:value, nil) == owner
+
+          store.delete(key)
+          1
+        end
+
+        redis.define_singleton_method(:value_for) do |key|
+          store[key]&.fetch(:value, nil)
+        end
+      end
+    end
+
+    before do
+      allow(Sidekiq).to receive(:redis).and_yield(fake_redis)
+    end
 
     it 'pulls linked seeds and ingests them for the recipient' do
       allow(BetterTogether::FederatedLinkedSeedPullService).to receive(:call).and_return(pull_result)
       allow(BetterTogether::Seeds::LinkedSeedIngestService).to receive(:call)
+      fake_redis.set(job.send(:dispatch_lock_key, grant.id), 'dispatch-token', nx: true, ex: 600)
 
-      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id,
-                                  sync_cursor: 'private-cursor-1')
+      job.perform(platform_connection_id: connection.id, recipient_person_id: recipient_person.id,
+                  sync_cursor: 'private-cursor-1', person_access_grant_id: grant.id, dispatch_lock_token: 'dispatch-token')
 
       expect(BetterTogether::FederatedLinkedSeedPullService).to have_received(:call).with(
         connection:,
@@ -52,6 +84,7 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob do
         recipient_person: recipient_person,
         seeds: pull_result.seeds
       )
+      expect(fake_redis.value_for(job.send(:dispatch_lock_key, grant.id))).to be_nil
     end
 
     it 'does nothing when the recipient no longer has an active linked private grant' do
@@ -60,12 +93,15 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob do
 
       allow(BetterTogether::FederatedLinkedSeedPullService).to receive(:call)
       allow(BetterTogether::Seeds::LinkedSeedIngestService).to receive(:call)
+      missing_grant_id = SecureRandom.uuid
+      fake_redis.set(job.send(:dispatch_lock_key, missing_grant_id), 'dispatch-token', nx: true, ex: 600)
 
-      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id,
-                                  sync_cursor: 'private-cursor-1')
+      job.perform(platform_connection_id: connection.id, recipient_person_id: recipient_person.id,
+                  sync_cursor: 'private-cursor-1', person_access_grant_id: missing_grant_id, dispatch_lock_token: 'dispatch-token')
 
       expect(BetterTogether::FederatedLinkedSeedPullService).not_to have_received(:call)
       expect(BetterTogether::Seeds::LinkedSeedIngestService).not_to have_received(:call)
+      expect(fake_redis.value_for(job.send(:dispatch_lock_key, missing_grant_id))).to be_nil
     end
   end
 end

@@ -11,6 +11,8 @@ module BetterTogether
     helper BetterTogether::ApplicationHelper
     helper BetterTogether::ContactDetailsHelper
     helper BetterTogether::NavigationItemsHelper
+    helper BetterTogether::ImageHelper
+    helper BetterTogether::PeopleHelper
 
     layout 'better_together/mailer'
 
@@ -23,8 +25,11 @@ module BetterTogether
     #   1. Explicit @platform ivar set by the child mailer (e.g. PlatformInvitationMailer)
     #   2. Current.platform set by Rack middleware (web/API requests)
     #   3. Global BetterTogether.base_url env fallback (background jobs with no request context)
+    # Uses Platform#resolved_host_url (not the raw url/host_url column) so mail links
+    # respect a platform's active PlatformDomain rather than a stale host_url value.
     def default_url_options
-      raw = @platform&.url || ::Current.platform&.url || BetterTogether.base_url
+      effective_platform = @platform || ::Current.platform
+      raw = effective_platform&.resolved_host_url || BetterTogether.base_url
       options = super.merge(locale:, **resolve_url_options(raw.to_s))
       ActiveStorage::Current.url_options = options
       options
@@ -33,7 +38,7 @@ module BetterTogether
     private
 
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_locale_and_time_zone(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       # Use Current.platform (set by middleware for web/API requests) with
       # fallback to host platform for background job mailer sends.
@@ -48,12 +53,11 @@ module BetterTogether
         I18n.with_locale(locale, &)
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Parse a raw URL string and return Rails url_options components (host:, protocol:, port:).
     # Handles full URLs (https://example.com/path) — Rails expects host: to be hostname-only.
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def resolve_url_options(raw_url)
       uri = URI.parse(raw_url.to_s)
       opts = { host: uri.host.presence || raw_url.to_s }
@@ -63,7 +67,6 @@ module BetterTogether
     rescue URI::InvalidURIError
       { host: raw_url.to_s }
     end
-    # rubocop:enable Metrics/AbcSize
 
     def default_port?(scheme, port)
       (scheme == 'https' && port == 443) || (scheme == 'http' && port == 80)

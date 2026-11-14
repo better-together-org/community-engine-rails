@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A gathering
-  class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
+    include Base64ImageInput
     include Contactable
+    include ContactData
+    include Geography::Locatable::AddressData
     include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
@@ -13,8 +18,15 @@ module BetterTogether
     include PlatformHost
     include Protected
     include Privacy
+    include Metrics::Shareable
     include Metrics::Viewable
+    include Quotas::Owner
+    include Reportable
     include Searchable
+    include Shortlinkable
+    include SitemapRefreshable
+    include ::Storext.model
+    include Geography::Locatable::LocationMapPoints
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -26,9 +38,45 @@ module BetterTogether
             inverse_of: :community,
             dependent: :nullify
 
+    # Transient (non-persisted) flag: set by PrimaryCommunity#create_primary_community
+    # when this Community is being created as some Platform's own primary
+    # community, so it doesn't try to resolve the generic ambient platform
+    # (Current.platform / host platform / Platform.first) for a platform_id
+    # that PrimaryCommunity#backfill_primary_community_platform is going to
+    # overwrite anyway once the owning platform has a persisted id. Without
+    # this, any platform after the very first ends up with its own primary
+    # community silently scoped under whatever the ambient platform happens
+    # to be (typically the host platform) instead of itself — which as of
+    # PrivacyCeilingValidatable actively breaks community creation whenever
+    # that ambient platform is more restrictive than the community being
+    # bootstrapped.
+    attr_accessor :bootstrapping_primary_community
+
+    # The very first Platform ever created has no platform yet for its own host
+    # community to reference — PrimaryCommunity#create_primary_community creates
+    # this community first (better_together_communities.platform_id is
+    # nullable), then Platform saves referencing it (community_id is NOT NULL,
+    # so Platform must reference an already-persisted community), then
+    # backfill_primary_community_platform sets this platform_id once the
+    # platform itself has a persisted id. Overrides
+    # PlatformScoped#platform_presence_optional? — see that concern for why
+    # this is a hook method rather than a redeclared belongs_to.
+    def platform_presence_optional?
+      bootstrapping_host_community? || bootstrapping_primary_community
+    end
+
+    def bootstrapping_host_community?
+      host? && !BetterTogether::Platform.exists?(host: true)
+    end
+
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+    has_many :posts, class_name: 'BetterTogether::Post', dependent: :nullify
+
+    store_attributes :settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -42,10 +90,7 @@ module BetterTogether
     slugged :name
 
     translates :name, type: :string
-    translates :description, type: :text
-    translates :description_html, backend: :action_text
-
-    settings index: default_elasticsearch_index
+    translates :description, backend: :action_text
 
     searchable pg_search: {
       against: [:identifier],
@@ -57,31 +102,59 @@ module BetterTogether
       }
     }
 
+    # The community's own place. A plain association, not Locatable::One (which also makes a record Mappable).
+    has_one :location, class_name: 'BetterTogether::Geography::LocatableLocation', as: :locatable,
+                       dependent: :destroy, autosave: true
+
+    # Adds the located_in(place) scope (settlement pages list the communities located in them) without making the
+    # community Mappable; it works off the has_one :location above.
+    include Geography::Locatable::LocatedIn
+
+    accepts_base64_image :logo_data, attachment: :logo, filename_field: :logo_filename, default_name: 'logo'
+    accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
+                                            default_name: 'cover'
+    accepts_base64_image :profile_image_data, attachment: :profile_image, filename_field: :profile_image_filename,
+                                              default_name: 'profile'
+
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 600],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
+
+    alias card_image cover_image
 
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     # Virtual attributes to track removal
@@ -92,36 +165,59 @@ module BetterTogether
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
     after_create :create_default_calendar
+    after_commit :clear_host_community_cache, if: -> { saved_change_to_attribute?(:host) }
 
     validates :name, presence: true
+    validate :host_privacy_matches_platform, if: -> { host? && persisted? && will_save_change_to_privacy? }
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     def self.extra_permitted_attributes
-      super + %i[allow_membership_requests]
+      super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
+    end
+
+    # Communities the sitemap indexes for a platform. Host apps narrow this to keep communities out of it.
+    def self.sitemap_listable(platform)
+      for_platform(platform).privacy_public
+    end
+
+    def self.host_community
+      @host_community ||= find_by(host: true)
+    end
+
+    def self.reset_host_community_cache!
+      @host_community = nil
     end
 
     def as_community
       becomes(self.class.base_class)
     end
 
-    def membership_requests_enabled?(platform: primary_platform)
-      allow_membership_requests? || platform&.allow_membership_requests?
+    def clear_host_community_cache
+      self.class.reset_host_community_cache!
     end
 
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description:,
-        description_html: description_html.present? ? search_text_value(description_html) : nil
-      }.compact.as_json
+    def membership_requests_enabled?(platform: primary_platform || ::BetterTogether::Platform.find_by(host: true))
+      ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
+        ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
     end
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
     end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        cover_image
+      elsif cover_image.content_type == 'image/png'
+        cover_image.variant(:optimized_png)
+      else
+        cover_image.variant(:optimized_jpeg)
+      end
+    end
+
+    alias optimized_card_image optimized_cover_image
 
     def optimized_logo
       if logo.content_type == 'image/svg+xml'
@@ -131,10 +227,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif logo.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        logo.variant(:optimized_png).processed
+        logo.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        logo.variant(:optimized_jpeg).processed
+        logo.variant(:optimized_jpeg)
       end
     end
 
@@ -146,10 +242,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif profile_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        profile_image.variant(:optimized_png).processed
+        profile_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        profile_image.variant(:optimized_jpeg).processed
+        profile_image.variant(:optimized_jpeg)
       end
     end
 
@@ -163,7 +259,20 @@ module BetterTogether
       (invited_ids + existing_member_ids).uniq
     end
 
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.community_url(self, locale: I18n.locale)
+    end
+
     private
+
+    # The host community follows its platform's privacy; change the platform's privacy instead.
+    def host_privacy_matches_platform
+      platform = ::BetterTogether::Platform.find_by(host: true, community_id: id)
+      return if platform.nil? || platform.privacy == privacy
+
+      errors.add(:privacy, :host_community_follows_platform,
+                 message: "must match the host platform privacy ('#{platform.privacy}')")
+    end
 
     def create_default_calendar
       calendar_identifier = "default-#{identifier}"

@@ -2,10 +2,22 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Event edit preserves data', :as_user do
+RSpec.feature 'Event edit preserves data', :as_platform_manager do
   let!(:community) { create(:community, privacy: 'public') }
 
   before do
+    # :as_platform_manager (not :as_user) so AutomaticTestConfiguration's
+    # global auto-login hook signs in the manager directly. With :as_user it
+    # instead auto-logs in a generic user first, and this spec's own
+    # capybara_login_as_platform_manager call below then has to sign that
+    # user out and sign the manager back in - a sign-out (Turbo
+    # `data-turbo-method="delete"` logout link) racing
+    # Capybara.reset_session! that left the session still authenticated as
+    # the generic user when the edit page loaded, denying `edit?` and
+    # redirecting to the homepage (whose nav search form then got misparsed
+    # by this spec as the event form, chasing a "search"-id event down a
+    # dead end). With the tag matching, capybara_login_as_platform_manager
+    # below is a harmless no-op (already signed in as the same user).
     configure_host_platform
     capybara_login_as_platform_manager
   end

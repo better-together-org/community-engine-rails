@@ -1,0 +1,12 @@
+---
+title: Map pin styles
+audience:
+- developer
+journey_step: As a developer, I can style map pins with stacked Font Awesome icons.
+callouts:
+- :id: pins
+  :title: Pin styles
+  :description: A type sets the default look of its points.
+accessibility_notes: Pins are decorative; popups and the legend carry the names.
+slug: map_pin_styles
+device: mobile

@@ -1,5 +1,9 @@
 # Markdown Content Management Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-17. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## ⚠️ RETROSPECTIVE DOCUMENTATION
 
 **This is retrospective documentation for already-implemented functionality in PR #1149 (merged November 2025).**

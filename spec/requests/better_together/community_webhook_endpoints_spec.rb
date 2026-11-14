@@ -8,6 +8,7 @@ RSpec.describe 'Community Webhook Endpoints', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let!(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
   let!(:person) { platform_manager.person }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
   let!(:community) { create(:better_together_community) }
 
   def index_path
@@ -58,6 +59,14 @@ RSpec.describe 'Community Webhook Endpoints', :as_platform_manager do
         get index_path
         expect(response.body).not_to include(other_endpoint.name)
       end
+    end
+
+    it 'redirects signed-in non-admins away from index' do
+      sign_in regular_user
+
+      get index_path
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -142,6 +151,14 @@ RSpec.describe 'Community Webhook Endpoints', :as_platform_manager do
     it 'displays the endpoint URL' do
       get show_path(endpoint)
       expect_html_content(endpoint.url)
+    end
+
+    it 'redirects signed-in non-admins away from show' do
+      sign_in regular_user
+
+      get show_path(endpoint)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

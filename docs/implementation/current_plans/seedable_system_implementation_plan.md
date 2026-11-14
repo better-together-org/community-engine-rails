@@ -1,5 +1,9 @@
 # 🎯 Seedable System Enhancement Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-23. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## 🎖️ Executive Summary
 
 **Objective**: Complete the Seedable data import/export system to production-ready standards with robust security, validation, and comprehensive import functionality.

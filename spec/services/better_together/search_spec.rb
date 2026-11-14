@@ -15,10 +15,10 @@ RSpec.describe BetterTogether::Search do
   end
 
   describe '.backend_class' do
-    it 'uses Elasticsearch by default' do
+    it 'uses pg_search by default' do
       ENV.delete('SEARCH_BACKEND')
 
-      expect(described_class.backend_class).to eq(BetterTogether::Search::ElasticsearchBackend)
+      expect(described_class.backend_class).to eq(BetterTogether::Search::PgSearchBackend)
     end
 
     it 'uses the database backend when configured explicitly' do
@@ -29,6 +29,12 @@ RSpec.describe BetterTogether::Search do
 
     it 'maps pg_search requests to the database backend until a dedicated implementation exists' do
       ENV['SEARCH_BACKEND'] = 'pg_search'
+
+      expect(described_class.backend_class).to eq(BetterTogether::Search::PgSearchBackend)
+    end
+
+    it 'falls back to pg_search when Elasticsearch is requested but no adapter is registered' do
+      ENV['SEARCH_BACKEND'] = 'elasticsearch'
 
       expect(described_class.backend_class).to eq(BetterTogether::Search::PgSearchBackend)
     end

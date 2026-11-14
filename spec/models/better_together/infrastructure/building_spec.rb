@@ -62,6 +62,53 @@ RSpec.describe BetterTogether::Infrastructure::Building do
         expect(building_no_floors.floors.count).to eq(1)
         expect(floor).to be_persisted
       end
+
+      it 'does not create another floor when one already exists', :aggregate_failures do
+        building = create(:better_together_infrastructure_building)
+        existing_floor = building.floors.first
+
+        expect(building.ensure_floor).to be_nil
+        expect(building.floors.count).to eq(1)
+        expect(building.floors.first).to eq(existing_floor)
+      end
+    end
+
+    describe '#name_is_address?' do
+      it 'returns true when the name matches the address geocoding string' do
+        address = create(:better_together_address,
+                         line1: '62 Broadway',
+                         city_name: 'Corner Brook',
+                         state_province_name: 'NL',
+                         country_name: 'Canada')
+        building = create(:better_together_infrastructure_building, address:)
+        building.update!(name: address.geocoding_string)
+
+        expect(building.name_is_address?).to be(true)
+      end
+    end
+
+    describe '#select_option_title' do
+      it 'includes the name and slug' do
+        building = create(:better_together_infrastructure_building, name: 'Community Hall')
+
+        expect(building.select_option_title).to eq("#{building.name} (#{building.slug})")
+      end
+    end
+
+    describe '#schedule_address_geocoding' do
+      it 'enqueues geocoding when the address can be geocoded' do
+        allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
+        address = create(:better_together_address,
+                         line1: '62 Broadway',
+                         city_name: 'Corner Brook',
+                         state_province_name: 'NL',
+                         country_name: 'Canada')
+
+        create(:better_together_infrastructure_building, address:)
+
+        expect(BetterTogether::Geography::GeocodingJob).to have_received(:perform_later)
+          .with(instance_of(described_class))
+      end
     end
   end
 end

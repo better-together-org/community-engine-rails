@@ -30,7 +30,7 @@ This branch adds a multi-tenant platform architecture, federation MVP, and BCryp
 - [ ] `PLATFORM_URL` env var confirmed to match the public base URL of this deployment
 - [ ] `PLATFORM_NAME` and `PLATFORM_TIME_ZONE` env vars set (used by seed run)
 - [ ] Redis available (required for `Current.platform` cache)
-- [ ] Elasticsearch healthy (`/host/search` sanity check)
+- [ ] Search working (`/search?q=...` returns results; `rake better_together:search:audit` reports `ok`)
 - [ ] Sidekiq workers **stopped** before migration, restarted after
 
 ---

@@ -8,10 +8,9 @@ module BetterTogether
     MEMBERSHIP_INCLUDES = [
       { member: [
         :string_translations,
-        :text_translations,
         { profile_image_attachment: { blob: { variant_records: [], preview_image_attachment: { blob: [] } } } }
       ] },
-      { role: %i[string_translations text_translations] }
+      { role: [:string_translations] }
     ].freeze
 
     # Efficiently load platform memberships with all necessary associations

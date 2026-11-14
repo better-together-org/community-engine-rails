@@ -1,5 +1,9 @@
 # Membership Notifications TDD Acceptance Criteria
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-12-21. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document defines stakeholder-focused acceptance criteria for the membership notifications feature using TDD.

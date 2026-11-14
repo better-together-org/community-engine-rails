@@ -49,8 +49,6 @@ module BetterTogether
       end
 
       def manageable_platform_ids
-        return BetterTogether::Platform.select(:id) if permitted_to?('manage_platform_members') || permitted_to?('manage_platform_roles')
-
         BetterTogether::PersonPlatformMembership
           .joins(role: { role_resource_permissions: :resource_permission })
           .where(member_id: agent.id)
@@ -62,8 +60,6 @@ module BetterTogether
     protected
 
     def can_manage_platform_members?
-      return true if permitted_to?('manage_platform_members') || permitted_to?('manage_platform_roles')
-
       platform = record.try(:joinable)
 
       permitted_to?('manage_platform_members', platform) ||

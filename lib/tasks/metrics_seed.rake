@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :metrics do
     desc 'Seed sample metrics data for testing and demonstration'
@@ -178,7 +178,7 @@ namespace :better_together do
 
           BetterTogether::Metrics::Share.create!(
             shareable: page,
-            platform: platforms.sample,
+            platform_name: platforms.sample,
             url: page_url,
             locale: locale,
             shared_at: date + rand(0..23).hours + rand(0..59).minutes
@@ -288,4 +288,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

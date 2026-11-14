@@ -5,7 +5,10 @@
 
     <div>
       <% if policy(BetterTogether::Post).create? %>
-        <%= link_to t('better_together.posts.create_post', default: 'Create the first post'), new_post_path, class: 'btn btn-primary' %>
+        <%= link_to t('better_together.posts.create_post', default: 'Create the first post'),
+                    new_post_path(community_id: params[:community_id]),
+                    class: 'btn btn-primary',
+                    id: 'posts-empty-create-btn' %>
       <% end %>
     </div>
   </div>

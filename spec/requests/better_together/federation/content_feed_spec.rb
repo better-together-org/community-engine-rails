@@ -104,4 +104,34 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
 
     expect(response).to have_http_status(:unauthorized)
   end
+
+  context 'when the local platform is target_platform on the connection, not source_platform' do
+    let(:remote_platform) { create(:better_together_platform, :community_engine_peer) }
+    let(:connection) do
+      create(
+        :better_together_platform_connection,
+        :active,
+        source_platform: remote_platform,
+        target_platform: source_platform,
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+    end
+
+    it 'still returns a cursor-paginated content batch for an authorized peer' do
+      creator = create(:better_together_person, federate_content: true)
+      post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
+
+      get better_together.federation_content_feed_path(locale:),
+          headers: { 'Authorization' => "Bearer #{oauth_access_token}" }
+
+      expect(response).to have_http_status(:ok)
+
+      payload = JSON.parse(response.body)
+      expect(payload['seeds'].first['better_together']['payload']['id']).to eq(post.id)
+    end
+  end
 end

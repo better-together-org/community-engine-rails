@@ -1,0 +1,18 @@
+%% render.orientation: landscape
+flowchart LR
+  settings["Settings: My Data tab"]
+  exports["Export requests table"]
+  status["Localized status badge\nstatus_values.completed|failed|pending|processing"]
+  failure["Friendly failed export helper"]
+  links["Self-service connection cards"]
+  ctas["Specific CTA labels\nlinked people | access grants | linked seeds | portable seed exports"]
+  evidence["Controller + screenshot review specs"]
+
+  settings --> exports
+  exports --> status
+  exports --> failure
+  settings --> links
+  links --> ctas
+  status --> evidence
+  failure --> evidence
+  ctas --> evidence

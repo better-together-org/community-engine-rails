@@ -1,0 +1,8 @@
+<%# locals: (community:) -%>
+<%# Hook: the location line of the About tab. Host apps override this partial to link the place. -%>
+<% if community.location&.display_name.present? %>
+  <p class="community-location card-text" id="community-location">
+    <i class="fas fa-map-marker-alt me-1" aria-hidden="true"></i>
+    <%= community.location.display_name %>
+  </p>
+<% end %>

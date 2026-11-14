@@ -68,9 +68,9 @@ RSpec.describe BetterTogether::Geography::Continent do
       Mobility.with_locale(:es) do
         continent.description = 'Un gran continente'
       end
-      expect(continent.description).to eq('A large continent')
+      expect(continent.description.to_plain_text).to eq('A large continent')
       Mobility.with_locale(:es) do
-        expect(continent.description).to eq('Un gran continente')
+        expect(continent.description.to_plain_text).to eq('Un gran continente')
       end
     end
 

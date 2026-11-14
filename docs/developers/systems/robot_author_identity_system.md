@@ -102,4 +102,3 @@ Still future work:
 - a complete first-class robot profile/detail surface
 - fully robot-native public author presentation across every content surface
 - explicit robot-led publish/review workflow UX
-- the dedicated governed release-package workflow that treats robot authorship as a primary path instead of only a compatible substrate

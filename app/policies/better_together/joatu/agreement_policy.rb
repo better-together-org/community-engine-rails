@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Authorization for Joatu agreements
-    class AgreementPolicy < ApplicationPolicy
+    class AgreementPolicy < PlatformRecordPolicy
       def index? = user.present?
 
       def show?
@@ -32,6 +32,23 @@ module BetterTogether
       alias accept? update?
       alias reject? update?
 
+      def cancel?
+        return false unless user.present?
+        return false unless record.status_accepted?
+
+        return can_approve_network_connections? if connection_request_agreement?
+
+        participant? || can_manage_joatu?
+      end
+
+      def fulfill?
+        return false unless user.present?
+        return false unless record.status_accepted?
+        return false if connection_request_agreement?
+
+        participant? || can_manage_joatu?
+      end
+
       def destroy?
         return false unless user.present?
 
@@ -41,29 +58,29 @@ module BetterTogether
       end
 
       def participant?
-        return false unless record&.offer && record.request
+        return false unless record.present?
 
-        [record.offer.creator_id, record.request.creator_id].compact.include?(agent&.id)
+        record.participant_for?(agent)
       end
 
-      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+      class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
         def resolve # rubocop:todo Metrics/AbcSize
           return scope.none unless user.present?
-          return scope.all if can_manage_joatu?
-          return scope.all if can_manage_network_connections? && connection_request_agreement_scope?
+          return platform_scoped if can_manage_joatu?
+          return platform_scoped if can_manage_network_connections? && connection_request_agreement_scope?
 
-          public_records = scope.where(privacy: 'public')
+          public_records = platform_scoped.where(privacy: 'public')
 
           # Agreements where the agent is either the offer or request creator
           offers = BetterTogether::Joatu::Offer.arel_table
           requests = BetterTogether::Joatu::Request.arel_table
 
-          join = scope.joins(:offer, :request)
+          join = platform_scoped.joins(:offer, :request)
           participant_records = join.where(
             offers[:creator_id].eq(agent&.id).or(requests[:creator_id].eq(agent&.id))
           )
 
-          public_records.or(scope.where(id: participant_records.select(:id)))
+          public_records.or(platform_scoped.where(id: participant_records.select(:id)))
         end
 
         private

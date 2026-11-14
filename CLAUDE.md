@@ -1,0 +1,31 @@
+# CLAUDE.md — Community Engine Rails
+
+Project instructions for Claude Code sessions in this repository.
+
+@AGENTS.md
+
+## Non-negotiable rules
+
+- **Tests must use `prspec` (parallel rspec)**. Bare `rspec` is not permitted without explicit operator authorization. If `prspec` is unavailable, stop and report — do not fall back.
+  - Targeted spec: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
+  - Full suite (about 9 min on a 12-core host, which now defaults to 3 workers; 8 workers is the fastest but uses about 16 GiB; see `docs/development/test_profiling.md`): `bin/dc-ci`
+  - After any DB schema change: run `bin/parallel-setup` before running any tests
+- **Before pushing, run every spec affected by your changes** (specs for each changed file, plus callers, shared support and related feature/request specs). The full suite is not required locally; CI runs it.
+- **GitHub comments/PRs**: Use `gh_with_bts_robot.sh` — never bare `gh api graphql`. Posts as `bettertogether-bts-robot`, not `rsmithlal`.
+- **Migrations**: Use `create_bt_table :name`, not `create_table :better_together_name`. Guard all additive migrations with `table_exists?`, `column_exists?`, `index_name_exists?`.
+- **Cloud agent sessions** (claude.ai/code containers): `bin/dc-run` cannot work there (no Docker daemon at start, Docker Hub rate limits, dev image cannot be built). Use `bin/cloud-session-env setup` once, then `bin/cloud-session-env run bundle exec prspec …` in place of `bin/dc-run`; read `docs/development/cloud_session_environment.md` first for known environmental spec failures.
+- **Never reference or ingest Colibri Software code** — proprietary third-party, no BTS relationship.
+- **HAProxy routing changes require T3 full PR review**. DNS never changes.
+
+## Test commands quick reference
+
+| Goal | Command |
+|------|---------|
+| Run a single spec | `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb` |
+| Run a specific line | `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb:123` |
+| Run multiple files | `bin/dc-run bundle exec prspec spec/file1_spec.rb spec/file2_spec.rb` |
+| Full suite | `bin/dc-ci` |
+| Rebuild parallel DBs | `bin/parallel-setup` |
+| Lint | `bin/dc-run bundle exec rubocop --parallel` |
+| i18n check | `bin/dc-run bin/i18n` |
+| Diagram check (before any push touching models, associations, migrations or `.mmd`) | `bin/check_diagrams`, then commit what it rewrote |

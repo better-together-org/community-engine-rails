@@ -18,6 +18,18 @@ module BetterTogether
         attribute :cover_image_url
         attribute :logo_url
 
+        # Publisher inputs, write-only (the image URLs above are what is returned): base64 images, a street
+        # address for the location (Locatable::AddressData) and the contact details (ContactData).
+        WRITE_ONLY = %i[
+          logo_data logo_filename cover_image_data cover_image_filename profile_image_data profile_image_filename
+          address_data contact_data
+        ].freeze
+        attributes(*WRITE_ONLY)
+
+        def fetchable_fields
+          super - WRITE_ONLY
+        end
+
         # Relationships
         has_one :creator, class_name: 'Person'
         has_many :members, relation_name: :person_members, class_name: 'Person'
@@ -29,7 +41,20 @@ module BetterTogether
         filter :privacy
         filter :protected
         filter :host
+        filter :slug, apply: lambda { |records, value, _options|
+          matching_ids = records.i18n.where(slug: Array(value)).pluck(:id)
+          records.where(id: matching_ids)
+        }
         filter :creator_id
+
+        # ActionText returns an ActionText::RichText object; serialize as plain text for JSON consumers.
+        def description
+          @model.description&.to_plain_text.to_s
+        end
+
+        def description=(value)
+          @model.description = value
+        end
 
         # Custom attribute methods
         def profile_image_url

@@ -1,0 +1,25 @@
+---
+title: Platform Domains — New (custom domain picker)
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager onboarding a client with their own domain, I choose
+  "use my own domain" and see DNS/TLS guidance instead of a subdomain suffix.
+callouts:
+- :id: kind_custom_radio
+  :title: Custom domain picker
+  :description: Toggling this radio hides the subdomain-suffix fields and shows the
+    DNS/TLS guidance panel instead — client-side only, via the same Stimulus controller.
+- :id: custom_fields
+  :title: DNS/TLS guidance
+  :description: Static text echoing the operator guidance already documented in docs/production/multi_platform_deployment.md
+    — no new documentation content, just surfaced in-context.
+- :id: hostname_field
+  :title: Free-text hostname
+  :description: Same field as the subdomain path — no model or validation difference
+    between the two picker states.
+accessibility_notes: Toggling the radio moves focus-visible state correctly via native
+  radio input semantics; the guidance panel is a static alert region, not a live region.
+slug: platform_domains_new_custom_domain_state
+device: mobile

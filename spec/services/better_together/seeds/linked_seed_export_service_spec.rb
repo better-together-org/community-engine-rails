@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Seeds::LinkedSeedExportService do
   describe '#call' do
-    let(:source_platform) { create(:better_together_platform) }
-    let(:target_platform) { create(:better_together_platform) }
+    let(:source_platform) { create(:better_together_platform, :public) }
+    let(:target_platform) { create(:better_together_platform, :public) }
     let(:connection) do
       create(
         :better_together_platform_connection,
@@ -55,10 +55,12 @@ RSpec.describe BetterTogether::Seeds::LinkedSeedExportService do
       expect(result.seeds).to eq([])
     end
 
-    it 'continues pagination beyond 500 offset records' do
+    # The per-type query fetches cursor + limit rows (previously capped at 500), so a large offset
+    # is exercised with a small page size instead of creating 500+ posts.
+    it 'continues pagination past the first page of records' do
       create_list(
         :better_together_post,
-        504,
+        16, # plus the one existing private post = 17 records; cursor 12 leaves 5
         creator: grant.grantor_person,
         privacy: 'private',
         platform: source_platform
@@ -67,7 +69,7 @@ RSpec.describe BetterTogether::Seeds::LinkedSeedExportService do
       result = described_class.call(
         connection:,
         recipient_identifier: grant.grantee_person.identifier,
-        cursor: '500',
+        cursor: '12',
         limit: 10
       )
 

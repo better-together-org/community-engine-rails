@@ -23,12 +23,12 @@ Target state:
 - CE defines `llm` and `embeddings` subsystem groups in the adapter registry
 - CE uses `ruby_llm` as the abstraction layer for model calls
 - direct OpenAI integration moves into a thin provider gem
-- Borgberry becomes the preferred BTS-hosted audited path for local Ollama execution
+- local model hosts (for example Ollama) can register as audited providers
 
 Guardrails for the target architecture:
 
 - no external LLM provider is required by CE core
-- no silent fallback from local audited Borgberry routing to a cloud provider
+- no silent fallback from local audited routing to a cloud provider
 - platform, tenant, and community context must be preserved for authorization and audit
 - prompts, responses, model identifiers, and usage metadata must be auditable with redaction controls when needed
 
@@ -342,7 +342,7 @@ OPENAI_API_KEY=sk-...your-api-key
 # OpenAI-compatible base override
 # OPENAI_API_BASE=https://your-openai-compatible-endpoint.example/v1
 
-# Future Borgberry/Ollama routing is provided by the Borgberry adapter gem.
+# Local model routing (for example Ollama) is provided by a provider gem registered in the adapter registry.
 ```
 
 ### RubyLLM Configuration (`config/initializers/ruby_llm.rb`)
@@ -524,7 +524,7 @@ config.log_errors = false
 ## Future Enhancements
 
 ### Planned Features
-- **Multiple AI Providers**: Support for Borgberry/Ollama, OpenAI-compatible endpoints, and other `ruby_llm` providers
+- **Multiple AI Providers**: Support for Ollama, OpenAI-compatible endpoints, and other `ruby_llm` providers
 - **Translation Memory**: Leverage previous translations for consistency
 - **Batch Translation UI**: Web interface for bulk operations
 - **Quality Scoring**: AI translation quality assessment

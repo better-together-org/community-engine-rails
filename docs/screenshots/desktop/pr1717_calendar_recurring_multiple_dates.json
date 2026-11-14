@@ -1,0 +1,83 @@
+{
+  "name": "pr1717_calendar_recurring_multiple_dates",
+  "device": "desktop",
+  "url": "/en/calendars/e0246704-02ac-429d-855a-07a650a11c01",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_occurrences_ux",
+  "flow": "calendar_recurring_expansion",
+  "source_spec": "./spec/docs_screenshots/better_together/event_occurrences_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#calendar-day-2026-11-02-events",
+      "title": "First occurrence day cell",
+      "bullets": [
+        "CalendarOccurrenceExpander expands the recurrence rule into one Occurrence per date."
+      ],
+      "target": {
+        "x": 79.0,
+        "y": 724.09375,
+        "width": 172.0,
+        "height": 42.0,
+        "right": 251.0,
+        "bottom": 766.09375,
+        "center_x": 165.0,
+        "center_y": 745.09375
+      },
+      "avoid": {
+        "x": 79.0,
+        "y": 724.09375,
+        "width": 172.0,
+        "height": 42.0,
+        "right": 251.0,
+        "bottom": 766.09375,
+        "center_x": 165.0,
+        "center_y": 745.09375
+      },
+      "placement": {
+        "side": "right",
+        "x": 271.0,
+        "y": 650.09,
+        "width": 380,
+        "height": 190,
+        "score": 1189.0
+      }
+    },
+    {
+      "selector": "#calendar-day-2026-11-09-events",
+      "title": "Same event, a different day cell",
+      "bullets": [
+        "Before this PR, a recurring event only ever appeared on its original creation date, never on any later occurrence."
+      ],
+      "target": {
+        "x": 79.0,
+        "y": 804.09375,
+        "width": 172.0,
+        "height": 42.0,
+        "right": 251.0,
+        "bottom": 846.09375,
+        "center_x": 165.0,
+        "center_y": 825.09375
+      },
+      "avoid": {
+        "x": 79.0,
+        "y": 804.09375,
+        "width": 172.0,
+        "height": 42.0,
+        "right": 251.0,
+        "bottom": 846.09375,
+        "center_x": 165.0,
+        "center_y": 825.09375
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 866.09,
+        "width": 380,
+        "height": 242,
+        "score": 610.90625
+      }
+    }
+  ]
+}

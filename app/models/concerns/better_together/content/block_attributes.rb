@@ -28,9 +28,8 @@ module BetterTogether
 
         has_one_attached :background_image_file do |attachable|
           attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080],
-                                              # rubocop:todo Layout/LineLength
+                                              # rubocop:todo-next Layout/LineLength
                                               saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-          # rubocop:enable Layout/LineLength
           attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 90 },
                                              format: 'png'
         end
@@ -42,9 +41,8 @@ module BetterTogether
         validate :validate_css_units
 
         validates :container_class,
-                  # rubocop:todo Layout/LineLength
+                  # rubocop:todo-next Layout/LineLength
                   inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
-        # rubocop:enable Layout/LineLength
 
         store_attributes :accessibility_attributes do
           aria_label String, default: ''
@@ -118,8 +116,8 @@ module BetterTogether
         include ::BetterTogether::RemoveableAttachment
       end
 
-      # rubocop:todo Metrics/MethodLength
-      def block_styles # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
+      def block_styles # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         styles = {
           background_color:,
           background_image:,
@@ -151,10 +149,14 @@ module BetterTogether
           url_opts[:port] = uri.port unless [80, 443].include?(uri.port)
           ActiveStorage::Current.url_options = url_opts
 
+          proxy_url = BetterTogether::MediaUrlBuilder.proxy_url_for(optimized_background_image, url_options: url_opts)
           bg_image_style = [
-            # rubocop:todo Layout/LineLength
-            "url(#{Rails.application.routes.url_helpers.rails_storage_proxy_url(optimized_background_image)})", background_image.presence
-            # rubocop:enable Layout/LineLength
+            # Quote the URL: ActiveStorage appends the blob filename as the last
+            # path segment, and filenames routinely contain "(", ")", spaces or
+            # commas -- all of which are a syntax error inside an unquoted CSS
+            # url(). Wrapping in double quotes keeps the declaration valid.
+            ("url(\"#{proxy_url}\")" if proxy_url.present?),
+            background_image.presence
           ].reject(&:blank?).join(', ')
           styles = styles.merge({
                                   background_image: bg_image_style,
@@ -164,7 +166,6 @@ module BetterTogether
 
         styles
       end
-      # rubocop:enable Metrics/MethodLength
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
@@ -217,7 +218,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def validate_css_units # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         BORDER_ATTRIBUTES.each do |attribute|
           value = send(attribute)
@@ -239,7 +240,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
     end

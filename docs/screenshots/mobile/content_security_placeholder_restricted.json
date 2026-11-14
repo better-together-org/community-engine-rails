@@ -1,8 +1,8 @@
 {
   "name": "content_security_placeholder_restricted",
   "device": "mobile",
-  "url": "/en/conversations/5f41fafe-637b-4d9b-8ef3-995109a7b878?person_id=user",
-  "title": "A officia quasi qui. | Conversations | Test Host Community",
+  "url": "/en/conversations/a463e783-55b3-4357-afaa-09766ad2bdd4?person_id=user",
+  "title": "Sed laborum beatae possimus. | Conversations | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "content_security_review_states",
@@ -19,31 +19,31 @@
       ],
       "target": {
         "x": 155.5,
-        "y": 457.0,
+        "y": 489.0,
         "width": 305.5,
         "height": 98.0,
         "right": 461.0,
-        "bottom": 555.0,
+        "bottom": 587.0,
         "center_x": 308.25,
-        "center_y": 506.0
+        "center_y": 538.0
       },
       "avoid": {
         "x": 155.5,
-        "y": 457.0,
+        "y": 489.0,
         "width": 305.5,
         "height": 98.0,
         "right": 461.0,
-        "bottom": 555.0,
+        "bottom": 587.0,
         "center_x": 308.25,
-        "center_y": 506.0
+        "center_y": 538.0
       },
       "placement": {
         "side": "below",
         "x": 173.25,
-        "y": 575.0,
+        "y": 607.0,
         "width": 270.0,
         "height": 514,
-        "score": 706.0
+        "score": 670.0
       }
     }
   ]

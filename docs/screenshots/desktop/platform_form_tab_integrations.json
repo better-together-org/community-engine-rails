@@ -1,0 +1,11 @@
+{
+  "name": "platform_form_tab_integrations",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_integrations",
+  "flow": "platform_edit_integrations",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_integrations_tab_spec.rb"
+}

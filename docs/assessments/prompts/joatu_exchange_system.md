@@ -1,3 +1,8 @@
+
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 Goal:
 Perform a comprehensive review and risk assessment of the Mutual Aid & Exchange (Joatu Exchange) system in this Ruby on Rails application.
 Focus on logic correctness, financial safety, workflow robustness, and user experience.

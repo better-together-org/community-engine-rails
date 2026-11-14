@@ -1,0 +1,19 @@
+---
+title: Events index scoped to a community
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I see only the events a community hosts.
+callouts:
+- :id: new_event
+  :title: New event
+  :description: Host is the scoped community.
+- :id: filters
+  :title: Filters
+  :description: The scope survives filtering.
+- :id: list
+  :title: Hosted events
+  :description: Policy scope still applies.
+accessibility_notes: The filter toggle is a native button with aria-expanded and aria-controls.
+slug: framed_indexes_events
+device: mobile

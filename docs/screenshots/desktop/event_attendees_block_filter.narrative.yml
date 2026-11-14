@@ -1,0 +1,15 @@
+---
+title: Event attendees with block filtering
+audience:
+- member
+- organizer
+- developer
+journey_step: As an organizer, I do not see attendees I have blocked or who blocked
+  me.
+callouts:
+- :id: attendee_list
+  :title: Attendee list
+  :description: Blocked attendees are not listed and are not counted in the tab label.
+accessibility_notes: The list uses list-group items; names are plain text.
+slug: event_attendees_block_filter
+device: desktop

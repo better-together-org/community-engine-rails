@@ -6,6 +6,7 @@
 ## Getting Started
 
 - [Development Setup](dev-setup.md) - Complete local development environment setup guide
+- [Cloud Agent Session Environment](cloud_session_environment.md) - Running dev/test in Claude Code cloud sessions via `bin/cloud-session-env`
 - [Rails Version Branch Maintenance](rails_version_branch_maintenance.md) - Branch strategy, CI flow, and dependency update procedure for Rails compatibility lines
 
 ## Quick Links
@@ -18,11 +19,10 @@
 ## Development Tools
 
 ### Required Tools
-- Ruby 3.4.4 via rbenv
+- Ruby 3.4.12 via rbenv
 - Node.js 20.x
 - PostgreSQL 14+ with PostGIS
 - Redis (for caching and Sidekiq)
-- Elasticsearch 7.17.23
 - Docker & Docker Compose
 
 ### Development Commands
@@ -59,6 +59,17 @@ bin/render_diagrams
 4. **Code**: Implement feature
 5. **Verify**: Run tests and quality checks
 6. **Commit**: Submit pull request
+
+## Repo-local session wrappers
+
+This repository now includes repo-local wrappers so session logs and linked worktree metadata stay attached to the canonical repository root instead of disposable worktrees.
+
+Useful commands:
+
+```bash
+./scripts/session_command_log.sh init
+./scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
+```
 
 ## Related Documentation
 

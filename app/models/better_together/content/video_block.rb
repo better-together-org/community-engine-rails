@@ -4,7 +4,11 @@ module BetterTogether
   module Content
     # Renders an embedded video from YouTube, Vimeo, or a raw iframe URL.
     class VideoBlock < Block
-      ASPECT_RATIOS = %w[16x9 4x3 1x1].freeze
+      include Translatable
+      include AttachableBlock
+
+      ASPECT_RATIOS = %w[16x9 4x3 1x1 9x16].freeze
+      PRIVACY_EMBED_HOST = 'https://www.youtube-nocookie.com/embed/'
 
       YOUTUBE_PATTERN = %r{
         (?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/) |
@@ -14,9 +18,10 @@ module BetterTogether
 
       VIMEO_PATTERN = %r{vimeo\.com/(?:video/)?(\d+)}
 
+      translates :caption, type: :string
+
       store_attributes :content_data do
         video_url    String, default: ''
-        caption      String, default: ''
         aspect_ratio String, default: '16x9'
       end
 
@@ -45,34 +50,36 @@ module BetterTogether
         end
       end
 
-      def embed_title
-        caption.presence || I18n.t('better_together.content.blocks.video_block.title')
+      # The same embed on youtube-nocookie.com, for places that embed without the viewer opening the page (attachments).
+      def attachment_embed_url
+        return embed_url unless provider == :youtube
+
+        embed_url.sub(%r{\Ahttps://www\.youtube\.com/embed/}, PRIVACY_EMBED_HOST)
       end
 
-      def self.content_addable?
-        true
+      def portrait?
+        aspect_ratio == '9x16'
+      end
+
+      def attachable_plain_text_representation(_caption = nil)
+        '[Video]'
+      end
+
+      def embed_title
+        caption.presence || I18n.t('better_together.content.blocks.video_block.title')
       end
 
       def self.extra_permitted_attributes
         super + %i[video_url caption aspect_ratio]
       end
-
-      def evidence_selector_options
-        super + [
-          {
-            value: "#{evidence_selector}:video",
-            label: "Video embed: #{self}"
-          },
-          {
-            value: "#{evidence_selector}:caption",
-            label: "Video caption: #{self}"
-          },
-          {
-            value: "#{evidence_selector}:timestamp:*",
-            label: 'Video timestamp selector'
-          }
-        ]
-      end
     end
   end
 end
+
+# Register known video provider origins so the CSP-aware iframe embed renders them instead of showing a blocked notice.
+BetterTogether.register_content_security_policy_sources(
+  :frame_src,
+  'https://www.youtube.com',
+  'https://player.vimeo.com',
+  'https://www.youtube-nocookie.com'
+)

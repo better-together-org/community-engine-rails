@@ -1,0 +1,18 @@
+flowchart TD
+  Manager["Platform content manager"] --> HostUI["Host block UI\n/host/content/blocks"]
+  Manager --> PageUI["Page builder UI\n/host/pages/:page_id"]
+  Agent["Authenticated MCP client"] --> MCP["MCP block tools"]
+  Script["Authenticated API client"] --> API["JSON:API\n/api/v1/blocks and /api/v1/page_blocks"]
+
+  HostUI --> Block["Content::Block"]
+  PageUI --> PageBlock["Content::PageBlock"]
+  MCP --> Block
+  MCP --> PageBlock
+  API --> Block
+  API --> PageBlock
+
+  Block --> Reusable["Reusable block record"]
+  PageBlock --> Placement["Page attachment and ordering"]
+
+  Reusable --> DeleteBlock["Delete block record\nonly when explicitly destroyed"]
+  Placement --> Detach["Detach from page\nwithout cascading block deletion"]

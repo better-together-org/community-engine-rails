@@ -12,10 +12,6 @@ module BetterTogether
 
       validates :checklist_id, presence: true
 
-      def self.content_addable?
-        true
-      end
-
       def self.extra_permitted_attributes
         super + %i[checklist_id]
       end

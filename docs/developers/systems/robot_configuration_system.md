@@ -13,8 +13,9 @@ This gives CE a stable place to define:
 - what system prompt and provider-specific settings should accompany that robot
 
 The current implementation is intentionally infrastructure-first. The persisted
-model and runtime resolution exist now, but there is not yet a dedicated admin
-UI for creating or editing robot records.
+model and runtime resolution exist now, and platform managers now have a
+dedicated host-side HTML UI for creating and editing platform-scoped robot
+records while still seeing inherited global fallbacks.
 
 ## Core Files
 
@@ -23,6 +24,8 @@ UI for creating or editing robot records.
 - Runtime base class: `app/robots/better_together/application_bot.rb`
 - Translation implementation: `app/robots/better_together/translation_bot.rb`
 - Platform association: `app/models/better_together/platform.rb`
+- HTML controller: `app/controllers/better_together/robots_controller.rb`
+- Platform management view integration: `app/views/better_together/platforms/show.html.erb`
 
 ## Data Model
 
@@ -119,6 +122,18 @@ So the runtime stack is now:
 `TranslationsController` -> `TranslationBot` -> `ApplicationBot` ->
 `BetterTogether::Robot.resolve` -> adapterized `llm_chat`
 
+The OpenAI compatibility path remains environment-managed:
+
+- `OPENAI_API_KEY` is preferred
+- `OPENAI_ACCESS_TOKEN` remains the fallback
+- default provider remains `openai`
+- default chat model remains `BETTER_TOGETHER_LLM_MODEL` or `gpt-4o-mini-2024-07-18`
+- default embedding model remains `BETTER_TOGETHER_EMBEDDING_MODEL` or `text-embedding-3-small`
+
+`BetterTogether.translation_available?` and `BetterTogether.llm_available?`
+now use the same provider-readiness checks that drive both the translation UI
+toggle and the platform management readiness panel.
+
 ## Settings Contract
 
 `settings` is intentionally open-ended JSON for provider/runtime options. The
@@ -148,14 +163,14 @@ Implemented now:
 - platform-aware and global fallback resolution
 - bot metadata attached to adapterized AI calls
 - translation path migrated to the new runtime contract
+- host HTML CRUD for platform-scoped robot records
+- platform show-page readiness/status summary for translation robots
 
 Not implemented yet:
 
-- admin CRUD UI for robot management
-- dedicated policy/controller layer for robot administration
 - richer typed validation for `settings`
 - additional first-class robot workflows beyond translation
-- screenshots, because no robot-management UI exists on branch tip
+- screenshots for the new robot-management surface
 
 ## Reviewer Notes
 

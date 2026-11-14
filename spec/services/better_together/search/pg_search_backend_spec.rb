@@ -8,6 +8,33 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
   it 'reports the pg_search backend key while reusing the database fallback behavior' do
     expect(backend.backend_key).to eq(:pg_search)
     expect(backend).to be_a(BetterTogether::Search::DatabaseBackend)
+    expect(backend.audit_report_labels).to eq(
+      collection: 'Scopes',
+      identifier: 'Scope',
+      documents: 'Searchable Records',
+      size: 'Store Size'
+    )
+    expect(backend.audit_capabilities).to eq(store_size: false, existence_checks: false)
+  end
+
+  it 'selects the pg_search rank so results are ordered by score, not id' do
+    low = instance_double(Struct.new(:id, :pg_search_rank), id: 1, pg_search_rank: 0.1)
+    high = instance_double(Struct.new(:id, :pg_search_rank), id: 2, pg_search_rank: 0.9)
+    ranked = instance_double(ActiveRecord::Relation)
+    relation = double('relation', with_pg_search_rank: ranked) # rubocop:disable RSpec/VerifiedDoubles
+    entry = instance_double(
+      BetterTogether::Search::Registry::Entry,
+      pg_search_enabled?: true,
+      search_relation: relation
+    )
+
+    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
+    allow(ranked).to receive(:limit).with(50).and_return([low, high])
+
+    result = backend.search('lighthouse')
+
+    expect(result.records).to eq([high, low])
+    expect(relation).to have_received(:with_pg_search_rank)
   end
 
   it 'uses pg_search_query scopes when available' do
@@ -21,18 +48,39 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
     )
 
     allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
-    allow(entry).to receive(:search_relation).with('borgberry').and_return(relation)
+    allow(entry).to receive(:search_relation).with('lighthouse').and_return(relation)
     allow(relation).to receive(:limit).with(50).and_return([record])
 
-    result = backend.search('borgberry')
+    result = backend.search('lighthouse')
 
     expect(result.status).to eq(:ok), result.error
     expect(result.backend).to eq(:pg_search)
     expect(result.records).to eq([record])
   end
 
+  it 'reports the pg_search scope identifier for audited entries' do
+    entry = instance_double(
+      BetterTogether::Search::Registry::Entry,
+      pg_search_enabled?: true,
+      search_scope_name: :pg_search_query
+    )
+
+    expect(backend.audit_store_identifier(entry)).to eq('pg_search_query')
+    expect(backend.audit_search_mode(entry)).to eq('pg_search')
+  end
+
+  it 'reports database fallback identifiers when a model lacks a pg_search scope' do
+    entry = instance_double(
+      BetterTogether::Search::Registry::Entry,
+      pg_search_enabled?: false
+    )
+
+    expect(backend.audit_store_identifier(entry)).to eq('database_fallback')
+    expect(backend.audit_search_mode(entry)).to eq('database_fallback')
+  end
+
   it 'falls back to database scoring when a model has no pg_search scope configured' do
-    record = instance_double(BetterTogether::Checklist, id: 10, as_indexed_json: { title: 'Borgberry checklist archive' })
+    record = instance_double(BetterTogether::Checklist, id: 10, as_indexed_json: { title: 'Lighthouse checklist archive' })
     entry = instance_double(
       BetterTogether::Search::Registry::Entry,
       pg_search_enabled?: false,
@@ -41,7 +89,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
 
     allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
 
-    result = backend.search('borgberry archive')
+    result = backend.search('lighthouse archive')
 
     expect(result.status).to eq(:ok), result.error
     expect(result.records).to eq([record])
@@ -58,6 +106,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
         {
           block_attributes: {
             type: 'BetterTogether::Content::Markdown',
+            privacy: 'public',
             markdown_source: "This page only mentions #{token} in markdown."
           }
         }

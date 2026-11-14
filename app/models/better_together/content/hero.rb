@@ -5,8 +5,9 @@ module BetterTogether
     # Uses Trix editor and Active Storage to allow user to create and display rich text content
     class Hero < Block
       include Translatable
+      include Base64ImageInput
 
-      translates :heading, :cta_text, type: :string
+      translates :heading, :cta_text, :cta_url, type: :string
       translates :content, backend: :action_text
 
       AVAILABLE_BTN_CLASSES = {
@@ -27,10 +28,6 @@ module BetterTogether
         dark: 'btn-dark',
         dark_outline: 'btn-outline-dark'
       }.freeze
-
-      store_attributes :content_data do
-        cta_url String, default: ''
-      end
 
       store_attributes :css_settings do
         css_classes String, default: 'text-white'
@@ -54,6 +51,10 @@ module BetterTogether
       def inline_overlay_styles
         inline_styles(overlay_styles)
       end
+
+      # API clients send the background as base64 (background_image_data)
+      accepts_base64_image :background_image_data, attachment: :background_image_file,
+                                                   filename_field: :background_image_filename, default_name: 'hero'
 
       include ::BetterTogether::RemoveableAttachment
     end

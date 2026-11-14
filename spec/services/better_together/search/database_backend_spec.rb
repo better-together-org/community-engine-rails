@@ -11,7 +11,7 @@ RSpec.describe BetterTogether::Search::DatabaseBackend do
       id: 10,
       class: BetterTogether::Page,
       as_indexed_json: {
-        title: 'Borgberry seed packet',
+        title: 'Lighthouse seed packet',
         template_content: { en: 'Community archive and public launch notes' }
       }
     )
@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::Search::DatabaseBackend do
 
   describe '#search' do
     it 'returns matching records from the configured registry entries' do
-      result = backend.search('borgberry archive')
+      result = backend.search('lighthouse archive')
 
       expect(result.status).to eq(:ok)
       expect(result.backend).to eq(:database)
@@ -67,6 +67,32 @@ RSpec.describe BetterTogether::Search::DatabaseBackend do
       expect(backend.refresh_index(page_entry)).to be(true)
       expect(backend.index_record(page_record)).to be(true)
       expect(backend.delete_record(page_record)).to be(true)
+    end
+  end
+
+  describe 'block privacy in the live indexed payload' do
+    it 'does not match a page on text that lives only in a non-public block' do
+      page = create(:better_together_page, :published_public)
+      block = create(:content_markdown, markdown_source: 'zzuniqueprivateblocktoken')
+      block.update_columns(privacy: 'private')
+      create(:better_together_content_page_block, page: page, block: block, position: 0)
+
+      entry = instance_double(BetterTogether::Search::Registry::Entry, relation: [page], db_count: 1)
+      allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
+
+      expect(backend.search('zzuniqueprivateblocktoken').records).not_to include(page)
+    end
+
+    it 'still matches a page on text in a public block' do
+      page = create(:better_together_page, :published_public)
+      block = create(:content_markdown, markdown_source: 'zzuniquepublicblocktoken')
+      block.update_columns(privacy: 'public')
+      create(:better_together_content_page_block, page: page, block: block, position: 0)
+
+      entry = instance_double(BetterTogether::Search::Registry::Entry, relation: [page], db_count: 1)
+      allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
+
+      expect(backend.search('zzuniquepublicblocktoken').records).to include(page)
     end
   end
 end

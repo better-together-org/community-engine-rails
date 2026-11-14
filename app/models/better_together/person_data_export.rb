@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Stores generated account-data export requests and attached export archives.
-  class PersonDataExport < ApplicationRecord
+  class PersonDataExport < PlatformRecord
     self.table_name = 'better_together_person_data_exports'
 
     STATUS_VALUES = {
@@ -13,7 +13,11 @@ module BetterTogether
     }.freeze
 
     belongs_to :person, class_name: 'BetterTogether::Person', inverse_of: :person_data_exports
+    # Captures the platform where the export was requested — audit trail only.
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     has_one_attached :export_file, dependent: :purge_later
+
+    before_create :capture_current_platform
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
 
@@ -46,6 +50,10 @@ module BetterTogether
 
     def enqueue_generation
       BetterTogether::GeneratePersonDataExportJob.perform_later(id)
+    end
+
+    def capture_current_platform
+      self.platform ||= Current.platform || BetterTogether::Platform.find_by(host: true)
     end
   end
 end

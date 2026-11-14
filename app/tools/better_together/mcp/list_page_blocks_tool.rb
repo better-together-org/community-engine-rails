@@ -23,10 +23,7 @@ module BetterTogether
 
           authorize page, :show?
 
-          blocks = page.page_blocks
-                       .includes(:block)
-                       .order(:position)
-                       .map { |pb| serialize_page_block(pb) }
+          blocks = visible_page_blocks(page).map { |pb| serialize_page_block(pb) }
 
           result = JSON.generate({ page_id: page.id, page_slug: page.slug_en, blocks: })
           log_invocation('list_page_blocks', { page_id: }, result.bytesize)
@@ -37,6 +34,15 @@ module BetterTogether
       end
 
       private
+
+      # Only blocks the caller may see (Content::BlockPolicy#show?). The page-level
+      # authorize above already confirmed access to the page itself.
+      def visible_page_blocks(page)
+        page.page_blocks
+            .includes(:block)
+            .order(:position)
+            .select { |page_block| policy(page_block.block).show? }
+      end
 
       def find_page(page_id) # rubocop:todo Metrics/MethodLength
         scope = policy_scope(BetterTogether::Page)
@@ -67,7 +73,7 @@ module BetterTogether
       end
 
       # Returns a brief human-readable summary of the block's content
-      # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       def block_summary(block)
         case block
         when BetterTogether::Content::Markdown
@@ -93,6 +99,10 @@ module BetterTogether
           "#{block.block_name} — limit #{block.item_limit}"
         when BetterTogether::Content::NavigationAreaBlock
           "nav_area_id=#{block.navigation_area_id}"
+        when BetterTogether::Content::FileDownloadBlock
+          "upload_id=#{block.upload_id}"
+        when BetterTogether::Content::ImageGalleryBlock
+          "images=#{block.parsed_image_ids.size} layout=#{block.layout}"
         when BetterTogether::Content::MermaidDiagram
           block.respond_to?(:diagram_source_en) ? block.diagram_source_en.to_s.truncate(80) : ''
         when BetterTogether::Content::Css
@@ -102,7 +112,6 @@ module BetterTogether
           block.identifier.presence || block.block_name
         end
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
     end
   end
 end

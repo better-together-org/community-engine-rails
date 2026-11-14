@@ -5,7 +5,15 @@
 module BetterTogether
   # Responds to requests for navigation items
   class NavigationItemsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
-    before_action :navigation_area
+    # Must run before ResourceController's own `before_action :set_resource_instance,
+    # only: %i[show edit update destroy ics]` (registered in the grandparent class,
+    # so it fires before any plain `before_action` declared here) and before
+    # FriendlyResourceController's `before_action :set_metric_viewable, only: :show`.
+    # Both of those end up calling (overridden) #set_resource_instance, which builds
+    # resource_collection as `NavigationItem.where(navigation_area: @navigation_area)`
+    # — if @navigation_area isn't set yet, that scopes to no navigation_area at all,
+    # so the item is never found and #show/#update/#destroy 404 unconditionally.
+    prepend_before_action :navigation_area
     before_action :set_pages, only: %i[new edit create update]
     before_action :navigation_item, only: %i[show edit update destroy]
 
@@ -77,9 +85,8 @@ module BetterTogether
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @navigation_item }),
               turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
-                                                          # rubocop:todo Layout/LineLength
+                                                          # rubocop:todo-next Layout/LineLength
                                                           locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
-              # rubocop:enable Layout/LineLength
             ]
           end
         end
@@ -126,9 +133,16 @@ module BetterTogether
     end
 
     def navigation_area
+      # Must pass collection: explicitly — the default find_by_translatable scoping
+      # (resource_collection) is this controller's own NavigationItem collection,
+      # which requires @navigation_area to already be set (via navigation_area: @navigation_area
+      # in resource_collection below). Using it here to look up the NavigationArea itself
+      # would be circular and never match, since navigation_area_id ids don't match
+      # navigation_item ids.
       @navigation_area ||= find_by_translatable(
         translatable_type: ::BetterTogether::NavigationArea.name,
-        friendly_id: params[:navigation_area_id]
+        friendly_id: params[:navigation_area_id],
+        collection: policy_scope(::BetterTogether::NavigationArea)
       )
     end
 

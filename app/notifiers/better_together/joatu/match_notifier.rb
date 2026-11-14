@@ -17,28 +17,7 @@ module BetterTogether
 
       notification_methods do
         delegate :offer, :request, to: :event
-      end
 
-      def offer = params[:offer]
-      def request = params[:request]
-
-      def title
-        'New match found'
-      end
-
-      def body
-        "#{offer.name} matches #{request.name}"
-      end
-
-      def build_message(_notification)
-        { title:, body: }
-      end
-
-      def email_params(_notification)
-        { offer:, request: }
-      end
-
-      notification_methods do
         def current_offer_gid
           offer.respond_to?(:to_global_id) ? offer.to_global_id.to_s : offer.to_s
         end
@@ -65,6 +44,25 @@ module BetterTogether
             params['offer'].to_s == o_gid && params['request'].to_s == r_gid
           end
         end
+      end
+
+      def offer = params[:offer]
+      def request = params[:request]
+
+      def title
+        'New match found'
+      end
+
+      def body
+        "#{offer.name} matches #{request.name}"
+      end
+
+      def build_message(_notification)
+        { title:, body: }
+      end
+
+      def email_params(_notification)
+        { offer:, request: }
       end
 
       # Prevent creating a new notification record if an unread one exists for this pair

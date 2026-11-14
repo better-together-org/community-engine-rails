@@ -1,0 +1,10 @@
+{
+  "name": "person_linked_seeds_show",
+  "device": "mobile",
+  "url": "/en/linked-seeds/bb538476-7b27-4574-9e6d-9c0c274631d7",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "person_linked_seeds",
+  "source_spec": "./spec/docs_screenshots/better_together/person_linked_seeds_spec.rb"
+}

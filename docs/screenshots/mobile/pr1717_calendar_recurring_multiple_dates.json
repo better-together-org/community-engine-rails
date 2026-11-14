@@ -1,0 +1,83 @@
+{
+  "name": "pr1717_calendar_recurring_multiple_dates",
+  "device": "mobile",
+  "url": "/en/calendars/e0246704-02ac-429d-855a-07a650a11c01",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_occurrences_ux",
+  "flow": "calendar_recurring_expansion",
+  "source_spec": "./spec/docs_screenshots/better_together/event_occurrences_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#calendar-day-2026-11-02-events",
+      "title": "First occurrence day cell",
+      "bullets": [
+        "CalendarOccurrenceExpander expands the recurrence rule into one Occurrence per date."
+      ],
+      "target": {
+        "x": 19.0,
+        "y": 789.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 104.625,
+        "bottom": 852.546875,
+        "center_x": 61.8125,
+        "center_y": 821.046875
+      },
+      "avoid": {
+        "x": 19.0,
+        "y": 789.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 104.625,
+        "bottom": 852.546875,
+        "center_x": 61.8125,
+        "center_y": 821.046875
+      },
+      "placement": {
+        "side": "above",
+        "x": 24,
+        "y": 501.55,
+        "width": 270.0,
+        "height": 268,
+        "score": 789.546875
+      }
+    },
+    {
+      "selector": "#calendar-day-2026-11-09-events",
+      "title": "Same event, a different day cell",
+      "bullets": [
+        "Before this PR, a recurring event only ever appeared on its original creation date, never on any later occurrence."
+      ],
+      "target": {
+        "x": 19.0,
+        "y": 889.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 104.625,
+        "bottom": 952.546875,
+        "center_x": 61.8125,
+        "center_y": 921.046875
+      },
+      "avoid": {
+        "x": 19.0,
+        "y": 889.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 104.625,
+        "bottom": 952.546875,
+        "center_x": 61.8125,
+        "center_y": 921.046875
+      },
+      "placement": {
+        "side": "right",
+        "x": 124.63,
+        "y": 787.05,
+        "width": 270.0,
+        "height": 268,
+        "score": 395.375
+      }
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # MCP & API Integration Plan — Community Engine + Management Tool
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-02-15 (last edited 2026-10-11). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** February 15, 2026
 **Scope:** MCP server hardening, Doorkeeper OAuth2 integration, JSON API + MCP coverage gap analysis, full system architecture mapping
 **Branch:** `feat/mcp`
@@ -116,7 +120,7 @@ Already uses parameterized `ILIKE ?` — safe.
 ### 2.6 No CORS Protection in Production
 **Severity:** None (already correct) | **No action needed**
 
-`allowed_origins: []` in non-dev prevents cross-origin browser access. MCP clients (n8n, CLI tools) connect server-to-server and don't use browser CORS.
+The Origin header (or, with none, the referer or request host) must name one of the platform's active domains or an internal platform URL, plus any hostnames in `MCP_ALLOWED_ORIGINS`; the list follows platform domain changes (`BetterTogether::Mcp::OriginGuard` and `AllowedOrigins`). The gem's own `allowed_origins: []` does not block anything, because fast-mcp skips its check for an empty list. MCP clients (n8n, CLI tools) connect server-to-server and don't use browser CORS.
 
 ### 2.7 Content Excerpts in Search Results
 **Severity:** Low | **Effort:** Small | **Priority:** P3

@@ -4,12 +4,14 @@ module BetterTogether
   class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     include InvitationTokenAuthorization
     include NotificationReadable
+    include ChecksRequiredAgreements
+
+    before_action :check_community_creation_agreement, only: %i[new create]
 
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/ClassLength
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/ClassLength
     prepend_before_action :set_community_for_privacy_check, only: [:show]
     prepend_before_action :process_community_invitation_token, only: %i[show]
@@ -21,11 +23,11 @@ module BetterTogether
     # GET /communities
     def index
       authorize resource_class
-      @communities = policy_scope(resource_collection)
+      @communities = policy_scope(resource_collection).includes(community_index_includes)
     end
 
     # GET /communities/1
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       # Check for valid invitation if accessing via invitation token
       @current_invitation = find_invitation_by_token
       @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
@@ -34,14 +36,13 @@ module BetterTogether
                          .includes(
                            :string_translations,
                            :contributions,
-                           :citations,
-                           :claims,
                            blocks: { background_image_file_attachment: :blob }
                          )
       set_current_person_community_membership
-
-      # Categorize events for display
-      categorize_community_events
+      set_membership_request_review_state
+      load_community_roles_data
+      load_community_memberships
+      load_community_quotas
 
       mark_match_notifications_read_for(resource_instance)
     end
@@ -99,7 +100,7 @@ module BetterTogether
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @community }),
-              turbo_stream.update('community_form', partial: 'communities/form',
+              turbo_stream.update('community_form', partial: 'better_together/communities/form',
                                                     locals: { community: @community })
             ]
           end
@@ -132,18 +133,32 @@ module BetterTogether
 
     def permitted_attributes
       %i[
+        requires_invitation
         allow_membership_requests
+        contributors_display_visibility
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
-        .concat(resource_class.extra_permitted_attributes)
+       .concat(resource_class.extra_permitted_attributes)
     end
 
     def set_current_person_community_membership
       return unless helpers.current_person
 
-      @current_person_community_membership = @community.person_community_memberships.find_by(
-        member: helpers.current_person
-      )
+      @current_person_community_memberships = @community.person_community_memberships
+                                                      .includes(:role)
+                                                      .where(member: helpers.current_person)
+                                                      .order(Arel.sql("CASE WHEN status = 'active' THEN 0 ELSE 1 END"),
+                                                             :created_at)
+    end
+
+    def set_membership_request_review_state
+      sample_request = BetterTogether::Joatu::MembershipRequest.new(target: @community, status: 'open')
+      @membership_request_review_allowed = policy(sample_request).approve?
+      return unless @membership_request_review_allowed
+
+      @open_membership_request_count = policy_scope(BetterTogether::Joatu::MembershipRequest)
+                                       .where(target: @community, status: 'open')
+                                       .count
     end
 
     def resource_class
@@ -288,11 +303,50 @@ module BetterTogether
       @community = @resource if @resource.is_a?(BetterTogether::Community)
     end
 
-    def categorize_community_events
-      @draft_events = policy_scope(@community.hosted_events).draft
-      @upcoming_events = policy_scope(@community.hosted_events).upcoming
-      @ongoing_events = policy_scope(@community.hosted_events).ongoing
-      @past_events = policy_scope(@community.hosted_events).past
+    def load_community_roles_data
+      @community_roles = BetterTogether::Role
+                         .where(resource_type: 'BetterTogether::Community')
+                         .includes(:string_translations, :resource_permissions)
+                         .order(:position)
+
+      @community_memberships_by_role = @community.person_community_memberships
+                                                 .active
+                                                 .includes(community_role_member_includes)
+                                                 .group_by(&:role_id)
+    end
+
+    def community_index_includes
+      [
+        { cover_image_attachment: { blob: { variant_records: [] } } },
+        { buildings: %i[space address] }
+      ]
+    end
+
+    def load_community_quotas
+      return unless policy(@resource).view_quota_usage?
+
+      @community_quotas = @community.quotas.includes(:quota_balances)
+    end
+
+    def load_community_memberships
+      @community_memberships = @community.person_community_memberships
+                                         .includes(
+                                           :joinable,
+                                           { role: [:string_translations] },
+                                           community_role_member_includes
+                                         )
+    end
+
+    def community_role_member_includes
+      { member: [
+        :string_translations,
+        { profile_image_attachment: {
+          blob: {
+            variant_records: [],
+            preview_image_attachment: { blob: [] }
+          }
+        } }
+      ] }
     end
   end
 end

@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PostPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:community_member_user) { create(:better_together_user, :confirmed) }
@@ -11,6 +20,8 @@ RSpec.describe BetterTogether::PostPolicy do
   let(:scoped_community) { create(:better_together_community, privacy: 'public') }
   let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
   let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
 
   let(:public_published_post) do
     create(
@@ -38,8 +49,7 @@ RSpec.describe BetterTogether::PostPolicy do
       creator: creator_user.person,
       author: creator_user.person,
       privacy: 'community',
-      published_at: 1.minute.ago,
-      platform: scoped_platform
+      published_at: 1.minute.ago
     )
   end
 
@@ -54,11 +64,12 @@ RSpec.describe BetterTogether::PostPolicy do
   end
 
   before do
-    BetterTogether::PersonCommunityMembership.find_or_create_by!(
-      joinable: scoped_community,
+    membership = BetterTogether::PersonCommunityMembership.find_or_create_by!(
+      joinable: host_community,
       member: community_member_user.person,
       role: community_member_role
     )
+    membership.update!(status: 'active') unless membership.active?
   end
 
   describe '#index?' do
@@ -141,6 +152,26 @@ RSpec.describe BetterTogether::PostPolicy do
     it 'denies unauthenticated users' do
       expect(described_class.new(nil, BetterTogether::Post)).not_to be_create
     end
+
+    it 'allows an active community member who has accepted the content publishing agreement' do
+      grant_content_publishing_agreement(community_member_user.person)
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(community_member_user, new_post).create?).to be true
+    end
+
+    it 'denies an active community member who has not accepted the content publishing agreement' do
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(community_member_user, new_post).create?).to be false
+    end
+
+    it 'denies a non-member even with the content publishing agreement accepted' do
+      grant_content_publishing_agreement(regular_user.person)
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(regular_user, new_post).create?).to be false
+    end
   end
 
   describe '#update?' do
@@ -149,7 +180,7 @@ RSpec.describe BetterTogether::PostPolicy do
     end
 
     it 'allows editors' do
-      public_published_post.add_governed_contributor(editor_user.person, role: 'editor')
+      public_published_post.add_contributor(editor_user.person, role: 'editor')
 
       expect(described_class.new(editor_user, public_published_post).update?).to be true
     end
@@ -271,6 +302,28 @@ RSpec.describe BetterTogether::PostPolicy do
 
       scope = described_class::Scope.new(regular_user, BetterTogether::Post)
       expect(scope.resolve).not_to include(blocked_public_post)
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_a_post) { create(:better_together_post, platform: platform_a) }
+    let(:platform_b_post) { create(:better_together_post, platform: platform_b) }
+
+    it "denies a steward of platform A from updating platform B's post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_post).update?).to be false
+    end
+
+    it "allows a steward of platform A to update platform A's own post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_a_post).update?).to be true
+    end
+
+    it "denies a steward of platform A from destroying platform B's post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_post).destroy?).to be false
     end
   end
 end

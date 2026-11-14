@@ -1,0 +1,16 @@
+flowchart TD
+  Visitor["Visitor or signed-in person"] --> Form["Membership request form"]
+  Form --> Create["Create MembershipRequest\nstatus=open"]
+  Create --> Queue["Community manager review"]
+
+  Queue --> Approve["Approve"]
+  Queue --> Decline["Decline"]
+
+  Decline --> Closed["status=closed"]
+
+  Approve --> Authenticated{"creator present?"}
+  Authenticated -->|yes| Membership["Create PersonCommunityMembership"]
+  Authenticated -->|no| Invitation["Create CommunityInvitation"]
+
+  Membership --> Fulfilled["status=fulfilled"]
+  Invitation --> Fulfilled

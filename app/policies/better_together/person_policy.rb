@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PersonPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
       user.present?
     end
@@ -10,8 +12,14 @@ module BetterTogether
       me? || can_read_private_people? || visible_in_scope?
     end
 
+    # Gate for the record's attached media (ActiveStorageSecurity#enforce_download_policy!): the same
+    # audience as the record itself. Without this method the gate lets any signed-in user through.
+    def download?
+      show?
+    end
+
     def create?
-      user.present? && (permitted_to?('create_person') || permitted_to?('manage_platform'))
+      user.present? && (permitted_to?('create_person', current_platform) || platform_manager?)
     end
 
     def new?
@@ -19,7 +27,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (me? || permitted_to?('update_person'))
+      user.present? && (me? || permitted_to?('update_person', record.platform) || platform_manager?)
     end
 
     def edit?
@@ -27,19 +35,24 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && permitted_to?('delete_person')
+      user.present? && permitted_to?('delete_person', record.platform)
     end
 
     def me?
       user.present? && record === user.person # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
-      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         base_scope = scope.with_translations
 
-        # Explicit directory access can still see all people.
-        return base_scope if permitted_to?('list_person')
+        # Platform isolation: all people must belong to current platform
+        return base_scope.none unless current_platform
+
+        base_scope = platform_scoped(base_scope)
+
+        # Explicit directory access sees every person on the platform, except blocks in either direction.
+        return base_scope.where.not(id: blocked_person_ids) if agent && permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles
         return base_scope.privacy_public unless agent
@@ -68,11 +81,7 @@ module BetterTogether
         # Add people with direct interactions (blocked users, conversation participants, etc.)
         query = query.or(people_table[:id].in(interaction_person_ids)) if interaction_person_ids.any?
 
-        # Get IDs of people the current user has blocked or been blocked by
-        blocked_ids = agent.person_blocks.pluck(:blocked_id)
-        blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id)
-        excluded_ids = blocked_ids + blocker_ids
-
+        excluded_ids = blocked_person_ids
         query = query.and(people_table[:id].not_in(excluded_ids)) if excluded_ids.any?
 
         base_scope.where(query).distinct
@@ -80,14 +89,22 @@ module BetterTogether
 
       private
 
+      # IDs of people the agent has blocked or who have blocked the agent.
+      def blocked_person_ids
+        blocked_ids = agent.person_blocks.pluck(:blocked_id)
+        blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id)
+        blocked_ids + blocker_ids
+      end
+
       def shared_community_member_ids # rubocop:todo Metrics/MethodLength
         return @shared_community_member_ids if defined?(@shared_community_member_ids)
 
         @shared_community_member_ids = if agent.present?
                                          # Get people who are members of communities that the current person is also a member of # rubocop:disable Layout/LineLength
-                                         agent_community_ids = agent.person_community_memberships.pluck(:joinable_id)
+                                         agent_community_ids = agent.person_community_memberships.active.pluck(:joinable_id)
                                          if agent_community_ids.any?
                                            BetterTogether::PersonCommunityMembership
+                                             .active
                                              .where(joinable_id: agent_community_ids)
                                              .where.not(member_id: agent.id)
                                              .pluck(:member_id)

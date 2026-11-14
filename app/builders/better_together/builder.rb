@@ -7,12 +7,14 @@ module BetterTogether
   class Builder
     class << self
       def build(clear: false)
-        if clear
-          ActiveRecord::Base.transaction do
-            clear_existing
+        PublicVisibilityGate.as_system do
+          if clear
+            ActiveRecord::Base.transaction do
+              clear_existing
+            end
           end
+          seed_data
         end
-        seed_data
       end
 
       def seed_data

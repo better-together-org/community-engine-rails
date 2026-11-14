@@ -44,6 +44,7 @@ Some documentation serves multiple stakeholder groups and can be found in:
 - **[Shared Documentation](shared/README.md)** - Cross-cutting topics like roles, permissions, and security
 - **[Visual Documentation](diagrams/README.md)** - System diagrams and visual aids
 - **[Release Notes](releases/0.11.0.md)** - Current `0.11.0` release overview and capability map
+- **[0.11.0 Bot Safety Summary](releases/0.11.0_bot_safety_summary.md)** - Stakeholder-friendly summary of the new built-in bot-safety baseline
 - **[Implementation Plans](implementation/README.md)** - Current and planned feature development
 
 ## About Better Together

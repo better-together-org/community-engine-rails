@@ -9,6 +9,24 @@
   color: $light-background-text-color;
 }
 
+// "Create new ..." action rows appended to SlimSelect AJAX results (see
+// slim_select_controller.js createOptions). Set apart from real results with a
+// top divider and the theme accent colour.
+.ss-content .ss-option.ss-create-option {
+  border-top: 1px solid $border-color;
+  font-weight: 500;
+
+  .ss-create-option__label {
+    color: $primary;
+  }
+
+  .ss-create-option__label--simple {
+    color: $light-background-text-color;
+    font-weight: 400;
+    font-style: italic;
+  }
+}
+
 .form-label {
   font-weight: 500;
 }

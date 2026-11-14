@@ -21,9 +21,12 @@ module BetterTogether
     }.freeze
 
     def resource_permission_resource_type_label(resource_type)
+      registered_label = BetterTogether::Resourceful.label_for(resource_type)
+      return registered_label if registered_label
+
       resource_klass = BetterTogether::SafeClassResolver.resolve(
         resource_type,
-        allowed: BetterTogether::Resourceful::RESOURCE_CLASSES
+        allowed: BetterTogether::Resourceful.allowed_resource_classes
       )
 
       return resource_type unless resource_klass

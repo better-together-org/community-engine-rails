@@ -60,6 +60,21 @@ Current downstream routing is intentionally narrow:
 - membership-request aliases can create `BetterTogether::Joatu::MembershipRequest`
 - unresolved routes are rejected and preserved as CE audit records
 
+### Reply by email (reply tokens)
+
+Comment notification emails can be answered by replying. `CommentMailer#added` issues a `BetterTogether::InboundEmailReplyToken` (`InboundEmailReplyToken.issue!(recipient:, repliable:, notification_type:, platform:)`) and sets the `Reply-To` header to `reply+<token>@<inbound mail domain>`. It does this only when the platform allows inbound mail, has a primary domain hostname, and the recipient has an email address; otherwise there is no `Reply-To` and the reply goes to the `From` address.
+
+| Column | Notes |
+|---|---|
+| `token` | Secure random token (`has_secure_token`) |
+| `recipient` | The `Person` the email was sent to |
+| `repliable` | Polymorphic target (a commentable) |
+| `notification_type` | Required, for example `comment_added` |
+| `platform` | Optional, checked against the receiving platform |
+| `expires_at`, `consumed_at` | Tokens last 30 days (`DEFAULT_LIFETIME`) and are single use |
+
+`InboundEmailResolutionService#reply_token_target` resolves a `reply+<token>` address only when the token is still active (not consumed, not expired), belongs to the receiving platform, and the sender address matches the recipient person; unlike `agent+` addresses it does not trust the `From` header on its own. `InboundEmailRoutingService#create_reply!` then creates a comment on the `repliable` as the recipient with the plain-text body and consumes the token, so a second reply with the same address is rejected.
+
 ### Mail screening behavior
 
 `BetterTogether::ContentSecurity::MailScreeningService` builds shared content-security payloads for:
@@ -117,6 +132,40 @@ This slice adds:
 
 That keeps mail content private at rest while still allowing auditable review outcomes.
 
+## Review records, malware scanning and routing
+
+Two layers record review state. **Subjects** (`better_together_content_security_subjects`, above) carry the lifecycle for enrolled attachments and embeds. **Items, scan events and findings** record the malware scanning of uploads:
+
+| Model | Table | Role |
+|---|---|---|
+| `ContentSecurity::Item` | `better_together_content_security_items` | One per attached blob: `blob`, polymorphic `attachable`, `attachment_name`, `source_surface`, `lifecycle_state` and `aggregate_verdict` (`pending_scan`, `clean`, `review_required`, `quarantined`, `blocked`, `override_released`), optional `safety_case`. `releasable?` is true for `clean` and `override_released` |
+| `ContentSecurity::ScanEvent` | `better_together_content_security_scan_events` | One scanner run: `status` (`started`, `completed`, `failed`, `skipped`), `plane`, `scanner_name`, version, signature, error, timestamps |
+| `ContentSecurity::Finding` | `better_together_content_security_findings` | One result: `plane`, `finding_type` (`malware_signature`, `scanner_error`, ...), `rule_id`, `severity`, `confidence`, `verdict`, `evidence_summary`, linked item, scan event and safety case |
+
+Models opt in with `ContentSecurity::ScannableAttachment` (`scans_attachment :file, surface: :uploads`; today only `Upload`). After commit, `AttachmentEnrollment.sync_attachment!` creates or updates the `Item` when scanning is enabled for that surface, resets it to `pending_scan` when the blob changed, and enqueues `ScanAttachmentJob`. Rich text uses `ContentSecurity::ActionTextRichTextControls` (included into Action Text rich text): it rejects embeds that are not Active Storage blobs and syncs a subject per embedded blob (`RichTextSubjectSync`).
+
+`ScanAttachmentJob` calls `Scanner.scan_blob`, which streams the blob to ClamAV (`ClamAvClient`) and returns clean, infected or error:
+
+- **clean**: the item becomes `clean` and is released.
+- **infected**: a `malware_signature` finding is recorded, the item is `quarantined`, and `SafetyCaseRouter.route!` files a `Report` (category `malware_detected`, outcome `content_review`) on behalf of the uploader plus an internal note, which opens a safety case linked to the item and finding.
+- **error**: with `fail_mode` `hold_until_clean` (the default) the item stays `pending_scan` with the error recorded and no case is opened, so a scanner outage does not flood the queue; with any other value the job records a `scanner_error` finding, marks the item `review_required` and routes a case. Connection errors are retried up to three times first.
+
+Mail attachments take a separate path: `DeterministicScanRunner` runs the rule engine over the message and, when scanning is enabled for the `mail` surface, scans the raw content with ClamAV and adds `malware_signature` or `malware_scan_error` findings.
+
+Configuration is read from `BetterTogether.content_security.malware_scanning` (initializer `better_together.content_security` in `lib/better_together/engine.rb`):
+
+| Environment variable | Default |
+|---|---|
+| `BT_MALWARE_SCANNING_ENABLED` | `false` |
+| `BT_MALWARE_SCANNING_ENGINE` | `clamav` (the only supported engine) |
+| `BT_MALWARE_SCANNING_HOST` / `_PORT` | `127.0.0.1` / `3310` |
+| `BT_MALWARE_SCANNING_TIMEOUT` | `10` seconds |
+| `BT_MALWARE_SCANNING_MAX_STREAM_BYTES` | 25 MB |
+| `BT_MALWARE_SCANNING_FAIL_MODE` | `hold_until_clean` |
+| `BT_MALWARE_SCANNING_SURFACES` | `uploads` (comma separated; `mail` adds the mail path) |
+
+Access is gated by `ContentSecurity::ActiveStorageGate`, included into Active Storage's blob and representation controllers, and by the proxy routes `content_security_service_blob_proxy` and `content_security_blob_representation_proxy`. The reviewer queue is the "Content security review items" section of the safety case index (`/safety/cases`); see [Safety and Federation Review Workflow](safety_and_federation_review_workflow.md) and the [operator guide](../../platform_organizers/content_security_and_malware_scanning.md).
+
 ## Diagram
 
 **Diagram Files:**
@@ -129,9 +178,9 @@ That keeps mail content private at rest while still allowing auditable review ou
 This is a real enforcement slice, but it is not yet the entire final program.
 
 - the mail path currently routes a narrow set of alias outcomes
-- the orchestrator contract exists, but external scanners like ClamAV, YARA, and Rspamd still need full runtime wiring
+- ClamAV is wired for uploads and mail attachments; YARA and Rspamd are not
 - upload enrollment currently starts from the implemented upload and rich-text seams, not every attachment-bearing model in CE
-- this slice does not add a new reviewer UI yet; it establishes the canonical CE persistence and gating path first
+- the reviewer surface is the content security section of the safety case queue; there is no dedicated content security screen
 
 ## Screenshots
 
