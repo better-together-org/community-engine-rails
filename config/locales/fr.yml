@@ -1016,6 +1016,8 @@ fr:
         field_origin: D'où il vient
         field_remaining: Reste
         grant_amount: Montant
+        grant_confirm: Accorder %{amount} de crédit à %{person}?
+        grant_confirm_blank: Accorder du crédit à %{person}?
         grant_currency: Devise
         grant_expires: Expire après (jours)
         grant_expires_hint: Laissez vide pour un crédit qui n'expire pas.
@@ -1389,6 +1391,8 @@ fr:
           confirmer votre paiement dans tous les cas.
         claimed: Le vendeur a été informé que vous l’avez envoyé.
         claimed_note: Vous l’avez dit au vendeur le %{date}.
+        clear_confirm: Marquer le chèque de la commande %{number} de %{buyer} comme
+          encaissé? Son paiement sera compté comme reçu.
         disclosure_cash_in_person: L’argent comptant se remet en personne. Notez quand
           et à qui.
         disclosure_cheque_clearing: Un chèque peut prendre des jours à être encaissé
@@ -1432,6 +1436,10 @@ fr:
           envoyé.
         queue_link: Paiements qui vous attendent
         queue_title: Paiements qui vous attendent
+        receive_cheque_confirm: Marquer le chèque de la commande %{number} de %{buyer}
+          comme reçu (%{amount})? Marquez-le encaissé une fois payé par la banque.
+        receive_confirm: Marquer la commande %{number} de %{buyer} comme reçue (%{amount})?
+          La commande sera réglée et l’acheteur obtiendra l’accès.
         receive_hint: Marquez ceci comme reçu quand l’argent vous est parvenu. Vous
           n’avez pas à attendre que l’acheteur dise l’avoir envoyé.
         received_on_label: Date de réception (facultatif)
@@ -1446,6 +1454,8 @@ fr:
             achat.
           too_many_claims: Cela a été envoyé trop de fois.
         reject: Non reçu, refuser
+        reject_confirm: Rejeter le paiement de la commande %{number} de %{buyer}?
+          La commande sera annulée et l’acheteur en sera informé.
         reject_reason_label: Si vous ne l’avez pas reçu, dites pourquoi (l’acheteur
           le verra)
         rejection_reason: 'Le vendeur a indiqué : %{reason}'
@@ -1520,6 +1530,7 @@ fr:
         field_placed: Passée le
         field_purpose: Pour
         field_quantity: Quantité
+        field_refund_date: Date
         field_status: État
         field_subtotal: Sous-total
         field_tax: Taxe
@@ -1551,6 +1562,14 @@ fr:
         purpose_one_time: Achat unique
         purpose_subscription: Abonnement ou adhésion
         purpose_ticket: Billets d'événement
+        refund_includes_tax: dont %{tax} de taxe
+        refund_status_failed: Échoué
+        refund_status_pending: En attente
+        refund_status_recorded: Enregistré par le vendeur
+        refund_status_succeeded: Remboursé
+        refunded_total: 'Remboursé : %{amount}'
+        refunds_caption: Argent remis pour la commande %{number}
+        refunds_heading: Remboursements
         regenerate_documents: Refaire
         return_paid: Merci. Votre paiement a été reçu.
         return_pending: Merci. Nous confirmons votre paiement et vous le dirons dès
@@ -1626,9 +1645,10 @@ fr:
           de paiement. Chacun doit encore être activé pour le vendeur avant que les
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
-        field_amount_cents: Montant (plus petite unité monétaire)
-        field_amount_cents_hint: p. ex. 4500 = 45,00 pour la plupart des devises;
-          4500 = 4500 pour les devises sans décimales comme le JPY
+        field_amount: Montant
+        field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
+          Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
+          entiers.
         field_beneficiary_label: Etiquette du beneficiaire
         field_billing_interval: Intervalle de facturation
         field_community_capacity_tier: Niveau de capacite
@@ -1903,12 +1923,16 @@ fr:
         cancel_refused: La commande ne peut pas être annulée tant qu'il reste de l'argent
           versé. Rendez d'abord chaque paiement.
         cancelled: La commande a été annulée et ce qu'elle retenait a été libéré.
+        credit_refund_confirm: Retourner %{amount} au crédit de %{buyer} pour la commande
+          %{number}? Cette action est irréversible.
         credit_refund_heading: Retourner au crédit en magasin
         credit_refund_hint: 'L''acheteur a payé avec du crédit en magasin : l''argent
           retourne aussitôt sur son solde de crédit. Il ne peut pas être versé en
           espèces.'
         credit_refund_submit: Retourner au crédit
         refund_amount_label: Montant remboursé (jusqu’à %{max}; vide pour tout)
+        refund_confirm: Enregistrer un remboursement de %{amount} pour la commande
+          %{number} à %{buyer}? Cette action est irréversible.
         refund_heading: Enregistrer un remboursement
         refund_hint: La plateforme ne peut pas déplacer cet argent. Enregistrez-le
           ici une fois rendu.
@@ -6395,6 +6419,7 @@ fr:
         de paiement
       not_a_number: n'est pas un nombre
       not_a_purchase_agreement: doit être une entente d’achat
+      not_an_amount: doit être un nombre simple comme 45,00
       not_an_integer: doit être un nombre entier
       not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
         dehors d'un processeur"
@@ -6415,9 +6440,11 @@ fr:
       recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
       required: doit exister
       taken: est déjà utilisé(e)
+      too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)
         other: est trop long (pas plus de %{count} caractères)
+      too_precise: peut avoir au plus %{places} décimales dans cette devise
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)

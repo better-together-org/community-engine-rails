@@ -1015,6 +1015,8 @@ en:
         field_origin: Where it came from
         field_remaining: Left
         grant_amount: Amount
+        grant_confirm: Give %{amount} of store credit to %{person}?
+        grant_confirm_blank: Give store credit to %{person}?
         grant_currency: Currency
         grant_expires: Expires after (days)
         grant_expires_hint: Leave empty for credit that does not expire.
@@ -1377,6 +1379,8 @@ en:
           payment either way.
         claimed: The seller has been told you sent it.
         claimed_note: You told the seller on %{date}.
+        clear_confirm: Mark the cheque for order %{number} from %{buyer} as cleared?
+          Its payment will be counted as received.
         disclosure_cash_in_person: Cash is handed over in person. Keep a note of when
           and to whom.
         disclosure_cheque_clearing: A cheque can take days to clear and can bounce.
@@ -1416,6 +1420,10 @@ en:
           money reaches you, whether or not the buyer says they sent it.
         queue_link: Payments waiting for you
         queue_title: Payments waiting for you
+        receive_cheque_confirm: Mark the cheque for order %{number} from %{buyer}
+          as received (%{amount})? Mark it cleared once the bank has paid it.
+        receive_confirm: Mark order %{number} from %{buyer} as received (%{amount})?
+          The order will be settled and the buyer given access.
         receive_hint: Mark this received when the money has reached you. You do not
           need to wait for the buyer to say they sent it.
         received_on_label: Date received (optional)
@@ -1429,6 +1437,8 @@ en:
           self_confirmation: You cannot confirm a payment for your own purchase.
           too_many_claims: That has been sent too many times.
         reject: Not received, reject
+        reject_confirm: Reject the payment for order %{number} from %{buyer}? The
+          order will be cancelled and the buyer told.
         reject_reason_label: If you did not receive it, say why (the buyer will see
           this)
         rejection_reason: 'The seller said: %{reason}'
@@ -1500,6 +1510,7 @@ en:
         field_placed: Placed
         field_purpose: For
         field_quantity: Quantity
+        field_refund_date: Date
         field_status: Status
         field_subtotal: Subtotal
         field_tax: Tax
@@ -1531,6 +1542,14 @@ en:
         purpose_one_time: One-time purchase
         purpose_subscription: Subscription or membership
         purpose_ticket: Event tickets
+        refund_includes_tax: includes %{tax} tax
+        refund_status_failed: Failed
+        refund_status_pending: Pending
+        refund_status_recorded: Recorded by the seller
+        refund_status_succeeded: Refunded
+        refunded_total: Refunded %{amount}
+        refunds_caption: Money given back for order %{number}
+        refunds_heading: Refunds
         regenerate_documents: Make again
         return_paid: Thank you. Your payment was received.
         return_pending: Thank you. We are confirming your payment and will tell you
@@ -1602,9 +1621,9 @@ en:
         field_accepted_payment_methods_hint: Ways to pay outside a payment processor.
           Each still has to be turned on for the seller before buyers can use it.
         field_active: Active (visible to subscribers)
-        field_amount_cents: Amount (smallest currency unit)
-        field_amount_cents_hint: e.g. 4500 = 45.00 for most currencies; 4500 = 4500
-          for zero-decimal currencies such as JPY
+        field_amount: Amount
+        field_amount_hint: Type the price as you would write it, for example 45.00.
+          Currencies without cents, such as JPY and KRW, take whole numbers.
         field_beneficiary_label: Beneficiary label
         field_billing_interval: Billing interval
         field_community_capacity_tier: Capacity tier
@@ -1863,11 +1882,15 @@ en:
         cancel_refused: The order cannot be cancelled while money is still against
           it. Return each payment first.
         cancelled: The order was cancelled and what it held was released.
+        credit_refund_confirm: Return %{amount} to the store credit of %{buyer} for
+          order %{number}? This cannot be undone.
         credit_refund_heading: Return to store credit
         credit_refund_hint: The buyer paid with store credit, so the money goes back
           onto their credit balance at once. It cannot be paid out as cash.
         credit_refund_submit: Return to credit
         refund_amount_label: Amount given back (up to %{max}; blank for all)
+        refund_confirm: Record a refund of %{amount} for order %{number} to %{buyer}?
+          This cannot be undone.
         refund_heading: Record a refund
         refund_hint: The platform cannot move this money. Record it here once you
           have given it back.
@@ -6218,6 +6241,7 @@ en:
       no_payment_method: needs an online processor or at least one other way to pay
       not_a_number: is not a number
       not_a_purchase_agreement: must be a purchase agreement
+      not_an_amount: must be a plain figure such as 45.00
       not_an_integer: must be an integer
       not_an_offline_method: "%{method} is not an installed payment method outside
         a processor"
@@ -6237,9 +6261,11 @@ en:
       recipient_missing: needs an email address or a phone number
       required: must exist
       taken: has already been taken
+      too_large: is too large
       too_long:
         one: is too long (maximum is %{count} character)
         other: is too long (maximum is %{count} characters)
+      too_precise: can have no more than %{places} decimal places in this currency
       too_short:
         one: is too short (minimum is %{count} character)
         other: is too short (minimum is %{count} characters)

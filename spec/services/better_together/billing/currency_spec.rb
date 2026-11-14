@@ -22,6 +22,30 @@ RSpec.describe BetterTogether::Billing::Currency do
     ['', nil, 'lots', '-5', '1,000', '1e3', '12.5.0'].each { |text| expect(described_class.to_minor(text, 'USD')).to be_nil }
   end
 
+  describe '.parse_major' do
+    it 'converts a typed price for the currency, with a decimal point or comma' do
+      expect(described_class.parse_major('45', 'USD')).to eq([4_500, nil])
+      expect(described_class.parse_major('45.50', 'USD')).to eq([4_550, nil])
+      expect(described_class.parse_major('45,50', 'USD')).to eq([4_550, nil])
+      expect(described_class.parse_major('4500', 'JPY')).to eq([4_500, nil])
+      expect(described_class.parse_major('4500.0', 'JPY')).to eq([4_500, nil])
+    end
+
+    it 'says why a price cannot be used' do
+      expect(described_class.parse_major('  ', 'USD')).to eq([nil, :blank])
+      expect(described_class.parse_major('1,000.00', 'USD')).to eq([nil, :not_an_amount])
+      expect(described_class.parse_major('-1', 'USD')).to eq([nil, :not_an_amount])
+      expect(described_class.parse_major('1.005', 'USD')).to eq([nil, :too_precise])
+      expect(described_class.parse_major('1.5', 'JPY')).to eq([nil, :too_precise])
+      expect(described_class.parse_major('1000000000', 'USD')).to eq([nil, :too_large])
+    end
+  end
+
+  it 'shows a stored price the way it is typed' do
+    expect(described_class.to_input(12_345, 'USD')).to eq('123.45')
+    expect(described_class.to_input(500, 'JPY')).to eq('500')
+  end
+
   it 'covers every supported plan currency without error' do
     BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES.each do |code|
       expect { described_class.to_major(100, code) }.not_to raise_error

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:52:48Z",
+  "generated_at": "2026-11-12T23:55:37Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -27298,6 +27298,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::AgreementTarget",
+            "BetterTogether::Billing::MajorAmount",
             "BetterTogether::Billing::PlatformBound",
             "BetterTogether::Billing::Purchasable",
             "BetterTogether::Billing::SellerScoped",
@@ -28324,6 +28325,15 @@
           "included_by": [
             "Billing::OrderAgreementAcceptance",
             "Billing::LineItem"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::MajorAmount",
+          "label": "Billing::MajorAmount",
+          "capability": "Majoramount",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
           ]
         },
         {

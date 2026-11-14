@@ -1,0 +1,48 @@
+{
+  "name": "billing_confirm_queue",
+  "device": "mobile",
+  "url": "/en/billing/offline_payments",
+  "title": "Payments waiting for you | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_confirmations",
+  "flow": "billing_confirm_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_confirmations_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-offline-confirm-btn-5b936073-fd32-400b-b81d-735b0fcfdcff",
+      "title": "Mark received asks first",
+      "bullets": [
+        "Names the order, the buyer and the amount, so a stray click does not settle an order."
+      ],
+      "target": {
+        "x": 354.671875,
+        "y": 359.390625,
+        "width": 117.03125,
+        "height": 31.0,
+        "right": 471.703125,
+        "bottom": 390.390625,
+        "center_x": 413.1875,
+        "center_y": 374.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 106.0,
+        "width": 485.0,
+        "height": 761.0,
+        "right": 485.0,
+        "bottom": 867.0,
+        "center_x": 242.5,
+        "center_y": 486.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 887.0,
+        "width": 270.0,
+        "height": 242,
+        "score": 390.0
+      }
+    }
+  ]
+}

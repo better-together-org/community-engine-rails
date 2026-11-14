@@ -1,0 +1,48 @@
+{
+  "name": "billing_confirm_grant",
+  "device": "mobile",
+  "url": "/en/billing/credit_accounts?person_id=e3ef8b84-e008-4b84-8b8b-6dc5e8f67481",
+  "title": "Store credit accounts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_confirmations",
+  "flow": "billing_confirm_grant",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_confirmations_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-credit-grant-btn",
+      "title": "Give credit asks first",
+      "bullets": [
+        "Names the person and the amount before any credit is created."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 842.390625,
+        "width": 112.984375,
+        "height": 38.0,
+        "right": 141.984375,
+        "bottom": 880.390625,
+        "center_x": 85.4921875,
+        "center_y": 861.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 66.0,
+        "width": 500.0,
+        "height": 893.0,
+        "right": 500.0,
+        "bottom": 959.0,
+        "center_x": 250.0,
+        "center_y": 512.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 979.0,
+        "width": 270.0,
+        "height": 216,
+        "score": 298.0
+      }
+    }
+  ]
+}

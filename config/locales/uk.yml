@@ -994,6 +994,8 @@ uk:
         field_origin: Звідки він
         field_remaining: Залишок
         grant_amount: Сума
+        grant_confirm: Надати %{amount} кредиту користувачеві %{person}?
+        grant_confirm_blank: Надати кредит користувачеві %{person}?
         grant_currency: Валюта
         grant_expires: Спливає через (днів)
         grant_expires_hint: Залиште порожнім для кредиту, що не спливає.
@@ -1353,6 +1355,8 @@ uk:
           може підтвердити її в будь-якому разі.
         claimed: Продавця повідомлено, що ви надіслали оплату.
         claimed_note: Ви повідомили продавця %{date}.
+        clear_confirm: Позначити чек за замовлення %{number} від %{buyer} як оплачений
+          банком? Його платіж буде враховано як отриманий.
         disclosure_cash_in_person: Готівку передають особисто. Занотуйте, коли і кому.
         disclosure_cheque_clearing: Чек може зараховуватися кілька днів і може бути
           повернутий. Доступ може початися лише після зарахування.
@@ -1391,6 +1395,10 @@ uk:
           дійшли до вас, незалежно від того, чи каже покупець, що надіслав.
         queue_link: Оплати, що чекають на вас
         queue_title: Оплати, що чекають на вас
+        receive_cheque_confirm: Позначити чек за замовлення %{number} від %{buyer}
+          як отриманий (%{amount})? Позначте його оплаченим, коли банк його проведе.
+        receive_confirm: Позначити замовлення %{number} від %{buyer} як отримане (%{amount})?
+          Замовлення буде закрито, а покупець отримає доступ.
         receive_hint: Позначте це отриманим, коли гроші дійшли до вас. Не потрібно
           чекати, поки покупець скаже, що надіслав.
         received_on_label: Дата отримання (необов’язково)
@@ -1404,6 +1412,8 @@ uk:
           self_confirmation: Ви не можете підтвердити оплату власної покупки.
           too_many_claims: Це надсилали забагато разів.
         reject: Не отримано, відхилити
+        reject_confirm: Відхилити платіж за замовлення %{number} від %{buyer}? Замовлення
+          буде скасовано, а покупця повідомлено.
         reject_reason_label: Якщо ви не отримали, поясніть чому (покупець це побачить)
         rejection_reason: 'Продавець зазначив: %{reason}'
         seller_heading: 'Оплата: %{method}'
@@ -1473,6 +1483,7 @@ uk:
         field_placed: Оформлено
         field_purpose: Для
         field_quantity: Кількість
+        field_refund_date: Дата
         field_status: Стан
         field_subtotal: Проміжна сума
         field_tax: Податок
@@ -1502,6 +1513,14 @@ uk:
         purpose_one_time: Разова покупка
         purpose_subscription: Підписка або членство
         purpose_ticket: Квитки на події
+        refund_includes_tax: включно з податком %{tax}
+        refund_status_failed: Не вдалося
+        refund_status_pending: Очікує
+        refund_status_recorded: Записано продавцем
+        refund_status_succeeded: Повернено
+        refunded_total: 'Повернено: %{amount}'
+        refunds_caption: Кошти, повернені за замовлення %{number}
+        refunds_heading: Повернення коштів
         regenerate_documents: Створити знову
         return_paid: Дякуємо. Вашу оплату отримано.
         return_pending: Дякуємо. Ми підтверджуємо вашу оплату й повідомимо, коли все
@@ -1574,9 +1593,9 @@ uk:
         field_accepted_payment_methods_hint: Способи оплати поза платіжним процесором.
           Кожен потрібно ще ввімкнути для продавця, перш ніж покупці зможуть ним скористатися.
         field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
-        field_amount_cents: Сума (найменша одиниця валюти)
-        field_amount_cents_hint: напр., 4500 = 45,00 для більшості валют; 4500 = 4500
-          для валют без десяткових знаків, як JPY
+        field_amount: Сума
+        field_amount_hint: Введіть ціну так, як ви її записали б, наприклад 45,00.
+          Валюти без копійок, як-от JPY і KRW, приймають цілі числа.
         field_beneficiary_label: Marka benefitsiariya
         field_billing_interval: Interval bilingu
         field_community_capacity_tier: Riven' potshnosty
@@ -1836,11 +1855,15 @@ uk:
         cancel_refused: Замовлення не можна скасувати, доки за ним залишаються гроші.
           Спочатку поверніть кожен платіж.
         cancelled: Замовлення скасовано, а зарезервоване ним звільнено.
+        credit_refund_confirm: Повернути %{amount} на кредит покупця %{buyer} за замовлення
+          %{number}? Це неможливо скасувати.
         credit_refund_heading: Повернути на кредит магазину
         credit_refund_hint: Покупець заплатив кредитом магазину, тому гроші одразу
           повертаються на його баланс кредиту. Їх не можна виплатити готівкою.
         credit_refund_submit: Повернути на кредит
         refund_amount_label: Сума повернення (до %{max}; порожньо — усе)
+        refund_confirm: Записати повернення %{amount} за замовлення %{number} покупцю
+          %{buyer}? Це неможливо скасувати.
         refund_heading: Записати повернення
         refund_hint: Платформа не може переказати ці гроші. Запишіть це тут, коли
           поверните їх.
@@ -6303,6 +6326,7 @@ uk:
         оплати
       not_a_number: не є числом
       not_a_purchase_agreement: має бути угодою про покупку
+      not_an_amount: має бути простим числом, наприклад 45,00
       not_an_integer: має бути цілим числом
       not_an_offline_method: "%{method} не є встановленим способом оплати поза процесором"
       not_configured: не налаштовано для цієї платформи
@@ -6323,11 +6347,13 @@ uk:
       recipient_missing: потрібна адреса електронної пошти або номер телефону
       required: має існувати
       taken: вже зайнято
+      too_large: завелика
       too_long:
         few: занадто довгий (максимум %{count} символи)
         many: занадто довгий (максимум %{count} символів)
         one: занадто довгий (максимум %{count} символ)
         other: занадто довгий (максимум %{count} символів)
+      too_precise: може мати не більше %{places} десяткових знаків у цій валюті
       too_short:
         few: занадто короткий (мінімум %{count} символи)
         many: занадто короткий (мінімум %{count} символів)

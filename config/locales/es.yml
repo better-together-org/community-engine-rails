@@ -1008,6 +1008,8 @@ es:
         field_origin: De dónde viene
         field_remaining: Queda
         grant_amount: Importe
+        grant_confirm: "¿Otorgar %{amount} de crédito a %{person}?"
+        grant_confirm_blank: "¿Otorgar crédito a %{person}?"
         grant_currency: Moneda
         grant_expires: Vence después de (días)
         grant_expires_hint: Déjalo vacío para un crédito que no vence.
@@ -1368,6 +1370,8 @@ es:
           su pago de cualquier modo.
         claimed: Se informó al vendedor de que lo envió.
         claimed_note: Se lo dijo al vendedor el %{date}.
+        clear_confirm: "¿Marcar el cheque del pedido %{number} de %{buyer} como cobrado?
+          Su pago se contará como recibido."
         disclosure_cash_in_person: El efectivo se entrega en persona. Anote cuándo
           y a quién.
         disclosure_cheque_clearing: Un cheque puede tardar días en cobrarse y puede
@@ -1408,6 +1412,11 @@ es:
           cuando el dinero le llegue, el comprador diga o no que lo envió.
         queue_link: Pagos que le esperan
         queue_title: Pagos que le esperan
+        receive_cheque_confirm: "¿Marcar el cheque del pedido %{number} de %{buyer}
+          como recibido (%{amount})? Márquelo como cobrado cuando el banco lo haya
+          pagado."
+        receive_confirm: "¿Marcar el pedido %{number} de %{buyer} como recibido (%{amount})?
+          El pedido se liquidará y el comprador obtendrá acceso."
         receive_hint: Márquelo como recibido cuando el dinero le haya llegado. No
           necesita esperar a que el comprador diga que lo envió.
         received_on_label: Fecha de recepción (opcional)
@@ -1421,6 +1430,8 @@ es:
           self_confirmation: No puede confirmar un pago de su propia compra.
           too_many_claims: Se ha enviado demasiadas veces.
         reject: No recibido, rechazar
+        reject_confirm: "¿Rechazar el pago del pedido %{number} de %{buyer}? El pedido
+          se cancelará y se avisará al comprador."
         reject_reason_label: Si no lo recibió, diga por qué (el comprador lo verá)
         rejection_reason: 'El vendedor dijo: %{reason}'
         seller_heading: Pago con %{method}
@@ -1491,6 +1502,7 @@ es:
         field_placed: Realizado
         field_purpose: Para
         field_quantity: Cantidad
+        field_refund_date: Fecha
         field_status: Estado
         field_subtotal: Subtotal
         field_tax: Impuesto
@@ -1520,6 +1532,14 @@ es:
         purpose_one_time: Compra única
         purpose_subscription: Suscripción o membresía
         purpose_ticket: Entradas a eventos
+        refund_includes_tax: incluye %{tax} de impuesto
+        refund_status_failed: Fallido
+        refund_status_pending: Pendiente
+        refund_status_recorded: Registrado por el vendedor
+        refund_status_succeeded: Reembolsado
+        refunded_total: 'Reembolsado: %{amount}'
+        refunds_caption: Dinero devuelto por el pedido %{number}
+        refunds_heading: Reembolsos
         regenerate_documents: Generar de nuevo
         return_paid: Gracias. Recibimos su pago.
         return_pending: Gracias. Estamos confirmando su pago y se lo diremos cuando
@@ -1596,9 +1616,9 @@ es:
           de pagos. Cada una debe activarse para el vendedor antes de que los compradores
           puedan usarla.
         field_active: Activo (visible para suscriptores)
-        field_amount_cents: Importe (unidad monetaria más pequeña)
-        field_amount_cents_hint: p. ej., 4500 = 45,00 en la mayoría de las monedas;
-          4500 = 4500 en monedas sin decimales como el JPY
+        field_amount: Importe
+        field_amount_hint: Escriba el precio como lo escribiría normalmente, por ejemplo
+          45,00. Las monedas sin centavos, como el JPY y el KRW, usan números enteros.
         field_beneficiary_label: Etiqueta de beneficiario
         field_billing_interval: Intervalo de facturacion
         field_community_capacity_tier: Nivel de capacidad
@@ -1865,11 +1885,15 @@ es:
         cancel_refused: El pedido no se puede cancelar mientras quede dinero pagado.
           Devuelva primero cada pago.
         cancelled: Se canceló el pedido y se liberó lo que reservaba.
+        credit_refund_confirm: "¿Devolver %{amount} al crédito de %{buyer} por el
+          pedido %{number}? No se puede deshacer."
         credit_refund_heading: Devolver al crédito de la tienda
         credit_refund_hint: El comprador pagó con crédito de la tienda, así que el
           dinero vuelve a su saldo de crédito al instante. No se puede pagar en efectivo.
         credit_refund_submit: Devolver al crédito
         refund_amount_label: Importe devuelto (hasta %{max}; vacío para todo)
+        refund_confirm: "¿Registrar un reembolso de %{amount} del pedido %{number}
+          a %{buyer}? No se puede deshacer."
         refund_heading: Registrar un reembolso
         refund_hint: La plataforma no puede mover este dinero. Regístrelo aquí cuando
           lo haya devuelto.
@@ -6312,6 +6336,7 @@ es:
         pago
       not_a_number: no es un número
       not_a_purchase_agreement: debe ser un acuerdo de compra
+      not_an_amount: debe ser una cifra simple como 45,00
       not_an_integer: debe ser un entero
       not_an_offline_method: "%{method} no es un método de pago instalado fuera de
         un procesador"
@@ -6331,9 +6356,11 @@ es:
       recipient_missing: necesita un correo electrónico o un número de teléfono
       required: debe existir
       taken: ya está en uso
+      too_large: es demasiado grande
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
+      too_precise: puede tener como máximo %{places} decimales en esta moneda
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
