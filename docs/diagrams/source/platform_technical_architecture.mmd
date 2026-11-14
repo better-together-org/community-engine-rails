@@ -1,0 +1,58 @@
+flowchart TB
+  subgraph Client
+    B[Browser]
+  end
+
+  subgraph WebApp[Rails Engine]
+    C[Controllers]
+    V[Views & Stimulus]
+    P[Policies & RBAC]
+    M[Models]
+  end
+
+  subgraph Jobs[Background Jobs]
+    SJ[Sidekiq Workers]
+    N[Notifications - Noticed]
+  end
+
+  subgraph Data
+    DB[(PostgreSQL + PostGIS)]
+    ES[(Elasticsearch)]
+    REDIS[(Redis)]
+    AS[(Active Storage)]
+  end
+
+  subgraph External
+    SMTP[Email Service]
+    GEO[Geocoding API]
+  end
+
+  AC[Action Cable]
+
+  B -->|HTTP| C
+  C --> P
+  C --> M
+  C --> V
+  V --> B
+  C --> AC
+
+  M --> DB
+  M --> ES
+  M --> AS
+  SJ --> DB
+  SJ --> ES
+  SJ --> AS
+  SJ --> N
+  N --> SMTP
+  AC --> REDIS
+  SJ --> GEO
+
+  classDef web fill:#e3f2fd,stroke:#90caf9
+  classDef jobs fill:#fff3e0,stroke:#ffb74d
+  classDef data fill:#e8f5e9,stroke:#81c784
+  classDef ext fill:#f3e5f5,stroke:#ba68c8
+
+  class C,V,P,M,AC web
+  class SJ,N jobs
+  class DB,ES,REDIS,AS data
+  class SMTP,GEO ext
