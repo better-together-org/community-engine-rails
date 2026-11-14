@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+<% resource_namespaces.each_with_index do |name, i| -%>
+<%= '  ' * i %>module <%= name %>
+<% end -%>
+<% pad = '  ' * resource_namespaces.size -%>
+<%= pad %># Serializes <%= class_name %> for the JSON:API.
+<%= pad %>class <%= class_name %>Resource < ::BetterTogether::Api::ApplicationResource
+<%= pad %>  model_name '::<%= full_class_name %>'
+
+<%= pad %>  attributes <%= resource_attributes.presence || ':created_at' %>
+<% if options[:privacy] -%>
+<%= pad %>  attributes :privacy
+<% end -%>
+<%= pad %>end
+<% resource_namespaces.each_index.reverse_each do |i| -%>
+<%= '  ' * i %>end
+<% end -%>
