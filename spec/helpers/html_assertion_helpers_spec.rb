@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups, RSpec/VerifiedDoubles
+# rubocop:disable-next RSpec/NestedGroups, RSpec/VerifiedDoubles
 RSpec.describe HtmlAssertionHelpers, type: :request do
   include described_class
 
@@ -491,4 +491,3 @@ RSpec.describe HtmlAssertionHelpers, type: :request do
     end
   end
 end
-# rubocop:enable RSpec/NestedGroups, RSpec/VerifiedDoubles

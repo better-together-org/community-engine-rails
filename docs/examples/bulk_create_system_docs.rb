@@ -107,7 +107,7 @@ def find_diagram(filename)
   )
 end
 
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+# rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
 def create_system_doc(system_key, config)
   puts "\n📄 Creating #{config[:title]} documentation..."
   # Create or find page
@@ -167,7 +167,6 @@ def create_system_doc(system_key, config)
   puts "  🎉 Page created: /en/#{config[:slug]}"
   page
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
 def related_systems_list(current_system)
   SYSTEM_DOCS.keys

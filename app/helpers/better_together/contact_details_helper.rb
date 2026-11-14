@@ -39,7 +39,7 @@ module BetterTogether
       safe_join(content)
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def render_contact(contact, include_private: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       content_tag(:div, class: 'contact mb-3 col') do
         name_and_role = content_tag(:div, class: 'name-and-role mb-3') do
@@ -56,7 +56,6 @@ module BetterTogether
           render_addresses(contact, include_private:)
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def render_phone_numbers(contact_detail, options = {})
       include_private = options.fetch(:include_private, false)
@@ -113,7 +112,7 @@ module BetterTogether
              locals: { social_media_accounts: }
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def social_media_icon_class(platform)
       icon_classes = {
         'Facebook' => 'fab fa-facebook-f',
@@ -127,7 +126,6 @@ module BetterTogether
       }
       icon_classes[platform]
     end
-    # rubocop:enable Metrics/MethodLength
 
     def render_website_links(contact_detail, options = {})
       include_private = options.fetch(:include_private, false)

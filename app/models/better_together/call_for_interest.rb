@@ -31,16 +31,14 @@ module BetterTogether
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200],
-                                          # rubocop:todo Layout/LineLength
+                                          # rubocop:todo-next Layout/LineLength
                                           saver: { strip: true, quality: 85, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-      # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 1200],
                                          saver: { strip: true, quality: 85, optimize_coding: true }, format: 'png'
 
       attachable.variant :optimized_card_jpeg, resize_to_limit: [1200, 300],
-                                               # rubocop:todo Layout/LineLength
+                                               # rubocop:todo-next Layout/LineLength
                                                saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-      # rubocop:enable Layout/LineLength
       attachable.variant :optimized_card_png, resize_to_limit: [1200, 300],
                                               saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
     end

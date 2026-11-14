@@ -107,7 +107,7 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       expect { result = described_class.call(connection:, limit: 10) }.not_to raise_error
 
       payloads_by_id = result.seeds.index_by { |seed| seed['better_together'][:payload][:id] }
-                                   .transform_values { |seed| seed['better_together'][:payload] }
+                             .transform_values { |seed| seed['better_together'][:payload] }
       expect(payloads_by_id.keys).to include(healthy_post.id, wrapped_event.id)
       expect(payloads_by_id[wrapped_event.id][:attributes][:description])
         .to eq(BetterTogether::Seeds::SafeRichText::TRUNCATED_MARKER)

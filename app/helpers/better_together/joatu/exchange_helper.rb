@@ -11,7 +11,7 @@ module BetterTogether
       # - hide when the offer itself is a response to one of the current_person's Requests
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def respond_with_request_visible?(offer) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return false unless defined?(current_person) && current_person
         return false if offer.creator == current_person
@@ -33,7 +33,6 @@ module BetterTogether
 
         true
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -42,7 +41,7 @@ module BetterTogether
       # - hide when the request itself is a response to one of the current_person's Offers
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def respond_with_offer_visible?(request) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return false unless defined?(current_person) && current_person
         return false if request.creator == current_person
@@ -64,7 +63,6 @@ module BetterTogether
 
         true
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 

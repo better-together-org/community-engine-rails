@@ -54,7 +54,7 @@ module BetterTogether
       owner_candidates(record).include?(safe_current_person)
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def owner_candidates(record)
       [].tap do |owners|
         owners << record if record.is_a?(BetterTogether::Person)
@@ -63,9 +63,8 @@ module BetterTogether
         owners.concat(Array(record.authors)) if record.respond_to?(:authors)
       end.compact.uniq
     end
-    # rubocop:enable Metrics/AbcSize
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def default_report_action_item(record)
       {
         id: 'report',
@@ -85,6 +84,5 @@ module BetterTogether
         )
       }
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

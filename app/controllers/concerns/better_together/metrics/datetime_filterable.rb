@@ -32,7 +32,7 @@ module BetterTogether
       # Set the datetime range for filtering metrics
       # Defaults to last 30 days if not specified
       # Validates constraints and halts execution with error if invalid
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def set_datetime_range
         @start_date = parse_date_param(params[:start_date]) || 30.days.ago.beginning_of_day
         @end_date = parse_date_param(params[:end_date]) || Time.current.end_of_day
@@ -44,7 +44,6 @@ module BetterTogether
         # Validate and halt if invalid (returns false to stop filter chain)
         validate_datetime_range!
       end
-      # rubocop:enable Metrics/AbcSize
 
       # Parse date parameter from ISO 8601 format
       def parse_date_param(date_string)
@@ -81,7 +80,7 @@ module BetterTogether
 
       # Apply additional filters (locale, pageable_type, hour, day of week)
       # Uses Arel for safe query construction
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def apply_additional_filters(scope, timestamp_column)
         scope = scope.where(locale: @locale_filter) if @locale_filter.present?
         scope = scope.where(pageable_type: @pageable_type_filter) if @pageable_type_filter.present?
@@ -107,7 +106,6 @@ module BetterTogether
 
         scope
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
   end
 end

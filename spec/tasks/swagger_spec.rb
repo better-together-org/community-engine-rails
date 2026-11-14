@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'rake'
 
-# rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/DescribeClass, RSpec/SpecFilePathFormat
 RSpec.describe 'swagger rake tasks', type: :task do
   before do
     Rake.application = Rake::Application.new
@@ -69,7 +69,7 @@ RSpec.describe 'swagger rake tasks', type: :task do
     context 'when swagger file exists' do
       let(:current_base_url) { BetterTogether.base_url }
 
-      # rubocop:disable RSpec/NestedGroups
+      # rubocop:disable-next RSpec/NestedGroups
       context 'with current server URL' do
         before do
           swagger_content = {
@@ -96,9 +96,8 @@ RSpec.describe 'swagger rake tasks', type: :task do
           expect { task.invoke }.to output(/Base URL: #{Regexp.escape(current_base_url)}/).to_stdout
         end
       end
-      # rubocop:enable RSpec/NestedGroups
 
-      # rubocop:disable RSpec/NestedGroups
+      # rubocop:disable-next RSpec/NestedGroups
       context 'with outdated server URL' do
         before do
           swagger_content = {
@@ -137,7 +136,6 @@ RSpec.describe 'swagger rake tasks', type: :task do
                                                                         .and raise_error(SystemExit)
         end
       end
-      # rubocop:enable RSpec/NestedGroups
     end
   end
 
@@ -154,4 +152,3 @@ RSpec.describe 'swagger rake tasks', type: :task do
     output
   end
 end
-# rubocop:enable RSpec/DescribeClass, RSpec/SpecFilePathFormat

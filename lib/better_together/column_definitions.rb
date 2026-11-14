@@ -36,13 +36,13 @@ module BetterTogether
 
     def bt_locale(table_name = nil)
       table_name ||= name
-      string  :locale,
-              limit: 5,
-              null: false,
-              index: {
-                name: "by_#{table_name}_locale"
-              },
-              default: I18n.default_locale
+      string :locale,
+             limit: 5,
+             null: false,
+             index: {
+               name: "by_#{table_name}_locale"
+             },
+             default: I18n.default_locale
     end
 
     # Adds location fields: iso_code with configurable length and format

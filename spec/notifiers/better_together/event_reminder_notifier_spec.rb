@@ -37,9 +37,8 @@ module BetterTogether # :nodoc:
     end
 
     let(:event) { event_class.new(id: 42, name: 'Example Event', starts_at: 1.week.from_now) }
-    # rubocop:todo RSpec/VerifiedDoubles
+    # rubocop:todo-next RSpec/VerifiedDoubles
     let(:notification) { double('Notification', recipient: recipient, record: event) }
-    # rubocop:enable RSpec/VerifiedDoubles
 
     subject(:notifier) { described_class.new(record: event, params: { reminder_type: '24_hours' }) }
 
@@ -49,9 +48,8 @@ module BetterTogether # :nodoc:
 
     it 'includes unread notification count in message' do
       unread = double('Unread', count: 3) # rubocop:todo RSpec/VerifiedDoubles
-      # rubocop:todo RSpec/VerifiedDoubles
+      # rubocop:todo-next RSpec/VerifiedDoubles
       allow(recipient).to receive(:notifications).and_return(double('Notifications', unread: unread))
-      # rubocop:enable RSpec/VerifiedDoubles
       result = notifier.send(:build_message, notification)
 
       expect(result[:unread_count]).to eq(3)

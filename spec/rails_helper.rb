@@ -49,7 +49,7 @@ end
 
 # Essential tables that should be preserved across tests
 # rubocop:todo Metrics/PerceivedComplexity
-# rubocop:todo Lint/CopDirectiveSyntax
+# rubocop:todo-next Lint/CopDirectiveSyntax
 ESSENTIAL_TABLES = %w[
   better_together_communities
   better_together_platforms
@@ -71,7 +71,6 @@ ESSENTIAL_TABLES = %w[
   active_storage_attachments
   active_storage_variant_records
 ].freeze
-# rubocop:enable Lint/CopDirectiveSyntax
 # rubocop:enable Metrics/PerceivedComplexity
 
 # Seeds the essential rows into the database this process is connected to. parallel_rspec runs

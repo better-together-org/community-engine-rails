@@ -142,7 +142,7 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
     )
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def seed_federation_hub_state!
     BetterTogether::AccessControlBuilder.seed_data
     network_admin
@@ -158,7 +158,6 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
     federated_post.federation_content_grants_by_connection = { connection.id => 'denied' }
     federated_post.save!
   end
-  # rubocop:enable Metrics/AbcSize
 
   def login_as_network_admin
     capybara_sign_in_user(network_admin_email, 'SecureTest123!@#')

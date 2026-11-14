@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/VerifiedDoubles
+# rubocop:disable-next RSpec/VerifiedDoubles
 RSpec.describe BetterTogether::ContentSecurity::RichTextAttachmentFilter, type: :service do
   let(:blob) { double('blob', id: 42, filename: 'doc.pdf') }
   let(:content) { double('action_text_content', blank?: false) }
@@ -102,4 +102,3 @@ RSpec.describe BetterTogether::ContentSecurity::RichTextAttachmentFilter, type: 
     end
   end
 end
-# rubocop:enable RSpec/VerifiedDoubles

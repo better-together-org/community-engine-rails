@@ -254,8 +254,7 @@ RSpec.describe 'Documentation screenshots for content security review states',
   end
 
   def png_data
-    # rubocop:disable Layout/LineLength
+    # rubocop:disable-next Layout/LineLength
     "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\b\x06\x00\x00\x00\x1F\x15\xC4\x89\x00\x00\x00\nIDATx\x9Cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xB4\x00\x00\x00\x00IEND\xAEB`\x82".b
-    # rubocop:enable Layout/LineLength
   end
 end

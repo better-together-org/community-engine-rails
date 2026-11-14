@@ -85,9 +85,8 @@ module BetterTogether
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @navigation_item }),
               turbo_stream.update('navigation_item_form', partial: 'better_together/navigation_items/form',
-                                                          # rubocop:todo Layout/LineLength
+                                                          # rubocop:todo-next Layout/LineLength
                                                           locals: { navigation_item: @navigation_item, navigation_area: @navigation_area })
-              # rubocop:enable Layout/LineLength
             ]
           end
         end

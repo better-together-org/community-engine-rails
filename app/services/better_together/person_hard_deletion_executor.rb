@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Executes a full destructive cleanup for safe prelaunch account purges.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PersonHardDeletionExecutor
     DELETE_ONLY_CLASSES = [::BetterTogether::ConversationParticipant].freeze
     MEMBERSHIP_MODELS = [
@@ -25,7 +25,7 @@ module BetterTogether
       @reason = reason
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def call
       inventory = BetterTogether::PersonHardDeletionInventory.call(person:)
       audit = nil
@@ -46,7 +46,6 @@ module BetterTogether
       record_failure(audit, e)
       raise
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
@@ -65,7 +64,7 @@ module BetterTogether
       Rails.logger.error("PersonHardDeletionExecutor could not record failure: #{e.message}")
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def build_audit(inventory)
       BetterTogether::PersonPurgeAudit.create!(
         person:,
@@ -88,7 +87,6 @@ module BetterTogether
         }
       )
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def audit_platform_id
       person_deletion_request&.platform_id || person&.platform_id
@@ -174,7 +172,7 @@ module BetterTogether
       Array(entry.fetch(:ids)).reject { |id| processed[[model_class.name, id.to_s]] }
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def destroy_entry(entry, model_class, scoped_ids, processed)
       if delete_only_entry?(entry, model_class)
         cleanup_notifications_for_deleted_memberships(entry, model_class, scoped_ids)
@@ -197,7 +195,6 @@ module BetterTogether
         execution_methods: execution_methods.uniq
       )
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def delete_only_entry?(entry, model_class)
       entry.fetch(:action) == 'delete' || DELETE_ONLY_CLASSES.include?(model_class)
@@ -268,5 +265,4 @@ module BetterTogether
       target.instance_of?(entry_model(entry)) && Array(entry.fetch(:ids)).map(&:to_s).include?(target.id.to_s)
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

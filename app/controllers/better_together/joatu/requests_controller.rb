@@ -112,7 +112,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def apply_source_prefill(request) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return unless request
 
@@ -143,7 +143,6 @@ module BetterTogether
         request.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
                                                  creator_id: helpers.current_person&.id)
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 

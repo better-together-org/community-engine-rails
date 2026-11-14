@@ -50,7 +50,7 @@ module BetterTogether
 
     # Scope: platform managers see all, others see their own + community endpoints they admin
     class Scope < PlatformRecordPolicy::Scope
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def resolve
         if user&.person&.permitted_to?('manage_platform_api', current_platform)
           platform_scoped
@@ -61,7 +61,6 @@ module BetterTogether
           scope.none
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
       private
 

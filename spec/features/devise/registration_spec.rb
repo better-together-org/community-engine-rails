@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 RSpec.feature 'User Registration', :user_registration do
   # Ensure you have a valid user created; using FactoryBot here
   let!(:host_setup_wizard) do
@@ -84,11 +84,9 @@ RSpec.feature 'User Registration', :user_registration do
     click_button 'Sign Up'
 
     # Expect a confirmation message (this text may vary based on your flash messages)
-    # rubocop:disable Layout/LineLength
+    # rubocop:disable-next Layout/LineLength
     expect(page).to have_content('A message with a confirmation link has been sent to your email address. Please follow the link to activate your account')
-    # rubocop:enable Layout/LineLength
     expect(page).to have_content('Sign In')
     expect(BetterTogether::AgreementParticipant.count).to eq(3)
   end
 end
-# rubocop:enable Metrics/BlockLength

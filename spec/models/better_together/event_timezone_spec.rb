@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'Event timezone migration' do
   describe 'Event model' do
     it 'has timezone column' do
@@ -41,4 +41,3 @@ RSpec.describe 'Event timezone migration' do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

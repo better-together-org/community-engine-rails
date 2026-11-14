@@ -24,7 +24,7 @@ module BetterTogether
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def anonymized_attributes
       {
         name: deleted_name,
@@ -37,7 +37,6 @@ module BetterTogether
         anonymized_at: Time.current
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
     def purge_attachments!
       person.profile_image.purge if person.profile_image.attached?

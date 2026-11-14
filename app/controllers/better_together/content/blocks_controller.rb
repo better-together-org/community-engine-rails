@@ -3,7 +3,7 @@
 module BetterTogether
   module Content
     # Handles CRUD for content blocks independently of pages.
-    # rubocop:todo Metrics/ClassLength
+    # rubocop:todo-next Metrics/ClassLength
     class BlocksController < ResourceController
       ALLOWED_RESOURCE_SEARCH_CLASSES = [
         'BetterTogether::Event',
@@ -184,6 +184,5 @@ module BetterTogether
         authorize(resource_class, :preview_markdown?)
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

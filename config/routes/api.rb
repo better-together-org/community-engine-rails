@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # bt base path
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 scope path: BetterTogether.route_scope_path do
   # API Authentication routes (no locale requirement)
   # These routes handle JWT token generation and don't need localization
@@ -42,4 +42,3 @@ scope path: BetterTogether.route_scope_path do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

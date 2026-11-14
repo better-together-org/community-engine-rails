@@ -10,7 +10,7 @@ module BetterTogether
       # Candidates are restricted to the same platform as record - mutual aid
       # matching does not cross tenant boundaries.
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/CyclomaticComplexity
+      # rubocop:todo-next Metrics/CyclomaticComplexity
       def self.match(record) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         offer_klass   = BetterTogether::Joatu::Offer
         request_klass = BetterTogether::Joatu::Request
@@ -41,9 +41,8 @@ module BetterTogether
           join_sql = ActiveRecord::Base.send(
             :sanitize_sql_array,
             [
-              # rubocop:todo Layout/LineLength
+              # rubocop:todo-next Layout/LineLength
               "LEFT JOIN #{rl_klass.table_name} AS rl ON rl.source_type = ? AND rl.source_id = ? AND rl.response_type = ? AND rl.response_id = #{offer_klass.table_name}.id",
-              # rubocop:enable Layout/LineLength
               request_klass.name, record.id, offer_klass.name
             ]
           )
@@ -71,9 +70,8 @@ module BetterTogether
           join_sql = ActiveRecord::Base.send(
             :sanitize_sql_array,
             [
-              # rubocop:todo Layout/LineLength
+              # rubocop:todo-next Layout/LineLength
               "LEFT JOIN #{rl_klass.table_name} AS rl ON rl.source_type = ? AND rl.source_id = ? AND rl.response_type = ? AND rl.response_id = #{request_klass.table_name}.id",
-              # rubocop:enable Layout/LineLength
               offer_klass.name, record.id, request_klass.name
             ]
           )
@@ -84,7 +82,6 @@ module BetterTogether
           raise ArgumentError, "Unsupported record type: #{record.class.name}"
         end
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
 
       # Counterparts created by someone who blocked, or was blocked by, the record's creator.

@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
   let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
@@ -185,4 +185,3 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

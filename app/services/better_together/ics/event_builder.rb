@@ -21,7 +21,7 @@ module BetterTogether
 
       # Build event using icalendar gem's event object
       # @param cal_event [Icalendar::Event] The icalendar event object to populate
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def build_icalendar_event(cal_event)
         cal_event.dtstart = icalendar_datetime(schedulable.starts_at)
         cal_event.dtend = icalendar_datetime(schedulable.ends_at) if schedulable.ends_at
@@ -41,7 +41,6 @@ module BetterTogether
         # Add reminder alarms
         add_reminders(cal_event)
       end
-      # rubocop:enable Metrics/AbcSize
 
       private
 
@@ -169,7 +168,7 @@ module BetterTogether
       # Add reminder alarms (VALARM) to the icalendar event
       # Creates three default reminders: 24 hours, 1 hour, and at start time
       # @param cal_event [Icalendar::Event] The icalendar event object
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def add_reminders(cal_event)
         # 24 hour reminder
         cal_event.alarm do |alarm|
@@ -195,7 +194,6 @@ module BetterTogether
                                      event_name: schedulable.name)
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
   end
 end

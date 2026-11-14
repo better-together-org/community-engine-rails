@@ -4,7 +4,7 @@ module BetterTogether
   # Concern for managing invitation tokens in user sessions across all invitation types
   # Provides unified session handling for registration and authentication flows
   # This module coordinates multiple invitation concerns and provides a unified interface
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module InvitationSessionManagement
     extend ActiveSupport::Concern
 
@@ -238,5 +238,4 @@ module BetterTogether
       end
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

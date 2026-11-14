@@ -48,9 +48,8 @@ module BetterTogether
     end
 
     def has_contact_details? # rubocop:todo Naming/PredicatePrefix
-      # rubocop:todo Layout/LineLength
+      # rubocop:todo-next Layout/LineLength
       phone_numbers.size.positive? || email_addresses.size.positive? || addresses.size.positive? || social_media_accounts.size.positive? || website_links.size.positive?
-      # rubocop:enable Layout/LineLength
     end
 
     def person

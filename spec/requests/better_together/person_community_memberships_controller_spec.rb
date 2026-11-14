@@ -74,7 +74,7 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController as communit
   let(:locale) { I18n.default_locale }
 
   describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships', :as_user do
-    # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:todo-next RSpec/ExampleLength, RSpec/MultipleExpectations
     it 'creates a membership when actor created the community but holds no membership role' do
       creator = BetterTogether::User.find_by(email: 'user@example.test').person
       community = create(:better_together_community, creator: creator)
@@ -95,9 +95,8 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController as communit
       follow_redirect!
       expect(response).to have_http_status(:ok)
     end
-    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
 
-    # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:todo-next RSpec/ExampleLength, RSpec/MultipleExpectations
     it 'excludes existing members from the add-member select on the community page' do
       creator = BetterTogether::User.find_by(email: 'user@example.test').person
       community = create(:better_together_community, creator: creator)
@@ -114,7 +113,6 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController as communit
         "<option value=\"#{existing_member.id}\">#{existing_member.select_option_title}</option>"
       )
     end
-    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
   end
 end
 
@@ -123,7 +121,7 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-servic
   let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
 
   describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships', :as_user do
-    # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:todo-next RSpec/ExampleLength, RSpec/MultipleExpectations
     it 'creates an active membership when direct join is allowed' do
       community = create(:better_together_community, :open_access)
 
@@ -142,9 +140,8 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-servic
       expect(membership.status).to eq('active')
       expect(response).to redirect_to(community)
     end
-    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
 
-    # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    # rubocop:todo-next RSpec/ExampleLength, RSpec/MultipleExpectations
     it 'creates a pending membership when request mode is enabled' do
       community = create(:better_together_community, :membership_requests_enabled)
       create(:better_together_platform, :membership_requests_enabled, community: community)
@@ -162,7 +159,6 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-servic
       expect(membership.status).to eq('pending')
       expect(response).to redirect_to(community)
     end
-    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
   end
 end
 # rubocop:enable RSpec/MultipleDescribes

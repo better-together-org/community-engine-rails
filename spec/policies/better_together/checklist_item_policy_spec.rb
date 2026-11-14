@@ -19,49 +19,44 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
   describe '#create?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, item).create? }
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it { is_expected.to be true }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
       it { is_expected.to be false }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
   describe '#update?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, item).update? }
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it { is_expected.to be true }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'creator' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { creator_user }
 
       it { is_expected.to be true }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
       it { is_expected.to be false }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
   describe '#show?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
@@ -94,20 +89,18 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
   describe '#destroy?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, item).destroy? }
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { manager_user }
 
       it { is_expected.to be true }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'creator' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { creator_user }
 
       it { is_expected.to be false }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end

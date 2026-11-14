@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Which events are the sessions of which series. A session belongs to one series; sessions on the same day are fine.
-class CreateBetterTogetherEventSeriesSessions < ActiveRecord::Migration[8.1]
+class CreateBetterTogetherEventSeriesSessions < ActiveRecord::Migration[7.2]
   TABLE = :better_together_event_series_sessions
 
   def up

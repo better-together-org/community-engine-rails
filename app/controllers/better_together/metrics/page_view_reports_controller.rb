@@ -60,9 +60,8 @@ module BetterTogether
                 turbo_stream.replace('flash_messages',
                                      partial: 'layouts/better_together/flash_messages',
                                      locals: { flash: flash }),
-                # rubocop:todo Layout/LineLength
+                # rubocop:todo-next Layout/LineLength
                 turbo_stream.replace('new_report', '<turbo-frame id="new_report"></turbo-frame>') # Clear the new report form frame
-                # rubocop:enable Layout/LineLength
               ]
             end
           else

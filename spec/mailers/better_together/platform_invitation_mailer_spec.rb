@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module BetterTogether # :nodoc:
   RSpec.describe PlatformInvitationMailer do
     describe '#invite' do
@@ -184,4 +184,3 @@ module BetterTogether # :nodoc:
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

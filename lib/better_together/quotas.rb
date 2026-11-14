@@ -22,16 +22,15 @@ module BetterTogether
       # do so a future enforcement phase can swap this implementation without
       # touching call sites.
       # rubocop:todo Naming/PredicateMethod
-      # rubocop:todo Lint/UnusedMethodArgument
+      # rubocop:todo-next Lint/UnusedMethodArgument
       def check!(type:, owner:, amount:, subject: nil, actor: nil)
         true
       end
-      # rubocop:enable Lint/UnusedMethodArgument
       # rubocop:enable Naming/PredicateMethod
 
       # rubocop:todo Metrics/ParameterLists
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def reserve!(type:, owner:, amount:, idempotency_key:, subject: nil, actor: nil, ttl: 5.minutes)
         return nil unless Locality.local_owner?(owner)
 
@@ -53,7 +52,6 @@ module BetterTogether
         QuotaBalance.refresh_reserved!(quota, period_key)
         reservation
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/ParameterLists
 

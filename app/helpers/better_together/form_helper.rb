@@ -12,7 +12,7 @@ module BetterTogether
     # location picker) can render the label select without a blank prompt option
     # that a browser `required` check would otherwise block on.
     def label_select_field(form, required: true, prompt: 'Select Label') # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      # rubocop:todo Metrics/BlockLength
+      # rubocop:todo-next Metrics/BlockLength
       content_tag(:div, class: 'label-select', data: { controller: 'better_together--dependent-fields' }) do
         label_select_id = dom_id(form.object, :label).split('-').first
 
@@ -52,7 +52,6 @@ module BetterTogether
 
         field_label + select_field + other_text_field
       end
-      # rubocop:enable Metrics/BlockLength
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -359,7 +358,7 @@ module BetterTogether
     # instead of the model's human_attribute_name for the field. This is useful
     # when the visible label needs to be different from the translated attribute
     # name (for example: participant_ids -> "Add participants").
-    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo-next Metrics/PerceivedComplexity
     def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
@@ -401,7 +400,6 @@ module BetterTogether
         label_tag(field, label_text.html_safe, options)
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
 
     # rubocop:todo Metrics/MethodLength

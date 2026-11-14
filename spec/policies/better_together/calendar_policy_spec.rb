@@ -24,21 +24,19 @@ RSpec.describe BetterTogether::CalendarPolicy, type: :policy do
   end
 
   describe '#show?' do
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'when the creator views their calendar' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       it 'allows show' do
         expect(described_class.new(creator_user, calendar).show?).to be true
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'when a platform manager views the calendar' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       it 'allows show' do
         expect(described_class.new(steward_user, calendar).show?).to be true
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     it 'denies guest' do
       expect(described_class.new(nil, calendar).show?).to be false
@@ -60,28 +58,25 @@ RSpec.describe BetterTogether::CalendarPolicy, type: :policy do
   end
 
   describe '#update?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'when the creator updates their calendar' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       it 'allows update' do
         expect(described_class.new(creator_user, calendar).update?).to be true
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'when platform manager updates the calendar' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       it 'allows update' do
         expect(described_class.new(steward_user, calendar).update?).to be true
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'when another user tries to update' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       it 'denies update' do
         expect(described_class.new(normal_user, calendar).update?).to be false
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end

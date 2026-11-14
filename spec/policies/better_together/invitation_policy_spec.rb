@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # Testing CommunityInvitationPolicy as a concrete implementation of InvitationPolicy
 # InvitationPolicy is an abstract base class with template methods
-# rubocop:disable RSpec/NestedGroups, RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/NestedGroups, RSpec/SpecFilePathFormat
 RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward do
   subject(:policy) { described_class.new(user, invitation) }
 
@@ -139,4 +139,3 @@ RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward d
     end
   end
 end
-# rubocop:enable RSpec/NestedGroups, RSpec/SpecFilePathFormat

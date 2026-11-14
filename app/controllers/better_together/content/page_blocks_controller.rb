@@ -23,9 +23,8 @@ module BetterTogether
           format.html
           format.turbo_stream do
             render turbo_stream: turbo_stream.append('blocks-list',
-                                                     # rubocop:todo Layout/LineLength
+                                                     # rubocop:todo-next Layout/LineLength
                                                      partial: 'better_together/content/page_blocks/form_fields', locals: { page_block: @page_block })
-            # rubocop:enable Layout/LineLength
           end
         end
       end

@@ -4,7 +4,7 @@ require 'uri'
 
 module BetterTogether
   # Computes CSP source lists, including an optional configured asset host origin.
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module ContentSecurityPolicySources
     module_function
 
@@ -142,7 +142,7 @@ module BetterTogether
       origin_tokens(raw_value).reject { |origin| normalize_origin(origin) }.uniq
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def normalize_origin(origin)
       value = origin.to_s.strip
       return nil if value.empty?
@@ -158,7 +158,6 @@ module BetterTogether
     rescue URI::InvalidURIError
       nil
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def origin_for_url(value)
       url = value.to_s.strip
@@ -214,5 +213,4 @@ module BetterTogether
       resolved_platform || BetterTogether::Platform.find_by(host: true)
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

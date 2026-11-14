@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module BetterTogether # :nodoc:
   RSpec.describe Recurrence do
     include ActiveSupport::Testing::TimeHelpers
@@ -220,4 +220,3 @@ module BetterTogether # :nodoc:
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

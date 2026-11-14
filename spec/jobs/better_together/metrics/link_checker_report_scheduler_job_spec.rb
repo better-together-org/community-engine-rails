@@ -19,9 +19,8 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
         )
 
         # Mock the ActiveRecord query chain
-        # rubocop:disable RSpec/VerifiedDoubles
+        # rubocop:disable-next RSpec/VerifiedDoubles
         relation = double('ActiveRecord::Relation')
-        # rubocop:enable RSpec/VerifiedDoubles
         allow(BetterTogether::Metrics::LinkCheckerReport).to receive_messages(create_and_generate!: fake_report, where: relation)
         allow(relation).to receive_messages(not: relation, order: relation, first: nil)
 
@@ -72,9 +71,8 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
 
       before do
         # Mock the ActiveRecord query chain
-        # rubocop:disable RSpec/VerifiedDoubles
+        # rubocop:disable-next RSpec/VerifiedDoubles
         relation = double('ActiveRecord::Relation')
-        # rubocop:enable RSpec/VerifiedDoubles
         allow(BetterTogether::Metrics::LinkCheckerReport).to receive_messages(create_and_generate!: current_report, where: relation)
         allow(relation).to receive_messages(not: relation, order: relation, first: previous_report)
 
@@ -106,9 +104,8 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportSchedulerJob do
 
       before do
         # Mock the ActiveRecord query chain
-        # rubocop:disable RSpec/VerifiedDoubles
+        # rubocop:disable-next RSpec/VerifiedDoubles
         relation = double('ActiveRecord::Relation')
-        # rubocop:enable RSpec/VerifiedDoubles
         allow(BetterTogether::Metrics::LinkCheckerReport).to receive_messages(create_and_generate!: current_report, where: relation)
         allow(relation).to receive_messages(not: relation, order: relation, first: previous_report)
 

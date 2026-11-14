@@ -24,7 +24,7 @@ module BetterTogether
         end
       end
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def respond_to_create_success(format) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         format.html do
           redirect_to url_for(@resource.becomes(resource_class)),
@@ -38,7 +38,6 @@ module BetterTogether
           redirect_to url_for(@resource.becomes(resource_class))
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       def respond_to_create_failure(format) # rubocop:todo Metrics/MethodLength
         format.turbo_stream do

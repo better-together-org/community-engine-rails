@@ -82,7 +82,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Only proceed if there's an invitation token in the URL or already in the session.
       return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
@@ -115,7 +115,6 @@ module BetterTogether
         session.delete(:platform_invitation_expires_at)
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
@@ -239,7 +238,7 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def user_not_authorized(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
@@ -268,9 +267,8 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       return render_not_found if exception.is_a?(ActiveRecord::RecordNotFound)
@@ -291,13 +289,11 @@ module BetterTogether
 
       respond_to do |format|
         format.turbo_stream do
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
-          # rubocop:enable Layout/LineLength
           render turbo_stream: turbo_stream.replace('flash_messages',
-                                                    # rubocop:todo Layout/LineLength
+                                                    # rubocop:todo-next Layout/LineLength
                                                     partial: 'layouts/better_together/flash_messages', locals: { flash: })
-          # rubocop:enable Layout/LineLength
         end
         format.html do
           flash[:error] = exception.message
@@ -305,7 +301,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # A prior render earlier in this request (e.g. EventsController#show's .ics
     # branch calling render_event_ics, which sets response.content_type to

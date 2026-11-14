@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::UserPolicy do
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
@@ -18,7 +18,6 @@ RSpec.describe BetterTogether::UserPolicy do
     membership.save!
     user.person.touch
   end
-  # rubocop:enable Metrics/AbcSize
 
   def grant_user_admin_on(user, platform)
     BetterTogether::AccessControlBuilder.seed_data

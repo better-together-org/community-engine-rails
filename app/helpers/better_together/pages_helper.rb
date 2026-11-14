@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # rubocop:todo Metrics/ModuleLength
+  # rubocop:todo-next Metrics/ModuleLength
   module PagesHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
     def render_page_content(page)
       Rails.cache.fetch(
@@ -144,5 +144,4 @@ module BetterTogether
       params[:slug_filter] || ''
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

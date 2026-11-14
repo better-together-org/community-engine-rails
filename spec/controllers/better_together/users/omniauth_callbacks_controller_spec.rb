@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
+# rubocop:disable-next RSpec/NestedGroups
 RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :omniauth, :skip_host_setup do
   routes { BetterTogether::Engine.routes }
 
@@ -617,4 +617,3 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
     end
   end
 end
-# rubocop:enable RSpec/NestedGroups

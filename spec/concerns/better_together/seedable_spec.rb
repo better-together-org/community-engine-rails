@@ -5,11 +5,10 @@ require 'rails_helper'
 module BetterTogether
   describe Seedable, type: :model do
     # Define a test ActiveRecord model inline for this spec
-    # rubocop:todo RSpec/LeakyConstantDeclaration
+    # rubocop:todo-next RSpec/LeakyConstantDeclaration
     class TestSeedableClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock
       include Seedable
     end
-    # rubocop:enable RSpec/LeakyConstantDeclaration
 
     describe TestSeedableClass, type: :model do
       # Create the test table before each example with a table_exists? guard so

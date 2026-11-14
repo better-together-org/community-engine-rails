@@ -20,7 +20,7 @@ module BetterTogether
         BetterTogether::Agreement.delete_all
       end
 
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def build_privacy_policy # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') do |a|
           a.protected = true
@@ -61,9 +61,8 @@ module BetterTogether
           term.content = 'We respect your privacy and protect your personal information.'
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def build_terms_of_service # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') do |a|
           a.protected = true
@@ -100,9 +99,8 @@ module BetterTogether
           term.content = 'Use the platform responsibly and respectfully.'
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def build_code_of_conduct # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') do |a|
           a.protected = true
@@ -139,7 +137,6 @@ module BetterTogether
           term.content = 'Be respectful, inclusive, and considerate to other community members.'
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       def build_content_publishing_agreement # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |a|

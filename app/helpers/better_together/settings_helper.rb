@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Helper methods for settings page
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module SettingsHelper
     # Renders a self-contained preference field with individual form and change tracking
     #
@@ -73,7 +73,7 @@ module BetterTogether
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def render_field_by_type(person, field_name, field_type, field_options)
       field_value = person.send(field_name)
       base_attrs = {
@@ -96,7 +96,6 @@ module BetterTogether
         render_text_field(field_value, base_attrs, field_options)
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def render_select_field(field_name, field_value, field_options, base_attrs)
       if field_name == :locale
@@ -110,7 +109,7 @@ module BetterTogether
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def render_time_zone_field(field_value, base_attrs, _field_options)
       default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
@@ -147,7 +146,6 @@ module BetterTogether
         html_options
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def render_toggle_field(field_name, field_value, base_attrs)
       content_tag(:div, class: 'form-check form-switch') do
@@ -195,5 +193,4 @@ module BetterTogether
       end
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

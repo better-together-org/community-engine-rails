@@ -10,9 +10,8 @@ module BetterTogether
 
     # Token-based invitation handling (public access)
     # rubocop:todo Metrics/ClassLength
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :find_invitation_by_token, only: %i[show accept decline]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/ClassLength
     skip_before_action :check_platform_privacy, if: -> { @invitation.present? }, only: %i[show accept decline]
 

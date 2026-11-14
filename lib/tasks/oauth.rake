@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :oauth do
     desc 'Create default OAuth applications for n8n and management tool integration'
@@ -36,17 +36,15 @@ namespace :better_together do
       else
         puts 'UID                                  Name                           Owner                Scopes'
         puts '-' * 120
-        # rubocop:disable Style/FormatStringToken
+        # rubocop:disable-next Style/FormatStringToken
         apps.each do |app|
           puts format('%-36s %-30s %-20s %s',
                       app.uid, app.name, app.owner&.name || 'none', app.scopes)
         end
-        # rubocop:enable Style/FormatStringToken
       end
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
 
 def find_platform_manager(platform)
   # Find a person with platform management permission

@@ -139,7 +139,7 @@ module BetterTogether
 
       protected
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         communities_table = ::BetterTogether::Community.arel_table
         person_community_memberships_table = ::BetterTogether::PersonCommunityMembership.arel_table
@@ -175,7 +175,6 @@ module BetterTogether
 
         query
       end
-      # rubocop:enable Metrics/MethodLength
     end
 
     private

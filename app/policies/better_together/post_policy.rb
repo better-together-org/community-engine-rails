@@ -38,7 +38,7 @@ module BetterTogether
 
     # Scope for resolving visible posts
     class Scope < PlatformRecordPolicy::Scope
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def resolve
         return platform_scoped.latest_first if platform_content_manager?
 
@@ -50,7 +50,6 @@ module BetterTogether
         creator_posts = posts_table[:creator_id].eq(agent.id)
         base.where(visible_posts.or(creator_posts))
       end
-      # rubocop:enable Metrics/AbcSize
 
       private
 

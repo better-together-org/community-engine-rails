@@ -38,7 +38,7 @@ module BetterTogether
     private
 
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_locale_and_time_zone(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       # Use Current.platform (set by middleware for web/API requests) with
       # fallback to host platform for background job mailer sends.
@@ -53,12 +53,11 @@ module BetterTogether
         I18n.with_locale(locale, &)
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Parse a raw URL string and return Rails url_options components (host:, protocol:, port:).
     # Handles full URLs (https://example.com/path) — Rails expects host: to be hostname-only.
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def resolve_url_options(raw_url)
       uri = URI.parse(raw_url.to_s)
       opts = { host: uri.host.presence || raw_url.to_s }
@@ -68,7 +67,6 @@ module BetterTogether
     rescue URI::InvalidURIError
       { host: raw_url.to_s }
     end
-    # rubocop:enable Metrics/AbcSize
 
     def default_port?(scheme, port)
       (scheme == 'https' && port == 443) || (scheme == 'http' && port == 80)

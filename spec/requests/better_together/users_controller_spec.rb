@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::UsersController' do
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
@@ -18,7 +18,6 @@ RSpec.describe 'BetterTogether::UsersController' do
     membership.save!
     user.person.touch
   end
-  # rubocop:enable Metrics/AbcSize
 
   let(:locale) { I18n.default_locale }
   let(:manager) { create(:better_together_user, :confirmed, :platform_manager) }

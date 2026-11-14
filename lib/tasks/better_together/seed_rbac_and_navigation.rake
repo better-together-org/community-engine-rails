@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :seed do
     desc 'Seed new roles, permissions, assignments, and navigation items'
@@ -49,10 +49,9 @@ namespace :better_together do
         resource_type: 'BetterTogether::Platform',
         name: 'Platform Analytics Viewer',
         # rubocop:todo Lint/CopDirectiveSyntax
-        # rubocop:todo Lint/CopDirectiveSyntax
+        # rubocop:todo-next Lint/CopDirectiveSyntax
         description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
                      'reports without access to other platform management functions.'
-        # rubocop:enable Lint/CopDirectiveSyntax
         # rubocop:enable Lint/CopDirectiveSyntax
       )
       role.save! if role.changed?
@@ -183,7 +182,7 @@ namespace :better_together do
       }
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def host_dashboard_review_nav_items
       [
         {
@@ -244,7 +243,6 @@ namespace :better_together do
         }
       ]
     end
-    # rubocop:enable Metrics/MethodLength
 
     def shift_host_nav_positions_for_analytics(host_nav)
       scope = BetterTogether::NavigationItem
@@ -444,4 +442,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

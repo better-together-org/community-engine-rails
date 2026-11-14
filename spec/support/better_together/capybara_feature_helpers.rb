@@ -11,7 +11,7 @@ module BetterTogether # :nodoc:
     include BetterTogether::Engine.routes.url_helpers
 
     # Setup or update a single host platform and return a platform-steward user
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def configure_host_platform
       # Reuse existing host platform if present, don't try to create a new one
       # Use find_or_create_by with rescue to handle race conditions in parallel tests
@@ -64,7 +64,6 @@ module BetterTogether # :nodoc:
 
       host_platform
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def capybara_login_as_platform_steward
       capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')
@@ -80,7 +79,7 @@ module BetterTogether # :nodoc:
 
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def capybara_sign_in_user(email, password) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # If we've already signed in this user in the current session, skip re-authentication.
       if defined?(@capybara_signed_in_user_email) && @capybara_signed_in_user_email == email && (page.has_selector?('#user-nav') || page.has_link?('Log Out') || page.has_content?(email)) # rubocop:disable Layout/LineLength
@@ -114,7 +113,6 @@ module BetterTogether # :nodoc:
       # Memoize the signed-in email to avoid repeating sign-in steps in the same Capybara session
       @capybara_signed_in_user_email = email
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 

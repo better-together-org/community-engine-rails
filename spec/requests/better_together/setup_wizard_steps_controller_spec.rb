@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module BetterTogether # :nodoc:
   RSpec.describe SetupWizardStepsController, :no_auth, :skip_host_setup do
     let(:wizard) { Wizard.find_or_create_by!(identifier: 'host_setup') }
@@ -151,11 +151,10 @@ module BetterTogether # :nodoc:
           invalid_platform = Platform.new
           invalid_platform.errors.add(:base, 'Test validation error')
 
-          # rubocop:disable RSpec/AnyInstance
+          # rubocop:disable-next RSpec/AnyInstance
           allow_any_instance_of(Platform).to receive(:save!).and_raise(
             ActiveRecord::RecordInvalid.new(invalid_platform)
           )
-          # rubocop:enable RSpec/AnyInstance
 
           post better_together.setup_wizard_step_create_host_platform_path(locale: I18n.default_locale),
                params: { platform: valid_platform_params }
@@ -356,11 +355,10 @@ module BetterTogether # :nodoc:
           invalid_user = User.new
           invalid_user.errors.add(:base, 'Test validation error')
 
-          # rubocop:disable RSpec/AnyInstance
+          # rubocop:disable-next RSpec/AnyInstance
           allow_any_instance_of(User).to receive(:save!).and_raise(
             ActiveRecord::RecordInvalid.new(invalid_user)
           )
-          # rubocop:enable RSpec/AnyInstance
 
           post better_together.setup_wizard_step_create_admin_path(locale: I18n.default_locale),
                params: { user: valid_user_params }
@@ -425,9 +423,8 @@ module BetterTogether # :nodoc:
         before do
           @original_host_platform_ids = BetterTogether::Platform.where(host: true).pluck(:id)
           BetterTogether::Platform.where(host: true).update_all(host: false)
-          # rubocop:disable RSpec/MessageChain
+          # rubocop:disable-next RSpec/MessageChain
           allow(controller).to receive_message_chain(:helpers, :base_url).and_return('http://test.example.com')
-          # rubocop:enable RSpec/MessageChain
         end
 
         after do
@@ -457,4 +454,3 @@ module BetterTogether # :nodoc:
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

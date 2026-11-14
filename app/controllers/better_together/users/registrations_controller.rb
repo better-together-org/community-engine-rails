@@ -14,17 +14,15 @@ module BetterTogether
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Lint/CopDirectiveSyntax
+      # rubocop:todo-next Lint/CopDirectiveSyntax
       before_action :process_invitation_code_parameters, only: %i[new create]
-      # rubocop:enable Lint/CopDirectiveSyntax
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Lint/CopDirectiveSyntax
+      # rubocop:todo-next Lint/CopDirectiveSyntax
       before_action :set_required_agreements, only: %i[new create]
-      # rubocop:enable Lint/CopDirectiveSyntax
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/PerceivedComplexity
       before_action :load_all_invitations_from_session, only: %i[new create]

@@ -54,7 +54,6 @@ RSpec.describe BetterTogether::NavigationItem do
     end
   end
 end
-# frozen_string_literal: true
 
 # spec/models/better_together/navigation_item_spec.rb
 

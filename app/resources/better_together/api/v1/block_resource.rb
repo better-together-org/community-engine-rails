@@ -18,7 +18,7 @@ module BetterTogether
       #
       # Position on a page is managed via the PageBlock join — use the page_blocks endpoint
       # or the page update endpoint (page_blocks_attributes) for ordering.
-      # rubocop:disable Metrics/ClassLength
+      # rubocop:disable-next Metrics/ClassLength
       class BlockResource < ::BetterTogether::Api::ApplicationResource
         model_name '::BetterTogether::Content::Block'
 
@@ -184,7 +184,6 @@ module BetterTogether
           "BetterTogether::#{name}"
         end
       end
-      # rubocop:enable Metrics/ClassLength
 
       # JSONAPI-Resources STI aliases — must live in the same file as BlockResource
       # so Zeitwerk loads them together.  Any new Content::Block STI subtype must

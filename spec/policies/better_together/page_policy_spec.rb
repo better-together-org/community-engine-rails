@@ -232,23 +232,21 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
   describe '#update?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, page).update? }
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { steward_user }
       let(:page) { public_unpublished }
 
       it { is_expected.to be true }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'author' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { author_user }
       let(:page) { private_unpublished }
 
       it { is_expected.to be true }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     context 'editor' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { editor_user }
@@ -257,20 +255,19 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       it { is_expected.to be true }
     end
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
       let(:page) { public_published }
 
       it { is_expected.to be false }
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
   describe 'Scope' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject(:resolved_scope) { described_class::Scope.new(user, BetterTogether::Page).resolve }
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { steward_user }
 
@@ -278,9 +275,8 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
         expect(resolved_scope).to match_array BetterTogether::Page.all
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'author' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { author_user }
 
@@ -290,7 +286,6 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
         expect(resolved_scope).not_to include(public_unpublished, private_published)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     context 'editor' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { editor_user }
@@ -301,7 +296,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       end
     end
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'normal user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
@@ -316,7 +311,6 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
         expect(resolved_scope).not_to include(private_unpublished)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
     context 'community member' do # rubocop:todo RSpec/MultipleMemoizedHelpers
@@ -359,7 +353,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
-  # rubocop:disable RSpec/MultipleMemoizedHelpers
+  # rubocop:disable-next RSpec/MultipleMemoizedHelpers
   describe 'cross-tenant isolation' do
     let(:platform_a) { create(:better_together_platform, :public) }
     let(:platform_b) { create(:better_together_platform, :public) }
@@ -381,6 +375,5 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       expect(described_class.new(steward_a, platform_b_page).destroy?).to be false
     end
   end
-  # rubocop:enable RSpec/MultipleMemoizedHelpers
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers, RSpec/NamedSubject

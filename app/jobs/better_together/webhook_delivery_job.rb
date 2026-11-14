@@ -24,7 +24,7 @@ module BetterTogether
     end
 
     # @param delivery_id [String] UUID of the WebhookDelivery record
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def perform(delivery_id)
       delivery = WebhookDelivery.find(delivery_id)
       endpoint = delivery.webhook_endpoint
@@ -48,7 +48,6 @@ module BetterTogether
     rescue ActiveRecord::RecordNotFound
       Rails.logger.warn("WebhookDeliveryJob: delivery #{delivery_id} not found, skipping")
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 

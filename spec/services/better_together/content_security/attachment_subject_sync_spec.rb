@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/VerifiedDoubles
+# rubocop:disable-next RSpec/VerifiedDoubles
 RSpec.describe BetterTogether::ContentSecurity::AttachmentSubjectSync, type: :service do
   let(:blob) { double('blob', id: 42) }
   let(:attachment) { double('attachment', attached?: true, blob:) }
@@ -97,4 +97,3 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentSubjectSync, type: :se
     end
   end
 end
-# rubocop:enable RSpec/VerifiedDoubles

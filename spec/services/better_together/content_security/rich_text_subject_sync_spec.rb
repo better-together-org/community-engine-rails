@@ -4,9 +4,8 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::ContentSecurity::RichTextSubjectSync, type: :service do
   let(:png_data) do
-    # rubocop:disable Layout/LineLength
+    # rubocop:disable-next Layout/LineLength
     "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\b\x06\x00\x00\x00\x1F\x15\xC4\x89\x00\x00\x00\nIDATx\x9Cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xB4\x00\x00\x00\x00IEND\xAEB`\x82"
-    # rubocop:enable Layout/LineLength
   end
 
   let(:blob) do

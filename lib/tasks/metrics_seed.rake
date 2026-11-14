@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :metrics do
     desc 'Seed sample metrics data for testing and demonstration'
@@ -288,4 +288,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

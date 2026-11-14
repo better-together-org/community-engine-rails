@@ -83,7 +83,7 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
     expect(page).to have_css('#new_platform_platform_name', wait: 10, visible: :all)
   end
 
-  # rubocop:todo Metrics/AbcSize
+  # rubocop:todo-next Metrics/AbcSize
   def fill_in_platform_identity_and_submit(suffix: SecureRandom.hex(4))
     fill_in 'new_platform_platform_name', with: "Tenant Platform #{suffix}"
     fill_in_trix_field 'new_platform_platform_description', with: 'A place where neighbors and friends support each other.'
@@ -91,7 +91,6 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
     click_submit
     expect(page).to have_css('#new_platform_domain_hostname', wait: 10, visible: :all)
   end
-  # rubocop:enable Metrics/AbcSize
 
   def skip_domain_step
     find('button[name="skip_step"]').click
@@ -128,7 +127,7 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
   # Runs axe against every step's rendered page and confirms the progress
   # step list's aria-current="step" tracks the active step, in the given
   # locale — the shared body for the primary "every step, every locale" spec.
-  # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:todo-next Metrics/AbcSize, Metrics/MethodLength
   def run_full_wizard_flow(locale)
     suffix = SecureRandom.hex(4)
 
@@ -151,7 +150,6 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
     check_step_accessibility('review_and_launch', locale)
     click_submit
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def check_step_accessibility(identifier, locale)
     # .trix-button-row is Trix's own generated toolbar markup (not application

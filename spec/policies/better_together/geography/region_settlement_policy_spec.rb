@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/VerifiedDoubles
+# rubocop:disable-next RSpec/VerifiedDoubles
 RSpec.describe BetterTogether::Geography::RegionSettlementPolicy, type: :policy do
   let(:user) { create(:better_together_user) }
   let(:record) { double('region_settlement', protected?: false) }
@@ -55,4 +55,3 @@ RSpec.describe BetterTogether::Geography::RegionSettlementPolicy, type: :policy 
     end
   end
 end
-# rubocop:enable RSpec/VerifiedDoubles

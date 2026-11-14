@@ -11,7 +11,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def index # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         # Eager-load translated attributes (string/text/rich text) and the
         # creator's string translations to avoid N+1 lookups when rendering
@@ -67,7 +67,6 @@ module BetterTogether
           @aggregated_request_matches = BetterTogether::Joatu::Request.none
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -106,7 +105,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def create # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         resource_instance(resource_params)
         authorize_resource
@@ -121,7 +120,7 @@ module BetterTogether
             if source_type == 'BetterTogether::Joatu::Request' && source_id.present?
               source = BetterTogether::Joatu::Request.find_by(id: source_id)
               if source
-                # rubocop:todo Metrics/BlockNesting
+                # rubocop:todo-next Metrics/BlockNesting
                 if source.respond_to?(:status) && !%w[open matched].include?(source.status)
                   Rails.logger.warn(
                     "Not creating response link: source #{source.id} status #{source.status} not respondable"
@@ -130,7 +129,6 @@ module BetterTogether
                   BetterTogether::Joatu::ResponseLink.create(source: source, response: @resource,
                                                              creator_id: helpers.current_person&.id)
                 end
-                # rubocop:enable Metrics/BlockNesting
               end
             end
 
@@ -157,7 +155,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -166,7 +163,7 @@ module BetterTogether
       # Build an offer prefilled from a source Request when source params are present
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def apply_source_prefill_offer(offer) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         return unless offer
 
@@ -195,7 +192,6 @@ module BetterTogether
         offer.response_links_as_response.build(source_type: source.class.to_s, source_id: source.id,
                                                creator_id: helpers.current_person&.id)
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 

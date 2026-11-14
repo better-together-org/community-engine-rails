@@ -19,9 +19,8 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy ics]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
@@ -180,7 +179,7 @@ module BetterTogether
       @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def build_event_hosts
       # Build from params if host_id and host_type are provided (e.g., from community/partner/venue)
       if params[:host_id].present? && params[:host_type].present? && event_host_class
@@ -201,7 +200,6 @@ module BetterTogether
       person.reload if person&.persisted?
       resource_instance.event_hosts.build(host: person)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def event_host_class
       param_type = params[:host_type]
@@ -398,7 +396,7 @@ module BetterTogether
       nil
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       set_resource_instance
       return if performed? # Exit early if 404 was already rendered
@@ -434,7 +432,6 @@ module BetterTogether
         redirect_to @event, alert: attendance.errors.full_messages.to_sentence
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # Override base controller method to add performance optimizations
     def set_resource_instance
@@ -449,7 +446,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/AbcSize
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def preload_event_associations! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize
       return unless @event
 
@@ -481,7 +478,6 @@ module BetterTogether
 
       self
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
 
     # Process recurrence_attributes from form and convert to IceCube rule

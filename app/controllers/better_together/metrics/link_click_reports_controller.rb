@@ -84,7 +84,7 @@ module BetterTogether
       end
 
       # GET /metrics/link_click_reports/:id/download
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         authorize @link_click_report, :download?
 
@@ -109,7 +109,6 @@ module BetterTogether
           redirect_to metrics_link_click_reports_path, alert: t('resources.download_failed')
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 

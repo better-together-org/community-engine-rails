@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/VerifiedDoubles
+# rubocop:disable-next RSpec/VerifiedDoubles
 RSpec.describe BetterTogether::ContentSecurity::Configuration, type: :service do
   let(:malware_scanning_config) do
     double('malware_scanning',
@@ -123,4 +123,3 @@ RSpec.describe BetterTogether::ContentSecurity::Configuration, type: :service do
     end
   end
 end
-# rubocop:enable RSpec/VerifiedDoubles

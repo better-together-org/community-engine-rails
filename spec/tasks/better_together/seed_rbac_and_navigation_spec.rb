@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'rake'
 
-# rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/DescribeClass, RSpec/SpecFilePathFormat
 RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
   before do
     Rake.application = Rake::Application.new
@@ -165,4 +165,3 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(invitation.reload.platform_role_id).to eq(analytics_role.id)
   end
 end
-# rubocop:enable RSpec/DescribeClass, RSpec/SpecFilePathFormat

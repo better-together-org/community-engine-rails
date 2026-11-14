@@ -40,7 +40,7 @@ module BetterTogether
         @definitions ||= {}
       end
 
-      # rubocop:disable Metrics/ParameterLists
+      # rubocop:disable-next Metrics/ParameterLists
       def register(key, type: :string, label: nil, hint: nil, default: nil, pattern: nil, validator: nil,
                    secret: false, env_fallback: nil, options: [], group_label: nil)
         key = key.to_s
@@ -51,7 +51,6 @@ module BetterTogether
         definitions[key] = Definition.new(key:, type:, label:, hint:, default:, pattern:, validator:, secret:,
                                           env_fallback:, options: Array(options), group_label:)
       end
-      # rubocop:enable Metrics/ParameterLists
 
       def find(key) = definitions[key.to_s]
       def any? = definitions.any?

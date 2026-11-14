@@ -80,7 +80,7 @@ module BetterTogether
         { imported_seeds: [], imported_records: [], unsupported_seeds: [], conflicted_seeds: [] }
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def classify_seed(seed_data, batches)
         result = ::BetterTogether::Seeds::Ingest.call(
           seed_data: seed_data,
@@ -105,7 +105,6 @@ module BetterTogether
 
         batches[:conflicted_seeds] << conflict
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def build_result(batches, planting)
         Result.new(
@@ -201,7 +200,7 @@ module BetterTogether
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable-next Metrics/MethodLength
       def conflicting_record_for(model_class, payload, record)
         importer = IMPORTER_MAP.fetch(payload[:type].to_s).new(
           connection: connection,
@@ -220,7 +219,6 @@ module BetterTogether
           exclude_id: record.id
         )
       end
-      # rubocop:enable Metrics/MethodLength
 
       def import_record(payload:, connection:, **)
         importer_class = IMPORTER_MAP[payload[:type].to_s]

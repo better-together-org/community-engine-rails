@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'Safety translation coverage' do
   let(:supported_locales) { %i[en fr es uk] }
   let(:required_keys) do
@@ -49,4 +49,3 @@ RSpec.describe 'Safety translation coverage' do
     I18n.t(key, locale:, default: '__missing_translation__') != '__missing_translation__'
   end
 end
-# rubocop:enable RSpec/DescribeClass

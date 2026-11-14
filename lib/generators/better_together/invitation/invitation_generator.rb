@@ -110,7 +110,7 @@ module BetterTogether
         say "Could not update #{invitable_model_path}: #{e.message}", :yellow
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def generate_routes
         routes_file_path = File.join(destination_root, 'config/routes.rb')
         return unless File.exist?(routes_file_path)
@@ -123,7 +123,6 @@ module BetterTogether
           create_new_invitable_resource_with_invitations(routes_file_path)
         end
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       def show_readme
         show_success_message

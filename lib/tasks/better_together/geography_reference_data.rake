@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :geography do
     desc 'Installs the curated geography reference dataset (Continents/Countries/States/' \
@@ -33,4 +33,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

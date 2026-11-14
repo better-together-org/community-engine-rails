@@ -26,7 +26,7 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
-    # rubocop:disable Style/ArgumentsForwarding
+    # rubocop:disable-next Style/ArgumentsForwarding
     def storage_proxy_url_for(attachment, **options)
       return unless attachment.present?
 
@@ -44,7 +44,6 @@ module BetterTogether
         **url_builder_options
       )
     end
-    # rubocop:enable Style/ArgumentsForwarding
 
     # Returns the base path configured for BetterTogether.
     def base_path
@@ -190,9 +189,8 @@ module BetterTogether
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
       @host_community ||= host_platform.community ||
-                          # rubocop:todo Layout/LineLength
+                          # rubocop:todo-next Layout/LineLength
                           ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
-                          # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
@@ -233,7 +231,7 @@ module BetterTogether
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
     # from translations and fall back to the Open Graph description when set.
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
                       meta_content_for(:meta_description)
@@ -251,7 +249,6 @@ module BetterTogether
 
       safe_join(tags, "\n")
     end
-    # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
       # Prevent indexing when debug mode is enabled
@@ -318,7 +315,7 @@ module BetterTogether
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
                    meta_content_for(:og_title)
@@ -348,7 +345,6 @@ module BetterTogether
 
       safe_join(tags, "\n")
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Generates a canonical link tag for the current request.
@@ -510,7 +506,7 @@ module BetterTogether
     # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
     # Value is the IANA identifier: "America/New_York"
     # Returns array of [display_name, iana_identifier] pairs
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def iana_timezone_options_for_select
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -532,11 +528,10 @@ module BetterTogether
       zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
            .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Returns commonly used timezone options sorted by UTC offset
     # Used for the "Common Timezones" priority optgroup
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def priority_timezone_options
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -560,7 +555,6 @@ module BetterTogether
       priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
                     .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Returns timezone options grouped by continent/region, excluding priority zones
     # Each group is sorted by UTC offset (ascending), then alphabetically
@@ -626,7 +620,7 @@ module BetterTogether
     # @param options [Hash] Standard Rails select options (include_blank, prompt, etc.)
     # @param html_options [Hash] HTML options for the select tag
     # @return [String] HTML select element with SlimSelect integration
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def iana_time_zone_select(form, attribute, selected_or_priority = nil, options = {}, html_options = {})
       # Determine selected timezone from various sources
       selected = if selected_or_priority.is_a?(String)
@@ -666,7 +660,6 @@ module BetterTogether
         merged_html_options
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def friendly_timezone_label(tz_id)
       rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }

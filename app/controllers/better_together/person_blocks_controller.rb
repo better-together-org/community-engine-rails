@@ -76,9 +76,8 @@ module BetterTogether
     end
 
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        # rubocop:todo Layout/IndentationWidth
-        @person_block = helpers.current_person.person_blocks.new(person_block_params)
-  # rubocop:enable Layout/IndentationWidth
+  # rubocop:todo-next Layout/IndentationWidth
+  @person_block = helpers.current_person.person_blocks.new(person_block_params)
 
   authorize @person_block # rubocop:todo Layout/IndentationConsistency
 

@@ -24,9 +24,8 @@ RSpec.describe BetterTogether::Positioned do # rubocop:disable RSpec/SpecFilePat
 
   after do
     ActiveRecord::Base.connection.drop_table :positioned_tests, if_exists: true
-    # rubocop:todo RSpec/RemoveConst
+    # rubocop:todo-next RSpec/RemoveConst
     Object.send(:remove_const, :PositionedTest) if Object.const_defined?(:PositionedTest)
-    # rubocop:enable RSpec/RemoveConst
   end
 
   it 'treats blank scope values as nil when computing max position' do

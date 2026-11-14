@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 module BetterTogether # :nodoc:
   RSpec.describe JoatuMailer do
     describe 'new_match' do
@@ -60,4 +60,3 @@ module BetterTogether # :nodoc:
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

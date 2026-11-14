@@ -658,7 +658,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     end
 
     context 'when creating an event with Eastern timezone while user is in Newfoundland timezone' do
-      # rubocop:disable RSpec/MultipleExpectations
+      # rubocop:disable-next RSpec/MultipleExpectations
       it 'interprets datetime values in the event timezone, not user timezone' do
         # Simulate user in Newfoundland time viewing the form
         # User enters "2026-03-15 14:00" in the form with Eastern timezone selected
@@ -703,7 +703,6 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.local_starts_at.hour).to eq(14)
         expect(event.local_ends_at.hour).to eq(16)
       end
-      # rubocop:enable RSpec/MultipleExpectations
     end
 
     context 'when updating an event timezone and datetime values' do

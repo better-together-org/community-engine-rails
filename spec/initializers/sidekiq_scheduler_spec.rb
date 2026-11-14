@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'Sidekiq Scheduler Configuration' do
   let(:engine_schedule_path) { BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml') }
   let(:host_schedule_path) do
@@ -287,4 +287,3 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module BetterTogether # :nodoc:
   RSpec.describe TranslationsController, :as_user do # rubocop:disable Metrics/BlockLength
     describe 'POST #translate' do # rubocop:disable Metrics/BlockLength
@@ -315,4 +315,3 @@ module BetterTogether # :nodoc:
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

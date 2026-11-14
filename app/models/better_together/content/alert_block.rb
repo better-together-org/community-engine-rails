@@ -12,8 +12,8 @@ module BetterTogether
       translates :body_text, type: :text
 
       store_attributes :content_data do
-        alert_level  String, default: 'info'
-        dismissible  String, default: 'false'
+        alert_level String, default: 'info'
+        dismissible String, default: 'false'
       end
 
       validates :alert_level, inclusion: { in: ALERT_LEVELS }
