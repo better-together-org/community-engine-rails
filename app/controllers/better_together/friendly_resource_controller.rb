@@ -79,7 +79,8 @@ module BetterTogether
       path = old_slug_redirect_path
       return false unless path
 
-      redirect_to [path, request.query_string.presence].compact.join('?'), status: :moved_permanently
+      redirect_to [path, request.query_string.presence].compact.join('?'), status: :moved_permanently,
+                                                                           allow_other_host: false
       true
     end
 
@@ -87,8 +88,13 @@ module BetterTogether
       return unless request.get? && action_name == 'show'
 
       current = Redirects::SlugHistory.current_slug_for(@resource, id_param)
-      path = current && request.path.sub(/#{Regexp.escape(id_param.to_s)}\z/, current)
-      path if path.present? && path != request.path
+      path = current && "#{request.path.delete_suffix(id_param.to_s)}#{ERB::Util.url_encode(current)}"
+      path if local_path?(path) && path != request.path
+    end
+
+    # Only a path on this site: it starts with one slash, never a scheme-relative or backslash form.
+    def local_path?(path)
+      path.present? && path.start_with?('/') && !path.start_with?('//', '/\\')
     end
 
     # Overridable hook for when the requested resource is absent from the
