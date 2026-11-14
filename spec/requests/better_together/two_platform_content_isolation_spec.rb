@@ -33,6 +33,19 @@ RSpec.describe 'Two-platform content isolation', :skip_host_setup do
     host! hostname
   end
 
+  describe 'renamed pages (slug history)' do
+    it 'does not resolve another platform\'s old slug', :aggregate_failures do
+      page = create(:better_together_page, platform: other_platform, privacy: 'public', published_at: 1.day.ago,
+                                           slug: 'old-beta-name', title: 'Renamed beta marker')
+      page.update!(slug: 'new-beta-name')
+
+      serve_from(alpha)
+      get better_together.render_page_path(path: 'old-beta-name', locale:)
+      expect(response).to have_http_status(:not_found)
+      expect(response.body).not_to include('Renamed beta marker')
+    end
+  end
+
   describe 'static pages with the same slug (colophon)' do
     let!(:alpha_page) do
       create(:better_together_page, platform: host_platform, privacy: 'public', published_at: 1.day.ago,
