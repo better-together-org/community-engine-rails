@@ -7,7 +7,7 @@ module BetterTogether
   # Credentials are encrypted at rest using Rails ActiveRecord::Encryption.
   # A Platform may have many StorageConfigurations but designates one as primary
   # via platforms.storage_configuration_id.
-  class StorageConfiguration < ApplicationRecord
+  class StorageConfiguration < ApplicationRecord # rubocop:disable Metrics/ClassLength
     self.table_name = 'better_together_storage_configurations'
 
     SERVICE_TYPES = %w[local amazon s3_compatible].freeze
@@ -90,18 +90,23 @@ module BetterTogether
 
     # Replaces the key pair only after the new pair passes a connection test, so a typo cannot lock
     # a platform out of its bucket. Returns true on success and adds an error on failure.
-    def rotate_credentials!(access_key_id:, secret_access_key:)
-      candidate = dup.tap { |c| c.assign_attributes(access_key_id:, secret_access_key:) }
+    # The key pair is an encrypted attribute; it is only ever assigned through the model.
+    def rotate_credentials!(**credentials)
+      candidate = dup.tap { |c| c.assign_attributes(credentials.slice(:access_key_id, :secret_access_key)) }
       result = Storage::ConnectionTest.new(candidate).call
       return rotate_failed(result) unless result.ok? && candidate.valid?
 
-      update!(access_key_id:, secret_access_key:, health_status: 'ok', health_message: 'ok',
-              health_checked_at: Time.current)
-      ActiveStorage::Blob.services.forget(storage_key) if ActiveStorage::Blob.services.respond_to?(:forget)
-      true
+      persist_rotation(candidate)
     end
 
     private
+
+    def persist_rotation(candidate) # rubocop:disable Naming/PredicateMethod
+      update!(candidate.slice(:access_key_id, :secret_access_key)
+                       .merge(health_status: 'ok', health_message: 'ok', health_checked_at: Time.current))
+      ActiveStorage::Blob.services.forget(storage_key) if ActiveStorage::Blob.services.respond_to?(:forget)
+      true
+    end
 
     def endpoint_host_safe
       BetterTogether::SafeFederationUrlValidator
