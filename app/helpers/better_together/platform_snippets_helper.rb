@@ -30,10 +30,14 @@ module BetterTogether
 
     private
 
-    # Consent-gated categories are not rendered here: they wait for the visitor's consent.
+    # Analytics and marketing snippets render only for visitors who consented to that category.
     def platform_snippets_for(platform)
-      @platform_snippets_for ||= platform.platform_snippets.enabled.where(consent_category: 'none')
-                                         .reorder(:position).to_a.select { |snippet| snippet_visible?(snippet) }
+      @platform_snippets_for ||= platform.platform_snippets.enabled.reorder(:position).to_a
+                                         .select { |snippet| snippet_visible?(snippet) && snippet_consented?(snippet) }
+    end
+
+    def snippet_consented?(snippet)
+      respond_to?(:consent_granted?) ? consent_granted?(snippet.consent_category) : snippet.consent_category == 'none'
     end
 
     def snippet_visible?(snippet)

@@ -1130,6 +1130,21 @@ es:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Aceptar todo
+      analytics: 'Analítica: nos ayuda a entender como se usa el sitio'
+      body: Este sitio desea usar código de analítica y marketing. Las funciones esenciales
+        siempre funcionan. Puede cambiar de opinión en cualquier momento.
+      choices_legend: Categorías opcionales
+      choose: Elegir
+      essential_note: Las funciones esenciales siempre están activas.
+      essential_only: Solo lo esencial
+      marketing: 'Marketing: medir y personalizar la comunicación'
+      policy_link: Lea la política de cookies.
+      preferences: Preferencias de cookies
+      save: Guardar mis opciones
+      saved: Sus opciones de privacidad se guardaron.
+      title: Sus opciones de privacidad
     contact_details:
       contact_information: Información de contacto
       title: Detalles de Contacto

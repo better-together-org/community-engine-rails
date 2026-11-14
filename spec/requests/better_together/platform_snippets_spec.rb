@@ -107,6 +107,56 @@ RSpec.describe 'Platform snippets', :no_auth do # rubocop:disable RSpec/Describe
     end
   end
 
+  describe 'consent gating' do
+    let(:consent_headers) do
+      lambda do |analytics:, marketing: false|
+        value = CGI.escape({ v: 1, analytics:, marketing: }.to_json)
+        { 'HTTP_COOKIE' => "#{BetterTogether::Consent::COOKIE}=#{value}" }
+      end
+    end
+
+    it 'holds analytics snippets and shows the banner until the visitor consents', :aggregate_failures do
+      snippet!(consent_category: 'analytics', content: 'analyticsRan()')
+      get page_path
+
+      expect(response.body).not_to include('analyticsRan()')
+      expect(response.body).to include('id="consent-banner"')
+      expect(response.body).to include('id="consent-accept-all"')
+    end
+
+    it 'renders the analytics snippet once analytics consent is stored', :aggregate_failures do
+      snippet!(consent_category: 'analytics', content: 'analyticsRan()')
+      get page_path, headers: consent_headers.call(analytics: true)
+
+      expect(response.body).to include('analyticsRan()')
+      expect(response.body).to include('id="consent-preferences-link"')
+    end
+
+    it 'keeps marketing snippets held when only analytics was granted' do
+      snippet!(consent_category: 'marketing', content: 'marketingRan()')
+      get page_path, headers: consent_headers.call(analytics: true)
+
+      expect(response.body).not_to include('marketingRan()')
+    end
+
+    it 'always renders consent-free snippets and shows no banner without gated code', :aggregate_failures do
+      snippet!(content: 'plainRan()')
+      get page_path
+
+      expect(response.body).to include('plainRan()')
+      expect(response.body).not_to include('id="consent-banner"')
+    end
+
+    it 'shows the banner when a registered provider needs consent' do
+      BetterTogether.register_consent_provider(:test) { true }
+      get page_path
+
+      expect(response.body).to include('id="consent-banner"')
+    ensure
+      BetterTogether::Consent.reset!
+    end
+  end
+
   describe 'administration' do
     let(:index_path) { better_together.platform_platform_snippets_path(platform, locale:) }
     let(:valid_params) do

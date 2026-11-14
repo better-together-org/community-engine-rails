@@ -79,6 +79,7 @@
       <%= content_for?(:custom_mobile_bar) ? yield(:custom_mobile_bar) : render('layouts/better_together/mobile_bar') %>
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
+      <%= render 'layouts/better_together/consent_banner' %>
       <%= render_platform_snippets(:body_end) %>
     </div>
   <% end %>
