@@ -1,5 +1,6 @@
-<% if @quotas.any? %>
-  <% @quotas.each do |quota| %>
+<% visible = visible_quotas(@quotas) %>
+<% if visible.any? %>
+  <% visible.each do |quota| %>
     <%= render 'better_together/quotas/usage_meter', quota: quota %>
   <% end %>
 <% else %>

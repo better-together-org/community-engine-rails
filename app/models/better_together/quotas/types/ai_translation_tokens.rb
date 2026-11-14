@@ -11,9 +11,6 @@ module BetterTogether
       class AiTranslationTokens < BetterTogether::Quotas::Type
         KEY = 'ai_translation_tokens'
 
-        # Provisional (product decision pending, not an engineering one).
-        PERSON_DEFAULT_TOKENS = 50_000
-
         class << self
           def key
             KEY
@@ -27,6 +24,16 @@ module BetterTogether
             'monthly'
           end
 
+          # Offered only when an AI provider is configured: RubyLLM has an OpenAI token
+          # (OPENAI_API_KEY / OPENAI_ACCESS_TOKEN) or an active robot is available to
+          # the platform (platform-specific or global). The key and ledger stay as
+          # 'ai_translation_tokens'; the wording is generic LLM usage so other AI
+          # features can draw on the same quota later.
+          def available_for?(platform)
+            RubyLLM.config.openai_api_key.present? ||
+              BetterTogether::Robot.available_for_platform(platform).exists?
+          end
+
           def measure(subject)
             subject.tokens_used
           end
@@ -35,10 +42,6 @@ module BetterTogether
           # are invisible to this ledger, a known, accepted gap, not fixed in this phase.
           def counts_toward_quota?(subject)
             subject.respond_to?(:status) ? subject.status == 'success' : true
-          end
-
-          def default_limit(_owner)
-            PERSON_DEFAULT_TOKENS
           end
         end
       end

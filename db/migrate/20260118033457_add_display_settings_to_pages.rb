@@ -7,6 +7,8 @@ class AddDisplaySettingsToPages < ActiveRecord::Migration[7.2]
 
     # Backfill existing pages to hide title by default
     # New pages will use the model default of true
+    return unless table_has_rows?(:better_together_pages)
+
     BetterTogether::Page.reset_column_information
     BetterTogether::Page.where(display_settings: {}).update_all(display_settings: { show_title: false })
   end

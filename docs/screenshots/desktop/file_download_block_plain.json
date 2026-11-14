@@ -1,0 +1,11 @@
+{
+  "name": "file_download_block_plain",
+  "device": "desktop",
+  "url": "/en/board-documents",
+  "title": "Board documents | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "file_download_block",
+  "flow": "plain",
+  "source_spec": "./spec/docs_screenshots/better_together/file_download_block_spec.rb"
+}

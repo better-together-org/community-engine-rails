@@ -79,10 +79,18 @@ module BetterTogether
       navigation_item.children? ? 'button' : nil
     end
 
+    # Real aria-* attributes for a dropdown toggle (data: {'aria-expanded'}
+    # would render the inert data-aria-expanded). Bootstrap keeps them in sync.
+    def dropdown_aria_attributes(navigation_item)
+      return {} unless navigation_item.children?
+
+      { expanded: 'false', haspopup: 'true' }
+    end
+
     def dropdown_data_attributes(navigation_item)
       data = { 'identifier' => navigation_item.identifier }
       if navigation_item.children?
-        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false',
+        data = data.merge({ 'bs-toggle' => 'dropdown',
                             'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
       end
 
@@ -254,10 +262,17 @@ module BetterTogether
     def route_names_for_select(nav_item = nil)
       options_for_select(
         BetterTogether::NavigationItem.route_names.map do |name, route|
-          [I18n.t("better_together.navigation_items.route_names.#{name}"), route]
+          [navigation_route_name_label(name), route]
         end,
         nav_item&.route_name
       )
+    end
+
+    # Every key in NavigationItem.route_names needs a translation in each locale;
+    # spec/i18n/navigation_route_names_spec.rb enforces that for the gem's own list.
+    # The humanized default only keeps host-app additions readable until they translate them.
+    def navigation_route_name_label(name)
+      I18n.t("better_together.navigation_items.route_names.#{name}", default: name.to_s.humanize)
     end
 
     def navigation_item_turbo_frame_target(navigation_item)

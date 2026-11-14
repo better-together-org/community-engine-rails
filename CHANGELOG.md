@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Security
+- Bump omniauth to 2.3.1 and require `>= 2.2.0` (GHSA-m27g-v28p-f9fx / CVE-2026-63183, host header injection). The GitHub strategy now sets `full_host` through `BetterTogether::OmniauthFullHost`, so a forged `Host` or `X-Forwarded-Host` cannot change the OAuth `redirect_uri`; only active platform domains are honoured, otherwise the host platform URL is used
+
+---
+
 ## [0.11.0] – 2026-10-15
 
 Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)

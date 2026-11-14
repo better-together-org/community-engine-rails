@@ -133,9 +133,9 @@ RSpec.describe BetterTogether::ShareButtonsHelper do
       expect(result).to include('fa-stack-1x')
     end
 
-    it 'has role=img for accessibility' do
+    it 'hides the decorative icon stack from assistive technology' do
       result = helper.send(:share_icon, 'email')
-      expect(result).to include('role="img"')
+      expect(result).to include('aria-hidden="true"')
     end
   end
 end
