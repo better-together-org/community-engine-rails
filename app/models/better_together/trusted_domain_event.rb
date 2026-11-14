@@ -8,7 +8,7 @@ module BetterTogether
       domain_added domain_updated domain_removed
       account_created membership_granted membership_request_approved
     ].freeze
-    VIAS = %w[google_oauth password_registration membership_request steward].freeze
+    VIAS = %w[oauth password_registration membership_request steward].freeze
 
     belongs_to :platform, class_name: '::BetterTogether::Platform'
     belongs_to :platform_trusted_domain, class_name: '::BetterTogether::PlatformTrustedDomain', optional: true
