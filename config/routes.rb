@@ -377,6 +377,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :person_data_exports, only: %i[create show]
         resources :person_deletion_requests, only: %i[create destroy]
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
+        patch 'settings/cookie_consent', to: 'cookie_consents#update', as: :settings_cookie_consent
         get 'settings/my_data', to: 'settings#my_data', as: :settings_my_data
         get 'settings/usage', to: 'settings#usage', as: :settings_usage
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
@@ -454,6 +455,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # Only logged-in Platform Managers have access to these routes
+        # Custom code is gated by its own permission, which the platform stewards do not hold.
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform_code') } do
+          scope path: 'host' do
+            resources :platforms, only: [] do
+              resources :platform_snippets, except: %i[show] do
+                member { patch :move }
+                collection { patch :toggle_all }
+              end
+            end
+          end
+        end
+
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'

@@ -6,12 +6,12 @@ classDiagram
     class BetterTogether__CalendarsController["CalendarsController"] {
       <<Controller>>
       models: Calendar
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__EventsController["EventsController"] {
       <<Controller>>
       models: Event
-      concerns: ChecksRequiredAgreements, EventSeriesActions, FramedIndex, InvitationSessionManagement +7
+      concerns: ChecksRequiredAgreements, ConsentCookieSync, EventSeriesActions, FramedIndex +8
     }
   }
 

@@ -1,0 +1,89 @@
+<%# Cookie consent controls for the signed-in person. Categories come from the cookie policy registry. %>
+<%# locals: (person:) %>
+<% categories = consent_categories_in_use %>
+<% preference = consent_preference_for(person) %>
+<% current = preference.current?(consent_policy_version) %>
+<% policy = BetterTogether::Page.i18n.find_by(slug: 'cookie-policy') %>
+
+<div id="cookie-consent-settings">
+  <% if categories.empty? %>
+    <p id="cookie-consent-none" class="mb-0"><%= t('better_together.consent.settings.none') %></p>
+  <% else %>
+    <%= form_with url: better_together.settings_cookie_consent_path(locale: I18n.locale), method: :patch,
+                  id: 'cookie-consent-form',
+                  data: { controller: 'better_together--consent-settings',
+                          action: 'submit->better_together--consent-settings#submit' },
+                  html: { 'data-better_together--consent-settings-policy-version-value' => consent_policy_version,
+                          'data-better_together--consent-settings-persist-url-value' => better_together.settings_cookie_consent_path(locale: I18n.locale),
+                          'data-better_together--consent-settings-days-value' => BetterTogether::Consent::COOKIE_DAYS } do %>
+      <p id="cookie-consent-stored" class="text-muted"
+         data-better_together--consent-settings-target="stored"
+         data-saved-template="<%= t('better_together.consent.settings.saved_on', date: '%{date}') %>">
+        <% if current %>
+          <%= t('better_together.consent.settings.saved_on', date: l(preference.decided_at.to_date, format: :long)) %>
+        <% elsif preference.stored? %>
+          <%= t('better_together.consent.settings.outdated') %>
+        <% else %>
+          <%= t('better_together.consent.settings.not_decided') %>
+        <% end %>
+      </p>
+
+      <fieldset id="cookie-consent-fieldset">
+        <legend class="h6"><%= t('better_together.consent.choices_legend') %></legend>
+
+        <div id="cookie-consent-essential-row" class="mb-3">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="cookie-consent-essential" role="switch" checked disabled
+                   aria-describedby="cookie-consent-essential-help">
+            <label class="form-check-label" for="cookie-consent-essential"><%= t('better_together.consent.settings.essential') %></label>
+          </div>
+          <div id="cookie-consent-essential-help" class="form-text ms-4">
+            <%= t('better_together.consent.settings.essential_help') %>
+            <% names = consent_segments_for('essential').flat_map { |segment| segment.cookies.map(&:name) } %>
+            <% if names.any? %><span class="text-nowrap">(<%= safe_join(names.map { |name| content_tag(:code, name) }, ', ') %>)</span><% end %>
+          </div>
+        </div>
+
+        <% categories.each do |category| %>
+          <div id="cookie-consent-<%= category %>-row" class="mb-3">
+            <%= hidden_field_tag "consent[#{category}]", '0', id: nil %>
+            <div class="form-check form-switch">
+              <%= check_box_tag "consent[#{category}]", '1', current && preference.decision[category],
+                                id: "cookie-consent-#{category}", class: 'form-check-input', role: 'switch',
+                                'data-better_together--consent-settings-target' => category,
+                                aria: { describedby: "cookie-consent-#{category}-help" } %>
+              <label class="form-check-label" for="cookie-consent-<%= category %>"><%= t("better_together.consent.#{category}") %></label>
+            </div>
+            <div id="cookie-consent-<%= category %>-help" class="form-text ms-4">
+              <% segments = consent_segments_for(category) %>
+              <% if segments.any? %>
+                <ul class="mb-0 ps-3">
+                  <% segments.each do |segment| %>
+                    <li><strong><%= segment.title %></strong><% if segment.description.present? %>: <%= segment.description %><% end %></li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <%= t("better_together.consent.settings.#{category}_help") %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </fieldset>
+
+      <div class="d-flex flex-wrap gap-2 mb-2">
+        <button type="submit" id="cookie-consent-save" class="btn btn-primary"><%= t('better_together.consent.save') %></button>
+        <button type="button" id="cookie-consent-withdraw" class="btn btn-outline-danger"
+                data-action="click->better_together--consent-settings#withdrawAll"><%= t('better_together.consent.settings.withdraw_all') %></button>
+      </div>
+      <p id="cookie-consent-status" class="small mb-2" role="status" aria-live="polite"
+         data-better_together--consent-settings-target="status"
+         data-saved-message="<%= t('better_together.consent.saved') %>"
+         data-error-message="<%= t('better_together.consent.settings.not_stored') %>"></p>
+    <% end %>
+  <% end %>
+
+  <p class="small text-muted mb-0">
+    <%= t('better_together.consent.settings.device_note') %>
+    <% if policy %><%= link_to t('better_together.consent.policy_link'), better_together.render_page_path(policy.slug), id: 'cookie-consent-policy-link' %><% end %>
+  </p>
+</div>

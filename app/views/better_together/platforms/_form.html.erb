@@ -51,7 +51,7 @@
 <%
   tab_error_counts = platform_form_tab_error_counts(platform)
   active_tab = platform_form_active_tab(tab_error_counts)
-  tab_ids = platform_form_tab_ids
+  tab_ids = platform_form_tab_ids(platform)
   show_storage_tab = platform.persisted? && policy(BetterTogether::StorageConfiguration.new(platform:)).index?
   tab_ids << 'storage' if show_storage_tab
 %>

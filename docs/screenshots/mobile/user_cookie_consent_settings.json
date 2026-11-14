@@ -1,0 +1,11 @@
+{
+  "name": "user_cookie_consent_settings",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "consent",
+  "flow": "user_cookie_consent",
+  "source_spec": "./spec/docs_screenshots/better_together/user_cookie_consent_spec.rb"
+}
