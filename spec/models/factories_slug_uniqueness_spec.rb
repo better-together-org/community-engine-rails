@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # Factory slug uniqueness verification tests
-# rubocop:disable RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/SpecFilePathFormat
 RSpec.describe FactoryBot, type: :factory do
   describe 'creates multiple instances without slug collisions' do
     it 'creates 5 unique communities' do
@@ -138,4 +138,3 @@ RSpec.describe FactoryBot, type: :factory do
     end
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat

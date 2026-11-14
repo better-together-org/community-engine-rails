@@ -6,96 +6,96 @@ classDiagram
     class BetterTogether__Billing__AgreementRequirementsController["Billing::AgreementRequirementsController"] {
       <<Controller>>
       models: Billing::AgreementRequirement
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__AllowancesController["Billing::AllowancesController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__CheckoutsController["Billing::CheckoutsController"] {
       <<Controller>>
-      concerns: Billing::CheckoutTaxPreview, Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession +3
+      concerns: Billing::CheckoutTaxPreview, Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement +4
     }
     class BetterTogether__Billing__CreditAccountsController["Billing::CreditAccountsController"] {
       <<Controller>>
       models: Billing::CreditAccount
-      concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +3
+      concerns: Billing::OwnerScoped, Billing::PersonLookup, ConsentCookieSync, InvitationSessionManagement +4
     }
     class BetterTogether__Billing__CreditGrantsController["Billing::CreditGrantsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +3
+      concerns: Billing::OwnerScoped, Billing::PersonLookup, ConsentCookieSync, InvitationSessionManagement +4
     }
     class BetterTogether__Billing__CreditsController["Billing::CreditsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__EntitlementsController["Billing::EntitlementsController"] {
       <<Controller>>
       models: Billing::Entitlement
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__OfflinePaymentsController["Billing::OfflinePaymentsController"] {
       <<Controller>>
       models: Billing::OfflinePayment
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__OrderClaimsController["Billing::OrderClaimsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__OrdersController["Billing::OrdersController"] {
       <<Controller>>
       models: Billing::Order
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__PlanGrantsController["Billing::PlanGrantsController"] {
       <<Controller>>
       models: Billing::PlanGrant
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__PlansController["Billing::PlansController"] {
       <<Controller>>
       models: Billing::Plan
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__ProcessorOptionsController["Billing::ProcessorOptionsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__ProcessorSettingsController["Billing::ProcessorSettingsController"] {
       <<Controller>>
       models: Billing::ProcessorSetting
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__PromotionRedemptionsController["Billing::PromotionRedemptionsController"] {
       <<Controller>>
       models: Billing::PromotionRedemption
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__PromotionsController["Billing::PromotionsController"] {
       <<Controller>>
       models: Billing::Promotion
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__SaleRefundsController["Billing::SaleRefundsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__SalesController["Billing::SalesController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__SubscribersController["Billing::SubscribersController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__SubscriptionsController["Billing::SubscriptionsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: Billing::OwnerScoped, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__Billing__WalkUpSalesController["Billing::WalkUpSalesController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +3
+      concerns: Billing::OwnerScoped, Billing::PersonLookup, ConsentCookieSync, InvitationSessionManagement +4
     }
   }
 

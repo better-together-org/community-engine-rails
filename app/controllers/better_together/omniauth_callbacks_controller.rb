@@ -4,7 +4,7 @@ module BetterTogether
   # Handles OAuth authentication callbacks from external providers (GitHub, Facebook, etc.).
   # Creates or updates PersonPlatformIntegration records and signs in users.
   # Enforces required agreement acceptance before allowing authenticated access.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     include InvitationSessionManagement
 
@@ -67,7 +67,7 @@ module BetterTogether
     # Redirect user after OAuth based on agreements status
     # @param user [User] the user to redirect
     # @param kind [String] OAuth provider name (e.g., 'Github')
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def redirect_after_oauth(user, kind)
       return unless user.present?
       return redirect_unconfirmed_oauth_signup if !user.confirmed? && !@was_signed_in
@@ -103,7 +103,6 @@ module BetterTogether
         redirect_to after_sign_in_path_for(user), allow_other_host: false
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # Provider did not verify the email: Devise already sent its confirmation email, so no session is started
     def redirect_unconfirmed_oauth_signup
@@ -113,7 +112,7 @@ module BetterTogether
 
     # Handle redirect when user has unaccepted agreements
     # @param user [User] the user with unaccepted agreements
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def handle_unaccepted_agreements(user)
       if @was_signed_in
         Rails.logger.debug '[OAUTH DEBUG] User was already signed in - NOT signing in again' if ENV['DEBUG_OAUTH']
@@ -129,7 +128,6 @@ module BetterTogether
       flash[:alert] = t('better_together.agreements.status.acceptance_required')
       redirect_to better_together.agreements_status_path(locale: I18n.locale)
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Complete onboarding for OAuth users (community membership + invitations)
     def complete_oauth_user_onboarding(user)
@@ -194,7 +192,7 @@ module BetterTogether
     end
 
     # Prevent OAuth signup when platform requires invitation
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def check_invitation_requirement
       return unless new_oauth_signup_attempt?
       return unless helpers.host_platform&.requires_invitation?
@@ -205,11 +203,10 @@ module BetterTogether
       redirect_to new_user_session_path(locale: I18n.locale),
                   allow_other_host: false
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     # Detect if this is a new user signup vs existing user OAuth connection
     # @return [Boolean] true if new signup, false if existing user or returning OAuth user
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def new_oauth_signup_attempt?
       return false if current_user.present? # Signed-in user connecting OAuth
       return false if person_platform_integration&.persisted? # Returning OAuth user with existing integration
@@ -222,7 +219,6 @@ module BetterTogether
       # treat as new signup attempt requiring invitation validation
       true
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # Check if there's a valid, unexpired invitation in the session
     # @return [Boolean] true if valid invitation exists
@@ -284,7 +280,7 @@ module BetterTogether
       @local_platform ||= BetterTogether::OmniauthFullHost.domain_for(request.env)&.platform
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def set_user
       return unless auth.present?
 
@@ -318,7 +314,6 @@ module BetterTogether
 
       redirect_to redirect_path, allow_other_host: false
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # def github
     #   @user = ::BetterTogether.user_class.from_omniauth(request.env['omniauth.auth'])
@@ -340,5 +335,4 @@ module BetterTogether
       new_user_session_path(locale: I18n.locale)
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

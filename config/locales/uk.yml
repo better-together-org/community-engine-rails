@@ -2579,6 +2579,39 @@ uk:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Прийняти все
+      analytics: 'Аналітика: допомагає зрозуміти, як використовується сайт'
+      body: Цей сайт хоче використовувати код аналітики та маркетингу. Основні функції
+        працюють завжди. Ви можете змінити рішення будь-коли.
+      choices_legend: Необов’язкові категорії
+      choose: Вибрати
+      essential_note: Основні функції завжди увімкнені.
+      essential_only: Лише необхідне
+      marketing: 'Маркетинг: вимірювання та персоналізація комунікації'
+      policy_link: Прочитати політику щодо файлів cookie.
+      preferences: Налаштування файлів cookie
+      save: Зберегти мій вибір
+      saved: Ваш вибір щодо конфіденційності збережено.
+      settings:
+        analytics_help: Допомагають платформі зрозуміти, як використовується сайт.
+        device_note: Ваш вибір прив’язаний до облікового запису й застосовується щоразу,
+          коли ви входите.
+        essential: Необхідні файли cookie (завжди увімкнені)
+        essential_help: Потрібні, щоб ви могли увійти, для безпеки сайту та щоб запам’ятати
+          цей вибір.
+        marketing_help: Вимірюють і персоналізують комунікацію.
+        none: Ця платформа наразі не використовує необов’язкових файлів cookie, тож
+          вибирати нічого. Необхідні файли cookie завжди увімкнені.
+        not_decided: Ви ще не зробили вибір. Доти використовуються лише необхідні
+          файли cookie.
+        not_stored: Збережено на цьому пристрої, але не вдалося зберегти в обліковому
+          записі. Спробуйте ще раз.
+        outdated: З часу вашого останнього вибору платформа змінила запитувані згоди.
+          Оберіть знову.
+        saved_on: Ваш вибір збережено %{date}.
+        withdraw_all: Відкликати всі необов’язкові згоди
+      title: Ваш вибір щодо конфіденційності
     contact_details:
       contact_information: Контактна інформація
       title: Контактні деталі
@@ -2900,6 +2933,57 @@ uk:
       sidebar:
         conversations: Розмови
         new: Нова
+    cookie_policy:
+      categories:
+        analytics:
+          description: Допомагають нам зрозуміти, як використовується платформа, щоб
+            її покращувати.
+          title: Аналітичні файли cookie
+        marketing:
+          description: Вимірюють і персоналізують комунікацію.
+          title: Маркетингові файли cookie
+      choices_optional: Необов’язкові файли cookie вимкнені, доки ви не погодитеся.
+        Ви можете змінити або відкликати вибір будь-коли кнопкою налаштувань cookie
+        або, увійшовши, в налаштуваннях.
+      columns:
+        duration: Тривалість
+        name: Назва cookie
+        purpose: Призначення
+        type: Тип
+      core:
+        consent:
+          cookies:
+            consent: Зберігає ваш вибір згоди (аналітика й маркетинг) та версію політики,
+              на яку ви відповіли
+          description: Запам’ятовують ваш вибір, щоб не питати щоразу.
+          title: Ваш вибір щодо cookie
+        durations:
+          consent_days: 180 днів, подовжується щоразу
+          session: Сеанс
+          session_inactivity: Сеанс (6 годин неактивності)
+          two_weeks: 2 тижні
+        session:
+          cookies:
+            csrf: Токен безпеки, що захищає від міжсайтової підробки запитів (CSRF)
+            remember: Залишає вас у системі, коли ви обираєте «Запам’ятати мене» під
+              час входу
+            session: Підтримує сеанс входу та зберігає тимчасові дані, як-от токени
+              запрошень, мову та налаштування налагодження
+          description: Підтримують ваш вхід і захищають платформу від підроблених
+            запитів.
+          title: Вхід і безпека
+      last_updated: 'Останнє оновлення:'
+      manage_choices: Керуйте вибором файлів cookie в налаштуваннях
+      optional_intro: Наведені нижче необов’язкові файли cookie використовуються лише
+        з вашої згоди. Ви можете змінити рішення будь-коли кнопкою налаштувань cookie
+        або, увійшовши, в налаштуваннях.
+      party:
+        first: Власні
+        third: Сторонні
+      privacy_link: Інформація про конфіденційність від %{provider}
+      third_party_listed: Ця платформа використовує сторонні сервіси, перелічені нижче.
+        Вони встановлюють файли cookie або сховище браузера лише так, як описано.
+      version: версія політики %{version}
     default_member_name: Учасник
     device_permissions:
       location:
@@ -5111,6 +5195,103 @@ uk:
         accepted: Прийнято
         expired: Закінчився термін
         pending: Очікує
+    platform_snippets:
+      applies_to_options:
+        all: Усім
+        signed_out: Лише відвідувачам без входу
+      audit_actions:
+        created: Створено
+        destroyed: Видалено
+        disabled: Вимкнено
+        enabled: Увімкнено
+        updated: Оновлено
+      consent_categories:
+        analytics: Аналітика
+        marketing: Маркетинг
+        none: Не потрібна
+      destroyed: Фрагмент видалено.
+      edit:
+        subtitle: Для %{platform_name}.
+        title: Змінити %{name}
+      errors:
+        invalid_meta_markup: має містити метатеги або посилання preconnect
+        invalid_script_markup: має бути чистим JavaScript без тегів script чи коментарів
+          HTML
+        invalid_src: має бути адресою https
+        invalid_style_markup: має бути чистим CSS без тегів style чи коментарів HTML
+        meta_requires_head: метатеги можуть бути лише в head
+        origin_not_allowed: походження %{origin} не дозволене налаштуваннями безпеки
+          скриптів цієї платформи
+      form:
+        allow_origin: Дозволити походження цього скрипта в політиці безпеки вмісту
+        allow_origin_hint: Додає походження до дозволених джерел скриптів цієї платформи.
+        applies_to: Показувати
+        cancel: Скасувати
+        consent_category: Згода відвідувача
+        consent_hint: Фрагменти аналітики й маркетингу утримуються, доки відвідувачі
+          не дадуть згоду.
+        content: Код
+        content_hint: Вбудовані скрипти виконуються з nonce безпеки сторінки. Не додавайте
+          теги script чи style. Для типу meta лише метатеги та посилання preconnect.
+        enabled: Увімкнено
+        enabled_hint: Залиште вимкненим, доки не перевірите фрагмент.
+        kind: Тип
+        location: Розташування
+        name: Назва
+        notes: Нотатки
+        save: Зберегти фрагмент
+        src: Адреса скрипта
+        src_hint: Лише для зовнішніх скриптів. Адреса має використовувати https, а
+          її походження має бути дозволене в налаштуваннях безпеки платформи.
+        warning: Цей код виконується в браузері кожного відвідувача. Перевірте в безпечному
+          режимі й тримайте фрагмент вимкненим, доки не будете готові.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Останні зміни
+        back_to_platform: Назад до налаштувань платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей фрагмент?
+        disabled_label: Вимкнено
+        edit_btn: Змінити
+        enabled_label: Увімкнено
+        header_actions: Дії
+        header_consent: Згода
+        header_kind: Тип
+        header_location: Розташування
+        header_name: Назва
+        header_status: Стан
+        kill_switch_hint: Додайте ?safe_mode=1 до адреси сторінки, щоб побачити сайт
+          без фрагментів.
+        kill_switch_off: Усі фрагменти вимкнено.
+        kill_switch_on: Фрагменти працюють.
+        kill_switch_title: Усі фрагменти
+        move_down: Вниз
+        move_up: Вгору
+        new_btn: Новий фрагмент
+        none_yet: Фрагментів ще немає.
+        subtitle: Скрипти, стилі та метатеги, додані на кожну сторінку %{platform_name}.
+        table_aria: Фрагменти власного коду
+        title: Власний код
+        turn_off: Вимкнути всі
+        turn_on: Увімкнути всі
+        warning: Фрагменти виконуються в браузері кожного відвідувача й можуть читати
+          те, що він бачить і вводить на цій платформі. Додавайте лише перевірений
+          код.
+      kinds:
+        html_meta: Метатеги
+        script_inline: Вбудований скрипт
+        script_src: Зовнішній скрипт
+        style_inline: Вбудований стиль
+      locations:
+        body_end: Кінець body
+        body_start: Початок body
+        head_end: Кінець head
+        head_start: Початок head
+      new:
+        subtitle: Для %{platform_name}. Нові фрагменти спочатку вимкнені.
+        title: Новий фрагмент
+      saved: Фрагмент збережено.
+      switch_updated: Перемикач фрагментів оновлено.
     platform_trusted_domains:
       created: Довірений домен додано.
       destroyed: Довірений домен видалено. Наявні облікові записи та членства не змінюються.
@@ -5223,6 +5404,10 @@ uk:
           й натисніть Enter.
         csp_img_src_text_label: Дозволені зовнішні джерела зображень
         csp_title: Безпека / вбудовування CSP
+        custom_code_hint: Додавайте скрипти, стилі та метатеги на кожну сторінку.
+          Потрібен дозвіл керувати кодом платформи.
+        custom_code_link: Керувати власним кодом
+        custom_code_title: Власний код
         custom_css_hint: Розширене налаштування. Стилі, додані тут, завантажуються
           після теми та мають над нею перевагу.
         custom_css_title: Власний CSS
@@ -5279,6 +5464,16 @@ uk:
         title: Зареєструвати зовнішню платформу
       show:
         new_invitation: Нове запрошення
+      storage_tab:
+        bucket: Контейнер
+        description: Де зберігаються файли, завантажені на цю платформу. Коли активна
+          конфігурація сховища, файли зберігаються в окремому контейнері платформи.
+        health: Стан з’єднання
+        manage: Керувати конфігураціями сховища
+        service_type: Тип сервісу
+        shared_default: Типове налаштування інсталяції
+        source: Активна конфігурація
+        title: Сховище файлів
       tabs:
         access: Доступ і приватність
         appearance: Вигляд
@@ -5288,6 +5483,7 @@ uk:
         features: Функції та квоти
         integrations: Інтеграції
         security: Безпека
+        storage: Сховище
       theme:
         allow_user_themes: Дозволити кожному обирати власну тему
         allow_user_themes_hint: Якщо увімкнено, користувачі, що увійшли в систему,
@@ -5926,6 +6122,10 @@ uk:
           description: Керуйте користувачами, яких ви заблокували від взаємодії з
             вами.
           title: Заблоковані люди
+        cookie_consent:
+          description: Оберіть, які необов’язкові файли cookie може використовувати
+            ця платформа. Ваш вибір зберігається в обліковому записі.
+          title: Згода на файли cookie
         developer:
           apps:
             client_id_label: ID клієнта
@@ -6048,6 +6248,7 @@ uk:
         tabs:
           account: Обліковий запис
           blocked_people: Заблоковані люди
+          cookie_consent: Згода на файли cookie
           developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
@@ -6183,15 +6384,15 @@ uk:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "«%{name}» тепер сховище файлів цієї платформи. Нові
+        завантаження використовують його одразу; наявні файли залишаються на місці."
+      activated_with_restart: "«%{name}» активовано. Нові завантаження використовують
+        її одразу; інші процеси підхоплять її приблизно за 30 секунд."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'З’єднання з «%{name}» не вдалося: %{message}'
+      connection_ok: З’єднання з «%{name}» успішне.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -6200,15 +6401,21 @@ uk:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Помилка
+        ok: Справне
+        unknown: Не перевірено
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: Активувати цю конфігурацію? Нові завантаження використовують
+          її одразу, а інші процеси підхоплять її приблизно за 30 секунд. Наявні файли
+          залишаються на старому сховищі; міграція блобів виконується окремо вручну.
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
-        activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+        activation_restart_note: Активація нової конфігурації негайно перемикає сховище
+          в поточному процесі. Інші процеси застосунку підхоплять зміну приблизно
+          за 30 секунд.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -6227,6 +6434,7 @@ uk:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: Стан
         header_name: Name
         header_status: Status
         header_type: Type
@@ -6239,6 +6447,7 @@ uk:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Перевірити з’єднання
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive

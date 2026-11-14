@@ -23,7 +23,7 @@ module BetterTogether
       # [entitlement id, quota type] => the owner's usage, for each allowance a live entitlement carries.
       def meters_for(entitlements)
         entitlements.select(&:live?).flat_map { |entitlement| entitlement.grants.applied.allowances.map { |grant| [entitlement, grant] } }
-                                    .to_h { |entitlement, grant| [[entitlement.id, grant.quota_type], Entitlements::Meter.for(owner: entitlement.beneficiary, type: grant.quota_type)] }
+                    .to_h { |entitlement, grant| [[entitlement.id, grant.quota_type], Entitlements::Meter.for(owner: entitlement.beneficiary, type: grant.quota_type)] }
       end
     end
   end

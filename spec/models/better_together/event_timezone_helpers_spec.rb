@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'Event timezone helpers' do
   let(:event) do
     create(:better_together_event,
@@ -125,4 +125,3 @@ RSpec.describe 'Event timezone helpers' do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

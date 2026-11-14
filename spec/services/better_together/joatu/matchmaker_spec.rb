@@ -96,9 +96,8 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
         request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open',
                                                                        target: target_person))
         offer   = with_category(create(:better_together_joatu_offer,   creator: creator_b, status: 'open',
-                                                                       # rubocop:todo Layout/LineLength
+                                                                       # rubocop:todo-next Layout/LineLength
                                                                        target_type: request.target_type, target_id: nil))
-        # rubocop:enable Layout/LineLength
 
         expect(described_class.match(request)).to include(offer)
       end

@@ -75,7 +75,7 @@ module BetterTogether
 
         def payments
           request.order.payments.select { |payment| Billing.local_method?(payment.processor) && payment.refundable_cents.positive? }
-                                .sort_by(&:created_at).reverse
+                 .sort_by(&:created_at).reverse
         end
       end
     end

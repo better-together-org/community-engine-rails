@@ -6,27 +6,27 @@ classDiagram
     class BetterTogether__ConversationsController["ConversationsController"] {
       <<Controller>>
       models: Conversation
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +3
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +4
     }
     class BetterTogether__MessagesController["MessagesController"] {
       <<Controller>>
       models: Message
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +2
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__ReportsController["ReportsController"] {
       <<Controller>>
       models: Report
-      concerns: BotProtectedSubmissions, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
+      concerns: BotProtectedSubmissions, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +4
     }
     class BetterTogether__Safety__CasesController["Safety::CasesController"] {
       <<Controller>>
       models: Safety::Case
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__Safety__NotesController["Safety::NotesController"] {
       <<Controller>>
       models: Safety::Note
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
   }
 

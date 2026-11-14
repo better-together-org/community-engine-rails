@@ -1,0 +1,11 @@
+{
+  "name": "platform_storage_configurations",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/storage_configurations",
+  "title": "Storage Configurations | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_storage",
+  "flow": "platform_storage_configurations",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_storage_tab_spec.rb"
+}

@@ -8,6 +8,7 @@ module BetterTogether
     include Pundit::Authorization
     include InvitationSessionManagement
     include MentionPrefetch
+    include ConsentCookieSync
     include ThirdPartyTracking
     include Rails.application.routes.mounted_helpers
 
@@ -29,6 +30,7 @@ module BetterTogether
 
     before_action :set_platform_invitation
     before_action :check_platform_privacy
+    before_action :sync_consent_cookie
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
@@ -85,7 +87,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Only proceed if there's an invitation token in the URL or already in the session.
       return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
@@ -118,7 +120,6 @@ module BetterTogether
         session.delete(:platform_invitation_expires_at)
       end
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     def current_invitation

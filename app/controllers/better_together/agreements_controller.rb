@@ -47,7 +47,7 @@ module BetterTogether
       authorize @agreement unless pundit_policy_authorized?
     end
 
-    # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:todo-next Metrics/AbcSize, Metrics/MethodLength
     def accept
       unless current_user.person.present?
         render json: { error: t('better_together.agreements.accept_action.no_participant') }, status: :unprocessable_entity
@@ -74,7 +74,6 @@ module BetterTogether
         message: t('better_together.agreements.accept_action.accepted')
       }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     protected
 

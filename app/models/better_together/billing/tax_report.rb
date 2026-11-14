@@ -22,7 +22,7 @@ module BetterTogether
     #   (a facilitator, whose tax is not on the seller's return).
     #
     #   TaxReport.new(platform:, from:, to:, owner: TaxReport::Owner.all, interval: 'month').call
-    # rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
     class TaxReport
       SALE_STATUSES = %w[paid partially_refunded refunded].freeze
       REFUND_STATUSES = %w[succeeded recorded].freeze
@@ -455,6 +455,5 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
   end
 end

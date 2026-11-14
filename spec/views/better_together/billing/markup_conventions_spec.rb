@@ -16,7 +16,7 @@ RSpec.describe 'Billing template conventions' do # rubocop:disable RSpec/Describ
     uncaptioned = files.flat_map do |file|
       lines = lines_of(file)
       lines.each_index.select { |i| lines[i].include?('<table') && lines[i, 3].none? { |line| line.include?('<caption') } }
-                      .map { |i| "#{File.basename(file)}:#{i + 1}" }
+           .map { |i| "#{File.basename(file)}:#{i + 1}" }
     end
 
     expect(uncaptioned).to be_empty

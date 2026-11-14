@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T20:38:47Z",
+  "generated_at": "2026-11-14T21:04:29Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -2510,6 +2510,7 @@
             "BetterTogether::Invitation"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2527,6 +2528,7 @@
             "BetterTogether::OauthApplication"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2544,6 +2546,7 @@
           ],
           "concerns": [
             "BetterTogether::AppearancePreferenceParams",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2560,6 +2563,7 @@
             "BetterTogether::PersonAccessGrant"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2576,6 +2580,7 @@
             "BetterTogether::PersonBlock"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2593,6 +2598,7 @@
             "BetterTogether::PersonChecklistItem"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2609,6 +2615,7 @@
             "BetterTogether::PersonCommunityMembership"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2625,6 +2632,7 @@
             "BetterTogether::PersonDataExport"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2641,6 +2649,7 @@
             "BetterTogether::PersonDeletionRequest"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2657,6 +2666,7 @@
             "BetterTogether::PersonLinkedSeed"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2673,6 +2683,7 @@
             "BetterTogether::PersonLink"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2689,6 +2700,7 @@
             "BetterTogether::PersonPlatformIntegration"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2705,6 +2717,7 @@
             "BetterTogether::PersonPlatformMembership"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2719,6 +2732,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2735,6 +2749,7 @@
             "BetterTogether::ResourcePermission"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2751,6 +2766,7 @@
             "BetterTogether::Role"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2767,6 +2783,7 @@
             "BetterTogether::User"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -2878,6 +2895,31 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Person"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PersonSeedsController",
+            "PersonPlatformMembershipsController",
+            "PersonPlatformIntegrationsController",
+            "PersonLinksController",
+            "PersonLinkedSeedsController",
+            "PersonDeletionRequestsController",
+            "PersonDataExportsController",
+            "PersonCommunityMembershipsController",
+            "PersonChecklistItemsController",
+            "PersonBlocksController",
+            "PersonAccessGrantsController",
+            "InvitationsController",
+            "OauthApplicationsController",
+            "UsersController",
+            "RolesController",
+            "ResourcePermissionsController",
+            "PeopleController"
           ]
         },
         {
@@ -4081,6 +4123,12 @@
           "from": "BetterTogether::PlatformTrustedDomain",
           "to": "BetterTogether::Person",
           "label": "created_by (created_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Person",
+          "label": "updated_by (updated_by_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -5608,6 +5656,14 @@
               "string"
             ],
             [
+              "health_message",
+              "string"
+            ],
+            [
+              "health_status",
+              "string"
+            ],
+            [
               "name",
               "string"
             ],
@@ -5970,6 +6026,7 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenAuthorization",
             "BetterTogether::InvitationTokenSession",
@@ -5986,6 +6043,7 @@
           "superclass": "BetterTogether::WebhookEndpointsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6000,6 +6058,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6014,6 +6073,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6029,6 +6089,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::BotProtectedSubmissions",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6045,6 +6106,7 @@
             "BetterTogether::NavigationArea"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6061,6 +6123,7 @@
             "BetterTogether::NavigationItem"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6077,6 +6140,7 @@
             "BetterTogether::PlatformConnection"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6093,6 +6157,7 @@
             "BetterTogether::PlatformInvitation"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6110,6 +6175,7 @@
             "BetterTogether::Platform"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6125,6 +6191,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::AppearancePreferenceParams",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6139,6 +6206,7 @@
           "superclass": "BetterTogether::WizardsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6154,6 +6222,7 @@
           "superclass": "BetterTogether::WizardStepsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6171,6 +6240,7 @@
             "BetterTogether::Sitemap"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6187,6 +6257,7 @@
             "BetterTogether::StorageConfiguration"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6203,6 +6274,7 @@
             "BetterTogether::WizardStep"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6220,6 +6292,7 @@
             "BetterTogether::Wizard"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -6342,6 +6415,31 @@
           "capability": "Checksrequiredagreements",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "CommunitiesController"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "StorageConfigurationsController",
+            "SitemapsController",
+            "WizardsController",
+            "SettingsController",
+            "PlatformInvitationsController",
+            "WizardStepsController",
+            "MembershipRequestsController",
+            "HubController",
+            "HostDashboardController",
+            "SetupWizardController",
+            "SetupWizardStepsController",
+            "PlatformConnectionsController",
+            "CommunityWebhookEndpointsController",
+            "PlatformsController",
+            "NavigationItemsController",
+            "NavigationAreasController",
             "CommunitiesController"
           ]
         },
@@ -8073,6 +8171,18 @@
         },
         {
           "from": "BetterTogether::PlatformTrustedDomain",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippetAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -13621,6 +13731,7 @@
             "BetterTogether::CallForInterest"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13637,6 +13748,7 @@
             "BetterTogether::Category"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13653,6 +13765,7 @@
             "BetterTogether::Content::Block"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13670,6 +13783,7 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13688,6 +13802,7 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::FramedIndex",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -13705,6 +13820,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13719,6 +13835,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13735,6 +13852,7 @@
             "BetterTogether::Upload"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -13896,6 +14014,22 @@
           "included_by": [
             "Page",
             "Post"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "TranslationsController",
+            "StaticPagesController",
+            "Content::BlocksController",
+            "UploadsController",
+            "PostsController",
+            "PagesController",
+            "CategoriesController",
+            "CallsForInterestController"
           ]
         },
         {
@@ -18968,6 +19102,7 @@
             "BetterTogether::Calendar"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -18985,6 +19120,7 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::EventSeriesActions",
             "BetterTogether::FramedIndex",
             "BetterTogether::InvitationSessionManagement",
@@ -19068,6 +19204,16 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "EventsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventsController",
+            "CalendarsController"
           ]
         },
         {
@@ -20374,6 +20520,7 @@
             "BetterTogether::Conversation"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -20392,6 +20539,7 @@
             "BetterTogether::Message"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -20410,6 +20558,7 @@
           ],
           "concerns": [
             "BetterTogether::BotProtectedSubmissions",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -20427,6 +20576,7 @@
             "BetterTogether::Safety::Case"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -20443,6 +20593,7 @@
             "BetterTogether::Safety::Note"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -20484,6 +20635,19 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Message"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Safety::NotesController",
+            "Safety::CasesController",
+            "ReportsController",
+            "MessagesController",
+            "ConversationsController"
           ]
         },
         {
@@ -24138,6 +24302,7 @@
             "BetterTogether::Agreement"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24153,6 +24318,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24169,6 +24335,7 @@
             "BetterTogether::ChecklistItem"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24185,6 +24352,7 @@
             "BetterTogether::Checklist"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24201,6 +24369,7 @@
             "BetterTogether::Joatu::Agreement"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24218,6 +24387,7 @@
             "BetterTogether::Joatu::Offer"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24235,6 +24405,7 @@
             "BetterTogether::Joatu::Request"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24252,6 +24423,7 @@
             "BetterTogether::Seed"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -24321,6 +24493,22 @@
             "Joatu::PersonAccessGrantRequest",
             "Joatu::MembershipRequest",
             "Joatu::ConnectionRequest"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "SeedsController",
+            "AgreementsStatusController",
+            "ChecklistsController",
+            "ChecklistItemsController",
+            "AgreementsController",
+            "Joatu::RequestsController",
+            "Joatu::OffersController",
+            "Joatu::AgreementsController"
           ]
         },
         {
@@ -26123,6 +26311,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -26137,6 +26326,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -26154,6 +26344,7 @@
             "BetterTogether::Search"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -26169,6 +26360,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -26197,6 +26389,18 @@
             "Metrics::LinkClick",
             "Metrics::LinkCheckerReport",
             "Metrics::BillingReport"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ViewPreferencesController",
+            "SearchController",
+            "NotificationsController",
+            "HelpPreferencesController"
           ]
         },
         {
@@ -26726,6 +26930,7 @@
             "BetterTogether::WebhookEndpoint"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -26763,6 +26968,15 @@
           "included_by": [
             "WebhookDelivery",
             "WebhookEndpoint"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "WebhookEndpointsController"
           ]
         },
         {
@@ -29049,6 +29263,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29064,6 +29279,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29082,6 +29298,7 @@
           "concerns": [
             "BetterTogether::Billing::CheckoutTaxPreview",
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29100,6 +29317,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29116,6 +29334,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29133,6 +29352,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29150,6 +29370,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29167,6 +29388,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29182,6 +29404,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29199,6 +29422,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29216,6 +29440,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29233,6 +29458,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29248,6 +29474,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29265,6 +29492,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29282,6 +29510,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29299,6 +29528,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29314,6 +29544,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29329,6 +29560,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29344,6 +29576,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29359,6 +29592,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29375,6 +29609,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -29562,6 +29797,35 @@
             "Billing::OfflinePayment",
             "Billing::Entitlement",
             "Billing::ProcessorSetting"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::PlanGrantsController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
+            "Billing::CreditsController",
+            "Billing::CreditGrantsController",
+            "Billing::CreditAccountsController",
+            "Billing::CheckoutsController",
+            "Billing::AllowancesController",
+            "Billing::AgreementRequirementsController"
           ]
         },
         {
@@ -35914,6 +36178,174 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformSnippet",
+          "label": "PlatformSnippet",
+          "source_path": "app/models/better_together/platform_snippet.rb",
+          "table_name": "better_together_platform_snippets",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "updated_by_id",
+              "uuid FK"
+            ],
+            [
+              "applies_to",
+              "string"
+            ],
+            [
+              "consent_category",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "location",
+              "string"
+            ],
+            [
+              "name",
+              "string"
+            ],
+            [
+              "src",
+              "string"
+            ],
+            [
+              "content",
+              "text"
+            ],
+            [
+              "notes",
+              "text"
+            ]
+          ],
+          "validations": [
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "PresenceValidator: name",
+            "InclusionValidator: location (in=[\"head_start\", \"head_end\", \"body_start\", \"body_end\"])",
+            "InclusionValidator: kind (in=[\"script_inline\", \"script_src\", \"style_inline\", \"html_meta\"])",
+            "InclusionValidator: consent_category (in=[\"none\", \"analytics\", \"marketing\"])",
+            "InclusionValidator: applies_to (in=[\"all\", \"signed_out\"])",
+            "PresenceValidator: content (unless=:script_src?)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "updated_by",
+              "foreign_key": "updated_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Positioned",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "updated_by",
+              "foreign_key": "updated_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformSnippetAudit",
+          "label": "PlatformSnippetAudit",
+          "source_path": "app/models/better_together/platform_snippet_audit.rb",
+          "table_name": "better_together_platform_snippet_audits",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "snippet_id",
+              "uuid FK"
+            ],
+            [
+              "action",
+              "string"
+            ],
+            [
+              "snippet_name",
+              "string"
+            ],
+            [
+              "change_set",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: action (in=[\"created\", \"updated\", \"enabled\", \"disabled\", \"destroyed\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::PlatformTrustedDomain",
           "label": "PlatformTrustedDomain",
           "source_path": "app/models/better_together/platform_trusted_domain.rb",
@@ -37682,6 +38114,7 @@
           "superclass": "BetterTogether::Users::ConfirmationsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -37697,6 +38130,7 @@
           "superclass": "BetterTogether::Users::PasswordsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -37714,6 +38148,7 @@
           "concerns": [
             "BetterTogether::Api::Auth::RegistrationHelpers",
             "BetterTogether::BotProtectedSubmissions",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -37729,6 +38164,7 @@
           "superclass": "BetterTogether::Users::SessionsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -37752,6 +38188,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38153,6 +38590,7 @@
           "superclass": "ActionController::Base",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38168,6 +38606,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38183,6 +38622,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38200,6 +38640,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38217,6 +38658,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38232,6 +38674,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38247,6 +38690,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38262,6 +38706,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38277,6 +38722,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38294,6 +38740,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38309,6 +38756,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38325,6 +38773,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38342,6 +38791,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38357,6 +38807,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38374,6 +38825,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38390,6 +38842,7 @@
             "BetterTogether::BotDefense::Challenge"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38407,6 +38860,7 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38424,6 +38878,7 @@
             "BetterTogether::Content::PageBlock"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38456,6 +38911,21 @@
           ]
         },
         {
+          "name": "BetterTogether::CookieConsentsController",
+          "label": "CookieConsentsController",
+          "source_path": "app/controllers/better_together/cookie_consents_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
           "name": "BetterTogether::EventOccurrencesController",
           "label": "EventOccurrencesController",
           "source_path": "app/controllers/better_together/event_occurrences_controller.rb",
@@ -38465,6 +38935,7 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38481,6 +38952,7 @@
             "BetterTogether::FeatureAccessGrant"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38495,6 +38967,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38509,6 +38982,7 @@
           "superclass": "BetterTogether::Federation::ApiController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38523,6 +38997,7 @@
           "superclass": "BetterTogether::Federation::ApiController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38537,6 +39012,7 @@
           "superclass": "BetterTogether::Federation::ApiController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38553,6 +39029,7 @@
             "BetterTogether::FederationHub"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38567,6 +39044,7 @@
           "superclass": "BetterTogether::ResourceController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38583,6 +39061,7 @@
             "BetterTogether::Geography::Continent"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38599,6 +39078,7 @@
             "BetterTogether::Geography::Country"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38615,6 +39095,7 @@
             "BetterTogether::Geography::Map"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38631,6 +39112,7 @@
             "BetterTogether::Geography::RegionSettlement"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38647,6 +39129,7 @@
             "BetterTogether::Geography::Region"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38663,6 +39146,7 @@
             "BetterTogether::Geography::Settlement"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38679,6 +39163,7 @@
             "BetterTogether::Geography::State"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38703,6 +39188,7 @@
             "BetterTogether::Joatu::Category"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38717,6 +39203,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38731,6 +39218,7 @@
           "superclass": "BetterTogether::FriendlyResourceController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38748,6 +39236,7 @@
             "BetterTogether::Joatu::ResponseLink"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38763,6 +39252,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38779,6 +39269,7 @@
             "BetterTogether::MessageRequest"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38795,6 +39286,7 @@
             "BetterTogether::Metrics::BillingReport"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38812,6 +39304,7 @@
             "BetterTogether::Metrics::LinkCheckerReport"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38829,6 +39322,7 @@
             "BetterTogether::Metrics::LinkClickReport"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38846,6 +39340,7 @@
             "BetterTogether::Metrics::LinkClick"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38863,6 +39358,7 @@
             "BetterTogether::Metrics::PageViewReport"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38880,6 +39376,7 @@
             "BetterTogether::Metrics::PageView"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38895,6 +39392,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38913,6 +39411,7 @@
             "BetterTogether::Metrics::SearchQuery"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38930,6 +39429,7 @@
             "BetterTogether::Metrics::Share"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38947,6 +39447,7 @@
             "BetterTogether::Metrics::UserAccountReport"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38962,6 +39463,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38976,6 +39478,7 @@
           "superclass": "BetterTogether::WizardStepsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -38991,6 +39494,7 @@
           "superclass": "Devise::OmniauthCallbacksController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39007,6 +39511,7 @@
             "BetterTogether::PlatformDomain"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39023,6 +39528,24 @@
             "BetterTogether::PlatformIdentityProvider"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformSnippetsController",
+          "label": "PlatformSnippetsController",
+          "source_path": "app/controllers/better_together/platform_snippets_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::PlatformSnippet"
+          ],
+          "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39039,6 +39562,7 @@
             "BetterTogether::PlatformTrustedDomain"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39055,6 +39579,7 @@
             "BetterTogether::QuotaGrant"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39071,6 +39596,7 @@
             "BetterTogether::Redirect"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39085,6 +39611,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39099,6 +39626,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39115,6 +39643,7 @@
             "BetterTogether::Robot"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39129,6 +39658,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39145,6 +39675,7 @@
             "BetterTogether::Safety::Action"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39161,6 +39692,7 @@
             "BetterTogether::Safety::Agreement"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39177,6 +39709,7 @@
             "BetterTogether::SeedCatalog"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39191,6 +39724,7 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39207,6 +39741,7 @@
             "BetterTogether::ShortLink"
           ],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -39221,6 +39756,7 @@
           "superclass": "Devise::ConfirmationsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39236,6 +39772,7 @@
           "superclass": "BetterTogether::OmniauthCallbacksController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39251,6 +39788,7 @@
           "superclass": "Devise::PasswordsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39267,6 +39805,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::BotProtectedSubmissions",
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39282,6 +39821,7 @@
           "superclass": "Devise::SessionsController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39297,6 +39837,7 @@
           "superclass": "Devise::UnlocksController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::ConsentCookieSync",
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39439,6 +39980,8 @@
             "TrustedDomainEvent",
             "Redirect",
             "PlatformTrustedDomain",
+            "PlatformSnippetAudit",
+            "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -39599,6 +40142,93 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "EventOccurrence"
+          ]
+        },
+        {
+          "name": "BetterTogether::ConsentCookieSync",
+          "label": "ConsentCookieSync",
+          "capability": "Consentcookiesync",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ApplicationController",
+            "Api::Oauth::ApplicationsController",
+            "Safety::AgreementsController",
+            "Safety::ActionsController",
+            "Metrics::UserAccountReportsController",
+            "Metrics::SharesController",
+            "Metrics::SearchQueriesController",
+            "Metrics::ReportsController",
+            "Metrics::PageViewsController",
+            "Metrics::PageViewReportsController",
+            "Metrics::LinkClicksController",
+            "Metrics::LinkClickReportsController",
+            "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
+            "Joatu::HubController",
+            "Geography::StatesController",
+            "Geography::RegionSettlementsController",
+            "Geography::ContinentsController",
+            "Federation::ApiController",
+            "Content::PageBlocksController",
+            "BotDefense::ChallengesController",
+            "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
+            "Billing::PeopleController",
+            "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
+            "Billing::HubsController",
+            "Billing::HostingPlansController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::EventsController",
+            "Billing::CatalogController",
+            "Billing::BillingAddressesController",
+            "ShortLinkRedirectsController",
+            "SeedCatalogController",
+            "RobotsTxtController",
+            "RobotsController",
+            "ReportFollowupsController",
+            "RedirectsController",
+            "QuotaGrantsController",
+            "PlatformTrustedDomainsController",
+            "PlatformSnippetsController",
+            "PlatformIdentityProvidersController",
+            "PlatformDomainsController",
+            "NewPlatformSetupController",
+            "MessageRequestsController",
+            "LocationsController",
+            "FederationHubController",
+            "FeatureAccessGrantsController",
+            "EventOccurrencesController",
+            "CookieConsentsController",
+            "CommentsController",
+            "ResourceController",
+            "Federation::OauthTokensController",
+            "Federation::LinkedSeedsController",
+            "Federation::ContentFeedController",
+            "Users::UnlocksController",
+            "Users::SessionsController",
+            "Api::Auth::SessionsController",
+            "Users::RegistrationsController",
+            "Api::Auth::RegistrationsController",
+            "Users::PasswordsController",
+            "Api::Auth::PasswordsController",
+            "Users::ConfirmationsController",
+            "Api::Auth::ConfirmationsController",
+            "OmniauthCallbacksController",
+            "Users::OmniauthCallbacksController",
+            "NewPlatformSetupStepsController",
+            "ShortLinksController",
+            "FriendlyResourceController",
+            "Joatu::JoatuController",
+            "Geography::SettlementsController",
+            "Geography::RegionsController",
+            "Geography::MapsController",
+            "Geography::CountriesController",
+            "Joatu::ResponseLinksController",
+            "Joatu::CategoriesController"
           ]
         },
         {
@@ -39788,6 +40418,7 @@
             "RedirectsController",
             "QuotaGrantsController",
             "PlatformTrustedDomainsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -39796,6 +40427,7 @@
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
+            "CookieConsentsController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
@@ -39873,6 +40505,7 @@
             "RedirectsController",
             "QuotaGrantsController",
             "PlatformTrustedDomainsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -39881,6 +40514,7 @@
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
+            "CookieConsentsController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
@@ -39958,6 +40592,7 @@
             "RedirectsController",
             "QuotaGrantsController",
             "PlatformTrustedDomainsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -39966,6 +40601,7 @@
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
+            "CookieConsentsController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
@@ -40054,6 +40690,7 @@
             "RedirectsController",
             "QuotaGrantsController",
             "PlatformTrustedDomainsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -40062,6 +40699,7 @@
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
+            "CookieConsentsController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
@@ -40177,6 +40815,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Infrastructure::BuildingConnection",
+            "PlatformSnippet",
             "Infrastructure::Floor"
           ]
         },
@@ -40247,6 +40886,8 @@
             "TrustedDomainEvent",
             "Redirect",
             "PlatformTrustedDomain",
+            "PlatformSnippetAudit",
+            "PlatformSnippet",
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
@@ -40329,6 +40970,7 @@
             "RedirectsController",
             "QuotaGrantsController",
             "PlatformTrustedDomainsController",
+            "PlatformSnippetsController",
             "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
@@ -40337,6 +40979,7 @@
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
+            "CookieConsentsController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
@@ -40942,6 +41585,24 @@
           "from": "BetterTogether::PlatformIdentityProviderDomain",
           "to": "BetterTogether::PlatformDomain",
           "label": "platform_domain (platform_domain_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Person",
+          "label": "updated_by (updated_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippet",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformSnippetAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {

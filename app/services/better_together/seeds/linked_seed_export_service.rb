@@ -3,7 +3,7 @@
 module BetterTogether
   module Seeds
     # Exports recipient-scoped private seeds for an active person access grant.
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class LinkedSeedExportService
       DEFAULT_LIMIT = 50
 
@@ -139,6 +139,5 @@ module BetterTogether
         [batch, next_cursor]
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

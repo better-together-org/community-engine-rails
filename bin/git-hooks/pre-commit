@@ -47,7 +47,7 @@ if [ -n "$staged_ruby" ]; then
   # Prefer bin/dc-run (Docker-based env) so the hook works even when the local
   # gem environment is stale after a Gemfile.lock update.
   if [ -x "$(git rev-parse --show-toplevel)/bin/dc-run" ]; then
-    rubocop_cmd="$(git rev-parse --show-toplevel)/bin/dc-run rubocop"
+    rubocop_cmd="$(git rev-parse --show-toplevel)/bin/dc-run bundle exec rubocop"
   else
     rubocop_cmd="bundle exec rubocop"
   fi

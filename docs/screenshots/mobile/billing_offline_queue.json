@@ -30,19 +30,18 @@
         "x": 0.0,
         "y": 106.0,
         "width": 485.0,
-        "height": 761.0,
+        "height": 853.0,
         "right": 485.0,
-        "bottom": 867.0,
+        "bottom": 959.0,
         "center_x": 242.5,
-        "center_y": 486.5
+        "center_y": 532.5
       },
       "placement": {
-        "side": "below",
-        "x": 107.5,
-        "y": 887.0,
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
         "width": 270.0,
-        "height": 288,
-        "score": 390.0
+        "height": 288
       }
     }
   ]

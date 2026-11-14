@@ -2593,6 +2593,39 @@ en:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Accept all
+      analytics: 'Analytics: help us understand how the site is used'
+      body: This site would like to use analytics and marketing code. Essential features
+        always work. You can change your mind at any time.
+      choices_legend: Optional categories
+      choose: Choose
+      essential_note: Essential features are always on.
+      essential_only: Essential only
+      marketing: 'Marketing: measure and personalize outreach'
+      policy_link: Read the cookie policy.
+      preferences: Cookie preferences
+      save: Save my choices
+      saved: Your privacy choices were saved.
+      settings:
+        analytics_help: Help the platform understand how the site is used.
+        device_note: Your choices follow your account and are applied each time you
+          sign in.
+        essential: Essential cookies (always on)
+        essential_help: Needed to sign you in, keep the site secure and remember these
+          choices.
+        marketing_help: Measure and personalize outreach.
+        none: This platform does not currently use any optional cookies, so there
+          is nothing to choose. Essential cookies are always on.
+        not_decided: You have not made a choice yet. Until you do, only essential
+          cookies are used.
+        not_stored: Saved on this device, but we could not store it on your account.
+          Please try again.
+        outdated: This platform changed what it asks consent for since you last chose.
+          Please choose again.
+        saved_on: Your choices were saved on %{date}.
+        withdraw_all: Withdraw all optional consent
+      title: Your privacy choices
     contact_details:
       contact_information: Contact information
       title: Contact Details
@@ -2907,6 +2940,58 @@ en:
       sidebar:
         conversations: Conversations
         new: New
+    cookie_policy:
+      categories:
+        analytics:
+          description: These help us understand how the platform is used so we can
+            improve it.
+          title: Analytics cookies
+        marketing:
+          description: These measure and personalize outreach.
+          title: Marketing cookies
+      choices_optional: Optional cookies are off until you agree. You can change or
+        withdraw your choice at any time using the cookie preferences button or, when
+        signed in, your settings.
+      columns:
+        duration: Duration
+        name: Cookie name
+        purpose: Purpose
+        type: Type
+      core:
+        consent:
+          cookies:
+            consent: Stores your cookie consent choices (analytics and marketing)
+              and the version of the policy you answered
+          description: Remember the cookie choices you made so we do not ask again
+            on every visit.
+          title: Your cookie choices
+        durations:
+          consent_days: 180 days, renewed on each visit
+          session: Session
+          session_inactivity: Session (6 hours of inactivity)
+          two_weeks: 2 weeks
+        session:
+          cookies:
+            csrf: Security token that protects against Cross-Site Request Forgery
+              (CSRF) attacks
+            remember: Keeps you logged in when you select "Remember me" during sign-in
+            session: Maintains your login session and stores temporary data like invitation
+              tokens, locale preferences, and debug settings
+          description: Keep you signed in and protect the platform against forged
+            requests.
+          title: Sign-in and security
+      last_updated: 'Last updated:'
+      manage_choices: Manage your cookie choices in your settings
+      optional_intro: The following optional cookies are used only if you agree. You
+        can change your mind at any time from the cookie preferences button or, when
+        signed in, from your settings.
+      party:
+        first: First-party
+        third: Third-party
+      privacy_link: Privacy information from %{provider}
+      third_party_listed: This platform uses the third-party services listed below.
+        They set cookies or similar browser storage only as described.
+      version: policy version %{version}
     default_member_name: Member
     device_permissions:
       location:
@@ -5057,6 +5142,102 @@ en:
         accepted: Accepted
         expired: Expired
         pending: Pending
+    platform_snippets:
+      applies_to_options:
+        all: Everyone
+        signed_out: Signed-out visitors only
+      audit_actions:
+        created: Created
+        destroyed: Deleted
+        disabled: Disabled
+        enabled: Enabled
+        updated: Updated
+      consent_categories:
+        analytics: Analytics
+        marketing: Marketing
+        none: Not needed
+      destroyed: Snippet deleted.
+      edit:
+        subtitle: For %{platform_name}.
+        title: Edit %{name}
+      errors:
+        invalid_meta_markup: must contain meta tags or preconnect links
+        invalid_script_markup: must be plain JavaScript without script tags or HTML
+          comments
+        invalid_src: must be an https address
+        invalid_style_markup: must be plain CSS without style tags or HTML comments
+        meta_requires_head: meta tags can only go in the head
+        origin_not_allowed: origin %{origin} is not allowed by this platform's script
+          security settings
+      form:
+        allow_origin: Allow this script origin in the content security policy
+        allow_origin_hint: Adds the origin to this platform's allowed script origins.
+        applies_to: Shown to
+        cancel: Cancel
+        consent_category: Visitor consent
+        consent_hint: Analytics and marketing snippets are held back until visitors
+          consent.
+        content: Code
+        content_hint: Inline scripts run with the page security nonce. Do not include
+          script or style tags. Meta tags and preconnect links only for the meta kind.
+        enabled: Enabled
+        enabled_hint: Leave this off until you have tested the snippet.
+        kind: Kind
+        location: Location
+        name: Name
+        notes: Notes
+        save: Save snippet
+        src: Script address
+        src_hint: For external scripts only. The address must use https and its origin
+          must be allowed by the platform security settings.
+        warning: This code runs in every visitor's browser. Test with safe mode and
+          keep the snippet disabled until you are ready.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Recent changes
+        back_to_platform: Back to platform settings
+        delete_btn: Delete
+        delete_confirm: Delete this snippet?
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        header_actions: Actions
+        header_consent: Consent
+        header_kind: Kind
+        header_location: Location
+        header_name: Name
+        header_status: Status
+        kill_switch_hint: Add ?safe_mode=1 to any page address to view the site without
+          snippets.
+        kill_switch_off: All snippets are switched off.
+        kill_switch_on: Snippets are running.
+        kill_switch_title: All snippets
+        move_down: Down
+        move_up: Up
+        new_btn: New snippet
+        none_yet: No snippets yet.
+        subtitle: Scripts, styles and meta tags added to every page of %{platform_name}.
+        table_aria: Custom code snippets
+        title: Custom code
+        turn_off: Switch all off
+        turn_on: Switch all on
+        warning: Snippets run in every visitor's browser and can read what they see
+          and type on this platform. Only add code you trust.
+      kinds:
+        html_meta: Meta tags
+        script_inline: Inline script
+        script_src: External script
+        style_inline: Inline style
+      locations:
+        body_end: End of body
+        body_start: Start of body
+        head_end: End of head
+        head_start: Start of head
+      new:
+        subtitle: For %{platform_name}. New snippets start disabled.
+        title: New snippet
+      saved: Snippet saved.
+      switch_updated: The snippet switch was updated.
     platform_trusted_domains:
       created: Trusted domain was added.
       destroyed: Trusted domain was removed. Existing accounts and memberships are
@@ -5168,6 +5349,10 @@ en:
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
         csp_title: Security / CSP embeds
+        custom_code_hint: Add scripts, styles and meta tags to every page. Needs the
+          manage platform code permission.
+        custom_code_link: Manage custom code
+        custom_code_title: Custom code
         custom_css_hint: Advanced override. Styles added here load after the theme
           and take precedence over it.
         custom_css_title: Custom CSS
@@ -5223,6 +5408,16 @@ en:
         title: Register External Platform
       show:
         new_invitation: New invitation
+      storage_tab:
+        bucket: Bucket
+        description: Where this platform's uploaded files are kept. Files are stored
+          in the platform's own bucket when a storage configuration is active.
+        health: Connection health
+        manage: Manage storage configurations
+        service_type: Service type
+        shared_default: Shared installation default
+        source: Active configuration
+        title: File storage
       tabs:
         access: Access and privacy
         appearance: Appearance
@@ -5232,6 +5427,7 @@ en:
         features: Features and quotas
         integrations: Integrations
         security: Security
+        storage: Storage
       theme:
         allow_user_themes: Let people choose their own theme
         allow_user_themes_hint: When on, signed-in people can pick any available theme
@@ -5862,6 +6058,10 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        cookie_consent:
+          description: Choose which optional cookies this platform may use. Your choice
+            is saved to your account.
+          title: Cookie consent
         developer:
           apps:
             client_id_label: Client ID
@@ -5982,6 +6182,7 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          cookie_consent: Cookie consent
           developer: Developer
           device_permissions: Device Permissions
           integrations: Integrations
@@ -6116,15 +6317,16 @@ en:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "'%{name}' is now this platform's file storage. New
+        uploads from this platform use it immediately; existing files stay where they
+        are."
+      activated_with_restart: "'%{name}' activated. New uploads use it immediately;
+        other app processes pick it up within about 30 seconds."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'Connection to ''%{name}'' failed: %{message}'
+      connection_ok: Connection to '%{name}' succeeded.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -6133,18 +6335,21 @@ en:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Failed
+        ok: Healthy
+        unknown: Not tested
       index:
         activate_btn: Set active
-        activate_confirm: Activate this configuration? The current process rebinds
-          immediately. Other app processes require a restart to pick up the change.
-          Existing files stay on the old backend — blob migration is a separate manual
-          step.
+        activate_confirm: Activate this configuration? New uploads use it immediately
+          and other app processes pick it up within about 30 seconds. Existing files
+          stay on the old backend; blob migration is a separate manual step.
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
         activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+          the current process immediately. Other app processes pick up the change
+          within about 30 seconds.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -6163,6 +6368,7 @@ en:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: Health
         header_name: Name
         header_status: Status
         header_type: Type
@@ -6175,6 +6381,7 @@ en:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Test connection
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive

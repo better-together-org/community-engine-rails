@@ -2,7 +2,7 @@
 
 module Rack
   # Sets default Rack::Attack configuration
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class Attack
     ### Configure Cache ###
 
@@ -438,5 +438,4 @@ module Rack
       [503, {}, ['Blocked']]
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

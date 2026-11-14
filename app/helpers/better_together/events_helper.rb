@@ -2,7 +2,7 @@
 
 module BetterTogether
   # View helpers for events
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module EventsHelper
     # Return hosts for an event that the current user is authorized to view.
     # Keeps view markup small and centralizes the policy logic for testing.
@@ -40,7 +40,7 @@ module BetterTogether
     # @return [String] Formatted time display
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def display_event_time(event, start_time: nil, end_time: nil) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       raw_start = start_time || event&.starts_at
       return '' unless raw_start
@@ -68,9 +68,8 @@ module BetterTogether
         "#{l(start_time, format: start_format)} (#{duration_minutes} #{t('better_together.events.time.minutes')})"
       elsif duration_hours <= 5 && same_day
         # 1-5 hours, same day: show hours
-        # rubocop:todo Layout/LineLength
+        # rubocop:todo-next Layout/LineLength
         hours_text = duration_hours == 1 ? t('better_together.events.time.hour') : t('better_together.events.time.hours')
-        # rubocop:enable Layout/LineLength
         "#{l(start_time, format: start_format)} (#{duration_hours.to_i} #{hours_text})"
       elsif same_day
         # Same day, over 5 hours: show start and end times
@@ -92,7 +91,6 @@ module BetterTogether
         "#{l(start_time, format: start_format)} - #{l(end_time, format: end_format)}"
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
@@ -155,7 +153,7 @@ module BetterTogether
     # @param event [Event] The event object
     # @param max_avatars [Integer] Maximum number of avatars to show
     # @return [String] HTML for hosts display or empty string
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def event_hosts_display(event, max_avatars: 3)
       hosts = visible_event_hosts(event)
       return '' if hosts.empty?
@@ -179,7 +177,6 @@ module BetterTogether
         )
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # Returns the appropriate Font Awesome icon class for a host type
     # @param host_type_key [String] The underscored host type (e.g., 'person', 'community')
@@ -243,5 +240,4 @@ module BetterTogether
       datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

@@ -1,0 +1,47 @@
+{
+  "name": "billing_offline_self_confirmed",
+  "device": "desktop",
+  "url": "/en/billing/sales/7d5ef38a-62f9-409e-b206-8daf49666a88",
+  "title": "Order BT-7BIEL5YL | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_offline_payments",
+  "flow": "billing_offline_self_confirmed",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#self_confirmed_billing_offline_payment_c96db78b-369a-48b0-b908-9c9071b78c2f",
+      "title": "Confirmed by the buyer",
+      "bullets": [
+        "Shown when a steward confirmed their own purchase because no other steward could."
+      ],
+      "target": {
+        "x": 498.15625,
+        "y": 1016.0,
+        "width": 857.328125,
+        "height": 70.0,
+        "right": 1355.484375,
+        "bottom": 1086.0,
+        "center_x": 926.8203125,
+        "center_y": 1051.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1294.0,
+        "right": 1425.0,
+        "bottom": 1294.0,
+        "center_x": 712.5,
+        "center_y": 647.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 184
+      }
+    }
+  ]
+}

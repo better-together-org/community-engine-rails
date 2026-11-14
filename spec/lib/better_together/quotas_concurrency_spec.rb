@@ -41,7 +41,7 @@ RSpec.describe BetterTogether::Quotas, :js do
   # so `count` + 1 must not exceed the pool or a worker thread times out waiting.
   def in_threads(count)
     count.times.map { |i| Thread.new { ActiveRecord::Base.connection_pool.with_connection { yield(i) } } }
-               .each(&:value)
+         .each(&:value)
   end
 
   describe 'concurrent .settle! for the same owner+type' do

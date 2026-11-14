@@ -11,7 +11,7 @@
 require 'rails_helper'
 
 # The expectations run inside the capture block.
-# rubocop:disable RSpec/NoExpectationExample
+# rubocop:disable-next RSpec/NoExpectationExample
 RSpec.describe 'Documentation screenshots for the tax seed catalog',
                :docs_screenshot,
                :js,
@@ -140,4 +140,3 @@ RSpec.describe 'Documentation screenshots for the tax seed catalog',
     end
   end
 end
-# rubocop:enable RSpec/NoExpectationExample

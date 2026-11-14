@@ -1,8 +1,8 @@
 {
   "name": "billing_offline_sale",
   "device": "desktop",
-  "url": "/en/billing/sales/3201bee9-dfe9-4df5-8aef-aa7f01a86dff",
-  "title": "Order BT-IRSFLFZL | Test Host Community",
+  "url": "/en/billing/sales/ca03151d-ea0b-459e-88ba-8d87a96ea492",
+  "title": "Order BT-ZPFZCELD | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_offline_payments",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
   "callouts": [
     {
-      "selector": "#billing-offline-receive-form-e0f189fa-61dd-4bb2-8780-543125d7d15d",
+      "selector": "#billing-offline-receive-form-34d7b285-1c4b-4498-ac52-f3f85ae8e015",
       "title": "Say it arrived",
       "bullets": [
         "An optional reference and date; nothing is required."
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#billing-offline-reject-form-e0f189fa-61dd-4bb2-8780-543125d7d15d",
+      "selector": "#billing-offline-reject-form-34d7b285-1c4b-4498-ac52-f3f85ae8e015",
       "title": "Or say it did not",
       "bullets": [
         "The buyer sees your reason."

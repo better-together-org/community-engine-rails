@@ -6,40 +6,40 @@ classDiagram
     class BetterTogether__CallsForInterestController["CallsForInterestController"] {
       <<Controller>>
       models: CallForInterest
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__CategoriesController["CategoriesController"] {
       <<Controller>>
       models: Category
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__Content__BlocksController["Content::BlocksController"] {
       <<Controller>>
       models: Content::Block
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__PagesController["PagesController"] {
       <<Controller>>
       models: Page
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
+      concerns: ChecksRequiredAgreements, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +4
     }
     class BetterTogether__PostsController["PostsController"] {
       <<Controller>>
       models: Post
-      concerns: ChecksRequiredAgreements, FramedIndex, InvitationSessionManagement, InvitationTokenSession +5
+      concerns: ChecksRequiredAgreements, ConsentCookieSync, FramedIndex, InvitationSessionManagement +6
     }
     class BetterTogether__StaticPagesController["StaticPagesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__TranslationsController["TranslationsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__UploadsController["UploadsController"] {
       <<Controller>>
       models: Upload
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +2
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
   }
 
