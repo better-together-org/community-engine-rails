@@ -41,6 +41,15 @@ Suspending and resuming each write a billing event on the hosted platform (`host
 
 `better_together_billing_hosted_accounts`: one row per hosted platform the host has acted on (`status` active or suspended, `suspended_at`, `suspended_by_id`, `suspension_reason`). What a platform accepted is in agreement acceptances, not here.
 
+## Plan and usage
+
+A hosted platform's steward also sees what the platform gets for its money: `/billing/hosting_plan`, reached from the platform's operations buttons ("Plan and usage"). It reads the host's billing records for the plan held for the platform (or its community): the plan, whether it is paid up or late, the price, the renewal date, and a usage bar for each allowance. It needs no billing agreement, because the plan is the host's, not the platform's own selling. Nothing is changed here: the people who pay manage the plan (change, invoices, refunds) with the host. With no plan it says so and points to the host's plans.
+
+Access is the hosted steward rule used above (`HostedBillingPolicy#plan?`); a visitor is asked to sign in, anyone else sees nothing. Ids: `billing-hosting-plan-page`, `billing-hosting-plan-none`, `billing-hosting-plan-manage`, `billing-hosting-plan-billing-link`, and per plan `hosting_billing_entitlement_<id>`, `hosting_details_...`, `hosting_usage_...`.
+
+![Plan and usage, desktop](../screenshots/desktop/billing_hosting_plan.png)
+![Plan and usage, mobile](../screenshots/mobile/billing_hosting_plan.png)
+
 ```mermaid
 flowchart LR
   A[Host activates agreements] --> B[Platform steward accepts billing agreement]

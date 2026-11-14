@@ -1127,6 +1127,16 @@ en:
         suspend: Suspend
         suspended: Billing suspended for that platform.
         title: Hosted platforms
+      hosting_plan:
+        billing_link: 'Selling on this platform: billing set-up'
+        intro: The plan this platform is on with %{host}, and how much of it is used.
+        manage: 'The people who pay for this plan manage it with %{host}: they can
+          change plan, see invoices and ask for refunds there.'
+        none: This platform is not on a paid plan with %{host} yet.
+        price: Price
+        renews: Renews on
+        see_plans: See the plans
+        title: Plan and usage
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to
@@ -6757,6 +6767,7 @@ en:
           on route knowledge alone.
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
+        hosting_plan: Plan and usage
         platform_domains: Domains
         quota_grants: Quota grants
         robot_management: Manage LLM robots

@@ -186,6 +186,10 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
+    class BetterTogether__Billing__HostingPlansController["Billing::HostingPlansController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__HubsController["Billing::HubsController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
@@ -781,6 +785,7 @@ classDiagram
   BetterTogether__Billing__CatalogController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostedBillingsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostedPlatformsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HostingPlansController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HubsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderDocumentsController ..> BetterTogether__Billing__OrderDocument : manages
   BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController

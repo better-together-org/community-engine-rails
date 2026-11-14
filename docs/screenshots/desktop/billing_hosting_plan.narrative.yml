@@ -1,0 +1,14 @@
+---
+title: Plan and usage
+audience:
+- platform_organizer
+journey_step: As the steward of a hosted platform, I see the plan the platform is
+  on with the host and how much of it is used.
+callouts:
+- :id: plan
+  :title: Plan
+  :description: One card per plan held for the platform.
+accessibility_notes: Usage bars carry a progressbar role and a text label of used
+  and limit.
+slug: billing_hosting_plan
+device: desktop

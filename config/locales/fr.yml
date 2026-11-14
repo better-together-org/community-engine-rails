@@ -1131,6 +1131,16 @@ fr:
         suspend: Suspendre
         suspended: Facturation suspendue pour cette plateforme.
         title: Plateformes hébergées
+      hosting_plan:
+        billing_link: 'Vendre sur cette plateforme : configuration de la facturation'
+        intro: Le forfait de cette plateforme chez %{host}, et la part utilisée.
+        manage: 'Les personnes qui paient ce forfait le gèrent chez %{host} : changement
+          de forfait, factures et demandes de remboursement.'
+        none: Cette plateforme n'a pas encore de forfait payant chez %{host}.
+        price: Prix
+        renews: Renouvellement le
+        see_plans: Voir les forfaits
+        title: Forfait et utilisation
       hub:
         access_count: 'Actifs : %{count}'
         access_heading: Ce à quoi vous avez accès
@@ -6945,6 +6955,7 @@ fr:
           dépendre uniquement d'une URL directe.
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
+        hosting_plan: Forfait et utilisation
         platform_domains: Domaines
         quota_grants: Dérogations de quota
         robot_management: Gérer les robots LLM

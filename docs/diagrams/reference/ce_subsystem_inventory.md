@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-12T23:28:38Z`.
+Generated from live Rails reflections at `2026-11-12T23:34:01Z`.
 
 ## Identity, access, and memberships
 
@@ -858,6 +858,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Billing::CatalogController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::HostedBillingsController | `BetterTogether::ApplicationController` | `Billing::HostedBilling` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::HostedPlatformsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::HostingPlansController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::HubsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::OrderDocumentsController | `BetterTogether::ApplicationController` | `Billing::OrderDocument` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::OrderPaymentsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |

@@ -8,6 +8,7 @@ module BetterTogether
       # The steward of a hosted (non-host) platform, on that platform.
       def show? = hosted_steward?
       def accept? = hosted_steward?
+      def plan? = hosted_steward?
 
       # The steward of the host platform.
       def index? = host_steward?
