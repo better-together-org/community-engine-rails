@@ -10,6 +10,7 @@ module BetterTogether
     include PlatformFederationStatus
     include PlatformCspConfiguration
     include PlatformCssBlockManagement
+    include PlatformContentSlots
     include PlatformMembershipDisplay
     include Creatable
     include Identifier
@@ -134,6 +135,9 @@ module BetterTogether
     has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
                                            dependent: :destroy
+    has_many :platform_trusted_domains, class_name: '::BetterTogether::PlatformTrustedDomain',
+                                        dependent: :destroy, inverse_of: :platform
+    has_many :trusted_domain_events, class_name: '::BetterTogether::TrustedDomainEvent', dependent: :delete_all
     has_many :outgoing_platform_connections,
              class_name: '::BetterTogether::PlatformConnection',
              foreign_key: :source_platform_id,
@@ -221,6 +225,11 @@ module BetterTogether
     # intentionally-private placeholder community.
     def privacy_ceiling_exempt?
       external?
+    end
+
+    # The trusted domain that lets this verified email register without an invitation, or nil.
+    def trusted_domain_for(email, verified:)
+      BetterTogether::PlatformTrustedDomain.match(platform: self, email:, verified:)
     end
 
     def membership_requests_enabled_for?(community = primary_community)

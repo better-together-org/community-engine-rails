@@ -155,7 +155,8 @@ module BetterTogether
         permitted_attributes,
         *settings_attributes,
         *locale_attributes,
-        *css_block_attrs
+        *css_block_attrs,
+        *BetterTogether::PlatformContentSlots.permitted_attributes
       )
       restrict_quota_default_limits(permitted)
     end

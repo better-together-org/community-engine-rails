@@ -647,6 +647,7 @@ es:
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Imagen
+      better_together/content/image_gallery_block: Galería de imágenes
       better_together/content/link: Enlace
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagrama Mermaid
@@ -1156,6 +1157,10 @@ es:
     contacts:
       add: Agregar Contacto
     content:
+      block_picker:
+        create: Crear un nuevo bloque %{block}
+        create_for_page: Crear un nuevo bloque %{block} para la página
+        icon: Icono de %{block}
       blocks:
         accordion_block:
           answer: Answer
@@ -1228,6 +1233,16 @@ es:
           missing_url: No se ha configurado ninguna URL de iframe.
           url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
             Formbricks u otra inserción confiable de un espacio comunitario.
+        image_gallery_block:
+          empty: No hay imágenes para mostrar.
+          heading_help: Título que se muestra sobre la galería (opcional)
+          images: Imágenes
+          images_help: Elija los bloques de imagen en el orden en que deben aparecer.
+          layout: Diseño
+          layouts:
+            grid: Cuadrícula
+            masonry: Mosaico
+          lightbox: Abrir las imágenes en un visor al hacer clic
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2820,11 +2835,13 @@ es:
       new:
         title: Nuevo elemento de navegación para %{name}
       route_names:
+        agreements: Acuerdos
         calendars: Calendarios
         calls_for_interest: Convocatorias de interés
         communities: Comunidades
         content_blocks: Bloques de contenido
         events: Eventos
+        federation_hub: Centro de federación
         geography_continents: Continentes
         geography_countries: Países
         geography_maps: Mapas
@@ -2835,19 +2852,24 @@ es:
         host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
+        hub: Centro
+        joatu_hub: Centro Joatu
         joatu_offers: Ofertas
         joatu_requests: Solicitudes
         metrics_reports: Informes de métricas
         navigation_areas: Áreas de navegación
+        oauth_applications: Aplicaciones OAuth
         pages: Páginas
         people: Personas
         platform_connections: Conexiones de plataforma
         platforms: Plataformas
+        posts: Publicaciones
         reports: Informes
         resource_permissions: Permisos de recursos
         roles: Roles
         safety_cases: Revisión de seguridad
         users: Usuarios
+        webhook_endpoints: Puntos de conexión de webhook
       visibility_strategies:
         authenticated: Usuarios autenticados
         permission: Usuarios con permiso
@@ -2958,6 +2980,14 @@ es:
           in the safety review queue
         title: New safety report requires review
       time_ago: hace %{time}
+      trusted_domain_grant:
+        granted:
+          body: "%{person} se unió como %{role} mediante %{domain}"
+          title: El dominio de confianza %{domain} otorgó una membresía
+        rate_limited:
+          body: Se alcanzó el límite por hora de %{domain}. Las nuevas personas quedan
+            pendientes hasta que las revise.
+          title: El dominio de confianza %{domain} alcanzó su límite por hora
     oauth:
       applications:
         create:
@@ -3540,7 +3570,104 @@ es:
         accepted: Aceptado
         expired: Vencido
         pending: Pendiente
+    platform_trusted_domains:
+      created: Se agregó el dominio de confianza.
+      destroyed: Se eliminó el dominio de confianza. Las cuentas y membresías existentes
+        no cambian.
+      edit:
+        title: Editar dominio de confianza
+      events:
+        account_created: Cuenta creada
+        domain_added: Dominio agregado
+        domain_removed: Dominio eliminado
+        domain_updated: Dominio modificado
+        grant_rate_limited: Límite por hora alcanzado, concesión en espera de revisión
+        membership_granted: Membresía otorgada
+        membership_request_approved: Solicitud de membresía aprobada
+      form:
+        cancel: Cancelar
+        domain_hint: Solo la parte después de la arroba, por ejemplo example.org.
+          Los proveedores públicos como gmail.com requieren la confirmación de abajo.
+        domain_label: Dominio de correo
+        enabled_label: Activado
+        include_subdomains_label: Confiar también en los subdominios (por ejemplo
+          mail.example.org)
+        note_label: Nota para otros administradores (opcional)
+        public_domain_label: Entiendo que es un dominio de correo público y cualquiera
+          puede tener una dirección allí
+        role_ceiling_label: Entiendo que quienes tengan una dirección verificada en
+          este dominio reciben este rol automáticamente
+        role_hint: Solo roles de comunidad. Los roles de plataforma y de administración
+          no se pueden otorgar por dominio.
+        role_label: Rol de comunidad otorgado
+        submit: Guardar dominio de confianza
+      index:
+        activity_event: Evento
+        activity_heading: Actividad reciente
+        activity_none: Aún no hay actividad.
+        activity_person: Persona
+        activity_via: Mediante
+        activity_when: Cuándo
+        back_to_platform: Volver a la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este dominio de confianza? Las cuentas y membresías
+          existentes se mantienen."
+        disabled_label: Desactivado
+        edit_btn: Editar
+        enabled_label: Activado
+        explanation: Quienes inician sesión con un proveedor que verifica su correo,
+          o confirman su correo tras registrarse, y cuya dirección termina en un dominio
+          de confianza obtienen la membresía con el rol elegido sin esperar revisión.
+          Cada concesión queda registrada.
+        header_accounts: Cuentas creadas
+        header_actions: Acciones
+        header_domain: Dominio
+        header_role: Rol
+        header_status: Estado
+        header_subdomains: Subdominios
+        new_btn: Agregar dominio de confianza
+        no_domains: Aún no hay dominios de confianza.
+        subdomains_no: Solo coincidencia exacta
+        subdomains_yes: Incluidos
+        subtitle: Dominios de correo de confianza de %{platform_name}
+        table_aria: Dominios de correo de confianza
+        title: Dominios de confianza
+      new:
+        subtitle: Quienes tengan una dirección verificada en este dominio reciben
+          el rol elegido en %{platform_name}.
+        title: Agregar dominio de confianza
+      updated: Se actualizó el dominio de confianza.
+      vias:
+        membership_request: Solicitud de membresía
+        oauth: Proveedor de acceso
+        password_registration: Registro con correo
+        steward: Administración
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} no admite ese tipo de contenido."
+          too_long: "%{slot} es demasiado largo (el límite es de %{max} caracteres
+            por idioma)."
+        footer_above:
+          hint: Se muestra encima del pie de página del sitio, por ejemplo un aviso
+            de financiadores o un descargo de responsabilidad.
+          label: Encima del pie de página
+        header_above:
+          hint: Se muestra encima del encabezado del sitio, por ejemplo un anuncio.
+          label: Encima del encabezado
+        hint: Bloques de contenido opcionales que se muestran en lugares fijos de
+          cada página de esta plataforma. Cada idioma es independiente; un idioma
+          faltante recurre al idioma predeterminado. Deje un espacio vacío para conservar
+          el diseño estándar.
+        not_found_headlines:
+          hint: Un titular por línea, hasta 20. Se elige uno al azar cuando no se
+            encuentra una página. Sin titulares, se usa el título estándar.
+          label: Titulares de la página 404
+        not_found_message:
+          hint: Se muestra bajo el título cuando no se encuentra una página.
+          label: Mensaje de la página 404
+        remove: Quitar este contenido
+        title: Contenido del encabezado, el pie de página y la página 404
       form:
         allow_membership_requests: Permitir solicitudes de membresía
         allow_membership_requests_hint: Muestra un formulario público de solicitud
@@ -3592,6 +3719,14 @@ es:
           ai_translation_tokens: Tokens de uso de LLM de IA por mes
           media_storage: Almacenamiento
         quota_use_default: Usar el valor predeterminado (%{size})
+        trusted_domains:
+          after_save: Guarde primero la plataforma y luego agregue aquí los dominios
+            de correo de confianza.
+          heading: Dominios de correo de confianza
+          hint: Las direcciones verificadas de estos dominios se unen con un rol definido
+            sin esperar revisión.
+          manage: Administrar dominios de confianza
+          none: No hay dominios de confianza.
       index:
         provision_new_platform: Aprovisionar nueva plataforma
       new:
@@ -5368,6 +5503,11 @@ es:
         submit: Enviar
         terms_of_service:
           label: Acepto los Términos de Servicio
+        trusted_domains:
+          confirm_notice: Las direcciones de %{domains} se unen tras confirmar su
+            correo. Revise su bandeja de entrada cuando se haya registrado.
+          link: Regístrese con un correo de confianza
+          notice: "¿Tiene una dirección en %{domains}?"
         view: Ver
       signed_up: Bienvenido. Tu cuenta fue creada.
       signed_up_but_inactive: Tu cuenta ha sido creada correctamente. Sin embargo,
@@ -5442,6 +5582,7 @@ es:
       confirmation: no coincide con %{attribute}
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
         solicita una nueva
+      denied_for_trusted_domain: no puede otorgarse por un dominio de correo
       empty: no puede estar vacío
       equal_to: debe ser igual a %{count}
       even: debe ser par
@@ -5459,6 +5600,7 @@ es:
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       model_invalid: 'La validación falló: %{errors}'
+      not_a_community_role: debe ser un rol de comunidad
       not_a_number: no es un número
       not_an_integer: debe ser un entero
       not_found: no se ha encontrado
@@ -5469,7 +5611,11 @@ es:
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
+      public_mail_domain: es un proveedor de correo público; confirma para confiar
+        en todas sus direcciones
       required: debe existir
+      required_for_elevated_role: requiere confirmación explícita antes de que un
+        dominio de correo pueda otorgar un rol superior al de miembro básico
       taken: ya está en uso
       too_long:
         one: es demasiado largo (%{count} carácter máximo)

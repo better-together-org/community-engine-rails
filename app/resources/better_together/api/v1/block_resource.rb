@@ -77,6 +77,7 @@ module BetterTogether
                        :community_scope_id, :resource_ids,
                        :event_scope, :posts_scope,
                        :checklist_id, :navigation_area_id, :upload_id, :open_inline,
+                       :image_ids, :lightbox,
                        :template_path,
                        :diagram_source, :theme, :auto_height,
                        :markdown_file_path, :auto_sync_from_file,
@@ -150,7 +151,7 @@ module BetterTogether
             video_url caption aspect_ratio
             display_style item_limit show_view_more_link view_more_url
             community_scope_id resource_ids event_scope posts_scope
-            checklist_id navigation_area_id upload_id open_inline template_path
+            checklist_id navigation_area_id upload_id open_inline image_ids lightbox template_path
             diagram_source theme auto_height markdown_file_path auto_sync_from_file
             html_content cta_url
             markdown_source_en markdown_source_fr markdown_source_es markdown_source_uk
@@ -198,6 +199,7 @@ module BetterTogether
       FileDownloadBlockResource   = BlockResource
       HeroResource                = BlockResource
       HtmlResource                = BlockResource
+      ImageGalleryBlockResource   = BlockResource
       IframeBlockResource         = BlockResource
       ImageResource               = BlockResource
       MarkdownResource            = BlockResource

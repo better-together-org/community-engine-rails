@@ -164,6 +164,8 @@
           </div>
         </fieldset>
 
+        <%= render 'better_together/platforms/trusted_domains_section', platform: platform %>
+
         <div class="mb-3">
           <%= contributor_display_visibility_field(
                 form:,
@@ -182,6 +184,8 @@
           <%= render partial: 'better_together/content/blocks/fields/block',
                      locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
         </div>
+
+        <%= render 'better_together/platforms/content_slots_fields', platform: platform %>
       </div>
 
       <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'domains' %>" id="platform-domains" role="tabpanel" aria-labelledby="platform-domains-tab">

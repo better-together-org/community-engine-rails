@@ -2,6 +2,7 @@
 
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    skip_third_party_tracking
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/AbcSize
     # rubocop:todo Metrics/CyclomaticComplexity

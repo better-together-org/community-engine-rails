@@ -3,6 +3,7 @@
 module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    skip_third_party_tracking
     include PerUserThrottling
 
     throttle_per_user :conversation_create, only: :create

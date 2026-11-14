@@ -1,0 +1,49 @@
+# frozen_string_literal: true
+
+<% if module_name -%>
+module <%= module_name %>
+  class <%= class_name %> < <%= parent_class %>
+<% concerns.each do |concern| -%>
+    include <%= concern %>
+<% end -%>
+<% translatable_names.each do |name| -%>
+
+    translates :<%= name %>, type: :string
+<% end -%>
+<% if options[:friendly_id] -%>
+
+    slugged :<%= slug_source %>
+<% end -%>
+<% reference_attributes.each do |attribute| -%>
+
+    belongs_to :<%= attribute.name %><%= ', polymorphic: true' if attribute.polymorphic? %>
+<% end -%>
+<% if translatable_names.any? -%>
+
+    validates :<%= slug_source %>, presence: true
+<% end -%>
+  end
+end
+<% else -%>
+class <%= class_name %> < <%= parent_class %>
+<% concerns.each do |concern| -%>
+  include <%= concern %>
+<% end -%>
+<% translatable_names.each do |name| -%>
+
+  translates :<%= name %>, type: :string
+<% end -%>
+<% if options[:friendly_id] -%>
+
+  slugged :<%= slug_source %>
+<% end -%>
+<% reference_attributes.each do |attribute| -%>
+
+  belongs_to :<%= attribute.name %><%= ', polymorphic: true' if attribute.polymorphic? %>
+<% end -%>
+<% if translatable_names.any? -%>
+
+  validates :<%= slug_source %>, presence: true
+<% end -%>
+end
+<% end -%>

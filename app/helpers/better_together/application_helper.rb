@@ -370,6 +370,19 @@ module BetterTogether
       tag.meta(name: 'robots', content: meta_content)
     end
 
+    # True when this page may be measured by third-party vendors. Vendor extensions must check it
+    # before emitting scripts. Controllers outside the engine's base class are treated as allowed.
+    def third_party_tracking_allowed?
+      return true unless controller.respond_to?(:third_party_tracking_allowed?, true)
+
+      controller.send(:third_party_tracking_allowed?)
+    end
+
+    # Lets vendor scripts that stay loaded across Turbo visits learn what the current page allows.
+    def third_party_tracking_meta_tag
+      tag.meta(name: 'bt-third-party-tracking', content: third_party_tracking_allowed? ? 'on' : 'off')
+    end
+
     def render_provider_head_tags
       fragments = ::BetterTogether.head_tag_providers.values.filter_map do |provider|
         fragment = provider.call(self)

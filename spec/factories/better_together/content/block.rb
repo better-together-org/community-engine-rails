@@ -85,6 +85,11 @@ FactoryBot.define do
     label_en { 'Download the report' }
   end
 
+  factory :content_image_gallery_block, class: 'BetterTogether::Content::ImageGalleryBlock' do
+    privacy { 'public' }
+    heading_en { 'Field photos' }
+  end
+
   factory :content_statistics_block, class: 'BetterTogether::Content::StatisticsBlock' do
     privacy { 'public' }
     heading_en { 'Our Impact' }

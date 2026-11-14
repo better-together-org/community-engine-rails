@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>" <%= tag.attributes(html_color_mode_attributes) %>>
   <head>
+    <%= third_party_tracking_meta_tag %>
     <%= render_provider_head_tags %>
 
     <!-- Custom Head Javascript from Host App -->

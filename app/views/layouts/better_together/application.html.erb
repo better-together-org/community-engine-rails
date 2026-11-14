@@ -12,6 +12,7 @@
     <%= seo_meta_tags %>
     <%= canonical_link_tag %>
     <%= robots_meta_tag %>
+    <%= third_party_tracking_meta_tag %>
     <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
     <%= yield(:structured_data) if content_for?(:structured_data) %>
     <%= color_scheme_meta_tag %>
@@ -60,6 +61,7 @@
   <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
     <a class="visually-hidden-focusable bt-skip-link" id="skip-to-content" href="#main-content"><%= t('navbar.skip_to_content') %></a>
     <div class="wrapper">
+      <%= render_platform_content_slot(:header_above) %>
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
@@ -74,6 +76,7 @@
 
       <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
 
+      <%= render_platform_content_slot(:footer_above) %>
       <!-- Custom Footer from Host App -->
       <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 

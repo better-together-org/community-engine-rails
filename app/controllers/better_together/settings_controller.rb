@@ -10,6 +10,7 @@ module BetterTogether
   class SettingsController < ApplicationController
     include AppearancePreferenceParams
 
+    skip_third_party_tracking
     before_action :authenticate_user!
     before_action :set_person
     before_action :set_feature_gate_visibility
