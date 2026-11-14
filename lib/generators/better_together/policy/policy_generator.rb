@@ -40,15 +40,15 @@ module BetterTogether
             end
 
             def create?
-              permitted_to?('manage_platform')
+              platform_manager?
             end
 
             def update?
-              permitted_to?('manage_platform')
+              platform_manager?
             end
 
             def destroy?
-              permitted_to?('manage_platform')
+              platform_manager?
             end
           end
         RUBY
