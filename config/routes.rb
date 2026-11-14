@@ -531,6 +531,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
               resources :platform_domains, except: %i[show]
+              resources :redirects, except: %i[show] do
+                collection do
+                  get :import, action: :new_import
+                  post :import, action: :create_import
+                end
+              end
               resources :platform_identity_providers, except: %i[show], path: 'identity_providers'
             end
 

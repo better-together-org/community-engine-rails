@@ -401,6 +401,10 @@ en:
         type: Type
         valid_from: Valid from
         valid_until: Valid until
+      better_together/redirect:
+        from_path: Old path
+        status: Response
+        to_path: New path
       better_together/resource_permission:
         action: Action
         identifier: Identifier
@@ -616,6 +620,12 @@ en:
               must_be_true_for_share_domain: must be true for a share domain
             primary:
               already_taken_for_platform: has already been taken for this platform
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: must be a path starting with a slash or a full http or https
+                address
+              redirect_loop: leads back to itself through other redirects
         better_together/short_link:
           attributes:
             target_url:
@@ -696,6 +706,7 @@ en:
       better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
       better_together/post: Post
+      better_together/redirect: Redirect
       better_together/resource_permission: Resource Permission
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
@@ -3636,6 +3647,76 @@ en:
       nav:
         resource_permissions: Resource permissions
         roles: Roles
+    redirects:
+      created: Redirect was successfully added.
+      destroyed: Redirect was removed.
+      edit:
+        subtitle: Redirect for %{platform_name}
+        title: Edit %{from_path}
+      form:
+        active_label: Active
+        cancel: Cancel
+        create_btn: Add redirect
+        from_path_hint: The address visitors used, starting with a slash. Matching
+          ignores letter case, a trailing slash and any query string.
+        from_path_label: Old path
+        note_label: Note
+        preserve_query_label: Keep the query string when redirecting
+        status_label: Response
+        statuses:
+          s301: 301 Moved permanently
+          s302: 302 Found (temporary)
+          s307: 307 Temporary redirect
+          s308: 308 Permanent redirect
+          s410: 410 Gone
+        to_path_hint: A path on this site starting with a slash, or a full http or
+          https address. Leave blank only for 410 Gone.
+        to_path_label: New path or URL
+        update_btn: Update redirect
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this redirect?
+        edit_btn: Edit
+        gone_label: Gone (no new address)
+        header_actions: Actions
+        header_from: Old path
+        header_hits: Visits
+        header_status: Status
+        header_to: New path
+        import_btn: Import
+        inactive_label: inactive
+        new_btn: Add redirect
+        no_redirects: No redirects yet.
+        search_btn: Search
+        search_label: Search redirects
+        search_placeholder: Search by old path
+        subtitle: Old addresses that send visitors to a new place on %{platform_name}
+        table_aria: Redirects
+        title: Redirects
+      new:
+        subtitle: Add a redirect for %{platform_name}
+        title: New redirect
+      new_import:
+        back: Back to redirects
+        import_btn: Import
+        import_confirm: Import these redirects?
+        preview_btn: Preview
+        report_applied: Import finished
+        report_created: Created
+        report_error_line: 'Line %{row} (%{path}): %{message}'
+        report_preview: Preview (nothing was saved)
+        report_skipped: Skipped (already exist)
+        report_unchanged: Unchanged
+        report_updated: Updated
+        rows_hint: 'Write old path, new path and an optional status (301, 302, 307,
+          308 or 410), separated by commas. Lines starting with # are ignored. Preview
+          first; nothing is saved until you choose Import.'
+        rows_label: Redirects, one per line
+        subtitle: Add many redirects to %{platform_name} at once
+        title: Import redirects
+        upsert_label: Also update redirects that already exist
+      updated: Redirect was successfully updated.
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
       invalid_invitation: Invalid or expired invitation code. Please check your invitation
@@ -5673,6 +5754,7 @@ en:
         identity_providers: Sign-in providers
         platform_domains: Domains
         quota_grants: Quota grants
+        redirects: Redirects
         robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations
