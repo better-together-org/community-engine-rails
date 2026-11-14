@@ -3438,6 +3438,14 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        csp_title: Security / CSP embeds
+        custom_css_hint: Advanced override. Styles added here load after the theme
+          and take precedence over it.
+        custom_css_title: Custom CSS
+        domains_after_save: Save the platform first, then manage its domains and sign-in
+          providers here.
+        domains_hint: Review the domains this platform answers on and the services
+          people use to sign in.
         feature_gates_hint: Choose which rollout stage each feature requires on this
           platform.
         feature_gates_title: Feature rollout gates
@@ -3473,6 +3481,14 @@ en:
         title: Register External Platform
       show:
         new_invitation: New invitation
+      tabs:
+        access: Access and privacy
+        appearance: Appearance
+        details: Details
+        domains: Domains and sign-in
+        errors: errors on this tab
+        features: Features and quotas
+        security: Security
     posts:
       authors: Authors
       back_to_posts: Back to Posts
