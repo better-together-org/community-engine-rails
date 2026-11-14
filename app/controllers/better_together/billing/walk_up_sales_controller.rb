@@ -31,7 +31,7 @@ module BetterTogether
       # Show the form again with what was typed, so the seller corrects it instead of starting over.
       def refuse(error)
         Rails.logger.warn("[billing] walk-up sale refused: #{error.class}")
-        @error = :refused
+        @error = error.try(:reason) || :refused
         @buyer = find_platform_person(params[:buyer_id].to_s.strip)
         @entered = entered_details
         render :new, status: :unprocessable_content

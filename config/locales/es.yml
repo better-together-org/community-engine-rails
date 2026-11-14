@@ -1951,10 +1951,14 @@ es:
           e indique un nombre abajo para añadirlo. Escriba al menos dos letras de
           un nombre o identificador.
         buyer_label: Comprador
-        buyer_name_hint: Solo es necesario si no elige a nadie arriba. Se le añade
-          como miembro y se le invita a unirse a la comunidad.
+        buyer_name_hint: Solo hace falta si no se elige a nadie arriba. El comprador
+          se registra para esta venta y puede ser invitado a unirse a la comunidad.
         buyer_name_label: Nombre (si el comprador aún no está en la plataforma)
         buyer_placeholder: Buscar por nombre o identificador
+        error_invitation_cap: Hoy ya ha invitado al máximo de compradores nuevos permitido.
+          Inténtelo mañana o elija al comprador en la lista de miembros.
+        error_member_email: Ese correo electrónico pertenece a un miembro de esta
+          plataforma. Elíjalo en la lista de miembros.
         error_refused: No se pudo registrar esa venta. Revise el comprador, la forma
           de pago y los acuerdos.
         intro: Registre una venta hecha en persona. El comprador no tiene que hacer

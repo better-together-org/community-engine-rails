@@ -1948,10 +1948,14 @@ en:
         buyer_hint: Pick someone already on this platform, or leave this empty and
           give a name below to add them. Type at least two letters of a name or handle.
         buyer_label: Buyer
-        buyer_name_hint: Needed only when no one is picked above. They are added as
-          a member and invited to join the community.
+        buyer_name_hint: Needed only when no one is picked above. The buyer is recorded
+          for this sale, and may be invited to join the community.
         buyer_name_label: Name (if the buyer is not on the platform yet)
         buyer_placeholder: Search by name or handle
+        error_invitation_cap: You have invited as many new buyers today as is allowed.
+          Try again tomorrow, or pick the buyer from the member list.
+        error_member_email: That email belongs to a member of this platform. Choose
+          them from the member list instead.
         error_refused: That sale could not be recorded. Check the buyer, the way of
           paying and the agreements.
         intro: Record a sale made face to face. The buyer does not need to do anything;

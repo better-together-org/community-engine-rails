@@ -11,12 +11,25 @@ module BetterTogether
       # is recorded as accepted in person (`seller_assisted`) with who recorded it, so it is never
       # mistaken for the buyer's own acceptance at checkout.
       #
-      # The buyer is an existing person (`buyer:`) or, when they are not on the platform yet, a name given as
-      # `buyer_name:` (see NewBuyer; they are invited to the community afterwards). Either way `buyer_email:` is
+      # The buyer is a member picked from the list (`buyer:`, the only way a sale attaches to an existing account) or a name
+      # given as `buyer_name:` (see NewBuyer: invited to the community, or a guest for this sale only). Either way `buyer_email:` is
       # required: it is where the buyer's billing notices go for this order. A billing address may be given; it is
       # kept on the order, and on the person too when they have no address yet.
-      class WalkUp
-        class Refused < StandardError; end
+      class WalkUp # rubocop:disable Metrics/ClassLength
+        # A sale that was not recorded; `reason` picks the message the steward sees.
+        class Refused < StandardError
+          def reason = :refused
+        end
+
+        # The email typed is a member's: pick them from the list instead.
+        class MemberEmail < Refused
+          def reason = :member_email
+        end
+
+        # The steward has reached the day's most invitations.
+        class OverCap < Refused
+          def reason = :invitation_cap
+        end
 
         def self.call(...) = new(...).call
 
@@ -46,6 +59,10 @@ module BetterTogether
           order = Order.transaction { sell }
           send_invitation
           order
+        rescue NewBuyer::MemberEmail => e
+          raise MemberEmail, e.message
+        rescue NewBuyer::OverCap => e
+          raise OverCap, e.message
         rescue NewBuyer::Invalid, Orders::Place::Refused, Checkout::AgreementGate::NotReady => e
           raise Refused, e.message
         end

@@ -1993,10 +1993,16 @@ fr:
           vide et indiquez un nom ci-dessous pour l'ajouter. Tapez au moins deux lettres
           d'un nom ou d'un identifiant.
         buyer_label: Acheteur
-        buyer_name_hint: Nécessaire seulement si personne n'est choisi ci-dessus.
-          La personne est ajoutée comme membre et invitée à rejoindre la communauté.
+        buyer_name_hint: Nécessaire seulement si personne n’est choisi ci-dessus.
+          L’acheteur est enregistré pour cette vente et peut être invité à rejoindre
+          la communauté.
         buyer_name_label: Nom (si l'acheteur n'est pas encore sur la plateforme)
         buyer_placeholder: Rechercher par nom ou identifiant
+        error_invitation_cap: Vous avez déjà invité aujourd’hui le nombre maximal
+          de nouveaux acheteurs. Réessayez demain ou choisissez l’acheteur dans la
+          liste des membres.
+        error_member_email: Cette adresse courriel appartient à un membre de cette
+          plateforme. Choisissez-le plutôt dans la liste des membres.
         error_refused: Cette vente n’a pas pu être enregistrée. Vérifiez l’acheteur,
           le mode de paiement et les ententes.
         intro: Enregistrez une vente faite en personne. L’acheteur n’a rien à faire;
