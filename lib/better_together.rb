@@ -3,6 +3,7 @@
 require 'better_together/version'
 require 'better_together/adapter_registry'
 require 'better_together/profiling'
+require 'better_together/platform_settings_registry'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
@@ -37,6 +38,9 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
   mattr_accessor :head_tag_providers
+  # :gem (engine migrations run in place) or :install (copied into db/migrate); recorded by the installer
+  mattr_accessor :host_migrations_mode
+  self.host_migrations_mode = :gem
   mattr_accessor :registered_content_security_policy_sources
   mattr_accessor :content_security
   self.swagger_additional_endpoints = []

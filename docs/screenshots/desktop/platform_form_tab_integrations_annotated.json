@@ -1,0 +1,48 @@
+{
+  "name": "platform_form_tab_integrations_annotated",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_integrations",
+  "flow": "platform_edit_integrations",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_integrations_tab_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-integrations-tab",
+      "title": "Integrations tab",
+      "bullets": [
+        "Settings registered by extension gems, one set per platform."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 500.0,
+        "width": 306.0,
+        "height": 40.0,
+        "right": 378.0,
+        "bottom": 540.0,
+        "center_x": 225.0,
+        "center_y": 520.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 500.0,
+        "width": 306.0,
+        "height": 40.0,
+        "right": 378.0,
+        "bottom": 540.0,
+        "center_x": 225.0,
+        "center_y": 520.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 398.0,
+        "y": 441.0,
+        "width": 380,
+        "height": 158,
+        "score": 1062.0
+      }
+    }
+  ]
+}

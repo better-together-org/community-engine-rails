@@ -401,6 +401,10 @@ en:
         type: Type
         valid_from: Valid from
         valid_until: Valid until
+      better_together/redirect:
+        from_path: Old path
+        status: Response
+        to_path: New path
       better_together/resource_permission:
         action: Action
         identifier: Identifier
@@ -616,6 +620,12 @@ en:
               must_be_true_for_share_domain: must be true for a share domain
             primary:
               already_taken_for_platform: has already been taken for this platform
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: must be a path starting with a slash or a full http or https
+                address
+              redirect_loop: leads back to itself through other redirects
         better_together/short_link:
           attributes:
             target_url:
@@ -640,10 +650,12 @@ en:
       better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
       better_together/content/events_block: Events
+      better_together/content/file_download_block: File Download
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Image Gallery
       better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
@@ -695,6 +707,7 @@ en:
       better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
       better_together/post: Post
+      better_together/redirect: Redirect
       better_together/resource_permission: Resource Permission
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
@@ -1135,6 +1148,10 @@ en:
     contacts:
       add: Add Contact
     content:
+      block_picker:
+        create: Create a new %{block} block
+        create_for_page: Create a new %{block} block for the page
+        icon: "%{block} icon"
       blocks:
         accordion_block:
           answer: Answer
@@ -1182,6 +1199,13 @@ en:
               scope_hint: Only your reviewed image uploads are available here.
               title: Choose from library
               view_uploads: View uploads and review statuses
+        file_download_block:
+          description_help: Short description (optional)
+          empty: This file is not available.
+          label_help: Link text (optional, defaults to the file name)
+          meta: "%{type}, %{size}"
+          open_inline: Open in the browser instead of downloading
+          select_prompt: Select a file
         hero:
           editor:
             background: Background
@@ -1198,6 +1222,16 @@ en:
           missing_url: No iframe URL configured.
           url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
             another trusted community-space embed.
+        image_gallery_block:
+          empty: No images to display.
+          heading_help: Heading shown above the gallery (optional)
+          images: Images
+          images_help: Choose image blocks in the order they should appear.
+          layout: Layout
+          layouts:
+            grid: Grid
+            masonry: Masonry
+          lightbox: Open images in a viewer when clicked
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2080,6 +2114,13 @@ en:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Close
+      counter: "{current} of {total}"
+      dialog_label: 'Image gallery: %{name}'
+      next: Next image
+      open_image: 'Open image %{current} of %{total}: %{name}'
+      previous: Previous image
     infrastructure:
       locations: Locations
     invitations:
@@ -2748,11 +2789,13 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        agreements: Agreements
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities
         content_blocks: Content Blocks
         events: Events
+        federation_hub: Federation Hub
         geography_continents: Continents
         geography_countries: Countries
         geography_maps: Maps
@@ -2763,19 +2806,24 @@ en:
         host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
+        hub: Hub
+        joatu_hub: Joatu Hub
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
+        oauth_applications: OAuth Applications
         pages: Pages
         people: People
         platform_connections: Platform Connections
         platforms: Platforms
+        posts: Posts
         reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
         safety_cases: Safety Review
         users: Users
+        webhook_endpoints: Webhook Endpoints
       visibility_strategies:
         authenticated: Signed-in users
         permission: Users with permission
@@ -3531,6 +3579,12 @@ en:
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+        integrations_empty: No integrations are installed.
+        integrations_env_fallback: Using the %{variable} environment variable. A value
+          saved here replaces it.
+        integrations_hint: Settings for services connected through extension gems.
+          Each platform keeps its own values.
+        integrations_secret_set: A value is saved. Leave this blank to keep it.
         quota_defaults_hint: Starting limit for each new person, community and this
           platform. Leave a field blank to use the default set in the application
           configuration. Changing a value also updates existing quotas on this platform;
@@ -3574,6 +3628,7 @@ en:
         domains: Domains and sign-in
         errors: errors on this tab
         features: Features and quotas
+        integrations: Integrations
         security: Security
     posts:
       authors: Authors
@@ -3700,6 +3755,76 @@ en:
       nav:
         resource_permissions: Resource permissions
         roles: Roles
+    redirects:
+      created: Redirect was successfully added.
+      destroyed: Redirect was removed.
+      edit:
+        subtitle: Redirect for %{platform_name}
+        title: Edit %{from_path}
+      form:
+        active_label: Active
+        cancel: Cancel
+        create_btn: Add redirect
+        from_path_hint: The address visitors used, starting with a slash. Matching
+          ignores letter case, a trailing slash and any query string.
+        from_path_label: Old path
+        note_label: Note
+        preserve_query_label: Keep the query string when redirecting
+        status_label: Response
+        statuses:
+          s301: 301 Moved permanently
+          s302: 302 Found (temporary)
+          s307: 307 Temporary redirect
+          s308: 308 Permanent redirect
+          s410: 410 Gone
+        to_path_hint: A path on this site starting with a slash, or a full http or
+          https address. Leave blank only for 410 Gone.
+        to_path_label: New path or URL
+        update_btn: Update redirect
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this redirect?
+        edit_btn: Edit
+        gone_label: Gone (no new address)
+        header_actions: Actions
+        header_from: Old path
+        header_hits: Visits
+        header_status: Status
+        header_to: New path
+        import_btn: Import
+        inactive_label: inactive
+        new_btn: Add redirect
+        no_redirects: No redirects yet.
+        search_btn: Search
+        search_label: Search redirects
+        search_placeholder: Search by old path
+        subtitle: Old addresses that send visitors to a new place on %{platform_name}
+        table_aria: Redirects
+        title: Redirects
+      new:
+        subtitle: Add a redirect for %{platform_name}
+        title: New redirect
+      new_import:
+        back: Back to redirects
+        import_btn: Import
+        import_confirm: Import these redirects?
+        preview_btn: Preview
+        report_applied: Import finished
+        report_created: Created
+        report_error_line: 'Line %{row} (%{path}): %{message}'
+        report_preview: Preview (nothing was saved)
+        report_skipped: Skipped (already exist)
+        report_unchanged: Unchanged
+        report_updated: Updated
+        rows_hint: 'Write old path, new path and an optional status (301, 302, 307,
+          308 or 410), separated by commas. Lines starting with # are ignored. Preview
+          first; nothing is saved until you choose Import.'
+        rows_label: Redirects, one per line
+        subtitle: Add many redirects to %{platform_name} at once
+        title: Import redirects
+        upsert_label: Also update redirects that already exist
+      updated: Redirect was successfully updated.
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
       invalid_invitation: Invalid or expired invitation code. Please check your invitation
@@ -4839,6 +4964,9 @@ en:
               privacy, and time zone you choose.
             steward: A steward account is created with full management access to the
               new platform.
+  breadcrumbs:
+    home: Home
+    label: Breadcrumb
   community:
     create_failed: Create failed
     created: Created
@@ -5560,15 +5688,20 @@ en:
       invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Account and tools
     conversations: Conversations
+    footer_legal_navigation: Site information
+    footer_navigation: Footer links
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Main
     my_profile: My Profile
     notifications_tooltip: Notifications
     search_tooltip: Search
     settings: Settings
     sign_in: Sign In
+    skip_to_content: Skip to main content
     toggle_navigation: Toggle navigation
     user_nav_tooltip: Account Menu
   navigation:
@@ -5740,6 +5873,7 @@ en:
         identity_providers: Sign-in providers
         platform_domains: Domains
         quota_grants: Quota grants
+        redirects: Redirects
         robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations
@@ -5780,6 +5914,7 @@ en:
     continent: Continent
     country: Country
     download_failed: Download failed
+    download_held: This file is still being checked for safety. Please try again soon.
     invitation: Invitation
     invitation_email: Invitation email
     member: Member
@@ -5804,6 +5939,7 @@ en:
     confirm_destroy: Confirm destroy
   search:
     button: Search
+    label: Search the site
     placeholder: Search...
   seed_catalog:
     geography:

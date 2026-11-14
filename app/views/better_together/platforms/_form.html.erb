@@ -51,7 +51,7 @@
 <%
   tab_error_counts = platform_form_tab_error_counts(platform)
   active_tab = platform_form_active_tab(tab_error_counts)
-  tab_ids = %w[details access appearance domains security features]
+  tab_ids = platform_form_tab_ids
 %>
 
 <%= form_with(model: platform, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
@@ -414,6 +414,12 @@
           </div>
         <% end %>
       </div>
+
+      <% if tab_ids.include?('integrations') %>
+        <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'integrations' %>" id="platform-integrations" role="tabpanel" aria-labelledby="platform-integrations-tab">
+          <%= render partial: 'better_together/platforms/integrations_fields', locals: { platform:, form: } %>
+        </div>
+      <% end %>
 
       <%= render partial: 'better_together/platforms/extra_form_content', locals: { model: platform, form: } %>
     </div>

@@ -70,6 +70,7 @@ erDiagram
   QUOTAS ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
   EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_USAGES : "quota / quota_id"
+  EXT_PLATFORM ||--o{ REDIRECTS : "platform / platform_id"
   EXT_PLATFORM o|--o{ SHORT_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
@@ -419,6 +420,19 @@ erDiagram
     idempotency_key string
     owner_type string
     period_key string
+  }
+
+  REDIRECTS {
+    platform_id uuid
+    from_path string
+    source string
+    note text
+    to_path text
+    active boolean
+    preserve_query boolean
+    hit_count integer
+    status integer
+    last_hit_at datetime
   }
 
   SHORT_LINKS {

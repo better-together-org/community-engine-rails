@@ -401,6 +401,10 @@ es:
         type: Tipo
         valid_from: Válido desde
         valid_until: Válido hasta
+      better_together/redirect:
+        from_path: Ruta antigua
+        status: Respuesta
+        to_path: Ruta nueva
       better_together/resource_permission:
         action: Acción
         identifier: Identificador
@@ -604,6 +608,12 @@ es:
                 compartición
             primary:
               already_taken_for_platform: ya ha sido utilizado para esta plataforma
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: debe ser una ruta que empiece con una barra o una dirección
+                http o https completa
+              redirect_loop: vuelve a sí misma a través de otras redirecciones
         better_together/short_link:
           attributes:
             target_url:
@@ -628,10 +638,12 @@ es:
       better_together/content/communities_block: Comunidades
       better_together/content/css: CSS personalizado
       better_together/content/events_block: Eventos
+      better_together/content/file_download_block: Descarga de archivo
       better_together/content/hero: Héroe
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Imagen
+      better_together/content/image_gallery_block: Galería de imágenes
       better_together/content/link: Enlace
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagrama Mermaid
@@ -683,6 +695,7 @@ es:
       better_together/platform_domain: Dominio de plataforma
       better_together/platform_invitation: Invitación a plataforma
       better_together/post: Publicación
+      better_together/redirect: Redirección
       better_together/resource_permission: Permiso de recursos
       better_together/role: Papel
       better_together/role_resource_permission: Permiso de recursos de rol
@@ -1131,6 +1144,10 @@ es:
     contacts:
       add: Agregar Contacto
     content:
+      block_picker:
+        create: Crear un nuevo bloque %{block}
+        create_for_page: Crear un nuevo bloque %{block} para la página
+        icon: Icono de %{block}
       blocks:
         accordion_block:
           answer: Answer
@@ -1179,6 +1196,13 @@ es:
               scope_hint: Aquí solo están disponibles tus cargas de imagen revisadas.
               title: Elegir de la biblioteca
               view_uploads: Ver cargas y estados de revisión
+        file_download_block:
+          description_help: Descripción breve (opcional)
+          empty: Este archivo no está disponible.
+          label_help: Texto del enlace (opcional, por defecto el nombre del archivo)
+          meta: "%{type}, %{size}"
+          open_inline: Abrir en el navegador en lugar de descargar
+          select_prompt: Seleccionar un archivo
         hero:
           editor:
             background: Fondo
@@ -1196,6 +1220,16 @@ es:
           missing_url: No se ha configurado ninguna URL de iframe.
           url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
             Formbricks u otra inserción confiable de un espacio comunitario.
+        image_gallery_block:
+          empty: No hay imágenes para mostrar.
+          heading_help: Título que se muestra sobre la galería (opcional)
+          images: Imágenes
+          images_help: Elija los bloques de imagen en el orden en que deben aparecer.
+          layout: Diseño
+          layouts:
+            grid: Cuadrícula
+            masonry: Mosaico
+          lightbox: Abrir las imágenes en un visor al hacer clic
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -2096,6 +2130,13 @@ es:
         no_suggestions: No hay sugerencias aún — crea una oferta o solicitud para
           ver coincidencias.
         suggested_matches: Sugerencias de coincidencias
+    image_gallery:
+      close: Cerrar
+      counter: "{current} de {total}"
+      dialog_label: 'Galería de imágenes: %{name}'
+      next: Imagen siguiente
+      open_image: 'Abrir imagen %{current} de %{total}: %{name}'
+      previous: Imagen anterior
     infrastructure:
       locations: Ubicaciones
     invitations:
@@ -2781,11 +2822,13 @@ es:
       new:
         title: Nuevo elemento de navegación para %{name}
       route_names:
+        agreements: Acuerdos
         calendars: Calendarios
         calls_for_interest: Convocatorias de interés
         communities: Comunidades
         content_blocks: Bloques de contenido
         events: Eventos
+        federation_hub: Centro de federación
         geography_continents: Continentes
         geography_countries: Países
         geography_maps: Mapas
@@ -2796,19 +2839,24 @@ es:
         host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
+        hub: Centro
+        joatu_hub: Centro Joatu
         joatu_offers: Ofertas
         joatu_requests: Solicitudes
         metrics_reports: Informes de métricas
         navigation_areas: Áreas de navegación
+        oauth_applications: Aplicaciones OAuth
         pages: Páginas
         people: Personas
         platform_connections: Conexiones de plataforma
         platforms: Plataformas
+        posts: Publicaciones
         reports: Informes
         resource_permissions: Permisos de recursos
         roles: Roles
         safety_cases: Revisión de seguridad
         users: Usuarios
+        webhook_endpoints: Puntos de conexión de webhook
       visibility_strategies:
         authenticated: Usuarios autenticados
         permission: Usuarios con permiso
@@ -3587,6 +3635,13 @@ es:
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
+        integrations_empty: No hay integraciones instaladas.
+        integrations_env_fallback: Se usa la variable de entorno %{variable}. Un valor
+          guardado aquí la reemplaza.
+        integrations_hint: Ajustes de los servicios conectados mediante extensiones.
+          Cada plataforma conserva sus propios valores.
+        integrations_secret_set: Hay un valor guardado. Deje este campo vacío para
+          conservarlo.
         quota_defaults_hint: Límite inicial para cada persona y comunidad nuevas y
           para esta plataforma. Deja un campo en blanco para usar el valor de la configuración
           de la aplicación. Cambiar un valor también actualiza las cuotas existentes
@@ -3630,6 +3685,7 @@ es:
         domains: Dominios e inicio de sesión
         errors: errores en esta pestaña
         features: Funciones y cuotas
+        integrations: Integraciones
         security: Seguridad
     posts:
       authors: Autores
@@ -3757,6 +3813,79 @@ es:
       nav:
         resource_permissions: Permisos de recursos
         roles: Roles
+    redirects:
+      created: La redirección se añadió correctamente.
+      destroyed: La redirección se eliminó.
+      edit:
+        subtitle: Redirección para %{platform_name}
+        title: Editar %{from_path}
+      form:
+        active_label: Activa
+        cancel: Cancelar
+        create_btn: Añadir redirección
+        from_path_hint: La dirección que usaban los visitantes, que empieza con una
+          barra. La coincidencia ignora mayúsculas, la barra final y la cadena de
+          consulta.
+        from_path_label: Ruta antigua
+        note_label: Nota
+        preserve_query_label: Conservar la cadena de consulta al redirigir
+        status_label: Respuesta
+        statuses:
+          s301: 301 Movida permanentemente
+          s302: 302 Encontrada (temporal)
+          s307: 307 Redirección temporal
+          s308: 308 Redirección permanente
+          s410: 410 Eliminada
+        to_path_hint: Una ruta de este sitio que empiece con una barra, o una dirección
+          http o https completa. Déjelo vacío solo para 410 Eliminada.
+        to_path_label: Ruta nueva o URL
+        update_btn: Actualizar redirección
+      index:
+        back_to_platform: Volver a la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar esta redirección?"
+        edit_btn: Editar
+        gone_label: Eliminada (sin dirección nueva)
+        header_actions: Acciones
+        header_from: Ruta antigua
+        header_hits: Visitas
+        header_status: Estado
+        header_to: Ruta nueva
+        import_btn: Importar
+        inactive_label: inactiva
+        new_btn: Añadir redirección
+        no_redirects: Todavía no hay redirecciones.
+        search_btn: Buscar
+        search_label: Buscar redirecciones
+        search_placeholder: Buscar por ruta antigua
+        subtitle: Direcciones antiguas que llevan a los visitantes a un nuevo lugar
+          en %{platform_name}
+        table_aria: Redirecciones
+        title: Redirecciones
+      new:
+        subtitle: Añadir una redirección para %{platform_name}
+        title: Nueva redirección
+      new_import:
+        back: Volver a las redirecciones
+        import_btn: Importar
+        import_confirm: "¿Importar estas redirecciones?"
+        preview_btn: Vista previa
+        report_applied: Importación terminada
+        report_created: Creadas
+        report_error_line: 'Línea %{row} (%{path}): %{message}'
+        report_preview: Vista previa (no se guardó nada)
+        report_skipped: Omitidas (ya existen)
+        report_unchanged: Sin cambios
+        report_updated: Actualizadas
+        rows_hint: 'Escriba la ruta antigua, la ruta nueva y un estado opcional (301,
+          302, 307, 308 o 410), separados por comas. Las líneas que empiezan con #
+          se ignoran. Haga primero una vista previa; no se guarda nada hasta que elija
+          Importar.'
+        rows_label: Redirecciones, una por línea
+        subtitle: Añadir muchas redirecciones a %{platform_name} a la vez
+        title: Importar redirecciones
+        upsert_label: Actualizar también las redirecciones que ya existen
+      updated: La redirección se actualizó correctamente.
     registrations:
       captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
         de nuevo.
@@ -4922,6 +5051,9 @@ es:
               la privacidad y la zona horaria que elijas.
             steward: Se crea una cuenta de responsable con acceso total de gestión
               a la nueva plataforma.
+  breadcrumbs:
+    home: Inicio
+    label: Ruta de navegación
   community:
     create_failed: Creación fallida
     created: Creado
@@ -5655,15 +5787,20 @@ es:
       invalid_parameters: Parámetros inválidos
   navbar:
     accept_invitation: Aceptar invitación
+    account_navigation: Cuenta y herramientas
     conversations: Conversaciones
+    footer_legal_navigation: Información del sitio
+    footer_navigation: Enlaces del pie de página
     host_mgmt_tooltip: Gestión del anfitrión
     locale_switcher_tooltip: Cambiar idioma
     log_out: Cerrar sesión
+    main_navigation: Principal
     my_profile: Mi perfil
     notifications_tooltip: Notificaciones
     search_tooltip: Buscar
     settings: Configuración
     sign_in: Iniciar sesión
+    skip_to_content: Saltar al contenido principal
     toggle_navigation: Alternar navegación
     user_nav_tooltip: Menú de cuenta
   navigation:
@@ -5840,6 +5977,7 @@ es:
         identity_providers: Proveedores de inicio de sesión
         platform_domains: Dominios
         quota_grants: Concesiones de cuota
+        redirects: Redirecciones
         robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento
         title: Operaciones de la plataforma
@@ -5880,6 +6018,8 @@ es:
     continent: Continente
     country: País
     download_failed: Descarga fallida
+    download_held: Este archivo aún se está revisando por seguridad. Inténtalo de
+      nuevo pronto.
     invitation: Invitación
     invitation_email: Correo de invitación
     member: Miembro
@@ -5904,6 +6044,7 @@ es:
     confirm_destroy: Confirmar destrucción
   search:
     button: Buscar
+    label: Buscar en el sitio
     placeholder: Buscar...
   seed_catalog:
     geography:

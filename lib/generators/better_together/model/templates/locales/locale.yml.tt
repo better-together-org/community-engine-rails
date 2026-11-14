@@ -1,0 +1,6 @@
+<%= @locale %>:
+  activerecord:
+    models:
+      <%= (module_name ? "#{module_name.underscore}/" : '') + file_name %>:
+        one: <%= human_name %>
+        other: <%= human_name.pluralize %>
