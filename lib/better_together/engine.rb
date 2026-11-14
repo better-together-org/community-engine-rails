@@ -16,6 +16,10 @@ require 'better_together/migration_helpers'
 require 'better_together/generator_templates'
 require 'better_together/profiling'
 require 'better_together/storage_resolver'
+require 'better_together/storage/tenant_registry'
+require 'better_together/storage/tenant_service'
+require 'better_together/storage/usage'
+require 'better_together/storage/platform_blobs'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
@@ -184,6 +188,12 @@ module BetterTogether
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
     # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
     # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.
+    # Per-platform storage: swap in the registry that builds services from StorageConfiguration rows and
+    # stamp new blobs with the current platform's service. Runs after Rails registers its own blob hook.
+    initializer 'better_together.tenant_storage', after: 'active_storage.services' do
+      ActiveSupport.on_load(:active_storage_blob) { BetterTogether::Storage::TenantService.install! }
+    end
+
     initializer 'better_together.active_storage_variant_processor' do |app|
       app.config.active_storage.variant_processor = :vips
     end
@@ -274,6 +284,16 @@ module BetterTogether
         app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
         # Mirrors config/initializers/fast_mcp.rb, which mounts MCP from the same variable.
         app.config.mcp.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development? || Rails.env.test?).to_s == 'true'
+      end
+    end
+
+    # to_prepare re-runs after code reloads, so host themes survive the registry class being reloaded.
+    initializer 'better_together.host_platform_themes' do |app|
+      app.config.to_prepare do
+        path = Rails.root.join('config/platform_themes.yml')
+        if path.exist? && path != BetterTogether::PlatformThemeConfig::THEMES_PATH
+          BetterTogether::PlatformThemeConfig.register_themes_from(path)
+        end
       end
     end
 

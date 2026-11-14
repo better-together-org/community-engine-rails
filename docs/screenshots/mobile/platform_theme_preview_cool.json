@@ -1,0 +1,48 @@
+{
+  "name": "platform_theme_preview_cool",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_theme_settings",
+  "flow": "platform_theme_preview_cool",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_theme_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-theme-preview",
+      "title": "Live preview",
+      "bullets": [
+        "Nothing is saved until you save the platform."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 288.390625,
+        "width": 461.0,
+        "height": 681.1875,
+        "right": 473.0,
+        "bottom": 969.578125,
+        "center_x": 242.5,
+        "center_y": 628.984375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 288.390625,
+        "width": 461.0,
+        "height": 681.1875,
+        "right": 473.0,
+        "bottom": 969.578125,
+        "center_x": 242.5,
+        "center_y": 628.984375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 110.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 288.390625
+      }
+    }
+  ]
+}

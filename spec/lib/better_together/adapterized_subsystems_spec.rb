@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/SpecFilePathFormat
 RSpec.describe BetterTogether do
   around do |example|
     original_registry = described_class.adapter_registry
@@ -109,4 +109,3 @@ RSpec.describe BetterTogether do
     end
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat

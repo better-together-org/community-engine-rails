@@ -2,7 +2,7 @@
 
 module BetterTogether
   # CRUD for BetterTogether::Post
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PostsController < FriendlyResourceController
     include PostsIndexPreload
     include ChecksRequiredAgreements
@@ -151,5 +151,4 @@ module BetterTogether
       community_context ? [community_context.id] : []
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

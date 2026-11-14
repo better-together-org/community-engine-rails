@@ -3,7 +3,7 @@
 require 'digest'
 
 module BetterTogether
-  # rubocop:todo Metrics/ModuleLength
+  # rubocop:todo-next Metrics/ModuleLength
   module NavigationItemsHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
     HOST_DASHBOARD_TURBO_FRAME_ID = 'host-dashboard-tab-content'
     HOST_DASHBOARD_TAB_IDENTIFIERS = %w[
@@ -39,9 +39,8 @@ module BetterTogether
     ].freeze
 
     def better_together_nav_area
-  # rubocop:todo Layout/IndentationWidth
+  # rubocop:todo-next Layout/IndentationWidth
   @better_together_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'better-together')
-      # rubocop:enable Layout/IndentationWidth
     end
 
     # Retrieves navigation items for the BetterTogether header navigation.
@@ -138,7 +137,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def navigation_item_visible_for?(navigation_item, platform: host_platform)
       return false unless navigation_item
 
@@ -153,7 +152,6 @@ module BetterTogether
 
       @navigation_item_visibility_cache[cache_key] = visible
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def navigation_item_children_for(navigation_item, platform: host_platform)
@@ -399,12 +397,11 @@ module BetterTogether
       cache[key] = load_nav_items_for(nav_area).select { |item| navigation_item_visible_for?(item, platform: host_platform) }
     end
 
-    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def nav_visibility_context_key
       build_nav_visibility_context_key
     end
 
-    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:todo-next Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def build_nav_visibility_context_key
       context_parts = [
         "locale:#{current_locale}",
@@ -421,7 +418,6 @@ module BetterTogether
     rescue StandardError
       nil
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def nav_permission_cache_stamp
       context_key = current_user&.cache_key_with_version || 'guest'
@@ -439,7 +435,7 @@ module BetterTogether
         end
     end
 
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def membership_cache_segments
       context_key = current_user&.cache_key_with_version || 'guest'
       @membership_cache_segments_cache ||= {}
@@ -447,7 +443,6 @@ module BetterTogether
 
       @membership_cache_segments_cache[context_key] = membership_segments_for_user
     end
-    # rubocop:enable Metrics/AbcSize
 
     def role_cache_segments
       context_key = current_user&.cache_key_with_version || 'guest'
@@ -513,5 +508,4 @@ module BetterTogether
       "#{membership_class_name}:#{scope.count}:#{max_updated_at}"
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

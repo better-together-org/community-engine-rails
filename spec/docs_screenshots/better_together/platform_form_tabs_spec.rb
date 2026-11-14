@@ -22,7 +22,7 @@ RSpec.describe 'Documentation screenshots for the tabbed platform form', # ruboc
   tabs = {
     'details' => ['Details tab', 'Name, description, URL and time zone.'],
     'access' => ['Access and privacy tab', 'Who can see the platform and how people join.'],
-    'appearance' => ['Appearance tab', 'Custom CSS today; theme settings land here next.'],
+    'appearance' => ['Appearance tab', 'Theme colours, font, images and custom CSS.'],
     'domains' => ['Domains and sign-in tab', 'Links to the platform domains and sign-in providers.'],
     'security' => ['Security tab', 'Content security policy origins.'],
     'features' => ['Features and quotas tab', 'Rollout gates and quota defaults.']

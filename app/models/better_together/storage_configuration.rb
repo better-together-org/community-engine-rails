@@ -26,9 +26,9 @@ module BetterTogether
     # active_storage_configuration` (belongs_to, keyed by
     # platforms.storage_configuration_id) rather than a bare class-level
     # query — no `StorageConfiguration.find`/`.first`/`.all` exists anywhere
-    # in the app. Holds encrypted S3 credentials, so any new call site should
-    # keep going through the platform association rather than querying this
-    # class directly.
+    # in the app. The one exception is Storage::TenantRegistry, which loads a row
+    # by the id inside a blob's service_name. Holds encrypted S3 credentials, so
+    # any other call site should go through the platform association.
     belongs_to :platform, class_name: 'BetterTogether::Platform'
 
     validates :name, presence: true
@@ -97,6 +97,11 @@ module BetterTogether
       return rotate_failed(result) unless result.ok? && candidate.valid?
 
       persist_rotation(candidate)
+    end
+
+    # Bytes stored on this configuration's service (see Storage::Usage).
+    def used_bytes
+      Storage::Usage.bytes_for(self)
     end
 
     private

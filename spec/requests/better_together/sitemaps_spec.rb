@@ -40,7 +40,7 @@ RSpec.describe 'Sitemap' do
     end
   end
 
-  # rubocop:disable RSpec/NestedGroups
+  # rubocop:disable-next RSpec/NestedGroups
   describe 'GET /:locale/sitemap.xml.gz (locale-specific)' do
     I18n.available_locales.each do |test_locale|
       context "for locale #{test_locale}" do
@@ -77,7 +77,6 @@ RSpec.describe 'Sitemap' do
       end
     end
   end
-  # rubocop:enable RSpec/NestedGroups
 
   describe 'multi-platform isolation' do
     let!(:tenant_platform) do

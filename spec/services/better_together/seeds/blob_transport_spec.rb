@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable Layout/LineLength
+# rubocop:disable-next Layout/LineLength
 RSpec.describe 'Seed packet blob transport' do # rubocop:disable RSpec/DescribeClass
   let(:dir) { Dir.mktmpdir('seed-blobs') }
   let(:pdf) { "%PDF-1.4 packet blob #{SecureRandom.hex(4)}" }
@@ -182,4 +182,3 @@ RSpec.describe 'Seed packet blob transport' do # rubocop:disable RSpec/DescribeC
     end
   end
 end
-# rubocop:enable Layout/LineLength

@@ -5,7 +5,7 @@ module BetterTogether
   class JoatuMailer < ApplicationMailer
     # Support both direct delivery (recipient, offer:, request:) and
     # Noticed delivery using `.with(offer:, request:, recipient:)`.
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def new_match(recipient = nil, *_args, offer: nil, request: nil, **kwargs)
       # Accept various call shapes from Noticed or direct invocation.
       @recipient = recipient || kwargs[:recipient] || params[:recipient]
@@ -17,7 +17,6 @@ module BetterTogether
 
       mail(to: @recipient.email, subject: t('.subject'))
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def agreement_created
       @agreement = params[:agreement]

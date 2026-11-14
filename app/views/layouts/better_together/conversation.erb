@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>">
+<html lang="<%= I18n.locale %>" <%= tag.attributes(html_color_mode_attributes) %>>
   <head>
+    <%= third_party_tracking_meta_tag %>
     <%= render_provider_head_tags %>
 
     <!-- Custom Head Javascript from Host App -->
     <%= render 'layouts/better_together/custom_head_javascript' %>
 
     <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
-    <meta name="color-scheme" content="light dark">
+    <%= color_scheme_meta_tag %>
+    <%= color_mode_head_script_tag %>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= tag.meta name: "direct-upload-token", content: direct_upload_authorization_token %>
@@ -17,6 +19,10 @@
 
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
+
+    <%= platform_theme_style_tag %>
+    <%= user_theme_style_tag %>
+    <%= platform_favicon_tag %>
 
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
       <%= render partial: 'better_together/content/blocks/css', locals: { css: host_platform.css_block } if host_platform.css_block %>
