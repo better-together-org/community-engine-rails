@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-11T17:52:36Z`.
+Generated from live Rails reflections at `2026-11-14T02:04:48Z`.
 
 ## Identity, access, and memberships
 
@@ -689,6 +689,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | QuotaGrant | `better_together_quota_grants` | `granted_by_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`granted_by_type` (string)<br>`owner_type` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>InclusionValidator: granted_by_type (allow_nil=true, in=["BetterTogether::Person", "BetterTogether::Robot"]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaReservation | `better_together_quota_reservations` | `actor_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`actor_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>PresenceValidator: amount<br>NumericalityValidator: amount (only_integer=true)<br>PresenceValidator: period_key<br>PresenceValidator: expires_at | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaUsage | `better_together_quota_usages` | `actor_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`actor_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>PresenceValidator: amount<br>NumericalityValidator: amount (only_integer=true)<br>PresenceValidator: period_key<br>PresenceValidator: idempotency_key | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
+| Redirect | `better_together_redirects` | `platform_id` (uuid FK)<br>`from_path` (string)<br>`source` (string)<br>`note` (text)<br>`to_path` (text)<br>`active` (boolean) | PresenceValidator: from_path<br>UniquenessValidator: from_path (scope=:platform_id, case_sensitive=false)<br>InclusionValidator: status (in=[301, 302, 307, 308, 410])<br>InclusionValidator: source (in=["manual", "import", "seed", "slug_history"])<br>PresenceValidator: to_path (unless=:gone?) | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | SafetyReportDigestNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | SafetyReportDigestNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | SafetyReportSubmittedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
@@ -809,6 +810,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PlatformDomainsController | `BetterTogether::ApplicationController` | `PlatformDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | PlatformIdentityProvidersController | `BetterTogether::ApplicationController` | `PlatformIdentityProvider` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | QuotaGrantsController | `BetterTogether::ApplicationController` | `QuotaGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| RedirectsController | `BetterTogether::ApplicationController` | `Redirect` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | ReportFollowupsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | ResourceController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | RobotsController | `BetterTogether::ApplicationController` | `Robot` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
@@ -895,6 +897,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `QuotaGrant`: `owner` (belongs_to), `granted_by` (belongs_to), `seeds` (has_many)
 - `QuotaReservation`: `subject` (belongs_to), `actor` (belongs_to), `owner` (belongs_to), `seeds` (has_many)
 - `QuotaUsage`: `subject` (belongs_to), `actor` (belongs_to), `owner` (belongs_to), `seeds` (has_many)
+- `Redirect`: `seeds` (has_many)
 - `SafetyReportDigestNotifier`: `record` (belongs_to)
 - `SafetyReportDigestNotifier::Notification`: `recipient` (belongs_to)
 - `SafetyReportSubmittedNotifier`: `record` (belongs_to)
