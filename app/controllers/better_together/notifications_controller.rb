@@ -2,7 +2,8 @@
 
 module BetterTogether
   # handles rendering and marking notifications as read
-  class NotificationsController < ApplicationController
+  class NotificationsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    skip_third_party_tracking
     include BetterTogether::NotificationReadable
 
     before_action :authenticate_user!

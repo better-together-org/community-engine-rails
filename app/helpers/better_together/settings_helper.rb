@@ -47,6 +47,25 @@ module BetterTogether
       end
     end
 
+    # [label, id] choices for a person's theme select: the platform's own theme first, then every theme.
+    def user_theme_choices
+      cfg = BetterTogether::PlatformThemeConfig
+      [[t('better_together.people.preferences.appearance.platform_theme'), '']] +
+        cfg.themes.keys.map { |id| [cfg.theme_name(id), id] }
+    end
+
+    def user_color_mode_choices
+      BetterTogether::PlatformThemeConfig::COLOR_MODES.map { |mode| [t("better_together.color_mode.#{mode}"), mode] }
+    end
+
+    # Preview tokens keyed by theme id ('' is the platform's own theme), embedded for the live preview.
+    def user_theme_preview_json(platform = host_platform)
+      cfg = BetterTogether::PlatformThemeConfig
+      data = cfg.themes.keys.index_with { |id| cfg.preview_data(id) }
+      data[''] = cfg.preview_data('', platform.theme_config)
+      data.to_json
+    end
+
     private
 
     # rubocop:disable Metrics/ParameterLists
@@ -105,7 +124,8 @@ module BetterTogether
                    base_attrs.merge(class: 'form-select'))
       else
         choices = field_options[:choices] || []
-        select_tag("person[#{field_name}]", options_for_select(choices, field_value),
+        selected = field_options.key?(:selected) ? field_options[:selected] : field_value
+        select_tag("person[#{field_name}]", options_for_select(choices, selected),
                    base_attrs.merge(class: 'form-select'))
       end
     end

@@ -44,6 +44,7 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :fail_closed_unknown_hosts
   self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
   mattr_accessor :head_tag_providers
+  mattr_accessor :third_party_tracking_exclusions
   # :gem (engine migrations run in place) or :install (copied into db/migrate); recorded by the installer
   mattr_accessor :host_migrations_mode
   self.host_migrations_mode = :gem
@@ -51,6 +52,7 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :content_security
   self.swagger_additional_endpoints = []
   self.head_tag_providers = {}
+  self.third_party_tracking_exclusions = {}
   self.registered_content_security_policy_sources = Hash.new { |hash, key| hash[key] = [] }
   self.adapter_registry = BetterTogether::AdapterRegistry.new
 
@@ -219,6 +221,15 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       raise ArgumentError, 'provider must respond to call' unless provider.respond_to?(:call)
 
       head_tag_providers[key.to_sym] = provider
+    end
+
+    # Extensions and host apps add their own reasons to keep a page away from third-party vendors.
+    # The block receives the controller and returns true to exclude the request.
+    def register_third_party_tracking_exclusion(key, callable = nil, &block)
+      rule = callable || block
+      raise ArgumentError, 'rule must respond to call' unless rule.respond_to?(:call)
+
+      third_party_tracking_exclusions[key.to_sym] = rule
     end
 
     def register_content_security_policy_sources(directive, *sources)

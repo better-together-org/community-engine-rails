@@ -16,6 +16,9 @@
         icon: 'fa-solid fa-clock',
         hint: t('helpers.hint.person.time_zone')) %>
 
+  <!-- Appearance: personal theme and colour mode -->
+  <%= render 'better_together/people/appearance_preferences', person: person %>
+
   <!-- Email Notifications -->
   <div class="mb-4 pb-3 border-bottom">
     <h5 class="mb-3">
