@@ -3421,6 +3421,102 @@ en:
         accepted: Accepted
         expired: Expired
         pending: Pending
+    platform_snippets:
+      applies_to_options:
+        all: Everyone
+        signed_out: Signed-out visitors only
+      audit_actions:
+        created: Created
+        destroyed: Deleted
+        disabled: Disabled
+        enabled: Enabled
+        updated: Updated
+      consent_categories:
+        analytics: Analytics
+        marketing: Marketing
+        none: Not needed
+      destroyed: Snippet deleted.
+      edit:
+        subtitle: For %{platform_name}.
+        title: Edit %{name}
+      errors:
+        invalid_meta_markup: must contain meta tags or preconnect links
+        invalid_script_markup: must be plain JavaScript without script tags or HTML
+          comments
+        invalid_src: must be an https address
+        invalid_style_markup: must be plain CSS without style tags or HTML comments
+        meta_requires_head: meta tags can only go in the head
+        origin_not_allowed: origin %{origin} is not allowed by this platform's script
+          security settings
+      form:
+        allow_origin: Allow this script origin in the content security policy
+        allow_origin_hint: Adds the origin to this platform's allowed script origins.
+        applies_to: Shown to
+        cancel: Cancel
+        consent_category: Visitor consent
+        consent_hint: Analytics and marketing snippets are held back until visitors
+          consent.
+        content: Code
+        content_hint: Inline scripts run with the page security nonce. Do not include
+          script or style tags. Meta tags and preconnect links only for the meta kind.
+        enabled: Enabled
+        enabled_hint: Leave this off until you have tested the snippet.
+        kind: Kind
+        location: Location
+        name: Name
+        notes: Notes
+        save: Save snippet
+        src: Script address
+        src_hint: For external scripts only. The address must use https and its origin
+          must be allowed by the platform security settings.
+        warning: This code runs in every visitor's browser. Test with safe mode and
+          keep the snippet disabled until you are ready.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Recent changes
+        back_to_platform: Back to platform settings
+        delete_btn: Delete
+        delete_confirm: Delete this snippet?
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        header_actions: Actions
+        header_consent: Consent
+        header_kind: Kind
+        header_location: Location
+        header_name: Name
+        header_status: Status
+        kill_switch_hint: Add ?safe_mode=1 to any page address to view the site without
+          snippets.
+        kill_switch_off: All snippets are switched off.
+        kill_switch_on: Snippets are running.
+        kill_switch_title: All snippets
+        move_down: Down
+        move_up: Up
+        new_btn: New snippet
+        none_yet: No snippets yet.
+        subtitle: Scripts, styles and meta tags added to every page of %{platform_name}.
+        table_aria: Custom code snippets
+        title: Custom code
+        turn_off: Switch all off
+        turn_on: Switch all on
+        warning: Snippets run in every visitor's browser and can read what they see
+          and type on this platform. Only add code you trust.
+      kinds:
+        html_meta: Meta tags
+        script_inline: Inline script
+        script_src: External script
+        style_inline: Inline style
+      locations:
+        body_end: End of body
+        body_start: Start of body
+        head_end: End of head
+        head_start: Start of head
+      new:
+        subtitle: For %{platform_name}. New snippets start disabled.
+        title: New snippet
+      saved: Snippet saved.
+      switch_updated: The snippet switch was updated.
     platforms:
       form:
         allow_membership_requests: Allow membership requests
@@ -3439,6 +3535,10 @@ en:
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
         csp_title: Security / CSP embeds
+        custom_code_hint: Add scripts, styles and meta tags to every page. Needs the
+          manage platform code permission.
+        custom_code_link: Manage custom code
+        custom_code_title: Custom code
         custom_css_hint: Advanced override. Styles added here load after the theme
           and take precedence over it.
         custom_css_title: Custom CSS

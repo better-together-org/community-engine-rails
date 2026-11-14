@@ -1,0 +1,48 @@
+{
+  "name": "platform_snippets_index_annotated",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/platform_snippets",
+  "title": "Custom code | Test Host Community",
+  "locale": "en",
+  "role": "platform_code_manager",
+  "feature_set": "platform_snippets",
+  "flow": "platform_snippets_index",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_snippets_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-snippets-kill-switch",
+      "title": "Kill switch and audit trail",
+      "bullets": [
+        "Switch every snippet off at once; recent changes are listed below."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 290.0,
+        "width": 1296.0,
+        "height": 86.0,
+        "right": 1368.0,
+        "bottom": 376.0,
+        "center_x": 720.0,
+        "center_y": 333.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 290.0,
+        "width": 1296.0,
+        "height": 86.0,
+        "right": 1368.0,
+        "bottom": 376.0,
+        "center_x": 720.0,
+        "center_y": 333.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 396.0,
+        "width": 380,
+        "height": 190,
+        "score": 1081.0
+      }
+    }
+  ]
+}

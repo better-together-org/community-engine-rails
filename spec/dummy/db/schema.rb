@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_13_200100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -701,7 +701,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
     t.datetime "updated_at", null: false
     t.uuid "series_id", null: false
     t.uuid "session_id", null: false
-    t.integer "position", default: 0, null: false
+    t.integer "position", null: false
     t.index ["series_id"], name: "bt_event_series_sessions_by_series"
     t.index ["session_id"], name: "bt_event_series_sessions_by_session", unique: true
   end
@@ -1937,7 +1937,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
     t.text "client_secret"
     t.string "scopes"
     t.jsonb "options", default: {}, null: false
-    t.integer "position", default: 0, null: false
+    t.integer "position", null: false
     t.index ["platform_id", "provider_platform_id"], name: "idx_bt_platform_idps_unique", unique: true
     t.index ["platform_id"], name: "idx_bt_platform_idps_on_platform_id"
     t.index ["provider_platform_id"], name: "idx_bt_platform_idps_on_provider_platform_id"
@@ -1976,6 +1976,42 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
     t.index ["token"], name: "platform_invitations_by_token", unique: true
     t.index ["valid_from"], name: "platform_invitations_by_valid_from"
     t.index ["valid_until"], name: "platform_invitations_by_valid_until"
+  end
+
+  create_table "better_together_platform_snippet_audits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "snippet_id", null: false
+    t.uuid "actor_id"
+    t.string "action", null: false
+    t.string "snippet_name"
+    t.jsonb "change_set", default: {}, null: false
+    t.index ["actor_id"], name: "index_better_together_platform_snippet_audits_on_actor_id"
+    t.index ["platform_id"], name: "index_better_together_platform_snippet_audits_on_platform_id"
+    t.index ["snippet_id"], name: "index_better_together_platform_snippet_audits_on_snippet_id"
+  end
+
+  create_table "better_together_platform_snippets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "name", null: false
+    t.string "location", null: false
+    t.string "kind", null: false
+    t.text "content"
+    t.string "src"
+    t.boolean "enabled", default: false, null: false
+    t.integer "position", null: false
+    t.string "consent_category", default: "none", null: false
+    t.string "applies_to", default: "all", null: false
+    t.text "notes"
+    t.uuid "updated_by_id"
+    t.index ["platform_id", "location", "position"], name: "index_bt_platform_snippets_on_platform_location_position"
+    t.index ["platform_id"], name: "index_better_together_platform_snippets_on_platform_id"
+    t.index ["updated_by_id"], name: "index_better_together_platform_snippets_on_updated_by_id"
   end
 
   create_table "better_together_platforms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2996,6 +3032,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
   add_foreign_key "better_together_platform_invitations", "better_together_platforms", column: "invitable_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
+  add_foreign_key "better_together_platform_snippet_audits", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_snippets", "better_together_people", column: "updated_by_id"
+  add_foreign_key "better_together_platform_snippets", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_platforms", "better_together_storage_configurations", column: "storage_configuration_id", deferrable: :deferred

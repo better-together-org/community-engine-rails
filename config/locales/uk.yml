@@ -3477,6 +3477,103 @@ uk:
         accepted: Прийнято
         expired: Закінчився термін
         pending: Очікує
+    platform_snippets:
+      applies_to_options:
+        all: Усім
+        signed_out: Лише відвідувачам без входу
+      audit_actions:
+        created: Створено
+        destroyed: Видалено
+        disabled: Вимкнено
+        enabled: Увімкнено
+        updated: Оновлено
+      consent_categories:
+        analytics: Аналітика
+        marketing: Маркетинг
+        none: Не потрібна
+      destroyed: Фрагмент видалено.
+      edit:
+        subtitle: Для %{platform_name}.
+        title: Змінити %{name}
+      errors:
+        invalid_meta_markup: має містити метатеги або посилання preconnect
+        invalid_script_markup: має бути чистим JavaScript без тегів script чи коментарів
+          HTML
+        invalid_src: має бути адресою https
+        invalid_style_markup: має бути чистим CSS без тегів style чи коментарів HTML
+        meta_requires_head: метатеги можуть бути лише в head
+        origin_not_allowed: походження %{origin} не дозволене налаштуваннями безпеки
+          скриптів цієї платформи
+      form:
+        allow_origin: Дозволити походження цього скрипта в політиці безпеки вмісту
+        allow_origin_hint: Додає походження до дозволених джерел скриптів цієї платформи.
+        applies_to: Показувати
+        cancel: Скасувати
+        consent_category: Згода відвідувача
+        consent_hint: Фрагменти аналітики й маркетингу утримуються, доки відвідувачі
+          не дадуть згоду.
+        content: Код
+        content_hint: Вбудовані скрипти виконуються з nonce безпеки сторінки. Не додавайте
+          теги script чи style. Для типу meta лише метатеги та посилання preconnect.
+        enabled: Увімкнено
+        enabled_hint: Залиште вимкненим, доки не перевірите фрагмент.
+        kind: Тип
+        location: Розташування
+        name: Назва
+        notes: Нотатки
+        save: Зберегти фрагмент
+        src: Адреса скрипта
+        src_hint: Лише для зовнішніх скриптів. Адреса має використовувати https, а
+          її походження має бути дозволене в налаштуваннях безпеки платформи.
+        warning: Цей код виконується в браузері кожного відвідувача. Перевірте в безпечному
+          режимі й тримайте фрагмент вимкненим, доки не будете готові.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Останні зміни
+        back_to_platform: Назад до налаштувань платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей фрагмент?
+        disabled_label: Вимкнено
+        edit_btn: Змінити
+        enabled_label: Увімкнено
+        header_actions: Дії
+        header_consent: Згода
+        header_kind: Тип
+        header_location: Розташування
+        header_name: Назва
+        header_status: Стан
+        kill_switch_hint: Додайте ?safe_mode=1 до адреси сторінки, щоб побачити сайт
+          без фрагментів.
+        kill_switch_off: Усі фрагменти вимкнено.
+        kill_switch_on: Фрагменти працюють.
+        kill_switch_title: Усі фрагменти
+        move_down: Вниз
+        move_up: Вгору
+        new_btn: Новий фрагмент
+        none_yet: Фрагментів ще немає.
+        subtitle: Скрипти, стилі та метатеги, додані на кожну сторінку %{platform_name}.
+        table_aria: Фрагменти власного коду
+        title: Власний код
+        turn_off: Вимкнути всі
+        turn_on: Увімкнути всі
+        warning: Фрагменти виконуються в браузері кожного відвідувача й можуть читати
+          те, що він бачить і вводить на цій платформі. Додавайте лише перевірений
+          код.
+      kinds:
+        html_meta: Метатеги
+        script_inline: Вбудований скрипт
+        script_src: Зовнішній скрипт
+        style_inline: Вбудований стиль
+      locations:
+        body_end: Кінець body
+        body_start: Початок body
+        head_end: Кінець head
+        head_start: Початок head
+      new:
+        subtitle: Для %{platform_name}. Нові фрагменти спочатку вимкнені.
+        title: Новий фрагмент
+      saved: Фрагмент збережено.
+      switch_updated: Перемикач фрагментів оновлено.
     platforms:
       form:
         allow_membership_requests: Дозволити запити на членство
@@ -3495,6 +3592,10 @@ uk:
           й натисніть Enter.
         csp_img_src_text_label: Дозволені зовнішні джерела зображень
         csp_title: Безпека / вбудовування CSP
+        custom_code_hint: Додавайте скрипти, стилі та метатеги на кожну сторінку.
+          Потрібен дозвіл керувати кодом платформи.
+        custom_code_link: Керувати власним кодом
+        custom_code_title: Власний код
         custom_css_hint: Розширене налаштування. Стилі, додані тут, завантажуються
           після теми та мають над нею перевагу.
         custom_css_title: Власний CSS

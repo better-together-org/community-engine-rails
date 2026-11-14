@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
+    <%= render_platform_snippets(:head_start) %>
     <%= render_provider_head_tags %>
 
     <!-- Custom Head Javascript from Host App -->
@@ -23,9 +24,11 @@
     <% end %>
 
     <%= javascript_importmap_tags %>
+    <%= render_platform_snippets(:head_end) %>
   </head>
   <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
     <div class="wrapper">
+      <%= render_platform_snippets(:body_start) %>
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
@@ -41,6 +44,7 @@
 
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
+      <%= render_platform_snippets(:body_end) %>
     </div>
   <% end %>
 </html>
