@@ -88,6 +88,7 @@ module BetterTogether
 
     def authorize_blob_access
       return unless @blob.present?
+      return head :not_found unless blob_belongs_to_current_platform?
 
       record = resolve_authorizable_record(attachment_record_for(@blob))
 
@@ -99,6 +100,13 @@ module BetterTogether
       end
 
       enforce_download_policy!(record) if record
+    end
+
+    # A blob stored on one platform's own service is served only on that platform, so a shared
+    # URL or a mirrored attachment cannot expose it elsewhere. Default-service blobs are unaffected.
+    def blob_belongs_to_current_platform?
+      owner_id = BetterTogether::Storage::TenantService.owner_platform_id(@blob.service_name)
+      owner_id.nil? || ::Current.platform.nil? || owner_id == ::Current.platform.id
     end
 
     # Returns the first attachment's record, or nil on any error.
