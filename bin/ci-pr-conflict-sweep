@@ -7,7 +7,7 @@
 # Usage: bin/ci-pr-conflict-sweep [--base BRANCH] [--apply]
 #   --base BRANCH  only PRs targeting BRANCH (default: every open PR)
 #   --apply        write labels and comments (default: print what would be done)
-# Env: REMOTE (git remote name, default origin), GH_TOKEN (the bts-robot token in CI), GITHUB_REPOSITORY, GH (gh command override, for local use).
+# Env: CONFLICT_RESOLVER_MODE (off|dry-run|apply, default off), REMOTE (git remote name, default origin), GH_TOKEN (the bts-robot token in CI), GITHUB_REPOSITORY, GH (gh command override, for local use).
 # Needs a checkout with full history of the base branches.
 set -euo pipefail
 
@@ -15,7 +15,9 @@ GH="${GH:-gh}"
 REMOTE="${REMOTE:-origin}"
 LABEL="merge-conflict"
 MARKER="<!-- pr-conflict-sweep -->"
+# shellcheck disable=SC2034 # read by the sourced lib
 ALLOWLIST=".github/generated-conflict-paths"
+RESOLVER_MODE="${CONFLICT_RESOLVER_MODE:-off}" # off | dry-run | apply: whether to start the resolver for generated-only conflicts
 BASE=""
 APPLY=0
 
@@ -32,23 +34,8 @@ done
 : "${GITHUB_REPOSITORY:?}"
 cd "$(git rev-parse --show-toplevel)"
 
-patterns=()
-while IFS= read -r line; do
-  [[ -z "$line" || "$line" == \#* ]] && continue
-  patterns+=("$line")
-done < "$ALLOWLIST"
-
-generated_only() {
-  local file pattern matched
-  for file in "$@"; do
-    matched=0
-    for pattern in "${patterns[@]}"; do
-      # shellcheck disable=SC2053 # the pattern is meant to be a glob
-      [[ "$file" == $pattern ]] && { matched=1; break; }
-    done
-    [ "$matched" = 1 ] || return 1
-  done
-}
+# shellcheck source-path=SCRIPTDIR source=lib/pr-conflicts.sh
+source "$(dirname "$0")/lib/pr-conflicts.sh"
 
 act() { # act <description> <command...>: run it with --apply, otherwise only say it
   local what="$1"; shift
@@ -64,19 +51,6 @@ mergeable_state() {
     sleep 15
   done
   echo UNKNOWN
-}
-
-# Names of the files a merge of the PR head into its base cannot resolve, one per line.
-conflicted_files() {
-  local number="$1" base="$2" scratch
-  scratch="$(mktemp -d)"
-  git fetch -q "$REMOTE" "$base" "+pull/${number}/head:refs/sweep/pr-${number}"
-  git worktree add -q --detach "$scratch" "refs/sweep/pr-${number}"
-  git -C "$scratch" merge --no-commit --no-ff "${REMOTE}/${base}" >/dev/null 2>&1 || true
-  git -C "$scratch" diff --name-only --diff-filter=U
-  git -C "$scratch" merge --abort >/dev/null 2>&1 || true
-  git worktree remove --force "$scratch"
-  git update-ref -d "refs/sweep/pr-${number}"
 }
 
 existing_comment_id() {
@@ -119,6 +93,13 @@ report_conflict() { # report_conflict <number> <base> <files...>
   act "label and comment on #${number}" add_label "$number"
   if [ "$APPLY" = 1 ]; then post_comment "$number" "$body"; fi
   rm -f "$body"
+  if generated_only "$@" && [ "$RESOLVER_MODE" != "off" ]; then start_resolver "$number"; fi
+}
+
+start_resolver() { # start_resolver <number>: hand a generated-only conflict to the resolver workflow
+  local apply=false
+  [ "$RESOLVER_MODE" = "apply" ] && apply=true
+  act "start the resolver for #${1} (apply=${apply})" "$GH" workflow run diagram-conflict-resolver.yml -f "pr=${1}" -f "apply=${apply}"
 }
 
 clear_conflict() { # clear_conflict <number>
