@@ -6032,6 +6032,9 @@ es:
         cover_image: Imagen de portada
         feature_image: Se muestra en la parte superior de la página y se usa como
           imagen de vista previa al compartirla.
+      page:
+        show_title: Muestra el título en la parte superior de la página. Las páginas
+          que empiezan con un bloque de héroe usan el encabezado del héroe.
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
         cover_image: Sube una imagen de portada para mostrar en la parte superior

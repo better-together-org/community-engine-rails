@@ -149,6 +149,7 @@ RSpec.describe 'Documentation screenshots for block editor contract review',
   def assert_hero_render_state(expect_custom_colors)
     expect(page).to have_text('PR 1490 Hero Heading')
     expect(page).to have_text('PR 1490 Hero paragraph')
+    expect(page).to have_no_css('h1.page-title')
     assert_css_visibility('.hero-heading[style*="color: #ff6600"]', expect_custom_colors)
     assert_css_visibility('.hero-paragraph[style*="color: #336699"]', expect_custom_colors)
   end

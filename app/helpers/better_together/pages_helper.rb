@@ -69,7 +69,7 @@ module BetterTogether
         (breadcrumb_trail_cache_key(page) if respond_to?(:breadcrumb_trail_cache_key, true)),
         page_visibility_cache_context,
         I18n.locale,
-        'v5'
+        'v6'
       ]
     end
 

@@ -6085,6 +6085,9 @@ fr:
         cover_image: Image de couverture
         feature_image: Affichée en haut de la page et utilisée comme image d'aperçu
           lorsque la page est partagée.
+      page:
+        show_title: Affiche le titre en haut de la page. Les pages qui commencent
+          par un bloc héros utilisent plutôt le titre du héros.
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
