@@ -173,6 +173,20 @@ RSpec.describe 'Two-platform content isolation', :skip_host_setup do
     end
   end
 
+  describe 'other records with the same identifier' do
+    # calendar and community also validate a globally unique slug; see the friendly_id_slugs PR.
+    %i[place].each do |factory|
+      it "allows one #{factory} identifier on two platforms and rejects a duplicate on one", :aggregate_failures do
+        first = create(:"better_together_#{factory}", platform: host_platform, identifier: 'shared-id')
+        second = create(:"better_together_#{factory}", platform: other_platform, identifier: 'shared-id')
+        duplicate = build(:"better_together_#{factory}", platform: host_platform, identifier: 'shared-id')
+
+        expect([first, second]).to all(be_persisted)
+        expect(duplicate).not_to be_valid
+      end
+    end
+  end
+
   describe 'search' do
     before do
       create(:better_together_post, :public, :published, platform: host_platform, title: 'Zymurgy alpha entry')
