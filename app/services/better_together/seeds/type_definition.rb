@@ -8,7 +8,7 @@ module BetterTogether
     # record is found again (natural key), what a packet may write, and what it points at.
     # Built through the Registry DSL, frozen once registered.
     class TypeDefinition
-      HOOKS = %i[before_resolve transform after_plant].freeze
+      HOOKS = %i[before_resolve transform before_save after_plant].freeze
       Reference = Data.define(:name, :types, :optional)
       Attachment = Data.define(:name, :many)
 
@@ -44,8 +44,10 @@ module BetterTogether
         return find_by_refs(scope, parent_refs) if by_refs.any?
 
         scope = scope.where(within_column => parent_refs.fetch(within).id) if within
-        value = natural_key_via_attribute ? attributes&.dig(natural_key_columns.first.to_s) : key
-        value.nil? ? nil : scope.find_by(natural_key_columns.first => value)
+        column = natural_key_columns.first.to_s
+        # An attribute with the key's own name overrides the key when written, so it is also what is stored.
+        value = natural_key_via_attribute ? attributes&.dig(column) : (attributes&.dig(column) || key)
+        value.nil? ? nil : scope.find_by(natural_key_columns.first => stored_form(natural_key_columns.first, value))
       end
 
       def writable?(attribute)
@@ -78,6 +80,16 @@ module BetterTogether
       end
 
       private
+
+      # Some models normalize a key in its writer (identifier parameterizes, for example), so a lookup
+      # must use the form the writer would store, or a rerun never finds what it planted.
+      def stored_form(column, value)
+        probe = model.new
+        probe.public_send("#{column}=", value)
+        probe.public_send(column)
+      rescue StandardError
+        value
+      end
 
       def within_column
         model.reflect_on_association(within).foreign_key
