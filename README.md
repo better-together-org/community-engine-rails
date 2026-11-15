@@ -1,136 +1,59 @@
 # Better Together Community Engine
 
-[➡️ View the Documentation Index](docs/README.md)
-
-## Overview
-
-The Better Together Community Engine is a transformative platform designed to unite communities through the power of collaboration and shared resources. Our core intention is to provide an inclusive, accessible space where individuals and groups from diverse backgrounds can come together to share knowledge, engage in meaningful dialogue, and develop innovative solutions to common challenges. By leveraging the collective wisdom and experience of its members, the platform aims to foster a culture of mutual support, learning, and sustainable growth.
-
-At the heart of our mission lies the commitment to empower communities. We believe that by facilitating connections and encouraging collaboration, we can unlock the immense potential within communities to drive positive change. The platform is more than just a tool for communication; it's a hub for inspiration, a catalyst for innovation, and a foundation for building stronger, more resilient communities. Whether it's addressing environmental concerns, promoting social welfare, or supporting economic development, the Better Together Community Engine is dedicated to creating a brighter, more connected future for all.
-
-This project embodies our vision of a world where collaboration leads to greater understanding, innovation, and collective action. We invite you to join us in this journey, to contribute your unique perspectives and skills, and to be a part of a community that believes in the power of working better, together.
-
-This project is the core community building portion of the Better Together platform.
+A Rails engine for building community platforms: communities, membership, events, posts, pages, messaging and mutual aid exchanges, with privacy, safety and member data rights built in. You add the `better_together` gem to a Rails app (the *host app*) and it provides the platform; the host app supplies branding, deployment and any custom features.
 
 ![A Community Engine community page with a branded banner, a request-to-join control, tabs for About, Posts and Events, and share buttons](docs/screenshots/desktop/community_access_mode_request_to_join.png)
 
-Community Engine 0.11.0 adds multi-tenant platforms, federation, member data rights, stronger safety and privacy controls, and a larger content toolkit. See the [0.11.0 release notes](docs/releases/0.11.0.md).
+## Is it the right fit?
 
-## Documentation
+**A good fit if you want to:**
 
-For system overviews, flows, and diagrams, see the docs index:
+- run a community, co-operative, non-profit or civic site where members sign in, join communities, attend events, post and message each other, and organizers moderate;
+- host several organizations or sites from one install, each with its own domain, theme, members and storage (multi-tenant platforms);
+- keep control of your data: self-hosted, Postgres-backed, with member data export and deletion, and optional federation with other platforms by consent;
+- start from working social, content and governance features and extend them in a normal Rails app.
 
-- docs: docs/README.md
+**Probably not a fit if you:**
 
-## Dependencies
+- need a static brochure site or a blog only (a static site generator is simpler);
+- are not using, or do not want to run, Rails, PostgreSQL with PostGIS and Redis;
+- want a drop-in SaaS with no hosting or upgrade work: a host app needs maintenance, and each release has an upgrade guide.
 
-In addition to other dependencies, the Better Together Community Engine relies on Action Text and Action Storage, which are part of the Rails framework. These dependencies are essential for handling rich text content and file storage within the platform.
+## What it provides
 
-### Action Text
-[Action Text](https://guides.rubyonrails.org/action_text_overview.html#installation) brings rich text content and editing to Rails. It includes a WYSIWYG editor for writing rich text content stored in a manner compatible with Rails applications.
+- **Communities and membership.** Communities with public, private or request-to-join access, an organizer review queue, invitations, roles and permissions. See [community management](docs/platform_organizers/community_management.md) and the [membership request workflow](docs/developers/systems/membership_request_workflow.md).
+- **Content.** A page builder with many block types, posts, an uploads gallery and image library, navigation menus, short links, Markdown and rich text, and translatable content in English, French, Spanish and Ukrainian. See the [content system](docs/developers/systems/content_management.md) and [block system](docs/developers/systems/block_system_and_cms.md).
+- **Events.** Events with recurrence, invitations, RSVPs and calendars. See the [events system](docs/developers/systems/events_system.md).
+- **Messaging and exchanges.** Conversations with message requests, notifications, and Joatu offers and requests for mutual aid. See [conversations and messaging](docs/developers/systems/conversations_messaging_system.md) and the [Joatu docs](docs/joatu).
+- **Multi-tenant platforms.** Several platforms in one app, each with its own domains, theme, sign-in providers, storage and settings. See the [multi-tenant runtime](docs/developers/systems/multi_tenant_platform_runtime.md), [theme settings](docs/platform_organizers/theme_settings.md) and [storage configuration](docs/platform_organizers/storage_configuration_guide.md).
+- **Federation.** Optional, consent-based sharing of pages, posts and events between platforms, approved by stewards. See the [federation system](docs/developers/systems/federation_system.md).
+- **Safety and privacy.** Blocks enforced across messaging, events and exchanges, reporting, bot protection, rate limiting, content security scanning, agreements with an acceptance audit trail, and member data export and deletion. See the [security and protection system](docs/developers/systems/security_protection_system.md), [bot safety](docs/developers/systems/bot_safety_system.md) and [security and privacy for organizers](docs/platform_organizers/security_privacy.md).
+- **Sign-in.** Devise accounts, plus Google, Facebook and OpenID Connect providers configured per platform. See [Google sign-in setup](docs/platform_organizers/google_sign_in_setup.md).
+- **APIs and tooling.** A JSON:API and MCP surface for pages and posts, a seed packet format for moving content between platforms, and Postgres-native search. See the [API docs](docs/api) and [seed packet protocol](docs/developers/systems/seed_packet_protocol.md).
+- **Extension gems.** Elasticsearch, Sentry and Google Analytics are separate gems that plug into the engine: [better_together-elasticsearch](https://github.com/better-together-org/better_together-elasticsearch), [better_together-sentry](https://github.com/better-together-org/better_together-sentry) and [better_together-google-analytics](https://github.com/better-together-org/better_together-google-analytics).
 
-To set up Action Text, run the following commands:
+Version 0.11.0 is the current release. See the [0.11.0 release notes](docs/releases/0.11.0.md) for what changed and the [host upgrade guide](docs/releases/0.11.0_host_upgrade_guide.md) if you are upgrading.
 
-```bash
-rails action_text:install
-rails action_text:install:migrations
-```
+## Getting started
 
-Ensure that you follow the guide linked above to fully configure Action Text in your host app, including adding the required css and JavaScript files for the Trix editor and Action Text.
+Adding the engine to a Rails app takes a few commands, but the details differ for a new app and an existing one, so they live in one guide:
 
-### Active Storage
-[Active Storage](https://guides.rubyonrails.org/active_storage_overview.html#setup) facilitates uploading files to a cloud storage service like Amazon S3, Google Cloud Storage, or Microsoft Azure Storage, and attaching those files to Active Record objects.
+**[Installing Community Engine in a Rails app](docs/developers/host_app_installation.md)** covers requirements, the installer (`rails g better_together:install`), credentials and encryption keys, migrations and first run.
 
-To set up Active Storage, run the following command:
+Related reading for people running a host app: [migrations from the gem](docs/developers/host_app_migrations_from_gem.md), [deploying with Dokku](docs/production/deployment-dokku.md), [platform themes in host apps](docs/developers/systems/platform_themes_host_apps.md).
 
-```bash
-rails app:active_storage:install
-```
+## Where to read next
 
-Ensure that you follow the guide linked above to fully configure Active Storage in your host app, including creating and configuring your `storage.yml` file and setting storage defaults for your environments.
+The [documentation index](docs/README.md) is organized by role:
 
-### UUID Primary Keys
+- **Developers:** the [developer guide](docs/developers/README.md) and the [system docs](docs/developers/systems) (one per subsystem, with diagrams).
+- **Platform organizers:** the [platform organizer guide](docs/platform_organizers/README.md).
+- **Community organizers and members:** the [community organizer guide](docs/community_organizers/README.md) and [end user guide](docs/end_users/README.md).
+- **Everything:** the [table of contents](docs/table_of_contents.md).
 
-The community engine uses UUIDs as primary keys with all tables using `id` as their UUID primary key. To ensure that the Active Storage and Action Text migrations use uuid as the foreign keys for records, set the following configuration in your host app's `application.rb` file or an initializer.
+## License
 
-```ruby
-config.generators do |g|
-  g.orm :active_record, primary_key_type: :uuid
-end
-```
-
-## Installation
-
-Start a fresh Rails 8.1 app without the default asset pipeline. Rails 8.1 has no `--asset-pipeline=sprockets` option (it is silently ignored and you get propshaft plus dartsass, whose `application.css` clashes with sprockets), and this engine requires sprockets, which it brings in itself:
-
-```bash
-rails new my_app -d postgresql -A -T --skip-kamal --skip-solid --skip-jbuilder
-```
-
-The engine needs PostgreSQL with PostGIS, so the database adapter must be `postgis`. The installer switches it for you; if you prefer to do it by hand (or your `database.yml` is customised), set it before running `db:create`:
-
-```yaml
-# config/database.yml
-default: &default
-  adapter: postgis
-```
-
-Add this gem and the forks it needs to your Gemfile. Use `branch: 'main'` only to try it out; pin `ref:` to a reviewed commit for anything you deploy (the installer output depends on the gem version, so use a commit that contains the installer):
-
-```ruby
-gem 'better_together', '~> 0.11.0',
-    github: 'better-together-org/community-engine-rails',
-    branch: 'main'
-gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'master'
-gem 'storext', github: 'better-together-org/storext'
-# only if you want the rspec and factory_bot generator defaults (rails new -T leaves them out)
-gem 'rspec-rails', group: %i[development test]
-gem 'factory_bot_rails', group: %i[development test]
-```
-
-Sprockets refuses to boot without a manifest, and the installer is itself a Rails command that boots the app, so create an empty one first:
-
-```bash
-bundle install
-mkdir -p app/assets/config && touch app/assets/config/manifest.js
-```
-
-Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, an environment-variable fallback for the Active Record encryption keys (see [Credentials and encryption](#credentials-and-encryption)), the `adapter: postgis` switch in `config/database.yml`, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
-
-```bash
-rails g better_together:install            # engine migrations run from the gem (default)
-rails g better_together:install --migrations=install   # copy migrations into db/migrate instead
-```
-
-If you use Action Text, run `rails action_text:install` before the engine migrations and delete its copied migration; CE ships its own Action Text tables.
-
-Set up credentials and encryption keys as described in [Credentials and encryption](#credentials-and-encryption) before you migrate. Seeding enqueues background jobs, so Redis must be reachable (`REDIS_URL`). Create and migrate the database, then seed to create the setup wizard. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
-
-```bash
-rails db:create db:migrate db:seed
-```
-
-Open `/<locale>/w/setup_wizard` (for example `/en/w/setup_wizard`) to create the host platform and the first admin. Until the wizard is done every other page redirects there.
-
-### Credentials and encryption
-
-Host apps should keep secrets in environment-specific encrypted credentials, decrypted with the Rails master key, rather than in plain environment variables or committed files. Read the official guides first:
-
-- [Securing Rails Applications: Custom credentials](https://guides.rubyonrails.org/security.html#custom-credentials) for how credentials work.
-- [Active Record Encryption](https://guides.rubyonrails.org/active_record_encryption.html) for encrypted attributes.
-
-Credentials, per environment:
-
-```bash
-bin/rails credentials:edit --environment production   # creates config/credentials/production.yml.enc and production.key
-bin/rails credentials:edit --environment staging
-```
-
-Commit each `config/credentials/<environment>.yml.enc`. Never commit the matching `config/credentials/<environment>.key`; give it to the running app as `RAILS_MASTER_KEY` (or keep the file on the server) and keep a copy in your password manager. Credentials hold the S3 keys, OAuth client secrets and similar values; read them with `Rails.application.credentials.dig(...)`.
-
-Encrypted attributes: the engine encrypts some columns (for example calendar subscription tokens) with Active Record Encryption, which needs a primary key, a deterministic key and a key derivation salt. Generate them with `bin/rails db:encryption:init` and put the output in each environment's credentials under `active_record_encryption:`. Rails reads them from there automatically, so no initializer code is needed. Use different keys per environment, and never change or lose a key that has already encrypted data: the data cannot be read without it (see the key rotation section of the encryption guide).
-
-The installer also writes an optional fallback that reads `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` from the environment when they are set. It is for hosts that cannot use credentials; skip it with `--skip-encryption` if you use credentials. Setting only some of the three raises at boot.
+Released under the GNU Lesser General Public License; see [LICENSE](LICENSE).
 
 ## Development: Getting Started
 
