@@ -21,6 +21,15 @@ module BetterTogether
     validates :max_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     validates :current_completions, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
+    # The wizard for an identifier on a platform; a wizard created before any platform existed
+    # (NULL platform_id) is the fallback.
+    def self.for_identifier(identifier, platform: nil)
+      candidates = where(identifier:)
+      return candidates.first unless platform
+
+      candidates.find_by(platform_id: platform.id) || candidates.find_by(platform_id: nil)
+    end
+
     def completed?
       completed = wizard_steps.size == wizard_step_definitions.size &&
                   wizard_steps.ordered.all?(&:completed)

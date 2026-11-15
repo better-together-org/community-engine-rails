@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_15_200100) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_15_200200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -171,7 +171,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_200100) do
     t.uuid "agreement_id", null: false
     t.uuid "platform_id"
     t.index ["agreement_id"], name: "index_better_together_agreement_terms_on_agreement_id"
-    t.index ["identifier"], name: "index_better_together_agreement_terms_on_identifier", unique: true
+    t.index ["platform_id", "agreement_id", "identifier"], name: "idx_bt_agreement_terms_on_platform_parent_identifier", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_agreement_terms_on_platform_id"
   end
 
@@ -361,8 +361,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_200100) do
     t.index ["checklist_id"], name: "by_checklist_item_checklist"
     t.index ["children_count"], name: "index_better_together_checklist_items_on_children_count"
     t.index ["creator_id"], name: "by_better_together_checklist_items_creator"
-    t.index ["identifier"], name: "index_better_together_checklist_items_on_identifier", unique: true
     t.index ["parent_id"], name: "index_better_together_checklist_items_on_parent_id"
+    t.index ["platform_id", "checklist_id", "identifier"], name: "idx_bt_checklist_items_on_platform_parent_identifier", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_checklist_items_on_platform_id"
     t.index ["privacy"], name: "by_better_together_checklist_items_privacy"
   end
@@ -2805,8 +2805,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_200100) do
     t.uuid "platform_id"
     t.index ["creator_id"], name: "by_step_creator"
     t.index ["identifier"], name: "by_step_identifier"
+    t.index ["platform_id", "wizard_id", "identifier", "creator_id"], name: "idx_bt_wizard_steps_unique_open_per_platform", unique: true, where: "((completed IS FALSE) AND (platform_id IS NOT NULL))"
     t.index ["platform_id"], name: "index_better_together_wizard_steps_on_platform_id"
-    t.index ["wizard_id", "identifier", "creator_id"], name: "index_unique_wizard_steps", unique: true, where: "(completed IS FALSE)"
+    t.index ["wizard_id", "identifier", "creator_id"], name: "index_unique_wizard_steps", unique: true, where: "((completed IS FALSE) AND (platform_id IS NULL))"
     t.index ["wizard_id", "step_number"], name: "index_wizard_steps_on_wizard_id_and_step_number"
     t.index ["wizard_id"], name: "by_step_wizard"
     t.index ["wizard_step_definition_id"], name: "by_step_wizard_step_definition"
