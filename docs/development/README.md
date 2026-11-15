@@ -68,7 +68,7 @@ Useful commands:
 
 ```bash
 ./scripts/session_command_log.sh init
-./scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
+/home/rob/bts-cloud/n8n/management-tool/scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
 ```
 
 ## Related Documentation
