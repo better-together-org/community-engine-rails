@@ -232,6 +232,34 @@ Apply takes a per-packet advisory lock (deficiency 15), writes one transaction w
 
 Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only); snapshot-based edit detection is replaced by provenance columns once C7 lands.
 
+## Navigation as a packet (C6, navigation only)
+
+`config/seeds/better_together/navigation/` is the default header, host, Better Together and footer navigation with the 14 static pages and blocks it links to, as a protocol 2.0 packet (`add_only`, English). It is the first built-in packet and is planted with the rake tasks like any other:
+
+```
+rake better_together:seeds:plan  PACKET=config/seeds/better_together/navigation PLATFORM=<identifier>
+rake better_together:seeds:plant PACKET=config/seeds/better_together/navigation PLATFORM=<identifier> APPLY=1
+```
+
+`spec/seeds/golden/navigation_packet_spec.rb` plants it on an empty platform, reruns it, plants a second platform, checks that a steward-edited page survives, and compares the result item by item and page by page with what `NavigationBuilder` produces on the host platform. `NavigationBuilder` itself is not replaced: the test suite, `db/seeds.rb` and the generate tasks still call it, and switching them to `Seeds::Plant` is a separate change. Billing planters live on `feature/billing` and are not converted here.
+
+Differences from the builder, all deliberate:
+
+- The packet is idempotent. The builder creates the header, About, Home, Subprocessors and Better Together pages again on every run, with random slug suffixes (`about-HuFezy0o6k`), and names two navigation items after those suffixes. The packet uses stable keys and slugs.
+- `published_at` is a fixed past timestamp. A packet cannot say "now" (deficiency 21).
+- The Contributor Agreements dropdown is positioned last. The builder gives it position 1 because it counts unsaved items, which collides with Privacy Policy.
+- The builder cannot build a second platform's navigation (`Identifier has already been taken` across platforms when the item's platform is not yet set at validation). The packet can.
+- The footer contributor links keep the builder's `private` privacy even though their pages are public. That looks unintended, but changing it is a product decision, not a conversion detail.
+
+### Findings while converting (added to the numbered list)
+
+| # | Deficiency | Resolution |
+|---|---|---|
+| 20 | `content_block` could not carry `template_path`, and `protected` could not be set on pages, navigation areas and items, so the built-in pages could not be expressed | `template_path` and `protected` are now writable in the registry. A packet can therefore mark records undeletable; only plant packets you trust (sign them). The plant spec that proved an undeclared field is rejected now uses `platform_id` instead of `protected`, which is a decision for review |
+| 21 | No way to express a relative time such as `published_at: now` | Open: packets use a fixed timestamp. A `now` token resolved at plant time is a candidate |
+| 22 | The plan and the applied report counted a rerun of join rows (`page_block`) and records keyed by a parent as `create` | **Fixed**: the planner finds them when their parents already exist, and the applier reports `unchanged` for the rest. A first-time plan of a packet whose parents are new still shows them as `create`, which is correct |
+| 23 | A hash-valued attribute (`css_settings`) compared unequal to the stored record because the model fills in defaults, so every rerun reported `skipped_edited` | **Fixed**: `Snapshot.covers?` treats the stored hash as matching when it holds every key the packet names |
+
 ## What is deliberately not here
 
 - No provenance columns on planted records. The `Seed` table is platform-scoped (#2249); provenance stays in `SeedPlanting.result` (documented limit for deficiency 5).

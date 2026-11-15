@@ -1,0 +1,144 @@
+version: '2.0'
+type: page
+records:
+- key: home
+  attributes:
+    slug: home
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+    layout: layouts/better_together/full_width_page
+  translations:
+    en:
+      title: Home
+- key: about
+  attributes:
+    slug: about
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+  translations:
+    en:
+      title: About
+- key: better-together
+  attributes:
+    slug: better-together
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: What is Better Together?
+- key: better-together/community-engine
+  attributes:
+    slug: better-together/community-engine
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+    layout: layouts/better_together/full_width_page
+  translations:
+    en:
+      title: About the Community Engine
+- key: subprocessors
+  attributes:
+    slug: subprocessors
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: true
+  translations:
+    en:
+      title: Subprocessors
+- key: faq
+  attributes:
+    slug: faq
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: FAQ
+- key: privacy-policy
+  attributes:
+    slug: privacy-policy
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Privacy Policy
+- key: terms-of-service
+  attributes:
+    slug: terms-of-service
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Terms of Service
+- key: code-of-conduct
+  attributes:
+    slug: code-of-conduct
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Code of Conduct
+- key: accessibility
+  attributes:
+    slug: accessibility
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Accessibility
+- key: cookie-policy
+  attributes:
+    slug: cookie-policy
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Cookie Policy
+- key: contact
+  attributes:
+    slug: contact
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: true
+  translations:
+    en:
+      title: Contact Us
+- key: code_contributor_agreement
+  attributes:
+    slug: code-contributor-agreement
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Code Contributor Agreement
+- key: content_contributor_agreement
+  attributes:
+    slug: content-contributor-agreement
+    privacy: public
+    published_at: '2026-01-01T00:00:00Z'
+    protected: true
+    show_title: false
+  translations:
+    en:
+      title: Content Contributor Agreement
