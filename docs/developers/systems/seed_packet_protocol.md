@@ -133,8 +133,8 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | registered **in C2** (Flickr added), redirects D1 |
 | 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | **fixed in C4** |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
-| 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
-| 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | `Seed` platform-scoped (#2249); `clear` is not part of packets; `Plant` does not yet store the `Seed` envelope row, so the global `(type, identifier)` rule no longer blocks it but nothing writes it either (documented limit) |
+| 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored per planted record in `SeedProvenance` | spec C1; `SeedProvenance` table (this PR) |
+| 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | `Seed` platform-scoped (#2249); `clear` is not part of packets; `Plant` stores one `Seed` envelope row per platform and packet, linked from the `SeedPlanting` |
 | 7 | No dry-run or diff | The plan is the dry-run report | **fixed in C3** |
 | 8 | No validation schema | JSON Schemas and `Protocol::Validator` | **fixed in C1** |
 | 9 | No signature verification | Detached signature over `MANIFEST.json`, key id in `origin` | **fixed in C9**: Ed25519 detached signature, see Signatures below |
@@ -152,7 +152,7 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 
 `spec/seeds/golden/conformance_spec.rb` plants packets through `Plant` and covers: empty platform, identical rerun, dry run, two platforms, steward-edited record, missing reference, locale policy, verified blob, tampered blob, missing manifest, tar.gz and the source allowlist.
 
-Platform-scoped `Seed` landed in #2249 (C7, without provenance columns). Held: C6 for billing (lives on the billing branch). Deficiencies 5 and 6 stay partial: provenance is a snapshot inside `SeedPlanting.result`, not columns on planted records, and `Plant` does not store a `Seed` row.
+Platform-scoped `Seed` landed in #2249 (C7, without provenance columns). Held: C6 for billing (lives on the billing branch). Deficiencies 5 and 6 are fixed by `SeedProvenance` and the envelope row written by `Seeds::ProvenanceWriter` (see Provenance below).
 
 ## Type registry (C2)
 
@@ -228,15 +228,55 @@ Each record is classified by comparing a flat snapshot of the fields the entry o
 | Record differs and was edited since, or the packet never planted it | `skipped_edited` |
 | `managed` tombstone, record planted by the packet and unedited | `delete` |
 
-Apply takes a per-packet advisory lock (deficiency 15), writes one transaction with a savepoint per record, and rolls the whole packet back if any record errors, reporting every failing record with its field. A `SeedPlanting` row records the outcome; its `result.provenance` holds the per-record snapshots that the next plan reads, so provenance works today without new columns. Files fail closed per record until blob transport (C4) supplies `attach_files`.
+Apply takes a per-packet advisory lock (deficiency 15), writes one transaction with a savepoint per record, and rolls the whole packet back if any record errors, reporting every failing record with its field. A `SeedPlanting` row records the outcome; per-record provenance is stored in `SeedProvenance` rows that the next plan reads. Files fail closed per record until blob transport (C4) supplies `attach_files`.
 
-Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only); snapshot-based edit detection is replaced by provenance columns once C7 lands.
+Known limits: lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only).
+
+## Sentinels
+
+An attribute value of `$now` is replaced with the time of the plant when the record is **created**. It is not part of the edit comparison and is never rewritten: a rerun, an `upsert` update or a later plant leaves the stored time alone, so the plan stays `unchanged`. Use it for `published_at` and similar stamps. It is the only sentinel; there is no `$now+7d` or per-locale form.
+
+## Navigation as a packet (C6, navigation only)
+
+`config/seeds/better_together/navigation/` is the default header, host, Better Together and footer navigation with the 14 static pages and blocks it links to, as a protocol 2.0 packet (`add_only`, English). It is the first built-in packet and is planted with the rake tasks like any other:
+
+```
+rake better_together:seeds:plan  PACKET=config/seeds/better_together/navigation PLATFORM=<identifier>
+rake better_together:seeds:plant PACKET=config/seeds/better_together/navigation PLATFORM=<identifier> APPLY=1
+```
+
+`spec/seeds/golden/navigation_packet_spec.rb` plants it on an empty platform, reruns it, plants a second platform, checks that a steward-edited page survives, and compares the result item by item and page by page with what `NavigationBuilder` produces on the host platform. `NavigationBuilder` itself is not replaced: the test suite, `db/seeds.rb` and the generate tasks still call it, and switching them to `Seeds::Plant` is a separate change. Billing planters live on `feature/billing` and are not converted here.
+
+Differences from the builder, all deliberate:
+
+- The packet is idempotent. The builder creates the header, About, Home, Subprocessors and Better Together pages again on every run, with random slug suffixes (`about-HuFezy0o6k`), and names two navigation items after those suffixes. The packet uses stable keys and slugs.
+- `published_at` is `$now` (see Sentinels): stamped when the page is created, never rewritten on a rerun, like the builder's `Time.zone.now`.
+- Position numbers are not copied. The spec compares the order of items within each area and parent, which matches the builder. The builder gives the Contributor Agreements dropdown position 1 because it counts unsaved items, which ties with Privacy Policy; the packet numbers it last and the order is the same.
+- The builder cannot build a second platform's navigation (`Identifier has already been taken` across platforms when the item's platform is not yet set at validation). The packet can.
+- The two footer contributor links keep the builder's `private` privacy, so the packet matches the builder exactly. Their pages are public, so this looks unintended, but changing it is a product decision made in `NavigationBuilder` first, then here.
+
+### Findings while converting (added to the numbered list)
+
+| # | Deficiency | Resolution |
+|---|---|---|
+| 20 | `content_block` could not carry `template_path`, and `protected` could not be set, so the built-in pages could not be expressed | `template_path` is writable. `protected` is writable only on types that declare `protectable` in the registry (page, navigation_area, navigation_item); it is off by default for every other type and a packet that sets it elsewhere is rejected. Only plant packets you trust (sign them) |
+| 21 | No way to express a relative time such as `published_at: now` | **Fixed**: the `$now` sentinel, see below |
+| 22 | The plan and the applied report counted a rerun of join rows (`page_block`) and records keyed by a parent as `create` | **Fixed**: the planner finds them when their parents already exist, and the applier reports `unchanged` for the rest. A first-time plan of a packet whose parents are new still shows them as `create`, which is correct |
+| 23 | A hash-valued attribute (`css_settings`) compared unequal to the stored record because the model fills in defaults, so every rerun reported `skipped_edited` | **Fixed**: `Snapshot.covers?` treats the stored hash as matching when it holds every key the packet names |
 
 ## What is deliberately not here
 
-- No provenance columns on planted records. The `Seed` table is platform-scoped (#2249); provenance stays in `SeedPlanting.result` (documented limit for deficiency 5).
+- Provenance is a dedicated table, not columns on planted records, so planted tables stay unchanged.
 - No conversion of the billing planters (C6): they live on `feature/billing` and are converted there, with that branch's owner. Navigation is converted, see below.
 
 ## Tests
 
 `spec/services/better_together/seeds/protocol/` with fixture packet `spec/fixtures/seed_packets/minimal/`.
+
+## Provenance
+
+Each successful plant writes, inside the same transaction, one platform-scoped `Seed` envelope row per packet (linked from the `SeedPlanting`) and one `SeedProvenance` row per planted record: packet id, packet version, record type and key, the record's class and id, the fingerprint and the flat snapshot used for edit detection. `SeedProvenance.for_record(record)` answers which packet planted a record. Reruns update rows in place, `delete` tombstones remove them, and failed or dry-run plants write nothing. `PlantingHistory` reads these rows first.
+
+![Seed provenance model](../../diagrams/exports/png/seed_packet_provenance_model.png)
+
+Source: [seed_packet_provenance_model.mmd](../../diagrams/source/seed_packet_provenance_model.mmd)

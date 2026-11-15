@@ -130,6 +130,11 @@ module BetterTogether
           @definition.writable_attributes.concat(names)
         end
 
+        # Opt in to packets setting `protected` (undeletable records). Off for every type unless declared.
+        def protectable
+          @definition.writable_attributes << :protected
+        end
+
         def translated(*names)
           @definition.translated_attributes.concat(names)
         end

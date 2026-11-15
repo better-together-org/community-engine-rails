@@ -171,9 +171,25 @@ module BetterTogether
       end
 
       def locate(definition, entry, _index)
-        return nil if definition.by_refs.any? || definition.within
+        return locate_by_parents(definition, entry) if definition.by_refs.any? || definition.within
 
         definition.find(platform:, key: entry.key, attributes: entry.attributes)
+      end
+
+      # A record keyed by its parents can be found only when every parent already exists on the platform.
+      # Parents planted by this same packet for the first time do not exist yet, so the record is a create.
+      def locate_by_parents(definition, entry)
+        slots = definition.by_refs.presence || [definition.within]
+        parents = slots.to_h { |slot| [slot, entry.refs[slot.to_s] && resolve_parent(entry.refs[slot.to_s])] }
+        return nil if parents.values.any?(&:nil?)
+
+        definition.find(platform:, key: entry.key, parent_refs: parents, attributes: entry.attributes)
+      end
+
+      def resolve_parent(target)
+        Registry.fetch(target['type']).find(platform:, key: target['key'])
+      rescue Registry::UnknownType
+        nil
       end
 
       def classify(entry, definition, existing)
@@ -181,7 +197,7 @@ module BetterTogether
         proposed = Snapshot.proposed(definition.model.find(existing.id), definition, entry)
         keys = (proposed.keys + (planted&.keys || [])).uniq
         current = Snapshot.read(existing, definition, keys)
-        if proposed.all? { |k, v| current[k] == v }
+        if proposed.all? { |k, v| Snapshot.covers?(current[k], v) }
           add(entry, :unchanged, nil, existing)
         elsif packet.mode == 'add_only'
           add(entry, :skipped_edited, 'add_only keeps the existing record', existing)

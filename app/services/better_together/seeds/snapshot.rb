@@ -11,7 +11,7 @@ module BetterTogether
       module_function
 
       def keys_for(entry)
-        keys = entry.attributes.keys.map { |a| "attr:#{a}" }
+        keys = entry.attributes.reject { |_, v| Sentinel.now?(v) }.keys.map { |a| "attr:#{a}" }
         entry.translations.each { |locale, fields| fields.each_key { |f| keys << "tr:#{locale}:#{f}" } }
         keys.concat(entry.refs.keys.map { |slot| "ref:#{slot}" })
         keys << 'position' unless entry.position.nil?
@@ -29,6 +29,14 @@ module BetterTogether
         values = read(scratch, definition, keys_for(entry).grep_v(/\Aref:/))
         entry.refs.each { |slot, ref| values["ref:#{slot}"] = "#{ref['type']}:#{Registry.fetch(ref['type']).stored_key(ref['key'])}" }
         values
+      end
+
+      # True when `current` holds everything `proposed` says. A hash-valued store (css_settings) is filled in
+      # with defaults by the model, so a packet that names only some keys still matches the stored record.
+      def covers?(current, proposed)
+        return current == proposed unless proposed.is_a?(Hash) && current.is_a?(Hash)
+
+        proposed.all? { |k, v| covers?(current[k], v) }
       end
 
       def fingerprint(flat)

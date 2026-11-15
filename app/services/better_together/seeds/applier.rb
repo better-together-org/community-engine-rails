@@ -70,10 +70,17 @@ module BetterTogether
         return false unless existing
 
         @targets[item.entry.id] = existing
+        mark_unchanged(item, existing)
         true
       rescue KeyError => e
         fail_record(item.entry.id, e)
         true
+      end
+
+      # The plan said create because the parents did not exist when it was made; report what really happened.
+      def mark_unchanged(item, existing)
+        index = plan.items.index(item)
+        plan.items[index] = item.with(action: :unchanged, detail: 'already present', record_id: existing.id) if index
       end
 
       def save(record, entry)
