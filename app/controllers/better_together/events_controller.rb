@@ -388,8 +388,11 @@ module BetterTogether
       redirect_to new_user_session_path(locale: I18n.locale)
     end
 
-    # A token that matches no invitation gets the plain 404, not a sign-in prompt.
+    # On a private platform a token that matches no invitation gets the plain 404, not a sign-in prompt.
     def unknown_invitation_token_present?
+      platform = Current.platform || Current.host_platform
+      return false if platform.nil? || platform.privacy_public?
+
       token = extract_invitation_token_for_privacy
       token.present? && find_any_invitation_by_token(token).blank?
     end
