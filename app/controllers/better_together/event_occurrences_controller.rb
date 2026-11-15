@@ -89,7 +89,7 @@ module BetterTogether
     private
 
     def set_event
-      @event = BetterTogether::Event.friendly.find(params[:event_id])
+      @event = BetterTogether::Event.in_current_platform.friendly.find(params[:event_id])
     rescue ActiveRecord::RecordNotFound
       head :not_found
     end

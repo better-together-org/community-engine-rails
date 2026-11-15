@@ -145,14 +145,16 @@ module BetterTogether
     end
 
     def find_by_id_or_identifier(key)
-      BetterTogether::Checklist.where(id: key).or(BetterTogether::Checklist.where(identifier: key)).first
+      scope = BetterTogether::Checklist.in_current_platform
+      scope.where(id: key).or(scope.where(identifier: key)).first
     end
 
     def find_by_translation_slug(key)
       translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
         translatable_type: 'BetterTogether::Checklist',
         key: 'slug',
-        value: key
+        value: key,
+        translatable_id: BetterTogether::Checklist.in_current_platform.select(:id)
       ).includes(:translatable).last
 
       translation&.translatable
@@ -161,9 +163,9 @@ module BetterTogether
     end
 
     def find_by_friendly_or_id(key)
-      BetterTogether::Checklist.friendly.find(key)
+      BetterTogether::Checklist.friendly_find_in_platform(key)
     rescue StandardError
-      BetterTogether::Checklist.find_by(id: key)
+      BetterTogether::Checklist.in_current_platform.find_by(id: key)
     end
 
     def checklist_item

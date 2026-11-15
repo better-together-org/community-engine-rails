@@ -163,7 +163,9 @@ module BetterTogether
         error_class: NameError
       )
 
-      @invitable_resource = if invitable_class.respond_to?(:friendly)
+      @invitable_resource = if invitable_class.respond_to?(:friendly_find_in_platform)
+                              invitable_class.friendly_find_in_platform(invitable_id)
+                            elsif invitable_class.respond_to?(:friendly)
                               invitable_class.friendly.find(invitable_id)
                             else
                               invitable_class.find(invitable_id)
