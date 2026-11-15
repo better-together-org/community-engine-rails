@@ -80,7 +80,9 @@ RSpec.describe 'Cookie consent settings DOM contract', :no_auth, type: :request 
   end
 
   context 'with a stored decision' do
+    # Noon keeps the saved day and the asserted day equal across a UTC midnight.
     before do
+      travel_to(Time.zone.now.noon)
       BetterTogether.register_consent_provider(:all) { true }
       BetterTogether::ConsentPreference.new(user.person)
                                        .record!({ 'marketing' => true }, policy_version: BetterTogether::Consent.policy_version(platform))
