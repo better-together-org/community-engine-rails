@@ -95,7 +95,7 @@ bundle install
 mkdir -p app/assets/config && touch app/assets/config/manifest.js
 ```
 
-Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the session middleware (the engine disables the session store, so a host app must mount it), env-driven Active Record encryption keys, the `adapter: postgis` switch in `config/database.yml`, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
+Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the session middleware (the engine disables the session store, so a host app must mount it), an environment-variable fallback for the Active Record encryption keys (see [Credentials and encryption](#credentials-and-encryption)), the `adapter: postgis` switch in `config/database.yml`, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
 
 ```bash
 rails g better_together:install            # engine migrations run from the gem (default)
@@ -104,13 +104,33 @@ rails g better_together:install --migrations=install   # copy migrations into db
 
 If you use Action Text, run `rails action_text:install` before the engine migrations and delete its copied migration; CE ships its own Action Text tables.
 
-Set the Active Record encryption variables (`bin/rails db:encryption:init` prints values): `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT`. Seeding enqueues background jobs, so Redis must be reachable (`REDIS_URL`). Create and migrate the database, then seed to create the setup wizard. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
+Set up credentials and encryption keys as described in [Credentials and encryption](#credentials-and-encryption) before you migrate. Seeding enqueues background jobs, so Redis must be reachable (`REDIS_URL`). Create and migrate the database, then seed to create the setup wizard. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
 
 ```bash
 rails db:create db:migrate db:seed
 ```
 
 Open `/<locale>/w/setup_wizard` (for example `/en/w/setup_wizard`) to create the host platform and the first admin. Until the wizard is done every other page redirects there.
+
+### Credentials and encryption
+
+Host apps should keep secrets in environment-specific encrypted credentials, decrypted with the Rails master key, rather than in plain environment variables or committed files. Read the official guides first:
+
+- [Securing Rails Applications: Custom credentials](https://guides.rubyonrails.org/security.html#custom-credentials) for how credentials work.
+- [Active Record Encryption](https://guides.rubyonrails.org/active_record_encryption.html) for encrypted attributes.
+
+Credentials, per environment:
+
+```bash
+bin/rails credentials:edit --environment production   # creates config/credentials/production.yml.enc and production.key
+bin/rails credentials:edit --environment staging
+```
+
+Commit each `config/credentials/<environment>.yml.enc`. Never commit the matching `config/credentials/<environment>.key`; give it to the running app as `RAILS_MASTER_KEY` (or keep the file on the server) and keep a copy in your password manager. Credentials hold the S3 keys, OAuth client secrets and similar values; read them with `Rails.application.credentials.dig(...)`.
+
+Encrypted attributes: the engine encrypts some columns (for example calendar subscription tokens) with Active Record Encryption, which needs a primary key, a deterministic key and a key derivation salt. Generate them with `bin/rails db:encryption:init` and put the output in each environment's credentials under `active_record_encryption:`. Rails reads them from there automatically, so no initializer code is needed. Use different keys per environment, and never change or lose a key that has already encrypted data: the data cannot be read without it (see the key rotation section of the encryption guide).
+
+The installer also writes an optional fallback that reads `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` from the environment when they are set. It is for hosts that cannot use credentials; skip it with `--skip-encryption` if you use credentials. Setting only some of the three raises at boot.
 
 ## Development: Getting Started
 
