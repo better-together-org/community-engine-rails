@@ -232,6 +232,10 @@ Apply takes a per-packet advisory lock (deficiency 15), writes one transaction w
 
 Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only); snapshot-based edit detection is replaced by provenance columns once C7 lands.
 
+## Sentinels
+
+An attribute value of `$now` is replaced with the time of the plant when the record is **created**. It is not part of the edit comparison and is never rewritten: a rerun, an `upsert` update or a later plant leaves the stored time alone, so the plan stays `unchanged`. Use it for `published_at` and similar stamps. It is the only sentinel; there is no `$now+7d` or per-locale form.
+
 ## Navigation as a packet (C6, navigation only)
 
 `config/seeds/better_together/navigation/` is the default header, host, Better Together and footer navigation with the 14 static pages and blocks it links to, as a protocol 2.0 packet (`add_only`, English). It is the first built-in packet and is planted with the rake tasks like any other:
@@ -246,17 +250,17 @@ rake better_together:seeds:plant PACKET=config/seeds/better_together/navigation 
 Differences from the builder, all deliberate:
 
 - The packet is idempotent. The builder creates the header, About, Home, Subprocessors and Better Together pages again on every run, with random slug suffixes (`about-HuFezy0o6k`), and names two navigation items after those suffixes. The packet uses stable keys and slugs.
-- `published_at` is a fixed past timestamp. A packet cannot say "now" (deficiency 21).
-- The Contributor Agreements dropdown is positioned last. The builder gives it position 1 because it counts unsaved items, which collides with Privacy Policy.
+- `published_at` is `$now` (see Sentinels): stamped when the page is created, never rewritten on a rerun, like the builder's `Time.zone.now`.
+- Position numbers are not copied. The spec compares the order of items within each area and parent, which matches the builder. The builder gives the Contributor Agreements dropdown position 1 because it counts unsaved items, which ties with Privacy Policy; the packet numbers it last and the order is the same.
 - The builder cannot build a second platform's navigation (`Identifier has already been taken` across platforms when the item's platform is not yet set at validation). The packet can.
-- The footer contributor links keep the builder's `private` privacy even though their pages are public. That looks unintended, but changing it is a product decision, not a conversion detail.
+- The two footer contributor links keep the builder's `private` privacy, so the packet matches the builder exactly. Their pages are public, so this looks unintended, but changing it is a product decision made in `NavigationBuilder` first, then here.
 
 ### Findings while converting (added to the numbered list)
 
 | # | Deficiency | Resolution |
 |---|---|---|
-| 20 | `content_block` could not carry `template_path`, and `protected` could not be set on pages, navigation areas and items, so the built-in pages could not be expressed | `template_path` and `protected` are now writable in the registry. A packet can therefore mark records undeletable; only plant packets you trust (sign them). The plant spec that proved an undeclared field is rejected now uses `platform_id` instead of `protected`, which is a decision for review |
-| 21 | No way to express a relative time such as `published_at: now` | Open: packets use a fixed timestamp. A `now` token resolved at plant time is a candidate |
+| 20 | `content_block` could not carry `template_path`, and `protected` could not be set, so the built-in pages could not be expressed | `template_path` is writable. `protected` is writable only on types that declare `protectable` in the registry (page, navigation_area, navigation_item); it is off by default for every other type and a packet that sets it elsewhere is rejected. Only plant packets you trust (sign them) |
+| 21 | No way to express a relative time such as `published_at: now` | **Fixed**: the `$now` sentinel, see below |
 | 22 | The plan and the applied report counted a rerun of join rows (`page_block`) and records keyed by a parent as `create` | **Fixed**: the planner finds them when their parents already exist, and the applier reports `unchanged` for the rest. A first-time plan of a packet whose parents are new still shows them as `create`, which is correct |
 | 23 | A hash-valued attribute (`css_settings`) compared unequal to the stored record because the model fills in defaults, so every rerun reported `skipped_edited` | **Fixed**: `Snapshot.covers?` treats the stored hash as matching when it holds every key the packet names |
 

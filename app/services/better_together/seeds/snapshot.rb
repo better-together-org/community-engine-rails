@@ -11,7 +11,7 @@ module BetterTogether
       module_function
 
       def keys_for(entry)
-        keys = entry.attributes.keys.map { |a| "attr:#{a}" }
+        keys = entry.attributes.reject { |_, v| Sentinel.now?(v) }.keys.map { |a| "attr:#{a}" }
         entry.translations.each { |locale, fields| fields.each_key { |f| keys << "tr:#{locale}:#{f}" } }
         keys.concat(entry.refs.keys.map { |slot| "ref:#{slot}" })
         keys << 'position' unless entry.position.nil?
