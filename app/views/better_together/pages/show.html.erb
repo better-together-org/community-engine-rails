@@ -113,7 +113,7 @@
         <%= yield :page_content %>
       <% end %>
 
-      <%= share_buttons(shareable: @page) if @page.privacy_public? %>
+      <%= share_buttons(shareable: @page) if @page.effective_privacy_public? %>
       <%= render 'shared/page_feedback_bar', record: @page if content_actions_visible_for?(@page) %>
     <% end %>
   <% end %>

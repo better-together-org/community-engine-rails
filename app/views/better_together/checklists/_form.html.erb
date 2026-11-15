@@ -35,6 +35,7 @@
     <div class="mb-3">
       <%= form.label :privacy %>
       <%= privacy_field(form:, klass: @checklist.class) %>
+      <%= privacy_ceiling_notice(@checklist) %>
     </div>
 
     <%= yield :action_toolbar %>

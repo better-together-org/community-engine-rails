@@ -68,6 +68,7 @@ module BetterTogether
     # be public before trusting it.
     def record_public_or_anonymous?
       record = @resource
+      return record.effective_privacy_public? if record.respond_to?(:effective_privacy_public?)
       return record.privacy_public? if record.respond_to?(:privacy_public?)
 
       current_user.blank?

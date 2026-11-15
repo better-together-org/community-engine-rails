@@ -91,10 +91,7 @@ module BetterTogether
       def exportable_posts
         apply_cursor(
           federation_consent_scoped(
-            ::BetterTogether::Post
-              .with_translations
-              .where(platform: connection.local_platform, privacy: 'public')
-              .where(source_id: nil)
+            local_public_records(::BetterTogether::Post)
               .where.not(published_at: nil)
               .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
           )
@@ -104,10 +101,7 @@ module BetterTogether
       def exportable_pages
         apply_cursor(
           federation_consent_scoped(
-            ::BetterTogether::Page
-              .with_translations
-              .where(platform: connection.local_platform, privacy: 'public')
-              .where(source_id: nil)
+            local_public_records(::BetterTogether::Page)
               .where.not(published_at: nil)
               .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
           )
@@ -117,13 +111,18 @@ module BetterTogether
       def exportable_events
         apply_cursor(
           federation_consent_scoped(
-            ::BetterTogether::Event
-              .with_translations
-              .where(platform: connection.local_platform, privacy: 'public')
-              .where(source_id: nil)
+            local_public_records(::BetterTogether::Event)
               .where.not(starts_at: nil)
           )
         ).order(updated_at: :asc, id: :asc).limit(limit)
+      end
+
+      # Local-origin public records, held back while their platform or community is not public.
+      def local_public_records(klass)
+        klass.with_translations
+             .where(platform: connection.local_platform, privacy: 'public')
+             .within_privacy_ceiling
+             .where(source_id: nil)
       end
 
       # Layers the per-item federation_visibility tri-state, and then any

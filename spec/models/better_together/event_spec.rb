@@ -637,7 +637,7 @@ module BetterTogether # :nodoc:
       end
     end
 
-    describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+    describe 'privacy ceiling (PrivacyCeilingValidatable never blocks saving)' do
       let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
       let(:community_platform) { create(:better_together_platform, privacy: 'community') }
       let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
@@ -663,10 +663,11 @@ module BetterTogether # :nodoc:
       end
 
       context 'community-privacy platform' do
-        it 'rejects public privacy' do
+        it 'saves public but caps effective privacy at community' do
           event = event_for.call(platform: community_platform, privacy: 'public')
-          expect(event).not_to be_valid
-          expect(event.errors[:privacy].join).to include('community')
+          expect(event).to be_valid
+          expect(event.privacy).to eq('public')
+          expect(event.effective_privacy).to eq('community')
         end
 
         it 'allows community privacy' do
@@ -679,10 +680,11 @@ module BetterTogether # :nodoc:
       end
 
       context 'private platform' do
-        it 'rejects public privacy' do
+        it 'saves public but caps effective privacy at community' do
           event = event_for.call(platform: private_platform, privacy: 'public')
-          expect(event).not_to be_valid
-          expect(event.errors[:privacy].join).to include('community')
+          expect(event).to be_valid
+          expect(event.privacy).to eq('public')
+          expect(event.effective_privacy).to eq('community')
         end
 
         it 'allows community privacy' do
@@ -697,7 +699,7 @@ module BetterTogether # :nodoc:
         end
       end
 
-      it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+      it 'stays valid on unrelated attribute updates' do
         event = create(:event, platform: public_platform, privacy: 'public')
         event.name = 'Updated name'
         expect(event).to be_valid
