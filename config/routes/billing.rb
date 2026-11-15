@@ -207,7 +207,7 @@ end
 # metrics routes in routes.rb; the controllers add the billing permission check.
 concern :billing_metrics do
   authenticated :user, lambda { |u|
-    u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
+    u.permitted_to?('view_metrics_dashboard') || u.platform_manager?
   } do
     scope path: 'host' do
       namespace :metrics do

@@ -43,11 +43,17 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       sign_in steward
       other_platform.billing_processor_settings.new(processor: 'cash', enabled: true, acknowledge: true,
                                                     settings: { 'instructions' => 'At the hall' }).save!(validate: false)
-      allow(Current).to receive(:platform).and_return(other_platform)
+      # The platform comes from the request host, so serve the request from the hosted platform's own domain.
+      domain = BetterTogether::PlatformDomain.find_by(platform: other_platform, primary_flag: true) ||
+               create(:better_together_platform_domain, :primary, platform: other_platform)
+      domain.update!(hostname: 'hosted.example.test')
+      host! 'hosted.example.test'
+      sign_in steward
 
       get settings_path
       expect(response).to have_http_status(:not_found)
 
+      sign_in steward
       patch setting_path('cash'), params: enable_params
       expect(response).to have_http_status(:not_found)
     end

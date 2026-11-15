@@ -35,7 +35,7 @@ RSpec.describe BetterTogether::Billing::EnqueueStuckBillingEventsJob do
 
     described_class.perform_now
 
-    expect(BetterTogether::Billing::ProcessBillingEventJob).to have_received(:perform_later).with(second.id)
+    expect(BetterTogether::Billing::ProcessBillingEventJob).to have_received(:perform_later).with(second.id) # rubocop:disable RSpecRails/ReceivePerformLater
     expect(Rails.logger).to have_received(:error).with(/could not re-enqueue event #{first.id}: StandardError/)
   end
 
