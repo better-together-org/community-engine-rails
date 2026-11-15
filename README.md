@@ -95,7 +95,7 @@ bundle install
 mkdir -p app/assets/config && touch app/assets/config/manifest.js
 ```
 
-Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the session middleware (the engine disables the session store, so a host app must mount it), an environment-variable fallback for the Active Record encryption keys (see [Credentials and encryption](#credentials-and-encryption)), the `adapter: postgis` switch in `config/database.yml`, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
+Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, an environment-variable fallback for the Active Record encryption keys (see [Credentials and encryption](#credentials-and-encryption)), the `adapter: postgis` switch in `config/database.yml`, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
 
 ```bash
 rails g better_together:install            # engine migrations run from the gem (default)
