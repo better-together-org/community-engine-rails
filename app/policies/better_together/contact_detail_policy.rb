@@ -10,6 +10,7 @@ module BetterTogether
       true # Adjust as per your authorization logic
     end
 
+    # Contact components carry their own privacy; anonymous viewers see only public ones.
     class Scope < PlatformRecordPolicy::Scope
       # Components that carry their own privacy (email, phone, website, social
       # account) show anonymous callers only rows that are effectively public.
