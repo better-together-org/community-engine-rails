@@ -232,6 +232,11 @@ module BetterTogether
       external?
     end
 
+    # A platform is the top of the visibility hierarchy; nothing caps it.
+    def self.privacy_ceiling_wrapper_columns
+      []
+    end
+
     # The trusted domain that lets this verified email register without an invitation, or nil.
     def trusted_domain_for(email, verified:)
       BetterTogether::PlatformTrustedDomain.match(platform: self, email:, verified:)

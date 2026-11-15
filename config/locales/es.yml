@@ -1614,9 +1614,6 @@ es:
           succeeded: Completado
     errors:
       only_one_primary: solo se puede establecer en un registro%{scope_suffix}
-      privacy:
-        exceeds_context_bounds: no puede ser más abierta que '%{max}' — la configuración
-          de la plataforma o comunidad impide este nivel de visibilidad
     event_invitations:
       index:
         invite_member: Invite member
@@ -4112,13 +4109,6 @@ es:
       delete: Eliminar registro
       edit: Editar publicación
       edit_post: Editar publicación
-      hints:
-        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
-          porque esta comunidad no es pública. Las publicaciones aquí solo pueden
-          ser visibles para los miembros de la comunidad o el autor.
-        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
-          porque la plataforma no es pública. Las publicaciones solo pueden ser visibles
-          para los miembros de la comunidad o el autor.
       index:
         map_unavailable: La vista de mapa no está disponible para publicaciones sin
           datos de ubicación.
@@ -4163,13 +4153,13 @@ es:
       view_post: Ver publicación
     primary: Primario
     privacy:
-      hints:
-        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
-          porque esta comunidad no es pública. El contenido aquí solo puede ser visible
-          para miembros de la comunidad o el autor.
-        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
-          porque la plataforma no es pública. El contenido solo puede ser visible
-          para miembros de la comunidad o el autor.
+      ceiling_notice:
+        community: Esta comunidad no es pública, así que este contenido solo es visible
+          como %{level} por ahora. Se publicará con la privacidad elegida cuando la
+          comunidad sea pública.
+        platform: Esta plataforma no es pública, así que este contenido solo es visible
+          como %{level} por ahora. Se publicará con la privacidad elegida cuando la
+          plataforma sea pública.
     quota_grants:
       created: Concesión de cuota creada.
       edit:
@@ -4797,6 +4787,9 @@ es:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      effective_privacy: Visible como %{privacy}
+      effective_privacy_tooltip: 'Una plataforma o comunidad no pública limita quién
+        puede ver este contenido: %{privacy}'
       event_status_level: 'Estado del evento: %{status}'
       event_status_tooltip: 'Estado del evento: %{status}'
       map:
