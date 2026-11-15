@@ -66,7 +66,9 @@ module BetterTogether
     end
 
     def wizard
-      @wizard ||= ::BetterTogether::Wizard.find_by(identifier: wizard_identifier)
+      @wizard ||= ::BetterTogether::Wizard.for_identifier(
+        wizard_identifier, platform: Current.platform || ::BetterTogether::Platform.find_by(host: true)
+      )
     end
 
     def wizard_identifier

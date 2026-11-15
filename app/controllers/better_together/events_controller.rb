@@ -352,7 +352,7 @@ module BetterTogether
     end
 
     def load_event_safely
-      @event || resource_class.friendly.find(params[:id])
+      @event || resource_class.friendly_find_in_platform(params[:id])
     rescue ActiveRecord::RecordNotFound
       nil
     end

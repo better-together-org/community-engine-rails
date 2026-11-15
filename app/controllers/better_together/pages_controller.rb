@@ -269,7 +269,7 @@ module BetterTogether
       community_id = params[:community_id].presence
       return if community_id.blank?
 
-      BetterTogether::Community.friendly.find(community_id)
+      BetterTogether::Community.friendly_find_in_platform(community_id)
     rescue ActiveRecord::RecordNotFound
       nil
     end
