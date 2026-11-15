@@ -659,6 +659,12 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__SeedProvenance["SeedProvenance"] {
+      <<Model>>
+      table: better_together_seed_provenances
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__ShortLink["ShortLink"] {
       <<Model>>
       table: better_together_short_links
@@ -908,6 +914,9 @@ classDiagram
   BetterTogether__QuotaUsage --> BetterTogether__Platform : platform
   BetterTogether__QuotaUsage --> BetterTogether__Quota : quota
   BetterTogether__Redirect --> BetterTogether__Platform : platform
+  BetterTogether__SeedProvenance --> BetterTogether__Platform : platform
+  BetterTogether__SeedProvenance --> BetterTogether__Seed : seed
+  BetterTogether__SeedProvenance --> BetterTogether__SeedPlanting : seed_planting
   BetterTogether__ShortLink --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform

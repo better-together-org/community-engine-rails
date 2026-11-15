@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T21:58:42Z",
+  "generated_at": "2026-11-15T16:29:29Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7528,6 +7528,12 @@
           "source_subsystem": "exchange_governance"
         },
         {
+          "from": "BetterTogether::Seed",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "exchange_governance"
+        },
+        {
           "from": "BetterTogether::Joatu::ResponseLink",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -7834,6 +7840,12 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::SeedProvenance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Redirect",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -8072,12 +8084,6 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
-        },
-        {
-          "from": "BetterTogether::Seed",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "exchange_governance"
         }
       ]
     },
@@ -12669,7 +12675,7 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug"
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)"
           ],
           "belongs_to": [
             {
@@ -17626,7 +17632,7 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug"
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)"
           ],
           "belongs_to": [
             {
@@ -24416,6 +24422,18 @@
           "to": "BetterTogether::ChecklistItem",
           "label": "checklist_item (checklist_item_id)",
           "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::SeedProvenance",
+          "to": "BetterTogether::Seed",
+          "label": "seed (seed_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::SeedProvenance",
+          "to": "BetterTogether::SeedPlanting",
+          "label": "seed_planting (seed_planting_id)",
+          "source_subsystem": "shared_supporting"
         }
       ]
     },
@@ -32297,6 +32315,114 @@
           "shared_table_group_size": 22
         },
         {
+          "name": "BetterTogether::SeedProvenance",
+          "label": "SeedProvenance",
+          "source_path": "app/models/better_together/seed_provenance.rb",
+          "table_name": "better_together_seed_provenances",
+          "columns": [
+            [
+              "packet_id",
+              "string FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "record_id",
+              "uuid FK"
+            ],
+            [
+              "seed_id",
+              "uuid FK"
+            ],
+            [
+              "seed_planting_id",
+              "uuid FK"
+            ],
+            [
+              "fingerprint",
+              "string"
+            ],
+            [
+              "packet_version",
+              "string"
+            ],
+            [
+              "record_class",
+              "string"
+            ],
+            [
+              "record_key",
+              "string"
+            ],
+            [
+              "record_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: packet_id, record_type, record_key, record_class, record_id, fingerprint"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "seed",
+              "foreign_key": "seed_id",
+              "target": "BetterTogether::Seed",
+              "optional": true
+            },
+            {
+              "name": "seed_planting",
+              "foreign_key": "seed_planting_id",
+              "target": "BetterTogether::SeedPlanting",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "seed",
+              "foreign_key": "seed_id",
+              "target": "BetterTogether::Seed",
+              "optional": true,
+              "target_subsystem": "exchange_governance"
+            },
+            {
+              "name": "seed_planting",
+              "foreign_key": "seed_planting_id",
+              "target": "BetterTogether::SeedPlanting",
+              "optional": true,
+              "target_subsystem": "exchange_governance"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::ShortLink",
           "label": "ShortLink",
           "source_path": "app/models/better_together/short_link.rb",
@@ -34765,6 +34891,7 @@
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
             "TrustedDomainEvent",
+            "SeedProvenance",
             "Redirect",
             "PlatformTrustedDomain",
             "PlatformSnippetAudit",
@@ -35502,6 +35629,7 @@
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
             "TrustedDomainEvent",
+            "SeedProvenance",
             "Redirect",
             "PlatformTrustedDomain",
             "PlatformSnippetAudit",
@@ -36121,6 +36249,24 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::SeedProvenance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::SeedProvenance",
+          "to": "BetterTogether::Seed",
+          "label": "seed (seed_id)",
+          "target_subsystem": "exchange_governance"
+        },
+        {
+          "from": "BetterTogether::SeedProvenance",
+          "to": "BetterTogether::SeedPlanting",
+          "label": "seed_planting (seed_planting_id)",
+          "target_subsystem": "exchange_governance"
         },
         {
           "from": "BetterTogether::ShortLink",
