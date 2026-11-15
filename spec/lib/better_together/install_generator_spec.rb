@@ -43,24 +43,6 @@ RSpec.describe BetterTogether::InstallGenerator, type: :generator do
     expect(File.executable?(File.join(destination_root, 'bin/check-engine-migrations'))).to be(true)
   end
 
-  it 'mounts the session middleware, because the engine disables the session store' do
-    write_host_files
-    run_generator
-
-    assert_file 'config/application.rb', /config\.session_store :cookie_store, key: '_\w+_session'/
-    assert_file 'config/application.rb', /config\.middleware\.use ActionDispatch::Cookies/
-    assert_file 'config/application.rb', /config\.middleware\.use config\.session_store, config\.session_options/
-  end
-
-  it 'leaves an existing session store alone' do
-    write_host_files
-    path = File.join(destination_root, 'config/application.rb')
-    File.write(path, File.read(path).sub("Rails::Application\n", "Rails::Application\n    config.session_store :cookie_store, key: '_mine'\n"))
-    run_generator
-
-    expect(File.read(path).scan('config.session_store').size).to eq(1)
-  end
-
   it 'reads Active Record encryption keys from the environment and never hardcodes them' do
     write_host_files
     run_generator
@@ -101,19 +83,18 @@ RSpec.describe BetterTogether::InstallGenerator, type: :generator do
     expect(File.read(File.join(destination_root, 'config/routes.rb')).scan('BetterTogether::Engine').size).to eq(1)
     expect(File.read(File.join(destination_root, 'config/storage.yml')).scan('s3_compatible:').size).to eq(1)
     expect(File.read(File.join(destination_root, 'config/application.rb')).scan('config.generators').size).to eq(1)
-    expect(File.read(File.join(destination_root, 'config/application.rb')).scan('session_store :cookie_store').size).to eq(1)
     expect(File.read(File.join(destination_root, 'config/application.rb')).scan('encryption.primary_key').size).to eq(1)
   end
 
   it 'honours the skip options' do
     write_host_files
     run_generator %w[--skip-routes --skip-storage --skip-assets --skip-generators --skip-ci-check
-                     --skip-session --skip-encryption --skip-database]
+                     --skip-encryption --skip-database]
 
     assert_file 'config/routes.rb', /\A(?!.*BetterTogether).*\z/m
     assert_no_file 'bin/check-engine-migrations'
     assert_no_file 'app/assets/stylesheets/host_theme.scss'
-    assert_file 'config/application.rb', /\A(?!.*(session_store|encryption)).*\z/m
+    assert_file 'config/application.rb', /\A(?!.*encryption).*\z/m
     assert_file 'config/database.yml', /adapter: postgresql/
   end
 

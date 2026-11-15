@@ -1,7 +1,0 @@
-    # BetterTogether install: session
-    # The engine sets session_store :disabled in its own initializer, so a host app must mount
-    # the session middleware itself. Without it every request fails with OmniAuth::NoSessionError.
-    config.session_store :cookie_store, key: '_<%= session_key %>_session'
-    config.middleware.use ActionDispatch::Cookies
-    config.middleware.use config.session_store, config.session_options
-

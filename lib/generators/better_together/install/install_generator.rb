@@ -6,7 +6,6 @@ module BetterTogether
     MOUNT_LINE = "mount BetterTogether::Engine => '/'"
     STORAGE_MARKER = 's3_compatible:'
     GENERATORS_MARKER = 'BetterTogether install: generators'
-    SESSION_MARKER = 'BetterTogether install: session'
     ENCRYPTION_MARKER = 'BetterTogether install: encryption'
 
     desc 'Installs the Community Engine inside your app: initializer, routes mount, storage,
@@ -21,8 +20,6 @@ module BetterTogether
     class_option :skip_assets, type: :boolean, default: false, desc: 'Do not touch manifest.js or theme stubs'
     class_option :skip_generators, type: :boolean, default: false,
                                    desc: 'Do not set uuid/rspec/factory_bot generator defaults'
-    class_option :skip_session, type: :boolean, default: false,
-                                desc: 'Do not mount the session middleware in config/application.rb'
     class_option :skip_encryption, type: :boolean, default: false,
                                    desc: 'Do not add the Active Record encryption key settings'
     class_option :skip_database, type: :boolean, default: false,
@@ -65,18 +62,6 @@ module BetterTogether
                        after: /class Application < Rails::Application\n/
     rescue Errno::ENOENT
       say_status :skip, 'config/application.rb not found, add the generator defaults by hand', :yellow
-    end
-
-    def configure_session
-      return if options[:skip_session]
-
-      app_config = destination_path('config/application.rb')
-      return unless File.exist?(app_config)
-
-      source = File.read(app_config)
-      return if source.include?(SESSION_MARKER) || source.include?('config.session_store')
-
-      inject_into_file 'config/application.rb', session_snippet, after: /class Application < Rails::Application\n/
     end
 
     def configure_encryption
@@ -128,11 +113,6 @@ module BetterTogether
 
     def destination_path(path)
       File.join(destination_root, path)
-    end
-
-    def session_snippet
-      key = Rails.application.class.module_parent_name.to_s.underscore.presence || File.basename(destination_root)
-      ERB.new(File.read(find_in_source_paths('session.txt')), trim_mode: '-').result_with_hash(session_key: key)
     end
 
     def add_manifest_links
