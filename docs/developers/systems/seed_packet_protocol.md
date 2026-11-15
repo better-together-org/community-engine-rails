@@ -134,10 +134,10 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | **fixed in C4** |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
 | 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
-| 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | spec C1; migration held (C7, PR #2165) |
+| 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | `Seed` platform-scoped (#2249); `clear` is not part of packets; `Plant` does not yet store the `Seed` envelope row, so the global `(type, identifier)` rule no longer blocks it but nothing writes it either (documented limit) |
 | 7 | No dry-run or diff | The plan is the dry-run report | **fixed in C3** |
 | 8 | No validation schema | JSON Schemas and `Protocol::Validator` | **fixed in C1** |
-| 9 | No signature verification | Detached signature over `MANIFEST.json`, key id in `origin` | spec C1; verification later |
+| 9 | No signature verification | Detached signature over `MANIFEST.json`, key id in `origin` | **fixed in C9**: Ed25519 detached signature, see Signatures below |
 | 10 | No partial update or deletion model | `mode` plus `deletes:` tombstones limited to provenance-owned records | spec and schema C1, applier C3 |
 | 11 | No versioning or migration semantics | `version` 2.x selects the 2.0 schema, 1.x keeps old rules; `packet.version` per packet; `seed_pack.schema_version` | **fixed in C1** (selection), migrations later |
 | 12 | Inconsistent locale handling | `default_locale`, `locales`, `unsupported_locale_policy`, per-record `translations` | **fixed in C1** (declaration and consistency check), policy applied in C3 |
@@ -152,7 +152,7 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 
 `spec/seeds/golden/conformance_spec.rb` plants packets through `Plant` and covers: empty platform, identical rerun, dry run, two platforms, steward-edited record, missing reference, locale policy, verified blob, tampered blob, missing manifest, tar.gz and the source allowlist.
 
-Held: C6 (billing and navigation as packets) and C7 (platform-scoped `Seed` and provenance columns, which touches PR #2165). Deficiencies 5, 6 and 10 stay partial and 9 (signatures) is specified only until then.
+Platform-scoped `Seed` landed in #2249 (C7, without provenance columns). Held: C6 for billing (lives on the billing branch). Deficiencies 5 and 6 stay partial: provenance is a snapshot inside `SeedPlanting.result`, not columns on planted records, and `Plant` does not store a `Seed` row.
 
 ## Type registry (C2)
 
@@ -192,6 +192,20 @@ Registered: `page`, `content_block`, `page_block`, `navigation_area`, `navigatio
 
 The registry spec checks each declared attribute is writable on the model, each attachment exists, and each reference points at a registered type, so a drifting model fails CI.
 
+## Signatures (C9)
+
+`MANIFEST.json.sig` is a base64 Ed25519 signature over the exact bytes of `MANIFEST.json`. The manifest lists the sha256 of every other file, so one signature covers the whole packet. `seed.origin.signing_key_id` names the key. A packet never carries the key it is checked against: `Seeds::Signature` looks the id up in keys the host trusts, registered with `Signature.register_key(id, pem)` or placed as `<key_id>.pem` in a directory listed in `BETTER_TOGETHER_SEED_TRUSTED_KEYS_DIR` (colon separated).
+
+| Situation | Result |
+|---|---|
+| Signature present, trusted key, bytes match | Plant continues |
+| Signature present, key id missing, malformed or untrusted | Error, nothing written |
+| Signature present, manifest changed or signed by another key | Error, nothing written |
+| No signature, `require_signature: false` (default) | Plant continues; integrity still rests on the manifest hashes |
+| No signature, `require_signature: true` (`REQUIRE_SIGNATURE=1` on the rake tasks) | Error, nothing written |
+
+The signature is checked before the manifest hashes. Tooling can produce one with `Signature.sign(manifest_bytes, private_key_pem)`. Limits: only Ed25519 is accepted (the `.asc` name in the schema is reserved, not implemented); there is no revocation list or key expiry, so removing a key file or registration is the revocation; GPG and OpenPGP keys are not read.
+
 ## Planner and applier (C3)
 
 `Seeds::Plant.call(path:, platform:, apply: false)` loads a packet directory (`Seeds::Packet`: no symlinks, safe YAML, schema validation), plans it (`Seeds::Planner`) and, only with `apply: true` and an error-free plan, writes it (`Seeds::Applier`). It always returns the structured report; a dry run writes nothing, not even a `SeedPlanting`.
@@ -220,8 +234,8 @@ Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `
 
 ## What is deliberately not here
 
-- No `Seed` migration and no provenance columns (C7, held until the multi-tenancy direction in PR #2165 is confirmed, so there is one `Seed` schema change).
-- No conversion of billing planters or the navigation builder (C6, held until the conformance suite exists and the billing branch owner is coordinated).
+- No provenance columns on planted records. The `Seed` table is platform-scoped (#2249); provenance stays in `SeedPlanting.result` (documented limit for deficiency 5).
+- No conversion of the billing planters (C6): they live on `feature/billing` and are converted there, with that branch's owner. Navigation is converted, see below.
 
 ## Tests
 

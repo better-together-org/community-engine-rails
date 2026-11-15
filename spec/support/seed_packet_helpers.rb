@@ -25,6 +25,17 @@ module SeedPacketHelpers
     dir
   end
 
+  def write_signed_packet(dir, key_id:, sign_with:)
+    build_packet(dir, records: nav_records, extra_packet: { 'manifest' => 'MANIFEST.json', 'signature' => 'MANIFEST.json.sig' })
+    envelope = YAML.safe_load_file(File.join(dir, 'packet.yml'))
+    envelope['better_together']['seed']['origin'] = { 'signing_key_id' => key_id }
+    File.write(File.join(dir, 'packet.yml'), envelope.to_yaml)
+    write_manifest(dir)
+    manifest = File.binread(File.join(dir, 'MANIFEST.json'))
+    File.write(File.join(dir, 'MANIFEST.json.sig'),
+               BetterTogether::Seeds::Signature.sign(manifest, sign_with.private_to_pem))
+  end
+
   def nav_records(title: 'Home')
     {
       navigation_area: [{ 'key' => 'main-nav', 'attributes' => { 'visible' => true },
