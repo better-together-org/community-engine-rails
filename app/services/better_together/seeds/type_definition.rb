@@ -79,6 +79,11 @@ module BetterTogether
         super
       end
 
+      # The form a natural-key value takes once the model has stored it.
+      def stored_key(value)
+        stored_form(natural_key_columns.first, value)
+      end
+
       private
 
       # Some models normalize a key in its writer (identifier parameterizes, for example), so a lookup
