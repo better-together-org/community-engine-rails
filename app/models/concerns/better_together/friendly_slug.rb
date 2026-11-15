@@ -44,6 +44,16 @@ module BetterTogether
         end
       end
 
+      # Slug conflicts (including reserved history slugs) only count inside the record's own platform.
+      def scope_for_slug_generator
+        scope = super
+        return scope unless has_attribute?(:platform_id)
+
+        owner_platform_id = platform_id || Current.platform&.id
+        owner_platform_id ? scope.where(platform_id: owner_platform_id) : scope
+      end
+      private :scope_for_slug_generator
+
       def slug=(arg, locale: nil, **options)
         arg = BetterTogether::FriendlySlug.normalize_slug_preserving_namespace(arg) if self.class.parameterize_slug
 
