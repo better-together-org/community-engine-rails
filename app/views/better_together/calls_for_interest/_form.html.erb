@@ -57,6 +57,7 @@
           <div class="col mb-3 pb-3 border-bottom">
             <%= form.label :privacy, t('better_together.calls_for_interest.labels.privacy') %>
             <%= privacy_field(form:, klass: call_for_interest.class) %>
+            <%= privacy_ceiling_notice(call_for_interest) %>
             <% if call_for_interest.errors[:privacy].any? %>
               <div class="invalid-feedback">
                 <%= call_for_interest.errors[:privacy].join(", ") %>

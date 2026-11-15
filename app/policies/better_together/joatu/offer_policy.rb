@@ -53,7 +53,7 @@ module BetterTogether
                                       .where(better_together_joatu_response_links: { id: nil })
 
           # Unauthenticated: public standalone offers only, no blocking to apply
-          return standalone.where(privacy: 'public') unless user.present?
+          return standalone.where(privacy: 'public').within_privacy_ceiling unless user.present?
 
           agent_id = agent.id
 

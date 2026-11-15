@@ -111,6 +111,7 @@
                             'better_together--dependent-fields-target' => 'controlField'
                           }
                         }) %>
+      <%= privacy_ceiling_notice(@navigation_item) %>
       <% if @navigation_item.errors[:privacy].any? %>
         <div class="invalid-feedback">
           <%= @navigation_item.errors[:privacy].join(", ") %>

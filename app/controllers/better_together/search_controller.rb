@@ -88,7 +88,7 @@ module BetterTogether
 
     # Used only when the policy check itself errors. A record that cannot say it is public is hidden.
     def public_search_record?(record)
-      return false unless record.respond_to?(:privacy_public?) && record.privacy_public?
+      return false unless record.respond_to?(:effective_privacy_public?) && record.effective_privacy_public?
 
       !record.respond_to?(:published?) || record.published?
     end

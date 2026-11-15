@@ -26,7 +26,7 @@ module BetterTogether
 
     def public?
       if upload.present?
-        upload.privacy_public? && upload.file_content_security_downloadable?
+        upload.effective_privacy_public? && upload.file_content_security_downloadable?
       elsif blob.present?
         BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(blob)
       else

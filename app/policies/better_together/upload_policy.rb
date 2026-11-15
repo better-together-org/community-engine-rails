@@ -20,7 +20,7 @@ module BetterTogether
     end
 
     def download?
-      (record.privacy_public? || record.creator == agent) &&
+      (privacy_public?(record) || record.creator == agent) &&
         record.attached?
     end
 

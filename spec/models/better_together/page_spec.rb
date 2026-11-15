@@ -308,7 +308,7 @@ module BetterTogether # :nodoc:
       end
     end
 
-    describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+    describe 'privacy ceiling (PrivacyCeilingValidatable never blocks saving)' do
       let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
       let(:community_platform) { create(:better_together_platform, privacy: 'community') }
       let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
@@ -337,10 +337,11 @@ module BetterTogether # :nodoc:
       end
 
       context 'public platform + community-privacy community' do
-        it 'rejects public privacy' do
+        it 'saves public but caps effective privacy at community' do
           page = page_for.call(platform: public_platform, community: community_community, privacy: 'public')
-          expect(page).not_to be_valid
-          expect(page.errors[:privacy].join).to include('community')
+          expect(page).to be_valid
+          expect(page.privacy).to eq('public')
+          expect(page.effective_privacy).to eq('community')
         end
 
         it 'allows community privacy' do
@@ -349,10 +350,11 @@ module BetterTogether # :nodoc:
       end
 
       context 'public platform + private community' do
-        it 'rejects public privacy' do
+        it 'saves public but caps effective privacy at community' do
           page = page_for.call(platform: public_platform, community: private_community, privacy: 'public')
-          expect(page).not_to be_valid
-          expect(page.errors[:privacy].join).to include('community')
+          expect(page).to be_valid
+          expect(page.privacy).to eq('public')
+          expect(page.effective_privacy).to eq('community')
         end
 
         it 'allows community privacy (members can still share within the community)' do
@@ -365,10 +367,11 @@ module BetterTogether # :nodoc:
       end
 
       context 'community-privacy platform' do
-        it 'rejects public privacy' do
+        it 'saves public but caps effective privacy at community' do
           page = page_for.call(platform: community_platform, privacy: 'public')
-          expect(page).not_to be_valid
-          expect(page.errors[:privacy].join).to include('community')
+          expect(page).to be_valid
+          expect(page.privacy).to eq('public')
+          expect(page.effective_privacy).to eq('community')
         end
 
         it 'allows community privacy' do
@@ -381,10 +384,11 @@ module BetterTogether # :nodoc:
       end
 
       context 'private platform' do
-        it 'rejects public privacy' do
+        it 'saves public but caps effective privacy at community' do
           page = page_for.call(platform: private_platform, privacy: 'public')
-          expect(page).not_to be_valid
-          expect(page.errors[:privacy].join).to include('community')
+          expect(page).to be_valid
+          expect(page.privacy).to eq('public')
+          expect(page.effective_privacy).to eq('community')
         end
 
         it 'allows community privacy' do
@@ -399,7 +403,7 @@ module BetterTogether # :nodoc:
         end
       end
 
-      it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+      it 'stays valid on unrelated attribute updates' do
         page = create(:better_together_page, platform: public_platform, community: public_community, privacy: 'public')
         page.title = 'Updated title'
         expect(page).to be_valid
@@ -411,27 +415,7 @@ module BetterTogether # :nodoc:
           page.last_synced_at = Time.current
 
           expect(page).to be_valid
-        end
-      end
-
-      context 'seed_privacy_ceiling_exempt (built-in seeded pages)' do
-        # NavigationBuilder/AgreementBuilder set this transient flag on new
-        # built-in pages (About, FAQ, legal/policy pages, contributor
-        # agreements) so they render for guests regardless of the platform's
-        # privacy ceiling. Deliberately not tied to `protected?` -- that flag
-        # is reused (and randomized by the page factory) across unrelated
-        # contexts, including the other examples in this describe block.
-        it 'allows public privacy even under a private platform and community' do
-          page = page_for.call(platform: private_platform, community: private_community, privacy: 'public')
-          page.seed_privacy_ceiling_exempt = true
-
-          expect(page).to be_valid
-        end
-
-        it 'does not affect an otherwise-identical page without the flag' do
-          page = page_for.call(platform: private_platform, community: private_community, privacy: 'public')
-
-          expect(page).not_to be_valid
+          expect(page.effective_privacy).to eq('public')
         end
       end
     end

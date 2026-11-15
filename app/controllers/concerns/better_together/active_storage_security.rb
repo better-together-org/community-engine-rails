@@ -151,7 +151,7 @@ module BetterTogether
       # policy (evaluated as an anonymous viewer) so markup and media agree.
       return BetterTogether::Content::BlockPolicy.new(nil, record).show? if record.is_a?(BetterTogether::Content::Block)
 
-      record.privacy_public?
+      record.respond_to?(:effective_privacy_public?) ? record.effective_privacy_public? : record.privacy_public?
     end
 
     # The host platform and host community are the site's brand (logo, cover, profile image). They must
