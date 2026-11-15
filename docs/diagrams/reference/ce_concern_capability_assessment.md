@@ -97,6 +97,7 @@ This assessment is generated from the current live class set and the concern cap
 | `PlatformCspConfiguration` | Platformcspconfiguration | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformCssBlockManagement` | Platformcssblockmanagement | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformFederationStatus` | Platformfederationstatus | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformFromParent` | Platformfromparent | `WizardStepDefinition`, `WizardStep` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformHost` | Platformhost | `Platform`, `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformMembershipDisplay` | Platformmembershipdisplay | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformRegistryDefaults` | Platformregistrydefaults | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |

@@ -174,8 +174,7 @@ RSpec.describe 'Two-platform content isolation', :skip_host_setup do
   end
 
   describe 'other records with the same identifier' do
-    # calendar and community also validate a globally unique slug; see the friendly_id_slugs PR.
-    %i[place].each do |factory|
+    %i[place calendar community].each do |factory|
       it "allows one #{factory} identifier on two platforms and rejects a duplicate on one", :aggregate_failures do
         first = create(:"better_together_#{factory}", platform: host_platform, identifier: 'shared-id')
         second = create(:"better_together_#{factory}", platform: other_platform, identifier: 'shared-id')
@@ -184,6 +183,58 @@ RSpec.describe 'Two-platform content isolation', :skip_host_setup do
         expect([first, second]).to all(be_persisted)
         expect(duplicate).not_to be_valid
       end
+    end
+  end
+
+  describe 'communities with the same identifier' do
+    let!(:alpha_community) do
+      create(:better_together_community, platform: host_platform, privacy: 'public', identifier: 'garden-club',
+                                         name: 'Alpha garden club')
+    end
+    let!(:beta_community) do
+      create(:better_together_community, platform: other_platform, privacy: 'public', identifier: 'garden-club',
+                                         name: 'Beta garden club')
+    end
+
+    it 'gives each community its own slug row and platform', :aggregate_failures do
+      rows = FriendlyId::Slug.unscoped.where(sluggable_type: 'BetterTogether::Community', slug: 'garden-club')
+
+      expect(rows.pluck(:sluggable_id, :platform_id)).to contain_exactly(
+        [alpha_community.id, host_platform.id], [beta_community.id, other_platform.id]
+      )
+    end
+
+    it 'resolves the shared slug to the community of the requesting platform', :aggregate_failures do
+      serve_from(alpha)
+      get better_together.community_path(alpha_community, locale:)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Alpha garden club')
+      expect(response.body).not_to include('Beta garden club')
+
+      serve_from(beta)
+      get better_together.community_path(beta_community, locale:)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Beta garden club')
+      expect(response.body).not_to include('Alpha garden club')
+    end
+
+    it 'finds the community by slug only inside its own platform', :aggregate_failures do
+      expect(BetterTogether::Community.friendly_find_in_platform('garden-club', platform: other_platform))
+        .to eq(beta_community)
+      expect(BetterTogether::Community.friendly_find_in_platform('garden-club', platform: host_platform))
+        .to eq(alpha_community)
+      expect { BetterTogether::Community.friendly_find_in_platform(beta_community.id, platform: host_platform) }
+        .to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe 'slugs generated from the same title' do
+    it 'does not make a platform rename its page because the other platform has the same title', :aggregate_failures do
+      alpha_page = create(:better_together_page, platform: host_platform, title: 'Open hours', slug: 'open-hours')
+      beta_page = create(:better_together_page, platform: other_platform, title: 'Open hours', slug: 'open-hours')
+
+      expect([alpha_page.slug, beta_page.slug]).to eq(%w[open-hours open-hours])
+      expect(BetterTogether::Page.friendly_find_in_platform('open-hours', platform: other_platform)).to eq(beta_page)
     end
   end
 

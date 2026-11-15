@@ -170,14 +170,14 @@ classDiagram
     class BetterTogether__WizardStep["WizardStep"] {
       <<Model>>
       table: better_together_wizard_steps
-      concerns: BetterTogetherId, PlatformScoped, Seedable
+      concerns: BetterTogetherId, PlatformFromParent, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__WizardStepDefinition["WizardStepDefinition"] {
       <<Model>>
       table: better_together_wizard_step_definitions
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +3
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformFromParent +4
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations
     }
   }

@@ -62,7 +62,7 @@ classDiagram
       <<Model>>
       table: better_together_agreement_terms
       translates: content, slug, summary
-      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +4
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformFromParent +5
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations +6
     }
     class BetterTogether__Checklist["Checklist"] {
@@ -76,7 +76,7 @@ classDiagram
       <<Model>>
       table: better_together_checklist_items
       translates: description, label, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +7
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +8
       weak refs: owner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description +5
     }
     class BetterTogether__Joatu__Agreement["Joatu::Agreement"] {

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T20:20:42Z",
+  "generated_at": "2026-11-15T20:30:12Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -5751,6 +5751,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformFromParent",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Seedable"
           ],
@@ -5863,6 +5864,7 @@
             "BetterTogether::BetterTogetherId",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
+            "BetterTogether::PlatformFromParent",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
@@ -6618,6 +6620,16 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Platform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformFromParent",
+          "label": "PlatformFromParent",
+          "capability": "Platformfromparent",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "WizardStepDefinition",
+            "WizardStep"
           ]
         },
         {
@@ -20595,6 +20607,7 @@
             "BetterTogether::BetterTogetherId",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
+            "BetterTogether::PlatformFromParent",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
             "BetterTogether::Protected",
@@ -20877,6 +20890,7 @@
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
+            "BetterTogether::PlatformFromParent",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
             "BetterTogether::Privacy",
@@ -23966,6 +23980,16 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "AgreementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformFromParent",
+          "label": "PlatformFromParent",
+          "capability": "Platformfromparent",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ChecklistItem",
+            "AgreementTerm"
           ]
         },
         {
