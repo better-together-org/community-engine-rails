@@ -380,11 +380,18 @@ module BetterTogether
     # events / events on another platform).
     def handle_resource_not_found
       return super if current_user.present? || current_robot.present?
+      return super if unknown_invitation_token_present?
 
       event = platform_scoped_event_ignoring_privacy
       return super unless event
 
       redirect_to new_user_session_path(locale: I18n.locale)
+    end
+
+    # A token that matches no invitation gets the plain 404, not a sign-in prompt.
+    def unknown_invitation_token_present?
+      token = extract_invitation_token_for_privacy
+      token.present? && find_any_invitation_by_token(token).blank?
     end
 
     def platform_scoped_event_ignoring_privacy
