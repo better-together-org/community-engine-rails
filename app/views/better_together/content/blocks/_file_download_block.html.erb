@@ -6,7 +6,7 @@
       <%= t('better_together.content.blocks.file_download_block.empty') %>
     </p>
   <% else %>
-    <% cache_if upload.privacy_public?, [file_download_block, upload, I18n.locale, upload.file_content_security_downloadable?] do %>
+    <% cache_if upload.effective_privacy_public?, [file_download_block, upload, I18n.locale, upload.file_content_security_downloadable?] do %>
       <% path = file_download_block.open_inline? ? better_together.short_file_path(upload) : better_together.short_file_download_path(upload) %>
       <div class="file-download-block card">
         <div class="card-body d-flex align-items-start gap-3">

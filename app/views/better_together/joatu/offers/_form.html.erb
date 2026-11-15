@@ -81,6 +81,7 @@
   <div class="mb-3">
     <%= required_label form, :privacy, class: 'form-label' %>
     <%= privacy_field(form:, klass: joatu_offer.class) %>
+    <%= privacy_ceiling_notice(joatu_offer) %>
   </div>
 
   <div class="mb-3">
