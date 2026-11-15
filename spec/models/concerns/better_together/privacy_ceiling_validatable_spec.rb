@@ -27,6 +27,17 @@ RSpec.describe BetterTogether::PrivacyCeilingValidatable do
     end
   end
 
+  describe 'a record with its own primary community' do
+    it 'is not capped by that community, which is its identity and not a container', :aggregate_failures do
+      person = create(:better_together_person, privacy: 'public')
+      person.community.update_columns(privacy: 'private')
+
+      expect(BetterTogether::Person.privacy_ceiling_wrapper_columns).not_to include('community_id')
+      expect(person.reload.effective_privacy).to eq('public')
+      expect(BetterTogether::Person.within_privacy_ceiling).to include(person)
+    end
+  end
+
   describe '#effective_privacy' do
     it 'caps a public record under a private platform at community' do
       page = page_for(platform: private_platform)

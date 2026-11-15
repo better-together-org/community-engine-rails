@@ -53,8 +53,13 @@ module BetterTogether
     class_methods do
       # Foreign keys whose rows can cap visibility. Models that never carry a
       # ceiling (see Agreement, Category, Platform) override this with [].
+      # A record's own primary community (PrimaryCommunity#has_community: Person,
+      # Building, Room, geography and similar) is its identity community, not a
+      # container, so it never caps the record.
       def privacy_ceiling_wrapper_columns
-        %w[platform_id community_id] & column_names
+        columns = %w[platform_id community_id] & column_names
+        columns -= ['community_id'] if include?(BetterTogether::PrimaryCommunity)
+        columns
       end
 
       # Arel predicate true for rows whose ceiling still allows 'public'.
@@ -115,6 +120,8 @@ module BetterTogether
     end
 
     def wrapping_privacy_ceiling_community
+      return nil if self.class.include?(BetterTogether::PrimaryCommunity)
+
       respond_to?(:community) ? community : nil
     end
 
