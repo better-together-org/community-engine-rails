@@ -61,30 +61,33 @@ end
 
 ## Installation
 
-Add this gem to your Gemfile:
+Start a fresh Rails 8.1 app without the default asset pipeline. Rails 8.1 has no `--asset-pipeline=sprockets` option (it is silently ignored and you get propshaft plus dartsass, whose `application.css` clashes with sprockets), and this engine requires sprockets, which it brings in itself:
+
+```bash
+rails new my_app -d postgresql -A -T --skip-kamal --skip-solid --skip-jbuilder
+```
+
+Add this gem and the forks it needs to your Gemfile. Use `branch: 'main'` only to try it out; pin `ref:` to a reviewed commit for anything you deploy (the installer output depends on the gem version, so use a commit that contains the installer):
 
 ```ruby
 gem 'better_together', '~> 0.11.0',
     github: 'better-together-org/community-engine-rails',
     branch: 'main'
-```
-
-Include the forks CE needs in your Gemfile (check the engine's Gemfile for the current list):
-
-```ruby
 gem 'pundit-resources', git: 'https://github.com/better-together-org/pundit-resources.git', branch: 'master'
 gem 'storext', github: 'better-together-org/storext'
+# only if you want the rspec and factory_bot generator defaults (rails new -T leaves them out)
+gem 'rspec-rails', group: %i[development test]
+gem 'factory_bot_rails', group: %i[development test]
 ```
 
-Start from a fresh Rails app that uses PostgreSQL with PostGIS, sprockets (remove `propshaft` if present; `--asset-pipeline=sprockets` is ignored by some Rails versions) and UUID primary keys:
+Sprockets refuses to boot without a manifest, and the installer is itself a Rails command that boots the app, so create an empty one first:
 
-```yaml
-# config/database.yml
-default: &default
-  adapter: postgis
+```bash
+bundle install
+mkdir -p app/assets/config && touch app/assets/config/manifest.js
 ```
 
-Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
+Run the engine installer. It writes the initializer, mounts the engine in `config/routes.rb`, adds the `s3_compatible` storage service, a `config.hosts` initializer, a head-tag provider stub, uuid/rspec/factory_bot generator defaults, the session middleware (the engine disables the session store, so a host app must mount it), env-driven Active Record encryption keys, the `adapter: postgis` switch in `config/database.yml`, the `app/assets/config/manifest.js` links, a theme stub and `bin/check-engine-migrations`:
 
 ```bash
 rails g better_together:install            # engine migrations run from the gem (default)
@@ -93,11 +96,13 @@ rails g better_together:install --migrations=install   # copy migrations into db
 
 If you use Action Text, run `rails action_text:install` before the engine migrations and delete its copied migration; CE ships its own Action Text tables.
 
-Create and migrate the database. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
+Set the Active Record encryption variables (`bin/rails db:encryption:init` prints values): `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT`. Seeding enqueues background jobs, so Redis must be reachable (`REDIS_URL`). Create and migrate the database, then seed to create the setup wizard. In the default gem mode nothing is copied; see `docs/developers/host_app_migrations_from_gem.md`.
 
 ```bash
-rails db:create db:migrate
+rails db:create db:migrate db:seed
 ```
+
+Open `/<locale>/w/setup_wizard` (for example `/en/w/setup_wizard`) to create the host platform and the first admin. Until the wizard is done every other page redirects there.
 
 ## Development: Getting Started
 
