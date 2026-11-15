@@ -9,7 +9,7 @@ module BetterTogether
     def show
       platform = Current.platform || ::BetterTogether::Platform.find_by(host: true)
       @wizard = ::BetterTogether::Wizard.for_identifier(params[:id], platform:) ||
-                ::BetterTogether::Wizard.friendly.find(params[:id])
+                ::BetterTogether::Wizard.friendly_find_in_platform(params[:id], platform:)
       determine_wizard_outcome(@wizard)
     end
   end

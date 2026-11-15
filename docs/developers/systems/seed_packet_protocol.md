@@ -263,6 +263,7 @@ Differences from the builder, all deliberate:
 | 21 | No way to express a relative time such as `published_at: now` | **Fixed**: the `$now` sentinel, see below |
 | 22 | The plan and the applied report counted a rerun of join rows (`page_block`) and records keyed by a parent as `create` | **Fixed**: the planner finds them when their parents already exist, and the applier reports `unchanged` for the rest. A first-time plan of a packet whose parents are new still shows them as `create`, which is correct |
 | 23 | A hash-valued attribute (`css_settings`) compared unequal to the stored record because the model fills in defaults, so every rerun reported `skipped_edited` | **Fixed**: `Snapshot.covers?` treats the stored hash as matching when it holds every key the packet names |
+| 24 | `friendly_id_slugs` had no platform, and its unique index never enforced anything (`scope` is NULL on every row and Postgres treats NULLs as distinct). Calendars and communities also checked slugs globally, so two platforms could not share an identifier | **Fixed**: slug rows carry `platform_id` copied from their record, unique on `(platform, type, slug, locale)` through a `COALESCE` index; calendar and community no longer check slugs globally; community lookups by slug resolve inside the platform (`friendly_find_in_platform`). Not changed: the global `Person` username check, `roles` and `resource_permissions` (RBAC review) |
 
 ## What is deliberately not here
 

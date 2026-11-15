@@ -96,8 +96,8 @@ module BetterTogether
     end
 
     def community_by_slug(slug, platform)
-      community = BetterTogether::Community.find_by(identifier: slug)
-      community ||= BetterTogether::Community.friendly.find(slug)
+      community = BetterTogether::Community.for_platform(platform).find_by(identifier: slug)
+      community ||= BetterTogether::Community.friendly_find_in_platform(slug, platform:)
       return community if community.present? && platform.community == community
 
       nil
