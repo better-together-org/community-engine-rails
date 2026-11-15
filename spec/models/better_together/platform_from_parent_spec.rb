@@ -72,5 +72,20 @@ RSpec.describe BetterTogether::PlatformFromParent do
       expect([BetterTogether::Wizard.for_identifier('setup', platform:),
               BetterTogether::Wizard.for_identifier('setup', platform: other_platform)]).to eq([mine, theirs])
     end
+
+    it 'falls back to the host platform wizard for a tenant platform that has none', :aggregate_failures do
+      host = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, host: true)
+      host_wizard = create(:better_together_wizard, platform: host, identifier: 'host_probe')
+
+      expect(BetterTogether::Wizard.for_identifier('host_probe', platform: other_platform)).to eq(host_wizard)
+    end
+
+    it 'falls back to a platformless wizard, then to any wizard with the identifier', :aggregate_failures do
+      only = create(:better_together_wizard, platform: platform, identifier: 'solo')
+      expect(BetterTogether::Wizard.for_identifier('solo', platform: other_platform)).to eq(only)
+
+      shared = create(:better_together_wizard, platform: nil, identifier: 'shared')
+      expect(BetterTogether::Wizard.for_identifier('shared', platform: other_platform)).to eq(shared)
+    end
   end
 end
