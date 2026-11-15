@@ -121,7 +121,8 @@ module BetterTogether
     end
 
     def primary_image
-      hero_block&.background_image_file
+      heroes = blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file
+      heroes.detect { |hero| hero.background_image_file.attached? }&.background_image_file
     end
 
     # The picture used for link previews: the feature image, else the hero block background

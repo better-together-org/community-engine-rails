@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
-# Gives every page whose hero block has a background image a feature image pointing at the same
-# blob, so link previews and the banner no longer depend on the hero block. No file is copied and
-# the hero block is untouched. Pages that already have a feature image are skipped.
+# Gives every page whose hero block has an uploaded background image a feature image pointing at
+# the same blob, so link previews and the banner no longer depend on the hero block. No file is
+# copied and the hero block is untouched. Pages that already have a feature image are skipped.
+# With several heroes, the lowest-position hero that has a background image wins (the old
+# Page#hero_block took the lowest-position hero). A hero's CSS `background_image` string
+# (gradient or url) is not an upload and is left as it is.
+# Sharing a blob is safe: ActiveStorage refuses to destroy a blob that another attachment still
+# uses, and the specs prove removing either image leaves the other intact.
 #
 # Dry run: DRY_RUN=1 bin/rails db:migrate only reports how many pages would change.
 # Reversible: `down` removes only feature image attachments that share a blob with the page's hero.
@@ -13,7 +18,7 @@ class CopyHeroBackgroundsToPageFeatureImage < ActiveRecord::Migration[7.2]
     FROM better_together_content_page_blocks pb
     JOIN better_together_content_blocks b ON b.id = pb.block_id AND b.type = 'BetterTogether::Content::Hero'
     JOIN active_storage_attachments att ON att.record_id = b.id AND att.name = 'background_image_file'
-    ORDER BY pb.page_id, pb.position
+    ORDER BY pb.page_id, pb.position, att.created_at, att.id
   SQL
 
   def up
