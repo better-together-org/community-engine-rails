@@ -38,6 +38,25 @@ RSpec.describe BetterTogether::PrivacyCeilingValidatable do
     end
   end
 
+  describe '.with_privacy_ceiling_preloaded' do
+    it 'reads the ceiling of many rows without a query per row' do
+      platform = create(:better_together_platform, privacy: 'private')
+      ids = Array.new(5) do
+        create(:better_together_page, platform:, community: create(:better_together_community, privacy: 'private')).id
+      end
+      queries = 0
+      counter = lambda do |*, payload|
+        queries += 1 unless payload[:name] == 'SCHEMA' || payload[:cached]
+      end
+
+      ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') do
+        BetterTogether::Page.where(id: ids).with_privacy_ceiling_preloaded.each(&:effective_privacy)
+      end
+
+      expect(queries).to be <= 4
+    end
+  end
+
   describe '#effective_privacy' do
     it 'caps a public record under a private platform at community' do
       page = page_for(platform: private_platform)

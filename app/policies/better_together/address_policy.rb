@@ -16,7 +16,7 @@ module BetterTogether
         component_scope = base_scope.where(COMPONENT_CONDITION)
 
         return component_scope if platform_manager?
-        return component_scope.where(privacy: 'public') unless agent
+        return effective_public(component_scope) unless agent
 
         base_scope.where(id: visible_address_ids(component_scope).uniq)
       end

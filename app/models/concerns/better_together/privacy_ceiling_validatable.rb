@@ -70,6 +70,14 @@ module BetterTogether
       def within_privacy_ceiling
         where(privacy_ceiling_open_arel)
       end
+
+      # Loads the platform and community that cap each row, so lists that show
+      # the effective visibility badge do not query once per row.
+      def with_privacy_ceiling_preloaded
+        names = privacy_ceiling_wrapper_columns.map { |column| column.delete_suffix('_id').to_sym }
+        names = names.select { |name| reflect_on_association(name) }
+        names.any? ? includes(*names) : all
+      end
     end
 
     # The most open privacy this record may effectively have, or nil if unbounded.
