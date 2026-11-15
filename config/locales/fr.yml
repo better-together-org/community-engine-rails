@@ -3150,9 +3150,6 @@ fr:
           succeeded: Réussi
     errors:
       only_one_primary: ne peut être défini que sur un seul enregistrement%{scope_suffix}
-      privacy:
-        exceeds_context_bounds: ne peut pas être plus ouvert que '%{max}' — les paramètres
-          de la plateforme ou de la communauté empêchent ce niveau de visibilité
     event_invitations:
       index:
         invite_member: Invite member
@@ -5756,13 +5753,6 @@ fr:
       delete: Supprimer l'enregistrement
       edit: Modifier la publication
       edit_post: Modifier la publication
-      hints:
-        privacy_limited_by_community: Certaines options de confidentialité sont désactivées
-          car cette communauté n'est pas publique. Les publications ici ne peuvent
-          être visibles que par les membres de la communauté ou l'auteur.
-        privacy_limited_by_platform: Certaines options de confidentialité sont désactivées
-          car la plateforme n'est pas publique. Les publications ne peuvent être visibles
-          que par les membres de la communauté ou l'auteur.
       index:
         map_unavailable: La vue carte n'est pas disponible pour les publications sans
           données de localisation.
@@ -5807,13 +5797,13 @@ fr:
       view_post: Voir la publication
     primary: Principal
     privacy:
-      hints:
-        privacy_limited_by_community: Certains paramètres de confidentialité sont
-          désactivés car cette communauté n'est pas publique. Le contenu peut seulement
-          être visible pour les membres de la communauté ou l'auteur.
-        privacy_limited_by_platform: Certains paramètres de confidentialité sont désactivés
-          car la plateforme n'est pas publique. Le contenu peut seulement être visible
-          pour les membres de la communauté ou l'auteur.
+      ceiling_notice:
+        community: Cette communauté n'est pas publique, donc ce contenu n'est visible
+          que comme %{level} pour le moment. Il sera publié au niveau choisi dès que
+          la communauté deviendra publique.
+        platform: Cette plateforme n'est pas publique, donc ce contenu n'est visible
+          que comme %{level} pour le moment. Il sera publié au niveau choisi dès que
+          la plateforme deviendra publique.
     quota_grants:
       created: Dérogation de quota créée.
       edit:
@@ -6450,6 +6440,9 @@ fr:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      effective_privacy: Visible comme %{privacy}
+      effective_privacy_tooltip: 'Une plateforme ou une communauté non publique limite
+        qui peut voir ce contenu : %{privacy}'
       event_status_level: 'Statut de l''événement: %{status}'
       event_status_tooltip: 'Statut de l''événement: %{status}'
       map:

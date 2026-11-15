@@ -8,7 +8,7 @@ Files live under `app/models/concerns/better_together/` unless noted.
 
 ### `PrivacyCeilingValidatable`
 
-Validates that a record's `privacy` does not exceed the ceiling set by its platform and community. Ceiling order is `private`, `community`, `public`.
+Computes the visibility ceiling that a record's platform and community impose. It never blocks a save: a public page can be prepared behind a private platform and goes live when the platform opens. Ceiling order is `private`, `community`, `public`.
 
 | Platform | Community | Ceiling |
 |---|---|---|
@@ -16,9 +16,13 @@ Validates that a record's `privacy` does not exceed the ceiling set by its platf
 | public | not public | `community` |
 | not public | any | `community` |
 
-A non-public platform or community caps content at `community`, not `private`, because members of a locked-down space can still write community-scoped content. The check runs only for new records and when `privacy` changes, so existing records stay valid. An external wrapping platform (`external?`) has no ceiling.
+A non-public platform or community caps content at `community`, not `private`, because members of a locked-down space can still see community-scoped content. An external wrapping platform (`external?`) has no ceiling.
 
-**Exemptions.** `privacy_ceiling_exempt?` returns `federated_mirror_privacy_ceiling_exempt?` (a federated mirror carries its origin's already-vetted privacy). Models override it for visibility that is governed elsewhere: `Platform`, `Agreement`, `Page`, `Category`, `NavigationItem` and `Content::Block` define their own. Seeded pages set `seed_privacy_ceiling_exempt` so built-in pages can be public on a private platform. Host models that own a private placeholder community (for example a venue) need `privacy_ceiling_exempt?` to create public records; see the [host upgrade guide](../releases/0.11.0_host_upgrade_guide.md).
+**API.** `privacy_ceiling` returns the ceiling (nil when unbounded). `effective_privacy` returns the more restrictive of `privacy` and the ceiling; `privacy_capped?`, `effective_privacy_public?` and `effective_privacy_community?` build on it. `within_privacy_ceiling` is the SQL twin (rows whose ceiling still allows `public`), tested against `effective_privacy`. Anything that decides who may see a record (policies, sitemaps, media, federation export, search) must use these instead of `privacy_public?`. See the [audit](../implementation/privacy_ceiling_audit.md).
+
+**UI.** Edit forms show a non-blocking `privacy_ceiling_notice` beside the privacy select, and `privacy_badge` adds a "Visible as" badge while a record is capped.
+
+**Exemptions.** `privacy_ceiling_exempt?` makes `effective_privacy` equal `privacy`. It returns true for federated mirrors (they carry their origin's vetted privacy) and for `Agreement` and `Category`, whose `privacy` is not used for visibility gating. Such models also override `privacy_ceiling_wrapper_columns` to `[]` so the SQL twin ignores them. `Platform` has no wrapper columns. The old `seed_privacy_ceiling_exempt` flag is gone: seeded pages are capped like any other until the platform is public.
 
 ### `CommunityAssignable`
 

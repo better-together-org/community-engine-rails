@@ -181,7 +181,7 @@ module BetterTogether
 
     # Communities the sitemap indexes for a platform. Host apps narrow this to keep communities out of it.
     def self.sitemap_listable(platform)
-      for_platform(platform).privacy_public
+      for_platform(platform).privacy_public.within_privacy_ceiling
     end
 
     def self.host_community

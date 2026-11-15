@@ -1,102 +1,142 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Validates that a record's privacy setting does not exceed the ceiling
-  # imposed by its wrapping platform and community.
+  # Computes the visibility ceiling imposed on a record by its wrapping
+  # platform and community. It never blocks a save: content can be prepared as
+  # public behind a private platform and goes live when the platform opens.
   #
-  # Ceiling rules (most → most open: private → community → public):
-  #   - Platform public + community public     → ceiling = 'public'
-  #   - Platform public + community non-public → ceiling = 'community'
-  #   - Platform non-public                    → ceiling = 'community'
+  # Ceiling rules (most to least restrictive: private, community, public):
+  #   - Platform public + community public     => ceiling = 'public'
+  #   - Platform public + community non-public => ceiling = 'community'
+  #   - Platform non-public                    => ceiling = 'community'
   #
-  # A private/non-public platform or community caps content at 'community'
-  # (not 'private') because members of a locked-down platform or community
-  # can still write community-scoped content.
+  # `effective_privacy` is the more restrictive of the record's own privacy and
+  # the ceiling. Readers (policies, scopes, sitemaps, media, federation export)
+  # must use it, or the SQL twin `within_privacy_ceiling`, instead of `privacy`.
   module PrivacyCeilingValidatable
     extend ActiveSupport::Concern
 
     CEILING_ORDER = %w[private community public].freeze
 
-    included do
-      validate :privacy_within_platform_community_bounds,
-               if: -> { privacy.present? && (new_record? || will_save_change_to_privacy?) && !privacy_ceiling_exempt? }
+    # Ceiling for an explicit platform/community pair (nil means unbounded).
+    def self.ceiling_for(platform: nil, community: nil)
+      return nil unless platform || community
+
+      [platform, community].compact.all?(&:privacy_public?) ? 'public' : 'community'
     end
 
-    # Escape hatch for models whose `privacy` value isn't actually used for
-    # visibility gating (e.g. Agreement — its policy shows records to everyone
-    # regardless of `privacy`) and so shouldn't be constrained by a platform's
-    # or community's own privacy tier. Override to return true in such models.
-    # The base implementation also exempts federated mirrors (see below).
+    # Builds the SQL twin of #privacy_ceiling for a model's table.
+    module SqlPredicate
+      def self.open_arel(model, table)
+        columns = model.privacy_ceiling_wrapper_columns
+        return Arel::Nodes::True.new if columns.empty?
+
+        open = columns.map { |column| wrapper_open(table, column) }.reduce { |memo, node| memo.and(node) }
+        mirrored = mirrored_arel(model, table)
+        mirrored ? open.or(mirrored) : open
+      end
+
+      def self.wrapper_open(table, column)
+        wrapper = column == 'platform_id' ? BetterTogether::Platform : BetterTogether::Community
+        open_ids = wrapper.where(privacy: 'public')
+        open_ids = open_ids.or(wrapper.where(external: true)) if wrapper == BetterTogether::Platform
+        table[column.to_sym].eq(nil).or(table[column.to_sym].in(open_ids.select(:id).arel))
+      end
+
+      # Federated mirrors carry the origin's already-vetted privacy.
+      def self.mirrored_arel(model, table)
+        names = %w[source_id last_synced_at].select { |name| model.column_names.include?(name) }
+        names.map { |name| table[name.to_sym].not_eq(nil) }.reduce { |memo, node| memo.or(node) }
+      end
+    end
+
+    class_methods do
+      # Foreign keys whose rows can cap visibility. Models that never carry a
+      # ceiling (see Agreement, Category, Platform) override this with [].
+      # A record's own primary community (PrimaryCommunity#has_community: Person,
+      # Building, Room, geography and similar) is its identity community, not a
+      # container, so it never caps the record.
+      def privacy_ceiling_wrapper_columns
+        columns = %w[platform_id community_id] & column_names
+        columns -= ['community_id'] if include?(BetterTogether::PrimaryCommunity)
+        columns
+      end
+
+      # Arel predicate true for rows whose ceiling still allows 'public'.
+      def privacy_ceiling_open_arel(table = arel_table)
+        SqlPredicate.open_arel(self, table)
+      end
+
+      def within_privacy_ceiling
+        where(privacy_ceiling_open_arel)
+      end
+
+      # Loads the platform and community that cap each row, so lists that show
+      # the effective visibility badge do not query once per row.
+      def with_privacy_ceiling_preloaded
+        names = privacy_ceiling_wrapper_columns.map { |column| column.delete_suffix('_id').to_sym }
+        names = names.select { |name| reflect_on_association(name) }
+        names.any? ? includes(*names) : all
+      end
+    end
+
+    # The most open privacy this record may effectively have, or nil if unbounded.
+    def privacy_ceiling
+      return nil if privacy_ceiling_exempt?
+
+      wrapping_platform = wrapping_privacy_ceiling_platform
+      return nil if external_wrapping_platform?(wrapping_platform)
+
+      PrivacyCeilingValidatable.ceiling_for(platform: wrapping_platform, community: wrapping_privacy_ceiling_community)
+    end
+
+    # The more restrictive of the record's own privacy and its ceiling.
+    def effective_privacy
+      own = privacy.to_s
+      max = privacy_ceiling
+      return own if max.nil?
+
+      own_idx = CEILING_ORDER.index(own)
+      return own if own_idx.nil?
+
+      CEILING_ORDER[[own_idx, CEILING_ORDER.index(max)].min]
+    end
+
+    # True when the platform or community currently hides more than the record asks for.
+    def privacy_capped?
+      privacy.present? && effective_privacy != privacy.to_s
+    end
+
+    def effective_privacy_public?
+      effective_privacy == 'public'
+    end
+
+    def effective_privacy_community?
+      effective_privacy == 'community'
+    end
+
+    # Models whose `privacy` is not used for visibility gating (Agreement,
+    # Category) return true. Federated mirrors carry the origin's privacy.
     def privacy_ceiling_exempt?
-      federated_mirror_privacy_ceiling_exempt?
-    end
-
-    private
-
-    # A federated mirror carries the origin platform's already-vetted privacy —
-    # the origin applied its own ceiling and publishing-agreement gate before
-    # federating. The receiving instance stores the mirror under its own local
-    # platform (for local visibility), so `external_wrapping_platform?` never
-    # fires for it; exempt it here instead. Local visibility of the mirror is
-    # still governed by policy/scopes, not this validation.
-    def federated_mirror_privacy_ceiling_exempt?
       respond_to?(:mirrored?) && mirrored?
     end
 
-    def privacy_within_platform_community_bounds
-      max = privacy_ceiling
-      return unless max
-
-      current_idx = CEILING_ORDER.index(privacy.to_s)
-      max_idx     = CEILING_ORDER.index(max)
-      return if current_idx.nil? || max_idx.nil? || current_idx <= max_idx
-
-      default_msg = "cannot be more open than '#{max}' — platform or community settings prevent this"
-      errors.add(:privacy, :exceeds_context_bounds,
-                 message: I18n.t('better_together.errors.privacy.exceeds_context_bounds',
-                                 max: max, default: default_msg))
-    end
-
-    def privacy_ceiling
-      wrapping_platform  = wrapping_privacy_ceiling_platform
-      wrapping_community = wrapping_privacy_ceiling_community
-      return nil unless wrapping_platform || wrapping_community
-      return nil if external_wrapping_platform?(wrapping_platform)
-
-      platform_idx  = ceiling_platform_level(wrapping_platform)
-      community_idx = ceiling_community_level(wrapping_community)
-      CEILING_ORDER[[platform_idx, community_idx].min]
-    end
+    private
 
     def wrapping_privacy_ceiling_platform
       respond_to?(:platform) ? platform : nil
     end
 
     def wrapping_privacy_ceiling_community
+      return nil if self.class.include?(BetterTogether::PrimaryCommunity)
+
       respond_to?(:community) ? community : nil
     end
 
-    # External platforms (federation peers, OAuth identity providers) are
-    # structural registry entries, not real local visibility containers, and
-    # their auto-created primary community is a private placeholder (see
-    # PrimaryCommunity#primary_community_privacy) rather than a real
-    # community. Content whose platform is external (e.g. a mirrored
-    # federated post) isn't locally contained, so no ceiling applies —
-    # mirrors the exemption Platform itself gets via privacy_ceiling_exempt?.
+    # External platforms (federation peers, identity providers) are registry
+    # entries, not local visibility containers, so no ceiling applies.
     def external_wrapping_platform?(wrapping_platform)
       wrapping_platform.respond_to?(:external?) && wrapping_platform.external?
-    end
-
-    def ceiling_platform_level(platform)
-      return CEILING_ORDER.length - 1 unless platform
-
-      platform.privacy_public? ? CEILING_ORDER.length - 1 : CEILING_ORDER.index('community')
-    end
-
-    def ceiling_community_level(community)
-      return CEILING_ORDER.length - 1 unless community
-
-      community.privacy_public? ? CEILING_ORDER.length - 1 : CEILING_ORDER.index('community')
     end
   end
 end

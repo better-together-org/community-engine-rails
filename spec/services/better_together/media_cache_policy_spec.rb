@@ -27,7 +27,7 @@ RSpec.describe BetterTogether::MediaCachePolicy, type: :service do
   end
 
   describe '.for_upload' do
-    let(:upload) { instance_double(BetterTogether::Upload, privacy_public?: privacy_public, file_content_security_downloadable?: downloadable) }
+    let(:upload) { instance_double(BetterTogether::Upload, effective_privacy_public?: privacy_public, file_content_security_downloadable?: downloadable) }
     let(:privacy_public) { true }
     let(:downloadable) { true }
 
@@ -39,7 +39,7 @@ RSpec.describe BetterTogether::MediaCachePolicy, type: :service do
     end
 
     it 'marks non-public uploads as private' do
-      allow(upload).to receive(:privacy_public?).and_return(false)
+      allow(upload).to receive(:effective_privacy_public?).and_return(false)
 
       policy = described_class.for_upload(upload)
 

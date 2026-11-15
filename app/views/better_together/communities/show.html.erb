@@ -98,7 +98,7 @@
             <%= render 'better_together/communities/location_line', community: @resource %>
             <%= render 'better_together/communities/about_extra', community: @resource %>
 
-            <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
+            <%= share_buttons(shareable: @resource) if @resource.effective_privacy_public? %>
           </div>
         </section>
 

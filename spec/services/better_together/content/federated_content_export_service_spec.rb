@@ -36,6 +36,20 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       expect(result.next_cursor).to be_present
     end
 
+    it 'does not export public records whose own platform is not public' do
+      private_platform = create(:better_together_platform, privacy: 'private', host: false)
+      private_connection = create(
+        :better_together_platform_connection, :active,
+        source_platform: private_platform, target_platform:,
+        content_sharing_policy: 'mirror_network_feed', share_posts: true
+      )
+      create(:better_together_post, platform: private_platform, privacy: 'public', published_at: 1.day.ago)
+
+      result = described_class.call(connection: private_connection, limit: 10)
+
+      expect(result.seeds).to be_empty
+    end
+
     it 'excludes mirrored remote-origin content from export' do
       create(
         :better_together_post,

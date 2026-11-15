@@ -157,6 +157,10 @@ module BetterTogether
       true
     end
 
+    def self.privacy_ceiling_wrapper_columns
+      []
+    end
+
     private
 
     def apply_default_consent_metadata # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

@@ -3070,9 +3070,6 @@ en:
           succeeded: Succeeded
     errors:
       only_one_primary: can only be set for one record%{scope_suffix}
-      privacy:
-        exceeds_context_bounds: cannot be more open than '%{max}' — the platform or
-          community settings prevent this level of visibility
     event_invitations:
       index:
         invite_member: Invite member
@@ -5583,13 +5580,6 @@ en:
       delete: Delete Record
       edit: Edit Post
       edit_post: Edit Post
-      hints:
-        privacy_limited_by_community: Some privacy options are disabled because this
-          community is not public. Posts here can only be visible to community members
-          or the author.
-        privacy_limited_by_platform: Some privacy options are disabled because the
-          platform is not public. Posts can only be visible to community members or
-          the author.
       index:
         map_unavailable: Map view is not available for posts without location data.
         new_btn_text: New Post
@@ -5633,13 +5623,13 @@ en:
       view_post: View Post
     primary: Primary
     privacy:
-      hints:
-        privacy_limited_by_community: Some privacy options are disabled because this
-          community is not public. Content here can only be visible to community members
-          or the author.
-        privacy_limited_by_platform: Some privacy options are disabled because the
-          platform is not public. Content can only be visible to community members
-          or the author.
+      ceiling_notice:
+        community: This community is not public, so this content is only visible as
+          %{level} for now. It goes live at the privacy you choose once the community
+          becomes public.
+        platform: This platform is not public, so this content is only visible as
+          %{level} for now. It goes live at the privacy you choose once the platform
+          becomes public.
     quota_grants:
       created: Quota grant created.
       edit:
@@ -6255,6 +6245,9 @@ en:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      effective_privacy: Visible as %{privacy}
+      effective_privacy_tooltip: 'A non-public platform or community is limiting who
+        can see this content: %{privacy}'
       event_status_level: 'Event status: %{status}'
       event_status_tooltip: 'Event status: %{status}'
       map:

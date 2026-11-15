@@ -42,7 +42,6 @@ module BetterTogether
                   title_en: 'What is Better Together?',
                   slug_en: 'better-together',
                   privacy: 'public',
-                  seed_privacy_ceiling_exempt: true,
                   published_at: Time.zone.now,
                   protected: true,
                   show_title: false,
@@ -51,7 +50,6 @@ module BetterTogether
                       block_attributes: {
                         type: 'BetterTogether::Content::Template',
                         privacy: 'public',
-                        seed_privacy_ceiling_exempt: true,
                         template_path: 'better_together/static_pages/better_together',
                         css_settings: { container_class: '', css_classes: 'my-4' }
                       }
@@ -62,7 +60,6 @@ module BetterTogether
                   title_en: 'About the Community Engine',
                   slug_en: 'better-together/community-engine',
                   privacy: 'public',
-                  seed_privacy_ceiling_exempt: true,
                   published_at: Time.zone.now,
                   protected: true,
                   show_title: false,
@@ -72,7 +69,6 @@ module BetterTogether
                       block_attributes: {
                         type: 'BetterTogether::Content::Template',
                         privacy: 'public',
-                        seed_privacy_ceiling_exempt: true,
                         template_path: 'better_together/static_pages/community_engine',
                         css_settings: { container_class: '', css_classes: 'my-4' }
                       }
@@ -125,7 +121,6 @@ module BetterTogether
                 title_en: 'FAQ',
                 slug_en: 'faq',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 show_title: false,
@@ -134,7 +129,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/faq',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -145,7 +139,6 @@ module BetterTogether
                 title_en: 'Privacy Policy',
                 slug_en: 'privacy-policy',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 show_title: false,
@@ -154,7 +147,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/privacy',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -165,7 +157,6 @@ module BetterTogether
                 title_en: 'Terms of Service',
                 slug_en: 'terms-of-service',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 show_title: false,
@@ -174,7 +165,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/terms_of_service',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -185,7 +175,6 @@ module BetterTogether
                 title_en: 'Code of Conduct',
                 slug_en: 'code-of-conduct',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 show_title: false,
@@ -194,7 +183,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/code_of_conduct',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -205,7 +193,6 @@ module BetterTogether
                 title_en: 'Accessibility',
                 slug_en: 'accessibility',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 show_title: false,
@@ -214,7 +201,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/accessibility',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -225,7 +211,6 @@ module BetterTogether
                 title_en: 'Cookie Policy',
                 slug_en: 'cookie-policy',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 show_title: false,
@@ -234,7 +219,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/cookie_consent',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -245,7 +229,6 @@ module BetterTogether
                 title_en: 'Contact Us',
                 slug_en: 'contact',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 page_blocks_attributes: [
@@ -253,7 +236,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       # rubocop:todo-next Lint/CopDirectiveSyntax
                       content_en: <<-HTML
                           <p>This is a default contact page for your platform. Be sure to write a real one!</p>
@@ -264,7 +246,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/content/blocks/template/host_community_contact_details',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -356,7 +337,6 @@ module BetterTogether
                   title_en: 'About',
                   slug_en: 'about',
                   privacy: 'public',
-                  seed_privacy_ceiling_exempt: true,
                   published_at: Time.zone.now,
                   protected: true,
                   page_blocks_attributes: [
@@ -364,7 +344,6 @@ module BetterTogether
                       block_attributes: {
                         type: 'BetterTogether::Content::RichText',
                         privacy: 'public',
-                        seed_privacy_ceiling_exempt: true,
                         content_en: <<-HTML
                           <p>This is a default about page. Be sure to write a real one!</p>
                         HTML
@@ -918,7 +897,6 @@ module BetterTogether
                 title_en: 'Home',
                 slug_en: 'home',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 layout: 'layouts/better_together/full_width_page',
@@ -928,7 +906,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/community_engine',
                       css_settings: { container_class: '' }
                     }
@@ -939,7 +916,6 @@ module BetterTogether
                 title_en: 'Subprocessors',
                 slug_en: 'subprocessors',
                 privacy: 'public',
-                seed_privacy_ceiling_exempt: true,
                 published_at: Time.zone.now,
                 protected: true,
                 page_blocks_attributes: [
@@ -947,7 +923,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       privacy: 'public',
-                      seed_privacy_ceiling_exempt: true,
                       template_path: 'better_together/static_pages/subprocessors',
                       css_settings: { container_class: '', css_classes: 'my-4' }
                     }
@@ -966,7 +941,7 @@ module BetterTogether
 
         # New static pages seed public; an existing page keeps whatever privacy a
         # host set (build_* is designed to be re-run idempotently).
-        page ||= ::BetterTogether::Page.new(identifier:, privacy: 'public', seed_privacy_ceiling_exempt: true)
+        page ||= ::BetterTogether::Page.new(identifier:, privacy: 'public')
         page.assign_attributes(
           platform: Current.platform || ::BetterTogether::Platform.find_by(host: true) || ::BetterTogether::Platform.first,
           title_en: title,
@@ -984,7 +959,6 @@ module BetterTogether
           block: ::BetterTogether::Content::Template.create!(
             template_path:,
             privacy: 'public',
-            seed_privacy_ceiling_exempt: true,
             css_settings: { container_class: '', css_classes: 'my-4' }
           )
         )

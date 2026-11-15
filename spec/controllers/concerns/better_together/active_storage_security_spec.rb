@@ -144,6 +144,26 @@ module BetterTogether
         end
       end
 
+      context 'when the record is public but its platform or community is not' do
+        let(:record) do
+          instance_double(BetterTogether::Upload, privacy_public?: true, effective_privacy_public?: false)
+        end
+
+        it 'returns false so a signed blob URL cannot expose it to guests' do
+          expect(controller.send(:publicly_accessible?, record)).to be false
+        end
+      end
+
+      context 'when a real public upload sits under a private platform' do
+        let(:private_platform) { create(:better_together_platform, privacy: 'private', host: false) }
+        let(:upload) { create(:better_together_upload, platform: private_platform, privacy: 'public') }
+
+        it 'is not publicly accessible' do
+          expect(upload.privacy).to eq('public')
+          expect(controller.send(:publicly_accessible?, upload)).to be false
+        end
+      end
+
       context 'when the record is not privacy_public?' do
         let(:record) { instance_double(BetterTogether::Upload, privacy_public?: false) }
 

@@ -8,6 +8,7 @@ module BetterTogether # :nodoc:
       it 'creates a valid category' do
         category = build(:category)
         expect(category).to be_valid
+        expect(category.effective_privacy).to eq('public')
       end
 
       it 'creates categories with custom icons' do
@@ -54,12 +55,8 @@ module BetterTogether # :nodoc:
       end
 
       it 'stays public even under a private platform, reproducing CategoryBuilder seeding' do
-        # db/seeds.rb always creates the host platform with privacy: 'private'.
-        # Without the ceiling exemption, a freshly seeded public-by-default
-        # Category fails PrivacyCeilingValidatable on every db:seed. The suite's
-        # global seed_helper before-hook already creates the host platform for
-        # every example, so reuse it rather than creating a second :host record
-        # (Platform/Community both enforce only one host row).
+        # db/seeds.rb creates the host platform private; categories are shared taxonomy.
+        # Reuse the host platform from the global seed helper (only one host row allowed).
         host_platform = BetterTogether::Platform.find_by!(host: true)
         host_platform.update_column(:privacy, 'private')
         category = build(:category, platform: host_platform, privacy: 'public')

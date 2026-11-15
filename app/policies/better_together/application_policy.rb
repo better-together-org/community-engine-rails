@@ -141,11 +141,28 @@ module BetterTogether
           return table[:id].eq(nil)
         end
 
-        query = table[:privacy].eq('public')
+        query = effective_public_query(table)
         return query unless agent
 
         community_query = scoped_community_privacy_query(table)
         community_query ? query.or(community_query) : query
+      end
+
+      # Public rows count as public only while their platform and community are
+      # public; capped rows fall back to community visibility.
+      def effective_public_query(table)
+        table[:privacy].eq('public').and(ceiling_open_arel(table))
+      end
+
+      def effective_community_query(table)
+        table[:privacy].eq('community').or(table[:privacy].eq('public').and(Arel::Nodes::Not.new(ceiling_open_arel(table))))
+      end
+
+      def ceiling_open_arel(table)
+        model = scope.respond_to?(:klass) ? scope.klass : scope
+        return Arel::Nodes::True.new unless model.respond_to?(:privacy_ceiling_open_arel)
+
+        Arel::Nodes::Grouping.new(model.privacy_ceiling_open_arel(table))
       end
 
       # `scope` may be a model class or an ActiveRecord::Relation (e.g. when a
@@ -160,14 +177,14 @@ module BetterTogether
 
         case scoped_model_name
         when 'BetterTogether::Community'
-          table[:privacy].eq('community').and(table[:id].in(scoped_community_ids))
+          effective_community_query(table).and(table[:id].in(scoped_community_ids))
         when 'BetterTogether::Page', 'BetterTogether::Calendar', 'BetterTogether::Platform',
              'BetterTogether::Post'
-          table[:privacy].eq('community').and(table[:community_id].in(scoped_community_ids))
+          effective_community_query(table).and(table[:community_id].in(scoped_community_ids))
         when 'BetterTogether::Event', 'BetterTogether::Content::Block'
           # Blocks (like Events) carry no community_id; a community-scoped block is
           # visible to members of its platform's community.
-          table[:privacy].eq('community').and(table[:platform_id].in(scoped_platform_ids))
+          effective_community_query(table).and(table[:platform_id].in(scoped_platform_ids))
         when 'BetterTogether::CallForInterest'
           scoped_call_for_interest_privacy_query(table)
         end
@@ -177,7 +194,7 @@ module BetterTogether
         scoped_query = call_for_interest_scope_clauses(table).reduce { |query, clause| query.or(clause) }
         return nil unless scoped_query
 
-        table[:privacy].eq('community').and(scoped_query)
+        effective_community_query(table).and(scoped_query)
       end
 
       def call_for_interest_scope_clauses(table)
@@ -226,8 +243,8 @@ module BetterTogether
 
       def robot_visible_privacy_query(table)
         clauses = []
-        clauses << table[:privacy].eq('public') if robot_allows_scope?('read_public_content')
-        clauses << table[:privacy].eq('community') if robot_allows_scope?('read_community_content')
+        clauses << effective_public_query(table) if robot_allows_scope?('read_public_content')
+        clauses << effective_community_query(table) if robot_allows_scope?('read_community_content')
         clauses << table[:privacy].eq('private') if robot_allows_scope?('read_private_content')
 
         clauses.compact.reduce { |query, clause| query.or(clause) }
@@ -253,7 +270,7 @@ module BetterTogether
     end
 
     def robot_can_access_record?(target = record)
-      robot.present? && target.respond_to?(:privacy) && robot.allows_content_privacy?(target.privacy)
+      robot.present? && target.respond_to?(:privacy) && robot.allows_content_privacy?(effective_privacy_of(target))
     end
 
     def can_read_people_directory?(target = nil)
@@ -299,12 +316,21 @@ module BetterTogether
       privacy_public?(target) || (privacy_community?(target) && member_of_resolved_community?(target))
     end
 
+    # Both predicates read the effective privacy, so a public record under a
+    # non-public platform or community is treated as community-scoped.
     def privacy_public?(target = record)
-      target.respond_to?(:privacy_public?) && target.privacy_public?
+      effective_privacy_of(target) == 'public'
     end
 
     def privacy_community?(target = record)
-      target.respond_to?(:privacy_community?) && target.privacy_community?
+      effective_privacy_of(target) == 'community'
+    end
+
+    def effective_privacy_of(target)
+      return target.effective_privacy.to_s if target.respond_to?(:effective_privacy)
+      return target.privacy.to_s if target.respond_to?(:privacy_public?) && target.respond_to?(:privacy)
+
+      ''
     end
 
     def member_of_resolved_community?(target = record)

@@ -40,13 +40,26 @@ module BetterTogether
       privacy_label = privacy_display_value(entity)
       tooltip_text = t('better_together.shared.privacy_tooltip', privacy: privacy_label)
 
-      create_badge(
+      badge = create_badge(
         privacy_label,
         rounded: rounded,
         style: chosen_style,
         tooltip: tooltip_text,
         aria_label: t('better_together.shared.privacy_level', privacy: privacy_label)
       )
+      safe_join([badge, effective_privacy_badge(entity, rounded:)].compact, ' ')
+    end
+
+    # Shown beside the privacy badge only while a private platform or community
+    # is holding a more open record back, so the list tells the real audience.
+    def effective_privacy_badge(entity, rounded: true)
+      return unless entity.respond_to?(:privacy_capped?) && entity.privacy_capped?
+
+      label = t("attributes.privacy_list.#{entity.effective_privacy}", default: entity.effective_privacy.humanize)
+      text = t('better_together.shared.effective_privacy', privacy: label)
+      tooltip = t('better_together.shared.effective_privacy_tooltip', privacy: label)
+      content_tag(:span, create_badge(text, rounded:, style: 'warning', tooltip:),
+                  id: dom_id(entity, :effective_privacy_badge), data: { effective_privacy: entity.effective_privacy })
     end
 
     # Return the mapped bootstrap-style for an entity's privacy. Useful for wiring
