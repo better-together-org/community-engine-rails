@@ -139,6 +139,40 @@ RSpec.describe 'Two-platform content isolation', :skip_host_setup do
     end
   end
 
+  describe 'events with the same identifier' do
+    let!(:alpha_event) do
+      create(:better_together_event, platform: host_platform, privacy: 'public', identifier: 'open-night',
+                                     name: 'Alpha open night', starts_at: 2.days.from_now)
+    end
+    let!(:beta_event) do
+      create(:better_together_event, platform: other_platform, privacy: 'public', identifier: 'open-night',
+                                     name: 'Beta open night', starts_at: 2.days.from_now)
+    end
+
+    it 'creates both events' do
+      expect([alpha_event, beta_event]).to all(be_persisted)
+    end
+
+    it 'resolves the identifier only on the platform that owns it', :aggregate_failures do
+      serve_from(alpha)
+      get better_together.event_path(alpha_event, locale:)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Alpha open night')
+      expect(response.body).not_to include('Beta open night')
+
+      serve_from(beta)
+      get better_together.event_path(beta_event, locale:)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Beta open night')
+      expect(response.body).not_to include('Alpha open night')
+    end
+
+    it 'still rejects a duplicate identifier on the same platform' do
+      dup = build(:better_together_event, platform: host_platform, identifier: 'open-night')
+      expect(dup).not_to be_valid
+    end
+  end
+
   describe 'search' do
     before do
       create(:better_together_post, :public, :published, platform: host_platform, title: 'Zymurgy alpha entry')

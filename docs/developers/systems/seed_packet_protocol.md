@@ -188,7 +188,7 @@ Registered: `page`, `content_block`, `page_block`, `navigation_area`, `navigatio
 |---|---|---|
 | 17 | Natural keys are not always a column: social accounts and join rows have none | `within:` and `by_refs:` key kinds |
 | 18 | `Page` has no cover or share image attachment, so the page share image needs a model change | Open model work item, not worked around |
-| 19 | `Event.identifier` is globally unique (index on `identifier` alone), unlike pages and uploads | Platform-scoped uniqueness needed before two platforms plant one events packet; open model work item |
+| 19 | `Event.identifier` was globally unique (index on `identifier` alone), unlike pages and uploads | Fixed: unique on `(identifier, platform_id)` where `platform_id` is not null, like posts and pages; the Identifier concern already validated per platform. Covered by the two-platform isolation suite |
 
 The registry spec checks each declared attribute is writable on the model, each attachment exists, and each reference points at a registered type, so a drifting model fails CI.
 

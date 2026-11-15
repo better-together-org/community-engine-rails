@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_15_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_15_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -730,7 +730,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_120000) do
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["federation_visibility"], name: "by_better_together_events_federation_visibility"
-    t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_events_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["next_occurrence_at"], name: "bt_events_by_next_occurrence_at"
     t.index ["platform_id", "source_id"], name: "index_bt_events_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
