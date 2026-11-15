@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_15_200200) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_15_200300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2839,9 +2839,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_200200) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale", null: false
+    t.uuid "platform_id"
+    t.index "COALESCE(platform_id, '00000000-0000-0000-0000-000000000000'::uuid), sluggable_type, slug, locale", name: "idx_friendly_id_slugs_unique_per_platform", unique: true
     t.index ["locale"], name: "index_friendly_id_slugs_on_locale"
+    t.index ["platform_id"], name: "index_friendly_id_slugs_on_platform_id"
     t.index ["slug", "sluggable_type", "locale"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"
-    t.index ["slug", "sluggable_type", "scope", "locale"], name: "index_friendly_id_slugs_unique", unique: true
     t.index ["sluggable_type", "sluggable_id"], name: "by_sluggable"
   end
 
