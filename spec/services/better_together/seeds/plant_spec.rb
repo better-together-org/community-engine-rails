@@ -152,6 +152,50 @@ RSpec.describe BetterTogether::Seeds::Plant do
     end
   end
 
+  context 'with a position on a type that has no position column' do
+    let(:records) do
+      { page: [{ 'key' => 'about', 'position' => 2, 'attributes' => { 'slug' => 'about', 'privacy' => 'public' },
+                 'translations' => { 'en' => { 'title' => 'About' } } }] }
+    end
+
+    it 'reports it in the plan instead of failing partway through a plant', :aggregate_failures do
+      expect(plant(apply: false)[:errors]).to include(include(record: 'page:about', field: '/position'))
+      expect { plant }.not_to change(BetterTogether::Page, :count)
+      expect(plant[:errors]).not_to be_empty
+    end
+  end
+
+  context 'with a key the model normalizes when it is written' do
+    let(:records) do
+      { content_block: [{ 'key' => 'home.body', 'attributes' => { 'type' => 'BetterTogether::Content::RichText' },
+                          'translations' => { 'en' => { 'content' => '<p>Hi</p>' } } }] }
+    end
+
+    it 'finds the record again on a rerun instead of creating a duplicate', :aggregate_failures do
+      expect(plant[:created]).to eq(1)
+      second = plant
+      expect(second[:errors]).to be_empty
+      expect(second[:created]).to eq(0)
+    end
+  end
+
+  context 'with a record keyed by its parents' do
+    let(:records) do
+      { page: [{ 'key' => 'about', 'attributes' => { 'slug' => 'about', 'privacy' => 'private' },
+                 'translations' => { 'en' => { 'title' => 'About' } } }],
+        content_block: [{ 'key' => 'about-body', 'attributes' => { 'type' => 'BetterTogether::Content::RichText' },
+                          'translations' => { 'en' => { 'content' => '<p>Hi</p>' } } }],
+        page_block: [{ 'key' => 'about/body', 'position' => 0,
+                       'refs' => { 'page' => 'page:about', 'block' => 'content_block:about-body' } }] }
+    end
+
+    it 'does not duplicate it on a rerun', :aggregate_failures do
+      first = nil
+      expect { first = plant }.to change(BetterTogether::Content::PageBlock, :count).by(1), -> { first[:errors].inspect }
+      expect { expect(plant[:errors]).to be_empty }.not_to change(BetterTogether::Content::PageBlock, :count)
+    end
+  end
+
   context 'with an invalid record' do
     let(:records) do
       list = nav_records

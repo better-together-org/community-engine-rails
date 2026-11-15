@@ -43,10 +43,13 @@ module BetterTogether
 
       def write(item, definition)
         entry = item.entry
+        return if already_planted?(item, definition)
+
         ActiveRecord::Base.transaction(requires_new: true) do
           record = item.action == :create ? RecordWriter.build(definition, entry, platform) : definition.model.find(item.record_id)
           RecordWriter.assign_fields(record, definition, entry)
           RecordWriter.assign_refs(record, entry, resolve_refs(entry))
+          definition.hook(:before_save)&.call(record, platform)
           save(record, entry)
           attach(record, entry)
           @targets[entry.id] = record
@@ -55,6 +58,22 @@ module BetterTogether
         end
       rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ArgumentError, KeyError => e
         fail_record(entry.id, e)
+      end
+
+      # The planner cannot locate records keyed by their parents (within / by_refs) before the parents exist,
+      # so a rerun resolves them here, once the parents are known, and leaves an existing record alone.
+      def already_planted?(item, definition)
+        return false unless item.action == :create && (definition.within || definition.by_refs.any?)
+
+        refs = resolve_refs(item.entry).transform_keys(&:to_sym)
+        existing = definition.find(platform:, key: item.entry.key, parent_refs: refs, attributes: item.entry.attributes)
+        return false unless existing
+
+        @targets[item.entry.id] = existing
+        true
+      rescue KeyError => e
+        fail_record(item.entry.id, e)
+        true
       end
 
       def save(record, entry)

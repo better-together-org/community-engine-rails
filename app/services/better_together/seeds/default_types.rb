@@ -75,6 +75,10 @@ module BetterTogether
           attributes :privacy, :starts_at, :ends_at, :duration_minutes, :timezone, :registration_url, :status
           translated :name, :description
           attachment :cover_image
+          # Events need a host; seeds have no creator, so the target platform's community hosts them.
+          before_save do |event, platform|
+            event.event_hosts.build(host: platform.community) if event.event_hosts.empty? && platform.community
+          end
         end
       end
 

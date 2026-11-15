@@ -280,7 +280,8 @@ element lacks one, add it to the view first.
 
 ## Session Audit And Worktree Bootstrap
 - Start each agent session with `./scripts/session_command_log.sh init`.
-- Before mutating work, run `./scripts/session_worktree.sh ensure --repo . --agent <codex|claude|copilot|local> --session-id "${CODEX_THREAD_ID:-$(date -u +%Y%m%dT%H%M%SZ)}" --storage-mode local`.
+- Before mutating work, run `/home/rob/bts-cloud/n8n/management-tool/scripts/session_worktree.sh ensure --repo . --agent <codex|claude|copilot|local> --session-id "${CODEX_THREAD_ID:-$(date -u +%Y%m%dT%H%M%SZ)}" --storage-mode local`.
+- Worktrees for every BTS repo live only in `/home/rob/bts-cloud/n8n/management-tool/tmp/worktrees/` (created by the management-tool script above, with `--repo .` pointing at this repo). Never create worktrees under `<repo>/tmp/worktrees`, `<repo>/worktrees`, `.claude/worktrees` or as sibling directories.
 - Run consequential commands through `./scripts/session_command_log.sh run --intent "<intent>" -- <command>`.
 - Session command logs and worktree metadata must remain anchored in the repository's main `logs/sessions/` directory, even when the current shell is inside a linked worktree.
 
