@@ -77,6 +77,9 @@ erDiagram
   EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_USAGES : "quota / quota_id"
   EXT_PLATFORM ||--o{ REDIRECTS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ SEED_PROVENANCES : "platform / platform_id"
+  EXT_SEED o|--o{ SEED_PROVENANCES : "seed / seed_id"
+  EXT_SEED_PLANTING o|--o{ SEED_PROVENANCES : "seed_planting / seed_planting_id"
   EXT_PLATFORM o|--o{ SHORT_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
@@ -474,6 +477,19 @@ erDiagram
     last_hit_at datetime
   }
 
+  SEED_PROVENANCES {
+    packet_id string
+    platform_id uuid
+    record_id uuid
+    seed_id uuid
+    seed_planting_id uuid
+    fingerprint string
+    packet_version string
+    record_class string
+    record_key string
+    record_type string
+  }
+
   SHORT_LINKS {
     creator_id uuid
     linkable_id uuid
@@ -600,6 +616,14 @@ erDiagram
   }
 
   EXT_ROLE {
+    string export_ref
+  }
+
+  EXT_SEED {
+    string export_ref
+  }
+
+  EXT_SEED_PLANTING {
     string export_ref
   }
 

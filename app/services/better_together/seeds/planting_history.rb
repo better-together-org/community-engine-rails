@@ -4,7 +4,7 @@ module BetterTogether
   module Seeds
     # What earlier completed plantings of a packet wrote on a platform, keyed "type:key",
     # with the field snapshot taken right after each write. This is the provenance used to
-    # tell unedited planted records from steward edits until provenance columns exist.
+    # tell unedited planted records from steward edits until SeedProvenance rows exist for them.
     module PlantingHistory
       module_function
 
@@ -18,6 +18,13 @@ module BetterTogether
           (planting.result['provenance'] || {}).each do |id, data|
             data['deleted'] ? records.delete(id) : records[id] = data
           end
+        end.merge(from_provenance(platform:, packet_id:))
+      end
+
+      # SeedProvenance rows are the record of truth once they exist; plantings made before the table are the fallback.
+      def from_provenance(platform:, packet_id:)
+        SeedProvenance.for_packet(platform:, packet_id:).to_h do |row|
+          ["#{row.record_type}:#{row.record_key}", { 'id' => row.record_id, 'snapshot' => row.snapshot }]
         end
       end
 
