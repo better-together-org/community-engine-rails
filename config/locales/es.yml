@@ -280,6 +280,7 @@ es:
         scopes: Alcances
       better_together/page:
         blocks: Bloques
+        feature_image: Imagen destacada
         identifier: Identificador
         image_blocks: Bloques de imagen
         keywords: Palabras clave
@@ -6029,6 +6030,8 @@ es:
           cover_image: Imagen de portada
       images:
         cover_image: Imagen de portada
+        feature_image: Se muestra en la parte superior de la página y se usa como
+          imagen de vista previa al compartirla.
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
         cover_image: Sube una imagen de portada para mostrar en la parte superior

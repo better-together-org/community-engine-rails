@@ -26,14 +26,15 @@
   <%= @page.url %>
 <% end %>
 
-<% if @page.primary_image&.attached? %>
+<% share_image = @page.share_image %>
+<% if share_image&.attached? %>
   <% content_for :og_image do %>
-    <%= storage_proxy_url_for(@page.primary_image) %>
+    <%= storage_proxy_url_for(share_image) %>
   <% end %>
   <% content_for :og_image_alt do %>
     <%= @page.title %>
   <% end %>
-  <% og_image_dimensions(@page.primary_image).each do |dimension, value| %>
+  <% og_image_dimensions(share_image).each do |dimension, value| %>
     <% content_for :"og_image_#{dimension}" do %>
       <%= value %>
     <% end %>

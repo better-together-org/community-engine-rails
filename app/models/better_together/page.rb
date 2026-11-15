@@ -5,7 +5,9 @@ require 'storext'
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
+    include Attachments::Images
     include Authorable
+    include Base64ImageInput
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
@@ -30,6 +32,11 @@ module BetterTogether
     include ::Storext.model
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+
+    attachable_feature_image
+    accepts_base64_image :feature_image_data, attachment: :feature_image, filename_field: :feature_image_filename,
+                                              default_name: 'feature'
+    configure_attachment_cleanup
 
     before_validation :sync_name_and_title
 
@@ -115,6 +122,15 @@ module BetterTogether
 
     def primary_image
       hero_block&.background_image_file
+    end
+
+    # The picture used for link previews: the feature image, else the hero block background
+    # (deprecated fallback for one release), else nil so the caller falls back to the site logo.
+    def share_image
+      return feature_image if feature_image.attached?
+
+      hero_image = primary_image
+      hero_image if hero_image&.attached?
     end
 
     # Payload for search indexing (database fallback and future external backends).
