@@ -112,14 +112,12 @@ module BetterTogether
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
-    def hero_block
-      @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
-    end
-
+    # Every block of the page, in position order. A hero is a block like any other.
     def content_blocks
-      @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
+      @content_blocks ||= blocks.with_attached_background_image_file.with_translations
     end
 
+    # Deprecated: the first hero block's background, only used as a share image fallback for one release.
     def primary_image
       heroes = blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file
       heroes.detect { |hero| hero.background_image_file.attached? }&.background_image_file
@@ -132,6 +130,33 @@ module BetterTogether
 
       hero_image = primary_image
       hero_image if hero_image&.attached?
+    end
+
+    # True when a visible hero already shows the feature image (same blob), so the banner would
+    # draw the picture twice.
+    def hero_shows_feature_image?(visible_blocks)
+      return false unless feature_image.attached?
+
+      visible_blocks.any? do |block|
+        block.is_a?(BetterTogether::Content::Hero) && block.background_image_file.attached? &&
+          block.background_image_file.blob_id == feature_image.blob_id
+      end
+    end
+
+    # The banner renders when there is a feature image that no visible hero already shows.
+    def feature_banner?(visible_blocks)
+      feature_image.attached? && !hero_shows_feature_image?(visible_blocks)
+    end
+
+    # Where the title is shown, given the page's visible blocks in order:
+    #   :hero    the first block is a hero, which carries the page heading
+    #   :banner  the banner renders, so the title is the banner heading
+    #   :heading a plain h1 above the content
+    # Only :banner and :heading are controlled by show_title.
+    def title_placement(visible_blocks)
+      return :hero if visible_blocks.first.is_a?(BetterTogether::Content::Hero)
+
+      feature_banner?(visible_blocks) ? :banner : :heading
     end
 
     # Payload for search indexing (database fallback and future external backends).
