@@ -67,6 +67,14 @@ Start a fresh Rails 8.1 app without the default asset pipeline. Rails 8.1 has no
 rails new my_app -d postgresql -A -T --skip-kamal --skip-solid --skip-jbuilder
 ```
 
+The engine needs PostgreSQL with PostGIS, so the database adapter must be `postgis`. The installer switches it for you; if you prefer to do it by hand (or your `database.yml` is customised), set it before running `db:create`:
+
+```yaml
+# config/database.yml
+default: &default
+  adapter: postgis
+```
+
 Add this gem and the forks it needs to your Gemfile. Use `branch: 'main'` only to try it out; pin `ref:` to a reviewed commit for anything you deploy (the installer output depends on the gem version, so use a commit that contains the installer):
 
 ```ruby
