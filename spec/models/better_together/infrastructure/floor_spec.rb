@@ -71,12 +71,9 @@ RSpec.describe BetterTogether::Infrastructure::Floor do
 
     describe 'self-geocoding' do
       it 'does not enqueue GeocodingJob for the floor itself (Floor has no independent space)' do
-        allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
-
-        create(:better_together_infrastructure_floor)
-
-        expect(BetterTogether::Geography::GeocodingJob).not_to have_received(:perform_later)
-          .with(instance_of(described_class))
+        expect do
+          create(:better_together_infrastructure_floor)
+        end.not_to have_enqueued_job(BetterTogether::Geography::GeocodingJob).with(instance_of(described_class))
       end
     end
 

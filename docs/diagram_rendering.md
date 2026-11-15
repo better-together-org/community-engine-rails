@@ -92,11 +92,11 @@ COMPLEXITY_LINE_THRESHOLD=50 bin/render_diagrams
 
 `bin/render_diagrams` decides whether to re-render from a hash of the diagram source plus the
 render settings (sizes, orientation mode, thresholds, `RENDER_HASH_VERSION`), recorded in
-`docs/diagrams/exports/.source-hashes`. File timestamps are ignored, so a fresh checkout, a
+`docs/diagrams/exports/.hashes/<source>.hash` (one file per diagram). File timestamps are ignored, so a fresh checkout, a
 rebase or a `touch` never re-renders a diagram whose content did not change, and a PR only
 carries export changes for diagrams it actually edited.
 
-- The manifest is committed. Rendering updates it; commit it with the exports.
+- The hash files are committed. Rendering updates them; commit them with the exports. They are split one per diagram so two branches that edit different diagrams never conflict on a shared manifest.
 - `bin/render_diagrams --force` re-renders everything. CI uses the hash skip, and forces only when `bin/render_diagrams` or the workflow changes. A newer push cancels the older run.
 - `bin/render_diagrams --seed-hashes` records hashes for existing exports without rendering.
   Use it only after confirming the exports are current.

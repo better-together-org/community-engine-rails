@@ -129,6 +129,10 @@ module BetterTogether
             plan.add_error(record: entry.id, field: "/translations/#{name}", message: "#{name} is not translatable on #{definition.name}")
           end
         end
+        if !entry.position.nil? && definition.position_column.nil?
+          ok = false
+          plan.add_error(record: entry.id, field: '/position', message: "#{definition.name} has no position column")
+        end
         if entry.attributes['type'] && definition.sti_allowed&.call&.exclude?(entry.attributes['type'])
           ok = false
           plan.add_error(record: entry.id, field: '/attributes/type', message: "#{entry.attributes['type']} is not an allowed type")
@@ -169,7 +173,7 @@ module BetterTogether
       def locate(definition, entry, _index)
         return nil if definition.by_refs.any? || definition.within
 
-        definition.find(platform:, key: entry.key)
+        definition.find(platform:, key: entry.key, attributes: entry.attributes)
       end
 
       def classify(entry, definition, existing)

@@ -589,6 +589,11 @@ es:
                 pública
             visibility_strategy:
               inclusion: debe ser autenticado o permiso
+        better_together/person_deletion_request:
+          attributes:
+            base:
+              last_platform_steward: no se puede eliminar mientras seas la única persona
+                administradora de tu plataforma
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -1143,6 +1148,38 @@ es:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Aceptar todo
+      analytics: 'Analítica: nos ayuda a entender como se usa el sitio'
+      body: Este sitio desea usar código de analítica y marketing. Las funciones esenciales
+        siempre funcionan. Puede cambiar de opinión en cualquier momento.
+      choices_legend: Categorías opcionales
+      choose: Elegir
+      essential_note: Las funciones esenciales siempre están activas.
+      essential_only: Solo lo esencial
+      marketing: 'Marketing: medir y personalizar la comunicación'
+      policy_link: Lea la política de cookies.
+      preferences: Preferencias de cookies
+      save: Guardar mis opciones
+      saved: Sus opciones de privacidad se guardaron.
+      settings:
+        analytics_help: Ayudan a la plataforma a entender cómo se usa el sitio.
+        device_note: Tus elecciones siguen a tu cuenta y se aplican cada vez que inicias
+          sesión.
+        essential: Cookies esenciales (siempre activas)
+        essential_help: Necesarias para iniciar sesión, mantener el sitio seguro y
+          recordar estas elecciones.
+        marketing_help: Miden y personalizan la comunicación.
+        none: Esta plataforma no usa actualmente cookies opcionales, así que no hay
+          nada que elegir. Las cookies esenciales siempre están activas.
+        not_decided: Aún no has elegido. Mientras tanto solo se usan cookies esenciales.
+        not_stored: Guardado en este dispositivo, pero no pudimos guardarlo en tu
+          cuenta. Inténtalo de nuevo.
+        outdated: Esta plataforma cambió los consentimientos que solicita desde tu
+          última elección. Elige de nuevo.
+        saved_on: Tus elecciones se guardaron el %{date}.
+        withdraw_all: Retirar todo el consentimiento opcional
+      title: Sus opciones de privacidad
     contact_details:
       contact_information: Información de contacto
       title: Detalles de Contacto
@@ -1453,6 +1490,57 @@ es:
       sidebar:
         conversations: Conversaciones
         new: Nuevo
+    cookie_policy:
+      categories:
+        analytics:
+          description: Nos ayudan a entender cómo se usa la plataforma para mejorarla.
+          title: Cookies de análisis
+        marketing:
+          description: Miden y personalizan la comunicación.
+          title: Cookies de marketing
+      choices_optional: Las cookies opcionales están desactivadas hasta que las aceptes.
+        Puedes cambiar o retirar tu elección en cualquier momento con el botón de
+        preferencias de cookies o, al iniciar sesión, desde tu configuración.
+      columns:
+        duration: Duración
+        name: Nombre de la cookie
+        purpose: Finalidad
+        type: Tipo
+      core:
+        consent:
+          cookies:
+            consent: Guarda tus elecciones de consentimiento (análisis y marketing)
+              y la versión de la política que respondiste
+          description: Recuerdan tus elecciones para no preguntarte en cada visita.
+          title: Tus elecciones de cookies
+        durations:
+          consent_days: 180 días, renovados en cada visita
+          session: Sesión
+          session_inactivity: Sesión (6 horas de inactividad)
+          two_weeks: 2 semanas
+        session:
+          cookies:
+            csrf: Token de seguridad que protege contra ataques de falsificación de
+              solicitudes entre sitios (CSRF)
+            remember: Te mantiene conectado cuando eliges «Recordarme» al iniciar
+              sesión
+            session: Mantiene tu sesión y guarda datos temporales como tokens de invitación,
+              idioma y ajustes de depuración
+          description: Mantienen tu sesión iniciada y protegen la plataforma contra
+            solicitudes falsificadas.
+          title: Inicio de sesión y seguridad
+      last_updated: 'Última actualización:'
+      manage_choices: Gestiona tus elecciones de cookies en tu configuración
+      optional_intro: Las siguientes cookies opcionales solo se usan si las aceptas.
+        Puedes cambiar de opinión en cualquier momento con el botón de preferencias
+        de cookies o, al iniciar sesión, desde tu configuración.
+      party:
+        first: Propia
+        third: De terceros
+      privacy_link: Información de privacidad de %{provider}
+      third_party_listed: Esta plataforma usa los servicios de terceros indicados
+        abajo. Solo establecen cookies o almacenamiento del navegador como se describe.
+      version: versión de la política %{version}
     default_member_name: Miembro
     device_permissions:
       location:
@@ -3264,6 +3352,9 @@ es:
         thanks: Gracias
     person_platform_integrations:
       create:
+        account_not_on_platform: No pudimos vincular esta cuenta de %{provider} con
+          una cuenta existente en esta plataforma. Inicia sesión con tu método habitual
+          o pide ayuda a una persona organizadora de la plataforma.
         already_connected: Ya tiene una cuenta de %{provider} conectada. Por favor
           desconéctela primero si desea conectar una cuenta diferente.
         email_mismatch: 'No se puede conectar la cuenta de %{provider}: el correo
@@ -3412,6 +3503,30 @@ es:
           se pausarán."
         sync_cursor: Cursor de sincronización
         sync_status: Estado de sincronización
+    platform_deletion_requests:
+      back: Volver a los ajustes de la cuenta
+      cancel: Cancelar solicitud
+      cancelled: Tu solicitud de eliminación de la plataforma fue cancelada.
+      created: Tu solicitud de eliminación de la plataforma se ha enviado a las personas
+        administradoras anfitrionas.
+      explanation: Eliminar tu cuenta dejaría esta plataforma sin administración,
+        por lo que no está permitido. Envía una solicitud a las personas administradoras
+        de la plataforma anfitriona para que la eliminen, o pide antes a otra persona
+        que sea administradora.
+      go_to_form: Solicitar la eliminación de la plataforma
+      intro: Eres la única persona administradora de %{platform}.
+      last_steward_notice: Eres la única persona administradora de esta plataforma.
+        Para salir, pide a las personas administradoras anfitrionas que eliminen la
+        plataforma, o nombra antes a otra persona administradora.
+      pending: Tu solicitud se envió el %{date} y está pendiente de revisión.
+      reason: "¿Por qué quieres que se elimine la plataforma?"
+      reason_hint: Opcional. Las personas administradoras anfitrionas lo leerán al
+        revisar la solicitud.
+      redirected: Eres la última persona administradora de esta plataforma, por lo
+        que la eliminación de la cuenta se gestiona como una solicitud de eliminación
+        de la plataforma.
+      submit: Enviar solicitud de eliminación
+      title: Solicitar la eliminación de esta plataforma
     platform_domains:
       cancel: Cancelar
       cannot_destroy_primary: No se puede eliminar el dominio principal. Establezca
@@ -3570,6 +3685,105 @@ es:
         accepted: Aceptado
         expired: Vencido
         pending: Pendiente
+    platform_snippets:
+      applies_to_options:
+        all: Todos
+        signed_out: Solo visitantes sin sesión
+      audit_actions:
+        created: Creado
+        destroyed: Eliminado
+        disabled: Desactivado
+        enabled: Activado
+        updated: Actualizado
+      consent_categories:
+        analytics: Analítica
+        marketing: Marketing
+        none: No necesario
+      destroyed: Fragmento eliminado.
+      edit:
+        subtitle: Para %{platform_name}.
+        title: Editar %{name}
+      errors:
+        invalid_meta_markup: debe contener metaetiquetas o enlaces preconnect
+        invalid_script_markup: debe ser JavaScript sin etiquetas script ni comentarios
+          HTML
+        invalid_src: debe ser una dirección https
+        invalid_style_markup: debe ser CSS sin etiquetas style ni comentarios HTML
+        meta_requires_head: las metaetiquetas solo pueden ir en el head
+        origin_not_allowed: el origen %{origin} no está permitido por los ajustes
+          de seguridad de scripts de esta plataforma
+      form:
+        allow_origin: Permitir el origen de este script en la política de seguridad
+          de contenido
+        allow_origin_hint: Añade el origen a los orígenes de script permitidos de
+          esta plataforma.
+        applies_to: Se muestra a
+        cancel: Cancelar
+        consent_category: Consentimiento del visitante
+        consent_hint: Los fragmentos de analítica y marketing se retienen hasta que
+          los visitantes den su consentimiento.
+        content: Código
+        content_hint: Los scripts en línea se ejecutan con el nonce de seguridad de
+          la página. No incluya etiquetas script ni style. Para el tipo meta, solo
+          metaetiquetas y enlaces preconnect.
+        enabled: Activado
+        enabled_hint: Déjelo desactivado hasta que haya probado el fragmento.
+        kind: Tipo
+        location: Ubicación
+        name: Nombre
+        notes: Notas
+        save: Guardar fragmento
+        src: Dirección del script
+        src_hint: Solo para scripts externos. La dirección debe usar https y su origen
+          debe estar permitido en los ajustes de seguridad de la plataforma.
+        warning: Este código se ejecuta en el navegador de cada visitante. Pruebe
+          con el modo seguro y mantenga el fragmento desactivado hasta que esté listo.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Cambios recientes
+        back_to_platform: Volver a los ajustes de la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este fragmento?"
+        disabled_label: Desactivado
+        edit_btn: Editar
+        enabled_label: Activado
+        header_actions: Acciones
+        header_consent: Consentimiento
+        header_kind: Tipo
+        header_location: Ubicación
+        header_name: Nombre
+        header_status: Estado
+        kill_switch_hint: Añada ?safe_mode=1 a la dirección de cualquier página para
+          ver el sitio sin fragmentos.
+        kill_switch_off: Todos los fragmentos están desactivados.
+        kill_switch_on: Los fragmentos están activos.
+        kill_switch_title: Todos los fragmentos
+        move_down: Bajar
+        move_up: Subir
+        new_btn: Nuevo fragmento
+        none_yet: Aún no hay fragmentos.
+        subtitle: Scripts, estilos y metaetiquetas añadidos a cada página de %{platform_name}.
+        table_aria: Fragmentos de código personalizado
+        title: Código personalizado
+        turn_off: Desactivar todos
+        turn_on: Activar todos
+        warning: Los fragmentos se ejecutan en el navegador de cada visitante y pueden
+          leer lo que ven y escriben en esta plataforma. Añada solo código de confianza.
+      kinds:
+        html_meta: Metaetiquetas
+        script_inline: Script en línea
+        script_src: Script externo
+        style_inline: Estilo en línea
+      locations:
+        body_end: Final del body
+        body_start: Inicio del body
+        head_end: Final del head
+        head_start: Inicio del head
+      new:
+        subtitle: Para %{platform_name}. Los fragmentos nuevos comienzan desactivados.
+        title: Nuevo fragmento
+      saved: Fragmento guardado.
+      switch_updated: Se actualizó el interruptor de fragmentos.
     platform_trusted_domains:
       created: Se agregó el dominio de confianza.
       destroyed: Se eliminó el dominio de confianza. Las cuentas y membresías existentes
@@ -3686,6 +3900,10 @@ es:
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
         csp_title: Seguridad / incrustaciones CSP
+        custom_code_hint: Añada scripts, estilos y metaetiquetas a cada página. Requiere
+          el permiso de gestión de código de la plataforma.
+        custom_code_link: Gestionar código personalizado
+        custom_code_title: Código personalizado
         custom_css_hint: Ajuste avanzado. Los estilos añadidos aquí se cargan después
           del tema y tienen prioridad sobre él.
         custom_css_title: CSS personalizado
@@ -3742,6 +3960,17 @@ es:
         title: Registrar plataforma externa
       show:
         new_invitation: Nueva invitación
+      storage_tab:
+        bucket: Depósito
+        description: Donde se guardan los archivos subidos a esta plataforma. Los
+          archivos se guardan en el depósito propio de la plataforma cuando hay una
+          configuración de almacenamiento activa.
+        health: Estado de la conexión
+        manage: Gestionar configuraciones de almacenamiento
+        service_type: Tipo de servicio
+        shared_default: Valor predeterminado de la instalación
+        source: Configuración activa
+        title: Almacenamiento de archivos
       tabs:
         access: Acceso y privacidad
         appearance: Apariencia
@@ -3751,6 +3980,7 @@ es:
         features: Funciones y cuotas
         integrations: Integraciones
         security: Seguridad
+        storage: Almacenamiento
       theme:
         allow_user_themes: Permitir que cada persona elija su tema
         allow_user_themes_hint: Si está activado, las personas con sesión iniciada
@@ -4396,6 +4626,10 @@ es:
           description: Gestione usuarios que ha bloqueado para que no interactúen
             con usted.
           title: Personas Bloqueadas
+        cookie_consent:
+          description: Elige qué cookies opcionales puede usar esta plataforma. Tu
+            elección se guarda en tu cuenta.
+          title: Consentimiento de cookies
         developer:
           apps:
             client_id_label: ID de Cliente
@@ -4517,6 +4751,7 @@ es:
         tabs:
           account: Cuenta
           blocked_people: Personas Bloqueadas
+          cookie_consent: Consentimiento de cookies
           developer: Desarrollador
           device_permissions: Permisos del Dispositivo
           integrations: Integraciones
@@ -4651,15 +4886,16 @@ es:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "«%{name}» es ahora el almacenamiento de archivos de
+        esta plataforma. Las nuevas subidas lo usan de inmediato; los archivos existentes
+        se quedan donde están."
+      activated_with_restart: "«%{name}» activada. Las nuevas subidas la usan de inmediato;
+        los demás procesos la detectan en unos 30 segundos."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'La conexión con «%{name}» falló: %{message}'
+      connection_ok: La conexión con «%{name}» fue correcta.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -4668,15 +4904,22 @@ es:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Fallido
+        ok: Correcto
+        unknown: Sin probar
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: "¿Activar esta configuración? Las nuevas subidas la usan
+          de inmediato y los demás procesos la detectan en unos 30 segundos. Los archivos
+          existentes permanecen en el almacenamiento anterior; la migración de blobs
+          es un paso manual aparte."
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
-        activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+        activation_restart_note: Activar una nueva configuración vincula el almacenamiento
+          en el proceso actual de inmediato. Los demás procesos de la aplicación lo
+          detectan en unos 30 segundos.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -4695,6 +4938,7 @@ es:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: Estado
         header_name: Name
         header_status: Status
         header_type: Type
@@ -4707,6 +4951,7 @@ es:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Probar conexión
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive

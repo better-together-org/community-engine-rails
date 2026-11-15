@@ -15,7 +15,13 @@ require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
 require 'better_together/generator_templates'
 require 'better_together/profiling'
+require 'better_together/safe_outbound_host'
+require 'better_together/tenancy_audit'
 require 'better_together/storage_resolver'
+require 'better_together/storage/tenant_registry'
+require 'better_together/storage/tenant_service'
+require 'better_together/storage/usage'
+require 'better_together/storage/platform_blobs'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
@@ -70,7 +76,8 @@ module BetterTogether
 
     initializer 'better_together.zeitwerk_ignores', before: :set_autoload_paths do
       ignored_lib_paths = %w[generators rubocop tasks].map { |dir| root.join('lib', dir).to_s }
-      ignored_lib_files = [root.join('lib/mobility/backends/attachments/backend.rb').to_s]
+      ignored_lib_files = %w[lib/mobility/backends/attachments/backend.rb
+                             lib/better_together/cookie_policy/rspec.rb].map { |file| root.join(file).to_s }
 
       Rails.autoloaders.each do |autoloader|
         autoloader.ignore(*ignored_lib_paths, *ignored_lib_files)
@@ -132,6 +139,29 @@ module BetterTogether
     # Insert PlatformContextMiddleware early in the stack so Current.platform
     # is resolved for all requests — web, JSONAPI, and MCP — before any
     # controller action runs.
+    # Every OpenID Connect request (discovery, JWKS, token) checks that its host is public.
+    initializer 'better_together.openid_connect_ssrf_guard' do
+      if defined?(::OpenIDConnect) && ::OpenIDConnect.respond_to?(:http_config)
+        ::OpenIDConnect.http_config do |config|
+          config.request :url_encoded if config.respond_to?(:request)
+          config.use BetterTogether::SafeOutboundHost::Guard
+        end
+      end
+    end
+
+    # Accounts are per platform. A session (or token) for a user of another platform is dropped,
+    # which also protects against a cookie domain misconfigured to span platform hosts.
+    initializer 'better_together.warden_platform_guard' do
+      Warden::Manager.after_set_user do |user, auth, opts|
+        platform = ::Current.platform
+        if platform && user.respond_to?(:platform_id) && user.platform_id.present? && user.platform_id != platform.id
+          scope = opts[:scope]
+          auth.logout(scope)
+          throw :warden, scope:, message: :invalid
+        end
+      end
+    end
+
     initializer 'better_together.platform_context_middleware' do |app|
       require root.join('app/middleware/better_together/platform_context_middleware').to_s
       app.middleware.use BetterTogether::PlatformContextMiddleware
@@ -184,6 +214,12 @@ module BetterTogether
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
     # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
     # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.
+    # Per-platform storage: swap in the registry that builds services from StorageConfiguration rows and
+    # stamp new blobs with the current platform's service. Runs after Rails registers its own blob hook.
+    initializer 'better_together.tenant_storage', after: 'active_storage.services' do
+      ActiveSupport.on_load(:active_storage_blob) { BetterTogether::Storage::TenantService.install! }
+    end
+
     initializer 'better_together.active_storage_variant_processor' do |app|
       app.config.active_storage.variant_processor = :vips
     end

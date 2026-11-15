@@ -62,7 +62,7 @@ module BetterTogether
         report = manifest.verify(root)
         return [report.errors.map { |e| [e.file, e.message].compact.join(': ') }, nil] unless report.valid?
 
-        [[], BlobAttacher.new(root:, manifest:)]
+        [[], BlobAttacher.new(root:, manifest:, platform: @platform)]
       end
 
       def apply(packet, plan)

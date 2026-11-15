@@ -66,6 +66,8 @@ module BetterTogether
       oauth_issuer_url String
       search_query_analytics_enabled Boolean, default: true
       search_query_analytics_mode String, default: 'full'
+      # Platform-wide kill switch for custom code snippets.
+      snippets_enabled Boolean, default: true
     end
 
     # Alias the database url column to host_url for clarity
@@ -131,6 +133,9 @@ module BetterTogether
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
+    has_many :platform_snippets, -> { order(:location, :position) },
+             class_name: '::BetterTogether::PlatformSnippet', dependent: :destroy
+    has_many :platform_snippet_audits, class_name: '::BetterTogether::PlatformSnippetAudit', dependent: :delete_all
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
     has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
@@ -312,6 +317,23 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    # People holding an active steward role on this platform.
+    def steward_person_ids
+      person_platform_memberships.joins(:role)
+                                 .where(status: 'active', better_together_roles: { identifier: 'platform_steward' })
+                                 .distinct.pluck(:member_id)
+    end
+
+    def steward?(person)
+      person.present? && steward_person_ids.include?(person.id)
+    end
+
+    # True when deleting this person would leave the platform without a steward.
+    def last_steward?(person)
+      ids = steward_person_ids
+      ids.size == 1 && ids.first == person&.id
     end
 
     private

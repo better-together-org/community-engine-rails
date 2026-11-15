@@ -1,0 +1,49 @@
+{
+  "name": "account_deletion_last_steward",
+  "device": "mobile",
+  "url": "/en/users/edit",
+  "title": "Edit User | Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "account_deletion",
+  "flow": "last_steward",
+  "source_spec": "./spec/docs_screenshots/better_together/account_deletion_spec.rb",
+  "callouts": [
+    {
+      "selector": "#last-steward-deletion-notice",
+      "title": "Last steward",
+      "bullets": [
+        "Account deletion is replaced by a platform removal request.",
+        "This keeps the platform from being left without a steward."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 637.0,
+        "width": 476.0,
+        "height": 145.0,
+        "right": 488.0,
+        "bottom": 782.0,
+        "center_x": 250.0,
+        "center_y": 709.5
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 637.0,
+        "width": 476.0,
+        "height": 145.0,
+        "right": 488.0,
+        "bottom": 782.0,
+        "center_x": 250.0,
+        "center_y": 709.5
+      },
+      "placement": {
+        "side": "above",
+        "x": 115.0,
+        "y": 329.0,
+        "width": 270.0,
+        "height": 288,
+        "score": 637.0
+      }
+    }
+  ]
+}

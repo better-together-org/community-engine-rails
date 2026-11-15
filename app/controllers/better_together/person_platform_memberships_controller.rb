@@ -165,7 +165,28 @@ module BetterTogether
 
     # Only allow a list of trusted parameters through.
     def person_platform_membership_params
-      params.require(:person_platform_membership).permit(:member_id, :role_id, :joinable_id)
+      permitted = params.require(:person_platform_membership).permit(:member_id, :role_id, :joinable_id)
+      ensure_assignable!(permitted)
+      permitted
+    end
+
+    # Only people of this platform and roles meant for platforms can be assigned, by id. A foreign
+    # member id or a role from another resource type is treated as not found.
+    def ensure_assignable!(permitted)
+      if permitted[:member_id].present? && !assignable_people.exists?(id: permitted[:member_id])
+        raise ActiveRecord::RecordNotFound
+      end
+      return if permitted[:role_id].blank? || assignable_roles.exists?(id: permitted[:role_id])
+
+      raise ActiveRecord::RecordNotFound
+    end
+
+    def assignable_people
+      @platform.community.person_members.where(platform_id: @platform.id)
+    end
+
+    def assignable_roles
+      ::BetterTogether::Role.where(resource_type: 'BetterTogether::Platform')
     end
 
     # Adds a policy check for the person platform membership
@@ -185,8 +206,8 @@ module BetterTogether
 
     # Sets up data needed for the form
     def set_form_data
-      @available_people = @platform.community.person_members.distinct
-      @available_roles = ::BetterTogether::Role.where(resource_type: 'BetterTogether::Platform')
+      @available_people = assignable_people.distinct
+      @available_roles = assignable_roles
     end
   end
 end

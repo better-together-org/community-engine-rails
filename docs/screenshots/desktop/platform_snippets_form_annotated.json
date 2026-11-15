@@ -1,0 +1,48 @@
+{
+  "name": "platform_snippets_form_annotated",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/platform_snippets/new",
+  "title": "New snippet | Test Host Community",
+  "locale": "en",
+  "role": "platform_code_manager",
+  "feature_set": "platform_snippets",
+  "flow": "platform_snippets_form",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_snippets_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_snippet_enabled",
+      "title": "New snippets start disabled",
+      "bullets": [
+        "Test with safe mode, then enable."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 1190.0,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 80.5,
+        "bottom": 1206.0,
+        "center_x": 72.5,
+        "center_y": 1198.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 1190.0,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 80.5,
+        "bottom": 1206.0,
+        "center_x": 72.5,
+        "center_y": 1198.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 100.5,
+        "y": 1116.0,
+        "width": 380,
+        "height": 164,
+        "score": 1359.5
+      }
+    }
+  ]
+}

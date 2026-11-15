@@ -147,6 +147,23 @@ RSpec.describe 'Seed packet blob transport' do # rubocop:disable RSpec/DescribeC
       expect(upload.file.filename.to_s).to eq('a.pdf')
     end
 
+    it "writes the blob to the target platform's storage service", :aggregate_failures do
+      config = create(:better_together_storage_configuration, platform:)
+      platform.update!(storage_configuration_id: config.id)
+      other_attacher = described_class.new(root: dir, manifest: BetterTogether::Seeds::Manifest.load(dir), platform: platform.reload)
+
+      other_attacher.call(record: upload, entry:)
+
+      expect(upload.reload.file.blob.service_name).to eq(config.storage_key)
+      expect(upload.file.download).to eq(pdf)
+    end
+
+    it 'keeps the default service for a platform without its own configuration' do
+      described_class.new(root: dir, manifest: BetterTogether::Seeds::Manifest.load(dir), platform:).call(record: upload, entry:)
+
+      expect(upload.reload.file.blob.service_name).to eq(ActiveStorage::Blob.service.name.to_s)
+    end
+
     it 'is a no-op when identical bytes are already attached' do
       attacher.call(record: upload, entry:)
 
