@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_15_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2454,6 +2454,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
     t.index ["status"], name: "index_better_together_seed_plantings_on_status"
   end
 
+  create_table "better_together_seed_provenances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "seed_id"
+    t.uuid "seed_planting_id"
+    t.string "packet_id", null: false
+    t.string "packet_version"
+    t.string "record_type", null: false
+    t.string "record_key", null: false
+    t.string "record_class", null: false
+    t.uuid "record_id", null: false
+    t.string "fingerprint", null: false
+    t.jsonb "snapshot", default: {}, null: false
+    t.index ["platform_id", "packet_id", "record_type", "record_key"], name: "index_bt_seed_provenances_on_platform_packet_record", unique: true
+    t.index ["platform_id"], name: "index_better_together_seed_provenances_on_platform_id"
+    t.index ["record_class", "record_id"], name: "index_bt_seed_provenances_on_record"
+    t.index ["seed_id"], name: "index_better_together_seed_provenances_on_seed_id"
+    t.index ["seed_planting_id"], name: "index_better_together_seed_provenances_on_seed_planting_id"
+  end
+
   create_table "better_together_seeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.string "type", default: "BetterTogether::Seed", null: false
@@ -3158,6 +3180,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
   add_foreign_key "better_together_safety_notes", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_safety_notes", "better_together_safety_cases", column: "safety_case_id"
   add_foreign_key "better_together_seed_plantings", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_seed_provenances", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_seed_provenances", "better_together_seed_plantings", column: "seed_planting_id"
+  add_foreign_key "better_together_seed_provenances", "better_together_seeds", column: "seed_id"
   add_foreign_key "better_together_seeds", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_short_links", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_sitemaps", "better_together_platforms", column: "platform_id"

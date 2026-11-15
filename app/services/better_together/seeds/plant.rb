@@ -89,6 +89,8 @@ module BetterTogether
             outcome = Applier.new(plan:, platform: @platform, attach_files: @attach_files).call
           end
           raise ActiveRecord::Rollback if outcome.errors.any?
+
+          ProvenanceWriter.call(packet:, platform: @platform, planting:, provenance: outcome.provenance)
         end
         finish(planting, plan, outcome)
       end

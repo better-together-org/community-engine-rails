@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-14T21:58:42Z`.
+Generated from live Rails reflections at `2026-11-15T16:29:29Z`.
 
 ## Identity, access, and memberships
 
@@ -702,6 +702,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | SafetyReportDigestNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | SafetyReportSubmittedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | SafetyReportSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
+| SeedProvenance | `better_together_seed_provenances` | `packet_id` (string FK)<br>`platform_id` (uuid FK)<br>`record_id` (uuid FK)<br>`seed_id` (uuid FK)<br>`seed_planting_id` (uuid FK)<br>`fingerprint` (string) | PresenceValidator: packet_id, record_type, record_key, record_class, record_id, fingerprint | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`seed` -> `Seed` (exchange_governance)<br>`seed_planting` -> `SeedPlanting` (exchange_governance) |
 | ShortLink | `better_together_short_links` | `creator_id` (uuid FK)<br>`linkable_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`code` (string)<br>`linkable_type` (string)<br>`status` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: code<br>UniquenessValidator: code (scope=:platform_id, case_sensitive=false)<br>FormatValidator: code (with=/\A[a-z0-9-]+\z/)<br>PresenceValidator: target_url | `BetterTogetherId`<br>`Creatable`<br>`PlatformScoped`<br>`Seedable`<br>`Translatable` | `platform` -> `Platform` (platform_network)<br>`creator` -> `Person` (identity_access) |
 | SocialMediaAccount | `better_together_social_media_accounts` | `contact_detail_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`handle` (string)<br>`platform_name` (string)<br>`privacy` (string)<br>`url` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: privacy<br>InclusionValidator: privacy (in=["public", "community", "private"])<br>PresenceValidator: platform_name<br>InclusionValidator: platform_name (in=["Facebook", "Instagram", "LinkedIn", "YouTube", "TikTok", "Reddit", "What'sApp", "Flickr"])<br>UniquenessValidator: platform_name (scope=:contact_detail_id, message="account already exists for this contact") | `BetterTogetherId`<br>`PlatformScoped`<br>`Privacy`<br>`PrivacyCeilingValidatable`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | TrustedDomainEvent | `better_together_trusted_domain_events` | `actor_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`platform_trusted_domain_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`domain` (string)<br>`event_type` (string) | InclusionValidator: event_type (in=["domain_added", "domain_updated", "domain_removed", "account_created", "membership_granted", "membership_request_approved", "grant_rate_limited"])<br>InclusionValidator: via (allow_nil=true, in=["oauth", "password_registration", "membership_request", "steward"])<br>PresenceValidator: domain | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`actor` -> `Person` (identity_access)<br>`subject` -> `Person` (identity_access) |
@@ -921,6 +922,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `SafetyReportDigestNotifier::Notification`: `recipient` (belongs_to)
 - `SafetyReportSubmittedNotifier`: `record` (belongs_to)
 - `SafetyReportSubmittedNotifier::Notification`: `recipient` (belongs_to)
+- `SeedProvenance`: `seeds` (has_many)
 - `ShortLink`: `linkable` (belongs_to), `seeds` (has_many), `string_translations` (has_many)
 - `SocialMediaAccount`: `seeds` (has_many)
 - `TrustedDomainEvent`: `seeds` (has_many)

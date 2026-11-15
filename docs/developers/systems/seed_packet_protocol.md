@@ -133,8 +133,8 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | registered **in C2** (Flickr added), redirects D1 |
 | 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | **fixed in C4** |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
-| 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
-| 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | `Seed` platform-scoped (#2249); `clear` is not part of packets; `Plant` does not yet store the `Seed` envelope row, so the global `(type, identifier)` rule no longer blocks it but nothing writes it either (documented limit) |
+| 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored per planted record in `SeedProvenance` | spec C1; `SeedProvenance` table (this PR) |
+| 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | `Seed` platform-scoped (#2249); `clear` is not part of packets; `Plant` stores one `Seed` envelope row per platform and packet, linked from the `SeedPlanting` |
 | 7 | No dry-run or diff | The plan is the dry-run report | **fixed in C3** |
 | 8 | No validation schema | JSON Schemas and `Protocol::Validator` | **fixed in C1** |
 | 9 | No signature verification | Detached signature over `MANIFEST.json`, key id in `origin` | **fixed in C9**: Ed25519 detached signature, see Signatures below |
@@ -152,7 +152,7 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 
 `spec/seeds/golden/conformance_spec.rb` plants packets through `Plant` and covers: empty platform, identical rerun, dry run, two platforms, steward-edited record, missing reference, locale policy, verified blob, tampered blob, missing manifest, tar.gz and the source allowlist.
 
-Platform-scoped `Seed` landed in #2249 (C7, without provenance columns). Held: C6 for billing (lives on the billing branch). Deficiencies 5 and 6 stay partial: provenance is a snapshot inside `SeedPlanting.result`, not columns on planted records, and `Plant` does not store a `Seed` row.
+Platform-scoped `Seed` landed in #2249 (C7, without provenance columns). Held: C6 for billing (lives on the billing branch). Deficiencies 5 and 6 are fixed by `SeedProvenance` and the envelope row written by `Seeds::ProvenanceWriter` (see Provenance below).
 
 ## Type registry (C2)
 
@@ -228,9 +228,9 @@ Each record is classified by comparing a flat snapshot of the fields the entry o
 | Record differs and was edited since, or the packet never planted it | `skipped_edited` |
 | `managed` tombstone, record planted by the packet and unedited | `delete` |
 
-Apply takes a per-packet advisory lock (deficiency 15), writes one transaction with a savepoint per record, and rolls the whole packet back if any record errors, reporting every failing record with its field. A `SeedPlanting` row records the outcome; its `result.provenance` holds the per-record snapshots that the next plan reads, so provenance works today without new columns. Files fail closed per record until blob transport (C4) supplies `attach_files`.
+Apply takes a per-packet advisory lock (deficiency 15), writes one transaction with a savepoint per record, and rolls the whole packet back if any record errors, reporting every failing record with its field. A `SeedPlanting` row records the outcome; per-record provenance is stored in `SeedProvenance` rows that the next plan reads. Files fail closed per record until blob transport (C4) supplies `attach_files`.
 
-Known limits: `Seed` is not written (platform-scoped `Seed` is C7); lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only); snapshot-based edit detection is replaced by provenance columns once C7 lands.
+Known limits: lookups of `within:` and `by_refs:` types as references to existing platform records are not supported (packet-local only).
 
 ## Sentinels
 
@@ -266,9 +266,17 @@ Differences from the builder, all deliberate:
 
 ## What is deliberately not here
 
-- No provenance columns on planted records. The `Seed` table is platform-scoped (#2249); provenance stays in `SeedPlanting.result` (documented limit for deficiency 5).
+- Provenance is a dedicated table, not columns on planted records, so planted tables stay unchanged.
 - No conversion of the billing planters (C6): they live on `feature/billing` and are converted there, with that branch's owner. Navigation is converted, see below.
 
 ## Tests
 
 `spec/services/better_together/seeds/protocol/` with fixture packet `spec/fixtures/seed_packets/minimal/`.
+
+## Provenance
+
+Each successful plant writes, inside the same transaction, one platform-scoped `Seed` envelope row per packet (linked from the `SeedPlanting`) and one `SeedProvenance` row per planted record: packet id, packet version, record type and key, the record's class and id, the fingerprint and the flat snapshot used for edit detection. `SeedProvenance.for_record(record)` answers which packet planted a record. Reruns update rows in place, `delete` tombstones remove them, and failed or dry-run plants write nothing. `PlantingHistory` reads these rows first.
+
+![Seed provenance model](../../diagrams/exports/png/seed_packet_provenance_model.png)
+
+Source: [seed_packet_provenance_model.mmd](../../diagrams/source/seed_packet_provenance_model.mmd)
