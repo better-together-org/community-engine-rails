@@ -90,7 +90,8 @@ RSpec.describe 'Cookie consent settings DOM contract', :no_auth, type: :request 
     it 'checks the stored categories and states the date', :aggregate_failures do
       expect(doc.at_css('#cookie-consent-marketing').key?('checked')).to be(true)
       expect(doc.at_css('#cookie-consent-analytics').key?('checked')).to be(false)
-      expect(doc.at_css('#cookie-consent-stored').text).to include(I18n.l(Time.zone.today, format: :long))
+      today = Time.current.in_time_zone(user.person.time_zone).to_date
+      expect(doc.at_css('#cookie-consent-stored').text).to include(I18n.l(today, format: :long))
     end
   end
 end
