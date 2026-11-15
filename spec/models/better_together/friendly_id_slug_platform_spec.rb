@@ -91,4 +91,17 @@ RSpec.describe BetterTogether::FriendlyIdSlugPlatform do
       expect { insert_slug_row(platform_id: host_platform.id) }.not_to raise_error
     end
   end
+
+  describe 'slug validation for platform-scoped models' do
+    it 'lets two platforms share a person slug and still rejects a repeat on one platform', :aggregate_failures do
+      create(:better_together_person, platform: host_platform, identifier: 'shared-handle')
+
+      other = build(:better_together_person, platform: other_platform, identifier: 'shared-handle-b', slug: 'shared-handle')
+      same = build(:better_together_person, platform: host_platform, identifier: 'shared-handle-c', slug: 'shared-handle')
+
+      expect(other).to be_valid
+      expect(same).not_to be_valid
+      expect(same.errors[:slug]).to be_present
+    end
+  end
 end

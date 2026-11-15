@@ -37,11 +37,19 @@ module BetterTogether
 
         slug_column = options[:slug_column] || :slug
         if slug_uniqueness
-          uniqueness_opts = scope ? { scope: } : true
-          validates slug_column, presence: true, uniqueness: uniqueness_opts, length: { minimum: min_length }
+          validates slug_column, presence: true, length: { minimum: min_length }
+          validate_slug_uniqueness(slug_column, scope)
         else
           validates slug_column, presence: true, length: { minimum: min_length }
         end
+      end
+
+      # Uniqueness is global unless a scope is given; models with a platform_id are unique per platform.
+      def self.validate_slug_uniqueness(slug_column, scope)
+        return validates(slug_column, uniqueness: { scope: }) if scope
+
+        validates slug_column, uniqueness: true, unless: -> { has_attribute?(:platform_id) }
+        validates slug_column, uniqueness: { scope: :platform_id }, if: -> { has_attribute?(:platform_id) }
       end
 
       # Slug conflicts (including reserved history slugs) only count inside the record's own platform.
