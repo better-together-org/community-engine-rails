@@ -47,7 +47,8 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :test
 
   # Cap the test log: one rotated file, 100 MB each (an uncapped log reached 2.5 GB).
-  config.logger = ActiveSupport::Logger.new(Rails.root.join('log/test.log'), 1, 100.megabytes)
+  # TaggedLogging keeps the `tagged` API that app code and specs call on Rails.logger.
+  config.logger = ActiveSupport::TaggedLogging.logger(Rails.root.join('log/test.log'), 1, 100.megabytes)
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
