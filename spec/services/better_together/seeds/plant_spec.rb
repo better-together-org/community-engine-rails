@@ -140,6 +140,31 @@ RSpec.describe BetterTogether::Seeds::Plant do
     end
   end
 
+  context 'with protected on a type that did not opt in' do
+    let(:records) do
+      { community: [{ 'key' => 'c1', 'attributes' => { 'protected' => true },
+                      'translations' => { 'en' => { 'name' => 'C1' } } }] }
+    end
+
+    it 'rejects it' do
+      expect(plant[:errors]).to include(include(field: '/attributes/protected'))
+    end
+  end
+
+  context 'with protected on a type that opted in' do
+    let(:records) do
+      list = nav_records
+      list[:navigation_item][0]['attributes']['protected'] = true
+      list
+    end
+
+    it 'writes it' do
+      plant
+
+      expect(area_items.find_by!(identifier: 'nav-home')).to be_protected
+    end
+  end
+
   context 'with a field the registry does not allow' do
     let(:records) do
       list = nav_records

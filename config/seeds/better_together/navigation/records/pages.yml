@@ -5,7 +5,7 @@ records:
   attributes:
     slug: home
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
     layout: layouts/better_together/full_width_page
@@ -16,7 +16,7 @@ records:
   attributes:
     slug: about
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
   translations:
     en:
@@ -25,7 +25,7 @@ records:
   attributes:
     slug: better-together
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -35,7 +35,7 @@ records:
   attributes:
     slug: better-together/community-engine
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
     layout: layouts/better_together/full_width_page
@@ -46,7 +46,7 @@ records:
   attributes:
     slug: subprocessors
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: true
   translations:
@@ -56,7 +56,7 @@ records:
   attributes:
     slug: faq
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -66,7 +66,7 @@ records:
   attributes:
     slug: privacy-policy
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -76,7 +76,7 @@ records:
   attributes:
     slug: terms-of-service
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -86,7 +86,7 @@ records:
   attributes:
     slug: code-of-conduct
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -96,7 +96,7 @@ records:
   attributes:
     slug: accessibility
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -106,7 +106,7 @@ records:
   attributes:
     slug: cookie-policy
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -116,7 +116,7 @@ records:
   attributes:
     slug: contact
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: true
   translations:
@@ -126,7 +126,7 @@ records:
   attributes:
     slug: code-contributor-agreement
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:
@@ -136,7 +136,7 @@ records:
   attributes:
     slug: content-contributor-agreement
     privacy: public
-    published_at: '2026-01-01T00:00:00Z'
+    published_at: $now
     protected: true
     show_title: false
   translations:

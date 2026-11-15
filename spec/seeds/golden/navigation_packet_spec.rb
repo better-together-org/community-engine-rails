@@ -14,13 +14,21 @@ RSpec.describe 'Navigation seed packet' do # rubocop:disable RSpec/DescribeClass
     BetterTogether::Seeds::Plant.call(path: packet_path, platform: target, apply: true, restrict_sources: true, **)
   end
 
+  # Everything about an item except its position number, which only has to keep the sequence (see `order`).
   def item_shape(item) # rubocop:disable Metrics/AbcSize
-    # The builder places the Contributor Agreements dropdown at position 1 (it counts items it has only built,
-    # not saved), colliding with Privacy Policy. The packet puts it last, so that one position is not compared.
-    position = item.title == 'Contributor Agreements' ? nil : item.position
-    [item.navigation_area.identifier, item.title, item.parent&.title, position, item.item_type, item.route_name.presence,
+    [item.navigation_area.identifier, item.title, item.parent&.title, item.item_type, item.route_name.presence,
      item.privacy, item.visibility_strategy, item.permission_identifier.presence, item.visible, item.protected,
      item.linkable&.title]
+  end
+
+  # Titles in display order within each (area, parent) group, as sets per position: the builder ties some items
+  # (Events and Community Hub; Privacy Policy and the Contributor Agreements dropdown), and tied items have no
+  # defined order. The dropdown is left out because the builder's position for it is the accidental tie.
+  def order(scope) # rubocop:disable Metrics/CyclomaticComplexity
+    scope.includes(:navigation_area, :parent).group_by { |i| [i.navigation_area.identifier, i.parent&.title] }
+         .transform_values do |items|
+      items.reject { |i| i.title == 'Contributor Agreements' }.group_by(&:position).sort.map { |_, tied| tied.map(&:title).sort }
+    end
   end
 
   it 'passes protocol validation' do
@@ -75,6 +83,18 @@ RSpec.describe 'Navigation seed packet' do # rubocop:disable RSpec/DescribeClass
     expect(BetterTogether::Page.i18n.find_by!(platform:, slug: 'faq').privacy).to eq('private')
   end
 
+  describe 'published_at: $now' do
+    it 'stamps the plant time on creation and leaves it alone on a rerun' do
+      plant
+      page = BetterTogether::Page.i18n.find_by!(platform:, slug: 'faq')
+      stamped = page.published_at
+      expect(stamped).to be_within(1.minute).of(Time.current)
+
+      travel(2.days) { expect(plant).to include(created: 0, updated: 0, skipped_edited: 0, errors: []) }
+      expect(page.reload.published_at).to eq(stamped)
+    end
+  end
+
   describe 'equivalence with NavigationBuilder on the host platform' do
     let(:host) { BetterTogether::Platform.find_by!(host: true) }
 
@@ -85,6 +105,14 @@ RSpec.describe 'Navigation seed packet' do # rubocop:disable RSpec/DescribeClass
       built_items = BetterTogether::NavigationItem.where(platform: host).includes(:navigation_area, :parent, :linkable).map { |i| item_shape(i) }
 
       expect(packet_items).to match_array(built_items)
+    end
+
+    it 'keeps the builder\'s order of items' do
+      built = order(BetterTogether::NavigationItem.where(platform: host))
+      planted = order(BetterTogether::NavigationItem.where(platform:))
+
+      expect(planted.keys).to match_array(built.keys)
+      built.each { |group, titles| expect(planted[group]).to eq(titles), "order differs in #{group.inspect}" }
     end
 
     it 'plants the same pages and blocks' do

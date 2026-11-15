@@ -17,7 +17,8 @@ module BetterTogether
       def self.register_content
         Registry.register(:page) do
           model 'BetterTogether::Page'
-          attributes :slug, :privacy, :meta_description, :keywords, :layout, :template, :published_at, :show_title, :protected
+          attributes :slug, :privacy, :meta_description, :keywords, :layout, :template, :published_at, :show_title
+          protectable
           translated :title, :content
           reference :community, to: :community, optional: true
           reference :sidebar_nav, to: :navigation_area, optional: true
@@ -48,13 +49,15 @@ module BetterTogether
       def self.register_navigation
         Registry.register(:navigation_area) do
           model 'BetterTogether::NavigationArea'
-          attributes :visible, :style, :protected
+          attributes :visible, :style
+          protectable
           translated :name
         end
         Registry.register(:navigation_item) do
           model 'BetterTogether::NavigationItem'
           attributes :item_type, :url, :icon, :route_name, :visible, :privacy, :visibility_strategy,
-                     :permission_identifier, :protected
+                     :permission_identifier
+          protectable
           translated :title
           reference :navigation_area, to: :navigation_area
           reference :parent, to: :navigation_item, optional: true
