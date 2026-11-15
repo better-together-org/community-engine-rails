@@ -48,7 +48,7 @@ module BetterTogether
     # Operator and grantor must each hold the authority being delegated.
     def scopes_within_authority
       { operator: operator, granted_by: granted_by }.each do |field, person|
-        next if person.blank? || person.permitted_to?('manage_platform')
+        next if person.blank? || person.platform_manager?(platform)
 
         trusted_scopes_allowed(field)
         community_authority_allowed(field, person)

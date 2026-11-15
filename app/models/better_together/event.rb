@@ -59,7 +59,8 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    slugged :name
+    # Identifier already enforces slug uniqueness per platform (see Post).
+    slugged :name, slug_uniqueness: false
 
     # Explicit lifecycle status, orthogonal to the timing-derived scopes below
     # (draft/scheduled/upcoming/ongoing/past): an event can be confirmed AND

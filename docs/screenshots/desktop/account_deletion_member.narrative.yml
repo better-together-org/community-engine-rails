@@ -1,0 +1,12 @@
+---
+title: Request account deletion
+audience:
+- end_user
+journey_step: As a member, I can ask for my account on this platform to be deleted.
+callouts:
+- :id: form
+  :title: Request deletion
+  :description: Starts the review.
+accessibility_notes: The reason field has a visible label.
+slug: account_deletion_member
+device: desktop

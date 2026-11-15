@@ -1,0 +1,107 @@
+name: Diagram Autofix
+
+# When a same-repo pull request fails Schema Diagrams or Diagrams Check, regenerate the diagrams and commit
+# the difference as a GitHub-signed commit (bts-robot token), the same way i18n-health fixes locale files.
+# This covers a branch whose diagrams went stale after a base branch was merged in (for example after a
+# person resolved the code conflicts in the GitHub editor), and ordinary forgotten diagram updates.
+# It does not touch a PR that fails for any other reason, or whose branch moved since the failing run.
+
+on:
+  workflow_run:
+    workflows: ["Schema Diagrams", "Diagrams Check"]
+    types: [completed]
+
+# One fix per branch at a time. A second failing check on the same branch finds nothing left to fix.
+concurrency:
+  group: diagram-autofix-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  fix:
+    if: >-
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      SEARCH_BACKEND: "pg_search"
+      BRANCH: ${{ github.event.workflow_run.head_branch }}
+      FAILED_SHA: ${{ github.event.workflow_run.head_sha }}
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      # The robot token is given only to the commit step, never to steps that run the branch's own code.
+      - name: Checkout the branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+
+      - name: Stop if the branch moved since the failing run
+        id: tip
+        shell: bash
+        run: |
+          if [[ "$(git rev-parse HEAD)" != "${FAILED_SHA}" ]]; then
+            echo "::notice::${BRANCH} moved after the failing run; the newer push will be checked on its own."
+            echo "current=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "current=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      # Copied from main outside the checkout, so the branch cannot change what runs with the token.
+      - name: Take the commit tooling from main
+        if: steps.tip.outputs.current == 'true'
+        shell: bash
+        run: |
+          git fetch -q origin main
+          mkdir -p "${RUNNER_TEMP}/tools"
+          git show origin/main:bin/ci-signed-commit > "${RUNNER_TEMP}/tools/ci-signed-commit"
+          chmod +x "${RUNNER_TEMP}/tools/ci-signed-commit"
+
+      - name: Regenerate the diagrams
+        if: steps.tip.outputs.current == 'true'
+        uses: ./.github/actions/regenerate-diagrams
+
+      - name: Commit what changed
+        if: steps.tip.outputs.current == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+        run: |
+          paths=(db/community-engine-db.dbml docs/diagrams)
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "::error::Secret BTS_ROBOT_PUSH_TOKEN is not set; cannot make a verified commit."
+            exit 1
+          fi
+          if [[ -z "$(git status --porcelain -- "${paths[@]}")" ]]; then
+            echo "Regeneration changed nothing; the failure is not stale diagrams."
+            exit 0
+          fi
+          git status --short -- "${paths[@]}" | head -50
+          "${RUNNER_TEMP}/tools/ci-signed-commit" "chore(diagrams): regenerate stale diagrams" "${paths[@]}"

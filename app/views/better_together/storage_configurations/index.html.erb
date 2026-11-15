@@ -78,6 +78,7 @@
             <th scope="col"><%= t('.header_bucket') %></th>
             <th scope="col"><%= t('.header_endpoint') %></th>
             <th scope="col"><%= t('.header_status') %></th>
+            <th scope="col"><%= t('.header_health') %></th>
             <th scope="col"><span class="visually-hidden"><%= t('.header_actions') %></span></th>
           </tr>
         </thead>
@@ -101,8 +102,18 @@
                   <span class="text-muted"><%= t('.not_active') %></span>
                 <% end %>
               </td>
+              <td id="<%= dom_id(config, :health) %>">
+                <%= render 'better_together/storage_configurations/health', config: %>
+              </td>
               <td class="text-end">
                 <div class="btn-group btn-group-sm" role="group">
+                  <% unless config.local? %>
+                    <%= button_to t('.test_btn'),
+                                  test_connection_platform_storage_configuration_path(@platform, config),
+                                  method: :post,
+                                  id: dom_id(config, :test_connection),
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                  <% end %>
                   <% unless active %>
                     <%= button_to t('.activate_btn'),
                                   activate_platform_storage_configuration_path(@platform, config),

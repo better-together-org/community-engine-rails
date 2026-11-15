@@ -4,7 +4,13 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::PersonPlatformMemberships' do
   let(:platform) { BetterTogether::Platform.find_by(host: true) || configure_host_platform }
-  let(:person) { create(:better_together_person, name: "Patrick O'Brien") }
+  let(:person) do
+    create(:better_together_person, name: "Patrick O'Brien", platform_id: platform.id).tap do |p|
+      platform.community.person_community_memberships.create!(
+        member: p, status: 'active', role: BetterTogether::Role.find_by(resource_type: 'BetterTogether::Community')
+      )
+    end
+  end
   let(:analytics_viewer_role) do
     BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer', resource_type: 'BetterTogether::Platform')
   end

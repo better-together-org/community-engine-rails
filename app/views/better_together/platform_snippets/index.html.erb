@@ -1,0 +1,94 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1><%= t('.title') %></h1>
+      <p class="text-muted mb-0"><%= t('.subtitle', platform_name: @platform.name) %></p>
+    </div>
+    <%= link_to new_platform_platform_snippet_path(@platform), id: 'new-platform-snippet-btn', class: 'btn btn-primary' do %>
+      <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn') %>
+    <% end %>
+  </div>
+
+  <div class="alert alert-warning" id="platform-snippets-warning" role="note"><%= t('.warning') %></div>
+
+  <section id="platform-snippets-kill-switch" class="card mb-4" aria-labelledby="platform-snippets-switch-title">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        <h2 class="h5 mb-1" id="platform-snippets-switch-title"><%= t('.kill_switch_title') %></h2>
+        <p class="mb-0 text-muted"><%= @platform.snippets_enabled? ? t('.kill_switch_on') : t('.kill_switch_off') %> <%= t('.kill_switch_hint') %></p>
+      </div>
+      <%= button_to (@platform.snippets_enabled? ? t('.turn_off') : t('.turn_on')),
+                    toggle_all_platform_platform_snippets_path(@platform, enabled: !@platform.snippets_enabled?),
+                    method: :patch, id: 'platform-snippets-switch-btn',
+                    class: "btn #{@platform.snippets_enabled? ? 'btn-outline-danger' : 'btn-outline-success'}" %>
+    </div>
+  </section>
+
+  <% if @snippets.any? %>
+    <div class="table-responsive">
+      <table id="platform-snippets-table" class="table table-hover" aria-label="<%= t('.table_aria') %>">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('.header_name') %></th>
+            <th scope="col"><%= t('.header_location') %></th>
+            <th scope="col"><%= t('.header_kind') %></th>
+            <th scope="col"><%= t('.header_consent') %></th>
+            <th scope="col"><%= t('.header_status') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('.header_actions') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @snippets.each do |snippet| %>
+            <tr id="<%= dom_id(snippet) %>">
+              <td><%= snippet.name %></td>
+              <td><%= t("better_together.platform_snippets.locations.#{snippet.location}") %></td>
+              <td><%= t("better_together.platform_snippets.kinds.#{snippet.kind}") %></td>
+              <td><%= t("better_together.platform_snippets.consent_categories.#{snippet.consent_category}") %></td>
+              <td>
+                <% if snippet.enabled? %>
+                  <span class="platform-snippet-status text-success"><i class="fas fa-check-circle" aria-hidden="true"></i> <%= t('.enabled_label') %></span>
+                <% else %>
+                  <span class="platform-snippet-status text-muted"><%= t('.disabled_label') %></span>
+                <% end %>
+              </td>
+              <td class="text-end">
+                <div id="<%= dom_id(snippet, :actions) %>" class="btn-group btn-group-sm" role="group">
+                  <%= button_to t('.move_up'), move_platform_platform_snippet_path(@platform, snippet, direction: 'up'),
+                                method: :patch, class: 'btn btn-outline-secondary btn-sm' %>
+                  <%= button_to t('.move_down'), move_platform_platform_snippet_path(@platform, snippet, direction: 'down'),
+                                method: :patch, class: 'btn btn-outline-secondary btn-sm' %>
+                  <%= link_to t('.edit_btn'), edit_platform_platform_snippet_path(@platform, snippet),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                  <%= button_to t('.delete_btn'), platform_platform_snippet_path(@platform, snippet), method: :delete,
+                                class: 'btn btn-outline-danger btn-sm', data: { turbo_confirm: t('.delete_confirm') } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info" id="platform-snippets-empty"><%= t('.none_yet') %></div>
+  <% end %>
+
+  <section id="platform-snippets-audit" class="mt-4" aria-labelledby="platform-snippets-audit-title">
+    <h2 class="h5" id="platform-snippets-audit-title"><%= t('.audit_title') %></h2>
+    <ul class="list-unstyled small">
+      <% @audits.each do |audit| %>
+        <li id="<%= dom_id(audit) %>">
+          <time datetime="<%= audit.created_at.iso8601 %>"><%= l(audit.created_at, format: :short) %></time>
+          <%= t('.audit_line', action: t("better_together.platform_snippets.audit_actions.#{audit.action}"), name: audit.snippet_name) %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <div class="mt-3">
+    <%= link_to t('.back_to_platform'), edit_platform_path(@platform), class: 'btn btn-outline-secondary' %>
+  </div>
+</div>

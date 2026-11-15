@@ -1,0 +1,49 @@
+{
+  "name": "account_deletion_platform_request",
+  "device": "mobile",
+  "url": "/en/platform_deletion_requests/new",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "account_deletion",
+  "flow": "platform_request",
+  "source_spec": "./spec/docs_screenshots/better_together/account_deletion_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-deletion-request-form",
+      "title": "Platform removal request",
+      "bullets": [
+        "Sent to the host platform stewards.",
+        "Can be cancelled while pending."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 278.546875,
+        "width": 476.0,
+        "height": 242.0,
+        "right": 488.0,
+        "bottom": 520.546875,
+        "center_x": 250.0,
+        "center_y": 399.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 278.546875,
+        "width": 476.0,
+        "height": 242.0,
+        "right": 488.0,
+        "bottom": 520.546875,
+        "center_x": 250.0,
+        "center_y": 399.546875
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 540.55,
+        "width": 270.0,
+        "height": 216,
+        "score": 736.453125
+      }
+    }
+  ]
+}

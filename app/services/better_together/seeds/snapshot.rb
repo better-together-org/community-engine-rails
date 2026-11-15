@@ -27,7 +27,7 @@ module BetterTogether
       def proposed(scratch, definition, entry)
         RecordWriter.assign_fields(scratch, definition, entry)
         values = read(scratch, definition, keys_for(entry).grep_v(/\Aref:/))
-        entry.refs.each { |slot, ref| values["ref:#{slot}"] = "#{ref['type']}:#{ref['key']}" }
+        entry.refs.each { |slot, ref| values["ref:#{slot}"] = "#{ref['type']}:#{Registry.fetch(ref['type']).stored_key(ref['key'])}" }
         values
       end
 

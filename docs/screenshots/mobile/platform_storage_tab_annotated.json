@@ -1,0 +1,48 @@
+{
+  "name": "platform_storage_tab_annotated",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_storage",
+  "flow": "platform_storage_tab",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_storage_tab_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-storage-health",
+      "title": "Connection health",
+      "bullets": [
+        "Result of the last connection test."
+      ],
+      "target": {
+        "x": 16.0,
+        "y": 873.390625,
+        "width": 453.0,
+        "height": 45.0,
+        "right": 469.0,
+        "bottom": 918.390625,
+        "center_x": 242.5,
+        "center_y": 895.890625
+      },
+      "avoid": {
+        "x": 16.0,
+        "y": 873.390625,
+        "width": 453.0,
+        "height": 45.0,
+        "right": 469.0,
+        "bottom": 918.390625,
+        "center_x": 242.5,
+        "center_y": 895.890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 721.39,
+        "width": 270.0,
+        "height": 132,
+        "score": 873.390625
+      }
+    }
+  ]
+}

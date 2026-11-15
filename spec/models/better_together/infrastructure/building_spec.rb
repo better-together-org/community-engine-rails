@@ -97,17 +97,15 @@ RSpec.describe BetterTogether::Infrastructure::Building do
 
     describe '#schedule_address_geocoding' do
       it 'enqueues geocoding when the address can be geocoded' do
-        allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
         address = create(:better_together_address,
                          line1: '62 Broadway',
                          city_name: 'Corner Brook',
                          state_province_name: 'NL',
                          country_name: 'Canada')
 
-        create(:better_together_infrastructure_building, address:)
-
-        expect(BetterTogether::Geography::GeocodingJob).to have_received(:perform_later)
-          .with(instance_of(described_class))
+        expect do
+          create(:better_together_infrastructure_building, address:)
+        end.to have_enqueued_job(BetterTogether::Geography::GeocodingJob).with(instance_of(described_class))
       end
     end
   end
