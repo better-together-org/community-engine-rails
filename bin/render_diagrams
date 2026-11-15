@@ -137,9 +137,8 @@ else
 fi
 
 # Chromium refuses to start as root without --no-sandbox (containers, cloud agent
-# sessions), and GitHub's Ubuntu 24 runners block the unprivileged user namespaces its sandbox needs,
-# so hand mermaid-cli a puppeteer config that disables the sandbox there.
-if [[ ( "$(id -u)" -eq 0 || -n "${GITHUB_ACTIONS:-}" ) && -z "${MERMAID_PUPPETEER_CONFIG:-}" ]]; then
+# sessions), so hand mermaid-cli a puppeteer config that disables the sandbox there.
+if [[ "$(id -u)" -eq 0 && -z "${MERMAID_PUPPETEER_CONFIG:-}" ]]; then
   MERMAID_PUPPETEER_CONFIG="$(mktemp)"
   echo '{"args":["--no-sandbox"]}' > "$MERMAID_PUPPETEER_CONFIG"
 fi
