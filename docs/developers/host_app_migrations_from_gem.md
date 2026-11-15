@@ -27,6 +27,14 @@ Copied migrations carry the `.better_together.rb` suffix. The engine then stops 
 
 Delete `db/migrate/*.better_together.rb`, then confirm `rails db:migrate:status` shows no `NO FILE` rows for engine versions. Versions stay identical, so history is preserved.
 
+## Switching from gem to install
+
+Do not run `better_together:install:migrations` on an app that already ran the engine migrations in place. The copies get new timestamps, so the database sees 392 pending migrations and the first one fails with `PG::DuplicateTable`. The `.better_together.rb` files also switch the in-place mode off, which is why `bin/check-engine-migrations` fails the build when they appear. Choose the mode before the first `db:migrate`; changing it on a migrated database is not covered here.
+
+## Upgrading the gem
+
+`bundle update better_together` then `rails db:migrate` runs only the new engine migrations and updates `db/schema.rb`; there is no copy step. Review the schema diff in the pull request, and read the new files under the gem's `db/migrate` before upgrading (some are destructive). Host migrations are ordered by timestamp together with the engine's: one dated before an engine migration that is still pending simply runs in version order, and one dated earlier than the newest applied version runs on the next `db:migrate`. Rolling back (`db:rollback`, `db:migrate:redo`) works on engine versions like any other.
+
 ## Server setup
 
 Production host provisioning is handled by `bin/prod/host-setup.sh` (see the production setup docs).
