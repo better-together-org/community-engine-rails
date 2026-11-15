@@ -143,12 +143,12 @@ RSpec.describe BetterTogether::Seeds::Plant do
   context 'with a field the registry does not allow' do
     let(:records) do
       list = nav_records
-      list[:navigation_item][0]['attributes']['protected'] = true
+      list[:navigation_item][0]['attributes']['platform_id'] = SecureRandom.uuid
       list
     end
 
     it 'rejects the record instead of assigning it' do
-      expect(plant[:errors]).to include(include(field: '/attributes/protected'))
+      expect(plant[:errors]).to include(include(field: '/attributes/platform_id'))
     end
   end
 
@@ -193,6 +193,16 @@ RSpec.describe BetterTogether::Seeds::Plant do
       first = nil
       expect { first = plant }.to change(BetterTogether::Content::PageBlock, :count).by(1), -> { first[:errors].inspect }
       expect { expect(plant[:errors]).to be_empty }.not_to change(BetterTogether::Content::PageBlock, :count)
+    end
+
+    it 'reports the join row as unchanged on a rerun, in the plan and in the applied report', :aggregate_failures do
+      plant
+      planned = plant(apply: false)
+      applied = plant
+
+      expect(planned).to include(created: 0, unchanged: 3)
+      expect(applied).to include(created: 0, unchanged: 3)
+      expect(applied[:records]).to include(include(record: 'page_block:about/body', action: :unchanged))
     end
   end
 

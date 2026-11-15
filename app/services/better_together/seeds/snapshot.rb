@@ -31,6 +31,14 @@ module BetterTogether
         values
       end
 
+      # True when `current` holds everything `proposed` says. A hash-valued store (css_settings) is filled in
+      # with defaults by the model, so a packet that names only some keys still matches the stored record.
+      def covers?(current, proposed)
+        return current == proposed unless proposed.is_a?(Hash) && current.is_a?(Hash)
+
+        proposed.all? { |k, v| covers?(current[k], v) }
+      end
+
       def fingerprint(flat)
         Digest::SHA256.hexdigest(JSON.generate(flat.sort.to_h))
       end

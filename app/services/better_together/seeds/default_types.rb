@@ -17,7 +17,7 @@ module BetterTogether
       def self.register_content
         Registry.register(:page) do
           model 'BetterTogether::Page'
-          attributes :slug, :privacy, :meta_description, :keywords, :layout, :template, :published_at, :show_title
+          attributes :slug, :privacy, :meta_description, :keywords, :layout, :template, :published_at, :show_title, :protected
           translated :title, :content
           reference :community, to: :community, optional: true
           reference :sidebar_nav, to: :navigation_area, optional: true
@@ -25,7 +25,7 @@ module BetterTogether
         Registry.register(:content_block) do
           model 'BetterTogether::Content::Block'
           sti :type, allowed: -> { BetterTogether::Seeds::DefaultTypes.content_block_types }
-          attributes :privacy, :visible, :css_settings, :html_attributes, :content_data, :media_settings
+          attributes :privacy, :visible, :css_settings, :html_attributes, :content_data, :media_settings, :template_path
           translated :content
           attachment :background_image_file
         end
@@ -48,13 +48,13 @@ module BetterTogether
       def self.register_navigation
         Registry.register(:navigation_area) do
           model 'BetterTogether::NavigationArea'
-          attributes :visible, :style
+          attributes :visible, :style, :protected
           translated :name
         end
         Registry.register(:navigation_item) do
           model 'BetterTogether::NavigationItem'
           attributes :item_type, :url, :icon, :route_name, :visible, :privacy, :visibility_strategy,
-                     :permission_identifier
+                     :permission_identifier, :protected
           translated :title
           reference :navigation_area, to: :navigation_area
           reference :parent, to: :navigation_item, optional: true
