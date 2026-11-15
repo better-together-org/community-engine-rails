@@ -12,7 +12,8 @@ module BetterTogether
         new(...).call
       end
 
-      def initialize(path:, platform:, apply: false, planted_by: nil, attach_files: nil, restrict_sources: false)
+      def initialize(path:, platform:, apply: false, planted_by: nil, attach_files: nil, restrict_sources: false, require_signature: false)
+        @require_signature = require_signature
         @path = path
         @restrict_sources = restrict_sources
         @platform = platform
@@ -54,6 +55,9 @@ module BetterTogether
       # Verifies MANIFEST.json when present; record files need one (fail closed).
       def check_transport(root, packet)
         manifest_path = root.join('MANIFEST.json')
+        signature_errors = check_signature(root, packet, manifest_path)
+        return [signature_errors, nil] if signature_errors.any?
+
         has_files = packet.entries.any? { |e| e.files.any? }
         return [['records declare files but the packet has no MANIFEST.json'], nil] if has_files && !manifest_path.file?
         return [[], nil] unless manifest_path.file?
@@ -63,6 +67,16 @@ module BetterTogether
         return [report.errors.map { |e| [e.file, e.message].compact.join(': ') }, nil] unless report.valid?
 
         [[], BlobAttacher.new(root:, manifest:, platform: @platform)]
+      end
+
+      # A signature, when present, must verify against a trusted key before anything else is read.
+      def check_signature(root, packet, manifest_path)
+        return [] unless @require_signature || Signature.signed?(root)
+        return ['a signature is required but the packet has no MANIFEST.json'] unless manifest_path.file?
+
+        report = Signature.verify(root, key_id: packet.envelope.dig('seed', 'origin', 'signing_key_id'),
+                                        require: @require_signature)
+        report.errors.map { |e| [e.file, e.message].compact.join(': ') }
       end
 
       def apply(packet, plan)
