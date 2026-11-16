@@ -58,11 +58,11 @@ module BetterTogether # :nodoc:
       platform_steward.build_person(name: 'Platform Steward', identifier: 'manager-example-test') unless platform_steward.person
       platform_steward.save! if platform_steward.new_record? || platform_steward.changed? || platform_steward.person&.changed?
 
-      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+      platform_steward_role = HostRoles.find('platform_steward')
       unless platform_steward_role
         BetterTogether::AccessControlBuilder.seed_data
-        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                                BetterTogether::Role.find_by(identifier: 'platform_manager')
+        platform_steward_role = HostRoles.find('platform_steward') ||
+                                HostRoles.find('platform_manager')
       end
 
       if platform_steward_role
