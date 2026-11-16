@@ -29,4 +29,35 @@ RSpec.describe 'Static page share metadata', :as_platform_manager do
     expect(doc.at_css("meta[property='og:type']")['content']).to eq('website')
     expect(response.body).not_to include('twitter:')
   end
+
+  describe 'og:image' do
+    let(:png) { 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==' }
+    let(:hero) { create(:better_together_content_hero, :with_background_image) }
+
+    let(:share_image_content) { ->(doc) { doc.at_css("meta[property='og:image']")&.[]('content').to_s } }
+
+    it 'uses the feature image, ahead of the hero background', :aggregate_failures do
+      page.page_blocks.create!(block: hero, position: 1)
+      page.reload.update!(feature_image_data: png, feature_image_filename: 'banner.png')
+
+      get better_together.render_page_path(path: page.slug, locale:)
+
+      expect(share_image_content.call(Nokogiri::HTML(response.body))).to include('banner.png')
+      expect(Nokogiri::HTML(response.body).at_css("meta[property='og:image:alt']")['content']).to eq(page.title)
+    end
+
+    it 'falls back to the hero background for one release' do
+      page.page_blocks.create!(block: hero, position: 1)
+
+      get better_together.render_page_path(path: page.slug, locale:)
+
+      expect(share_image_content.call(Nokogiri::HTML(response.body))).to include('hero_background.jpg')
+    end
+
+    it 'falls back to the platform logo when the page has neither' do
+      get better_together.render_page_path(path: page.slug, locale:)
+
+      expect(share_image_content.call(Nokogiri::HTML(response.body))).not_to include('banner.png', 'hero_background.jpg')
+    end
+  end
 end

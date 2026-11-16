@@ -38,6 +38,7 @@ export default class extends Controller {
         reader.onload = (e) => {
             // Create a new image element
             const img = document.createElement("img");
+            img.alt = ""; // decorative: the chosen file name is shown in the field label
             img.src = e.target.result; // Set the preview image's `src` to the file content
             if (this.imageClasses) {
                 img.classList.add(...this.imageClasses.split(' '));
@@ -69,6 +70,7 @@ export default class extends Controller {
 
     // Create and append the existing image to the preview container
     const img = document.createElement("img");
+    img.alt = ""; // decorative: the chosen file name is shown in the field label
     img.src = this.existingImageUrl; // Use the stored image URL
     if (this.imageClasses) {
       img.classList.add(this.imageClasses);

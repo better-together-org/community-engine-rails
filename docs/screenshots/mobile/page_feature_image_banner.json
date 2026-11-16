@@ -1,0 +1,49 @@
+{
+  "name": "page_feature_image_banner",
+  "device": "mobile",
+  "url": "/en/harbour-history",
+  "title": "Harbour history | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "page_feature_image_banner",
+  "flow": "page_feature_image_banner",
+  "source_spec": "./spec/docs_screenshots/better_together/page_feature_image_banner_spec.rb",
+  "callouts": [
+    {
+      "selector": "#page-feature-image-title",
+      "title": "Banner title",
+      "bullets": [
+        "The page title sits on the feature image.",
+        "Pages that open with a hero use the hero heading."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 72.609375,
+        "width": 476.0,
+        "height": 67.390625,
+        "right": 488.0,
+        "bottom": 140.0,
+        "center_x": 250.0,
+        "center_y": 106.3046875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 72.609375,
+        "width": 476.0,
+        "height": 67.390625,
+        "right": 488.0,
+        "bottom": 140.0,
+        "center_x": 250.0,
+        "center_y": 106.3046875
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 160.0,
+        "width": 270.0,
+        "height": 236,
+        "score": 1117.0
+      }
+    }
+  ]
+}

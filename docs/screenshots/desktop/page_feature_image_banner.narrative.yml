@@ -1,0 +1,13 @@
+---
+title: Page feature image banner
+audience:
+- member
+- content_editor
+journey_step: As a reader, I see the page picture with its title.
+callouts:
+- :id: feature_banner
+  :title: Banner title
+  :description: The title is the single h1 of the page.
+accessibility_notes: The image is decorative; the heading names the page.
+slug: page_feature_image_banner
+device: desktop
