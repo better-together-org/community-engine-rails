@@ -3476,8 +3476,6 @@ fr:
         title: Connexions de plateforme
       new:
         back: Retour
-        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
-        register_platform_link: Enregistrer une plateforme externe →
         title: Nouvelle connexion de plateforme
       show:
         api_read: Lecture API
