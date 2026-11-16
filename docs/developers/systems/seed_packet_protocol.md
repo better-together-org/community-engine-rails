@@ -178,7 +178,7 @@ end
 | `attachment`, `position`, `sti` | Files, ordering column, and the subclass column for STI types such as content blocks |
 | `before_resolve`, `transform`, `after_plant` | Hooks for host-app logic |
 
-`Registry.ordered` returns types in dependency order and raises `DependencyCycle`. `TypeDefinition#find(platform:, key:, parent_refs:)` resolves a key on the target platform only, never globally. Host apps register their own types (NLO districts, NLV venues) from an initializer.
+`Registry.ordered` returns types in dependency order and raises `DependencyCycle`. `TypeDefinition#find(platform:, key:, parent_refs:)` resolves a key on the target platform only, never globally. A type keyed `within:` (or `by_refs:`) is found through the parent records its own refs name: the planner follows the packet entry's refs (a `social_media_account` reaches its `contact_detail`, which reaches its `contactable`) and the applier takes parents from the records written or located earlier in the same run. A parent that is not in the packet cannot be named by type and key alone, so a ref to such a record fails the plan with a packet error (`was not found in the packet or on the platform`) instead of raising. Host apps register their own types (NLO districts, NLV venues) from an initializer.
 
 Registered: `page`, `content_block`, `page_block`, `navigation_area`, `navigation_item`, `upload`, `event`, `community`, `contact_detail`, `social_media_account`, `platform` (lookup target only). `SocialMediaAccount::PLATFORMS` gains Flickr.
 

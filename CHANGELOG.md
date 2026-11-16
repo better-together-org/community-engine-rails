@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Seed packets: planning or planting a `social_media_account` that references a `contact_detail` no longer crashes with `KeyError: key not found: :contactable`. Records keyed by their parents (`within:`, `by_refs:`) are now located through the parents their own refs name, in the packet and in an already planted database, and unresolvable parents fail the plan with a packet error
+
 ### Security
 - Bump omniauth to 2.3.1 and require `>= 2.2.0` (GHSA-m27g-v28p-f9fx / CVE-2026-63183, host header injection). The GitHub strategy now sets `full_host` through `BetterTogether::OmniauthFullHost`, so a forged `Host` or `X-Forwarded-Host` cannot change the OAuth `redirect_uri`; only active platform domains are honoured, otherwise the host platform URL is used
 
