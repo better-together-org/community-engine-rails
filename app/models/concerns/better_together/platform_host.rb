@@ -18,16 +18,21 @@ module BetterTogether
 
     # Method to set the host attribute to true only if there is no host community
     def set_as_host
-      return if self.class.where(host: true).exists?
+      return if host_scope.where(host: true).exists?
 
       self.host = true
     end
 
     protected
 
+    # STI subtypes share one host row with their base class, so uniqueness is checked against the base.
+    def host_scope
+      self.class.base_class
+    end
+
     # Validate that only one record can be marked as host
     def single_host_record
-      return unless host && self.class.where.not(id:).exists?(host: true)
+      return unless host && host_scope.where.not(id:).exists?(host: true)
 
       errors.add(:host, I18n.t('errors.models.host_single'))
     end

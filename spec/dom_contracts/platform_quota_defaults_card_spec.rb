@@ -66,7 +66,7 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
   end
 
   it 'is not rendered for an external platform' do
-    external = create(:better_together_platform, :external)
+    external = create(:better_together_platform, :remote)
 
     get better_together.edit_platform_path(locale: I18n.default_locale, id: external.slug)
 

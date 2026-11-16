@@ -30,7 +30,7 @@ module BetterTogether
       host_platform = ::BetterTogether::Platform.find_by(host: true)
       return false unless host_platform
 
-      if record.external?
+      if record.remote?
         user.permitted_to?('manage_network_connections', host_platform) ||
           user.permitted_to?('create_platform', host_platform)
       else

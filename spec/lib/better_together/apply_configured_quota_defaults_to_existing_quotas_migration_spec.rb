@@ -30,7 +30,7 @@ RSpec.describe ApplyConfiguredQuotaDefaultsToExistingQuotas do
   end
 
   it 'leaves quotas owned by external owners alone' do
-    external = create(:better_together_platform, :external)
+    external = create(:better_together_platform, :remote)
     external_person = quota_for(create(:better_together_person, platform: external))
     external_platform = quota_for(external)
 

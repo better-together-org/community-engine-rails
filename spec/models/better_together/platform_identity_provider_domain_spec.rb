@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::PlatformIdentityProviderDomain do
   let(:platform) { create(:better_together_platform) }
-  let(:external) { create(:better_together_platform, external: true) }
+  let(:external) { create(:better_together_platform, locality: 'remote') }
   let(:domain) do
     BetterTogether::PlatformDomain.create!(platform:, hostname: 'one.example.test', active: true)
   end

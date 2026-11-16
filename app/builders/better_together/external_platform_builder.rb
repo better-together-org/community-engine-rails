@@ -49,18 +49,16 @@ module BetterTogether
 
       # Clear existing external platforms - Use with caution!
       def clear_existing
-        count = Platform.external.count
-        Platform.external.delete_all
+        count = OauthPlatform.count
+        OauthPlatform.delete_all
         puts "✓ Cleared #{count} existing external platforms"
       end
 
       private
 
       def create_external_platform(provider_attrs) # rubocop:todo Metrics/MethodLength
-        platform = Platform.find_or_initialize_by(
-          identifier: provider_attrs[:identifier],
-          external: true
-        )
+        platform = Platform.remote.find_by(identifier: provider_attrs[:identifier]) ||
+                   OauthPlatform.new(identifier: provider_attrs[:identifier], locality: 'remote')
 
         if platform.new_record?
           platform.assign_attributes(
@@ -68,7 +66,7 @@ module BetterTogether
             url: provider_attrs[:url],
             description: provider_attrs[:description],
             time_zone: provider_attrs[:time_zone],
-            external: true,
+            locality: 'remote',
             host: false,
             privacy: 'public'
           )

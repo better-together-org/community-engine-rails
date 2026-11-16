@@ -148,12 +148,13 @@ module BetterTogether
     end
 
     def provision_platform!
-      platform = ::BetterTogether::Platform.find_or_initialize_by(host_url: @host_url)
+      platform = ::BetterTogether::Platform.find_by(host_url: @host_url) ||
+                 (@host ? ::BetterTogether::OperatorPlatform : ::BetterTogether::HostedPlatform).new(host_url: @host_url)
 
       platform.assign_attributes(
         name: @name,
         time_zone: @time_zone,
-        external: false,
+        locality: 'local',
         host: @host,
         privacy: 'public'
       )

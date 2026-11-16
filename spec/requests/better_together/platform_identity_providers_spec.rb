@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe 'Platform identity providers admin', :as_platform_manager do # rubocop:disable RSpec/DescribeClass
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
   let!(:github_platform) do
-    BetterTogether::Platform.find_by(identifier: 'github', external: true) ||
-      create(:better_together_platform, identifier: 'github', external: true, name: 'GitHub', url: 'https://github.com')
+    BetterTogether::Platform.find_by(identifier: 'github', locality: 'remote') ||
+      create(:better_together_platform, identifier: 'github', locality: 'remote', name: 'GitHub', url: 'https://github.com')
   end
   let(:base) { "/#{I18n.default_locale}/host/platforms/#{platform.to_param}/identity_providers" }
   let(:page_html) { Nokogiri::HTML(response.body) }

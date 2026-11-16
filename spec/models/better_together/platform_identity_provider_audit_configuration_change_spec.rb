@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::PlatformIdentityProvider, '#audit_configuration_change' do
   let(:platform) { create(:better_together_platform) }
-  let(:github) { create(:better_together_platform, identifier: 'github-audit', external: true) }
+  let(:github) { create(:better_together_platform, identifier: 'github-audit', locality: 'remote') }
 
   it 'records created and updated events without secret values', :aggregate_failures do
     events = []

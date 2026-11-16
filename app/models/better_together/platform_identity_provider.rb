@@ -102,7 +102,7 @@ module BetterTogether
       return if identifier.blank?
 
       self.provider_platform = PersonPlatformIntegration.find_external_platform_for_provider(strategy) ||
-                               Platform.find_by(identifier:, external: true)
+                               Platform.remote.find_by(identifier:)
     end
 
     def issuer_platform_identifier
@@ -110,7 +110,7 @@ module BetterTogether
     end
 
     def issuer_platform
-      Platform.external.find_or_create_by!(identifier: issuer_platform_identifier) do |platform|
+      OauthPlatform.find_or_create_provider!(issuer_platform_identifier) do |platform|
         platform.name = issuer_host
         platform.url = issuer
         platform.description = "OpenID Connect issuer #{issuer}"
@@ -178,7 +178,7 @@ module BetterTogether
     end
 
     def provider_platform_is_external
-      return if provider_platform.nil? || provider_platform.external?
+      return if provider_platform.nil? || provider_platform.remote?
 
       errors.add(:provider_platform, :invalid)
     end

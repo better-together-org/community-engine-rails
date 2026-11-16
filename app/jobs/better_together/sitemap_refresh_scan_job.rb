@@ -9,7 +9,7 @@ module BetterTogether
     queue_as :maintenance
 
     def perform
-      BetterTogether::Platform.internal.find_each do |platform|
+      BetterTogether::Platform.local.find_each do |platform|
         BetterTogether::SitemapRefreshJob.enqueue_unless_pending(platform.id)
       end
     end

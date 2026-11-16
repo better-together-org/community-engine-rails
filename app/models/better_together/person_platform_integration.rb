@@ -194,7 +194,7 @@ module BetterTogether
       return nil unless platform_identifier
 
       # Find or create the external platform for this OAuth provider
-      Platform.external.find_or_create_by!(identifier: platform_identifier) do |platform|
+      OauthPlatform.find_or_create_provider!(platform_identifier) do |platform|
         platform.name = platform_identifier.titleize
         platform.url = platform_url_for_provider(platform_identifier)
         platform.description = "#{platform_identifier.titleize} OAuth Provider"

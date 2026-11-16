@@ -28,6 +28,9 @@ erDiagram
   EXT_PLATFORM o|--o{ FEATURE_ACCESS_GRANTS : "platform / platform_id"
   EXT_PERSON ||--o{ FEATURE_ACCESS_GRANTS : "person / person_id"
   EXT_PERSON o|--o{ FEATURE_ACCESS_GRANTS : "granted_by_person / granted_by_person_id"
+  EXT_PERSON o|--o{ PLATFORMS : "creator / creator_id"
+  EXT_COMMUNITY ||--o{ PLATFORMS : "community / community_id"
+  EXT_STORAGE_CONFIGURATION o|--o{ PLATFORMS : "active_storage_configuration / storage_configuration_id"
   EXT_PLATFORM_CONNECTION ||--o{ FEDERATION_CONTENT_GRANTS : "platform_connection / platform_connection_id"
   EXT_ACTION_MAILBOX_INBOUND_EMAIL o|--o{ INBOUND_EMAIL_MESSAGES : "inbound_email / inbound_email_id"
   EXT_PLATFORM o|--o{ INBOUND_EMAIL_MESSAGES : "platform / platform_id"
@@ -238,6 +241,19 @@ erDiagram
     notes text
     expires_at datetime
     revoked_at datetime
+  }
+
+  PLATFORMS {
+    community_id uuid
+    creator_id uuid
+    storage_configuration_id uuid
+    identifier string
+    locality string
+    privacy string
+    time_zone string
+    type string
+    url string
+    host boolean
   }
 
   FEDERATION_CONTENT_GRANTS {
@@ -600,6 +616,10 @@ erDiagram
   }
 
   EXT_EVENT {
+    string export_ref
+  }
+
+  EXT_STORAGE_CONFIGURATION {
     string export_ref
   }
 

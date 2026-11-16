@@ -103,7 +103,7 @@ module BetterTogether
     end
 
     def primary_community_privacy
-      return 'private' if respond_to?(:external?) && external?
+      return 'private' if respond_to?(:remote?) && remote?
       return privacy if respond_to?(:privacy)
 
       'private'

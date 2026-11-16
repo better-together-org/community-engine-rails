@@ -127,7 +127,7 @@ module BetterTogether
     end
 
     def base_platform
-      ::BetterTogether::Platform.find_or_initialize_by(host: true) do |platform|
+      ::BetterTogether::OperatorPlatform.find_or_initialize_by(host: true) do |platform|
         platform.url                 = helpers.base_url
         platform.privacy             = 'private'
         platform.time_zone           = Time.zone.name

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::IdentityProviderCredentials do
   let!(:host_platform) { configure_host_platform }
   let(:host_domain) { ensure_host_platform_domain(host_platform) }
-  let(:github_platform) { create(:better_together_platform, external: true) }
+  let(:github_platform) { create(:better_together_platform, locality: 'remote') }
   let(:other_platform) { create(:better_together_platform) }
   let(:other_domain) do
     BetterTogether::PlatformDomain.create!(platform: other_platform, hostname: 'tenant.example.test', active: true)

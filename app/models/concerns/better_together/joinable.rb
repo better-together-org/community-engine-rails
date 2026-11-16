@@ -82,7 +82,7 @@ module BetterTogether
       BetterTogether::Role.find_default(
         default_member_role_identifier,
         platform: is_a?(BetterTogether::Platform) ? self : try(:platform),
-        resource_type: self.class.name
+        resource_type: self.class.base_class.name
       )
     end
 

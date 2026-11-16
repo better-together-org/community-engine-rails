@@ -56,7 +56,7 @@ RSpec.describe BetterTogether::Mcp::AllowedOrigins do
     end
 
     it 'does not allow the url of an external (federated) platform' do
-      create(:better_together_platform, external: true, host: false, url: 'https://peer.example.test')
+      create(:better_together_platform, locality: 'remote', host: false, url: 'https://peer.example.test')
       described_class.reset_cache!
 
       expect(described_class.allowed?('peer.example.test')).to be(false)

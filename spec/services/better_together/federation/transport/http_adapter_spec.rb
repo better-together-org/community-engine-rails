@@ -284,7 +284,7 @@ RSpec.describe BetterTogether::Federation::Transport::HttpAdapter do
     end
 
     it 'fetches from the remote peer when a non-host local platform is source_platform' do
-      non_host_local_platform = create(:better_together_platform) # external: false, host: false by default
+      non_host_local_platform = create(:better_together_platform) # locality: 'local', host: false by default
       connection = create(
         :better_together_platform_connection, :active,
         source_platform: non_host_local_platform,

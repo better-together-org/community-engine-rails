@@ -284,7 +284,7 @@ module BetterTogether
 
     def host_platform
       @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(
+                         ::BetterTogether::OperatorPlatform.new(
                            name: 'Better Together Community Engine',
                            url: ::BetterTogether.base_url,
                            privacy: 'private'

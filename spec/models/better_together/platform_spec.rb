@@ -21,10 +21,10 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
 
     describe ':external' do
-      subject(:external_platform) { create(:better_together_platform, :external) }
+      subject(:external_platform) { create(:better_together_platform, :remote) }
 
       it 'creates an external platform' do
-        expect(external_platform.external).to be true
+        expect(external_platform.locality).to eq('remote')
         expect(external_platform.host).to be false
       end
     end
@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       subject(:oauth_platform) { create(:better_together_platform, :oauth_provider) }
 
       it 'creates an OAuth provider platform' do
-        expect(oauth_platform.external).to be true
+        expect(oauth_platform.locality).to eq('remote')
         expect(oauth_platform.host).to be false
         expect(oauth_platform.name).to be_in(%w[GitHub Facebook Google Twitter])
         expect(oauth_platform.url).to be_present
@@ -188,7 +188,7 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
 
     it 'does not seed bundled Leaflet image origins for external platforms' do
-      platform = create(:better_together_platform, :external)
+      platform = create(:better_together_platform, :remote)
 
       expect(platform.csp_img_src).to be_empty
     end
@@ -216,7 +216,7 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
 
     it 'does not create a primary platform domain for external platforms' do
-      platform = create(:better_together_platform, :external, host_url: "https://remote-#{SecureRandom.hex(4)}.example.test")
+      platform = create(:better_together_platform, :remote, host_url: "https://remote-#{SecureRandom.hex(4)}.example.test")
 
       expect(platform.reload.primary_platform_domain).to be_nil
     end
@@ -236,7 +236,7 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
 
     it 'defaults generic external peers to pending review without federation metadata' do
-      platform = create(:better_together_platform, :external, host_url: "https://generic-#{SecureRandom.hex(4)}.example.test")
+      platform = create(:better_together_platform, :remote, host_url: "https://generic-#{SecureRandom.hex(4)}.example.test")
 
       expect(platform).to be_external_peer
       expect(platform).not_to be_community_engine

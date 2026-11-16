@@ -195,11 +195,11 @@ module OAuthTestHelpers # :nodoc:
     ]
 
     oauth_platforms.each do |platform_attrs|
-      next if BetterTogether::Platform.external.find_by(identifier: platform_attrs[:identifier])
+      next if BetterTogether::Platform.remote.find_by(identifier: platform_attrs[:identifier])
 
       BetterTogether::Platform.create!(
         platform_attrs.merge(
-          external: true,
+          locality: 'remote',
           url: "https://#{platform_attrs[:identifier]}.com",
           privacy: 'public',
           time_zone: 'UTC'

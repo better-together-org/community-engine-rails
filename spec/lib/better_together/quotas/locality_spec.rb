@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::Quotas::Locality do
 
   before { configure_host_platform }
 
-  let(:external_platform) { create(:better_together_platform, :external) }
+  let(:external_platform) { create(:better_together_platform, :remote) }
 
   it 'treats a local platform as local' do
     expect(described_class.local_owner?(create(:better_together_platform))).to be true

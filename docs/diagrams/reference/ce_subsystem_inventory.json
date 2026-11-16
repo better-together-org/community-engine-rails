@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T03:54:25Z",
+  "generated_at": "2026-11-16T19:34:33Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -4026,6 +4026,30 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::OperatorPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::OauthPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::HostedPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::FederatedPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Infrastructure::Room",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
@@ -4831,6 +4855,10 @@
               "string"
             ],
             [
+              "locality",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -4839,19 +4867,15 @@
               "string"
             ],
             [
+              "type",
+              "string"
+            ],
+            [
               "url",
               "string"
             ],
             [
-              "external",
-              "boolean"
-            ],
-            [
               "host",
-              "boolean"
-            ],
-            [
-              "protected",
               "boolean"
             ]
           ],
@@ -7923,6 +7947,54 @@
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Community",
           "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::OperatorPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::OperatorPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::OauthPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::OauthPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::HostedPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::HostedPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::FederatedPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::FederatedPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -28079,6 +28151,251 @@
           ]
         },
         {
+          "name": "BetterTogether::FederatedPlatform",
+          "label": "FederatedPlatform",
+          "source_path": "app/models/better_together/federated_platform.rb",
+          "table_name": "better_together_platforms",
+          "columns": [
+            [
+              "community_id",
+              "uuid FK"
+            ],
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "storage_configuration_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "locality",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "time_zone",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "url",
+              "string"
+            ],
+            [
+              "host",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "ExclusionValidator: friendly_id (in=dynamic)",
+            "PresenceValidator: slug",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
+            "PresenceValidator: name",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "slugs",
+              "as": "sluggable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "views",
+              "as": "pageable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "rich_text_translations",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_en",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_fr",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_es",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_uk",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "profile_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "cover_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "header_banner_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "favicon_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "dark_logo_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "description",
+            "name",
+            "slug"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Creatable",
+            "BetterTogether::FriendlySlug",
+            "BetterTogether::Identifier",
+            "BetterTogether::Joinable",
+            "BetterTogether::Metrics::Viewable",
+            "BetterTogether::Permissible",
+            "BetterTogether::PlatformContentSlots",
+            "BetterTogether::PlatformCspConfiguration",
+            "BetterTogether::PlatformCssBlockManagement",
+            "BetterTogether::PlatformFederationStatus",
+            "BetterTogether::PlatformHost",
+            "BetterTogether::PlatformMembershipDisplay",
+            "BetterTogether::PlatformRegistryDefaults",
+            "BetterTogether::PlatformSubtype",
+            "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::Quotas::Owner",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Seedable",
+            "BetterTogether::TimezoneAttributeAliasing",
+            "BetterTogether::Translatable",
+            "BetterTogether::Viewable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ],
+          "shared_table_variants": [
+            "HostedPlatform",
+            "OauthPlatform",
+            "OperatorPlatform"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::FederatedPlatform",
+            "BetterTogether::HostedPlatform",
+            "BetterTogether::OauthPlatform",
+            "BetterTogether::OperatorPlatform"
+          ],
+          "shared_table_group_size": 4
+        },
+        {
           "name": "BetterTogether::FederationContentGrant",
           "label": "FederationContentGrant",
           "source_path": "app/models/better_together/federation_content_grant.rb",
@@ -28264,6 +28581,242 @@
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
           "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::HostedPlatform",
+          "label": "HostedPlatform",
+          "source_path": "app/models/better_together/hosted_platform.rb",
+          "table_name": "better_together_platforms",
+          "columns": [
+            [
+              "community_id",
+              "uuid FK"
+            ],
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "storage_configuration_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "locality",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "time_zone",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "url",
+              "string"
+            ],
+            [
+              "host",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "ExclusionValidator: friendly_id (in=dynamic)",
+            "PresenceValidator: slug",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
+            "PresenceValidator: name",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "slugs",
+              "as": "sluggable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "views",
+              "as": "pageable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "rich_text_translations",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_en",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_fr",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_es",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_uk",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "profile_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "cover_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "header_banner_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "favicon_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "dark_logo_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "description",
+            "name",
+            "slug"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Creatable",
+            "BetterTogether::FriendlySlug",
+            "BetterTogether::Identifier",
+            "BetterTogether::Joinable",
+            "BetterTogether::Metrics::Viewable",
+            "BetterTogether::Permissible",
+            "BetterTogether::PlatformContentSlots",
+            "BetterTogether::PlatformCspConfiguration",
+            "BetterTogether::PlatformCssBlockManagement",
+            "BetterTogether::PlatformFederationStatus",
+            "BetterTogether::PlatformHost",
+            "BetterTogether::PlatformMembershipDisplay",
+            "BetterTogether::PlatformRegistryDefaults",
+            "BetterTogether::PlatformSubtype",
+            "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::Quotas::Owner",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Seedable",
+            "BetterTogether::TimezoneAttributeAliasing",
+            "BetterTogether::Translatable",
+            "BetterTogether::Viewable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ],
+          "shared_table_reference": "FederatedPlatform",
+          "shared_table_reference_name": "BetterTogether::FederatedPlatform",
+          "shared_table_group_size": 4
         },
         {
           "name": "BetterTogether::InboundEmailMessage",
@@ -30227,6 +30780,478 @@
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
           "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::OauthPlatform",
+          "label": "OauthPlatform",
+          "source_path": "app/models/better_together/oauth_platform.rb",
+          "table_name": "better_together_platforms",
+          "columns": [
+            [
+              "community_id",
+              "uuid FK"
+            ],
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "storage_configuration_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "locality",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "time_zone",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "url",
+              "string"
+            ],
+            [
+              "host",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "ExclusionValidator: friendly_id (in=dynamic)",
+            "PresenceValidator: slug",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
+            "PresenceValidator: name",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "slugs",
+              "as": "sluggable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "views",
+              "as": "pageable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "rich_text_translations",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_en",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_fr",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_es",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_uk",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "profile_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "cover_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "header_banner_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "favicon_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "dark_logo_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "description",
+            "name",
+            "slug"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Creatable",
+            "BetterTogether::FriendlySlug",
+            "BetterTogether::Identifier",
+            "BetterTogether::Joinable",
+            "BetterTogether::Metrics::Viewable",
+            "BetterTogether::Permissible",
+            "BetterTogether::PlatformContentSlots",
+            "BetterTogether::PlatformCspConfiguration",
+            "BetterTogether::PlatformCssBlockManagement",
+            "BetterTogether::PlatformFederationStatus",
+            "BetterTogether::PlatformHost",
+            "BetterTogether::PlatformMembershipDisplay",
+            "BetterTogether::PlatformRegistryDefaults",
+            "BetterTogether::PlatformSubtype",
+            "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::Quotas::Owner",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Seedable",
+            "BetterTogether::TimezoneAttributeAliasing",
+            "BetterTogether::Translatable",
+            "BetterTogether::Viewable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ],
+          "shared_table_reference": "FederatedPlatform",
+          "shared_table_reference_name": "BetterTogether::FederatedPlatform",
+          "shared_table_group_size": 4
+        },
+        {
+          "name": "BetterTogether::OperatorPlatform",
+          "label": "OperatorPlatform",
+          "source_path": "app/models/better_together/operator_platform.rb",
+          "table_name": "better_together_platforms",
+          "columns": [
+            [
+              "community_id",
+              "uuid FK"
+            ],
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "storage_configuration_id",
+              "uuid FK"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "locality",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "time_zone",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "url",
+              "string"
+            ],
+            [
+              "host",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "ExclusionValidator: friendly_id (in=dynamic)",
+            "PresenceValidator: slug",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
+            "PresenceValidator: name",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "slugs",
+              "as": "sluggable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "views",
+              "as": "pageable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "rich_text_translations",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_en",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_fr",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_es",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_uk",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "profile_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "cover_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "header_banner_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "favicon_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "dark_logo_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "description",
+            "name",
+            "slug"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Creatable",
+            "BetterTogether::FriendlySlug",
+            "BetterTogether::Identifier",
+            "BetterTogether::Joinable",
+            "BetterTogether::Metrics::Viewable",
+            "BetterTogether::Permissible",
+            "BetterTogether::PlatformContentSlots",
+            "BetterTogether::PlatformCspConfiguration",
+            "BetterTogether::PlatformCssBlockManagement",
+            "BetterTogether::PlatformFederationStatus",
+            "BetterTogether::PlatformHost",
+            "BetterTogether::PlatformMembershipDisplay",
+            "BetterTogether::PlatformRegistryDefaults",
+            "BetterTogether::PlatformSubtype",
+            "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Protected",
+            "BetterTogether::Quotas::Owner",
+            "BetterTogether::RemoveableAttachment",
+            "BetterTogether::Seedable",
+            "BetterTogether::TimezoneAttributeAliasing",
+            "BetterTogether::Translatable",
+            "BetterTogether::Viewable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "active_storage_configuration",
+              "foreign_key": "storage_configuration_id",
+              "target": "BetterTogether::StorageConfiguration",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ],
+          "shared_table_reference": "FederatedPlatform",
+          "shared_table_reference_name": "BetterTogether::FederatedPlatform",
+          "shared_table_group_size": 4
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier",
@@ -34936,6 +35961,10 @@
             "EventOccurrence",
             "CommentConfig",
             "AgentGrant",
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -35092,6 +36121,10 @@
           "capability": "Adds creator ownership hooks and creator-aware defaults.",
           "risk": "Creator fallback behavior can accidentally widen operational visibility.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -35122,6 +36155,10 @@
           "capability": "Adds translated/human-friendly slugs for routes and lookup.",
           "risk": "Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building"
@@ -35198,6 +36235,10 @@
           "capability": "Adds canonical identifiers and slug/lookup helpers used across APIs and UI.",
           "risk": "Identifier reuse across platforms or mirrors can blur provenance without explicit platform context.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building"
@@ -35423,6 +36464,18 @@
           ]
         },
         {
+          "name": "BetterTogether::Joinable",
+          "label": "Joinable",
+          "capability": "Adds membership join models and membership-request helpers.",
+          "risk": "Join/membership review surfaces can expose private community/member data if not scoped tightly.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
           "name": "BetterTogether::Labelable",
           "label": "Labelable",
           "capability": "Labelable",
@@ -35534,6 +36587,18 @@
           ]
         },
         {
+          "name": "BetterTogether::Metrics::Viewable",
+          "label": "Metrics::Viewable",
+          "capability": "Viewable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
           "name": "BetterTogether::NotificationReadable",
           "label": "NotificationReadable",
           "capability": "Notificationreadable",
@@ -35550,6 +36615,102 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "CommentsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::Permissible",
+          "label": "Permissible",
+          "capability": "Adds role/resource-permission linkage for policy checks and platform governance.",
+          "risk": "Permission bundling can create god-mode reads unless capabilities are split carefully.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformContentSlots",
+          "label": "PlatformContentSlots",
+          "capability": "Platformcontentslots",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformCspConfiguration",
+          "label": "PlatformCspConfiguration",
+          "capability": "Platformcspconfiguration",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformCssBlockManagement",
+          "label": "PlatformCssBlockManagement",
+          "capability": "Platformcssblockmanagement",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformFederationStatus",
+          "label": "PlatformFederationStatus",
+          "capability": "Platformfederationstatus",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformHost",
+          "label": "PlatformHost",
+          "capability": "Platformhost",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformMembershipDisplay",
+          "label": "PlatformMembershipDisplay",
+          "capability": "Platformmembershipdisplay",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformRegistryDefaults",
+          "label": "PlatformRegistryDefaults",
+          "capability": "Platformregistrydefaults",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
           ]
         },
         {
@@ -35586,6 +36747,30 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformSubtype",
+          "label": "PlatformSubtype",
+          "capability": "Platformsubtype",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformThemeSettings",
+          "label": "PlatformThemeSettings",
+          "capability": "Platformthemesettings",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
           "name": "BetterTogether::Positioned",
           "label": "Positioned",
           "capability": "Positioned",
@@ -35602,6 +36787,10 @@
           "capability": "Adds default/host community linkage and delegation helpers.",
           "risk": "Host-community fallbacks are powerful and need careful tenant/platform context boundaries.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building"
@@ -35624,6 +36813,10 @@
           "capability": "Adds privacy enum helpers and shared visibility semantics.",
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -35639,6 +36832,10 @@
           "capability": "Privacyceilingvalidatable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -35646,6 +36843,42 @@
             "SocialMediaAccount",
             "PhoneNumber",
             "EmailAddress"
+          ]
+        },
+        {
+          "name": "BetterTogether::Protected",
+          "label": "Protected",
+          "capability": "Adds protected-record safeguards for records that should resist accidental mutation/deletion.",
+          "risk": "Protected status can be mistaken for an authorization model when it is only a lifecycle safeguard.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::Quotas::Owner",
+          "label": "Quotas::Owner",
+          "capability": "Owner",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
+          "name": "BetterTogether::RemoveableAttachment",
+          "label": "RemoveableAttachment",
+          "capability": "Removeableattachment",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
           ]
         },
         {
@@ -35674,6 +36907,10 @@
             "EventOccurrence",
             "CommentConfig",
             "AgentGrant",
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -35774,15 +37011,43 @@
           ]
         },
         {
+          "name": "BetterTogether::TimezoneAttributeAliasing",
+          "label": "TimezoneAttributeAliasing",
+          "capability": "Adds consistent timezone aliases and coercion for scheduler-facing models.",
+          "risk": "Hidden timezone aliasing can obscure which timestamps are canonical.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
           "name": "BetterTogether::Translatable",
           "label": "Translatable",
           "capability": "Translatable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
             "ShortLink"
+          ]
+        },
+        {
+          "name": "BetterTogether::Viewable",
+          "label": "Viewable",
+          "capability": "Adds view-tracking hooks and reader-facing display helpers.",
+          "risk": "View analytics and cache helpers can become privacy-sensitive telemetry surfaces.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
           ]
         },
         {
@@ -35947,6 +37212,24 @@
           "target_subsystem": "platform_network"
         },
         {
+          "from": "BetterTogether::FederatedPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::FederatedPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::FederatedPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::FederationContentGrant",
           "to": "BetterTogether::PlatformConnection",
           "label": "platform_connection (platform_connection_id)",
@@ -35956,6 +37239,24 @@
           "from": "BetterTogether::FederationVisibilityStatusNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::HostedPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::HostedPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::HostedPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
           "target_subsystem": "platform_network"
         },
         {
@@ -36106,6 +37407,42 @@
           "from": "BetterTogether::NewMessageNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OauthPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OauthPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::OauthPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OperatorPlatform",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OperatorPlatform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::OperatorPlatform",
+          "to": "BetterTogether::StorageConfiguration",
+          "label": "active_storage_configuration (storage_configuration_id)",
           "target_subsystem": "platform_network"
         },
         {

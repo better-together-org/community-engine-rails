@@ -25,6 +25,6 @@ class SeedDefaultLocalPlatformCspImageOrigins < ActiveRecord::Migration[7.1]
   def platforms_table_ready?
     table_exists?(:better_together_platforms) &&
       column_exists?(:better_together_platforms, :settings) &&
-      column_exists?(:better_together_platforms, :external)
+      (column_exists?(:better_together_platforms, :external) || column_exists?(:better_together_platforms, :locality))
   end
 end

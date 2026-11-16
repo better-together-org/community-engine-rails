@@ -16,7 +16,7 @@ FactoryBot.define do
     # Use IANA timezone identifiers from TZInfo
     time_zone { TZInfo::Timezone.all_identifiers.sample }
     privacy { 'private' }
-    external { false }
+    locality { 'local' }
     # community # Assumes a factory for BetterTogether::Community exists
 
     trait :host do
@@ -24,8 +24,8 @@ FactoryBot.define do
       protected { true }
     end
 
-    trait :external do
-      external { true }
+    trait :remote do
+      locality { 'remote' }
       host { false }
       software_variant { 'generic' }
       federation_protocol { nil }
@@ -33,7 +33,7 @@ FactoryBot.define do
     end
 
     trait :oauth_provider do
-      external { true }
+      locality { 'remote' }
       host { false }
       name { %w[GitHub Facebook Google Twitter].sample }
       url { "https://#{name.downcase}-#{SecureRandom.hex(4)}.com" }
@@ -48,7 +48,7 @@ FactoryBot.define do
     end
 
     trait :community_engine_peer do
-      external { true }
+      locality { 'remote' }
       host { false }
       software_variant { 'community_engine' }
       federation_protocol { 'ce_oauth' }
