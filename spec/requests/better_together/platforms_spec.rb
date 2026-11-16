@@ -13,6 +13,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
 
   describe 'GET /host/platforms/new' do
     it 'renders the registration form for network admins' do
+      skip 'platforms#new is unrouted until platform provisioning is settled'
       sign_in network_admin
 
       get better_together.new_platform_path(locale:)
@@ -22,6 +23,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
     end
 
     it 'denies the form to regular users' do
+      skip 'platforms#new is unrouted until platform provisioning is settled'
       sign_in regular_user
 
       get better_together.new_platform_path(locale:)

@@ -70,7 +70,7 @@ module BetterTogether
       render json: formatted_people
     end
 
-    # GET /platforms/new
+    # GET /platforms/new (unrouted: disabled until platform provisioning is settled)
     def new
       @platform = ::BetterTogether::Platform.new(external: true)
       authorize @platform

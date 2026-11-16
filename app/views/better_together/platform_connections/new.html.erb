@@ -9,11 +9,6 @@
       <%= link_to t('better_together.platform_connections.new.back'), better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
     </div>
 
-    <p class="text-muted small mb-3">
-      <%= t('better_together.platform_connections.new.register_platform_hint') %>
-      <%= link_to t('better_together.platform_connections.new.register_platform_link'), better_together.new_platform_path %>
-    </p>
-
     <%= render 'form', platform_connection: @platform_connection %>
   </div>
 <% end %>

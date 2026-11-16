@@ -3409,8 +3409,6 @@ en:
         title: Platform Connections
       new:
         back: Back
-        register_platform_hint: Need to register a remote platform first?
-        register_platform_link: Register External Platform →
         title: New Platform Connection
       show:
         api_read: API Read

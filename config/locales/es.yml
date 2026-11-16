@@ -3452,8 +3452,6 @@ es:
         title: Conexiones de plataforma
       new:
         back: Volver
-        register_platform_hint: "¿Necesitas registrar primero una plataforma remota?"
-        register_platform_link: Registrar plataforma externa →
         title: Nueva conexión de plataforma
       show:
         api_read: Lectura API
