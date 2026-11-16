@@ -17,8 +17,8 @@ RSpec.describe BetterTogether::PlatformPolicy do
 
   describe '#create?' do
     let(:tenant_platform) { create(:platform) }
-    let(:internal_draft) { build(:platform, external: false) }
-    let(:external_draft) { build(:platform, :external) }
+    let(:internal_draft) { build(:platform, locality: 'local') }
+    let(:external_draft) { build(:platform, :remote) }
 
     it 'denies guests' do
       expect(described_class.new(nil, internal_draft).create?).to be false

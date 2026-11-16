@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::PlatformIdentityProvider, '#issuer' do
     row = build_oidc('https://idp.example.org')
 
     expect(row).to be_valid
-    expect(row.provider_platform).to be_external
+    expect(row.provider_platform).to be_remote
   end
 
   it 'requires an issuer' do
@@ -70,7 +70,7 @@ RSpec.describe BetterTogether::PlatformIdentityProvider, '#issuer' do
   end
 
   it 'does not require an issuer for other strategies' do
-    github = create(:better_together_platform, external: true)
+    github = create(:better_together_platform, locality: 'remote')
 
     expect(described_class.new(platform:, strategy: 'github', provider_platform: github,
                                client_id: 'a', client_secret: 'b')).to be_valid

@@ -48,8 +48,8 @@ module BetterTogether
       # local_hosted?, e.g. host<->tenant on this install) have no remote_platform for
       # HttpAdapter to fetch from and aren't a real federation sync target.
       exactly_one_external = Arel.sql(<<~SQL.squish)
-        (SELECT external FROM better_together_platforms WHERE id = better_together_platform_connections.source_platform_id)
-        != (SELECT external FROM better_together_platforms WHERE id = better_together_platform_connections.target_platform_id)
+        (SELECT locality FROM better_together_platforms WHERE id = better_together_platform_connections.source_platform_id)
+        != (SELECT locality FROM better_together_platforms WHERE id = better_together_platform_connections.target_platform_id)
       SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
       ::BetterTogether::PlatformConnection.active

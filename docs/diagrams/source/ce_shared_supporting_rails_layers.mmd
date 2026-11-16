@@ -518,6 +518,14 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__FederatedPlatform["FederatedPlatform\n(shared table family)"] {
+      <<Model>>
+      table: better_together_platforms
+      variants: HostedPlatform, OauthPlatform, OperatorPlatform
+      translates: description, name, slug
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +22
+      weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +12
+    }
     class BetterTogether__FederationContentGrant["FederationContentGrant"] {
       <<Model>>
       table: better_together_federation_content_grants
@@ -865,6 +873,9 @@ classDiagram
   BetterTogether__FeatureAccessGrant --> BetterTogether__Platform : platform
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : person
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : granted_by_person
+  BetterTogether__FederatedPlatform --> BetterTogether__Person : creator
+  BetterTogether__FederatedPlatform --> BetterTogether__Community : community
+  BetterTogether__FederatedPlatform --> BetterTogether__StorageConfiguration : active_storage_configuration
   BetterTogether__FederationContentGrant --> BetterTogether__PlatformConnection : platform_connection
   BetterTogether__InboundEmailMessage --> ActionMailbox__InboundEmail : inbound_email
   BetterTogether__InboundEmailMessage --> BetterTogether__Platform : platform

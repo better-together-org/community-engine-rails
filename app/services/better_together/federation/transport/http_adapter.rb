@@ -117,7 +117,7 @@ module BetterTogether
 
         # The connection's two platform sides don't encode "local vs remote" by
         # position (source/target reflect who initiated the link, not who's local) —
-        # resolve the actual federated peer via its external flag instead of assuming
+        # resolve the actual federated peer via its locality instead of assuming
         # source_platform is always the remote. See PlatformFederationStatus.
         def remote_platform
           @remote_platform ||= [connection.source_platform, connection.target_platform].find(&:external_peer?)

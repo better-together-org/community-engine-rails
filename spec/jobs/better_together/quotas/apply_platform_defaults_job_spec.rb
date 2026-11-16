@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Quotas::ApplyPlatformDefaultsJob do
   end
 
   it 'does nothing for an external platform' do
-    external = create(:better_together_platform, :external)
+    external = create(:better_together_platform, :remote)
 
     expect { described_class.perform_now(external.id) }.not_to raise_error
   end

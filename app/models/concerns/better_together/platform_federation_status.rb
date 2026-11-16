@@ -6,11 +6,11 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     def local_hosted?
-      !external?
+      local?
     end
 
     def external_peer?
-      external?
+      remote?
     end
 
     def community_engine?

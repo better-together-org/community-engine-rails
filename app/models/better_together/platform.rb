@@ -82,7 +82,9 @@ module BetterTogether
                 in: -> { TZInfo::Timezone.all_identifiers },
                 message: '%<value>s is not a valid timezone'
               }
-    validates :external, inclusion: { in: [true, false] }
+    # Declared explicitly so the class loads while migrations that predate the column run on an empty database.
+    attribute :locality, :string, default: 'local'
+    enum :locality, { local: 'local', remote: 'remote' }, default: :local, validate: true
     validates :software_variant, inclusion: { in: SOFTWARE_VARIANTS }, allow_blank: true
     validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
     validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
@@ -105,7 +107,7 @@ module BetterTogether
     # @return [Array] List of permitted attributes and nested hashes
     def self.permitted_attributes
       [
-        :name, :slug, :host_url, :time_zone, :external, :protected,
+        :name, :slug, :host_url, :time_zone, :locality, :protected,
         :storage_configuration_id,
         :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
         :csp_script_src_text, :csp_connect_src_text,
@@ -120,9 +122,9 @@ module BetterTogether
       ] + super
     end
 
-    scope :external, -> { where(external: true) }
-    scope :internal, -> { where(external: false) }
-    scope :oauth_providers, -> { external }
+    scope :oauth_providers, -> { where(type: 'BetterTogether::OauthPlatform') }
+
+    before_validation :infer_type, on: :create
 
     has_one_attached :profile_image
     has_one_attached :cover_image
@@ -155,7 +157,7 @@ module BetterTogether
              inverse_of: :target_platform
 
     after_commit :sync_primary_platform_domain!, on: %i[create update]
-    after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_external? }
+    after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_locality? }
 
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
@@ -229,7 +231,7 @@ module BetterTogether
     # used for federation/display purposes) isn't blocked by their
     # intentionally-private placeholder community.
     def privacy_ceiling_exempt?
-      external?
+      remote?
     end
 
     # A platform is the top of the visibility hierarchy; nothing caps it.
@@ -341,6 +343,12 @@ module BetterTogether
       ids.size == 1 && ids.first == person&.id
     end
 
+    # One row is one platform whichever subtype it was loaded or built as; AR's own check requires the same class.
+    def ==(other)
+      super || (other.is_a?(BetterTogether::Platform) && !id.nil? && other.id == id)
+    end
+    alias eql? ==
+
     private
 
     # A platform's privacy is not capped by its own primary community: that community follows the
@@ -440,6 +448,18 @@ module BetterTogether
 
         sanitized[key.to_s] = rollout.to_s
       end
+    end
+
+    # Safety net for code that builds a plain Platform: the subtype follows the host and locality.
+    # Creation sites that know their type build the subclass directly.
+    def infer_type
+      return if type.present?
+
+      self.type = (if host? then 'BetterTogether::OperatorPlatform'
+                   elsif remote?
+                     OauthPlatform.provider_identifier?(identifier) ? 'BetterTogether::OauthPlatform' : 'BetterTogether::FederatedPlatform'
+                   else 'BetterTogether::HostedPlatform'
+                   end)
     end
   end
 end

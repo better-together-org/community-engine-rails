@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_16_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_16_200200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2063,16 +2063,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_16_120000) do
     t.string "url", null: false
     t.string "time_zone", null: false
     t.jsonb "settings", default: {}, null: false
-    t.boolean "external", default: false, null: false
     t.uuid "creator_id"
     t.uuid "storage_configuration_id"
+    t.string "type", null: false
+    t.string "locality", default: "local", null: false
     t.index ["community_id"], name: "by_platform_community"
     t.index ["creator_id"], name: "by_better_together_platforms_creator"
-    t.index ["external"], name: "index_better_together_platforms_on_external"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
+    t.index ["locality"], name: "index_better_together_platforms_on_locality"
     t.index ["privacy"], name: "by_platform_privacy"
     t.index ["storage_configuration_id"], name: "index_better_together_platforms_on_storage_configuration_id"
+    t.index ["type"], name: "index_better_together_platforms_on_type"
     t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
   end
 

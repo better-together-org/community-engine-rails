@@ -7,7 +7,7 @@ RSpec.describe 'BetterTogether::Quotas external owners' do # rubocop:disable RSp
 
   before { configure_host_platform }
 
-  let(:external_platform) { create(:better_together_platform, :external) }
+  let(:external_platform) { create(:better_together_platform, :remote) }
   let(:external_person) { create(:better_together_person, platform: external_platform) }
 
   it 'settle! writes nothing for an external owner' do

@@ -27,7 +27,7 @@ module BetterTogether
       platform ||= Current.platform || Platform.find_by(host: true)
       return if platform.blank?
 
-      AccessControlBuilder.seed_data(platform:) unless platform.external? || for_platform(platform).exists?
+      AccessControlBuilder.seed_data(platform:) unless platform.remote? || for_platform(platform).exists?
       for_platform(platform).find_by(identifier:, **conditions)
     end
     after_commit :expire_affected_member_permission_caches

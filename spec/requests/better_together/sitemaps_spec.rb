@@ -80,7 +80,7 @@ RSpec.describe 'Sitemap' do
 
   describe 'multi-platform isolation' do
     let!(:tenant_platform) do
-      create(:better_together_platform, :public, host: false, external: false,
+      create(:better_together_platform, :public, host: false, locality: 'local',
                                                  host_url: 'https://tenant.example.test')
     end
 

@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
   let!(:community) { platform.community }
   let!(:github_platform) do
     BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
-      github.external = true
+      github.locality = 'remote'
       github.host = false
       github.name = 'GitHub'
       github.url = 'https://github.com'
