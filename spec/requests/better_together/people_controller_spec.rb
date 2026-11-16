@@ -110,7 +110,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
         :github,
         person:,
         user: person.user || create(:better_together_user, person:),
-        platform: create(:better_together_platform, :external, identifier: "github-#{SecureRandom.hex(3)}"),
+        platform: create(:better_together_platform, :remote, identifier: "github-#{SecureRandom.hex(3)}"),
         handle: 'octo-person',
         profile_url: 'https://github.com/octo-person'
       )

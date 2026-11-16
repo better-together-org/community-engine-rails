@@ -23,8 +23,8 @@ RSpec.describe 'Documentation screenshots for Platform sign-in providers admin U
     end
   end
   let!(:github_platform) do
-    BetterTogether::Platform.find_by(identifier: 'github', external: true) ||
-      create(:better_together_platform, identifier: 'github', external: true, name: 'GitHub',
+    BetterTogether::Platform.find_by(identifier: 'github', locality: 'remote') ||
+      create(:better_together_platform, identifier: 'github', locality: 'remote', name: 'GitHub',
                                         url: 'https://github.com')
   end
   let!(:provider) do

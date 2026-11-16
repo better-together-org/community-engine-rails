@@ -3,8 +3,8 @@
 module BetterTogether
   module Quotas
     # Only local owners get quotas: a local platform, and the people and communities
-    # that live on one. Federated peers, OAuth providers (Platform#external) and the
-    # people/communities mirrored from them never do. Locality is Platform#external
+    # that live on one. Federated peers, OAuth providers (Platform#locality) and the
+    # people/communities mirrored from them never do. Locality is Platform#locality
     # (PlatformFederationStatus#local_hosted?), never `host: true` equality, so any
     # local platform on an instance qualifies.
     module Locality

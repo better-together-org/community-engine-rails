@@ -38,7 +38,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
           identifier: "peer-#{SecureRandom.hex(4)}",
           host_url: "https://peer-#{SecureRandom.hex(4)}.example.com",
           time_zone: 'America/New_York',
-          external: true
+          locality: 'remote'
         }
       }
     end
@@ -52,7 +52,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
 
       expect(response).to have_http_status(:see_other)
       platform = BetterTogether::Platform.last
-      expect(platform.external).to be true
+      expect(platform.locality).to eq('remote')
     end
 
     it 'denies creation to regular users' do
@@ -70,7 +70,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
 
       expect do
         post better_together.platforms_path(locale:),
-             params: { platform: { identifier: '', host_url: 'not-a-url', time_zone: 'Invalid', external: true } }
+             params: { platform: { identifier: '', host_url: 'not-a-url', time_zone: 'Invalid', locality: 'remote' } }
       end.not_to change(BetterTogether::Platform, :count)
 
       expect(response).to have_http_status(:unprocessable_content)

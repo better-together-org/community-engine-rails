@@ -193,11 +193,11 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || last_synced_at.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.remote?
     end
 
     def preserved_remote_uuid?
-      source_id.blank? && platform&.external?
+      source_id.blank? && platform&.remote?
     end
 
     def source_identifier

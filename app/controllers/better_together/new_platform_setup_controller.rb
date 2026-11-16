@@ -44,7 +44,7 @@ module BetterTogether
 
     def build_draft_platform
       suffix = SecureRandom.hex(6)
-      ::BetterTogether::Platform.new(
+      ::BetterTogether::HostedPlatform.new(
         name: "New Platform #{suffix}",
         host_url: "https://draft-#{suffix}.pending.invalid",
         # Rails' timezone select (ApplicationHelper#iana_time_zone_select /
@@ -57,7 +57,7 @@ module BetterTogether
         # since they don't exercise client-side select/JS behavior).
         time_zone: 'Etc/UTC',
         privacy: 'private',
-        external: false,
+        locality: 'local',
         host: false
       )
     end

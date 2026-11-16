@@ -72,7 +72,7 @@ module BetterTogether
 
     # GET /platforms/new
     def new
-      @platform = ::BetterTogether::Platform.new(external: true)
+      @platform = ::BetterTogether::FederatedPlatform.new(locality: 'remote')
       authorize @platform
     rescue Pundit::NotAuthorizedError
       render_not_found
@@ -83,8 +83,8 @@ module BetterTogether
     end
 
     # POST /platforms
-    def create # rubocop:todo Metrics/MethodLength
-      @platform = ::BetterTogether::Platform.new(platform_create_params)
+    def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+      @platform = platform_class_for(platform_create_params).new(platform_create_params)
       authorize_platform
 
       if @platform.save
@@ -139,8 +139,17 @@ module BetterTogether
       @platform = set_resource_instance
     end
 
+    # Registering a remote peer builds a FederatedPlatform; anything else is a hosted platform.
+    def platform_class_for(attributes)
+      if attributes[:locality].to_s == 'remote'
+        ::BetterTogether::FederatedPlatform
+      else
+        ::BetterTogether::HostedPlatform
+      end
+    end
+
     def platform_create_params
-      params.require(:platform).permit(:identifier, :host_url, :time_zone, :external, *locale_attributes)
+      params.require(:platform).permit(:identifier, :host_url, :time_zone, :locality, *locale_attributes)
     end
 
     def platform_params # rubocop:todo Metrics/MethodLength

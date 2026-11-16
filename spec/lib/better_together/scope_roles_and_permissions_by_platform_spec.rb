@@ -6,7 +6,7 @@ require BetterTogether::Engine.root.join('db/migrate/20261116120000_scope_roles_
 RSpec.describe ScopeRolesAndPermissionsByPlatform do # rubocop:disable RSpec/DescribeClass
   let(:migration) { described_class.new }
   let(:host) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
-  let(:other) { create(:better_together_platform, host: false, external: false) }
+  let(:other) { create(:better_together_platform, host: false, locality: 'local') }
 
   before do
     host

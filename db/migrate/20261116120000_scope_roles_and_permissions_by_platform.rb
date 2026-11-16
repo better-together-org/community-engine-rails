@@ -88,9 +88,10 @@ class ScopeRolesAndPermissionsByPlatform < ActiveRecord::Migration[7.2] # ruboco
 
   # Every local, non-host platform without its own roles gets a copy of the host's set.
   def copy_sets_to_other_platforms
+    local = column_exists?(:better_together_platforms, :locality) ? "p.locality = 'local'" : 'p.external = FALSE'
     targets = select_values(<<~SQL.squish)
       SELECT p.id FROM better_together_platforms p
-      WHERE p.host = FALSE AND p.external = FALSE
+      WHERE p.host = FALSE AND #{local}
         AND NOT EXISTS (SELECT 1 FROM better_together_roles r WHERE r.platform_id = p.id)
     SQL
     targets.each { |platform_id| copy_set_to(connection.quote(platform_id)) }

@@ -29,7 +29,7 @@ RSpec.describe BetterTogether::Place do
 
   describe 'community assignment (CommunityAssignable)' do
     let(:local_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, host: true) }
-    let(:remote_platform) { create(:better_together_platform, :external) }
+    let(:remote_platform) { create(:better_together_platform, :remote) }
 
     it "assigns the platform's own community when community is nil, not the host community" do
       federated_place = build(:better_together_place, space: space, platform: remote_platform, community: nil)

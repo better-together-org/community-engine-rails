@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::PlatformIdentityProvider do
   end
 
   it 'requires the provider platform to be external' do
-    provider.provider_platform = create(:better_together_platform, external: false)
+    provider.provider_platform = create(:better_together_platform, locality: 'local')
 
     expect(provider).not_to be_valid
   end

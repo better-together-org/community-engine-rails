@@ -54,7 +54,7 @@ RSpec.describe 'better_together:seed:platform_csp_img_src_defaults', type: :task
   end
 
   it 'does not seed origins onto external platforms' do
-    external_platform = create(:better_together_platform, :external)
+    external_platform = create(:better_together_platform, :remote)
 
     task.invoke
 

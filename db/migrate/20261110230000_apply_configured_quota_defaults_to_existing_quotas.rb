@@ -16,7 +16,7 @@ class ApplyConfiguredQuotaDefaultsToExistingQuotas < ActiveRecord::Migration[7.2
 
   def up
     return unless table_exists?(:better_together_quotas) && table_exists?(:better_together_platforms)
-    return unless column_exists?(:better_together_platforms, :external)
+    return unless column_exists?(:better_together_platforms, :external) || column_exists?(:better_together_platforms, :locality)
 
     BetterTogether::Quotas::Defaults.reset!
     updated = OWNERS.sum { |kind, (owner_type, table)| update_owner_quotas(kind, owner_type, table) }
@@ -29,6 +29,12 @@ class ApplyConfiguredQuotaDefaultsToExistingQuotas < ActiveRecord::Migration[7.2
 
   private
 
+  # Works before and after the external boolean was replaced by the locality enum.
+  def local_sql(prefix = nil)
+    col = [prefix, column_exists?(:better_together_platforms, :locality) ? 'locality' : 'external'].compact.join('.')
+    column_exists?(:better_together_platforms, :locality) ? "#{col} = 'local'" : "#{col} = FALSE"
+  end
+
   def limit_for(kind)
     BetterTogether::Quotas::Defaults.yaml_value(QUOTA_TYPE, kind)
   end
@@ -40,7 +46,7 @@ class ApplyConfiguredQuotaDefaultsToExistingQuotas < ActiveRecord::Migration[7.2
     update_quotas(owner_type, limit, <<~SQL.squish)
       SELECT o.id FROM #{owner_table} o
       LEFT JOIN better_together_platforms p ON p.id = o.platform_id
-      WHERE p.id IS NULL OR p.external = FALSE
+      WHERE p.id IS NULL OR #{local_sql('p')}
     SQL
   end
 
@@ -48,7 +54,7 @@ class ApplyConfiguredQuotaDefaultsToExistingQuotas < ActiveRecord::Migration[7.2
     limit = limit_for('platform')
     return 0 if limit.nil?
 
-    update_quotas('BetterTogether::Platform', limit, 'SELECT id FROM better_together_platforms WHERE external = FALSE')
+    update_quotas('BetterTogether::Platform', limit, "SELECT id FROM better_together_platforms WHERE #{local_sql}")
   end
 
   def update_quotas(owner_type, limit, owner_ids_sql)
@@ -74,12 +80,12 @@ class ApplyConfiguredQuotaDefaultsToExistingQuotas < ActiveRecord::Migration[7.2
         SELECT COUNT(*) FROM better_together_quotas q
         WHERE q.quota_type = #{quote(QUOTA_TYPE)} AND q.owner_type = #{quote(owner_type)}
           AND q.owner_id IN (SELECT o.id FROM #{table} o LEFT JOIN better_together_platforms p ON p.id = o.platform_id
-                             WHERE p.id IS NULL OR p.external = FALSE)
+                             WHERE p.id IS NULL OR #{local_sql('p')})
       SQL
     end + select_value(<<~SQL.squish).to_i
       SELECT COUNT(*) FROM better_together_quotas
       WHERE quota_type = #{quote(QUOTA_TYPE)} AND owner_type = 'BetterTogether::Platform'
-        AND owner_id IN (SELECT id FROM better_together_platforms WHERE external = FALSE)
+        AND owner_id IN (SELECT id FROM better_together_platforms WHERE #{local_sql})
     SQL
   end
 end
