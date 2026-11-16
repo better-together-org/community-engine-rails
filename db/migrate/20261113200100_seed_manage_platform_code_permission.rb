@@ -4,6 +4,9 @@
 # by no existing role: it is granted explicitly, per platform, by assigning the role.
 class SeedManagePlatformCodePermission < ActiveRecord::Migration[7.2]
   def up
+    # Earlier migrations in a from-zero run loaded these models before platform_id was added.
+    [BetterTogether::ResourcePermission, BetterTogether::Role, BetterTogether::RoleResourcePermission].each(&:reset_column_information)
+
     permission = BetterTogether::ResourcePermission.find_or_initialize_by(identifier: 'manage_platform_code')
     permission.assign_attributes(action: 'manage', target: 'platform_code', resource_type: 'BetterTogether::Platform',
                                  protected: true, position: 28)
