@@ -56,6 +56,7 @@ ESSENTIAL_TABLES = %w[
   better_together_roles
   better_together_resource_permissions
   better_together_role_resource_permissions
+  better_together_seeds
   better_together_navigation_areas
   better_together_navigation_items
   better_together_categories
