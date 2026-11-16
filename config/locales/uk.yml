@@ -3461,8 +3461,6 @@ uk:
         title: З'єднання платформ
       new:
         back: Назад
-        register_platform_hint: Потрібно спочатку зареєструвати віддалену платформу?
-        register_platform_link: Зареєструвати зовнішню платформу →
         title: Нове з'єднання платформи
       show:
         api_read: API читання
