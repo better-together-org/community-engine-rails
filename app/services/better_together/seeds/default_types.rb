@@ -12,6 +12,7 @@ module BetterTogether
         register_files_and_events
         register_contacts
         register_redirects
+        register_rbac
       end
 
       def self.register_content
@@ -126,8 +127,30 @@ module BetterTogether
         end
       end
 
+      def self.register_rbac
+        Registry.register(:resource_permission) do
+          model 'BetterTogether::ResourcePermission'
+          attributes :action, :target, :resource_type
+          protectable
+          position :position
+        end
+        Registry.register(:role) do
+          model 'BetterTogether::Role'
+          attributes :resource_type
+          protectable
+          translated :name, :description
+          position :position
+        end
+        Registry.register(:role_resource_permission) do
+          model 'BetterTogether::RoleResourcePermission'
+          natural_key by_refs: %i[role resource_permission]
+          reference :role, to: :role
+          reference :resource_permission, to: :resource_permission
+        end
+      end
+
       private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
-                           :register_redirects
+                           :register_redirects, :register_rbac
     end
   end
 end

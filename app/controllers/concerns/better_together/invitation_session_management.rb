@@ -145,7 +145,7 @@ module BetterTogether
     # the platform_member role when the invitation carries no explicit role.
     def handle_platform_invitation_acceptance(user, invitation)
       role = invitation.platform_role ||
-             BetterTogether::Role.find_by(identifier: 'platform_member')
+             BetterTogether::Role.find_default('platform_member', platform: invitation.invitable)
 
       if role
         invitation.invitable.person_platform_memberships.find_or_create_by!(

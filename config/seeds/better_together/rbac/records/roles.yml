@@ -1,0 +1,193 @@
+---
+version: '2.0'
+type: role
+records:
+- key: community_member
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Member
+      description: Basic role for general community interaction, focusing on content consumption and participation in discussions.
+  position: 0
+- key: community_contributor
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Contributor
+      description: Empowers users to create and share content, fostering a creative and active community environment.
+  position: 1
+- key: community_facilitator
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Facilitator
+      description: Guides discussions and ensures inclusivity, acting as a mediator to foster a positive community environment.
+  position: 2
+- key: community_organizer
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Organizer
+      description: Coordinates the day-to-day functioning of a community, supporting members, events, content, and participation workflows.
+  position: 3
+- key: community_coordinator
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Coordinator
+      description: Manages community engagement and events, enhancing interaction and supporting sub-community initiatives.
+  position: 4
+- key: community_content_curator
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Content Curator
+      description: Manages the creation and curation of educational and engaging content, ensuring it meets community needs and aligns with platform objectives.
+  position: 5
+- key: community_strategist
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Strategist
+      description: Focuses on aligning community activities with broader platform goals and managing long-term strategic planning.
+  position: 6
+- key: community_legal_advisor
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Legal Advisor
+      description: Advises on legal matters pertaining to community interactions and content, ensuring compliance with laws and platform policies.
+  position: 7
+- key: community_governance_council
+  attributes:
+    resource_type: BetterTogether::Community
+    protected: true
+  translations:
+    en:
+      name: Community Governance Council
+      description: Oversees platform governance, ensuring that decisions reflect community interests and uphold ethical standards.
+  position: 8
+- key: platform_steward
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Steward
+      description: Stewards the platform as shared infrastructure, maintaining its operations and guiding platform-level decisions.
+  position: 0
+- key: platform_manager
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Manager
+      description: Manages daily operations and technical updates, ensuring the platform remains stable and responsive to user needs.
+  position: 1
+- key: platform_infrastructure_architect
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Infrastructure Architect
+      description: Designs and manages the platform's IT infrastructure, ensuring scalability, security, and efficient performance.
+  position: 2
+- key: platform_tech_support
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Tech Support
+      description: Provides ongoing technical support and troubleshooting, ensuring that technical issues are resolved quickly.
+  position: 3
+- key: platform_developer
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Developer
+      description: Develops new features and maintains the existing codebase, integrating community contributions and improving platform functionalities.
+  position: 4
+- key: platform_quality_assurance_lead
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Quality Assurance Lead
+      description: Ensures that all platform updates and features pass rigorous testing, maintaining high standards for reliability and performance.
+  position: 5
+- key: platform_accessibility_officer
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Accessibility Officer
+      description: Ensures that the platform is accessible to all users, advocating for and implementing best practices in accessibility.
+  position: 6
+- key: analytics_viewer
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Analytics Viewer
+      description: Has read-only access to platform analytics and metrics, and can generate and download reports without broader platform-management authority.
+  position: 7
+- key: platform_analytics_viewer
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Analytics Viewer
+      description: Has read-only access to platform analytics and metrics, can generate and download reports without access to other platform management functions.
+  position: 8
+- key: network_admin
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Network Admin
+      description: Manages platform-to-platform network relationships, connection approvals, and federation trust settings without inheriting full local platform stewardship.
+  position: 9
+- key: platform_code_manager
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Code Manager
+      description: May add scripts, styles and meta tags to the platform head and body.
+  position: 10
+- key: platform_member
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Member
+      description: Basic platform role for signed-in members who can access platform information without platform management authority.
+  position: 11

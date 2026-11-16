@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T20:30:12Z",
+  "generated_at": "2026-11-16T03:54:25Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -720,11 +720,11 @@
             "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "ExclusionValidator: friendly_id (in=dynamic)",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "PresenceValidator: email",
             "PresenceValidator: email (if=:email_required?)",
-            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)",
-            "UniquenessValidator: email (case_sensitive=false, scope=:platform_id)"
+            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)"
           ],
           "belongs_to": [
             {
@@ -830,9 +830,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: name"
+            "PresenceValidator: name",
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -1366,9 +1366,7 @@
           ],
           "validations": [
             "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "PresenceValidator: member",
-            "PresenceValidator: role",
-            "PresenceValidator: joinable",
+            "PresenceValidator: member, role, joinable",
             "UniquenessValidator: role_id (scope=[:joinable_id, :member_id])"
           ],
           "belongs_to": [
@@ -1940,9 +1938,7 @@
             ]
           ],
           "validations": [
-            "PresenceValidator: member",
-            "PresenceValidator: role",
-            "PresenceValidator: joinable",
+            "PresenceValidator: member, role, joinable",
             "UniquenessValidator: role_id (scope=[:joinable_id, :member_id])"
           ],
           "belongs_to": [
@@ -2134,9 +2130,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "UniquenessValidator: position (scope=[:resource_type, :platform_id])"
           ],
           "belongs_to": [
             {
@@ -2228,9 +2224,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -2414,11 +2410,11 @@
             "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "ExclusionValidator: friendly_id (in=dynamic)",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "PresenceValidator: email",
             "PresenceValidator: email (if=:email_required?)",
-            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)",
-            "UniquenessValidator: email (case_sensitive=false, scope=:platform_id)"
+            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)"
           ],
           "belongs_to": [
             {
@@ -4192,9 +4188,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])"
+            "InclusionValidator: protected (in=[true, false])",
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -4864,10 +4860,10 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "PresenceValidator: name",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -12512,6 +12508,12 @@
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
+              "direction": "has_one",
+              "name": "feature_image_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
               "direction": "has_many",
               "name": "categorizations",
               "as": "categorizable",
@@ -12572,7 +12574,9 @@
             "title"
           ],
           "concerns": [
+            "BetterTogether::Attachments::Images",
             "BetterTogether::Authorable",
+            "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Categorizable",
             "BetterTogether::CategoryIdentifiers",
@@ -12589,6 +12593,7 @@
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Publishable",
+            "BetterTogether::RemoveableAttachment",
             "BetterTogether::Reportable",
             "BetterTogether::Searchable",
             "BetterTogether::Seedable",
@@ -13244,6 +13249,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Category",
+            "Page",
             "Post"
           ]
         },
@@ -13263,6 +13269,7 @@
           "capability": "Base64imageinput",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Page",
             "Post",
             "Content::Image",
             "Content::Hero"
@@ -13878,6 +13885,7 @@
             "Upload",
             "Category",
             "CallForInterest",
+            "Page",
             "Content::Block",
             "Post",
             "Content::VideoBlock",
@@ -14744,9 +14752,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -14922,9 +14930,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15075,10 +15083,10 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "PresenceValidator: privacy",
-            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -15210,10 +15218,10 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "PresenceValidator: privacy",
-            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -15415,9 +15423,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15743,9 +15751,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15921,9 +15929,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -16097,10 +16105,10 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "PresenceValidator: privacy",
-            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -16299,10 +16307,10 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "PresenceValidator: privacy",
-            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -16558,10 +16566,10 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "PresenceValidator: privacy",
-            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -17372,9 +17380,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -20794,9 +20802,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "InclusionValidator: protected (in=[true, false])"
           ],
           "belongs_to": [
             {
@@ -20958,9 +20966,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: offer, request",
-            "PresenceValidator: status"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: offer, request"
           ],
           "belongs_to": [
             {
@@ -21555,9 +21563,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: name, description, creator",
-            "PresenceValidator: categories"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: name, description, creator"
           ],
           "belongs_to": [
             {
@@ -21944,9 +21952,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: name, description, creator",
-            "PresenceValidator: categories"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: name, description, creator"
           ],
           "belongs_to": [
             {
@@ -22206,9 +22214,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: name, description, creator",
-            "PresenceValidator: categories"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: name, description, creator"
           ],
           "belongs_to": [
             {
@@ -22473,9 +22481,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: name, description, creator",
-            "PresenceValidator: categories"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: name, description, creator"
           ],
           "belongs_to": [
             {
@@ -22743,9 +22751,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: name, description, creator",
-            "PresenceValidator: categories"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: name, description, creator"
           ],
           "belongs_to": [
             {
@@ -23013,9 +23021,9 @@
             "PresenceValidator: privacy",
             "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])",
             "PresenceValidator: slug",
-            "UniquenessValidator: slug",
-            "PresenceValidator: name, description, creator",
-            "PresenceValidator: categories"
+            "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "PresenceValidator: name, description, creator"
           ],
           "belongs_to": [
             {
@@ -28509,9 +28517,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -28784,9 +28792,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -28964,9 +28972,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {

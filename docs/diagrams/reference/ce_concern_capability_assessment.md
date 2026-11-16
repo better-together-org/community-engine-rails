@@ -15,7 +15,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Api::LocaleScoping` | Localescoping | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::OauthAuthorization` | Oauthauthorization | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `AppearancePreferenceParams` | Appearancepreferenceparams | `PeopleController` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Attachments::Images` | Images | `Category`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Attachments::Images` | Images | `Category`, `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Author` | Author | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Authorable` | Adds author/authorship associations and creator-aware authorship workflow. | `Page`, `Post` | Author visibility and blocked-author behavior must stay aligned with policy scopes. |
 | `Base64ImageInput` | Base64imageinput | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |

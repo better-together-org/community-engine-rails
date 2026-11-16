@@ -29,12 +29,12 @@ FactoryBot.define do
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
-        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+        platform_steward_role = HostRoles.find('platform_steward')
 
         unless platform_steward_role
           BetterTogether::AccessControlBuilder.seed_data
-          platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                                  BetterTogether::Role.find_by(identifier: 'platform_manager')
+          platform_steward_role = HostRoles.find('platform_steward') ||
+                                  HostRoles.find('platform_manager')
         end
 
         next unless platform_steward_role
@@ -52,16 +52,16 @@ FactoryBot.define do
       # Transitional alias: legacy specs should resolve to the canonical
       # platform-steward role when it exists.
       after(:create) do |user|
-        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+        platform_steward_role = HostRoles.find('platform_steward')
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
         unless platform_steward_role
           BetterTogether::AccessControlBuilder.seed_data
-          platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+          platform_steward_role = HostRoles.find('platform_steward')
         end
 
-        role = platform_steward_role || BetterTogether::Role.find_by(identifier: 'platform_manager')
+        role = platform_steward_role || HostRoles.find('platform_manager')
         next unless role
 
         membership = host_platform.person_platform_memberships.find_or_initialize_by(
@@ -78,11 +78,11 @@ FactoryBot.define do
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
-        network_admin_role = BetterTogether::Role.find_by(identifier: 'network_admin')
+        network_admin_role = HostRoles.find('network_admin')
 
         unless network_admin_role
           BetterTogether::AccessControlBuilder.seed_data
-          network_admin_role = BetterTogether::Role.find_by(identifier: 'network_admin')
+          network_admin_role = HostRoles.find('network_admin')
         end
 
         next unless network_admin_role

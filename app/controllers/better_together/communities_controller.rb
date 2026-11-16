@@ -311,6 +311,7 @@ module BetterTogether
 
     def load_community_roles_data
       @community_roles = BetterTogether::Role
+                         .for_platform(@community.platform)
                          .where(resource_type: 'BetterTogether::Community')
                          .includes(:string_translations, :resource_permissions)
                          .order(:position)
