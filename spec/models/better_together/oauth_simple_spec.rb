@@ -9,7 +9,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
   let(:community) { platform.community }
   let!(:github_platform) do
     BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
-      github.external = true
+      github.locality = 'remote'
       github.host = false
       github.name = 'GitHub'
       github.url = 'https://github.com'
@@ -61,7 +61,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
 
         # Should find and assign the correct external platform
         integration = user.person_platform_integrations.first
-        expect(integration.platform).to be_external
+        expect(integration.platform).to be_remote
         expect(integration.platform.identifier).to eq('github')
         expect(integration.platform.name).to eq('GitHub')
 

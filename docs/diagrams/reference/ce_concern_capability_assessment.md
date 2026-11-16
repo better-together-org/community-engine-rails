@@ -102,6 +102,7 @@ This assessment is generated from the current live class set and the concern cap
 | `PlatformMembershipDisplay` | Platformmembershipdisplay | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformRegistryDefaults` | Platformregistrydefaults | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformScoped` | Platformscoped | `RoleResourcePermission`, `ResourcePermission`, `PersonDeletionRequest`, `PersonDataExport`, `PersonChecklistItem`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformSubtype` | Platformsubtype | `OperatorPlatform`, `OauthPlatform`, `HostedPlatform`, `FederatedPlatform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformThemeSettings` | Platformthemesettings | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Positioned` | Positioned | `ResourcePermission`, `Role` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PostsIndexPreload` | Postsindexpreload | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |

@@ -49,7 +49,7 @@ RSpec.describe BetterTogether::OmniauthPlatformGate, :no_auth, :omniauth, :skip_
 
   it 'lets the callback through on a domain the provider allows' do
     provider = create(:better_together_platform_identity_provider, platform: host_platform,
-                                                                   provider_platform: create(:better_together_platform, external: true))
+                                                                   provider_platform: create(:better_together_platform, locality: 'remote'))
     provider.update!(platform_domains: [other_domain])
     host! other_hostname
 

@@ -7,7 +7,7 @@ require BetterTogether::Engine.root.join('db/migrate/20261112150000_backfill_hos
 # platform row (OAuth providers, federation).
 RSpec.describe BackfillHostPlatformOnInvitationsAndOauth, :no_auth do
   let!(:host_platform) { configure_host_platform }
-  let(:external_platform) { create(:better_together_platform, external: true) }
+  let(:external_platform) { create(:better_together_platform, locality: 'remote') }
 
   def run_migration
     ActiveRecord::Migration.suppress_messages { described_class.new.up }

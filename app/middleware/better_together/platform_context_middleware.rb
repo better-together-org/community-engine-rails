@@ -63,7 +63,7 @@ module BetterTogether
 
     def single_platform?
       Rails.cache.fetch('better_together/single_platform', expires_in: 1.minute) do
-        BetterTogether::Platform.where(external: false).limit(2).count < 2
+        BetterTogether::Platform.local.limit(2).count < 2
       end
     end
 

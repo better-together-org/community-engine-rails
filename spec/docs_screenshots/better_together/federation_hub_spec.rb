@@ -119,7 +119,7 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
   def find_or_create_peer_platform(name)
     identifier = "docs-#{name.parameterize}"
     BetterTogether::Platform.find_by(identifier:) ||
-      create(:better_together_platform, name:, identifier:, external: true, privacy: 'private')
+      create(:better_together_platform, name:, identifier:, locality: 'remote', privacy: 'private')
   end
 
   def connection

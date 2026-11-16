@@ -27,7 +27,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
 
   before do
     BetterTogether::Platform.find_or_create_by!(identifier: 'google') do |google|
-      google.external = true
+      google.locality = 'remote'
       google.host = false
       google.name = 'Google'
       google.url = 'https://accounts.google.com'

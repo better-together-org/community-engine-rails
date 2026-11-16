@@ -46,7 +46,7 @@ module BetterTogether
 
         def load_platform_hostnames
           domains = BetterTogether::PlatformDomain.active.pluck(:hostname)
-          urls = BetterTogether::Platform.internal.pluck(:url).filter_map { |url| url_host(url) }
+          urls = BetterTogether::Platform.local.pluck(:url).filter_map { |url| url_host(url) }
           (domains + urls).filter_map { |name| normalize(name).presence }.uniq
         end
 

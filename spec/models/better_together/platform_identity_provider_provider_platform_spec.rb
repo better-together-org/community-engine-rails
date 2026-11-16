@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::PlatformIdentityProvider, '#provider_platform' do
 
     expect(second).to be_persisted
     expect(first.provider_platform).not_to eq(second.provider_platform)
-    expect(first.provider_platform).to be_external
+    expect(first.provider_platform).to be_remote
   end
 
   it 'rejects the same issuer twice on a platform, however it is spelled', :aggregate_failures do
