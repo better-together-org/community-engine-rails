@@ -33,6 +33,19 @@ module BetterTogether
       end
 
       class_methods do
+        # A banner image shown at the top of a record and used as its share (og:image) picture.
+        # Removal is handled by configure_attachment_cleanup (remove_feature_image).
+        def attachable_feature_image
+          has_one_attached :feature_image do |attachable|
+            attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200], preprocessed: true
+            attachable.variant :optimized_png, resize_to_limit: [2400, 1200], preprocessed: true
+          end
+
+          validates :feature_image,
+                    content_type: VALID_IMAGE_CONTENT_TYPES,
+                    size: { less_than: 100.megabytes, message: 'is too large' }
+        end
+
         def configure_attachment_cleanup
           include ::BetterTogether::RemoveableAttachment
         end
@@ -51,6 +64,12 @@ module BetterTogether
           # Otherwise, use the optimized JPG variant
           card_image.variant(:optimized_card_jpeg)
         end
+      end
+
+      def optimized_feature_image
+        return feature_image if feature_image.content_type == 'image/svg+xml'
+
+        feature_image.variant(feature_image.content_type == 'image/png' ? :optimized_png : :optimized_jpeg)
       end
 
       def optimized_cover_image

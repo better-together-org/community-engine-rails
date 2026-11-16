@@ -38,7 +38,7 @@ module BetterTogether
 
       # Page editors/managers see every block (the view badges the non-public
       # ones); everyone else sees only what BlockPolicy::Scope / #show? permits.
-      # Sets @viewer_is_page_editor, @content_blocks, @hero_block.
+      # Sets @viewer_is_page_editor, @content_blocks.
       assign_visible_page_content_blocks(@page)
 
       # STI block collections may contain Content::Template records that have no

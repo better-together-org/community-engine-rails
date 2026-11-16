@@ -22,6 +22,7 @@ module BetterTogether
           translated :title, :content
           reference :community, to: :community, optional: true
           reference :sidebar_nav, to: :navigation_area, optional: true
+          attachment :feature_image
         end
         Registry.register(:content_block) do
           model 'BetterTogether::Content::Block'
