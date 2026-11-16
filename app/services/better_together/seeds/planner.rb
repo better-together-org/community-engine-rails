@@ -111,6 +111,8 @@ module BetterTogether
         classify(entry, definition, existing)
       rescue Registry::UnknownType
         plan.add_error(record: entry.id, field: 'type', message: "unknown seed type #{entry.type}")
+      rescue KeyError => e
+        plan.add_error(record: entry.id, field: '/refs', message: "cannot locate the record's parents: #{e.message}")
       end
 
       def validate_fields(entry, definition)
@@ -180,14 +182,27 @@ module BetterTogether
       # Parents planted by this same packet for the first time do not exist yet, so the record is a create.
       def locate_by_parents(definition, entry)
         slots = definition.by_refs.presence || [definition.within]
-        parents = slots.to_h { |slot| [slot, entry.refs[slot.to_s] && resolve_parent(entry.refs[slot.to_s])] }
+        parents = slots.to_h { |slot| [slot, entry.refs[slot.to_s] && resolve_parent(entry.refs[slot.to_s], [entry.id])] }
         return nil if parents.values.any?(&:nil?)
 
         definition.find(platform:, key: entry.key, parent_refs: parents, attributes: entry.attributes)
       end
 
-      def resolve_parent(target)
-        Registry.fetch(target['type']).find(platform:, key: target['key'])
+      # A parent keyed by its own parents (contact_detail within its contactable) is located through the
+      # refs that parent's packet entry declares. Returns nil when it cannot be located yet.
+      def resolve_parent(target, seen = [])
+        definition = Registry.fetch(target['type'])
+        return definition.find(platform:, key: target['key']) unless definition.within || definition.by_refs.any?
+
+        id = "#{target['type']}:#{target['key']}"
+        entry = @entries.find { |e| e.id == id }
+        return nil if entry.nil? || seen.include?(id)
+
+        slots = definition.by_refs.presence || [definition.within]
+        parents = slots.to_h { |slot| [slot, entry.refs[slot.to_s] && resolve_parent(entry.refs[slot.to_s], seen + [id])] }
+        return nil if parents.values.any?(&:nil?)
+
+        definition.find(platform:, key: entry.key, parent_refs: parents, attributes: entry.attributes)
       rescue Registry::UnknownType
         nil
       end

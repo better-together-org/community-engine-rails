@@ -101,11 +101,19 @@ module BetterTogether
         entry.refs.to_h do |slot, ref|
           id = "#{ref['type']}:#{ref['key']}"
           target = ref['scope'] == 'platform' ? nil : @targets[id]
-          target ||= Registry.fetch(ref['type']).find(platform:, key: ref['key'])
+          target ||= find_on_platform(ref)
           raise KeyError, "#{id} could not be resolved" unless target
 
           [slot, target]
         end
+      end
+
+      # Types keyed by their parents are known only through the packet (planted or located earlier in this run).
+      def find_on_platform(ref)
+        definition = Registry.fetch(ref['type'])
+        return nil if definition.within || definition.by_refs.any?
+
+        definition.find(platform:, key: ref['key'])
       end
 
       def remove(item, definition)
