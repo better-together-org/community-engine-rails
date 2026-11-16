@@ -89,7 +89,7 @@ RSpec.describe BetterTogether::Seeds::ProvenanceWriter do
     it 'writes neither a Seed nor provenance' do
       plant(apply: false)
 
-      expect(BetterTogether::SeedProvenance.count).to eq(0)
+      expect(BetterTogether::SeedProvenance.where(platform:)).to be_empty
       expect(BetterTogether::Seed.where(identifier: 'prov-packet')).to be_empty
     end
   end

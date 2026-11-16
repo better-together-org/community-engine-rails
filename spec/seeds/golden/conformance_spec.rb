@@ -5,11 +5,12 @@ require 'rails_helper'
 # Protocol 2.0 conformance: each example plants a golden packet through the public entry point
 # (Seeds::Plant) and asserts the structured report plus what did or did not reach the database.
 RSpec.describe 'Seed packet conformance' do # rubocop:disable RSpec/DescribeClass
-  include SeedBlobHelpers
-
+  let!(:plantings_before) { BetterTogether::SeedPlanting.count }
   let(:platform) { create(:better_together_platform) }
   let(:dir) { Dir.mktmpdir('seed-golden') }
   let(:pdf) { "%PDF-1.4\n#{'golden ' * 50}" }
+
+  include SeedBlobHelpers
 
   after { FileUtils.remove_entry(dir) }
 
@@ -48,7 +49,7 @@ RSpec.describe 'Seed packet conformance' do # rubocop:disable RSpec/DescribeClas
     it 'dry run writes nothing' do
       expect(plant(apply: false)).to include(created: 3, dry_run: true)
       expect(nav_count).to eq(0)
-      expect(BetterTogether::SeedPlanting.count).to eq(0)
+      expect(BetterTogether::SeedPlanting.count).to eq(plantings_before)
     end
 
     it 'keeps two platforms apart' do
