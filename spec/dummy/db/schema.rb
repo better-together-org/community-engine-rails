@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_15_210000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_16_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2282,9 +2282,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_210000) do
     t.string "action", null: false
     t.string "target", null: false
     t.uuid "platform_id"
-    t.index ["identifier"], name: "index_better_together_resource_permissions_on_identifier", unique: true
+    t.index ["platform_id", "identifier"], name: "idx_bt_resource_permissions_on_platform_identifier", unique: true
+    t.index ["platform_id", "resource_type", "position"], name: "idx_bt_resource_permissions_on_platform_resource_type_position", unique: true
     t.index ["platform_id"], name: "index_better_together_resource_permissions_on_platform_id"
-    t.index ["resource_type", "position"], name: "index_resource_permissions_on_resource_type_and_position", unique: true
   end
 
   create_table "better_together_robots", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2332,9 +2332,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_15_210000) do
     t.string "resource_type", null: false
     t.string "type", default: "BetterTogether::Role", null: false
     t.uuid "platform_id"
-    t.index ["identifier"], name: "index_better_together_roles_on_identifier", unique: true
+    t.index ["platform_id", "identifier"], name: "idx_bt_roles_on_platform_identifier", unique: true
+    t.index ["platform_id", "resource_type", "position"], name: "idx_bt_roles_on_platform_resource_type_position", unique: true
     t.index ["platform_id"], name: "index_better_together_roles_on_platform_id"
-    t.index ["resource_type", "position"], name: "index_roles_on_resource_type_and_position", unique: true
   end
 
   create_table "better_together_safety_actions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
