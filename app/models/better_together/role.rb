@@ -24,7 +24,7 @@ module BetterTogether
     # The platform's own copy of a default role; falls back to the current platform. A platform that
     # has no roles yet receives the default set first, so lookups never fall through to another platform.
     def self.find_default(identifier, platform: nil, **conditions)
-      platform ||= Current.platform
+      platform ||= Current.platform || Platform.find_by(host: true)
       return if platform.blank?
 
       AccessControlBuilder.seed_data(platform:) unless platform.external? || for_platform(platform).exists?

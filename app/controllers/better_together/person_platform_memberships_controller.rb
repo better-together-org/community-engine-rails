@@ -186,7 +186,7 @@ module BetterTogether
     end
 
     def assignable_roles
-      ::BetterTogether::Role.where(resource_type: 'BetterTogether::Platform')
+      ::BetterTogether::Role.for_platform(@platform).where(resource_type: 'BetterTogether::Platform')
     end
 
     # Adds a policy check for the person platform membership
