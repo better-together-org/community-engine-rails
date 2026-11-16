@@ -82,6 +82,8 @@ module BetterTogether
                 in: -> { TZInfo::Timezone.all_identifiers },
                 message: '%<value>s is not a valid timezone'
               }
+    # Declared explicitly so the class loads while migrations that predate the column run on an empty database.
+    attribute :locality, :string, default: 'local'
     enum :locality, { local: 'local', remote: 'remote' }, default: :local, validate: true
     validates :software_variant, inclusion: { in: SOFTWARE_VARIANTS }, allow_blank: true
     validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
