@@ -9,6 +9,6 @@ FactoryBot.define do
     enabled { true }
     include_subdomains { false }
 
-    role { BetterTogether::Role.find_by!(identifier: 'community_member') }
+    role { HostRoles.find!('community_member') }
   end
 end

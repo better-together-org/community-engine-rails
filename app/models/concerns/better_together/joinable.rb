@@ -79,9 +79,10 @@ module BetterTogether
     end
 
     def default_member_role
-      BetterTogether::Role.find_by(
-        resource_type: self.class.name,
-        identifier: default_member_role_identifier
+      BetterTogether::Role.find_default(
+        default_member_role_identifier,
+        platform: is_a?(BetterTogether::Platform) ? self : try(:platform),
+        resource_type: self.class.name
       )
     end
 

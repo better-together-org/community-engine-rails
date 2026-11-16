@@ -94,8 +94,8 @@ module BetterTogether
     end
 
     def assign_default_role
-      self.role = ::BetterTogether::Role.find_by(identifier: DEFAULT_ROLE_IDENTIFIER,
-                                                 resource_type: 'BetterTogether::Community')
+      self.role = ::BetterTogether::Role.find_default(DEFAULT_ROLE_IDENTIFIER, platform:,
+                                                                               resource_type: 'BetterTogether::Community')
     end
 
     def role_is_a_community_role

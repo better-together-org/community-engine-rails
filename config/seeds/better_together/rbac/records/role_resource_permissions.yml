@@ -1,0 +1,808 @@
+---
+version: '2.0'
+type: role_resource_permission
+records:
+- key: community_member-read_community
+  refs:
+    role: role:community_member
+    resource_permission: resource_permission:read_community
+- key: community_member-list_community
+  refs:
+    role: role:community_member
+    resource_permission: resource_permission:list_community
+- key: community_contributor-read_community
+  refs:
+    role: role:community_contributor
+    resource_permission: resource_permission:read_community
+- key: community_contributor-list_community
+  refs:
+    role: role:community_contributor
+    resource_permission: resource_permission:list_community
+- key: community_contributor-invite_community_members
+  refs:
+    role: role:community_contributor
+    resource_permission: resource_permission:invite_community_members
+- key: community_facilitator-read_community
+  refs:
+    role: role:community_facilitator
+    resource_permission: resource_permission:read_community
+- key: community_facilitator-list_community
+  refs:
+    role: role:community_facilitator
+    resource_permission: resource_permission:list_community
+- key: community_facilitator-invite_community_members
+  refs:
+    role: role:community_facilitator
+    resource_permission: resource_permission:invite_community_members
+- key: community_facilitator-manage_community_events
+  refs:
+    role: role:community_facilitator
+    resource_permission: resource_permission:manage_community_events
+- key: community_organizer-read_community
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:read_community
+- key: community_organizer-list_community
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:list_community
+- key: community_organizer-update_community
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:update_community
+- key: community_organizer-delete_community
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:delete_community
+- key: community_organizer-manage_community_members
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:manage_community_members
+- key: community_organizer-manage_community_settings
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:manage_community_settings
+- key: community_organizer-manage_community_content
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:manage_community_content
+- key: community_organizer-manage_community_events
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:manage_community_events
+- key: community_organizer-manage_community_roles
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:manage_community_roles
+- key: community_organizer-manage_community_notifications
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:manage_community_notifications
+- key: community_organizer-invite_community_members
+  refs:
+    role: role:community_organizer
+    resource_permission: resource_permission:invite_community_members
+- key: community_coordinator-read_community
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:read_community
+- key: community_coordinator-list_community
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:list_community
+- key: community_coordinator-update_community
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:update_community
+- key: community_coordinator-manage_community_members
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:manage_community_members
+- key: community_coordinator-manage_community_settings
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:manage_community_settings
+- key: community_coordinator-manage_community_content
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:manage_community_content
+- key: community_coordinator-manage_community_events
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:manage_community_events
+- key: community_coordinator-manage_community_roles
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:manage_community_roles
+- key: community_coordinator-manage_community_notifications
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:manage_community_notifications
+- key: community_coordinator-invite_community_members
+  refs:
+    role: role:community_coordinator
+    resource_permission: resource_permission:invite_community_members
+- key: community_content_curator-read_community
+  refs:
+    role: role:community_content_curator
+    resource_permission: resource_permission:read_community
+- key: community_content_curator-list_community
+  refs:
+    role: role:community_content_curator
+    resource_permission: resource_permission:list_community
+- key: community_content_curator-manage_community_content
+  refs:
+    role: role:community_content_curator
+    resource_permission: resource_permission:manage_community_content
+- key: community_strategist-read_community
+  refs:
+    role: role:community_strategist
+    resource_permission: resource_permission:read_community
+- key: community_strategist-list_community
+  refs:
+    role: role:community_strategist
+    resource_permission: resource_permission:list_community
+- key: community_strategist-update_community
+  refs:
+    role: role:community_strategist
+    resource_permission: resource_permission:update_community
+- key: community_strategist-manage_community_roles
+  refs:
+    role: role:community_strategist
+    resource_permission: resource_permission:manage_community_roles
+- key: community_legal_advisor-read_community
+  refs:
+    role: role:community_legal_advisor
+    resource_permission: resource_permission:read_community
+- key: community_legal_advisor-list_community
+  refs:
+    role: role:community_legal_advisor
+    resource_permission: resource_permission:list_community
+- key: community_legal_advisor-update_community
+  refs:
+    role: role:community_legal_advisor
+    resource_permission: resource_permission:update_community
+- key: community_legal_advisor-manage_community_settings
+  refs:
+    role: role:community_legal_advisor
+    resource_permission: resource_permission:manage_community_settings
+- key: community_governance_council-read_community
+  refs:
+    role: role:community_governance_council
+    resource_permission: resource_permission:read_community
+- key: community_governance_council-list_community
+  refs:
+    role: role:community_governance_council
+    resource_permission: resource_permission:list_community
+- key: community_governance_council-invite_community_members
+  refs:
+    role: role:community_governance_council
+    resource_permission: resource_permission:invite_community_members
+- key: community_governance_council-manage_community_members
+  refs:
+    role: role:community_governance_council
+    resource_permission: resource_permission:manage_community_members
+- key: community_governance_council-manage_community_roles
+  refs:
+    role: role:community_governance_council
+    resource_permission: resource_permission:manage_community_roles
+- key: platform_steward-read_platform
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:read_platform
+- key: platform_steward-list_platform
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:list_platform
+- key: platform_steward-create_platform
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:create_platform
+- key: platform_steward-update_platform
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:update_platform
+- key: platform_steward-delete_platform
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:delete_platform
+- key: platform_steward-manage_platform
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform
+- key: platform_steward-manage_platform_members
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_members
+- key: platform_steward-manage_joatu
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_joatu
+- key: platform_steward-manage_platform_api
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_steward-manage_platform_data_privacy
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_steward-manage_platform_database
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_steward-manage_platform_deployment
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_steward-manage_platform_roles
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_steward-manage_platform_safety
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_safety
+- key: platform_steward-manage_platform_security
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_steward-manage_platform_settings
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_steward-view_metrics_dashboard
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_steward-create_metrics_reports
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_steward-download_metrics_reports
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_steward-view_platform_logs
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_steward-view_network
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:view_network
+- key: platform_steward-access_beta_features
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:access_beta_features
+- key: platform_steward-access_alpha_features
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:access_alpha_features
+- key: platform_manager-read_platform
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:read_platform
+- key: platform_manager-list_platform
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:list_platform
+- key: platform_manager-create_platform
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:create_platform
+- key: platform_manager-update_platform
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:update_platform
+- key: platform_manager-delete_platform
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:delete_platform
+- key: platform_manager-manage_platform
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform
+- key: platform_manager-manage_platform_members
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_members
+- key: platform_manager-manage_joatu
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_joatu
+- key: platform_manager-manage_platform_api
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_manager-manage_platform_data_privacy
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_manager-manage_platform_database
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_manager-manage_platform_deployment
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_manager-manage_platform_roles
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_manager-manage_platform_safety
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_safety
+- key: platform_manager-manage_platform_security
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_manager-manage_platform_settings
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_manager-view_metrics_dashboard
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_manager-create_metrics_reports
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_manager-download_metrics_reports
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_manager-view_platform_logs
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_manager-view_network
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:view_network
+- key: platform_manager-access_beta_features
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:access_beta_features
+- key: platform_manager-access_alpha_features
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:access_alpha_features
+- key: network_admin-read_platform
+  refs:
+    role: role:network_admin
+    resource_permission: resource_permission:read_platform
+- key: network_admin-list_platform
+  refs:
+    role: role:network_admin
+    resource_permission: resource_permission:list_platform
+- key: network_admin-view_network
+  refs:
+    role: role:network_admin
+    resource_permission: resource_permission:view_network
+- key: network_admin-manage_network_connections
+  refs:
+    role: role:network_admin
+    resource_permission: resource_permission:manage_network_connections
+- key: network_admin-approve_network_connections
+  refs:
+    role: role:network_admin
+    resource_permission: resource_permission:approve_network_connections
+- key: network_admin-manage_federation_auth
+  refs:
+    role: role:network_admin
+    resource_permission: resource_permission:manage_federation_auth
+- key: platform_analytics_viewer-view_metrics_dashboard
+  refs:
+    role: role:platform_analytics_viewer
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_analytics_viewer-create_metrics_reports
+  refs:
+    role: role:platform_analytics_viewer
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_analytics_viewer-download_metrics_reports
+  refs:
+    role: role:platform_analytics_viewer
+    resource_permission: resource_permission:download_metrics_reports
+- key: analytics_viewer-view_metrics_dashboard
+  refs:
+    role: role:analytics_viewer
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: analytics_viewer-create_metrics_reports
+  refs:
+    role: role:analytics_viewer
+    resource_permission: resource_permission:create_metrics_reports
+- key: analytics_viewer-download_metrics_reports
+  refs:
+    role: role:analytics_viewer
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_infrastructure_architect-read_platform
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:read_platform
+- key: platform_infrastructure_architect-list_platform
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:list_platform
+- key: platform_infrastructure_architect-create_platform
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:create_platform
+- key: platform_infrastructure_architect-update_platform
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:update_platform
+- key: platform_infrastructure_architect-delete_platform
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:delete_platform
+- key: platform_infrastructure_architect-manage_platform
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform
+- key: platform_infrastructure_architect-manage_platform_api
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_infrastructure_architect-manage_platform_data_privacy
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_infrastructure_architect-manage_platform_database
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_infrastructure_architect-manage_platform_deployment
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_infrastructure_architect-manage_platform_roles
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_infrastructure_architect-manage_platform_security
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_infrastructure_architect-manage_platform_settings
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_infrastructure_architect-view_metrics_dashboard
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_infrastructure_architect-create_metrics_reports
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_infrastructure_architect-download_metrics_reports
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_infrastructure_architect-view_platform_logs
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_infrastructure_architect-access_beta_features
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:access_beta_features
+- key: platform_infrastructure_architect-access_alpha_features
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:access_alpha_features
+- key: platform_tech_support-read_platform
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:read_platform
+- key: platform_tech_support-list_platform
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:list_platform
+- key: platform_tech_support-create_platform
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:create_platform
+- key: platform_tech_support-update_platform
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:update_platform
+- key: platform_tech_support-delete_platform
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:delete_platform
+- key: platform_tech_support-manage_platform
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform
+- key: platform_tech_support-manage_platform_api
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_tech_support-manage_platform_data_privacy
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_tech_support-manage_platform_database
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_tech_support-manage_platform_deployment
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_tech_support-manage_platform_roles
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_tech_support-manage_platform_security
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_tech_support-manage_platform_settings
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_tech_support-view_metrics_dashboard
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_tech_support-create_metrics_reports
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_tech_support-download_metrics_reports
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_tech_support-view_platform_logs
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_tech_support-access_beta_features
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:access_beta_features
+- key: platform_tech_support-access_alpha_features
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:access_alpha_features
+- key: platform_developer-read_platform
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:read_platform
+- key: platform_developer-list_platform
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:list_platform
+- key: platform_developer-create_platform
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:create_platform
+- key: platform_developer-update_platform
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:update_platform
+- key: platform_developer-delete_platform
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:delete_platform
+- key: platform_developer-manage_platform
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform
+- key: platform_developer-manage_platform_api
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_developer-manage_platform_data_privacy
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_developer-manage_platform_database
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_developer-manage_platform_deployment
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_developer-manage_platform_roles
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_developer-manage_platform_security
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_developer-manage_platform_settings
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_developer-view_metrics_dashboard
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_developer-create_metrics_reports
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_developer-download_metrics_reports
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_developer-view_platform_logs
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_developer-access_beta_features
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:access_beta_features
+- key: platform_developer-access_alpha_features
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:access_alpha_features
+- key: platform_quality_assurance_lead-read_platform
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:read_platform
+- key: platform_quality_assurance_lead-list_platform
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:list_platform
+- key: platform_quality_assurance_lead-create_platform
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:create_platform
+- key: platform_quality_assurance_lead-update_platform
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:update_platform
+- key: platform_quality_assurance_lead-delete_platform
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:delete_platform
+- key: platform_quality_assurance_lead-manage_platform
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform
+- key: platform_quality_assurance_lead-manage_platform_api
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_quality_assurance_lead-manage_platform_data_privacy
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_quality_assurance_lead-manage_platform_database
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_quality_assurance_lead-manage_platform_deployment
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_quality_assurance_lead-manage_platform_roles
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_quality_assurance_lead-manage_platform_security
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_quality_assurance_lead-manage_platform_settings
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_quality_assurance_lead-view_metrics_dashboard
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_quality_assurance_lead-create_metrics_reports
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_quality_assurance_lead-download_metrics_reports
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_quality_assurance_lead-view_platform_logs
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_quality_assurance_lead-access_beta_features
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:access_beta_features
+- key: platform_quality_assurance_lead-access_alpha_features
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:access_alpha_features
+- key: platform_accessibility_officer-read_platform
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:read_platform
+- key: platform_accessibility_officer-list_platform
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:list_platform
+- key: platform_accessibility_officer-create_platform
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:create_platform
+- key: platform_accessibility_officer-update_platform
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:update_platform
+- key: platform_accessibility_officer-delete_platform
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:delete_platform
+- key: platform_accessibility_officer-manage_platform
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform
+- key: platform_accessibility_officer-manage_platform_api
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_api
+- key: platform_accessibility_officer-manage_platform_data_privacy
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_data_privacy
+- key: platform_accessibility_officer-manage_platform_database
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_database
+- key: platform_accessibility_officer-manage_platform_deployment
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_deployment
+- key: platform_accessibility_officer-manage_platform_roles
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_roles
+- key: platform_accessibility_officer-manage_platform_security
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_security
+- key: platform_accessibility_officer-manage_platform_settings
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_settings
+- key: platform_accessibility_officer-view_metrics_dashboard
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:view_metrics_dashboard
+- key: platform_accessibility_officer-create_metrics_reports
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:create_metrics_reports
+- key: platform_accessibility_officer-download_metrics_reports
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:download_metrics_reports
+- key: platform_accessibility_officer-view_platform_logs
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:view_platform_logs
+- key: platform_accessibility_officer-access_beta_features
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:access_beta_features
+- key: platform_code_manager-read_platform
+  refs:
+    role: role:platform_code_manager
+    resource_permission: resource_permission:read_platform
+- key: platform_code_manager-manage_platform_code
+  refs:
+    role: role:platform_code_manager
+    resource_permission: resource_permission:manage_platform_code
+- key: platform_member-read_platform
+  refs:
+    role: role:platform_member
+    resource_permission: resource_permission:read_platform

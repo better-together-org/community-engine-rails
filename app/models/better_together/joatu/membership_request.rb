@@ -117,7 +117,7 @@ module BetterTogether
       end
 
       def default_community_role
-        @trusted_domain_entry&.role || ::BetterTogether::Role.find_by(identifier: 'community_member')
+        @trusted_domain_entry&.role || ::BetterTogether::Role.find_default('community_member', platform: target.try(:platform))
       end
 
       # A trusted-domain requester skips the pending state. Reviewers are only notified when it did not apply.

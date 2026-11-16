@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Seeds::Plant do
+  let!(:plantings_before) { BetterTogether::SeedPlanting.count }
   let(:platform) { create(:better_together_platform) }
   let(:dir) { Dir.mktmpdir('seed-packet') }
   let(:records) { nav_records }
@@ -27,7 +28,7 @@ RSpec.describe BetterTogether::Seeds::Plant do
 
       expect(report).to include(dry_run: true, created: 3, errors: [])
       expect(BetterTogether::NavigationArea.where(platform:, identifier: 'main-nav')).to be_empty
-      expect(BetterTogether::SeedPlanting.count).to eq(0)
+      expect(BetterTogether::SeedPlanting.count).to eq(plantings_before)
     end
 
     it 'is the default for apply' do
@@ -136,7 +137,7 @@ RSpec.describe BetterTogether::Seeds::Plant do
 
       expect(report[:errors]).to include(include(record: 'navigation_item:nav-home', field: '/refs/navigation_area'))
       expect(BetterTogether::NavigationArea.where(platform:, identifier: 'main-nav')).to be_empty
-      expect(BetterTogether::SeedPlanting.count).to eq(0)
+      expect(BetterTogether::SeedPlanting.count).to eq(plantings_before)
     end
   end
 

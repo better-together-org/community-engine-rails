@@ -16,13 +16,13 @@ module BetterTogether
     slugged :identifier, dependent: :delete_all
 
     validates :action, inclusion: { in: ACTIONS }
-    validates :position, uniqueness: { scope: :resource_type }
+    validates :position, uniqueness: { scope: %i[resource_type platform_id] }
 
     scope :positioned, -> { order(:resource_type, :position) }
     after_commit :expire_affected_member_permission_caches
 
     def position_scope
-      :resource_type
+      %i[resource_type platform_id]
     end
 
     def to_s
