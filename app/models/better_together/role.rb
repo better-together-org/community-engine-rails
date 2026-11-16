@@ -20,10 +20,20 @@ module BetterTogether
               presence: true
 
     scope :positioned, -> { order(:resource_type, :position) }
+
+    # The platform's own copy of a default role; falls back to the current platform. A platform that
+    # has no roles yet receives the default set first, so lookups never fall through to another platform.
+    def self.find_default(identifier, platform: nil, **conditions)
+      platform ||= Current.platform || Platform.find_by(host: true)
+      return if platform.blank?
+
+      AccessControlBuilder.seed_data(platform:) unless platform.external? || for_platform(platform).exists?
+      for_platform(platform).find_by(identifier:, **conditions)
+    end
     after_commit :expire_affected_member_permission_caches
 
     def assign_resource_permissions(permission_identifiers, save_record: true, sync: false)
-      permissions = ::BetterTogether::ResourcePermission.where(identifier: permission_identifiers)
+      permissions = ::BetterTogether::ResourcePermission.where(platform_id:, identifier: permission_identifiers)
       synchronize_resource_permissions!(permissions) if sync
 
       # Avoid duplicate join records when called multiple times
@@ -64,7 +74,7 @@ module BetterTogether
     end
 
     def position_scope
-      :resource_type
+      %i[resource_type platform_id]
     end
   end
 end

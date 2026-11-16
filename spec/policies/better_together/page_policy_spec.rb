@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     user = create(:better_together_user, :confirmed)
     BetterTogether::PersonPlatformMembership.create!(
       joinable: platform, member: user.person,
-      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+      role: BetterTogether::Role.find_default('platform_steward', platform:), status: 'active'
     )
     user
   end

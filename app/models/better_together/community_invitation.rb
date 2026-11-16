@@ -39,7 +39,7 @@ module BetterTogether
       return unless community
 
       # Use the role specified in the invitation, or default to community_member
-      target_role = role || BetterTogether::Role.find_by(identifier: 'community_member')
+      target_role = role || BetterTogether::Role.find_default('community_member', platform: community.platform)
 
       membership = community.person_community_memberships.find_or_initialize_by(
         member: person,

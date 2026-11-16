@@ -3,14 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PlatformPolicy do
-  let(:platform_steward_role) { BetterTogether::Role.find_by(identifier: 'platform_steward') }
+  def platform_steward_role_for(platform) = BetterTogether::Role.find_default('platform_steward', platform:)
   let(:host_platform) { BetterTogether::Platform.find_by!(host: true) }
 
   def grant_platform_steward!(person, platform)
     BetterTogether::PersonPlatformMembership.create!(
       joinable: platform,
       member: person,
-      role: platform_steward_role,
+      role: platform_steward_role_for(platform),
       status: 'active'
     )
   end
@@ -165,7 +165,7 @@ RSpec.describe BetterTogether::PlatformPolicy do
       platform_a = create(:platform, privacy: 'private')
       platform_b = create(:platform, privacy: 'private')
       user = create(:better_together_user)
-      steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+      steward_role = BetterTogether::Role.find_default('platform_steward', platform: platform_a)
       BetterTogether::PersonPlatformMembership.create!(
         joinable: platform_a, member: user.person, role: steward_role, status: 'active'
       )
