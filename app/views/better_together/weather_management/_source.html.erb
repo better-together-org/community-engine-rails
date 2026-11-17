@@ -1,0 +1,61 @@
+<div id="weather-source-detail">
+  <%= link_to t('host_dashboard.weather.back'), host_dashboard_weather_path, id: 'weather-back-link',
+                                                                             class: 'btn btn-link px-0' %>
+  <h1 id="weather-source-heading" class="mb-2"><%= @source.identifier %></h1>
+  <p class="text-muted">
+    <%= t('host_dashboard.weather.sources.adapter', adapter: @source.adapter_key) %>
+    <%= render 'better_together/weather_management/status_badges', enabled: @source.enabled?, stale: false %>
+  </p>
+
+  <section id="weather-locations" class="card shadow-sm mt-3" aria-labelledby="weather-locations-heading">
+    <div class="card-body">
+      <h2 id="weather-locations-heading" class="h4 mb-2"><%= t('host_dashboard.weather.locations.heading') %></h2>
+      <% locations = @overview.locations_for(@source) %>
+      <% if locations.empty? %>
+        <p id="weather-locations-empty" class="text-muted mb-0"><%= t('host_dashboard.weather.locations.empty') %></p>
+      <% else %>
+        <div class="table-responsive">
+          <table id="weather-locations-table" class="table align-middle mb-0">
+            <caption class="visually-hidden"><%= t('host_dashboard.weather.locations.caption', source: @source.identifier) %></caption>
+            <thead>
+              <tr>
+                <th scope="col"><%= t('host_dashboard.weather.columns.settlement') %></th>
+                <th scope="col"><%= t('host_dashboard.weather.columns.status') %></th>
+                <th scope="col"><%= t('host_dashboard.weather.columns.last_refresh') %></th>
+                <th scope="col"><%= t('host_dashboard.weather.columns.last_success') %></th>
+                <th scope="col" class="text-end"><%= t('host_dashboard.weather.columns.actions') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% locations.each do |location| %>
+                <% name = location.settlement&.name || location.external_ref %>
+                <tr id="<%= dom_id(location) %>" class="weather-location-row">
+                  <th scope="row">
+                    <div class="fw-semibold weather-location-name"><%= name %></div>
+                    <div class="text-muted small weather-location-ref"><%= location.external_ref %></div>
+                  </th>
+                  <td>
+                    <%= render 'better_together/weather_management/status_badges',
+                               enabled: location.enabled?, stale: @overview.location_stale?(location, @source) %>
+                  </td>
+                  <td class="weather-location-last-refresh">
+                    <%= render 'better_together/weather_management/time',
+                               time: BetterTogether::Weather::StewardOverview.last_refresh_at(location) %>
+                  </td>
+                  <td class="weather-location-last-success">
+                    <%= render 'better_together/weather_management/time', time: location.last_refreshed_at %>
+                  </td>
+                  <td class="text-end">
+                    <%= render 'better_together/weather_management/toggle_link',
+                               enabled: location.enabled?, name:, css_class: 'weather-location-toggle-btn',
+                               url: confirm_host_dashboard_weather_location_path(location, enabled: !location.enabled?) %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

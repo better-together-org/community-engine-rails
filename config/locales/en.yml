@@ -6074,6 +6074,111 @@ en:
       visible_reports_badge:
         one: 1 visible report
         other: "%{count} visible reports"
+    weather:
+      actions:
+        disable: Disable
+        disable_named: Disable %{name}
+        enable: Enable
+        enable_named: Enable %{name}
+      audit:
+        caption: Recent weather setting changes, newest first
+        change: "%{before} to %{after}"
+        columns:
+          change: Change
+          what: What
+          when: When
+          who: Who
+        empty: No weather settings have been changed yet.
+        heading: Change history
+        kinds:
+          feature: Weather on this host
+          location: Location
+          source: Source
+        unknown_actor: Unknown person
+      back: Back to weather
+      columns:
+        actions: Actions
+        last_refresh: Last refresh
+        last_success: Last successful refresh
+        locations: Locations
+        settlement: Settlement
+        source: Source
+        status: Status
+      confirm:
+        cancel: Cancel
+        disable: Yes, disable
+        enable: Yes, enable
+        feature:
+          disable_effect: Turning weather off stops every weather job and hides the
+            Weather tab and the current conditions card for every platform on this
+            host. Stored readings are kept.
+          disable_heading: Turn weather off for this host?
+          enable_effect: Turning weather on lets weather jobs run again and shows
+            the Weather tab on settlements with an enabled location of an enabled
+            source, on every platform on this host.
+          enable_heading: Turn weather on for this host?
+        location:
+          disable_effect: Disabling weather for %{name} stops its refreshes and hides
+            the Weather tab on that settlement for every platform on this host. Stored
+            readings are kept.
+          disable_heading: Disable weather for %{name}?
+          enable_effect: Enabling weather for %{name} resumes its refreshes and shows
+            the Weather tab on that settlement while its source is enabled.
+          enable_heading: Enable weather for %{name}?
+        source:
+          disable_effect: Disabling %{name} stops refreshes for all %{count} of its
+            locations and hides their Weather tab for every platform on this host.
+            Stored readings are kept.
+          disable_heading: Disable the source %{name}?
+          enable_effect: Enabling %{name} resumes refreshes for its enabled locations
+            and shows their Weather tab for every platform on this host.
+          enable_heading: Enable the source %{name}?
+      description: Settlement weather for every platform on this host. Changes take
+        effect for the next weather job and page view, without a restart.
+      feature:
+        description: The host-wide switch. When it is off no weather job runs and
+          no weather is shown on any platform.
+        env_forced_off_html: The server setting <code>%{variable}</code> is false,
+          so weather is off for this host whatever this switch says. Remove that setting
+          and restart to use the switch.
+        heading: Weather on this host
+        status:
+          forced_off: Off (server setting)
+          'off': 'Off'
+          'on': 'On'
+        turn_off: Turn weather off
+        turn_on: Turn weather on
+      flash:
+        env_forced_off: Weather is switched off by a server setting, so the switch
+          cannot be changed here.
+        feature_disabled: Weather is now off for this host.
+        feature_enabled: Weather is now on for this host.
+        location_disabled: Weather for %{name} is now disabled.
+        location_enabled: Weather for %{name} is now enabled.
+        source_disabled: The source %{name} is now disabled.
+        source_enabled: The source %{name} is now enabled.
+        unchanged: Nothing changed; the setting already had that value.
+      heading: Weather
+      locations:
+        caption: Weather locations of %{source}
+        empty: This source has no locations. Locations are added by host seeds.
+        heading: Locations
+      never: Never
+      page_title: Weather
+      sources:
+        adapter: 'Adapter: %{adapter}'
+        caption: Weather sources with their locations and refresh times
+        description: Sources and locations are added by host seeds. Here you can switch
+          them on or off.
+        empty: No weather sources are configured on this host.
+        heading: Sources
+        location_count: "%{enabled} of %{count} enabled"
+        view_locations: Locations
+        view_locations_for: Locations of %{name}
+      status:
+        disabled: Disabled
+        enabled: Enabled
+        stale: Stale
   invitations:
     calculating: Calculating
   layouts:
