@@ -1,0 +1,11 @@
+{
+  "name": "settings_usage_tab",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "quotas",
+  "flow": "settings_usage_tab",
+  "source_spec": "./spec/docs_screenshots/better_together/settings_usage_tab_spec.rb"
+}
