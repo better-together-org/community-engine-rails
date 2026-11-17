@@ -11,6 +11,10 @@ class ScopeRolesAndPermissionsByPlatform < ActiveRecord::Migration[7.2] # ruboco
     better_together_resource_permissions: { identifier: 'index_better_together_resource_permissions_on_identifier',
                                             position: 'index_resource_permissions_on_resource_type_and_position' }
   }.freeze
+  SLUG_OWNERS = {
+    'BetterTogether::Role' => :better_together_roles,
+    'BetterTogether::ResourcePermission' => :better_together_resource_permissions
+  }.freeze
   NEW_IDENTIFIER = 'idx_bt_%<table>s_on_platform_identifier'
   NEW_POSITION = 'idx_bt_%<table>s_on_platform_resource_type_position'
 
@@ -26,6 +30,7 @@ class ScopeRolesAndPermissionsByPlatform < ActiveRecord::Migration[7.2] # ruboco
     return unless table_exists?(:better_together_roles) && table_exists?(:better_together_resource_permissions)
 
     assign_unowned_rows_to_host
+    backfill_slug_platforms
     swap_indexes_to_platform_scope
     copy_sets_to_other_platforms
   end
@@ -52,6 +57,26 @@ class ScopeRolesAndPermissionsByPlatform < ActiveRecord::Migration[7.2] # ruboco
   def assign_unowned_rows_to_host
     %w[better_together_roles better_together_resource_permissions better_together_role_resource_permissions].each do |table|
       execute "UPDATE #{table} SET platform_id = #{host_id_sql} WHERE platform_id IS NULL"
+    end
+  end
+
+  # The slug migration ran before roles and permissions had a platform, so their history rows were skipped.
+  # A row is left alone when the platform already holds the same slug, which the unique index would reject.
+  def backfill_slug_platforms
+    return unless table_exists?(:friendly_id_slugs) && column_exists?(:friendly_id_slugs, :platform_id)
+
+    SLUG_OWNERS.each do |type, table|
+      execute <<~SQL.squish
+        UPDATE friendly_id_slugs s SET platform_id = t.platform_id
+        FROM #{table} t
+        WHERE s.sluggable_type = #{quote(type)} AND s.sluggable_id = t.id
+          AND s.platform_id IS NULL AND t.platform_id IS NOT NULL
+          AND NOT EXISTS (
+            SELECT 1 FROM friendly_id_slugs o
+            WHERE o.platform_id = t.platform_id AND o.sluggable_type = s.sluggable_type
+              AND o.slug = s.slug AND o.locale = s.locale AND o.id <> s.id
+          )
+      SQL
     end
   end
 
@@ -145,9 +170,11 @@ class ScopeRolesAndPermissionsByPlatform < ActiveRecord::Migration[7.2] # ruboco
 
     execute <<~SQL.squish
       INSERT INTO friendly_id_slugs (slug, sluggable_id, sluggable_type, scope, locale, platform_id, lock_version, created_at, updated_at)
-      SELECT s.slug, m.new_id, s.sluggable_type, s.scope, s.locale, #{platform}, 0, NOW(), NOW()
+      SELECT DISTINCT ON (s.slug, s.locale, m.new_id)
+             s.slug, m.new_id, s.sluggable_type, s.scope, s.locale, #{platform}, 0, NOW(), NOW()
       FROM friendly_id_slugs s JOIN #{map} m ON m.old_id = s.sluggable_id
       WHERE s.sluggable_type = #{connection.quote(type)}
+      ORDER BY s.slug, s.locale, m.new_id, s.id DESC
     SQL
   end
 
