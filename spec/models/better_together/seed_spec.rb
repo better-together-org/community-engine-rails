@@ -37,14 +37,16 @@ RSpec.describe BetterTogether::Seed do
   end
 
   describe 'scopes' do
+    # Planting the default RBAC packet records its own seed, so count relative to the baseline.
+    let!(:baseline) { described_class.by_type('BetterTogether::Seed').count }
+
     before do
       create(:better_together_seed, identifier: 'generic_seed')
       create(:better_together_seed, identifier: 'home_page', type: 'BetterTogether::Seed')
     end
 
     it 'filters by type' do
-      # Essential test seeding also records packet Seeds, so count only the two made here.
-      expect(described_class.by_type('BetterTogether::Seed').by_identifier(%w[generic_seed home_page]).count).to eq(2)
+      expect(described_class.by_type('BetterTogether::Seed').count).to eq(baseline + 2)
     end
 
     it 'filters by identifier' do

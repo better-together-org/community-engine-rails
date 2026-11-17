@@ -194,7 +194,7 @@ module BetterTogether # :nodoc:
 
       describe 'federation provenance' do
         let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
-        let(:remote_platform) { create(:better_together_platform, :external) }
+        let(:remote_platform) { create(:better_together_platform, :remote) }
 
         around do |example|
           previous_platform = Current.platform
@@ -275,7 +275,7 @@ module BetterTogether # :nodoc:
 
       describe 'community assignment (CommunityAssignable)' do
         let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
-        let(:remote_platform) { create(:better_together_platform, :external) }
+        let(:remote_platform) { create(:better_together_platform, :remote) }
 
         it "assigns the platform's own community when community is nil, not the host community" do
           federated_page = build(:better_together_page, platform: remote_platform, community: nil)

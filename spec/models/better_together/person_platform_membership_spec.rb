@@ -237,4 +237,22 @@ RSpec.describe BetterTogether::PersonPlatformMembership do
       expect(Noticed::Notification.count).to eq(initial_count)
     end
   end
+
+  describe 'role platform', :strict_role_platform do
+    it 'rejects a role that belongs to a different platform' do
+      platform = create(:better_together_platform)
+      other_role = create(:better_together_role, :platform_role, platform: create(:better_together_platform))
+      membership = build(:better_together_person_platform_membership, joinable: platform, role: other_role)
+
+      expect(membership).not_to be_valid
+      expect(membership.errors[:role]).to be_present
+    end
+
+    it 'accepts a role from the membership platform' do
+      platform = create(:better_together_platform)
+      role = create(:better_together_role, :platform_role, platform:)
+
+      expect(build(:better_together_person_platform_membership, joinable: platform, role:)).to be_valid
+    end
+  end
 end

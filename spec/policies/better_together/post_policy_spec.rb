@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::PostPolicy do
     user = create(:better_together_user, :confirmed)
     BetterTogether::PersonPlatformMembership.create!(
       joinable: platform, member: user.person,
-      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+      role: BetterTogether::Role.find_default('platform_steward', platform:), status: 'active'
     )
     user
   end

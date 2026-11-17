@@ -165,6 +165,12 @@ module BetterTogether
       ::BetterTogether::Community
     end
 
+    # Two platforms can share a community slug: this platform's community wins. A slug that only
+    # another platform owns still resolves, as it did before.
+    def find_by_translatable(**)
+      super(**, collection: resource_collection.in_current_platform) || super
+    end
+
     def resource_collection
       # Set invitation token for policy scope
       invitation_token = params[:invitation_token] || session[:community_invitation_token]
@@ -281,7 +287,7 @@ module BetterTogether
     end
 
     def load_community_safely
-      @community || resource_class.friendly.find(params[:id])
+      @community || resource_class.friendly_find_in_platform(params[:id])
     rescue ActiveRecord::RecordNotFound
       nil
     end
@@ -305,6 +311,7 @@ module BetterTogether
 
     def load_community_roles_data
       @community_roles = BetterTogether::Role
+                         .for_platform(@community.platform)
                          .where(resource_type: 'BetterTogether::Community')
                          .includes(:string_translations, :resource_permissions)
                          .order(:position)

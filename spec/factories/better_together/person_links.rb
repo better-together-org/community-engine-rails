@@ -17,14 +17,14 @@ FactoryBot.define do
       target_platform = person_link.platform_connection.target_platform
 
       source_platform.person_platform_memberships.find_or_create_by!(member: person_link.source_person) do |membership|
-        membership.role = create(:better_together_role)
+        membership.role = create(:better_together_role, platform: source_platform)
         membership.status = 'active'
       end
 
       next unless person_link.target_person
 
       target_platform.person_platform_memberships.find_or_create_by!(member: person_link.target_person) do |membership|
-        membership.role = create(:better_together_role)
+        membership.role = create(:better_together_role, platform: target_platform)
         membership.status = 'active'
       end
     end

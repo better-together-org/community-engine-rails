@@ -46,7 +46,7 @@ RSpec.describe BetterTogether::Platform, '#quota_default_limits' do
   end
 
   it 'does not enqueue the job for an external platform' do
-    external = create(:better_together_platform, :external)
+    external = create(:better_together_platform, :remote)
 
     expect { external.update!(quota_default_limits: { 'media_storage' => { 'person' => '100' } }) }
       .not_to have_enqueued_job(BetterTogether::Quotas::ApplyPlatformDefaultsJob)

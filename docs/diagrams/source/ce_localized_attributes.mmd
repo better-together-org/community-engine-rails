@@ -179,6 +179,16 @@ classDiagram
       +name : string
       +slug : string
     }
+    class BetterTogether_FederatedPlatform["FederatedPlatform"] {
+      +description : rich_text
+      +name : string
+      +slug : string
+    }
+    class BetterTogether_HostedPlatform["HostedPlatform"] {
+      +description : rich_text
+      +name : string
+      +slug : string
+    }
     class BetterTogether_NavigationArea["NavigationArea"] {
       +name : string
       +slug : string
@@ -187,7 +197,17 @@ classDiagram
       +slug : string
       +title : string
     }
+    class BetterTogether_OauthPlatform["OauthPlatform"] {
+      +description : rich_text
+      +name : string
+      +slug : string
+    }
     class BetterTogether_OauthUser["OauthUser"] {
+      +slug : string
+    }
+    class BetterTogether_OperatorPlatform["OperatorPlatform"] {
+      +description : rich_text
+      +name : string
       +slug : string
     }
     class BetterTogether_Page["Page"] {

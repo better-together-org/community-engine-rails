@@ -280,6 +280,7 @@ en:
         scopes: Scopes
       better_together/page:
         blocks: Blocks
+        feature_image: Feature image
         identifier: Identifier
         image_blocks: Image blocks
         keywords: Keywords
@@ -2456,13 +2457,14 @@ en:
         no_items: No items to display
     color_mode:
       announce:
-        auto: 'Colour mode: automatic, following your device.'
         dark: 'Colour mode: dark.'
         light: 'Colour mode: light.'
       auto: Auto
       dark: Dark
       label: Colour mode
       light: Light
+      switch_to_dark: Switch to dark mode
+      switch_to_light: Switch to light mode
     comment_config:
       hints:
         permission: Controls who is allowed to post new comments.
@@ -3206,6 +3208,8 @@ en:
           at_start: "%{event_name} is starting now"
         view_details_url: View details url
       index:
+        map_truncated: Showing the first %{count} mapped events. Narrow the filters
+          to see the rest.
         new_btn_text: New Event
         result_count:
           one: "%{count} event"
@@ -4948,8 +4952,6 @@ en:
         title: Platform Connections
       new:
         back: Back
-        register_platform_hint: Need to register a remote platform first?
-        register_platform_link: Register External Platform →
         title: New Platform Connection
       show:
         api_read: API Read
@@ -7505,6 +7507,11 @@ en:
           cover_image: Cover image
       images:
         cover_image: Cover image
+        feature_image: Shown at the top of the page and used as the preview image
+          when the page is shared.
+      page:
+        show_title: Show the title at the top of the page. Pages that open with a
+          hero block use the hero heading instead.
       person:
         allow_messages_from_members: Opt-in to receive messages from people other
           than platform managers.

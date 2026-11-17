@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Factories are shipped to host apps, whose specs do not load this gem's spec/support.
+require_relative '../../support/host_roles'
+
 FactoryBot.define do
   factory 'better_together/platform_trusted_domain',
           class: 'BetterTogether::PlatformTrustedDomain',
@@ -9,6 +12,6 @@ FactoryBot.define do
     enabled { true }
     include_subdomains { false }
 
-    role { BetterTogether::Role.find_by!(identifier: 'community_member') }
+    role { HostRoles.find!('community_member') }
   end
 end

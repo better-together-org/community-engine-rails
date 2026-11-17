@@ -9,8 +9,8 @@ RSpec.describe 'Platform identity providers DOM contract', :as_platform_manager,
   let(:page_html) { Nokogiri::HTML(response.body) }
 
   before do
-    github = BetterTogether::Platform.find_by(identifier: 'github', external: true) ||
-             create(:better_together_platform, identifier: 'github', external: true, name: 'GitHub', url: 'https://github.com')
+    github = BetterTogether::Platform.find_by(identifier: 'github', locality: 'remote') ||
+             create(:better_together_platform, identifier: 'github', locality: 'remote', name: 'GitHub', url: 'https://github.com')
     create(:better_together_platform_identity_provider, platform:, provider_platform: github)
   end
 

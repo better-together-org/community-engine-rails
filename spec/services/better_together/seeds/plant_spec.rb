@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Seeds::Plant do
+  let!(:plantings_before) { BetterTogether::SeedPlanting.count }
   let(:platform) { create(:better_together_platform) }
   let(:dir) { Dir.mktmpdir('seed-packet') }
   let(:records) { nav_records }
@@ -27,7 +28,7 @@ RSpec.describe BetterTogether::Seeds::Plant do
 
       expect(report).to include(dry_run: true, created: 3, errors: [])
       expect(BetterTogether::NavigationArea.where(platform:, identifier: 'main-nav')).to be_empty
-      expect(BetterTogether::SeedPlanting.count).to eq(0)
+      expect(BetterTogether::SeedPlanting.count).to eq(plantings_before)
     end
 
     it 'is the default for apply' do
@@ -136,19 +137,44 @@ RSpec.describe BetterTogether::Seeds::Plant do
 
       expect(report[:errors]).to include(include(record: 'navigation_item:nav-home', field: '/refs/navigation_area'))
       expect(BetterTogether::NavigationArea.where(platform:, identifier: 'main-nav')).to be_empty
-      expect(BetterTogether::SeedPlanting.count).to eq(0)
+      expect(BetterTogether::SeedPlanting.count).to eq(plantings_before)
     end
   end
 
-  context 'with a field the registry does not allow' do
+  context 'with protected on a type that did not opt in' do
+    let(:records) do
+      { community: [{ 'key' => 'c1', 'attributes' => { 'protected' => true },
+                      'translations' => { 'en' => { 'name' => 'C1' } } }] }
+    end
+
+    it 'rejects it' do
+      expect(plant[:errors]).to include(include(field: '/attributes/protected'))
+    end
+  end
+
+  context 'with protected on a type that opted in' do
     let(:records) do
       list = nav_records
       list[:navigation_item][0]['attributes']['protected'] = true
       list
     end
 
+    it 'writes it' do
+      plant
+
+      expect(area_items.find_by!(identifier: 'nav-home')).to be_protected
+    end
+  end
+
+  context 'with a field the registry does not allow' do
+    let(:records) do
+      list = nav_records
+      list[:navigation_item][0]['attributes']['platform_id'] = SecureRandom.uuid
+      list
+    end
+
     it 'rejects the record instead of assigning it' do
-      expect(plant[:errors]).to include(include(field: '/attributes/protected'))
+      expect(plant[:errors]).to include(include(field: '/attributes/platform_id'))
     end
   end
 
@@ -193,6 +219,16 @@ RSpec.describe BetterTogether::Seeds::Plant do
       first = nil
       expect { first = plant }.to change(BetterTogether::Content::PageBlock, :count).by(1), -> { first[:errors].inspect }
       expect { expect(plant[:errors]).to be_empty }.not_to change(BetterTogether::Content::PageBlock, :count)
+    end
+
+    it 'reports the join row as unchanged on a rerun, in the plan and in the applied report', :aggregate_failures do
+      plant
+      planned = plant(apply: false)
+      applied = plant
+
+      expect(planned).to include(created: 0, unchanged: 3)
+      expect(applied).to include(created: 0, unchanged: 3)
+      expect(applied[:records]).to include(include(record: 'page_block:about/body', action: :unchanged))
     end
   end
 

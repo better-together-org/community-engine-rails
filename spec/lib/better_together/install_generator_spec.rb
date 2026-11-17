@@ -21,6 +21,7 @@ RSpec.describe BetterTogether::InstallGenerator, type: :generator do
     {
       'config/routes.rb' => "Rails.application.routes.draw do\nend\n",
       'config/storage.yml' => "local:\n  service: Disk\n",
+      'config/database.yml' => "default: &default\n  adapter: postgresql\n  encoding: unicode\n",
       'config/application.rb' => "module Host\n  class Application < Rails::Application\n  end\nend\n",
       'app/assets/config/manifest.js' => "//= link_tree ../images\n"
     }.each { |path, body| File.write(File.join(root, path), body) }
@@ -42,6 +43,31 @@ RSpec.describe BetterTogether::InstallGenerator, type: :generator do
     expect(File.executable?(File.join(destination_root, 'bin/check-engine-migrations'))).to be(true)
   end
 
+  it 'reads Active Record encryption keys from the environment and never hardcodes them' do
+    write_host_files
+    run_generator
+
+    assert_file 'config/application.rb', /encryption\.primary_key = ENV\.fetch\('ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY'\)/
+    assert_file 'config/application.rb', /deterministic_key = ENV\.fetch/
+    assert_file 'config/application.rb', /key_derivation_salt = ENV\.fetch/
+  end
+
+  it 'switches the postgresql adapter to postgis' do
+    write_host_files
+    run_generator
+
+    assert_file 'config/database.yml', /adapter: postgis/
+    assert_file 'config/database.yml', /\A(?!.*adapter: postgresql).*\z/m
+  end
+
+  it 'only sets rspec and factory_bot defaults when those gems are loaded' do
+    write_host_files
+    run_generator
+
+    assert_file 'config/application.rb', /g\.test_framework :rspec, fixture: false if Gem\.loaded_specs\.key\?\('rspec-rails'\)/
+    assert_file 'config/application.rb', /if Gem\.loaded_specs\.key\?\('factory_bot_rails'\)/
+  end
+
   it 'records the install migrations mode' do
     write_host_files
     run_generator %w[--migrations=install]
@@ -57,15 +83,19 @@ RSpec.describe BetterTogether::InstallGenerator, type: :generator do
     expect(File.read(File.join(destination_root, 'config/routes.rb')).scan('BetterTogether::Engine').size).to eq(1)
     expect(File.read(File.join(destination_root, 'config/storage.yml')).scan('s3_compatible:').size).to eq(1)
     expect(File.read(File.join(destination_root, 'config/application.rb')).scan('config.generators').size).to eq(1)
+    expect(File.read(File.join(destination_root, 'config/application.rb')).scan('encryption.primary_key').size).to eq(1)
   end
 
   it 'honours the skip options' do
     write_host_files
-    run_generator %w[--skip-routes --skip-storage --skip-assets --skip-generators --skip-ci-check]
+    run_generator %w[--skip-routes --skip-storage --skip-assets --skip-generators --skip-ci-check
+                     --skip-encryption --skip-database]
 
     assert_file 'config/routes.rb', /\A(?!.*BetterTogether).*\z/m
     assert_no_file 'bin/check-engine-migrations'
     assert_no_file 'app/assets/stylesheets/host_theme.scss'
+    assert_file 'config/application.rb', /\A(?!.*encryption).*\z/m
+    assert_file 'config/database.yml', /adapter: postgresql/
   end
 
   it 'check script fails on copied engine migrations' do

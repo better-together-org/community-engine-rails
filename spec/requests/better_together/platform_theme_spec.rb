@@ -93,8 +93,8 @@ RSpec.describe 'Platform theme settings', :as_platform_manager do # rubocop:disa
 
       expect(doc.at_css('html')['data-bs-theme']).to eq('dark')
       expect(doc.at_css('html')['data-bts-color-mode']).to eq('dark')
-      expect(doc.at_css('#color-mode-toggle [role=group][aria-label]')).to be_present
-      expect(doc.css('#color-mode-toggle button').map { |b| b['data-mode'] }).to eq(%w[auto light dark])
+      expect(doc.css('#color-mode-toggle button').size).to eq(1)
+      expect(doc.at_css('#color-mode-toggle #color-mode-button')['aria-label']).to be_present
       expect(doc.css('head script[nonce]').map(&:text).join).to include('prefers-color-scheme')
     end
 

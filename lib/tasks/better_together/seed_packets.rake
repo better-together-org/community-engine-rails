@@ -6,7 +6,8 @@ namespace :better_together do
       path = ENV.fetch('PACKET') { abort 'PACKET=/path/to/packet-directory is required' }
       identifier = ENV.fetch('PLATFORM') { abort 'PLATFORM=<platform identifier> is required' }
       platform = BetterTogether::Platform.find_by(identifier:) || abort("No platform with identifier #{identifier}")
-      report = BetterTogether::Seeds::Plant.call(path:, platform:, apply:, restrict_sources: true)
+      report = BetterTogether::Seeds::Plant.call(path:, platform:, apply:, restrict_sources: true,
+                                                 require_signature: ENV['REQUIRE_SIGNATURE'] == '1')
       puts JSON.pretty_generate(report)
       exit(1) if report[:errors].any?
     end
@@ -16,7 +17,7 @@ namespace :better_together do
       run_packet.call(false)
     end
 
-    desc 'Plant a seed packet (PACKET=dir PLATFORM=identifier). Dry run unless APPLY=1.'
+    desc 'Plant a seed packet (PACKET=dir PLATFORM=identifier). Dry run unless APPLY=1. REQUIRE_SIGNATURE=1 rejects unsigned packets.'
     task plant: :environment do
       run_packet.call(ENV['APPLY'] == '1')
     end

@@ -640,6 +640,14 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__FederatedPlatform["FederatedPlatform\n(shared table family)"] {
+      <<Model>>
+      table: better_together_platforms
+      variants: HostedPlatform, OauthPlatform, OperatorPlatform
+      translates: description, name, slug
+      concerns: BetterTogetherId, Billing::Billable, Billing::Subjectable, Creatable +25
+      weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +12
+    }
     class BetterTogether__FederationContentGrant["FederationContentGrant"] {
       <<Model>>
       table: better_together_federation_content_grants
@@ -778,6 +786,12 @@ classDiagram
     class BetterTogether__Redirect["Redirect"] {
       <<Model>>
       table: better_together_redirects
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__SeedProvenance["SeedProvenance"] {
+      <<Model>>
+      table: better_together_seed_provenances
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
@@ -1029,6 +1043,9 @@ classDiagram
   BetterTogether__FeatureAccessGrant --> BetterTogether__Platform : platform
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : person
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : granted_by_person
+  BetterTogether__FederatedPlatform --> BetterTogether__Person : creator
+  BetterTogether__FederatedPlatform --> BetterTogether__Community : community
+  BetterTogether__FederatedPlatform --> BetterTogether__StorageConfiguration : active_storage_configuration
   BetterTogether__FederationContentGrant --> BetterTogether__PlatformConnection : platform_connection
   BetterTogether__InboundEmailMessage --> ActionMailbox__InboundEmail : inbound_email
   BetterTogether__InboundEmailMessage --> BetterTogether__Platform : platform
@@ -1078,6 +1095,9 @@ classDiagram
   BetterTogether__QuotaUsage --> BetterTogether__Platform : platform
   BetterTogether__QuotaUsage --> BetterTogether__Quota : quota
   BetterTogether__Redirect --> BetterTogether__Platform : platform
+  BetterTogether__SeedProvenance --> BetterTogether__Platform : platform
+  BetterTogether__SeedProvenance --> BetterTogether__Seed : seed
+  BetterTogether__SeedProvenance --> BetterTogether__SeedPlanting : seed_planting
   BetterTogether__ShortLink --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform

@@ -20,9 +20,13 @@ RSpec.describe 'Platform theme and colour mode accessibility', :accessibility, :
 
   it 'has an axe clean colour mode toggle that can be used by keyboard' do
     expect(page).to be_axe_clean.within('#color-mode-toggle').according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
-    find('#color-mode-dark').send_keys(:enter)
+    expect(page).to have_css('#color-mode-button .color-mode-icon-light', visible: :visible)
+    find('#color-mode-button').send_keys(:enter)
     expect(page).to have_css('html[data-bs-theme=dark]', wait: 5)
-    expect(page).to have_css('#color-mode-dark[aria-pressed=true]')
+    expect(page).to have_css('#color-mode-button .color-mode-icon-dark', visible: :visible)
+    expect(page).to have_no_css('#color-mode-button .color-mode-icon-light', visible: :visible)
+    find('#color-mode-button').send_keys(:enter)
+    expect(page).to have_css('html[data-bs-theme=light]', wait: 5)
     expect(find('#color-mode-status', visible: :all).text(:all)).to be_present
   end
 end

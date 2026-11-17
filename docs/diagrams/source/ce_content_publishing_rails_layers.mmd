@@ -106,8 +106,8 @@ classDiagram
       <<Model>>
       table: better_together_pages
       translates: content, slug, title
-      concerns: Authorable, BetterTogetherId, Categorizable, CategoryIdentifiers +21
-      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +20
+      concerns: Attachments::Images, Authorable, Base64ImageInput, BetterTogetherId +24
+      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +21
     }
     class BetterTogether__Post["Post"] {
       <<Model>>

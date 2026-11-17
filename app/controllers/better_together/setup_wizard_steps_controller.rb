@@ -86,14 +86,14 @@ module BetterTogether
             # transitional legacy seeds are still present.
             helpers.host_platform.person_platform_memberships.create!(
               member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                    ::BetterTogether::Role.find_by(identifier: 'platform_manager')
+              role: ::BetterTogether::Role.find_default('platform_steward', platform: helpers.host_platform) ||
+                    ::BetterTogether::Role.find_default('platform_manager', platform: helpers.host_platform)
             )
 
             # TODO: This should be moved into a separate method somewhere
             helpers.host_community.person_community_memberships.create!(
               member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
+              role: ::BetterTogether::Role.find_default('community_governance_council', platform: helpers.host_platform)
             )
             helpers.host_community.creator = user.person
             helpers.host_community.save!
@@ -127,7 +127,7 @@ module BetterTogether
     end
 
     def base_platform
-      ::BetterTogether::Platform.find_or_initialize_by(host: true) do |platform|
+      ::BetterTogether::OperatorPlatform.find_or_initialize_by(host: true) do |platform|
         platform.url                 = helpers.base_url
         platform.privacy             = 'private'
         platform.time_zone           = Time.zone.name

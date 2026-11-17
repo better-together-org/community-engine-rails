@@ -17,6 +17,19 @@ RSpec.describe BetterTogether::SocialMediaAccount do
     end
   end
 
+  describe 'Flickr' do
+    it 'has a URL template for every listed platform that can have one' do
+      expect(described_class::URL_TEMPLATES).to have_key('Flickr')
+    end
+
+    it 'generates the profile url from the handle' do
+      account = build(:social_media_account, platform_name: 'Flickr', handle: '@Some.Photographer', url: nil)
+      account.valid?
+
+      expect(account.url).to eq('https://www.flickr.com/photos/some-photographer')
+    end
+  end
+
   describe 'associations' do
     it { is_expected.to belong_to(:contact_detail).class_name('BetterTogether::ContactDetail').touch(true) }
   end

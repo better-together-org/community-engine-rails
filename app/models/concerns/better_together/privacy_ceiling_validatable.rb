@@ -39,7 +39,7 @@ module BetterTogether
       def self.wrapper_open(table, column)
         wrapper = column == 'platform_id' ? BetterTogether::Platform : BetterTogether::Community
         open_ids = wrapper.where(privacy: 'public')
-        open_ids = open_ids.or(wrapper.where(external: true)) if wrapper == BetterTogether::Platform
+        open_ids = open_ids.or(wrapper.where(locality: 'remote')) if wrapper == BetterTogether::Platform
         table[column.to_sym].eq(nil).or(table[column.to_sym].in(open_ids.select(:id).arel))
       end
 
@@ -136,7 +136,7 @@ module BetterTogether
     # External platforms (federation peers, identity providers) are registry
     # entries, not local visibility containers, so no ceiling applies.
     def external_wrapping_platform?(wrapping_platform)
-      wrapping_platform.respond_to?(:external?) && wrapping_platform.external?
+      wrapping_platform.respond_to?(:remote?) && wrapping_platform.remote?
     end
   end
 end

@@ -15,7 +15,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Api::LocaleScoping` | Localescoping | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::OauthAuthorization` | Oauthauthorization | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `AppearancePreferenceParams` | Appearancepreferenceparams | `PeopleController` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Attachments::Images` | Images | `Category`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Attachments::Images` | Images | `Category`, `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Author` | Author | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Authorable` | Adds author/authorship associations and creator-aware authorship workflow. | `Page`, `Post` | Author visibility and blocked-author behavior must stay aligned with policy scopes. |
 | `Base64ImageInput` | Base64imageinput | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -112,10 +112,12 @@ This assessment is generated from the current live class set and the concern cap
 | `PlatformCspConfiguration` | Platformcspconfiguration | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformCssBlockManagement` | Platformcssblockmanagement | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformFederationStatus` | Platformfederationstatus | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformFromParent` | Platformfromparent | `WizardStepDefinition`, `WizardStep` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformHost` | Platformhost | `Platform`, `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformMembershipDisplay` | Platformmembershipdisplay | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformRegistryDefaults` | Platformregistrydefaults | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformScoped` | Platformscoped | `RoleResourcePermission`, `ResourcePermission`, `PersonDeletionRequest`, `PersonDataExport`, `PersonChecklistItem`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformSubtype` | Platformsubtype | `OperatorPlatform`, `OauthPlatform`, `HostedPlatform`, `FederatedPlatform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformThemeSettings` | Platformthemesettings | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Positioned` | Positioned | `ResourcePermission`, `Role` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PostsIndexPreload` | Postsindexpreload | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |

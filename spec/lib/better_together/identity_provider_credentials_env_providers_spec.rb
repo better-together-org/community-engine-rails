@@ -23,7 +23,7 @@ RSpec.describe BetterTogether::IdentityProviderCredentials, '.env_providers' do
 
   it 'drops domains a provider row claims' do
     row = create(:better_together_platform_identity_provider, platform: host_platform,
-                                                              provider_platform: create(:better_together_platform, external: true))
+                                                              provider_platform: create(:better_together_platform, locality: 'remote'))
     row.update!(platform_domains: [host_domain])
 
     expect(described_class.env_providers(host_platform).find { |e| e.provider.key == :github }.domains).to be_empty

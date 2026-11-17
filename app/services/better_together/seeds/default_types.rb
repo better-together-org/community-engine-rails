@@ -12,20 +12,23 @@ module BetterTogether
         register_files_and_events
         register_contacts
         register_redirects
+        register_rbac
       end
 
       def self.register_content
         Registry.register(:page) do
           model 'BetterTogether::Page'
           attributes :slug, :privacy, :meta_description, :keywords, :layout, :template, :published_at, :show_title
+          protectable
           translated :title, :content
           reference :community, to: :community, optional: true
           reference :sidebar_nav, to: :navigation_area, optional: true
+          attachment :feature_image
         end
         Registry.register(:content_block) do
           model 'BetterTogether::Content::Block'
           sti :type, allowed: -> { BetterTogether::Seeds::DefaultTypes.content_block_types }
-          attributes :privacy, :visible, :css_settings, :html_attributes, :content_data, :media_settings
+          attributes :privacy, :visible, :css_settings, :html_attributes, :content_data, :media_settings, :template_path
           translated :content
           attachment :background_image_file
         end
@@ -49,12 +52,14 @@ module BetterTogether
         Registry.register(:navigation_area) do
           model 'BetterTogether::NavigationArea'
           attributes :visible, :style
+          protectable
           translated :name
         end
         Registry.register(:navigation_item) do
           model 'BetterTogether::NavigationItem'
           attributes :item_type, :url, :icon, :route_name, :visible, :privacy, :visibility_strategy,
                      :permission_identifier
+          protectable
           translated :title
           reference :navigation_area, to: :navigation_area
           reference :parent, to: :navigation_item, optional: true
@@ -122,8 +127,30 @@ module BetterTogether
         end
       end
 
+      def self.register_rbac
+        Registry.register(:resource_permission) do
+          model 'BetterTogether::ResourcePermission'
+          attributes :action, :target, :resource_type
+          protectable
+          position :position
+        end
+        Registry.register(:role) do
+          model 'BetterTogether::Role'
+          attributes :resource_type
+          protectable
+          translated :name, :description
+          position :position
+        end
+        Registry.register(:role_resource_permission) do
+          model 'BetterTogether::RoleResourcePermission'
+          natural_key by_refs: %i[role resource_permission]
+          reference :role, to: :role
+          reference :resource_permission, to: :resource_permission
+        end
+      end
+
       private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
-                           :register_redirects
+                           :register_redirects, :register_rbac
     end
   end
 end

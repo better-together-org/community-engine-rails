@@ -280,6 +280,7 @@ fr:
         scopes: Portées
       better_together/page:
         blocks: Blocs
+        feature_image: Image principale
         identifier: Identifiant
         image_blocks: Blocs d'images
         keywords: Mots-clés
@@ -2521,13 +2522,14 @@ fr:
         no_items: Aucun élément à afficher
     color_mode:
       announce:
-        auto: 'Mode de couleur : automatique, selon votre appareil.'
         dark: 'Mode de couleur : sombre.'
         light: 'Mode de couleur : clair.'
       auto: Auto
       dark: Sombre
       label: Mode de couleur
       light: Clair
+      switch_to_dark: Passer au mode sombre
+      switch_to_light: Passer au mode clair
     comment_config:
       hints:
         permission: Détermine qui est autorisé à publier de nouveaux commentaires.
@@ -3293,6 +3295,8 @@ fr:
           at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
       index:
+        map_truncated: Affichage des %{count} premiers événements sur la carte. Précisez
+          les filtres pour voir le reste.
         new_btn_text: Nouvel événement
         result_count:
           one: "%{count} événement"
@@ -5084,8 +5088,6 @@ fr:
         title: Connexions de plateforme
       new:
         back: Retour
-        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
-        register_platform_link: Enregistrer une plateforme externe →
         title: Nouvelle connexion de plateforme
       show:
         api_read: Lecture API
@@ -7742,6 +7744,11 @@ fr:
           cover_image: Image de couverture
       images:
         cover_image: Image de couverture
+        feature_image: Affichée en haut de la page et utilisée comme image d'aperçu
+          lorsque la page est partagée.
+      page:
+        show_title: Affiche le titre en haut de la page. Les pages qui commencent
+          par un bloc héros utilisent plutôt le titre du héros.
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.

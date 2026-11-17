@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::SitemapRefreshable do # rubocop:todo RSpec/SpecFi
     end
 
     it 'does not enqueue for a record on an external platform' do
-      external = create(:better_together_platform, :external)
+      external = create(:better_together_platform, :remote)
       allow(record).to receive_messages(previously_new_record?: true, platform_id: external.id)
 
       record.send(:enqueue_sitemap_refresh)

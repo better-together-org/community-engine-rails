@@ -17,10 +17,22 @@ sanitize_slug() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+//; s/_+$//'
 }
 
+# Postgres truncates identifiers at 63 chars. The longest name is
+# community_engine_development (28) + suffix; test DBs add up to 2 worker digits.
+# Cap the suffix at 32 chars; longer slugs keep a prefix plus an 8 char hash.
+bounded_db_suffix() {
+  local slug="_$(sanitize_slug "$1")" max=32
+  if (( ${#slug} <= max )); then
+    printf '%s' "$slug"
+  else
+    printf '%s_%s' "${slug:0:$((max - 9))}" "$(printf '%s' "$slug" | sha1sum | cut -c1-8)"
+  fi
+}
+
 if [[ "$git_dir" == "$git_common_dir" ]]; then
   worktree_db_suffix=""
 else
-  worktree_db_suffix="_$(sanitize_slug "$repo_basename")"
+  worktree_db_suffix="$(bounded_db_suffix "$repo_basename")"
 fi
 
 export DC_UID="${DC_UID:-$(id -u)}"

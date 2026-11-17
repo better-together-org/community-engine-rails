@@ -1,0 +1,20 @@
+erDiagram
+  PLATFORM ||--o{ SEED : "stores one envelope per packet"
+  PLATFORM ||--o{ SEED_PLANTING : "receives"
+  PLATFORM ||--o{ SEED_PROVENANCE : "owns"
+  SEED ||--o{ SEED_PLANTING : "planted by"
+  SEED ||--o{ SEED_PROVENANCE : "describes"
+  SEED_PLANTING ||--o{ SEED_PROVENANCE : "wrote"
+  SEED_PROVENANCE }o--|| PLANTED_RECORD : "points at (record_class, record_id)"
+
+  SEED_PROVENANCE {
+    uuid platform_id
+    string packet_id
+    string packet_version
+    string record_type
+    string record_key
+    string record_class
+    uuid record_id
+    string fingerprint
+    jsonb snapshot
+  }

@@ -15,6 +15,7 @@ require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
 require 'better_together/generator_templates'
 require 'better_together/profiling'
+require 'better_together/friendly_id_slug_platform'
 require 'better_together/safe_outbound_host'
 require 'better_together/tenancy_audit'
 require 'better_together/storage_resolver'
@@ -393,6 +394,7 @@ module BetterTogether
     end
 
     config.to_prepare do
+      FriendlyId::Slug.include BetterTogether::FriendlyIdSlugPlatform
       ActiveStorage::Blobs::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
       ActiveStorage::Blobs::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
       ActiveStorage::Representations::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate

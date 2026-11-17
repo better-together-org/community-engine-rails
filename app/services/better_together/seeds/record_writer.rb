@@ -25,7 +25,11 @@ module BetterTogether
       end
 
       def assign_fields(record, definition, entry)
-        entry.attributes.except(definition.sti_column.to_s).each { |name, value| record.public_send("#{name}=", value) }
+        entry.attributes.except(definition.sti_column.to_s).each do |name, value|
+          next if Sentinel.now?(value) && record.persisted?
+
+          record.public_send("#{name}=", Sentinel.resolve(value))
+        end
         entry.translations.each do |locale, fields|
           Mobility.with_locale(locale) { fields.each { |name, value| record.public_send("#{name}=", value) } }
         end

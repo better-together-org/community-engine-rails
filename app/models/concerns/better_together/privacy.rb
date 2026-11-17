@@ -57,7 +57,7 @@ module BetterTogether
     end
 
     def externally_governed_privacy?
-      (respond_to?(:external?) && external?) || (respond_to?(:mirrored?) && mirrored?)
+      (respond_to?(:remote?) && remote?) || (respond_to?(:mirrored?) && mirrored?)
     end
   end
 end

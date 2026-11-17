@@ -20,6 +20,12 @@ module BetterTogether
       # callers rendering this map for a viewer must set it (MapsHelper#events_map does).
       attr_writer :visible_scope
 
+      # The events the list beside the map shows, filters applied (a relation, paginated or not). When set, the map
+      # pins that same result set across all its pages instead of every visible event, up to MAX_POINTS.
+      attr_writer :list_scope
+
+      MAX_POINTS = 500
+
       def self.mappable_class
         ::BetterTogether::Event
       end
@@ -44,7 +50,7 @@ module BetterTogether
       def self.records(visible_scope = nil)
         scope = if visible_scope
                   mappable_class.where(id: visible_scope.except(:includes, :preload, :eager_load,
-                                                                :order).select(:id))
+                                                                :order, :limit, :offset).select(:id))
                 else
                   mappable_class
                 end
@@ -56,7 +62,18 @@ module BetterTogether
       end
 
       def records
-        @records ||= self.class.records(@visible_scope)
+        @records ||= located_records.limit(MAX_POINTS)
+      end
+
+      # True when the result set has more mappable events than the map shows.
+      def truncated?
+        return @truncated if defined?(@truncated)
+
+        @truncated = located_records.unscope(:includes, :order).count > MAX_POINTS
+      end
+
+      def located_records
+        self.class.records(@list_scope || @visible_scope)
       end
 
       def leaflet_points

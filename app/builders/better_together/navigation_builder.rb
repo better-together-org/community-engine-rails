@@ -869,13 +869,13 @@ module BetterTogether
           community.protected = true
         end
 
-        ::BetterTogether::Platform.find_or_create_by!(host: true) do |platform|
+        ::BetterTogether::OperatorPlatform.find_or_create_by!(host: true) do |platform|
           platform.name = host_community.name
           platform.identifier = host_community.identifier
           platform.description = host_community.description
           platform.community = host_community
           platform.host_url = seed_host_url
-          platform.external = false
+          platform.locality = 'local'
           platform.privacy = 'public'
           platform.protected = true
           platform.time_zone = ENV.fetch('PLATFORM_TIME_ZONE', 'UTC')

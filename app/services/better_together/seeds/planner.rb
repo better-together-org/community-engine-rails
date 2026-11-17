@@ -111,6 +111,8 @@ module BetterTogether
         classify(entry, definition, existing)
       rescue Registry::UnknownType
         plan.add_error(record: entry.id, field: 'type', message: "unknown seed type #{entry.type}")
+      rescue KeyError => e
+        plan.add_error(record: entry.id, field: '/refs', message: "cannot locate the record's parents: #{e.message}")
       end
 
       def validate_fields(entry, definition)
@@ -171,9 +173,38 @@ module BetterTogether
       end
 
       def locate(definition, entry, _index)
-        return nil if definition.by_refs.any? || definition.within
+        return locate_by_parents(definition, entry) if definition.by_refs.any? || definition.within
 
         definition.find(platform:, key: entry.key, attributes: entry.attributes)
+      end
+
+      # A record keyed by its parents can be found only when every parent already exists on the platform.
+      # Parents planted by this same packet for the first time do not exist yet, so the record is a create.
+      def locate_by_parents(definition, entry)
+        slots = definition.by_refs.presence || [definition.within]
+        parents = slots.to_h { |slot| [slot, entry.refs[slot.to_s] && resolve_parent(entry.refs[slot.to_s], [entry.id])] }
+        return nil if parents.values.any?(&:nil?)
+
+        definition.find(platform:, key: entry.key, parent_refs: parents, attributes: entry.attributes)
+      end
+
+      # A parent keyed by its own parents (contact_detail within its contactable) is located through the
+      # refs that parent's packet entry declares. Returns nil when it cannot be located yet.
+      def resolve_parent(target, seen = [])
+        definition = Registry.fetch(target['type'])
+        return definition.find(platform:, key: target['key']) unless definition.within || definition.by_refs.any?
+
+        id = "#{target['type']}:#{target['key']}"
+        entry = @entries.find { |e| e.id == id }
+        return nil if entry.nil? || seen.include?(id)
+
+        slots = definition.by_refs.presence || [definition.within]
+        parents = slots.to_h { |slot| [slot, entry.refs[slot.to_s] && resolve_parent(entry.refs[slot.to_s], seen + [id])] }
+        return nil if parents.values.any?(&:nil?)
+
+        definition.find(platform:, key: entry.key, parent_refs: parents, attributes: entry.attributes)
+      rescue Registry::UnknownType
+        nil
       end
 
       def classify(entry, definition, existing)
@@ -181,7 +212,7 @@ module BetterTogether
         proposed = Snapshot.proposed(definition.model.find(existing.id), definition, entry)
         keys = (proposed.keys + (planted&.keys || [])).uniq
         current = Snapshot.read(existing, definition, keys)
-        if proposed.all? { |k, v| current[k] == v }
+        if proposed.all? { |k, v| Snapshot.covers?(current[k], v) }
           add(entry, :unchanged, nil, existing)
         elsif packet.mode == 'add_only'
           add(entry, :skipped_edited, 'add_only keeps the existing record', existing)

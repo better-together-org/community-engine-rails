@@ -58,6 +58,9 @@ erDiagram
   EXT_PLATFORM o|--o{ FEATURE_ACCESS_GRANTS : "platform / platform_id"
   EXT_PERSON ||--o{ FEATURE_ACCESS_GRANTS : "person / person_id"
   EXT_PERSON o|--o{ FEATURE_ACCESS_GRANTS : "granted_by_person / granted_by_person_id"
+  EXT_PERSON o|--o{ PLATFORMS : "creator / creator_id"
+  EXT_COMMUNITY ||--o{ PLATFORMS : "community / community_id"
+  EXT_STORAGE_CONFIGURATION o|--o{ PLATFORMS : "active_storage_configuration / storage_configuration_id"
   EXT_PLATFORM_CONNECTION ||--o{ FEDERATION_CONTENT_GRANTS : "platform_connection / platform_connection_id"
   EXT_ACTION_MAILBOX_INBOUND_EMAIL o|--o{ INBOUND_EMAIL_MESSAGES : "inbound_email / inbound_email_id"
   EXT_PLATFORM o|--o{ INBOUND_EMAIL_MESSAGES : "platform / platform_id"
@@ -107,6 +110,9 @@ erDiagram
   EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_USAGES : "quota / quota_id"
   EXT_PLATFORM ||--o{ REDIRECTS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ SEED_PROVENANCES : "platform / platform_id"
+  EXT_SEED o|--o{ SEED_PROVENANCES : "seed / seed_id"
+  EXT_SEED_PLANTING o|--o{ SEED_PROVENANCES : "seed_planting / seed_planting_id"
   EXT_PLATFORM o|--o{ SHORT_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
@@ -361,6 +367,19 @@ erDiagram
     revoked_at datetime
   }
 
+  PLATFORMS {
+    community_id uuid
+    creator_id uuid
+    storage_configuration_id uuid
+    identifier string
+    locality string
+    privacy string
+    time_zone string
+    type string
+    url string
+    host boolean
+  }
+
   FEDERATION_CONTENT_GRANTS {
     federatable_id uuid
     platform_connection_id uuid
@@ -598,6 +617,19 @@ erDiagram
     last_hit_at datetime
   }
 
+  SEED_PROVENANCES {
+    packet_id string
+    platform_id uuid
+    record_id uuid
+    seed_id uuid
+    seed_planting_id uuid
+    fingerprint string
+    packet_version string
+    record_class string
+    record_key string
+    record_type string
+  }
+
   SHORT_LINKS {
     creator_id uuid
     linkable_id uuid
@@ -743,6 +775,10 @@ erDiagram
     string export_ref
   }
 
+  EXT_STORAGE_CONFIGURATION {
+    string export_ref
+  }
+
   EXT_PLATFORM_CONNECTION {
     string export_ref
   }
@@ -752,6 +788,14 @@ erDiagram
   }
 
   EXT_ROLE {
+    string export_ref
+  }
+
+  EXT_SEED {
+    string export_ref
+  }
+
+  EXT_SEED_PLANTING {
     string export_ref
   }
 

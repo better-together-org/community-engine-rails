@@ -16,7 +16,8 @@ module BetterTogether
       'LinkedIn' => 'https://www.linkedin.com/in/%<handle>s',
       'YouTube' => 'https://www.youtube.com/%<handle>s',
       'TikTok' => 'https://www.tiktok.com/@%<handle>s',
-      'Reddit' => 'https://www.reddit.com/user/%<handle>s'
+      'Reddit' => 'https://www.reddit.com/user/%<handle>s',
+      'Flickr' => 'https://www.flickr.com/photos/%<handle>s'
       # 'WhatsApp' does not have a URL template
     }.freeze
 

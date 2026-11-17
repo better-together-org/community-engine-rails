@@ -5,11 +5,12 @@ require 'rails_helper'
 # Protocol 2.0 conformance: each example plants a golden packet through the public entry point
 # (Seeds::Plant) and asserts the structured report plus what did or did not reach the database.
 RSpec.describe 'Seed packet conformance' do # rubocop:disable RSpec/DescribeClass
-  include SeedBlobHelpers
-
+  let!(:plantings_before) { BetterTogether::SeedPlanting.count }
   let(:platform) { create(:better_together_platform) }
   let(:dir) { Dir.mktmpdir('seed-golden') }
   let(:pdf) { "%PDF-1.4\n#{'golden ' * 50}" }
+
+  include SeedBlobHelpers
 
   after { FileUtils.remove_entry(dir) }
 
@@ -48,7 +49,7 @@ RSpec.describe 'Seed packet conformance' do # rubocop:disable RSpec/DescribeClas
     it 'dry run writes nothing' do
       expect(plant(apply: false)).to include(created: 3, dry_run: true)
       expect(nav_count).to eq(0)
-      expect(BetterTogether::SeedPlanting.count).to eq(0)
+      expect(BetterTogether::SeedPlanting.count).to eq(plantings_before)
     end
 
     it 'keeps two platforms apart' do
@@ -142,6 +143,62 @@ RSpec.describe 'Seed packet conformance' do # rubocop:disable RSpec/DescribeClas
       expect(plant(restrict_sources: true)).to include(created: 3)
     ensure
       BetterTogether::Seeds::PacketSources.reset!
+    end
+  end
+
+  describe 'signature verification' do
+    let(:key) { OpenSSL::PKey.generate_key('ED25519') }
+    let(:key_id) { 'spec-key' }
+
+    after { BetterTogether::Seeds::Signature.reset! }
+
+    it 'plants a packet signed by a trusted key' do
+      BetterTogether::Seeds::Signature.register_key(key_id, key.public_to_pem)
+      write_signed_packet(dir, key_id:, sign_with: key)
+
+      expect(plant(require_signature: true)).to include(created: 3, errors: [])
+    end
+
+    it 'rejects a signature from an untrusted key and writes nothing' do
+      write_signed_packet(dir, key_id:, sign_with: key)
+
+      expect(plant[:errors].map { |e| e[:message] }.join).to include('not trusted')
+      expect(nav_count).to eq(0)
+    end
+
+    it 'rejects a manifest changed after signing' do
+      BetterTogether::Seeds::Signature.register_key(key_id, key.public_to_pem)
+      write_signed_packet(dir, key_id:, sign_with: key)
+      File.write(File.join(dir, 'MANIFEST.json'), File.read(File.join(dir, 'MANIFEST.json')).sub('"2.0"', '"2.0" '))
+
+      expect(plant[:errors].map { |e| e[:message] }.join).to include('signature does not match')
+      expect(nav_count).to eq(0)
+    end
+
+    it 'rejects a signature made by a different key than the trusted one' do
+      BetterTogether::Seeds::Signature.register_key(key_id, key.public_to_pem)
+      write_signed_packet(dir, key_id:, sign_with: OpenSSL::PKey.generate_key('ED25519'))
+
+      expect(plant[:errors].map { |e| e[:message] }.join).to include('signature does not match')
+    end
+
+    it 'rejects an unsigned packet only when a signature is required' do
+      build_packet(dir, records: nav_records)
+      write_manifest(dir)
+
+      expect(plant(require_signature: true)[:errors].map { |e| e[:message] }.join).to include('signature is required')
+      expect(plant).to include(created: 3, errors: [])
+    end
+
+    it 'loads trusted keys from a directory' do
+      keys_dir = Dir.mktmpdir('seed-keys')
+      File.write(File.join(keys_dir, "#{key_id}.pem"), key.public_to_pem)
+      stub_const('ENV', ENV.to_h.merge('BETTER_TOGETHER_SEED_TRUSTED_KEYS_DIR' => keys_dir))
+      write_signed_packet(dir, key_id:, sign_with: key)
+
+      expect(plant).to include(created: 3, errors: [])
+    ensure
+      FileUtils.remove_entry(keys_dir)
     end
   end
 end

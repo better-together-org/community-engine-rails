@@ -249,7 +249,7 @@
 
                         <div class="mb-3">
                           <%= form.label :role_id, t('platforms.show.members.add_member_modal.select_role'), class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @platform.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @platform.class.base_class.name).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit t('platforms.show.members.add_member_modal.submit'), class: "btn btn-primary" %>

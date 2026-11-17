@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
       create(
         :better_together_platform_connection,
         :active,
-        source_platform: create(:better_together_platform, :community_engine_peer, external: true),
+        source_platform: create(:better_together_platform, :community_engine_peer, locality: 'remote'),
         content_sharing_policy: 'mirror_network_feed',
         federation_auth_policy: 'api_read',
         share_posts: true,
@@ -61,7 +61,7 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
     end
 
     it 'does not enqueue pull jobs for inaccessible remote connections' do
-      remote_source_platform = create(:better_together_platform, :community_engine_peer, external: true)
+      remote_source_platform = create(:better_together_platform, :community_engine_peer, locality: 'remote')
       remote_connection = create(
         :better_together_platform_connection,
         :active,

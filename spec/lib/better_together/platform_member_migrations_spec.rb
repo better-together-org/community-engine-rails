@@ -45,10 +45,10 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
   end
 
   it 'uses the next available platform role position when earlier slots are occupied' do
-    if platform_member_role
-      BetterTogether::RoleResourcePermission.where(role_id: platform_member_role.id).delete_all
-      BetterTogether::Role.where(id: platform_member_role.id).delete_all
-    end
+    # Every platform has its own copy, and the migration reuses any copy it finds.
+    existing_ids = BetterTogether::Role.where(identifier: 'platform_member').ids
+    BetterTogether::RoleResourcePermission.where(role_id: existing_ids).delete_all
+    BetterTogether::Role.where(id: existing_ids).delete_all
 
     next_position = BetterTogether::Role.where(resource_type: 'BetterTogether::Platform').maximum(:position) + 1
 
@@ -59,11 +59,10 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
   end
 
   it 'uses the next available platform permission position when earlier slots are occupied' do
-    existing_permission = BetterTogether::ResourcePermission.find_by(identifier: 'read_platform')
-    if existing_permission
-      BetterTogether::RoleResourcePermission.where(resource_permission_id: existing_permission.id).delete_all
-      BetterTogether::ResourcePermission.where(id: existing_permission.id).delete_all
-    end
+    # Every platform has its own copy, and the migration reuses any copy it finds.
+    existing_ids = BetterTogether::ResourcePermission.where(identifier: 'read_platform').ids
+    BetterTogether::RoleResourcePermission.where(resource_permission_id: existing_ids).delete_all
+    BetterTogether::ResourcePermission.where(id: existing_ids).delete_all
 
     create(
       :better_together_resource_permission,

@@ -86,7 +86,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
         host_url: 'https://commons.example.test',
         time_zone: 'America/Halifax',
         host: false,
-        external: true,
+        locality: 'remote',
         privacy: 'private',
         software_variant: 'community_engine',
         federation_protocol: 'ce_oauth',

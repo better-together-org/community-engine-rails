@@ -120,6 +120,39 @@ $slider-thumb-border-size: 2px !default;
   --bs-dropdown-link-color: $light-background-text-color;
 }
 
+// Pills: hover is a quiet tint of the text colour, active is the brand colour with its own readable text colour.
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--bts-primary, var(--bs-primary));
+  --bs-nav-pills-link-active-color: var(--bts-primary-text, #fff);
+
+  .nav-link:not(.active):not(.disabled):hover,
+  .nav-link:not(.active):not(.disabled):focus-visible {
+    background-color: rgba(var(--bs-emphasis-color-rgb), 0.1);
+    color: var(--bs-body-color);
+  }
+
+  .nav-link.active:hover {
+    filter: brightness(1.08);
+  }
+}
+
+// Hover and active states follow the body text colour instead of Bootstrap's blue (white on blue, or on a brand
+// colour, fails contrast). The current item is also marked with a bar and weight so it is not shown by colour alone.
+// A platform theme re-points --bs-emphasis-color-rgb, so this tracks the theme and the colour mode.
+.dropdown-menu .dropdown-item {
+  --bs-dropdown-link-hover-color: var(--bs-body-color);
+  --bs-dropdown-link-hover-bg: rgba(var(--bs-emphasis-color-rgb), 0.08);
+  --bs-dropdown-link-active-color: var(--bs-body-color);
+  --bs-dropdown-link-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.16);
+
+  &.active,
+  &[aria-current='true'],
+  &[aria-current='page'] {
+    font-weight: 600;
+    box-shadow: inset 0.25rem 0 0 var(--bts-accent, var(--bs-link-color));
+  }
+}
+
 .host_community_logo {
   max-height: 5vh;
 }

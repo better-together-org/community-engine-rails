@@ -1,0 +1,11 @@
+{
+  "name": "page_feature_image_banner_plain",
+  "device": "desktop",
+  "url": "/en/harbour-history",
+  "title": "Harbour history | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "page_feature_image_banner",
+  "flow": "page_feature_image_banner_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/page_feature_image_banner_spec.rb"
+}

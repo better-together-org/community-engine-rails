@@ -68,7 +68,8 @@ class RepairLocalContentScopedToExternalPlatforms < ActiveRecord::Migration[7.2]
   private
 
   def external_platform_id_list
-    ids = execute('SELECT id FROM better_together_platforms WHERE external = TRUE').map { |row| row.fetch('id') }
+    remote = column_exists?(:better_together_platforms, :locality) ? "locality = 'remote'" : 'external = TRUE'
+    ids = execute("SELECT id FROM better_together_platforms WHERE #{remote}").map { |row| row.fetch('id') }
     return if ids.empty?
 
     ids.map { |id| quote(id) }.join(', ')

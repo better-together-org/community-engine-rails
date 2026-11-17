@@ -196,7 +196,7 @@ Table "better_together_agreement_terms" {
 
   indexes {
     "agreement_id" [name: "index_better_together_agreement_terms_on_agreement_id"]
-    "identifier" [unique, name: "index_better_together_agreement_terms_on_identifier"]
+    ("platform_id", "agreement_id", "identifier") [unique, name: "idx_bt_agreement_terms_on_platform_parent_identifier"]
     "platform_id" [name: "index_better_together_agreement_terms_on_platform_id"]
   }
 }
@@ -1140,7 +1140,7 @@ Table "better_together_calendars" {
   indexes {
     "community_id" [name: "by_better_together_calendars_community"]
     "creator_id" [name: "by_better_together_calendars_creator"]
-    "identifier" [unique, name: "index_better_together_calendars_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_calendars_on_identifier_platform_id"]
     "locale" [name: "by_better_together_calendars_locale"]
     "platform_id" [name: "index_better_together_calendars_on_platform_id"]
     "privacy" [name: "by_better_together_calendars_privacy"]
@@ -1233,8 +1233,8 @@ Table "better_together_checklist_items" {
     "checklist_id" [name: "by_checklist_item_checklist"]
     "children_count" [name: "index_better_together_checklist_items_on_children_count"]
     "creator_id" [name: "by_better_together_checklist_items_creator"]
-    "identifier" [unique, name: "index_better_together_checklist_items_on_identifier"]
     "parent_id" [name: "index_better_together_checklist_items_on_parent_id"]
+    ("platform_id", "checklist_id", "identifier") [unique, name: "idx_bt_checklist_items_on_platform_parent_identifier"]
     "platform_id" [name: "index_better_together_checklist_items_on_platform_id"]
     "privacy" [name: "by_better_together_checklist_items_privacy"]
   }
@@ -1312,7 +1312,7 @@ Table "better_together_communities" {
   indexes {
     "creator_id" [name: "by_creator"]
     "host" [unique, name: "index_better_together_communities_on_host"]
-    "identifier" [unique, name: "index_better_together_communities_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_communities_on_identifier_platform_id"]
     "platform_id" [name: "index_better_together_communities_on_platform_id"]
     "privacy" [name: "by_community_privacy"]
   }
@@ -1686,7 +1686,7 @@ Table "better_together_events" {
     "creator_id" [name: "by_better_together_events_creator"]
     "ends_at" [name: "bt_events_by_ends_at"]
     "federation_visibility" [name: "by_better_together_events_federation_visibility"]
-    "identifier" [unique, name: "index_better_together_events_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_events_on_identifier_platform_id"]
     "next_occurrence_at" [name: "bt_events_by_next_occurrence_at"]
     ("platform_id", "source_id") [unique, name: "index_bt_events_on_platform_and_source_id"]
     "platform_id" [name: "index_better_together_events_on_platform_id"]
@@ -1874,7 +1874,7 @@ Table "better_together_geography_maps" {
 
   indexes {
     "creator_id" [name: "by_better_together_geography_maps_creator"]
-    "identifier" [unique, name: "index_better_together_geography_maps_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_geography_maps_on_identifier_platform_id"]
     "locale" [name: "by_better_together_geography_maps_locale"]
     ("mappable_type", "mappable_id") [name: "index_better_together_geography_maps_on_mappable"]
     "platform_id" [name: "index_better_together_geography_maps_on_platform_id"]
@@ -2099,7 +2099,7 @@ Table "better_together_infrastructure_buildings" {
     "address_id" [name: "index_better_together_infrastructure_buildings_on_address_id"]
     "community_id" [name: "by_better_together_infrastructure_buildings_community"]
     "creator_id" [name: "by_better_together_infrastructure_buildings_creator"]
-    "identifier" [unique, name: "index_better_together_infrastructure_buildings_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_infra_buildings_on_identifier_platform_id"]
     "platform_id" [name: "index_better_together_infrastructure_buildings_on_platform_id"]
     "privacy" [name: "by_better_together_infrastructure_buildings_privacy"]
   }
@@ -2124,7 +2124,7 @@ Table "better_together_infrastructure_floors" {
     "building_id" [name: "index_better_together_infrastructure_floors_on_building_id"]
     "community_id" [name: "by_better_together_infrastructure_floors_community"]
     "creator_id" [name: "by_better_together_infrastructure_floors_creator"]
-    "identifier" [unique, name: "index_better_together_infrastructure_floors_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_infra_floors_on_identifier_platform_id"]
     "platform_id" [name: "index_better_together_infrastructure_floors_on_platform_id"]
     "privacy" [name: "by_better_together_infrastructure_floors_privacy"]
   }
@@ -2146,7 +2146,7 @@ Table "better_together_infrastructure_rooms" {
     "community_id" [name: "by_better_together_infrastructure_rooms_community"]
     "creator_id" [name: "by_better_together_infrastructure_rooms_creator"]
     "floor_id" [name: "index_better_together_infrastructure_rooms_on_floor_id"]
-    "identifier" [unique, name: "index_better_together_infrastructure_rooms_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_infra_rooms_on_identifier_platform_id"]
     "platform_id" [name: "index_better_together_infrastructure_rooms_on_platform_id"]
     "privacy" [name: "by_better_together_infrastructure_rooms_privacy"]
   }
@@ -2760,7 +2760,7 @@ Table "better_together_people" {
 
   indexes {
     "community_id" [name: "by_person_community"]
-    "identifier" [unique, name: "index_better_together_people_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_people_on_identifier_platform_id"]
     "platform_id" [name: "index_better_together_people_on_platform_id"]
     "privacy" [name: "by_better_together_people_privacy"]
   }
@@ -3084,7 +3084,7 @@ Table "better_together_places" {
   indexes {
     "community_id" [name: "by_better_together_places_community"]
     "creator_id" [name: "by_better_together_places_creator"]
-    "identifier" [unique, name: "index_better_together_places_on_identifier"]
+    ("identifier", "platform_id") [unique, name: "idx_bt_places_on_identifier_platform_id"]
     "platform_id" [name: "index_better_together_places_on_platform_id"]
     "privacy" [name: "by_better_together_places_privacy"]
     "space_id" [name: "index_better_together_places_on_space_id"]
@@ -3318,18 +3318,20 @@ Table "better_together_platforms" {
   "url" varchar [not null]
   "time_zone" varchar [not null]
   "settings" jsonb [not null, default: '{}']
-  "external" boolean [not null, default: false]
   "creator_id" uuid
   "storage_configuration_id" uuid
+  "type" varchar [not null]
+  "locality" varchar [not null, default: 'local']
 
   indexes {
     "community_id" [name: "by_platform_community"]
     "creator_id" [name: "by_better_together_platforms_creator"]
-    "external" [name: "index_better_together_platforms_on_external"]
     "host" [unique, name: "index_better_together_platforms_on_host"]
     "identifier" [unique, name: "index_better_together_platforms_on_identifier"]
+    "locality" [name: "index_better_together_platforms_on_locality"]
     "privacy" [name: "by_platform_privacy"]
     "storage_configuration_id" [name: "index_better_together_platforms_on_storage_configuration_id"]
+    "type" [name: "index_better_together_platforms_on_type"]
     "url" [unique, name: "index_better_together_platforms_on_url"]
   }
 }
@@ -3579,9 +3581,9 @@ Table "better_together_resource_permissions" {
   "platform_id" uuid
 
   indexes {
-    "identifier" [unique, name: "index_better_together_resource_permissions_on_identifier"]
+    ("platform_id", "identifier") [unique, name: "idx_bt_resource_permissions_on_platform_identifier"]
+    ("platform_id", "resource_type", "position") [unique, name: "idx_bt_resource_permissions_on_platform_resource_type_position"]
     "platform_id" [name: "index_better_together_resource_permissions_on_platform_id"]
-    ("resource_type", "position") [unique, name: "index_resource_permissions_on_resource_type_and_position"]
   }
 }
 
@@ -3641,9 +3643,9 @@ Table "better_together_roles" {
   "platform_id" uuid
 
   indexes {
-    "identifier" [unique, name: "index_better_together_roles_on_identifier"]
+    ("platform_id", "identifier") [unique, name: "idx_bt_roles_on_platform_identifier"]
+    ("platform_id", "resource_type", "position") [unique, name: "idx_bt_roles_on_platform_resource_type_position"]
     "platform_id" [name: "index_better_together_roles_on_platform_id"]
-    ("resource_type", "position") [unique, name: "index_roles_on_resource_type_and_position"]
   }
 }
 
@@ -3781,6 +3783,32 @@ Table "better_together_seed_plantings" {
     "seed_id" [name: "index_better_together_seed_plantings_on_seed_id"]
     "started_at" [name: "index_better_together_seed_plantings_on_started_at"]
     "status" [name: "index_better_together_seed_plantings_on_status"]
+  }
+}
+
+Table "better_together_seed_provenances" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid [not null]
+  "seed_id" uuid
+  "seed_planting_id" uuid
+  "packet_id" varchar [not null]
+  "packet_version" varchar
+  "record_type" varchar [not null]
+  "record_key" varchar [not null]
+  "record_class" varchar [not null]
+  "record_id" uuid [not null]
+  "fingerprint" varchar [not null]
+  "snapshot" jsonb [not null, default: '{}']
+
+  indexes {
+    ("platform_id", "packet_id", "record_type", "record_key") [unique, name: "index_bt_seed_provenances_on_platform_packet_record"]
+    "platform_id" [name: "index_better_together_seed_provenances_on_platform_id"]
+    ("record_class", "record_id") [name: "index_bt_seed_provenances_on_record"]
+    "seed_id" [name: "index_better_together_seed_provenances_on_seed_id"]
+    "seed_planting_id" [name: "index_better_together_seed_provenances_on_seed_planting_id"]
   }
 }
 
@@ -4184,6 +4212,7 @@ Table "better_together_wizard_steps" {
   indexes {
     "creator_id" [name: "by_step_creator"]
     "identifier" [name: "by_step_identifier"]
+    ("platform_id", "wizard_id", "identifier", "creator_id") [unique, name: "idx_bt_wizard_steps_unique_open_per_platform"]
     "platform_id" [name: "index_better_together_wizard_steps_on_platform_id"]
     ("wizard_id", "identifier", "creator_id") [unique, name: "index_unique_wizard_steps"]
     ("wizard_id", "step_number") [name: "index_wizard_steps_on_wizard_id_and_step_number"]
@@ -4223,11 +4252,13 @@ Table "friendly_id_slugs" {
   "created_at" timestamp [not null]
   "updated_at" timestamp [not null]
   "locale" varchar [not null]
+  "platform_id" uuid
 
   indexes {
+    "COALESCE(platform_id, '00000000-0000-0000-0000-000000000000'::uuid), sluggable_type, slug, locale" [unique, name: "idx_friendly_id_slugs_unique_per_platform"]
     "locale" [name: "index_friendly_id_slugs_on_locale"]
+    "platform_id" [name: "index_friendly_id_slugs_on_platform_id"]
     ("slug", "sluggable_type", "locale") [name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_locale"]
-    ("slug", "sluggable_type", "scope", "locale") [unique, name: "index_friendly_id_slugs_unique"]
     ("sluggable_type", "sluggable_id") [name: "by_sluggable"]
   }
 }
@@ -5124,6 +5155,12 @@ Ref: "better_together_safety_notes"."platform_id" > "better_together_platforms".
 Ref: "better_together_safety_notes"."safety_case_id" > "better_together_safety_cases"."id"
 
 Ref: "better_together_seed_plantings"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_seed_provenances"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_seed_provenances"."seed_id" > "better_together_seeds"."id"
+
+Ref: "better_together_seed_provenances"."seed_planting_id" > "better_together_seed_plantings"."id"
 
 Ref: "better_together_seeds"."platform_id" > "better_together_platforms"."id"
 

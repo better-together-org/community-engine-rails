@@ -433,7 +433,8 @@ module BetterTogether
     # @param html_options [Hash] Additional HTML options for the select field
     # @return [String] HTML for the role selection field
     def role_select_field(form:, field_name:, resource_type:, html_options: {})
-      roles = BetterTogether::Role.where(resource_type: resource_type)
+      roles = BetterTogether::Role.for_platform(Current.platform || BetterTogether::Platform.find_by(host: true))
+                                  .where(resource_type: resource_type)
                                   .includes(:string_translations)
                                   .order(:position)
                                   .i18n
