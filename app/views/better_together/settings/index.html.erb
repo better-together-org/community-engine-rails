@@ -53,7 +53,7 @@
           <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
           <%= t('.tabs.preferences') %>
         </button>
-        <button class="nav-link text-start" id="cookie-consent-tab" data-bs-toggle="pill" data-bs-target="#cookie-consent" type="button" role="tab" aria-controls="cookie-consent" aria-selected="false" data-better_together--tabs-target="tab">
+        <button class="nav-link text-start" id="cookie-consent-tab" data-bs-toggle="pill" data-bs-target="#consent-preferences" type="button" role="tab" aria-controls="consent-preferences" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-cookie-bite me-2" aria-hidden="true"></i>
           <%= t('.tabs.cookie_consent') %>
         </button>
@@ -227,7 +227,8 @@
       </div>
 
       <!-- Cookie Consent Tab -->
-      <div class="nav-tab-pane tab-pane fade" id="cookie-consent" role="tabpanel" aria-labelledby="cookie-consent-tab">
+      <%# The pane id avoids "cookie" on purpose: cookie-notice filters in ad blockers and browser shields hide #cookie-consent and leave the pane blank. %>
+      <div class="nav-tab-pane tab-pane fade" id="consent-preferences" role="tabpanel" aria-labelledby="cookie-consent-tab">
         <div class="card border-0 shadow-sm">
           <div class="card-body">
             <h3 class="card-title h5">
