@@ -1,0 +1,9 @@
+<%# locals: (enabled:, stale:) -%>
+<% if enabled %>
+  <span class="weather-status-badge badge rounded-pill text-bg-success"><%= t('host_dashboard.weather.status.enabled') %></span>
+<% else %>
+  <span class="weather-status-badge badge rounded-pill text-bg-secondary"><%= t('host_dashboard.weather.status.disabled') %></span>
+<% end %>
+<% if stale %>
+  <span class="weather-stale-badge badge rounded-pill text-bg-warning"><%= t('host_dashboard.weather.status.stale') %></span>
+<% end %>

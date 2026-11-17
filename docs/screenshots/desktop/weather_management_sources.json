@@ -1,0 +1,48 @@
+{
+  "name": "weather_management_sources",
+  "device": "desktop",
+  "url": "/en/host/weather",
+  "title": "Weather | Test Host Community",
+  "locale": "en",
+  "role": "host_steward",
+  "feature_set": "weather_management",
+  "flow": "sources",
+  "source_spec": "./spec/docs_screenshots/better_together/weather_management_spec.rb",
+  "callouts": [
+    {
+      "selector": "#weather-sources-table",
+      "title": "Sources at a glance",
+      "bullets": [
+        "Enabled and total locations, last refresh, last successful refresh and a stale flag."
+      ],
+      "target": {
+        "x": 431.0,
+        "y": 532.59375,
+        "width": 893.0,
+        "height": 238.0,
+        "right": 1324.0,
+        "bottom": 770.59375,
+        "center_x": 877.5,
+        "center_y": 651.59375
+      },
+      "avoid": {
+        "x": 431.0,
+        "y": 532.59375,
+        "width": 893.0,
+        "height": 238.0,
+        "right": 1324.0,
+        "bottom": 770.59375,
+        "center_x": 877.5,
+        "center_y": 651.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 687.5,
+        "y": 790.59,
+        "width": 380,
+        "height": 184,
+        "score": 686.40625
+      }
+    }
+  ]
+}

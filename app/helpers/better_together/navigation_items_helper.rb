@@ -11,6 +11,7 @@ module BetterTogether
       host-dashboard-membership-review
       host-dashboard-platform-connection-review
       host-dashboard-safety-review
+      host-dashboard-weather
     ].freeze
     SPECIAL_HOST_DASHBOARD_NAV_VISIBILITY = {
       'host-dashboard-membership-review' => ['manage_platform'],

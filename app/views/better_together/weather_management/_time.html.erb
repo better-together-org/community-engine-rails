@@ -1,0 +1,6 @@
+<%# locals: (time:) -%>
+<% if time %>
+  <%= time_tag time, l(time, format: :short) %>
+<% else %>
+  <span class="text-muted"><%= t('host_dashboard.weather.never') %></span>
+<% end %>

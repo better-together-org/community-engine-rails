@@ -95,7 +95,7 @@ module BetterTogether
 
       # nil when weather is off or this settlement has no active location, which hides the tab.
       def weather_location_for(settlement)
-        return unless ::BetterTogether.weather_enabled
+        return unless ::BetterTogether::Weather.feature_enabled?
 
         ::BetterTogether::Weather::Location.active.includes(:source, :current_condition)
                                            .find_by(settlement: settlement)
