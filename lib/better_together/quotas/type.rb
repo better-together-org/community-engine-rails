@@ -57,6 +57,12 @@ module BetterTogether
           true
         end
 
+        # Whether one owner's quota row should be listed (usage tabs, admin overview).
+        # Only consulted once available_for? passed; the default shows every row.
+        def visible_for?(_quota)
+          true
+        end
+
         # cumulative | monthly | daily; must match Quota#period's enum values.
         def period
           raise NotImplementedError, "#{self} must define .period"

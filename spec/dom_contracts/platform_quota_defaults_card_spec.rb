@@ -39,7 +39,7 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
     before { BetterTogether::Robot.update_all(active: false) } # rubocop:disable Rails/SkipsModelValidations
 
     it 'is hidden when no AI provider is configured' do
-      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+      allow(BetterTogether).to receive(:openai_credentials_present?).and_return(false)
 
       get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
 
@@ -47,7 +47,7 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
     end
 
     it 'is shown with generalized wording when an OpenAI token is configured' do
-      allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-test')
+      allow(BetterTogether).to receive(:openai_credentials_present?).and_return(true)
 
       get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
 
@@ -55,13 +55,22 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
       expect_html_content('AI LLM usage tokens per month')
     end
 
-    it 'is shown when an active robot is available' do
-      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
-      create(:better_together_robot, platform: nil, active: true)
+    it 'is shown when the translation robot uses a provider that needs no key' do
+      allow(BetterTogether).to receive(:openai_credentials_present?).and_return(false)
+      create(:better_together_robot, :global, :ollama, identifier: 'translation')
 
       get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
 
       expect(response.body).to include(token_fieldset)
+    end
+
+    it 'stays hidden when only a non-translation robot is active' do
+      allow(BetterTogether).to receive(:openai_credentials_present?).and_return(false)
+      create(:better_together_robot, :global, :ollama, identifier: 'summary')
+
+      get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
+
+      expect(response.body).not_to include(token_fieldset)
     end
   end
 
