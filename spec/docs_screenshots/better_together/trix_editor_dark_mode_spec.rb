@@ -75,5 +75,64 @@ RSpec.describe 'Documentation screenshots for the Trix editor in dark mode', # r
         expect(page).to have_css('trix-toolbar .trix-button--icon-bold')
       end
     end
+
+    it "captures the active bold button in #{mode} mode", :aggregate_failures do
+      checks = {}
+      BetterTogether::CapybaraScreenshotEngine.capture(
+        "trix_active_button_#{mode}_mode", device: :both, metadata: metadata("trix_active_button_#{mode}_mode"),
+                                           callouts: [{ selector: 'trix-toolbar .trix-button--icon-bold',
+                                                        title: "Active button (#{mode})",
+                                                        bullets: ['Active state uses the theme subtle primary.'] }]
+      ) do
+        show_editor(mode)
+        find('trix-editor', match: :first).click
+        find('trix-toolbar .trix-button--icon-bold', match: :first).click
+        expect(page).to have_css('trix-toolbar .trix-button--icon-bold.trix-active')
+        checks[:active_bg] = computed('trix-toolbar .trix-button--icon-bold.trix-active', 'backgroundColor')
+        checks[:page_bg] = computed('body', 'backgroundColor')
+      end
+
+      expect(checks[:active_bg]).not_to eq(checks[:page_bg])
+    end
+
+    it "captures the unannotated active bold button in #{mode} mode" do
+      BetterTogether::CapybaraScreenshotEngine.capture(
+        "trix_active_button_#{mode}_mode_plain", device: :both,
+                                                 metadata: metadata("trix_active_button_#{mode}_mode_plain")
+      ) do
+        show_editor(mode)
+        find('trix-editor', match: :first).click
+        find('trix-toolbar .trix-button--icon-bold', match: :first).click
+        expect(page).to have_css('trix-toolbar .trix-button--icon-bold.trix-active')
+      end
+    end
+
+    { 'link' => ['link', '.trix-dialog[data-trix-dialog="href"]'],
+      'heading' => ['x-heading', '.trix-dialog--heading'],
+      'color' => ['x-color', '.trix-dialog--color'] }.each do |name, (action, dialog)|
+      it "captures the #{name} dialog in #{mode} mode", :aggregate_failures do
+        checks = {}
+        [true, false].each do |annotated|
+          options = { device: :both, metadata: metadata("trix_#{name}_dialog_#{mode}_mode") }
+          if annotated
+            options[:callouts] = [{ selector: 'trix-toolbar', title: "#{name.capitalize} dialog (#{mode})",
+                                    bullets: ['Dialog surface, inputs and buttons follow the colour mode.'] }]
+          end
+          BetterTogether::CapybaraScreenshotEngine.capture(
+            "trix_#{name}_dialog_#{mode}_mode#{'_plain' unless annotated}", **options
+          ) do
+            show_editor(mode)
+            find('trix-editor', match: :first).click
+            find(%(trix-toolbar [data-trix-action="#{action}"]), match: :first).click
+            expect(page).to have_css("#{dialog}[data-trix-active]", wait: 5)
+            checks[:bg] = computed("#{dialog}[data-trix-active]", 'backgroundColor')
+            checks[:color] = computed("#{dialog}[data-trix-active]", 'color')
+          end
+        end
+
+        expect(checks[:bg]).to(mode == 'dark' ? match(/\A(rgb\(3[0-9]|rgb\(2[0-9]|rgb\(1[0-9]|rgb\([0-9],)/) : eq('rgb(255, 255, 255)'))
+        expect(checks[:color]).not_to eq(checks[:bg])
+      end
+    end
   end
 end
