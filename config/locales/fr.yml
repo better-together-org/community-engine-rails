@@ -1770,6 +1770,8 @@ fr:
           at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
       index:
+        map_truncated: Affichage des %{count} premiers événements sur la carte. Précisez
+          les filtres pour voir le reste.
         new_btn_text: Nouvel événement
         result_count:
           one: "%{count} événement"

@@ -1755,6 +1755,8 @@ uk:
           at_start: "%{event_name} починається зараз"
         view_details_url: URL деталей перегляду
       index:
+        map_truncated: Показано перші %{count} подій на карті. Уточніть фільтри, щоб
+          побачити решту.
         new_btn_text: Нова подія
         result_count:
           few: "%{count} події"

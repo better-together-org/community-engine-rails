@@ -96,7 +96,8 @@ RSpec.describe BetterTogether::PagesHelper do
         ['page_content', page.cache_key_with_version,
          page.page_blocks.maximum(:updated_at),
          page.blocks.maximum(:updated_at),
-         I18n.locale, 'guest', 'v3'],
+         [],
+         I18n.locale, 'guest', 'v4'],
         expires_in: 1.minute
       ).and_yield
 

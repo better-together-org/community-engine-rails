@@ -1759,6 +1759,8 @@ es:
           at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
       index:
+        map_truncated: Se muestran los primeros %{count} eventos del mapa. Acote los
+          filtros para ver el resto.
         new_btn_text: Nuevo evento
         result_count:
           one: "%{count} evento"

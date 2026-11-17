@@ -15,6 +15,7 @@ RSpec.describe 'better_together/content/blocks/_file_download_block' do
   before do
     configure_host_platform
     view.define_singleton_method(:content_actions_visible_for?) { |_block| false }
+    view.define_singleton_method(:current_user) { nil }
     without_partial_double_verification do
       allow(view).to receive(:policy).and_return(instance_double(BetterTogether::UploadPolicy, download?: true))
     end

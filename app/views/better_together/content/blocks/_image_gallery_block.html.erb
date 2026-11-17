@@ -6,7 +6,7 @@
       <%= t('better_together.content.blocks.image_gallery_block.empty') %>
     </p>
   <% else %>
-    <% cache [image_gallery_block, images.map(&:cache_key_with_version), I18n.locale] do %>
+    <% cache [image_gallery_block, dynamic_block_cache_stamp(image_gallery_block), I18n.locale] do %>
       <div class="image-gallery-block">
         <% if image_gallery_block.heading.present? %>
           <h2 class="image-gallery-block__heading h4 mb-3"><%= image_gallery_block.heading %></h2>

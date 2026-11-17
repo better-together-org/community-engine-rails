@@ -4,6 +4,8 @@ module BetterTogether
   module Content
     # Helpers for Content Blocks
     module BlocksHelper
+      include BetterTogether::Content::RecordBlocksHelper
+
       TEMPLATE_TRANSLATION_KEYS = {
         'better_together/content/blocks/template/default' => 'better_together.content.blocks.template.default',
         'better_together/content/blocks/template/host_community_contact_details' =>

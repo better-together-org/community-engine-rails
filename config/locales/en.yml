@@ -1751,6 +1751,8 @@ en:
           at_start: "%{event_name} is starting now"
         view_details_url: View details url
       index:
+        map_truncated: Showing the first %{count} mapped events. Narrow the filters
+          to see the rest.
         new_btn_text: New Event
         result_count:
           one: "%{count} event"
