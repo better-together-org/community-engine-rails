@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Platform theme and colour mode accessibility', :accessibility, :js, retry: 0 do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Platform theme and colour mode accessibility', :accessibility, :js, :no_auth, retry: 0 do # rubocop:disable RSpec/DescribeClass
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
 
   before do
