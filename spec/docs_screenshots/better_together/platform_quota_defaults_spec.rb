@@ -17,7 +17,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     # The LLM usage tokens block only appears once an AI provider is configured.
-    allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-docs-screenshot')
+    allow(BetterTogether).to receive(:openai_credentials_present?).and_return(true)
     Current.platform = host_platform
     host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => 500_000_000 } })
   end
