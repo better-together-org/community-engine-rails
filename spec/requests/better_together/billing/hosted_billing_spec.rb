@@ -125,6 +125,17 @@ RSpec.describe 'Hosted billing enablement', :skip_host_setup do
       expect(response.body).to include('billing-hosted-platforms-table', "hosted_billing_platform_#{hosted.id}")
     end
 
+    it 'lists only hosted tenants, never federated peers or OAuth providers' do
+      peer = create(:better_together_platform, :community_engine_peer)
+      hosted
+      sign_in host_steward
+
+      get status_path
+
+      expect(response.body).to include("hosted_billing_platform_#{hosted.id}")
+      expect(response.body).not_to include("hosted_billing_platform_#{peer.id}")
+    end
+
     it 'suspends and resumes a platform, recording who and why' do
       sign_in host_steward
 

@@ -77,8 +77,9 @@ module BetterTogether
           forget(platform)
         end
 
-        # Platforms the host serves, for the steward page: every non-host platform.
-        def hosted_platforms = BetterTogether::Platform.where(host: false).order(:created_at)
+        # Platforms the host serves, for the steward page: every hosted tenant. Federated peers and OAuth
+        # providers are remote platforms the host never serves, so they are not billable tenants.
+        def hosted_platforms = BetterTogether::HostedPlatform.where(host: false).order(:created_at)
 
         private
 
