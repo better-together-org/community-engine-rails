@@ -49,6 +49,27 @@ RSpec.describe ScopeRolesAndPermissionsByPlatform do # rubocop:disable RSpec/Des
     expect(membership.role.identifier).to eq('platform_manager')
   end
 
+  it 'backfills the platform of slug history rows for roles and permissions', :aggregate_failures do
+    role = BetterTogether::Role.find_by!(platform_id: host.id, identifier: 'platform_manager')
+    permission = BetterTogether::ResourcePermission.find_by!(platform_id: host.id)
+    slugs = FriendlyId::Slug.unscoped.where(sluggable_id: [role.id, permission.id])
+    slugs.update_all(platform_id: nil) # rubocop:disable Rails/SkipsModelValidations
+
+    silently { migration.up }
+
+    expect(slugs.reload.pluck(:platform_id).uniq).to eq([host.id])
+  end
+
+  it 'leaves a slug row alone when its platform already holds the same slug' do
+    role = BetterTogether::Role.find_by!(platform_id: host.id, identifier: 'platform_manager')
+    row = FriendlyId::Slug.unscoped.find_by!(sluggable_id: role.id)
+    row.update_columns(platform_id: nil) # rubocop:disable Rails/SkipsModelValidations
+    FriendlyId::Slug.unscoped.create!(sluggable: role, slug: row.slug, locale: row.locale, platform_id: host.id)
+
+    expect { silently { migration.up } }.not_to raise_error
+    expect(row.reload.platform_id).to be_nil
+  end
+
   it 'is idempotent' do
     silently { migration.up }
     expect { silently { migration.up } }.not_to(change(BetterTogether::Role, :count))

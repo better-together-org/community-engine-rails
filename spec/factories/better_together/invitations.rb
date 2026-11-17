@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Factories are shipped to host apps, whose specs do not load this gem's spec/support.
+require_relative '../../support/host_roles'
+
 unless FactoryBot.factories.registered?(:better_together_invitation)
   FactoryBot.define do
     factory :better_together_invitation,
