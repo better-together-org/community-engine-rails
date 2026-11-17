@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-16T19:34:33Z`.
+Generated from live Rails reflections at `2026-11-17T21:56:08Z`.
 
 ## Identity, access, and memberships
 
@@ -805,6 +805,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Geography::RegionsController | `BetterTogether::FriendlyResourceController` | `Geography::Region` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Geography::SettlementsController | `BetterTogether::FriendlyResourceController` | `Geography::Settlement` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Geography::StatesController | `BetterTogether::ApplicationController` | `Geography::State` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| HostJobsController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | InboundEmailsController | `ActionMailbox::BaseController` | — | — |
 | Joatu::CategoriesController | `BetterTogether::CategoriesController` | `Joatu::Category` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Joatu::HubController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |

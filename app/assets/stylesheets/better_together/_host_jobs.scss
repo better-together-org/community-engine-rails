@@ -1,0 +1,11 @@
+// Background jobs tab: the framed Sidekiq UI and the summary panel counts.
+.host-jobs-sidekiq-iframe {
+  min-height: 75vh;
+  background-color: #fff;
+}
+
+.host-jobs-summary-count {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}

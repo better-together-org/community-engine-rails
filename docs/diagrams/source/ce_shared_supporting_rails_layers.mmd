@@ -260,6 +260,10 @@ classDiagram
       <<Controller>>
       concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
+    class BetterTogether__HostJobsController["HostJobsController"] {
+      <<Controller>>
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+    }
     class BetterTogether__InboundEmailsController["InboundEmailsController"] {
       <<Controller>>
     }
@@ -803,6 +807,7 @@ classDiagram
   BetterTogether__Geography__RegionsController --|> BetterTogether__FriendlyResourceController
   BetterTogether__Geography__SettlementsController --|> BetterTogether__FriendlyResourceController
   BetterTogether__Geography__StatesController --|> BetterTogether__ApplicationController
+  BetterTogether__HostJobsController --|> BetterTogether__ApplicationController
   BetterTogether__Joatu__CategoriesController --|> BetterTogether__CategoriesController
   BetterTogether__Joatu__HubController --|> BetterTogether__ApplicationController
   BetterTogether__Joatu__JoatuController --|> BetterTogether__FriendlyResourceController

@@ -240,6 +240,20 @@ namespace :better_together do
           privacy: 'private',
           visibility_strategy: 'permission',
           permission_identifier: 'manage_platform_safety'
+        },
+        {
+          identifier: 'host-dashboard-jobs',
+          title: 'Background Jobs',
+          slug: 'host-dashboard-jobs',
+          position: 22,
+          item_type: 'link',
+          route_name: 'host_jobs_url',
+          icon: 'gears',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform_jobs'
         }
       ]
     end
@@ -370,6 +384,8 @@ namespace :better_together do
         'view_metrics_dashboard'
       when 'host-dashboard-safety-review'
         'manage_platform_safety'
+      when 'host-dashboard-jobs'
+        'manage_platform_jobs'
       when 'host-dashboard-platform-connection-review'
         'manage_network_connections'
       else

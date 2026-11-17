@@ -479,7 +479,8 @@ Monitor system performance:
 
 ### Background Jobs
 
-Monitor Sidekiq jobs at `/sidekiq`:
+Monitor jobs from Host Dashboard, Background jobs (needs `manage_platform_jobs`; see
+[Background jobs monitoring](host_jobs_monitoring.md)). The Sidekiq UI is also mounted at `/sidekiq`:
 
 **Job queues:**
 - Email delivery

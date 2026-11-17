@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T19:34:33Z",
+  "generated_at": "2026-11-17T21:56:08Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -35143,6 +35143,21 @@
           ]
         },
         {
+          "name": "BetterTogether::HostJobsController",
+          "label": "HostJobsController",
+          "source_path": "app/controllers/better_together/host_jobs_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
           "name": "BetterTogether::InboundEmailsController",
           "label": "InboundEmailsController",
           "source_path": "app/controllers/better_together/inbound_emails_controller.rb",
@@ -36062,6 +36077,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36285,6 +36301,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36358,6 +36375,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36431,6 +36449,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36527,6 +36546,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36978,6 +36998,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
