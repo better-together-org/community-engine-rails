@@ -30,7 +30,10 @@ RSpec.describe 'Documentation screenshots for theme and colour mode pairings', #
     manager
   end
 
-  after { Current.platform = nil }
+  after do
+    host_platform.update!(theme: {})
+    Current.platform = nil
+  end
 
   def metadata(flow)
     { locale: I18n.default_locale, role: 'platform_manager', feature_set: 'theme_colour_modes', flow:,

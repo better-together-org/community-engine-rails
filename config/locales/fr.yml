@@ -1008,13 +1008,14 @@ fr:
         no_items: Aucun élément à afficher
     color_mode:
       announce:
-        auto: 'Mode de couleur : automatique, selon votre appareil.'
         dark: 'Mode de couleur : sombre.'
         light: 'Mode de couleur : clair.'
       auto: Auto
       dark: Sombre
       label: Mode de couleur
       light: Clair
+      switch_to_dark: Passer au mode sombre
+      switch_to_light: Passer au mode clair
     comment_config:
       hints:
         permission: Détermine qui est autorisé à publier de nouveaux commentaires.

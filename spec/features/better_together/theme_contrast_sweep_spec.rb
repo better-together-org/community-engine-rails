@@ -69,7 +69,10 @@ RSpec.describe 'Theme and colour mode contrast sweep', :js, :skip_host_setup, re
     manager
   end
 
-  after { Current.platform = nil }
+  after do
+    host_platform.update!(theme: {})
+    Current.platform = nil
+  end
 
   def hex_rgb(hex) = hex.delete('#').scan(/../).map { |pair| pair.to_i(16) }.join(',')
 

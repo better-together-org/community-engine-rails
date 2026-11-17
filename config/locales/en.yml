@@ -1011,13 +1011,14 @@ en:
         no_items: No items to display
     color_mode:
       announce:
-        auto: 'Colour mode: automatic, following your device.'
         dark: 'Colour mode: dark.'
         light: 'Colour mode: light.'
       auto: Auto
       dark: Dark
       label: Colour mode
       light: Light
+      switch_to_dark: Switch to dark mode
+      switch_to_light: Switch to light mode
     comment_config:
       hints:
         permission: Controls who is allowed to post new comments.

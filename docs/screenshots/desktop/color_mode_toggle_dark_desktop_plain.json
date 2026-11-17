@@ -1,0 +1,11 @@
+{
+  "name": "color_mode_toggle_dark_desktop_plain",
+  "device": "desktop",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "color_mode_toggle",
+  "flow": "color_mode_toggle_dark_desktop_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/color_mode_toggle_spec.rb"
+}
