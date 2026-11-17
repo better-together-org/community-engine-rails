@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T19:51:24Z",
+  "generated_at": "2026-11-17T22:54:20Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -5028,6 +5028,7 @@
             "BetterTogether::PlatformMembershipDisplay",
             "BetterTogether::PlatformRegistryDefaults",
             "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PlatformWeatherSetting",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -6699,6 +6700,15 @@
           "name": "BetterTogether::PlatformThemeSettings",
           "label": "PlatformThemeSettings",
           "capability": "Platformthemesettings",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformWeatherSetting",
+          "label": "PlatformWeatherSetting",
+          "capability": "Platformweathersetting",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Platform"
@@ -28347,6 +28357,7 @@
             "BetterTogether::PlatformRegistryDefaults",
             "BetterTogether::PlatformSubtype",
             "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PlatformWeatherSetting",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -28779,6 +28790,7 @@
             "BetterTogether::PlatformRegistryDefaults",
             "BetterTogether::PlatformSubtype",
             "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PlatformWeatherSetting",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -30978,6 +30990,7 @@
             "BetterTogether::PlatformRegistryDefaults",
             "BetterTogether::PlatformSubtype",
             "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PlatformWeatherSetting",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -31214,6 +31227,7 @@
             "BetterTogether::PlatformRegistryDefaults",
             "BetterTogether::PlatformSubtype",
             "BetterTogether::PlatformThemeSettings",
+            "BetterTogether::PlatformWeatherSetting",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -35143,6 +35157,21 @@
           ]
         },
         {
+          "name": "BetterTogether::HostJobsController",
+          "label": "HostJobsController",
+          "source_path": "app/controllers/better_together/host_jobs_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
           "name": "BetterTogether::InboundEmailsController",
           "label": "InboundEmailsController",
           "source_path": "app/controllers/better_together/inbound_emails_controller.rb",
@@ -35815,6 +35844,21 @@
             "BetterTogether::MentionPrefetch",
             "BetterTogether::ThirdPartyTracking"
           ]
+        },
+        {
+          "name": "BetterTogether::WeatherManagementController",
+          "label": "WeatherManagementController",
+          "source_path": "app/controllers/better_together/weather_management_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
         }
       ],
       "concerns_inventory": [
@@ -36047,6 +36091,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "WeatherManagementController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36062,6 +36107,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36270,6 +36316,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "WeatherManagementController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36285,6 +36332,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36343,6 +36391,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "WeatherManagementController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36358,6 +36407,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36416,6 +36466,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "WeatherManagementController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36431,6 +36482,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36512,6 +36564,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "WeatherManagementController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36527,6 +36580,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -36771,6 +36825,18 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformWeatherSetting",
+          "label": "PlatformWeatherSetting",
+          "capability": "Platformweathersetting",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "OperatorPlatform",
+            "OauthPlatform",
+            "HostedPlatform",
+            "FederatedPlatform"
+          ]
+        },
+        {
           "name": "BetterTogether::Positioned",
           "label": "Positioned",
           "capability": "Positioned",
@@ -36963,6 +37029,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "WeatherManagementController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36978,6 +37045,7 @@
             "NewPlatformSetupController",
             "MessageRequestsController",
             "LocationsController",
+            "HostJobsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",

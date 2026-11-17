@@ -33,6 +33,7 @@ module BetterTogether
       host_dashboard_platform_connection_review: 'host_dashboard_platform_connection_review_url',
       host_dashboard_safety_review: 'host_dashboard_safety_review_url',
       host_dashboard_weather: 'host_dashboard_weather_url',
+      host_jobs: 'host_jobs_url',
       hub: 'hub_url',
       joatu_hub: 'joatu_hub_url',
       joatu_offers: 'joatu_offers_url',

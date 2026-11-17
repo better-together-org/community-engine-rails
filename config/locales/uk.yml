@@ -2952,6 +2952,8 @@ uk:
         host_dashboard_membership_review: Перегляд членства
         host_dashboard_platform_connection_review: Перегляд федерації
         host_dashboard_safety_review: Перегляд безпеки
+        host_dashboard_weather: Погода
+        host_jobs: Фонові завдання
         hub: Центр
         joatu_hub: Центр Joatu
         joatu_offers: Пропозиції
@@ -6101,6 +6103,55 @@ uk:
       infrastructure: Інфраструктура
       page_title: Панель керування хоста
       title: Панель керування хоста
+    jobs:
+      description: Поточні показники черги завдань і панель Sidekiq для цієї інсталяції.
+      heading: Фонові завдання
+      page_title: Фонові завдання
+      sidekiq:
+        heading: Панель Sidekiq
+        hint: Sidekiq відкривається всередині цієї сторінки. Його посилання й дії
+          залишаються у фреймі.
+        iframe_title: Панель фонових завдань Sidekiq
+        loading: Завантаження панелі Sidekiq...
+        new_tab_notice: "(відкривається в новій вкладці)"
+        open_new_tab: Відкрити Sidekiq у новій вкладці
+      summary:
+        announcement: 'Фонові завдання: невдалих %{failed}, повторюваних %{retrying},
+          мертвих %{dead}, завислих %{stalled}, робочих процесів %{processes}.'
+        heading: Зведення фонових завдань
+        links:
+          dead: 'Мертві завдання: %{count}. Відкрити сторінку мертвих завдань Sidekiq'
+          failed: 'Невдалі завдання: %{count}. Відкрити панель Sidekiq'
+          retrying: 'Повторювані завдання: %{count}. Відкрити сторінку повторів Sidekiq'
+          scheduled: 'Заплановані завдання: %{count}. Відкрити сторінку запланованих
+            завдань Sidekiq'
+        loading: Завантаження показників завдань...
+        longest_latency: 'Найдовше очікування в черзі: %{latency}'
+        no_latency: немає
+        no_processes_body: Завдання можуть потрапляти в чергу, але ніщо їх не обробляє.
+          Перевірте службу Sidekiq на сервері.
+        no_processes_title: Жоден робочий процес не запущено.
+        no_queues: У жодній черзі немає завдань в очікуванні.
+        open_jobs_tab: Відкрити фонові завдання
+        queue: Черга
+        queue_latency: Найстаріше завдання в очікуванні
+        queue_size: У черзі
+        queues_caption: Завдання в черзі за чергами
+        stalled_hint: Завдання вважається завислим, якщо воно виконується довше ніж
+          %{threshold}.
+        stats:
+          busy: Виконуються зараз
+          dead: Мертві
+          enqueued: У черзі
+          failed: Невдалі (за весь час)
+          processes: Робочі процеси
+          retrying: Повторюються
+          scheduled: Заплановані
+          stalled: Завислі
+        unavailable_body: Не вдалося звернутися до черги завдань (Redis). Показники
+          повернуться, щойно вона стане доступною.
+        unavailable_title: Показники завдань недоступні.
+        updated_at: Оновлено %{time}
     membership_review:
       anonymous_requester: Анонімний запитувач
       columns:

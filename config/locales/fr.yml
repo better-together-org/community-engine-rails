@@ -2961,6 +2961,8 @@ fr:
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
+        host_dashboard_weather: Météo
+        host_jobs: Tâches en arrière-plan
         hub: Hub
         joatu_hub: Hub Joatu
         joatu_offers: Offres
@@ -6153,6 +6155,58 @@ fr:
       infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
+    jobs:
+      description: Compteurs en direct de la file de tâches et tableau de bord Sidekiq
+        de cette installation.
+      heading: Tâches en arrière-plan
+      page_title: Tâches en arrière-plan
+      sidekiq:
+        heading: Tableau de bord Sidekiq
+        hint: Sidekiq s’affiche dans cette page. Ses liens et actions restent dans
+          le cadre.
+        iframe_title: Tableau de bord des tâches en arrière-plan Sidekiq
+        loading: Chargement du tableau de bord Sidekiq...
+        new_tab_notice: "(s’ouvre dans un nouvel onglet)"
+        open_new_tab: Ouvrir Sidekiq dans un nouvel onglet
+      summary:
+        announcement: 'Tâches en arrière-plan : %{failed} en échec, %{retrying} en
+          nouvel essai, %{dead} mortes, %{stalled} bloquées, %{processes} processus
+          de travail.'
+        heading: Résumé des tâches en arrière-plan
+        links:
+          dead: 'Tâches mortes : %{count}. Ouvrir la page des tâches mortes Sidekiq'
+          failed: 'Tâches en échec : %{count}. Ouvrir le tableau de bord Sidekiq'
+          retrying: 'Tâches en nouvel essai : %{count}. Ouvrir la page des nouveaux
+            essais Sidekiq'
+          scheduled: 'Tâches planifiées : %{count}. Ouvrir la page des tâches planifiées
+            Sidekiq'
+        loading: Chargement des compteurs de tâches...
+        longest_latency: 'Attente la plus longue en file : %{latency}'
+        no_latency: aucune
+        no_processes_body: Des tâches peuvent être mises en file, mais rien ne les
+          traite. Vérifiez le service Sidekiq sur le serveur.
+        no_processes_title: Aucun processus de travail n’est en cours.
+        no_queues: Aucune tâche n’attend dans les files.
+        open_jobs_tab: Ouvrir les tâches en arrière-plan
+        queue: File
+        queue_latency: Tâche la plus ancienne en attente
+        queue_size: En file
+        queues_caption: Tâches en file par file
+        stalled_hint: Une tâche est considérée comme bloquée après plus de %{threshold}
+          d’exécution.
+        stats:
+          busy: En cours
+          dead: Mortes
+          enqueued: En file
+          failed: En échec (total)
+          processes: Processus de travail
+          retrying: Nouvel essai
+          scheduled: Planifiées
+          stalled: Bloquées
+        unavailable_body: La file de tâches (Redis) est injoignable. Les compteurs
+          reviendront dès qu’elle sera de retour.
+        unavailable_title: Les compteurs de tâches sont indisponibles.
+        updated_at: Mis à jour %{time}
     membership_review:
       anonymous_requester: Personne anonyme
       columns:

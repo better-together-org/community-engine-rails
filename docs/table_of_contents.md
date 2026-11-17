@@ -39,6 +39,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Embedded Content & CSP Controls](platform_organizers/embedded_content_and_csp.md) - Trusted iframe/video origin management
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
+- [Background Jobs Monitoring](platform_organizers/host_jobs_monitoring.md) - Live job summary panel and the framed Sidekiq dashboard
 - [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 - [Federation Privacy and Consent](platform_organizers/federation_privacy_and_consent.md) - Safe operation of platform-to-platform trust
 - [Short Links](platform_organizers/short_links.md) - Short share links, expiry and visit tracking

@@ -456,6 +456,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        # Background jobs: summary panel and the framed Sidekiq UI (manage_platform_jobs on the host platform).
+        constraints BetterTogether::HostJobsConstraint.new do
+          scope path: 'host/jobs' do
+            get '/', to: 'host_jobs#show', as: 'host_jobs'
+            get 'sidekiq', to: 'host_jobs#sidekiq', as: 'host_jobs_sidekiq'
+            get 'summary', to: 'host_jobs#summary', as: 'host_jobs_summary'
+          end
+        end
+
         # Only logged-in Platform Managers have access to these routes
         # Custom code is gated by its own permission, which the platform stewards do not hold.
         code_manager = ->(u) { Current.platform.present? && u.permitted_to?('manage_platform_code', Current.platform) }
@@ -759,12 +768,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Placed after localized routes to ensure proper controller resolution
   draw :api
 
-  # Only allow authenticated users to get access
-  # to the Sidekiq web interface
-  devise_scope :user do
-    authenticated :user, ->(u) { u&.host_platform_manager? } do
-      mount Sidekiq::Web => '/sidekiq'
-    end
+  # Sidekiq web UI, for holders of manage_platform_jobs on the host platform (same check as the
+  # background jobs screen). The wrapper maps a ?locale= param onto Sidekiq's session locale.
+  constraints BetterTogether::HostJobsConstraint.new do
+    mount BetterTogether::SidekiqWebLocale.new(Sidekiq::Web) => '/sidekiq', as: :sidekiq_web
   end
 
   # Catch all requests without a locale and redirect to the default locale.

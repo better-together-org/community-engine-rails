@@ -12,7 +12,9 @@ module BetterTogether
       host-dashboard-platform-connection-review
       host-dashboard-safety-review
       host-dashboard-weather
+      host-dashboard-jobs
     ].freeze
+    HOST_DASHBOARD_TAB_CONTROLLERS = %w[better_together/host_dashboard better_together/host_jobs].freeze
     SPECIAL_HOST_DASHBOARD_NAV_VISIBILITY = {
       'host-dashboard-membership-review' => ['manage_platform'],
       'host-dashboard-platform-connection-review' => %w[
@@ -287,7 +289,7 @@ module BetterTogether
     end
 
     def navigation_item_turbo_frame_target(navigation_item)
-      return unless params[:controller] == 'better_together/host_dashboard'
+      return unless HOST_DASHBOARD_TAB_CONTROLLERS.include?(params[:controller])
       return unless HOST_DASHBOARD_TAB_IDENTIFIERS.include?(navigation_item.identifier)
 
       HOST_DASHBOARD_TURBO_FRAME_ID

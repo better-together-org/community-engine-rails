@@ -1,0 +1,30 @@
+<%# locals: (context: 'overview') -%>
+<section id="host-jobs-summary-panel"
+         class="host-jobs-summary-panel card shadow-sm mb-4"
+         aria-labelledby="host-jobs-summary-heading"
+         data-controller="better_together--host-jobs-summary"
+         data-better_together--host-jobs-summary-interval-value="30000">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <h2 id="host-jobs-summary-heading" class="h5 mb-0"><%= t('host_dashboard.jobs.summary.heading') %></h2>
+    <% if context == 'overview' %>
+      <%= link_to t('host_dashboard.jobs.summary.open_jobs_tab'),
+                  better_together.host_jobs_path(locale: I18n.locale),
+                  id: 'host-jobs-summary-open-tab-link',
+                  class: 'btn btn-primary btn-sm',
+                  data: { turbo_frame: '_top' } %>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <div id="host-jobs-summary-status"
+         class="visually-hidden"
+         role="status"
+         aria-live="polite"
+         aria-atomic="true"
+         data-better_together--host-jobs-summary-target="status"></div>
+    <%= turbo_frame_tag 'host-jobs-summary',
+                        src: better_together.host_jobs_summary_path(locale: I18n.locale, context:),
+                        'data-better_together--host-jobs-summary-target': 'frame' do %>
+      <p id="host-jobs-summary-loading" class="text-muted mb-0"><%= t('host_dashboard.jobs.summary.loading') %></p>
+    <% end %>
+  </div>
+</section>

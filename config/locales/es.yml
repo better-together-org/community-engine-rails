@@ -2941,6 +2941,8 @@ es:
         host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
+        host_dashboard_weather: Clima
+        host_jobs: Trabajos en segundo plano
         hub: Centro
         joatu_hub: Centro Joatu
         joatu_offers: Ofertas
@@ -6101,6 +6103,59 @@ es:
       infrastructure: Infraestructura
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
+    jobs:
+      description: Recuentos en vivo de la cola de trabajos y el panel de Sidekiq
+        de esta instalación.
+      heading: Trabajos en segundo plano
+      page_title: Trabajos en segundo plano
+      sidekiq:
+        heading: Panel de Sidekiq
+        hint: Sidekiq se muestra dentro de esta página. Sus enlaces y acciones permanecen
+          en el marco.
+        iframe_title: Panel de trabajos en segundo plano de Sidekiq
+        loading: Cargando el panel de Sidekiq...
+        new_tab_notice: "(se abre en una pestaña nueva)"
+        open_new_tab: Abrir Sidekiq en una pestaña nueva
+      summary:
+        announcement: 'Trabajos en segundo plano: %{failed} fallidos, %{retrying}
+          en reintento, %{dead} muertos, %{stalled} estancados, %{processes} procesos
+          de trabajo.'
+        heading: Resumen de trabajos en segundo plano
+        links:
+          dead: 'Trabajos muertos: %{count}. Abrir la página de trabajos muertos de
+            Sidekiq'
+          failed: 'Trabajos fallidos: %{count}. Abrir el panel de Sidekiq'
+          retrying: 'Trabajos en reintento: %{count}. Abrir la página de reintentos
+            de Sidekiq'
+          scheduled: 'Trabajos programados: %{count}. Abrir la página de programados
+            de Sidekiq'
+        loading: Cargando recuentos de trabajos...
+        longest_latency: 'Mayor espera en cola: %{latency}'
+        no_latency: ninguna
+        no_processes_body: Los trabajos pueden ponerse en cola, pero nada los procesa.
+          Revise el servicio Sidekiq en el servidor.
+        no_processes_title: No hay procesos de trabajo en ejecución.
+        no_queues: No hay trabajos esperando en ninguna cola.
+        open_jobs_tab: Abrir trabajos en segundo plano
+        queue: Cola
+        queue_latency: Trabajo más antiguo en espera
+        queue_size: En cola
+        queues_caption: Trabajos en cola por cola
+        stalled_hint: Un trabajo se considera estancado cuando lleva más de %{threshold}
+          en ejecución.
+        stats:
+          busy: En ejecución
+          dead: Muertos
+          enqueued: En cola
+          failed: Fallidos (histórico)
+          processes: Procesos de trabajo
+          retrying: En reintento
+          scheduled: Programados
+          stalled: Estancados
+        unavailable_body: No se pudo acceder a la cola de trabajos (Redis). Los recuentos
+          volverán cuando esté disponible.
+        unavailable_title: Los recuentos de trabajos no están disponibles.
+        updated_at: Actualizado %{time}
     membership_review:
       anonymous_requester: Persona solicitante anónima
       columns:
