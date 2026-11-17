@@ -1,6 +1,9 @@
 
+// Header menus open above flash alerts (#flash_messages, z-index 990), which sit above the page content. The
+// header needs a position for its z-index to apply; without one the alert covered open menu items.
 #main-nav {
-  z-index: 500;
+  position: relative;
+  z-index: 1020;
 
   .navbar {
     --bs-navbar-color: var(--bt-navbar-toggler-color, #212529);
@@ -16,16 +19,37 @@
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: var(--bs-dropdown-link-hover-bg);
       }
     }
 
+    // The Host toggle is rendered as a navbar list (centred, row on large screens). Lay it out and colour it like
+    // the other menu items, whatever header colours the theme or host stylesheet give navbar links.
     #host-nav-item {
       > ul {
-        display: block;
+        display: flex;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 0 !important;
 
         .admin-nav_navigation_item {
           width: 100%;
+        }
+      }
+
+      .nav-link.dropdown-toggle {
+        display: block;
+        padding: 8px 12px;
+        border: 0;
+        text-align: start !important;
+        color: var(--bs-dropdown-link-color);
+
+        &:hover,
+        &:focus-visible,
+        &.show {
+          color: var(--bs-dropdown-link-hover-color);
+          background-color: var(--bs-dropdown-link-hover-bg);
         }
       }
     }

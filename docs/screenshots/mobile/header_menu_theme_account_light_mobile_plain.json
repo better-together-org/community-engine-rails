@@ -1,0 +1,11 @@
+{
+  "name": "header_menu_theme_account_light_mobile_plain",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "header_menu_theme",
+  "flow": "account_light_mobile_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/header_menu_theme_spec.rb"
+}

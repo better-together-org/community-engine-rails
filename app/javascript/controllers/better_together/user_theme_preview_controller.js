@@ -1,10 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
+import { syncThemeStyles } from "better_together/theme_styles"
 
 const MODES = ["auto", "light", "dark"]
 
 // Live preview for a person's theme and colour mode in their settings. Nothing is saved by choosing;
-// each field saves through the preference field controller, then this applies the colour mode to the
-// page at once (a saved theme reloads the page so the server renders it).
+// each field saves through the preference field controller, then this applies the saved choice to the
+// page in place: the colour mode at once, the theme styles as the server now renders them.
 export default class extends Controller {
   static targets = ["preview", "state", "note"]
   static values = { themes: Object, stateText: String, contrastNote: String }
@@ -48,12 +49,30 @@ export default class extends Controller {
 
   saved(event) {
     const { field, value } = event.detail
-    if (field === "theme") {
-      if (window.Turbo && window.Turbo.visit) window.Turbo.visit(window.location.href, { action: "replace" })
-      else window.location.reload()
-    } else if (field === "color_mode" && MODES.includes(value)) {
-      this.applyMode(value)
+    if (field === "color_mode" && MODES.includes(value)) this.applyMode(value)
+    if (field === "theme" || field === "color_mode") this.refreshThemeStyles()
+  }
+
+  // Swaps in the theme styles the server now renders, without leaving the page. Only the newest save applies,
+  // so quick successive choices cannot land out of order.
+  async refreshThemeStyles() {
+    const request = (this.request = (this.request || 0) + 1)
+    let doc
+    try {
+      const response = await fetch(window.location.href, { headers: { Accept: "text/html" }, cache: "no-store", credentials: "same-origin" })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      doc = new DOMParser().parseFromString(await response.text(), "text/html")
+    } catch (e) {
+      window.location.reload()
+      return
     }
+    if (request !== this.request) return
+
+    syncThemeStyles(doc)
+    const mode = document.documentElement.getAttribute("data-bts-user-mode")
+    if (MODES.includes(mode)) this.applyMode(mode)
+    if (window.Turbo && window.Turbo.cache) window.Turbo.cache.clear()
+    this.element.dispatchEvent(new CustomEvent("theme:applied", { bubbles: true }))
   }
 
   applyMode(mode) {

@@ -315,6 +315,11 @@ module BetterTogether
 
     NAVBAR_LINK_SELECTORS = ['.navbar .nav-link', '.navbar .navbar-brand', '.navbar .navbar-text',
                              '.navbar .btn-link', '#main-nav a:not(.btn):not(.dropdown-item):not(.dropdown-menu a)'].join(', ').freeze
+    # Header and footer menus are page surfaces. :root lifts these over host rules that paint a menu with the
+    # header colour (#main-nav .dropdown-menu), which left body-coloured items dark on a dark header in light mode.
+    MENU_SURFACES = ['#main-nav', '#app-footer', '#mobile-bar'].map { |bar| ":root #{bar} .dropdown-menu" }.freeze
+    MENU_SURFACE_SELECTORS = MENU_SURFACES.join(', ').freeze
+    MENU_LINK_SELECTORS = MENU_SURFACES.map { |menu| "#{menu} a:not(.dropdown-item):not(.btn):not(.nav-link)" }.join(', ').freeze
     FOOTER_LINK_SELECTORS = ['footer a:not(.dropdown-item)', 'footer .nav-link', 'footer .navbar-text',
                              'footer .navbar-brand', '#app-footer a:not(.dropdown-item)', '#app-footer .nav-link',
                              '#app-footer .navbar-text'].join(', ').freeze
@@ -336,12 +341,14 @@ module BetterTogether
                        '--bs-btn-color: var(--bts-page-bg, #fff); }',
       'page_bg' => ':root { --bs-body-bg: var(--bts-page-bg); --bs-body-bg-rgb: var(--bts-page-bg-rgb); } ' \
                    'body { background-color: var(--bts-page-bg); } ' \
-                   '.dropdown-menu { --bs-dropdown-bg: var(--bts-page-bg); }',
+                   '.dropdown-menu { --bs-dropdown-bg: var(--bts-page-bg); } ' \
+                   "#{MENU_SURFACE_SELECTORS} { background-color: var(--bs-dropdown-bg); }",
       'link' => ':root { --bs-link-color: var(--bts-link); --bs-link-color-rgb: var(--bts-link-rgb); ' \
                 '--bs-link-hover-color: var(--bts-link); --bs-link-hover-color-rgb: var(--bts-link-rgb); } ' \
                 ':not(.navbar):not(footer) > .nav-tabs .nav-link, .nav-pills .nav-link:not(.active), ' \
                 '.list-group-item-action:not(.active) { --bs-nav-link-color: var(--bts-link); ' \
-                '--bs-nav-link-hover-color: var(--bts-link); }',
+                '--bs-nav-link-hover-color: var(--bts-link); } ' \
+                "#{MENU_LINK_SELECTORS} { color: var(--bs-link-color); }",
       'body_text' => ':root { --bs-body-color: var(--bts-body-text); --bs-body-color-rgb: var(--bts-body-text-rgb); ' \
                      '--bs-emphasis-color: var(--bts-body-text); --bs-emphasis-color-rgb: var(--bts-body-text-rgb); ' \
                      '--bs-secondary-color: rgba(var(--bts-body-text-rgb), 0.75); ' \
@@ -349,7 +356,8 @@ module BetterTogether
                      'body { color: var(--bts-body-text); } ' \
                      '.dropdown-menu { --bs-dropdown-color: var(--bts-body-text); ' \
                      '--bs-dropdown-border-color: rgba(var(--bts-body-text-rgb), 0.25); } ' \
-                     '.dropdown-menu .dropdown-item { --bs-dropdown-link-color: var(--bts-body-text); }',
+                     '.dropdown-menu .dropdown-item { --bs-dropdown-link-color: var(--bts-body-text); } ' \
+                     "#{MENU_SURFACE_SELECTORS} { color: var(--bs-dropdown-color); }",
       'band' => '.bg-light { background-color: var(--bts-band) !important; } ' \
                 ':root { --bs-secondary-bg: var(--bts-band); --bs-tertiary-bg: var(--bts-band); } ' \
                 '.alert-primary { --bs-alert-bg: var(--bts-band); --bs-alert-color: var(--bts-body-text); }',
