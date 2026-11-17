@@ -21,7 +21,7 @@ RSpec.describe 'Settings tab panes', # rubocop:disable RSpec/DescribeClass
   it 'renders the cookie consent tab content', :aggregate_failures do
     find('#cookie-consent-tab').click
 
-    expect(page).to have_css('#cookie-consent.show.active', wait: 10)
+    expect(page).to have_css('#consent-preferences.show.active', wait: 10)
     expect(page).to have_css('#cookie-consent-settings', visible: :visible, wait: 10)
     expect(page).to have_text(I18n.t('better_together.settings.index.cookie_consent.description'))
   end
