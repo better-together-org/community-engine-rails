@@ -1,5 +1,6 @@
 <%# locals: (panel:, settlement:) -%>
 <%# Settlement weather: current conditions, forecasts and stored history. Reads stored rows only. -%>
+<% cache panel.cache_key do %>
 <% zone = panel.time_zone %>
 <% source_lang = panel.location.source.config['language'].presence || 'en' %>
 <div id="weather-panel" class="weather-panel">
@@ -16,3 +17,4 @@
 
   <%= render 'better_together/weather/settlement_panel/attribution', panel: panel %>
 </div>
+<% end %>

@@ -479,6 +479,20 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        # Host dashboard Weather tab. WeatherPolicy (manage_platform_settings on the host platform) is the gate.
+        authenticated :user do
+          scope path: 'host/weather', controller: 'weather_management' do
+            get '/', action: :show, as: 'host_dashboard_weather'
+            get 'switch/confirm', action: :confirm_feature, as: 'confirm_host_dashboard_weather_feature'
+            patch 'switch', action: :update_feature, as: 'host_dashboard_weather_feature'
+            get 'sources/:id', action: :source, as: 'host_dashboard_weather_source'
+            get 'sources/:id/confirm', action: :confirm_source, as: 'confirm_host_dashboard_weather_source'
+            patch 'sources/:id', action: :update_source
+            get 'locations/:id/confirm', action: :confirm_location, as: 'confirm_host_dashboard_weather_location'
+            patch 'locations/:id', action: :update_location, as: 'host_dashboard_weather_location'
+          end
+        end
+
         authenticated :user, ->(u) { u.platform_manager? } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'

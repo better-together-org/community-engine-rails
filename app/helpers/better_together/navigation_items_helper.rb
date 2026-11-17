@@ -11,6 +11,7 @@ module BetterTogether
       host-dashboard-membership-review
       host-dashboard-platform-connection-review
       host-dashboard-safety-review
+      host-dashboard-weather
       host-dashboard-jobs
     ].freeze
     HOST_DASHBOARD_TAB_CONTROLLERS = %w[better_together/host_dashboard better_together/host_jobs].freeze

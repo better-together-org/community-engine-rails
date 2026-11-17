@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-17T21:56:08Z`.
+Generated from live Rails reflections at `2026-11-17T22:54:20Z`.
 
 ## Identity, access, and memberships
 
@@ -847,6 +847,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Users::RegistrationsController | `Devise::RegistrationsController` | — | `BotProtectedSubmissions`<br>`ConsentCookieSync`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup` |
 | Users::SessionsController | `Devise::SessionsController` | — | `ConsentCookieSync`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Users::UnlocksController | `Devise::UnlocksController` | — | `ConsentCookieSync`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| WeatherManagementController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 

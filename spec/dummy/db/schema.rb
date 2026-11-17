@@ -2654,6 +2654,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_205154) do
     t.datetime "issued_at", null: false
     t.datetime "fetched_at", null: false
     t.jsonb "payload", default: {}, null: false
+    t.index ["location_id", "kind", "fetched_at"], name: "bt_weather_forecast_latest_fetch"
     t.index ["location_id", "kind", "issued_at"], name: "bt_weather_forecast_unique_issue", unique: true
     t.index ["location_id"], name: "bt_weather_forecast_by_location"
   end
@@ -2676,6 +2677,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_205154) do
     t.datetime "last_observations_backfilled_at"
     t.datetime "last_error_at"
     t.text "last_error"
+    t.datetime "last_refreshed_at"
     t.index ["settlement_id", "source_id"], name: "bt_weather_location_unique_settlement_source", unique: true
     t.index ["settlement_id"], name: "bt_weather_location_by_settlement"
     t.index ["source_id"], name: "bt_weather_location_by_source"

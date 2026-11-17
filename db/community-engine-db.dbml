@@ -3198,6 +3198,7 @@ Table "better_together_weather_forecasts" {
   "payload" jsonb [not null, default: '{}']
 
   indexes {
+    ("location_id", "kind", "fetched_at") [name: "bt_weather_forecast_latest_fetch"]
     ("location_id", "kind", "issued_at") [unique, name: "bt_weather_forecast_unique_issue"]
     "location_id" [name: "bt_weather_forecast_by_location"]
   }
@@ -3222,6 +3223,7 @@ Table "better_together_weather_locations" {
   "last_observations_backfilled_at" timestamp
   "last_error_at" timestamp
   "last_error" text
+  "last_refreshed_at" timestamp
 
   indexes {
     ("settlement_id", "source_id") [unique, name: "bt_weather_location_unique_settlement_source"]

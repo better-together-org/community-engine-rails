@@ -94,7 +94,8 @@
   position: fixed;
   width: 100vw;
   top: calc(var(--nav-height) + var(--flash-gap));
-  z-index: 1001;
+  // Above the page content, below the header and its open menus (#main-nav, z-index 1020; hosts often use 1000).
+  z-index: 990;
   transition: top 0.02s ease-out;
   pointer-events: none;
 

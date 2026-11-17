@@ -1,0 +1,15 @@
+---
+title: 'Weather management: sources'
+audience:
+- platform_organizers
+journey_step: As a host steward, I can switch weather, its sources and locations on
+  or off.
+callouts:
+- :id: sources
+  :title: Sources at a glance
+  :description: Enabled and total locations, last refresh, last successful refresh
+    and a stale flag.
+accessibility_notes: Every switch goes through a confirm page that states its effect
+  in text.
+slug: weather_management_sources
+device: desktop
