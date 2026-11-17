@@ -182,6 +182,15 @@ module BetterTogether
     end
 
     # WCAG 2.x contrast ratio between two #rrggbb colours, or nil when either is invalid.
+    # { 'body_text' => '#3b2a20' } becomes { '--bts-body-text' => '#3b2a20', '--bts-body-text-rgb' => '59, 42, 32' }.
+    def self.with_rgb_companions(tokens)
+      tokens.each_with_object({}) do |(key, value), vars|
+        name = "--bts-#{key.dasherize}"
+        vars[name] = value
+        vars["#{name}-rgb"] = value.delete('#').scan(/../).map { |pair| pair.to_i(16) }.join(', ') if RGB_KEYS.include?(key) && HEX.match?(value)
+      end
+    end
+
     def self.contrast_ratio(foreground, background)
       return unless HEX.match?(foreground.to_s) && HEX.match?(background.to_s)
 
@@ -285,25 +294,88 @@ module BetterTogether
       low
     end
 
+    # Tokens that also get an "r, g, b" companion (--bts-<key>-rgb) so Bootstrap's rgba(var(--bs-*-rgb), alpha)
+    # utilities (links, secondary text, borders) follow the theme in either colour mode.
+    RGB_KEYS = %w[body_text page_bg link].freeze
+
+    # Bootstrap 5.3's dark-mode emphasis, subtle and border colours. A theme whose own light page colour is dark (the
+    # built-in dark theme) shown in light mode keeps Bootstrap's light-mode values for these, which leaves red or
+    # blue "emphasis" text dark on dark, so it gets this set in both modes.
+    DARK_PAGE_LUMINANCE = 0.18
+    DARK_SURFACE_CSS = '[data-bs-theme="light"] { color-scheme: dark; ' \
+                       '--bs-primary-text-emphasis: #6ea8fe; --bs-secondary-text-emphasis: #a7acb1; ' \
+                       '--bs-success-text-emphasis: #75b798; --bs-info-text-emphasis: #6edff6; ' \
+                       '--bs-warning-text-emphasis: #ffda6a; --bs-danger-text-emphasis: #ea868f; ' \
+                       '--bs-primary-bg-subtle: #031633; --bs-secondary-bg-subtle: #161719; ' \
+                       '--bs-success-bg-subtle: #051b11; --bs-info-bg-subtle: #032830; ' \
+                       '--bs-warning-bg-subtle: #332701; --bs-danger-bg-subtle: #2c0b0e; ' \
+                       '--bs-primary-border-subtle: #084298; --bs-secondary-border-subtle: #41464b; ' \
+                       '--bs-success-border-subtle: #0f5132; --bs-info-border-subtle: #087990; ' \
+                       '--bs-warning-border-subtle: #997404; --bs-danger-border-subtle: #842029; }'
+
+    NAVBAR_LINK_SELECTORS = ['.navbar .nav-link', '.navbar .navbar-brand', '.navbar .navbar-text',
+                             '.navbar .btn-link', '#main-nav a:not(.btn):not(.dropdown-item):not(.dropdown-menu a)'].join(', ').freeze
+    FOOTER_LINK_SELECTORS = ['footer a:not(.dropdown-item)', 'footer .nav-link', 'footer .navbar-text',
+                             'footer .navbar-brand', '#app-footer a:not(.dropdown-item)', '#app-footer .nav-link',
+                             '#app-footer .navbar-text'].join(', ').freeze
+
+    # Each rule is emitted only when its token is set. They override the neutral Bootstrap colours and the
+    # light-only colours baked into the engine and host stylesheets, so a theme reads correctly whichever colour
+    # mode is active (a dark theme shown in light mode, or a light theme in dark mode).
     RULES = {
       'primary' => ':root { --bs-primary: var(--bts-primary); } ' \
                    '.btn-primary { --bs-btn-bg: var(--bts-primary); --bs-btn-border-color: var(--bts-primary); ' \
                    '--bs-btn-color: var(--bts-primary-text, #fff); } ' \
+                   '.nav-pills { --bs-nav-pills-link-active-bg: var(--bts-primary); ' \
+                   '--bs-nav-pills-link-active-color: var(--bts-primary-text, #fff); } ' \
                    '.badge.text-bg-primary, .badge.bg-primary { background-color: var(--bts-primary) !important; ' \
                    'color: var(--bts-primary-text, #fff) !important; }',
       'accent' => ':focus-visible { outline: 2px solid var(--bts-accent); outline-offset: 2px; } ' \
                   '.alert-primary { --bs-alert-border-color: var(--bts-accent); }',
       'accent_dark' => '.btn-secondary { --bs-btn-bg: var(--bts-accent-dark); --bs-btn-border-color: var(--bts-accent-dark); ' \
                        '--bs-btn-color: var(--bts-page-bg, #fff); }',
-      'page_bg' => ':root { --bs-body-bg: var(--bts-page-bg); } body { background-color: var(--bts-page-bg); }',
-      'link' => ':root { --bs-link-color: var(--bts-link); }',
-      'body_text' => ':root { --bs-body-color: var(--bts-body-text); } body { color: var(--bts-body-text); }',
+      'page_bg' => ':root { --bs-body-bg: var(--bts-page-bg); --bs-body-bg-rgb: var(--bts-page-bg-rgb); } ' \
+                   'body { background-color: var(--bts-page-bg); } ' \
+                   '.dropdown-menu { --bs-dropdown-bg: var(--bts-page-bg); }',
+      'link' => ':root { --bs-link-color: var(--bts-link); --bs-link-color-rgb: var(--bts-link-rgb); ' \
+                '--bs-link-hover-color: var(--bts-link); --bs-link-hover-color-rgb: var(--bts-link-rgb); } ' \
+                ':not(.navbar):not(footer) > .nav-tabs .nav-link, .nav-pills .nav-link:not(.active), ' \
+                '.list-group-item-action:not(.active) { --bs-nav-link-color: var(--bts-link); ' \
+                '--bs-nav-link-hover-color: var(--bts-link); }',
+      'body_text' => ':root { --bs-body-color: var(--bts-body-text); --bs-body-color-rgb: var(--bts-body-text-rgb); ' \
+                     '--bs-emphasis-color: var(--bts-body-text); --bs-emphasis-color-rgb: var(--bts-body-text-rgb); ' \
+                     '--bs-secondary-color: rgba(var(--bts-body-text-rgb), 0.75); ' \
+                     '--bs-border-color: rgba(var(--bts-body-text-rgb), 0.25); } ' \
+                     'body { color: var(--bts-body-text); } ' \
+                     '.dropdown-menu { --bs-dropdown-color: var(--bts-body-text); ' \
+                     '--bs-dropdown-border-color: rgba(var(--bts-body-text-rgb), 0.25); } ' \
+                     '.dropdown-menu .dropdown-item { --bs-dropdown-link-color: var(--bts-body-text); }',
       'band' => '.bg-light { background-color: var(--bts-band) !important; } ' \
+                ':root { --bs-secondary-bg: var(--bts-band); --bs-tertiary-bg: var(--bts-band); } ' \
                 '.alert-primary { --bs-alert-bg: var(--bts-band); --bs-alert-color: var(--bts-body-text); }',
-      'navbar_bg' => '.navbar { background-color: var(--bts-navbar-bg); }',
-      'navbar_link' => '.navbar { --bs-navbar-color: var(--bts-navbar-link); --bs-navbar-brand-color: var(--bts-navbar-link); }',
-      'footer_bg' => 'footer { background-color: var(--bts-footer-bg); }',
-      'footer_link' => 'footer a { color: var(--bts-footer-link); }',
+      'navbar_bg' => '.navbar { background-color: var(--bts-navbar-bg); } ' \
+                     ':root { --bt-mobile-nav-bg: var(--bts-navbar-bg); } ' \
+                     '#main-nav { background: var(--bts-navbar-bg); }',
+      'navbar_link' => '.navbar { color: var(--bts-navbar-link); --bs-navbar-color: var(--bts-navbar-link); ' \
+                       '--bs-navbar-hover-color: var(--bts-navbar-link); ' \
+                       '--bs-navbar-active-color: var(--bts-navbar-link); --bs-navbar-brand-color: var(--bts-navbar-link); ' \
+                       '--bs-navbar-brand-hover-color: var(--bts-navbar-link); --bs-nav-link-color: var(--bts-navbar-link); ' \
+                       '--bs-nav-link-hover-color: var(--bts-navbar-link); } ' \
+                       "#{NAVBAR_LINK_SELECTORS} { color: var(--bts-navbar-link); } " \
+                       ':root { --bt-mobile-nav-color: var(--bts-navbar-link); ' \
+                       '--bt-mobile-nav-hover-color: var(--bts-navbar-link); ' \
+                       '--bt-navbar-toggler-color: var(--bts-navbar-link); } ' \
+                       '.navbar-toggler { color: var(--bts-navbar-link); border-color: currentColor; } ' \
+                       '.navbar-toggler-icon { background-image: none; background-color: currentColor; ' \
+                       '-webkit-mask: var(--bs-navbar-toggler-icon-bg) center / 100% no-repeat; ' \
+                       'mask: var(--bs-navbar-toggler-icon-bg) center / 100% no-repeat; }',
+      'footer_bg' => 'footer, #app-footer { background-color: var(--bts-footer-bg); } ' \
+                     'footer .navbar, #app-footer .navbar { background-color: transparent; }',
+      'footer_link' => 'footer, #app-footer { color: var(--bts-footer-link); } ' \
+                       "#{FOOTER_LINK_SELECTORS} { color: var(--bts-footer-link); } " \
+                       'footer .navbar, #app-footer .navbar { --bs-navbar-color: var(--bts-footer-link); ' \
+                       '--bs-nav-link-color: var(--bts-footer-link); } ' \
+                       'footer .navbar-toggler, #app-footer .navbar-toggler { color: var(--bts-footer-link); }',
       'font' => 'body { font-family: var(--bts-font); }',
       'radius' => ':root { --bs-border-radius: var(--bts-radius); }'
     }.freeze
@@ -354,7 +426,7 @@ module BetterTogether
     end
 
     def css_variables
-      vars = values.slice(*COLOR_KEYS).transform_keys { |k| "--bts-#{k.dasherize}" }
+      vars = self.class.with_rgb_companions(values.slice(*COLOR_KEYS))
       vars['--bts-font'] = FONT_STACKS[self['font']] if self['font']
       vars['--bts-radius'] = RADII[self['radius']] if self['radius']
       vars
@@ -369,7 +441,14 @@ module BetterTogether
       declarations = vars.map { |name, value| "#{name}: #{value};" }.join(' ')
       css = ":root { #{declarations} }\n"
       css += "#{dark_block}\n" if dark_mode_enabled? && dark_values.any?
+      css += "#{DARK_SURFACE_CSS}\n" if dark_page?
       css + consumer_rules
+    end
+
+    # True when the theme's own (light-mode) page colour is dark.
+    def dark_page?
+      page = self['page_bg']
+      page.present? && self.class.luminance(page) < DARK_PAGE_LUMINANCE
     end
 
     private
@@ -378,7 +457,7 @@ module BetterTogether
     def dark_block
       tokens = dark_values
       tokens = tokens.reverse_merge('page_bg' => DARK_DEFAULT_PAGE_BG) if tokens.key?('accent_dark')
-      declarations = tokens.map { |key, value| "--bts-#{key.dasherize}: #{value};" }.join(' ')
+      declarations = self.class.with_rgb_companions(tokens).map { |name, value| "#{name}: #{value};" }.join(' ')
       "[data-bs-theme=\"dark\"] { #{declarations} }"
     end
 

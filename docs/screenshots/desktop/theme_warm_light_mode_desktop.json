@@ -1,0 +1,48 @@
+{
+  "name": "theme_warm_light_mode_desktop",
+  "device": "desktop",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "theme_colour_modes",
+  "flow": "theme_warm_light_desktop",
+  "source_spec": "./spec/docs_screenshots/better_together/theme_colour_modes_spec.rb",
+  "callouts": [
+    {
+      "selector": "#app-footer",
+      "title": "Footer",
+      "bullets": [
+        "Uses the theme footer colours."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 1245.0,
+        "width": 1440.0,
+        "height": 212.0,
+        "right": 1440.0,
+        "bottom": 1457.0,
+        "center_x": 720.0,
+        "center_y": 1351.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 1245.0,
+        "width": 1440.0,
+        "height": 212.0,
+        "right": 1440.0,
+        "bottom": 1457.0,
+        "center_x": 720.0,
+        "center_y": 1351.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 530.0,
+        "y": 1093.0,
+        "width": 380,
+        "height": 132,
+        "score": 1245.0
+      }
+    }
+  ]
+}

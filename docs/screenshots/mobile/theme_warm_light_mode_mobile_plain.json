@@ -1,0 +1,11 @@
+{
+  "name": "theme_warm_light_mode_mobile_plain",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "theme_colour_modes",
+  "flow": "theme_warm_light_mobile_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/theme_colour_modes_spec.rb"
+}
