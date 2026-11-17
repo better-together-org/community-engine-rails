@@ -174,6 +174,20 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
   end
 
+  describe 'when a Sidekiq server loads the initializer during boot' do
+    it 'does not read autoloaded constants until the app has finished initializing' do
+      allow(Sidekiq).to receive(:server?).and_return(true)
+      deferred = nil
+      allow(Rails.application.config).to receive(:after_initialize) { |&block| deferred = block }
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?)
+
+      load initializer_path
+
+      expect(deferred).to be_a(Proc)
+      expect(BetterTogether::Billing::Configuration).not_to have_received(:requested?)
+    end
+  end
+
   describe 'billing jobs when billing is switched off' do
     let(:registered) do
       captured = nil

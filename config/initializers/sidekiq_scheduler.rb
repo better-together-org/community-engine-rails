@@ -44,20 +44,25 @@ if defined?(Sidekiq) && Sidekiq.server?
   # Load host app's schedule last (overrides engine/extension schedules for same job names)
   merge_schedule_file.call(Rails.root.join('config', 'sidekiq_scheduler.yml'), 'host app')
 
-  # Billing off means off: its recurring jobs are not registered unless the host switched billing on
-  # (BT_BILLING_ENABLED). A host that wants one anyway can still name it in its own schedule file.
-  unless BetterTogether::Billing::Configuration.requested?
-    host_schedule_file = Rails.root.join('config', 'sidekiq_scheduler.yml')
-    host_keys = host_schedule_file.exist? ? (YAML.load(host_schedule_file.read) || {}).keys : []
-    merged_schedule.reject! { |name, _| name.start_with?('better_together:billing:') && host_keys.exclude?(name) }
-  end
+  # Everything below reads autoloaded app constants (BetterTogether::Billing::Configuration), which are not
+  # available while config initializers run. A Sidekiq server boots the app through this file, so wait until
+  # the app has finished initializing. sidekiq-scheduler only reads the schedule after boot, so this is early enough.
+  Rails.application.config.after_initialize do
+    # Billing off means off: its recurring jobs are not registered unless the host switched billing on
+    # (BT_BILLING_ENABLED). A host that wants one anyway can still name it in its own schedule file.
+    unless BetterTogether::Billing::Configuration.requested?
+      host_schedule_file = Rails.root.join('config', 'sidekiq_scheduler.yml')
+      host_keys = host_schedule_file.exist? ? (YAML.load(host_schedule_file.read) || {}).keys : []
+      merged_schedule.reject! { |name, _| name.start_with?('better_together:billing:') && host_keys.exclude?(name) }
+    end
 
-  # Set the merged schedule
-  if merged_schedule.any?
-    Sidekiq.schedule = merged_schedule
-    Sidekiq::Scheduler.reload_schedule!
-    Rails.logger.info "Loaded #{merged_schedule.keys.count} scheduled job(s): #{merged_schedule.keys.join(', ')}"
-  else
-    Rails.logger.warn 'No Sidekiq Scheduler jobs found in engine or host app'
+    # Set the merged schedule
+    if merged_schedule.any?
+      Sidekiq.schedule = merged_schedule
+      Sidekiq::Scheduler.reload_schedule!
+      Rails.logger.info "Loaded #{merged_schedule.keys.count} scheduled job(s): #{merged_schedule.keys.join(', ')}"
+    else
+      Rails.logger.warn 'No Sidekiq Scheduler jobs found in engine or host app'
+    end
   end
 end
