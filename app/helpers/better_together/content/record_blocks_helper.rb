@@ -6,6 +6,14 @@ module BetterTogether
     # a checklist, a navigation area, a gallery, a download). Any cache around such a block, including the page's,
     # keys on #dynamic_block_cache_stamp so it follows the data instead of freezing at the last page edit.
     module RecordBlocksHelper
+      # Who is looking, as far as record visibility goes, so cached output is never shared across viewers who can
+      # see different records.
+      def page_visibility_cache_context
+        return send(:nav_permission_cache_stamp) if respond_to?(:nav_permission_cache_stamp, true)
+
+        current_user&.cache_key_with_version || 'guest'
+      end
+
       # Blocks that render a live collection of records, mapped to what they list. Anything cached around such a
       # block (the page, the block itself) must key on what the collection holds now, so a block added here is
       # picked up by every cache key through #dynamic_block_cache_stamp.

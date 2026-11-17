@@ -83,14 +83,6 @@ module BetterTogether
       page.content_blocks.filter_map { |block| dynamic_block_cache_stamp(block) }
     end
 
-    def page_visibility_cache_context
-      return send(:nav_permission_cache_stamp) if respond_to?(:nav_permission_cache_stamp, true)
-
-      current_user&.cache_key_with_version || 'guest'
-    rescue StandardError
-      current_user&.cache_key_with_version || 'guest'
-    end
-
     def sortable_column_header(column, label)
       sort_info = calculate_sort_info(column)
 
