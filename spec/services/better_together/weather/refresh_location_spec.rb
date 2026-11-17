@@ -23,7 +23,18 @@ RSpec.describe BetterTogether::Weather::RefreshLocation do
     expect(location.forecasts.pluck(:kind)).to contain_exactly('hourly', 'daily')
     expect(location.observations.hourly.pluck(:observed_at)).to eq([Time.utc(2026, 11, 2, 17)])
     expect(location.observations.first).to have_attributes(origin: 'live_feed', temperature_c: 6.0, precip_mm: nil)
-    expect(location.reload).to have_attributes(last_current_fetched_at: now, last_error: nil)
+    expect(location.reload).to have_attributes(last_current_fetched_at: now, last_refreshed_at: now, last_error: nil)
+  end
+
+  it 'keeps stored conditions and their stamp when the document has no current conditions' do
+    refresh
+    allow(adapter).to receive(:fetch_snapshot).and_return(snapshot.merge(current: nil))
+
+    described_class.call(location, now: now + 1.hour)
+
+    expect(location.reload).to have_attributes(last_current_fetched_at: now, last_forecast_fetched_at: now + 1.hour,
+                                               last_refreshed_at: now + 1.hour)
+    expect(location.current_condition.fetched_at).to eq(now)
   end
 
   it 'is idempotent across repeated refreshes of the same document' do

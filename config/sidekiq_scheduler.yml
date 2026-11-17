@@ -72,10 +72,10 @@
   description: "Expire held quota reservations past their TTL, matching reserve!'s default 5-minute window"
 
 "better_together:weather:refresh_hourly":
-  cron: "10 * * * *" # hourly at :10 UTC
+  cron: "*/15 * * * *" # every 15 minutes; the name is kept so host overrides still match
   class: "BetterTogether::Weather::RefreshScanJob"
   queue: "weather"
-  description: "Refresh current conditions and forecasts for every enabled weather location"
+  description: "Refresh current conditions and forecasts for every active weather location (skipped when no source is configured)"
 
 "better_together:weather:backfill_daily":
   cron: "30 6 * * *" # daily at 06:30 UTC

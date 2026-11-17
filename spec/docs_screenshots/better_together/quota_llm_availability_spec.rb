@@ -23,7 +23,7 @@ RSpec.describe 'Documentation screenshots for LLM usage token availability',
   after { Current.platform = nil }
 
   it 'captures the defaults form without the LLM token block when no AI provider is configured' do
-    allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+    allow(BetterTogether).to receive(:openai_credentials_present?).and_return(false)
 
     result = capture_docs_screenshot(
       'platform_quota_defaults_no_ai_provider',
@@ -46,7 +46,7 @@ RSpec.describe 'Documentation screenshots for LLM usage token availability',
   end
 
   it 'captures the grants overview with the generalized LLM usage tokens label' do
-    allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-docs-screenshot')
+    allow(BetterTogether).to receive(:openai_credentials_present?).and_return(true)
     person = create(:better_together_person, name: 'Sample Member')
     storage = BetterTogether::Quota.create!(owner: person, quota_type: 'media_storage', limit: 250_000_000,
                                             period: 'cumulative')

@@ -144,6 +144,15 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
       expect(css).not_to include('footer a {')
     end
 
+    it 'keeps header and footer menus on the page surface over a host menu colour' do
+      css = warm.to_css
+
+      expect(css).to include(':root #main-nav .dropdown-menu, :root #app-footer .dropdown-menu, ' \
+                             ':root #mobile-bar .dropdown-menu { background-color: var(--bs-dropdown-bg); }',
+                             ':root #mobile-bar .dropdown-menu { color: var(--bs-dropdown-color); }',
+                             ':root #main-nav .dropdown-menu a:not(.dropdown-item):not(.btn):not(.nav-link)')
+    end
+
     it 'gives a theme with a dark page the dark emphasis colours in light mode' do
       expect(described_class.new(described_class.themes['dark']).to_css)
         .to include('[data-bs-theme="light"] { color-scheme: dark;', '--bs-danger-text-emphasis: #ea868f')

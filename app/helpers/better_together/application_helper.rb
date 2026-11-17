@@ -183,7 +183,7 @@ module BetterTogether
 
       banner = storage_proxy_url_for(platform.header_banner) if platform.header_banner.attached?
       css = platform.theme_config.to_css(banner_url: banner)
-      content_tag(:style, css.html_safe, type: 'text/css', id: 'platform-theme-style') if css.present? # rubocop:disable Rails/OutputSafety
+      content_tag(:style, css.html_safe, type: 'text/css', id: 'platform-theme-style', data: { turbo_track: 'dynamic' }) if css.present? # rubocop:disable Rails/OutputSafety
     end
 
     COLOR_MODE_COOKIE = 'bts_color_mode'
@@ -241,7 +241,7 @@ module BetterTogether
     # Anonymous visitors, and people on platforms that disallow personal themes, get nothing.
     def user_theme_style_tag(platform = host_platform)
       css = user_theme_css(platform)
-      content_tag(:style, css.html_safe, type: 'text/css', id: 'user-theme-style') if css.present? # rubocop:disable Rails/OutputSafety
+      content_tag(:style, css.html_safe, type: 'text/css', id: 'user-theme-style', data: { turbo_track: 'dynamic' }) if css.present? # rubocop:disable Rails/OutputSafety
     end
 
     def user_theme_css(platform = host_platform)

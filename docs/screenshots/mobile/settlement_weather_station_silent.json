@@ -1,0 +1,48 @@
+{
+  "name": "settlement_weather_station_silent",
+  "device": "mobile",
+  "url": "/en/g/settlements/settlement-1",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "weather",
+  "flow": "station_silent",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_weather_spec.rb",
+  "callouts": [
+    {
+      "selector": "#weather-stale-notice",
+      "title": "Station not reporting",
+      "bullets": [
+        "Says when the station last reported and when the source was last checked."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 594.390625,
+        "width": 427.0,
+        "height": 106.0,
+        "right": 456.0,
+        "bottom": 700.390625,
+        "center_x": 242.5,
+        "center_y": 647.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 594.390625,
+        "width": 427.0,
+        "height": 106.0,
+        "right": 456.0,
+        "bottom": 700.390625,
+        "center_x": 242.5,
+        "center_y": 647.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 332.39,
+        "width": 270.0,
+        "height": 242,
+        "score": 594.390625
+      }
+    }
+  ]
+}
