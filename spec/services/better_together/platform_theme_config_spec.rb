@@ -108,6 +108,57 @@ RSpec.describe BetterTogether::PlatformThemeConfig do
     end
   end
 
+  describe 'colour mode independence' do
+    let(:warm) { described_class.new(described_class.themes['warm']) }
+
+    it 'emits rgb companions for the tokens Bootstrap uses with an alpha channel' do
+      css = warm.to_css
+
+      expect(css).to include('--bts-body-text-rgb: 59, 42, 32;', '--bts-page-bg-rgb: 255, 250, 245;',
+                             '--bts-link-rgb: 138, 58, 14;')
+    end
+
+    it 'repeats the rgb companions in the dark block' do
+      dark_block = warm.to_css[/\[data-bs-theme="dark"\] \{[^}]*\}/]
+
+      expect(dark_block).to include('--bts-body-text-rgb:', '--bts-page-bg-rgb:', '--bts-link-rgb:')
+    end
+
+    it 'derives Bootstrap secondary text and borders from the theme text colour' do
+      expect(warm.to_css).to include('--bs-secondary-color: rgba(var(--bts-body-text-rgb), 0.75)',
+                                     '--bs-link-color-rgb: var(--bts-link-rgb)')
+    end
+
+    it 'colours the navbar container, its links, the footer and the mobile bar from the theme' do
+      css = warm.to_css
+
+      expect(css).to include('.navbar { color: var(--bts-navbar-link);', '--bt-mobile-nav-bg: var(--bts-navbar-bg)',
+                             'footer, #app-footer { color: var(--bts-footer-link); }',
+                             'footer .navbar, #app-footer .navbar { background-color: transparent; }')
+    end
+
+    it 'keeps dropdown items out of the navbar and footer link colour' do
+      css = warm.to_css
+
+      expect(css).to include(':not(.dropdown-item)', '--bs-emphasis-color-rgb: var(--bts-body-text-rgb)')
+      expect(css).not_to include('footer a {')
+    end
+
+    it 'gives a theme with a dark page the dark emphasis colours in light mode' do
+      expect(described_class.new(described_class.themes['dark']).to_css)
+        .to include('[data-bs-theme="light"] { color-scheme: dark;', '--bs-danger-text-emphasis: #ea868f')
+    end
+
+    it 'themes the active pill from the primary colour and its text colour' do
+      expect(warm.to_css).to include('--bs-nav-pills-link-active-bg: var(--bts-primary)')
+    end
+
+    it 'leaves the emphasis colours alone for a theme with a light page' do
+      expect(warm.to_css).not_to include('color-scheme: dark')
+      expect(warm).not_to be_dark_page
+    end
+  end
+
   describe '#low_contrast_pairs' do
     it 'lists pairs under AA and skips unset ones' do
       pairs = described_class.new('primary' => '#ee722a', 'primary_text' => '#ffffff').low_contrast_pairs
