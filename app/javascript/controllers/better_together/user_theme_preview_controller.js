@@ -64,8 +64,5 @@ export default class extends Controller {
     try { window.localStorage.setItem("bts-color-mode", mode) } catch (e) { /* storage may be unavailable */ }
     const secure = window.location.protocol === "https:" ? "; Secure" : ""
     document.cookie = `bts_color_mode=${mode}; path=/; max-age=31536000; SameSite=Lax${secure}`
-    document.querySelectorAll("#color-mode-toggle [data-mode]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.mode === mode))
-    })
   }
 }

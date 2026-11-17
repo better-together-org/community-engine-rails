@@ -1004,13 +1004,14 @@ es:
         no_items: No hay elementos para mostrar
     color_mode:
       announce:
-        auto: 'Modo de color: automático, según su dispositivo.'
         dark: 'Modo de color: oscuro.'
         light: 'Modo de color: claro.'
       auto: Auto
       dark: Oscuro
       label: Modo de color
       light: Claro
+      switch_to_dark: Cambiar a modo oscuro
+      switch_to_light: Cambiar a modo claro
     comment_config:
       hints:
         permission: Controla quién puede publicar nuevos comentarios.
