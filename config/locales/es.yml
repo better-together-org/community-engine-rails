@@ -5098,6 +5098,8 @@ es:
           La información mostrada puede estar desactualizada.
         stale: Estas condiciones se actualizaron por última vez %{time} y pueden estar
           desactualizadas.
+        station_silent: La estación meteorológica no ha informado condiciones desde
+          %{time}. Consultamos la fuente por última vez %{checked}.
         summary:
           heading: El clima ahora
           view_full: Ver el clima completo

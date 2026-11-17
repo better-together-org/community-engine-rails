@@ -5139,6 +5139,8 @@ fr:
           à jour. Les informations affichées peuvent être périmées.
         stale: Ces conditions ont été mises à jour pour la dernière fois %{time} et
           peuvent être périmées.
+        station_silent: La station météo n'a pas transmis de conditions depuis %{time}.
+          Nous avons consulté la source pour la dernière fois %{checked}.
         summary:
           heading: La météo maintenant
           view_full: Voir la météo complète
