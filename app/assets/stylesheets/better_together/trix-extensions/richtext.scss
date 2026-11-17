@@ -106,3 +106,62 @@ trix-editor {
     border-color: currentColor
   }
 }
+
+// Colour mode. Vendored Trix hard-codes light colours and dark SVG icons, so they are remapped to Bootstrap
+// variables, which flip with data-bs-theme. Icons are black strokes, so inverting them keeps them readable.
+trix-editor {
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+
+  .trix-button { color: var(--bs-secondary-color); }
+  .trix-button.trix-active { background: var(--bs-primary-bg-subtle); }
+  .attachment__caption-editor { color: inherit; }
+}
+
+trix-toolbar {
+  .trix-button-group {
+    border-color: var(--bs-border-color);
+    border-top-color: var(--bs-border-color);
+    border-bottom-color: var(--bs-border-color);
+  }
+
+  .trix-button {
+    color: var(--bs-body-color);
+    background-color: transparent;
+    &:not(:first-child) { border-left-color: var(--bs-border-color); }
+    &.trix-active { background: var(--bs-primary-bg-subtle); color: var(--bs-body-color); }
+    &:disabled { color: var(--bs-tertiary-color); }
+  }
+
+  .trix-dialog {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-top-color: var(--bs-border-color);
+    box-shadow: 0 0.3em 1em rgba(var(--bs-emphasis-color-rgb), 0.2);
+  }
+
+  .trix-input--dialog {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+  }
+}
+
+[data-bs-theme='dark'] {
+  trix-toolbar .trix-button::before,
+  trix-editor .trix-button--remove::before { filter: invert(1); }
+
+  // Swatches keep their designed colours: text colours sit on a pale tile, background colours get dark text.
+  trix-toolbar .trix-dialog--color .trix-button-group {
+    button { background-color: var(--bs-light); }
+    [data-trix-attribute^=bgColor] { color: #212529; }
+  }
+}
+
+.trix-content {
+  blockquote { border-color: var(--bs-border-color); }
+  pre { background-color: var(--bs-tertiary-bg); color: var(--bs-body-color); }
+  .attachment--file { color: var(--bs-body-color); border-color: var(--bs-border-color); }
+  .attachment--preview .attachment__caption { color: var(--bs-secondary-color); }
+}

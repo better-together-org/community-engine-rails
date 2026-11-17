@@ -1,0 +1,48 @@
+{
+  "name": "trix_link_dialog_light_mode",
+  "device": "mobile",
+  "url": "/en/posts/new",
+  "title": "New Post | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "trix_editor_dark_mode",
+  "flow": "trix_link_dialog_light_mode",
+  "source_spec": "./spec/docs_screenshots/better_together/trix_editor_dark_mode_spec.rb",
+  "callouts": [
+    {
+      "selector": "trix-toolbar",
+      "title": "Link dialog (light)",
+      "bullets": [
+        "Dialog surface, inputs and buttons follow the colour mode."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 624.390625,
+        "width": 461.0,
+        "height": 59.0,
+        "right": 473.0,
+        "bottom": 683.390625,
+        "center_x": 242.5,
+        "center_y": 653.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 624.390625,
+        "width": 461.0,
+        "height": 59.0,
+        "right": 473.0,
+        "bottom": 683.390625,
+        "center_x": 242.5,
+        "center_y": 653.890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 388.39,
+        "width": 270.0,
+        "height": 216,
+        "score": 624.390625
+      }
+    }
+  ]
+}

@@ -20,4 +20,13 @@ RSpec.describe BetterTogether::Engine, '.theme_aware_stylesheets', type: :lint d
     expect(root.join('content_blocks.scss').read[/\.page-block-fields \{.*?\n\}/m]).not_to match(/#[0-9a-fA-F]{3,8}\b/)
     expect(root.join('sidebar_nav.scss').read).not_to match(/#[0-9a-fA-F]{3,8}\b/)
   end
+
+  it 'inverts the Trix toolbar icons in dark mode and uses theme variables for its surfaces', :aggregate_failures do
+    trix = root.join('trix-extensions/richtext.scss').read
+    themed = trix[/Colour mode\..*/m]
+
+    expect(themed).to match(/\[data-bs-theme='dark'\].*filter:\s*invert\(1\)/m)
+    expect(themed.scan(/#[0-9a-fA-F]{3,8}\b/)).to eq(['#212529']) # dark text on the pale background swatches
+    expect(themed).to include('var(--bs-body-bg)', 'var(--bs-border-color)')
+  end
 end
