@@ -19,9 +19,9 @@
 }
 
 .page-block-fields {
-  background-color: #f8f9fa; /* Light background color */
+  background-color: var(--bs-tertiary-bg);
   padding: 1rem;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--bs-border-color);
   margin-bottom: 1.5rem;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
@@ -37,9 +37,9 @@
 }
 
 .page-block-fields:hover {
-  background-color: #e9ecef; /* Highlight on hover */
+  background-color: var(--bs-secondary-bg);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for focus */
-  border-color: #adb5bd; /* Darken the border on hover */
+  border-color: var(--bs-border-color-translucent);
 }
 
 .content-block.content_hero {
@@ -264,7 +264,7 @@
 // Markdown content styling - GitHub-flavored markdown styles
 .markdown-content {
   line-height: 1.6;
-  color: #24292e;
+  color: var(--bs-body-color);
 
   // Headings
   h1, h2, h3, h4, h5, h6 {
@@ -272,7 +272,7 @@
     margin-bottom: 16px;
     font-weight: 600;
     line-height: 1.25;
-    border-bottom: 1px solid #eaecef;
+    border-bottom: 1px solid var(--bs-border-color);
     padding-bottom: 0.3em;
   }
 
@@ -281,7 +281,7 @@
   h3 { font-size: 1.25em; }
   h4 { font-size: 1em; }
   h5 { font-size: 0.875em; }
-  h6 { font-size: 0.85em; color: #6a737d; }
+  h6 { font-size: 0.85em; color: var(--bs-secondary-color); }
 
   // Paragraphs and text
   p {
@@ -291,7 +291,7 @@
 
   // Links
   a {
-    color: #0366d6;
+    color: var(--bs-link-color);
     text-decoration: none;
 
     &:hover {
@@ -321,8 +321,8 @@
   // Blockquotes
   blockquote {
     padding: 0 1em;
-    color: #6a737d;
-    border-left: 0.25em solid #dfe2e5;
+    color: var(--bs-secondary-color);
+    border-left: 0.25em solid var(--bs-border-color);
     margin: 0 0 16px 0;
 
     > :first-child {
@@ -340,7 +340,7 @@
     overflow: auto;
     font-size: 85%;
     line-height: 1.45;
-    background-color: #f6f8fa;
+    background-color: var(--bs-tertiary-bg);
     border-radius: 6px;
     margin-bottom: 16px;
 
@@ -361,7 +361,7 @@
     padding: 0.2em 0.4em;
     margin: 0;
     font-size: 85%;
-    background-color: rgba(27, 31, 35, 0.05);
+    background-color: var(--bs-tertiary-bg);
     border-radius: 6px;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   }
@@ -378,21 +378,21 @@
     th {
       font-weight: 600;
       padding: 6px 13px;
-      border: 1px solid #dfe2e5;
-      background-color: #f6f8fa;
+      border: 1px solid var(--bs-border-color);
+      background-color: var(--bs-tertiary-bg);
     }
 
     td {
       padding: 6px 13px;
-      border: 1px solid #dfe2e5;
+      border: 1px solid var(--bs-border-color);
     }
 
     tr {
-      background-color: #fff;
-      border-top: 1px solid #c6cbd1;
+      background-color: transparent;
+      border-top: 1px solid var(--bs-border-color);
 
       &:nth-child(2n) {
-        background-color: #f6f8fa;
+        background-color: var(--bs-tertiary-bg);
       }
     }
   }
@@ -402,7 +402,7 @@
     height: 0.25em;
     padding: 0;
     margin: 24px 0;
-    background-color: #e1e4e8;
+    background-color: var(--bs-border-color);
     border: 0;
   }
 
@@ -420,7 +420,7 @@
   img {
     max-width: 100%;
     box-sizing: content-box;
-    background-color: #fff;
+    background-color: transparent;
     border-radius: 6px;
   }
 
@@ -437,7 +437,8 @@
 
   // Highlight
   mark {
-    background-color: #fff740;
+    background-color: var(--bs-warning-bg-subtle);
+    color: var(--bs-body-color);
     padding: 0.2em;
   }
 
@@ -445,9 +446,9 @@
   .footnotes {
     margin-top: 32px;
     padding-top: 16px;
-    border-top: 1px solid #e1e4e8;
+    border-top: 1px solid var(--bs-border-color);
     font-size: 0.9em;
-    color: #6a737d;
+    color: var(--bs-secondary-color);
 
     ol {
       padding-left: 1.5em;
