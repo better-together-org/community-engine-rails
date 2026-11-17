@@ -5003,6 +5003,8 @@ en:
         source_error: The weather source could not be reached on the last update.
           The information shown may be out of date.
         stale: These conditions were last updated %{time} and may be out of date.
+        station_silent: The weather station has not reported conditions since %{time}.
+          We last checked with the source at %{checked}.
         summary:
           heading: Weather now
           view_full: See the full weather

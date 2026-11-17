@@ -2,6 +2,7 @@
 <%# Current conditions card for the settlement About tab. Host apps render it above their own content. Links to the Weather tab. -%>
 <% panel = weather_summary_panel(settlement) %>
 <% if panel %>
+  <% cache panel.summary_cache_key do %>
   <% values = panel.current_values %>
   <% zone = panel.time_zone %>
   <% source_lang = panel.location.source.config['language'].presence || 'en' %>
@@ -16,7 +17,11 @@
       </p>
       <% if panel.stale? %>
         <p id="weather-summary-stale" class="small text-warning-emphasis mb-2">
-          <%= t('better_together.weather.panel.stale', time: weather_datetime(panel.last_updated, zone) || t('better_together.weather.panel.never')) %>
+          <% if panel.source_silent? %>
+            <%= t('better_together.weather.panel.station_silent', time: weather_datetime(panel.last_updated, zone), checked: weather_datetime(panel.last_checked, zone)) %>
+          <% else %>
+            <%= t('better_together.weather.panel.stale', time: weather_datetime(panel.last_updated, zone) || t('better_together.weather.panel.never')) %>
+          <% end %>
         </p>
       <% end %>
       <p id="weather-summary-observed" class="small text-muted mb-2">
@@ -27,4 +32,5 @@
                   class: 'stretched-link', data: { controller: 'better-together--weather-tab-link', action: 'click->better-together--weather-tab-link#open' } %>
     </div>
   </section>
+  <% end %>
 <% end %>
