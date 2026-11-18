@@ -4,12 +4,13 @@ const STORAGE_KEY = "bts-color-mode"
 const COOKIE = "bts_color_mode"
 const MODES = ["auto", "light", "dark"]
 
-// Visitor colour mode: Auto follows prefers-color-scheme, Light and Dark are explicit.
+// Visitor colour mode: Auto follows prefers-color-scheme, Light and Dark are explicit. The header shows one button
+// for the appearance in use; a click switches to the opposite explicitly. Auto is set from Preferences.
 // The choice is kept in localStorage and a cookie (so the server renders the right mode on first paint)
 // and applied through Bootstrap 5.3's data-bs-theme on the html element.
 export default class extends Controller {
   static targets = ["button", "status"]
-  static values = { saveUrl: String, announceAuto: String, announceLight: String, announceDark: String }
+  static values = { saveUrl: String, announceLight: String, announceDark: String, labelToLight: String, labelToDark: String }
 
   connect() {
     this.root = document.documentElement
@@ -28,21 +29,26 @@ export default class extends Controller {
     return MODES.includes(mode) ? mode : "auto"
   }
 
-  select(event) {
-    const mode = event.currentTarget.dataset.mode
-    if (!MODES.includes(mode)) return
+  get dark() { return this.root.getAttribute("data-bs-theme") === "dark" }
+
+  toggle() {
+    const mode = this.dark ? "light" : "dark"
     this.root.dataset.btsColorMode = mode
     if (this.hasSaveUrlValue && this.saveUrlValue) this.root.dataset.btsUserMode = mode
     this.save(mode)
     this.apply()
-    this.statusTarget.textContent = this[`announce${mode[0].toUpperCase()}${mode.slice(1)}Value`]
+    this.statusTarget.textContent = mode === "dark" ? this.announceDarkValue : this.announceLightValue
   }
 
   apply() {
     const mode = this.mode
     const dark = mode === "dark" || (mode === "auto" && this.media && this.media.matches)
     this.root.setAttribute("data-bs-theme", dark ? "dark" : "light")
-    this.buttonTargets.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.mode === mode)))
+    this.buttonTargets.forEach((button) => {
+      const label = dark ? this.labelToLightValue : this.labelToDarkValue
+      button.setAttribute("aria-label", label)
+      button.setAttribute("title", label)
+    })
   }
 
   save(mode) {

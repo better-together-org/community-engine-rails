@@ -47,6 +47,11 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
   mattr_accessor :head_tag_providers
   mattr_accessor :third_party_tracking_exclusions
+  # Settlement weather. Hosts may turn it off; when on, it still needs an enabled source with
+  # an enabled location before any weather job is queued or any weather surface renders.
+  # Default on; operators turn it off with BETTER_TOGETHER_WEATHER_ENABLED=false.
+  mattr_accessor :weather_enabled
+  self.weather_enabled = !%w[false 0 off no].include?(ENV.fetch('BETTER_TOGETHER_WEATHER_ENABLED', 'true').to_s.downcase)
   # :gem (engine migrations run in place) or :install (copied into db/migrate); recorded by the installer
   mattr_accessor :host_migrations_mode
   self.host_migrations_mode = :gem

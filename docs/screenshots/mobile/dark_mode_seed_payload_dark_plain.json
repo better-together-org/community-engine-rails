@@ -1,0 +1,11 @@
+{
+  "name": "dark_mode_seed_payload_dark_plain",
+  "device": "mobile",
+  "url": "/en/host/seeds/daf91db8-8a9d-4638-b801-0bfcb797c13c",
+  "title": "dark-mode-seed-556112 | Seeds | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_seed_payload_dark_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb"
+}

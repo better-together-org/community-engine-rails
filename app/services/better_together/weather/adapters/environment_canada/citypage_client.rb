@@ -9,6 +9,7 @@ module BetterTogether
           BASE_URL = 'https://dd.weather.gc.ca/today/citypage_weather'
           HOURS_BACK = 2
           MAX_AGE = 3.hours
+          LISTING_TTL = 2.minutes
 
           # The newest file is older than MAX_AGE, so the feed is lagging.
           class StaleData < Http::Error; end
@@ -41,9 +42,17 @@ module BetterTogether
 
           def files_in_hour(province, time, pattern)
             hour = format('%02d', time.hour)
-            @http.get("#{BASE_URL}/#{province}/#{hour}/").scan(pattern).uniq.map { |name| [hour, name] }
+            listing(province, hour).scan(pattern).uniq.map { |name| [hour, name] }
           rescue Http::NotFound
             []
+          end
+
+          # One directory listing per province and hour serves every site in that province
+          # during a refresh scan, instead of one listing request per location.
+          def listing(province, hour)
+            Rails.cache.fetch(['better_together/weather/eccc/listing', province, hour], expires_in: LISTING_TTL) do
+              @http.get("#{BASE_URL}/#{province}/#{hour}/")
+            end
           end
 
           def ensure_fresh!(xml, now)

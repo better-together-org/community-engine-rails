@@ -1,5 +1,5 @@
 
-<%= cache hero.cache_key_with_version do %>
+<%= cache [hero.cache_key_with_version, media_url_cache_context] do %>
   <%= render layout: 'better_together/content/blocks/block', locals: { block: hero } do %>
     <%= content_tag :div, class: 'hero-background' do %>
       <div class="hero-overlay" style="<%= hero.inline_overlay_styles %>"></div>

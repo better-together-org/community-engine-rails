@@ -24,6 +24,11 @@
   <% if events_map && events_map.spaces.any? && !scoped_community && !scoped_place %>
     <section class="events-map my-4">
       <%= render partial: 'better_together/shared/map', locals: { map: events_map, use_label_as_popup: true } %>
+      <% if events_map.truncated? %>
+        <p id="events-map-truncated" class="small text-body-secondary mt-1">
+          <%= t('.map_truncated', count: BetterTogether::Geography::EventCollectionMap::MAX_POINTS) %>
+        </p>
+      <% end %>
     </section>
   <% end %>
 

@@ -1011,13 +1011,14 @@ en:
         no_items: No items to display
     color_mode:
       announce:
-        auto: 'Colour mode: automatic, following your device.'
         dark: 'Colour mode: dark.'
         light: 'Colour mode: light.'
       auto: Auto
       dark: Dark
       label: Colour mode
       light: Light
+      switch_to_dark: Switch to dark mode
+      switch_to_light: Switch to light mode
     comment_config:
       hints:
         permission: Controls who is allowed to post new comments.
@@ -1750,6 +1751,8 @@ en:
           at_start: "%{event_name} is starting now"
         view_details_url: View details url
       index:
+        map_truncated: Showing the first %{count} mapped events. Narrow the filters
+          to see the rest.
         new_btn_text: New Event
         result_count:
           one: "%{count} event"
@@ -2907,6 +2910,8 @@ en:
         host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
+        host_dashboard_weather: Weather
+        host_jobs: Background Jobs
         hub: Hub
         joatu_hub: Joatu Hub
         joatu_offers: Offers
@@ -5002,6 +5007,8 @@ en:
         source_error: The weather source could not be reached on the last update.
           The information shown may be out of date.
         stale: These conditions were last updated %{time} and may be out of date.
+        station_silent: The weather station has not reported conditions since %{time}.
+          We last checked with the source at %{checked}.
         summary:
           heading: Weather now
           view_full: See the full weather
@@ -5981,6 +5988,54 @@ en:
       infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
+    jobs:
+      description: Live counts from the job queue and the Sidekiq dashboard for this
+        installation.
+      heading: Background jobs
+      page_title: Background Jobs
+      sidekiq:
+        heading: Sidekiq dashboard
+        hint: Sidekiq runs inside this page. Its links and actions stay in the frame.
+        iframe_title: Sidekiq background jobs dashboard
+        loading: Loading the Sidekiq dashboard...
+        new_tab_notice: "(opens in a new tab)"
+        open_new_tab: Open Sidekiq in a new tab
+      summary:
+        announcement: 'Background jobs: %{failed} failed, %{retrying} retrying, %{dead}
+          dead, %{stalled} stalled, %{processes} worker processes.'
+        heading: Background jobs summary
+        links:
+          dead: 'Dead jobs: %{count}. Open the Sidekiq dead jobs page'
+          failed: 'Failed jobs: %{count}. Open the Sidekiq dashboard'
+          retrying: 'Retrying jobs: %{count}. Open the Sidekiq retries page'
+          scheduled: 'Scheduled jobs: %{count}. Open the Sidekiq scheduled page'
+        loading: Loading job counts...
+        longest_latency: 'Longest queue wait: %{latency}'
+        no_latency: none
+        no_processes_body: Jobs can be queued but nothing is processing them. Check
+          the Sidekiq service on the server.
+        no_processes_title: No worker processes are running.
+        no_queues: No jobs are waiting in any queue.
+        open_jobs_tab: Open background jobs
+        queue: Queue
+        queue_latency: Oldest job waiting
+        queue_size: Enqueued
+        queues_caption: Enqueued jobs per queue
+        stalled_hint: A job counts as stalled once it has been running for more than
+          %{threshold}.
+        stats:
+          busy: Running now
+          dead: Dead
+          enqueued: Enqueued
+          failed: Failed (all time)
+          processes: Worker processes
+          retrying: Retrying
+          scheduled: Scheduled
+          stalled: Stalled
+        unavailable_body: The job queue (Redis) could not be reached. The counts return
+          once it is back.
+        unavailable_title: Job counts are unavailable.
+        updated_at: Updated %{time}
     membership_review:
       anonymous_requester: Anonymous requester
       columns:
@@ -6069,6 +6124,111 @@ en:
       visible_reports_badge:
         one: 1 visible report
         other: "%{count} visible reports"
+    weather:
+      actions:
+        disable: Disable
+        disable_named: Disable %{name}
+        enable: Enable
+        enable_named: Enable %{name}
+      audit:
+        caption: Recent weather setting changes, newest first
+        change: "%{before} to %{after}"
+        columns:
+          change: Change
+          what: What
+          when: When
+          who: Who
+        empty: No weather settings have been changed yet.
+        heading: Change history
+        kinds:
+          feature: Weather on this host
+          location: Location
+          source: Source
+        unknown_actor: Unknown person
+      back: Back to weather
+      columns:
+        actions: Actions
+        last_refresh: Last refresh
+        last_success: Last successful refresh
+        locations: Locations
+        settlement: Settlement
+        source: Source
+        status: Status
+      confirm:
+        cancel: Cancel
+        disable: Yes, disable
+        enable: Yes, enable
+        feature:
+          disable_effect: Turning weather off stops every weather job and hides the
+            Weather tab and the current conditions card for every platform on this
+            host. Stored readings are kept.
+          disable_heading: Turn weather off for this host?
+          enable_effect: Turning weather on lets weather jobs run again and shows
+            the Weather tab on settlements with an enabled location of an enabled
+            source, on every platform on this host.
+          enable_heading: Turn weather on for this host?
+        location:
+          disable_effect: Disabling weather for %{name} stops its refreshes and hides
+            the Weather tab on that settlement for every platform on this host. Stored
+            readings are kept.
+          disable_heading: Disable weather for %{name}?
+          enable_effect: Enabling weather for %{name} resumes its refreshes and shows
+            the Weather tab on that settlement while its source is enabled.
+          enable_heading: Enable weather for %{name}?
+        source:
+          disable_effect: Disabling %{name} stops refreshes for all %{count} of its
+            locations and hides their Weather tab for every platform on this host.
+            Stored readings are kept.
+          disable_heading: Disable the source %{name}?
+          enable_effect: Enabling %{name} resumes refreshes for its enabled locations
+            and shows their Weather tab for every platform on this host.
+          enable_heading: Enable the source %{name}?
+      description: Settlement weather for every platform on this host. Changes take
+        effect for the next weather job and page view, without a restart.
+      feature:
+        description: The host-wide switch. When it is off no weather job runs and
+          no weather is shown on any platform.
+        env_forced_off_html: The server setting <code>%{variable}</code> is false,
+          so weather is off for this host whatever this switch says. Remove that setting
+          and restart to use the switch.
+        heading: Weather on this host
+        status:
+          forced_off: Off (server setting)
+          'off': 'Off'
+          'on': 'On'
+        turn_off: Turn weather off
+        turn_on: Turn weather on
+      flash:
+        env_forced_off: Weather is switched off by a server setting, so the switch
+          cannot be changed here.
+        feature_disabled: Weather is now off for this host.
+        feature_enabled: Weather is now on for this host.
+        location_disabled: Weather for %{name} is now disabled.
+        location_enabled: Weather for %{name} is now enabled.
+        source_disabled: The source %{name} is now disabled.
+        source_enabled: The source %{name} is now enabled.
+        unchanged: Nothing changed; the setting already had that value.
+      heading: Weather
+      locations:
+        caption: Weather locations of %{source}
+        empty: This source has no locations. Locations are added by host seeds.
+        heading: Locations
+      never: Never
+      page_title: Weather
+      sources:
+        adapter: 'Adapter: %{adapter}'
+        caption: Weather sources with their locations and refresh times
+        description: Sources and locations are added by host seeds. Here you can switch
+          them on or off.
+        empty: No weather sources are configured on this host.
+        heading: Sources
+        location_count: "%{enabled} of %{count} enabled"
+        view_locations: Locations
+        view_locations_for: Locations of %{name}
+      status:
+        disabled: Disabled
+        enabled: Enabled
+        stale: Stale
   invitations:
     calculating: Calculating
   layouts:

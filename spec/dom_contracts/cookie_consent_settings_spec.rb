@@ -29,11 +29,17 @@ RSpec.describe 'Cookie consent settings DOM contract', :no_auth, type: :request 
     end
 
     it 'exposes the tab, form and controls with stable ids', :aggregate_failures do # rubocop:disable RSpec/MultipleExpectations
-      %w[cookie-consent-tab cookie-consent cookie-consent-settings cookie-consent-form cookie-consent-stored
+      %w[cookie-consent-tab consent-preferences cookie-consent-settings cookie-consent-form cookie-consent-stored
          cookie-consent-fieldset cookie-consent-essential cookie-consent-analytics cookie-consent-analytics-help
          cookie-consent-save cookie-consent-withdraw cookie-consent-status].each do |id|
         expect(doc.at_css("##{id}")).to be_present, "missing ##{id}"
       end
+    end
+
+    it 'keeps the pane id clear of cookie-notice filter names and wired to its tab', :aggregate_failures do
+      expect(doc.at_css('#cookie-consent')).to be_nil
+      expect(doc.at_css('#cookie-consent-tab')['data-bs-target']).to eq('#consent-preferences')
+      expect(doc.at_css('#consent-preferences')['aria-labelledby']).to eq('cookie-consent-tab')
     end
 
     it 'lists only the categories something uses', :aggregate_failures do

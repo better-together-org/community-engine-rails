@@ -39,6 +39,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Embedded Content & CSP Controls](platform_organizers/embedded_content_and_csp.md) - Trusted iframe/video origin management
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
+- [Background Jobs Monitoring](platform_organizers/host_jobs_monitoring.md) - Live job summary panel and the framed Sidekiq dashboard
 - [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 - [Federation Privacy and Consent](platform_organizers/federation_privacy_and_consent.md) - Safe operation of platform-to-platform trust
 - [Short Links](platform_organizers/short_links.md) - Short share links, expiry and visit tracking
@@ -70,7 +71,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Settlement naming and wording assessment](assessments/settlement_to_town_rename_assessment.md) - Why "Settlement" stays, where the gloss lives, and the edit-point map for a future rename
 - [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
-- [Settlement Weather](weather.md) - Weather sources, adapters, stored observation history and ingest jobs
+- [Settlement Weather](weather.md) - Weather sources, adapters, stored observation history and ingest jobs, and the host steward Weather tab
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
 - [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across pg_search (default) and database search modes, with Elasticsearch as an optional extension gem

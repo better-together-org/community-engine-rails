@@ -24,14 +24,18 @@ module BetterTogether
             'monthly'
           end
 
-          # Offered only when an AI provider is configured: RubyLLM has an OpenAI token
-          # (OPENAI_API_KEY / OPENAI_ACCESS_TOKEN) or an active robot is available to
-          # the platform (platform-specific or global). The key and ledger stay as
-          # 'ai_translation_tokens'; the wording is generic LLM usage so other AI
-          # features can draw on the same quota later.
+          # Offered only when translation genuinely works for the platform: the same
+          # gate TranslationsController uses (translation robot resolved for the
+          # platform, and its provider has credentials, is ollama or has an adapter).
+          # The key stays 'ai_translation_tokens'; the wording is generic LLM usage.
           def available_for?(platform)
-            RubyLLM.config.openai_api_key.present? ||
-              BetterTogether::Robot.available_for_platform(platform).exists?
+            BetterTogether.translation_available?(platform:)
+          end
+
+          # An owner sees the quota only when it is granted: an effective limit above 0
+          # (an active QuotaGrant, else the stored limit copied from the defaults).
+          def visible_for?(quota)
+            quota.effective_limit.to_i.positive?
           end
 
           def measure(subject)

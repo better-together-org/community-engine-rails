@@ -250,6 +250,10 @@ records:
   refs:
     role: role:platform_steward
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_steward-manage_platform_jobs
+  refs:
+    role: role:platform_steward
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_steward-view_metrics_dashboard
   refs:
     role: role:platform_steward
@@ -342,6 +346,10 @@ records:
   refs:
     role: role:platform_manager
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_manager-manage_platform_jobs
+  refs:
+    role: role:platform_manager
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_manager-view_metrics_dashboard
   refs:
     role: role:platform_manager
@@ -470,6 +478,10 @@ records:
   refs:
     role: role:platform_infrastructure_architect
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_infrastructure_architect-manage_platform_jobs
+  refs:
+    role: role:platform_infrastructure_architect
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_infrastructure_architect-view_metrics_dashboard
   refs:
     role: role:platform_infrastructure_architect
@@ -546,6 +558,10 @@ records:
   refs:
     role: role:platform_tech_support
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_tech_support-manage_platform_jobs
+  refs:
+    role: role:platform_tech_support
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_tech_support-view_metrics_dashboard
   refs:
     role: role:platform_tech_support
@@ -622,6 +638,10 @@ records:
   refs:
     role: role:platform_developer
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_developer-manage_platform_jobs
+  refs:
+    role: role:platform_developer
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_developer-view_metrics_dashboard
   refs:
     role: role:platform_developer
@@ -698,6 +718,10 @@ records:
   refs:
     role: role:platform_quality_assurance_lead
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_quality_assurance_lead-manage_platform_jobs
+  refs:
+    role: role:platform_quality_assurance_lead
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_quality_assurance_lead-view_metrics_dashboard
   refs:
     role: role:platform_quality_assurance_lead
@@ -774,6 +798,10 @@ records:
   refs:
     role: role:platform_accessibility_officer
     resource_permission: resource_permission:manage_platform_settings
+- key: platform_accessibility_officer-manage_platform_jobs
+  refs:
+    role: role:platform_accessibility_officer
+    resource_permission: resource_permission:manage_platform_jobs
 - key: platform_accessibility_officer-view_metrics_dashboard
   refs:
     role: role:platform_accessibility_officer

@@ -25,10 +25,10 @@ module BetterTogether
       end
 
       def stale_forecasts
-        latest = Forecast.group(:location_id, :kind).maximum(:issued_at)
+        latest = Forecast.group(:location_id, :kind).maximum(:fetched_at)
         scope = Forecast.where(Forecast.arel_table[:fetched_at].lt(@forecast_days.days.ago))
-        latest.reduce(scope) do |relation, ((location_id, kind), issued_at)|
-          relation.where.not(location_id: location_id, kind: kind, issued_at: issued_at)
+        latest.reduce(scope) do |relation, ((location_id, kind), fetched_at)|
+          relation.where.not(location_id: location_id, kind: kind, fetched_at: fetched_at)
         end
       end
 

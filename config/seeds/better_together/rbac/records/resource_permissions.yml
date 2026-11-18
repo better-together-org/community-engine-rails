@@ -282,6 +282,13 @@ records:
     resource_type: BetterTogether::Platform
     protected: true
   position: 28
+- key: manage_platform_jobs
+  attributes:
+    action: manage
+    target: platform_jobs
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 29
 - key: create_person
   attributes:
     action: create

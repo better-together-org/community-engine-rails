@@ -63,6 +63,16 @@ RSpec.describe 'Documentation screenshots for the settlement weather tab',
                bullets: ['Every chart has a text alternative.'] }])
   end
 
+  it 'captures the notice shown when the station stops reporting' do # rubocop:disable RSpec/NoExpectationExample
+    location = BetterTogether::Weather::Location.find_by!(settlement: settlement)
+    location.current_condition.update!(observed_at: 5.hours.ago)
+    location.update!(last_refreshed_at: 5.minutes.ago)
+
+    capture('station_silent', '#weather-stale-notice',
+            [{ id: 'silent', selector: '#weather-stale-notice', title: 'Station not reporting',
+               bullets: ['Says when the station last reported and when the source was last checked.'] }])
+  end
+
   it 'captures the current conditions card on the about tab' do # rubocop:disable RSpec/NoExpectationExample
     capture('summary_card', '#weather-summary-card',
             [{ id: 'summary', selector: '#weather-summary-card', title: 'Current conditions card',

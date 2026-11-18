@@ -12,6 +12,7 @@ module BetterTogether
     include PlatformCssBlockManagement
     include PlatformContentSlots
     include PlatformMembershipDisplay
+    include PlatformWeatherSetting
     include Creatable
     include Identifier
     include Joinable
@@ -68,6 +69,8 @@ module BetterTogether
       search_query_analytics_mode String, default: 'full'
       # Platform-wide kill switch for custom code snippets.
       snippets_enabled Boolean, default: true
+      # Host-wide settlement weather switch, read on the host platform only (see Weather.feature_enabled?).
+      weather_enabled Boolean, default: true
     end
 
     # Alias the database url column to host_url for clarity

@@ -21,8 +21,7 @@ module BetterTogether
           store_current(snapshot[:current])
           Array(snapshot[:forecasts]).each { |forecast| store_forecast(forecast) }
         end
-        @location.record_success!(last_current_fetched_at: @now, last_forecast_fetched_at: @now)
-        snapshot
+        record_refresh(snapshot)
       rescue Http::Error => e
         Rails.logger.warn("[Weather] refresh failed location=#{@location.id} #{e.class}: #{e.message}")
         @location.record_error!(e)
@@ -30,6 +29,25 @@ module BetterTogether
       end
 
       private
+
+      # Only stamp what the document carried: a feed without current conditions must not
+      # make old conditions look freshly fetched. last_refreshed_at records the contact.
+      def record_refresh(snapshot)
+        @location.record_success!(**freshness_stamps(snapshot))
+        snapshot
+      end
+
+      def freshness_stamps(snapshot)
+        stamps = { last_refreshed_at: @now }
+        stamps[:last_current_fetched_at] = @now if snapshot[:current]
+        stamps[:last_forecast_fetched_at] = @now if Array(snapshot[:forecasts]).any?
+        log_missing_current if snapshot[:current].nil?
+        stamps
+      end
+
+      def log_missing_current
+        Rails.logger.info("[Weather] source reported no current conditions location=#{@location.id}")
+      end
 
       def store_current(current)
         return if current.nil?

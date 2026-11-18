@@ -2,12 +2,10 @@
 
 module BetterTogether
   module Weather
-    # Daily scan that enqueues a history backfill for every enabled location.
-    class BackfillScanJob < ApplicationJob
-      queue_as :weather
-
+    # Daily scan that enqueues a history backfill for every active location.
+    class BackfillScanJob < BaseJob
       def perform
-        Location.enabled.where(source_id: Source.enabled.select(:id)).find_each do |location|
+        Location.active.select(:id).find_each do |location|
           BackfillLocationJob.perform_later(location.id)
         end
       end
