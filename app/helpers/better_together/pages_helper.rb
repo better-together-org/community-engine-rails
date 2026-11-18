@@ -10,7 +10,7 @@ module BetterTogether
         ['page_content', page.cache_key_with_version,
          page.page_blocks.maximum(:updated_at),
          page.blocks.maximum(:updated_at),
-         page_dynamic_cache_stamp(page),
+         [page_dynamic_cache_stamp(page), media_url_cache_context],
          I18n.locale, page_visibility_cache_context, 'v4'],
         expires_in: 1.minute
       ) do
@@ -68,12 +68,12 @@ module BetterTogether
         page.page_blocks.maximum(:updated_at),
         page.blocks.maximum(:updated_at),
         page.contributions.maximum(:updated_at),
-        page_dynamic_cache_stamp(page),
+        [page_dynamic_cache_stamp(page), media_url_cache_context],
         page.sidebar_nav&.cache_key_with_version,
         (breadcrumb_trail_cache_key(page) if respond_to?(:breadcrumb_trail_cache_key, true)),
         page_visibility_cache_context,
         I18n.locale,
-        'v7'
+        'v8'
       ]
     end
 
