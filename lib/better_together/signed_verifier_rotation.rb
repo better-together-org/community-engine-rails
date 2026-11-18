@@ -12,9 +12,28 @@ module BetterTogether
   module SignedVerifierRotation
     DIGESTS = [OpenSSL::Digest::SHA256, OpenSSL::Digest::SHA1].freeze
 
+    # Rotates any verifier assigned to SignedGlobalID.verifier. GlobalID assigns its own verifier in an
+    # after_initialize hook that can run after ours, so rotating only the current value left it unrotated.
+    module VerifierAssignment
+      def verifier=(value)
+        super
+        BetterTogether::SignedVerifierRotation.rotate_assigned(value)
+      end
+    end
+
     class << self
       def install!(app)
-        rotate(SignedGlobalID.verifier, salt: 'signed_global_ids', secret_key_base: app.secret_key_base)
+        @salt = 'signed_global_ids'
+        @secret_key_base = app.secret_key_base
+        SignedGlobalID.singleton_class.prepend(VerifierAssignment) unless SignedGlobalID.singleton_class < VerifierAssignment
+        rotate_assigned(SignedGlobalID.verifier)
+      end
+
+      def rotate_assigned(verifier)
+        return if verifier.nil? || verifier.instance_variable_get(:@bt_rotated)
+
+        rotate(verifier, salt: @salt, secret_key_base: @secret_key_base)
+        verifier.instance_variable_set(:@bt_rotated, true)
       end
 
       def rotate(verifier, salt:, secret_key_base:)
