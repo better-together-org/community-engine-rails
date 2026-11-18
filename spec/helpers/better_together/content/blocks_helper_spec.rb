@@ -255,5 +255,48 @@ module BetterTogether # :nodoc:
         end
       end
     end
+
+    describe '#dynamic_block_cache_stamp' do
+      let(:community) { create(:better_together_community) }
+
+      before do
+        helper.extend(BetterTogether::PagesHelper)
+        helper.extend(Module.new { def policy_scope(scope) = scope.all })
+        allow(helper).to receive(:page_visibility_cache_context).and_return('viewer')
+      end
+
+      it 'is nil for blocks that list no records' do
+        expect(helper.dynamic_block_cache_stamp(create(:content_markdown))).to be_nil
+      end
+
+      it 'changes when a listed event is added, so a cached page is rebuilt' do
+        block = create(:content_events_block, event_scope: 'all')
+        before_stamp = helper.dynamic_block_cache_stamp(block)
+
+        create(:event)
+
+        expect(helper.dynamic_block_cache_stamp(block)).not_to eq(before_stamp)
+      end
+
+      it 'changes when an upcoming event leaves the upcoming window' do
+        block = create(:content_events_block, event_scope: 'upcoming')
+        event = create(:event, starts_at: 1.day.from_now, ends_at: 2.days.from_now)
+        before_stamp = helper.dynamic_block_cache_stamp(block)
+
+        event.update_columns(starts_at: 2.days.ago, ends_at: 1.day.ago) # rubocop:disable Rails/SkipsModelValidations
+
+        expect(helper.dynamic_block_cache_stamp(block)).not_to eq(before_stamp)
+      end
+
+      it 'changes when a checklist item is added to a checklist block' do
+        checklist = create(:better_together_checklist)
+        block = BetterTogether::Content::ChecklistBlock.new(checklist_id: checklist.id)
+        before_stamp = helper.dynamic_block_cache_stamp(block)
+
+        create(:better_together_checklist_item, checklist:)
+
+        expect(helper.dynamic_block_cache_stamp(block)).not_to eq(before_stamp)
+      end
+    end
   end
 end

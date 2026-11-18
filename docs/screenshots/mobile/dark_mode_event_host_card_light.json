@@ -1,0 +1,48 @@
+{
+  "name": "dark_mode_event_host_card_light",
+  "device": "mobile",
+  "url": "/en/events/e475bdea-82d5-46ba-b7c2-48925cd5a244/edit",
+  "title": "Edit Praesentium Deleniti Eos | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_event_host_card_light",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event-hosts .card.bg-body-tertiary",
+      "title": "Host card (light)",
+      "bullets": [
+        "The card follows the colour mode."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 556.390625,
+        "width": 442.0,
+        "height": 109.5625,
+        "right": 471.0,
+        "bottom": 665.953125,
+        "center_x": 250.0,
+        "center_y": 611.171875
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 556.390625,
+        "width": 442.0,
+        "height": 109.5625,
+        "right": 471.0,
+        "bottom": 665.953125,
+        "center_x": 250.0,
+        "center_y": 611.171875
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 685.95,
+        "width": 270.0,
+        "height": 132,
+        "score": 591.046875
+      }
+    }
+  ]
+}

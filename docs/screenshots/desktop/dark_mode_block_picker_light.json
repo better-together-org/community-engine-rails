@@ -1,0 +1,48 @@
+{
+  "name": "dark_mode_block_picker_light",
+  "device": "desktop",
+  "url": "/en/pages/adipisci-provident-est/edit",
+  "title": "Edit Adipisci provident est. | Pages | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_block_picker_light",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb",
+  "callouts": [
+    {
+      "selector": "#available-block-types",
+      "title": "Block picker (light)",
+      "bullets": [
+        "Tile and glyph invert with the mode."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 280.390625,
+        "width": 1401.0,
+        "height": 896.0,
+        "right": 1413.0,
+        "bottom": 1176.390625,
+        "center_x": 712.5,
+        "center_y": 728.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 280.390625,
+        "width": 1401.0,
+        "height": 896.0,
+        "right": 1413.0,
+        "bottom": 1176.390625,
+        "center_x": 712.5,
+        "center_y": 728.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 1196.39,
+        "width": 380,
+        "height": 132,
+        "score": 280.609375
+      }
+    }
+  ]
+}

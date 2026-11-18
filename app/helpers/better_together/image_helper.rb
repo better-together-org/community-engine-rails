@@ -3,6 +3,8 @@
 module BetterTogether
   # Helps with rendering images for various entities
   module ImageHelper # rubocop:todo Metrics/ModuleLength
+    include BetterTogether::MediaCacheContextHelper
+
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/CyclomaticComplexity
     # rubocop:todo Metrics/AbcSize
@@ -64,6 +66,14 @@ module BetterTogether
         default_image = default_card_image(entity, image_format)
         image_tag(image_url(default_image), **image_tag_attributes)
       end
+    end
+
+    # Cache key for a fragment that draws +entity+'s cover image. Without a cover of its own the image comes from the
+    # entity's first category with one, so that category's version is part of the key; the key also carries the
+    # origin the (absolute) proxy URL is built against.
+    def cover_image_cache_key(entity)
+      category = first_category_with_cover_image(entity)
+      [entity.cache_key_with_version, category&.cache_key_with_version, media_url_cache_context]
     end
 
     def default_card_image(entity, image_format)

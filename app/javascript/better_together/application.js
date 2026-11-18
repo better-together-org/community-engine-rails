@@ -23,6 +23,7 @@ import '@rails/actiontext'
 import 'better_together/tooltips'
 import 'better_together/trix-extensions/richtext'
 import 'better_together/notifications'
+import 'better_together/theme_styles'
 
 import 'channels'
 

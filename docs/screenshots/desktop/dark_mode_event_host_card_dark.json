@@ -1,0 +1,48 @@
+{
+  "name": "dark_mode_event_host_card_dark",
+  "device": "desktop",
+  "url": "/en/events/8e963306-c3bf-41d2-9ce6-e4a9afd5f63f/edit",
+  "title": "Edit Ipsa Eius Expedita | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_event_host_card_dark",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event-hosts .card.bg-body-tertiary",
+      "title": "Host card (dark)",
+      "bullets": [
+        "The card follows the colour mode."
+      ],
+      "target": {
+        "x": 419.0,
+        "y": 343.0,
+        "width": 932.0,
+        "height": 109.5625,
+        "right": 1351.0,
+        "bottom": 452.5625,
+        "center_x": 885.0,
+        "center_y": 397.78125
+      },
+      "avoid": {
+        "x": 419.0,
+        "y": 343.0,
+        "width": 932.0,
+        "height": 109.5625,
+        "right": 1351.0,
+        "bottom": 452.5625,
+        "center_x": 885.0,
+        "center_y": 397.78125
+      },
+      "placement": {
+        "side": "below",
+        "x": 695.0,
+        "y": 472.56,
+        "width": 380,
+        "height": 132,
+        "score": 1004.4375
+      }
+    }
+  ]
+}

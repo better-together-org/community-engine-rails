@@ -16,6 +16,8 @@ module BetterTogether
       def events_map
         @events_map ||= EventCollectionMap.find_or_create_by(identifier: 'events').tap do |map|
           map.visible_scope = policy_scope(::BetterTogether::Event)
+          # The map pins the events the list shows, with its filters, rather than every visible event.
+          map.list_scope = @events if @events.respond_to?(:except)
         end
       end
     end

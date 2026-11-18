@@ -88,14 +88,14 @@ RSpec.describe 'Platform theme fields DOM contract', :as_platform_manager, type:
     expect(parsed_response.at_css('#platform_theme_dark_primary')['value']).to eq('#6ca0e0')
   end
 
-  it 'renders the visitor colour mode toggle as a labelled group of three 44px buttons with a status region' do # rubocop:disable RSpec/MultipleExpectations
+  it 'renders the visitor colour mode toggle as one labelled 44px button with a status region' do # rubocop:disable RSpec/MultipleExpectations
     get edit_path
     toggle = parsed_response.at_css('#color-mode-toggle')
 
     expect(toggle['data-controller']).to eq('better_together--color-mode')
-    expect(toggle.at_css('[role=group]')['aria-label']).to be_present
-    expect(toggle.css('button[aria-pressed]').size).to eq(3)
-    expect(toggle.css('button .visually-hidden').map(&:text)).to all(be_present)
+    expect(toggle.css('button').size).to eq(1)
+    expect(toggle.at_css('#color-mode-button')['aria-label']).to be_present
+    expect(toggle.css('#color-mode-button i[aria-hidden=true]').size).to eq(2)
     expect(toggle.at_css('#color-mode-status')['aria-live']).to eq('polite')
     expect(toggle.at_css('style').text).to include('min-width: 44px', 'min-height: 44px')
   end

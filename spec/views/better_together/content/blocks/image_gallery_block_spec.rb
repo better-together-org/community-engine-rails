@@ -22,6 +22,7 @@ RSpec.describe 'better_together/content/blocks/_image_gallery_block' do
     configure_host_platform
     view.extend(BetterTogether::ImageHelper)
     view.define_singleton_method(:content_actions_visible_for?) { |_block| false }
+    view.define_singleton_method(:current_user) { nil }
     without_partial_double_verification do
       allow(view).to receive(:policy).and_return(instance_double(BetterTogether::Content::BlockPolicy, show?: allowed))
     end

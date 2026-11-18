@@ -1,0 +1,16 @@
+flowchart TD
+    A[Steward opens Host Dashboard] --> B{manage_platform_jobs on the host platform?}
+    B -- no --> X[No panel, no tab: /host/jobs and /sidekiq do not route, 404]
+    B -- yes --> C[Overview shows the summary panel]
+    C --> D[Background jobs tab /host/jobs]
+    D --> E[turbo-frame host-jobs-summary loads /host/jobs/summary]
+    E --> F[HostJobs::Summary reads Sidekiq API, cached 10 s]
+    F -- Redis down --> G[Unavailable state, never a 500]
+    F -- ok --> H[Counts, queues, stalled jobs, worker processes]
+    H --> I[Stimulus reloads the frame every 30 s while the tab is visible]
+    I --> J{A trouble count rose or workers hit zero?}
+    J -- yes --> K[role=status live region announces once]
+    J -- no --> I
+    D --> L[turbo-frame host-jobs-sidekiq loads /host/jobs/sidekiq lazily]
+    L --> M[Same-origin iframe /sidekiq/?locale=xx]
+    M --> N[SidekiqWebLocale maps locale into session, Sidekiq renders in that language]

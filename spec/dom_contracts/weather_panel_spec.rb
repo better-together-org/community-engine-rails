@@ -137,6 +137,15 @@ RSpec.describe 'Settlement weather panel DOM contract', :as_platform_manager, ty
       expect(page_html.at_css('#weather-stale-notice')).to be_present
     end
 
+    it 'keeps the stale notice id when the station is silent but the source was reached' do
+      location = create(:weather_location, settlement: settlement, last_refreshed_at: now - 5.minutes)
+      create(:weather_current_condition, location: location, observed_at: now - 5.hours, fetched_at: now - 4.hours)
+      get weather_path
+
+      checked = I18n.l(location.reload.last_refreshed_at.in_time_zone(location.time_zone), format: :short)
+      expect(page_html.at_css('#weather-stale-notice').text).to include(checked)
+    end
+
     it 'shows a source error notice after a failed update' do
       create(:weather_location, settlement: settlement, last_error_at: now, last_error: 'timeout')
       get weather_path

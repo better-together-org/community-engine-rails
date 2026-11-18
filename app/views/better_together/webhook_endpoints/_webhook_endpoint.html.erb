@@ -21,17 +21,17 @@
   <td>
     <% if webhook_endpoint.events.present? && webhook_endpoint.events.any? %>
       <% webhook_endpoint.events.first(3).each do |event| %>
-        <span class="badge bg-light text-dark border"><%= event %></span>
+        <span class="badge bg-body-secondary text-body border"><%= event %></span>
       <% end %>
       <% if webhook_endpoint.events.size > 3 %>
-        <span class="badge bg-light text-dark border">+<%= webhook_endpoint.events.size - 3 %></span>
+        <span class="badge bg-body-secondary text-body border">+<%= webhook_endpoint.events.size - 3 %></span>
       <% end %>
     <% else %>
       <span class="text-muted small"><%= t('better_together.webhook_endpoints.all_events', default: 'All events') %></span>
     <% end %>
   </td>
   <td>
-    <span class="badge bg-light text-dark border">
+    <span class="badge bg-body-secondary text-body border">
       <%= webhook_endpoint.webhook_deliveries.count %>
     </span>
   </td>

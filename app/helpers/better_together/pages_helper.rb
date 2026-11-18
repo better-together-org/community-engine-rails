@@ -3,12 +3,15 @@
 module BetterTogether
   # rubocop:todo-next Metrics/ModuleLength
   module PagesHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
+    include BetterTogether::Content::BlocksHelper
+
     def render_page_content(page)
       Rails.cache.fetch(
         ['page_content', page.cache_key_with_version,
          page.page_blocks.maximum(:updated_at),
          page.blocks.maximum(:updated_at),
-         I18n.locale, page_visibility_cache_context, 'v3'],
+         [page_dynamic_cache_stamp(page), media_url_cache_context],
+         I18n.locale, page_visibility_cache_context, 'v4'],
         expires_in: 1.minute
       ) do
         render policy_scope(page.content_blocks)
@@ -65,20 +68,19 @@ module BetterTogether
         page.page_blocks.maximum(:updated_at),
         page.blocks.maximum(:updated_at),
         page.contributions.maximum(:updated_at),
+        [page_dynamic_cache_stamp(page), media_url_cache_context],
         page.sidebar_nav&.cache_key_with_version,
         (breadcrumb_trail_cache_key(page) if respond_to?(:breadcrumb_trail_cache_key, true)),
         page_visibility_cache_context,
         I18n.locale,
-        'v6'
+        'v8'
       ]
     end
 
-    def page_visibility_cache_context
-      return send(:nav_permission_cache_stamp) if respond_to?(:nav_permission_cache_stamp, true)
-
-      current_user&.cache_key_with_version || 'guest'
-    rescue StandardError
-      current_user&.cache_key_with_version || 'guest'
+    # What the page's record-listing blocks (posts, events, people, communities) hold right now for this viewer,
+    # so a cached page is rebuilt when their lists change rather than frozen at the last page edit.
+    def page_dynamic_cache_stamp(page)
+      page.content_blocks.filter_map { |block| dynamic_block_cache_stamp(block) }
     end
 
     def sortable_column_header(column, label)

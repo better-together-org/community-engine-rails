@@ -2,9 +2,14 @@
 
 module BetterTogether
   module Weather
-    # Daily retention pass over stored observations and superseded forecasts.
-    class PurgeJob < ApplicationJob
+    # Daily retention pass over stored observations and superseded forecasts. It also runs
+    # without a source while old readings remain, and is skipped when nothing is stored.
+    class PurgeJob < BaseJob
       queue_as :maintenance
+
+      def self.work_available?
+        Weather.data_stored?
+      end
 
       def perform(dry_run: false)
         result = Retention.new(dry_run: dry_run).call

@@ -1,0 +1,5 @@
+<%# locals: (enabled:, name:, url:, css_class:) -%>
+<% label_key = enabled ? 'disable' : 'enable' %>
+<%= link_to t("host_dashboard.weather.actions.#{label_key}"), url,
+            class: "btn btn-sm #{enabled ? 'btn-outline-danger' : 'btn-outline-primary'} #{css_class}",
+            aria: { label: t("host_dashboard.weather.actions.#{label_key}_named", name:) } %>
