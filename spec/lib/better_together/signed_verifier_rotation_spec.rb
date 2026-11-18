@@ -38,4 +38,20 @@ RSpec.describe BetterTogether::SignedVerifierRotation do
   it 'does nothing without a secret' do
     expect(described_class.rotate(verifier_for(OpenSSL::Digest::SHA1), salt: 'x', secret_key_base: nil)).to be_nil
   end
+
+  describe '.install!' do
+    it 'rotates a verifier that GlobalID assigns after the install ran' do
+      original = SignedGlobalID.verifier
+      app = instance_double(Rails::Application, secret_key_base: secret)
+      described_class.install!(app)
+      late = verifier_for(OpenSSL::Digest::SHA1)
+      sgid = sgid_signed_with(OpenSSL::Digest::SHA256)
+
+      SignedGlobalID.verifier = late
+
+      expect(SignedGlobalID.parse(sgid, for: 'attachable')&.model_id).to eq(record.id)
+    ensure
+      SignedGlobalID.verifier = original
+    end
+  end
 end
