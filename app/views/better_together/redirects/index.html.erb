@@ -29,7 +29,7 @@
   <% if @redirects.any? %>
     <div class="table-responsive">
       <table id="redirects-table" class="table table-hover" aria-label="<%= t('.table_aria') %>">
-        <thead class="table-light">
+        <thead class="bt-table-head">
           <tr>
             <th scope="col"><%= t('.header_from') %></th>
             <th scope="col"><%= t('.header_to') %></th>
@@ -50,7 +50,7 @@
                 <% end %>
               </td>
               <td>
-                <span class="badge redirect-status-badge <%= redirect.active? ? 'bg-secondary' : 'bg-light text-dark border' %>">
+                <span class="badge redirect-status-badge <%= redirect.active? ? 'bg-secondary' : 'bg-body-secondary text-body border' %>">
                   <%= redirect.status %><%= " (#{t('.inactive_label')})" unless redirect.active? %>
                 </span>
               </td>

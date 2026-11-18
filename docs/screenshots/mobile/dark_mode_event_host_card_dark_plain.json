@@ -1,0 +1,11 @@
+{
+  "name": "dark_mode_event_host_card_dark_plain",
+  "device": "mobile",
+  "url": "/en/events/8edffdc0-4281-45cb-bf9c-96a38cea3e45/edit",
+  "title": "Edit Ad Quam Blanditiis | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_event_host_card_dark_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb"
+}

@@ -6,7 +6,7 @@
 }
 
 .metrics-chart-block {
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--bs-border-color);
   margin-bottom: 3rem;
   padding-bottom: 2rem;
 }
@@ -25,7 +25,7 @@
     rgba(251, 146, 60, 0.1) 50%,
     rgba(74, 222, 128, 0.1) 100%
   );
-  border: 1px solid rgba(203, 213, 225, 0.5);
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.375rem;
   padding: 0.75rem 1rem;
 }
