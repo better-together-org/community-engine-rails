@@ -26,12 +26,18 @@ $slider-thumb-border-size: 2px !default;
   --bt-navbar-toggler-icon-bg: var(--bs-navbar-toggler-icon-bg);
 }
 
-// Default navbar and link colours follow the colour mode (a fixed #222 was unreadable on the dark background).
+// Default navbar and link colours: the host's light-background colour, and its dark-background colour in dark mode.
 .navbar-brand {
-  --bs-navbar-brand-color: var(--bs-body-color);
+  --bs-navbar-brand-color: #{$light-background-text-color};
 
   &:hover, &:focus {
-    --bs-navbar-brand-hover-color: var(--bs-emphasis-color);
+    --bs-navbar-brand-hover-color: #{lighten($light-background-text-color, 10%)};
+  }
+
+  [data-bs-theme='dark'] &,
+  &[data-bs-theme='dark'] {
+    --bs-navbar-brand-color: #{$dark-background-text-color};
+    --bs-navbar-brand-hover-color: #{$dark-text-color};
   }
 
   img {
@@ -64,14 +70,21 @@ $slider-thumb-border-size: 2px !default;
 }
 
 .nav-link {
-  --bs-nav-link-color: var(--bs-body-color);
+  --bs-nav-link-color: #{$light-background-text-color};
 
   &.show, &.active {
-    --bs-navbar-active-color: var(--bs-emphasis-color);
+    --bs-navbar-active-color: #{lighten($light-background-text-color, 10%)};
   }
 
   &:hover, &:focus {
-    --bs-nav-link-hover-color: var(--bs-emphasis-color);
+    --bs-nav-link-hover-color: #{lighten($light-background-text-color, 10%)};
+  }
+
+  [data-bs-theme='dark'] &,
+  &[data-bs-theme='dark'] {
+    --bs-nav-link-color: #{$dark-background-text-color};
+    --bs-navbar-active-color: #{$dark-text-color};
+    --bs-nav-link-hover-color: #{$dark-text-color};
   }
 }
 
@@ -117,9 +130,15 @@ $slider-thumb-border-size: 2px !default;
   color: var(--bt-navbar-toggler-color, #212529);
 }
 
-// Menu text follows the colour mode. A fixed dark value here put #222 on the dark menu background.
+// Menu text uses the host's light-background colour, and its dark-background colour in dark mode (a single fixed
+// dark value put #222 on the dark menu background).
 .dropdown-item {
-  --bs-dropdown-link-color: var(--bs-body-color);
+  --bs-dropdown-link-color: #{$light-background-text-color};
+
+  [data-bs-theme='dark'] &,
+  &[data-bs-theme='dark'] {
+    --bs-dropdown-link-color: #{$dark-background-text-color};
+  }
 }
 
 // Pills: hover is a quiet tint of the text colour, active is the brand colour with its own readable text colour.
