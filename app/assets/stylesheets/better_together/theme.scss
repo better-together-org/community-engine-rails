@@ -26,11 +26,12 @@ $slider-thumb-border-size: 2px !default;
   --bt-navbar-toggler-icon-bg: var(--bs-navbar-toggler-icon-bg);
 }
 
+// Default navbar and link colours follow the colour mode (a fixed #222 was unreadable on the dark background).
 .navbar-brand {
-  --bs-navbar-brand-color: #{$light-background-text-color};
+  --bs-navbar-brand-color: var(--bs-body-color);
 
   &:hover, &:focus {
-    --bs-navbar-brand-hover-color: #{lighten($light-background-text-color, 10%)};
+    --bs-navbar-brand-hover-color: var(--bs-emphasis-color);
   }
 
   img {
@@ -63,14 +64,14 @@ $slider-thumb-border-size: 2px !default;
 }
 
 .nav-link {
-  --bs-nav-link-color: #{$light-background-text-color};
+  --bs-nav-link-color: var(--bs-body-color);
 
   &.show, &.active {
-    --bs-navbar-active-color: #{lighten($light-background-text-color, 10%)};
+    --bs-navbar-active-color: var(--bs-emphasis-color);
   }
 
   &:hover, &:focus {
-    --bs-nav-link-hover-color: #{lighten($light-background-text-color, 10%)};
+    --bs-nav-link-hover-color: var(--bs-emphasis-color);
   }
 }
 
@@ -116,8 +117,9 @@ $slider-thumb-border-size: 2px !default;
   color: var(--bt-navbar-toggler-color, #212529);
 }
 
+// Menu text follows the colour mode. A fixed dark value here put #222 on the dark menu background.
 .dropdown-item {
-  --bs-dropdown-link-color: #{$light-background-text-color};
+  --bs-dropdown-link-color: var(--bs-body-color);
 }
 
 // Pills: hover is a quiet tint of the text colour, active is the brand colour with its own readable text colour.
