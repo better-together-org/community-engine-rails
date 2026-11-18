@@ -51,9 +51,12 @@ module BetterTogether
         parts
       end
 
+      # A policy scope may carry includes for rendering (EventPolicy::Scope includes a polymorphic :category).
+      # Selecting columns from a relation with includes makes ActiveRecord JOIN them, which raises for polymorphic
+      # associations, and the fingerprint reads none of them. Filters, order and limit are kept.
       def collection_fingerprint(collection)
         table = collection.klass.arel_table
-        rows = collection.pluck(table[:id], table[:updated_at])
+        rows = collection.except(:includes, :preload, :eager_load).pluck(table[:id], table[:updated_at])
         Digest::SHA1.hexdigest(rows.map { |id, at| "#{id}:#{at.to_f}" }.join(','))
       end
 
@@ -61,7 +64,8 @@ module BetterTogether
       # cover image stands in for a missing post cover) and its contributors' avatars. Attaching or replacing an
       # image touches the record that owns it, so these versions change when any of those images does.
       def post_card_fingerprint(collection)
-        posts = collection.includes(:community, :categories, contributions: :author).to_a
+        posts = collection.except(:includes, :preload, :eager_load)
+                          .preload(:community, :categories, contributions: :author).to_a
         versions = posts.flat_map do |post|
           [post.community, *post.categories, *post.contributions.map(&:author)].compact.map(&:cache_key_with_version)
         end
