@@ -22,7 +22,18 @@ module BetterTogether
     def self.ceiling_for(platform: nil, community: nil)
       return nil unless platform || community
 
-      [platform, community].compact.all?(&:privacy_public?) ? 'public' : 'community'
+      [platform, community].compact.all? { |wrapper| wrapper_open?(wrapper) } ? 'public' : 'community'
+    end
+
+    # A wrapper is open when it is public, or when it is the platform (or that
+    # platform's own community) the current visitor holds a guest invitation for.
+    def self.wrapper_open?(wrapper)
+      wrapper.privacy_public? || guest_wrapper_ids.include?(wrapper.id)
+    end
+
+    def self.guest_wrapper_ids
+      guest = Current.guest_platform
+      guest ? [guest.id, guest.community_id].compact : []
     end
 
     # Builds the SQL twin of #privacy_ceiling for a model's table.
@@ -38,9 +49,14 @@ module BetterTogether
 
       def self.wrapper_open(table, column)
         wrapper = column == 'platform_id' ? BetterTogether::Platform : BetterTogether::Community
+        table[column.to_sym].eq(nil).or(table[column.to_sym].in(open_wrapper_ids(wrapper).select(:id).arel))
+      end
+
+      def self.open_wrapper_ids(wrapper)
         open_ids = wrapper.where(privacy: 'public')
         open_ids = open_ids.or(wrapper.where(locality: 'remote')) if wrapper == BetterTogether::Platform
-        table[column.to_sym].eq(nil).or(table[column.to_sym].in(open_ids.select(:id).arel))
+        guest_ids = PrivacyCeilingValidatable.guest_wrapper_ids
+        guest_ids.any? ? open_ids.or(wrapper.where(id: guest_ids)) : open_ids
       end
 
       # Federated mirrors carry the origin's already-vetted privacy.
