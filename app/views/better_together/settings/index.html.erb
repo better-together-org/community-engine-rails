@@ -338,7 +338,7 @@
                           <% if app.scopes.present? %>
                             <div class="mt-1">
                               <% app.scopes.to_a.each do |scope| %>
-                                <span class="badge bg-light text-dark border me-1"><%= scope %></span>
+                                <span class="badge bg-body-secondary text-body border me-1"><%= scope %></span>
                               <% end %>
                             </div>
                           <% end %>
@@ -382,7 +382,7 @@
               <% if @access_tokens.any? %>
                 <div class="table-responsive">
                   <table class="table table-sm" aria-label="<%= t('.developer.tokens.table_aria') %>">
-                    <thead class="table-light">
+                    <thead class="bt-table-head">
                       <tr>
                         <th scope="col"><%= t('.developer.tokens.col_app') %></th>
                         <th scope="col"><%= t('.developer.tokens.col_scopes') %></th>
@@ -396,7 +396,7 @@
                           <td><%= token.application&.name || t('.developer.tokens.no_app') %></td>
                           <td>
                             <% token.scopes.to_a.each do |scope| %>
-                              <span class="badge bg-light text-dark border me-1 small"><%= scope %></span>
+                              <span class="badge bg-body-secondary text-body border me-1 small"><%= scope %></span>
                             <% end %>
                           </td>
                           <td class="small text-muted"><%= l(token.created_at, format: :short) %></td>
