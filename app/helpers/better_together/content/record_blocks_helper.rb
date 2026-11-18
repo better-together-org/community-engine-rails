@@ -6,6 +6,8 @@ module BetterTogether
     # a checklist, a navigation area, a gallery, a download). Any cache around such a block, including the page's,
     # keys on #dynamic_block_cache_stamp so it follows the data instead of freezing at the last page edit.
     module RecordBlocksHelper
+      include BetterTogether::MediaCacheContextHelper
+
       # Who is looking, as far as record visibility goes, so cached output is never shared across viewers who can
       # see different records.
       def page_visibility_cache_context
@@ -34,19 +36,36 @@ module BetterTogether
       # window such as "upcoming". Every cache that wraps such a block (the block's own, the page's) keys on it.
       def dynamic_block_cache_stamp(block)
         parts = if (collection = record_block_collection(block))
-                  collection_fingerprint(collection)
+                  collection_parts(block, collection)
                 else
                   linked_record_fingerprint(block)
                 end
         return if parts.nil?
 
-        [block.class.name, block.id, parts, page_visibility_cache_context]
+        [block.class.name, block.id, parts, page_visibility_cache_context, media_url_cache_context]
+      end
+
+      def collection_parts(block, collection)
+        parts = [collection_fingerprint(collection)]
+        parts << post_card_fingerprint(collection) if block.is_a?(BetterTogether::Content::PostsBlock)
+        parts
       end
 
       def collection_fingerprint(collection)
         table = collection.klass.arel_table
         rows = collection.pluck(table[:id], table[:updated_at])
         Digest::SHA1.hexdigest(rows.map { |id, at| "#{id}:#{at.to_f}" }.join(','))
+      end
+
+      # What a post card draws besides the post itself: its community's mark, its categories (the first one with a
+      # cover image stands in for a missing post cover) and its contributors' avatars. Attaching or replacing an
+      # image touches the record that owns it, so these versions change when any of those images does.
+      def post_card_fingerprint(collection)
+        posts = collection.includes(:community, :categories, contributions: :author).to_a
+        versions = posts.flat_map do |post|
+          [post.community, *post.categories, *post.contributions.map(&:author)].compact.map(&:cache_key_with_version)
+        end
+        Digest::SHA1.hexdigest(versions.join(','))
       end
 
       # Blocks that render one chosen record and its children (a checklist and its items, a navigation area and
