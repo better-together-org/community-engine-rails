@@ -113,6 +113,8 @@ module BetterTogether
       end
 
       if @platform_invitation
+        # A guest link opens the platform's public content despite the privacy ceiling.
+        Current.guest_platform = Current.platform
         # Set the locale based on the invitation record
         I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
         session[:locale] = I18n.locale
