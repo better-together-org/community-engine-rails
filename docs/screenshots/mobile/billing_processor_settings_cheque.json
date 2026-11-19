@@ -1,0 +1,47 @@
+{
+  "name": "billing_processor_settings_cheque",
+  "device": "mobile",
+  "url": "/en/billing/processor_settings/cheque/edit",
+  "title": "Cheque | Payment methods | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_payment_methods",
+  "flow": "billing_processor_settings_cheque",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_processor_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-processor-grant-on",
+      "title": "When access starts",
+      "bullets": [
+        "A cheque can bounce, so waiting until it clears is the safer default."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 949.390625,
+        "width": 427.0,
+        "height": 38.0,
+        "right": 456.0,
+        "bottom": 987.390625,
+        "center_x": 242.5,
+        "center_y": 968.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 106.0,
+        "width": 485.0,
+        "height": 1151.0,
+        "right": 485.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 681.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 184
+      }
+    }
+  ]
+}

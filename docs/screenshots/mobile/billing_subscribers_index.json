@@ -1,0 +1,48 @@
+{
+  "name": "billing_subscribers_index",
+  "device": "mobile",
+  "url": "/en/billing/subscribers",
+  "title": "Subscribers | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_subscriptions",
+  "flow": "billing_subscribers_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_subscriptions_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-subscribers-filters",
+      "title": "Who needs attention",
+      "bullets": [
+        "Past due means a renewal is unpaid inside its extra time; lapsed means the extra time ran out."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 221.390625,
+        "width": 476.0,
+        "height": 40.0,
+        "right": 488.0,
+        "bottom": 261.390625,
+        "center_x": 250.0,
+        "center_y": 241.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 221.390625,
+        "width": 476.0,
+        "height": 40.0,
+        "right": 488.0,
+        "bottom": 261.390625,
+        "center_x": 250.0,
+        "center_y": 241.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 281.39,
+        "width": 270.0,
+        "height": 268,
+        "score": 995.609375
+      }
+    }
+  ]
+}

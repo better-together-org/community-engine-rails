@@ -1,0 +1,83 @@
+{
+  "name": "billing_promotions_index",
+  "device": "desktop",
+  "url": "/en/billing/promotions",
+  "title": "Promotion codes | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_promotions",
+  "flow": "billing_promotions_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_promotions_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-promotions-table",
+      "title": "Promotions",
+      "bullets": [
+        "Each row shows how many people have used it and whether it is on. The code itself is never shown again."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 241.0,
+        "width": 1294.0,
+        "height": 89.0,
+        "right": 1367.0,
+        "bottom": 330.0,
+        "center_x": 720.0,
+        "center_y": 285.5
+      },
+      "avoid": {
+        "x": 73.0,
+        "y": 241.0,
+        "width": 1294.0,
+        "height": 89.0,
+        "right": 1367.0,
+        "bottom": 330.0,
+        "center_x": 720.0,
+        "center_y": 285.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 350.0,
+        "width": 380,
+        "height": 184,
+        "score": 1127.0
+      }
+    },
+    {
+      "selector": "#new-promotion-btn",
+      "title": "Make a promotion",
+      "bullets": [
+        "The code is shown once when you make it."
+      ],
+      "target": {
+        "x": 1219.8125,
+        "y": 128.0,
+        "width": 148.1875,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 166.0,
+        "center_x": 1293.90625,
+        "center_y": 147.0
+      },
+      "avoid": {
+        "x": 1219.8125,
+        "y": 128.0,
+        "width": 148.1875,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 166.0,
+        "center_x": 1293.90625,
+        "center_y": 147.0
+      },
+      "placement": {
+        "side": "left",
+        "x": 819.81,
+        "y": 81.0,
+        "width": 380,
+        "height": 132,
+        "score": 1219.8125
+      }
+    }
+  ]
+}

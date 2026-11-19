@@ -1,0 +1,82 @@
+{
+  "name": "billing_purchase_terms",
+  "device": "mobile",
+  "url": "/en/billing/agreement_requirements",
+  "title": "Purchase terms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_purchase_terms",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-readiness-checklist",
+      "title": "Ready to sell?",
+      "bullets": [
+        "Draft agreements keep the platform from selling until they are reviewed and set to active."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 53.390625,
+        "width": 461.0,
+        "height": 270.0,
+        "right": 473.0,
+        "bottom": 323.390625,
+        "center_x": 242.5,
+        "center_y": 188.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 53.390625,
+        "width": 461.0,
+        "height": 270.0,
+        "right": 473.0,
+        "bottom": 323.390625,
+        "center_x": 242.5,
+        "center_y": 188.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 343.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 933.609375
+      }
+    },
+    {
+      "selector": "#billing-agreement-requirements-table",
+      "title": "Requirements",
+      "bullets": [
+        "Defaults apply to everything; a plan or a payment method can add its own."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 348.390625,
+        "width": 487.0,
+        "height": 856.0,
+        "right": 500.0,
+        "bottom": 1204.390625,
+        "center_x": 256.5,
+        "center_y": 776.390625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 348.390625,
+        "width": 487.0,
+        "height": 856.0,
+        "right": 500.0,
+        "bottom": 1204.390625,
+        "center_x": 256.5,
+        "center_y": 776.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 573.39,
+        "width": 270.0,
+        "height": 184
+      }
+    }
+  ]
+}

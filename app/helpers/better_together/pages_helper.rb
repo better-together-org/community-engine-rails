@@ -77,6 +77,15 @@ module BetterTogether
       ]
     end
 
+    # Plan blocks depend on who is looking (offer rules, memberships), which the shared
+    # page fragment key does not capture, so pages holding them are rendered uncached.
+    def page_has_viewer_specific_blocks?(blocks)
+      blocks.any? do |block|
+        block.is_a?(BetterTogether::Content::PlanButtonBlock) ||
+          block.is_a?(BetterTogether::Content::PlanCatalogBlock)
+      end
+    end
+
     # What the page's record-listing blocks (posts, events, people, communities) hold right now for this viewer,
     # so a cached page is rebuilt when their lists change rather than frozen at the last page edit.
     def page_dynamic_cache_stamp(page)

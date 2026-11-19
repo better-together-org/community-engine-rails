@@ -1,0 +1,136 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+require BetterTogether::Engine.root.join('db/migrate/20261015120000_create_better_together_pay_tables')
+
+RSpec.describe 'Create Better Together Pay tables migration' do # rubocop:disable RSpec/DescribeClass
+  subject(:migration) { CreateBetterTogetherPayTables.new }
+
+  let(:connection) { ActiveRecord::Base.connection }
+  let(:platform_tables) { %i[pay_customers pay_merchants pay_payment_methods pay_subscriptions pay_charges] }
+
+  # Migration.verbose is class-level state, so put it back for the specs that follow.
+  around do |example|
+    previous = ActiveRecord::Migration.verbose
+    ActiveRecord::Migration.verbose = false
+    example.run
+  ensure
+    ActiveRecord::Migration.verbose = previous
+  end
+
+  def column(table, name) = connection.columns(table).find { |c| c.name == name.to_s }
+
+  it 'is idempotent when the tables already exist' do
+    expect { migration.up }.not_to raise_error
+    expect(connection.table_exists?(:pay_customers)).to be true
+  end
+
+  it 'refuses to run over Pay tables that have no platform_id' do
+    # Inside the example's transaction, so the column comes back when it rolls back.
+    connection.execute('ALTER TABLE pay_merchants DROP COLUMN platform_id CASCADE')
+
+    expect { migration.up }.to raise_error(CreateBetterTogetherPayTables::ForeignPayTablesError, /pay_merchants/)
+  end
+
+  it 'tells an operator what to do about Pay tables it refuses to touch' do
+    connection.execute('ALTER TABLE pay_merchants DROP COLUMN platform_id CASCADE')
+
+    expect { migration.up }.to raise_error(
+      CreateBetterTogetherPayTables::ForeignPayTablesError,
+      /Pay's own migrations.*DROP TABLE.*db:migrate again.*stop: adopting them needs a data migration/m
+    )
+  end
+
+  it 'does not treat its own tables as foreign: a re-run changes nothing' do
+    expect { migration.up }.not_to(change { platform_tables.map { |table| connection.columns(table).map(&:name) } })
+  end
+
+  it 'refuses to roll back while any Pay table holds rows, and keeps them' do
+    connection.execute("INSERT INTO pay_webhooks (id, processor, created_at, updated_at) VALUES (gen_random_uuid(), 'stripe', NOW(), NOW())")
+
+    expect { migration.down }.to raise_error(ActiveRecord::IrreversibleMigration, /pay_webhooks contain rows.*delete payment data/)
+    expect(connection.select_value('SELECT COUNT(*) FROM pay_webhooks')).to eq(1)
+    expect(connection.table_exists?(:pay_customers)).to be true
+  end
+
+  it 'uses uuid keys like every other Community Engine table' do
+    (platform_tables + [:pay_webhooks]).each do |table|
+      expect(column(table, :id).sql_type).to eq('uuid')
+    end
+    expect(column(:pay_customers, :owner_id).sql_type).to eq('uuid')
+  end
+
+  it 'creates the STI and payment method type columns directly, with nothing to backfill' do
+    %i[pay_customers pay_charges pay_subscriptions pay_payment_methods pay_merchants].each do |table|
+      expect(connection.column_exists?(table, :type)).to be true
+    end
+    expect(connection.column_exists?(:pay_payment_methods, :payment_method_type)).to be true
+    expect(connection.column_exists?(:pay_charges, :object)).to be true
+  end
+
+  it 'binds every table that holds tenant data to a platform, NOT NULL, with a foreign key' do
+    platform_tables.each do |table|
+      expect(column(table, :platform_id).null).to be(false), "#{table}.platform_id must be NOT NULL"
+      expect(connection.foreign_keys(table).map(&:to_table)).to include('better_together_platforms')
+    end
+  end
+
+  it 'leaves the transient pay_webhooks rows without a platform' do
+    expect(connection.column_exists?(:pay_webhooks, :platform_id)).to be false
+  end
+
+  it 'ties children to their parent platform with composite foreign keys' do
+    composite = ->(table, to) { connection.foreign_keys(table).find { |fk| fk.to_table == to && fk.column.is_a?(Array) } }
+
+    expect(composite.call('pay_charges', 'pay_customers').column).to eq(%w[customer_id platform_id])
+    expect(composite.call('pay_charges', 'pay_subscriptions').column).to eq(%w[subscription_id platform_id])
+    expect(composite.call('pay_subscriptions', 'pay_customers').column).to eq(%w[customer_id platform_id])
+    expect(composite.call('pay_payment_methods', 'pay_customers').column).to eq(%w[customer_id platform_id])
+  end
+
+  it 'holds the encrypted JSON as text, because ciphertext is not a JSON document' do
+    {
+      pay_customers: %i[data object], pay_merchants: %i[data], pay_payment_methods: %i[data],
+      pay_subscriptions: %i[data object metadata], pay_charges: %i[data object metadata], pay_webhooks: %i[event]
+    }.each do |table, names|
+      names.each { |name| expect(column(table, name).type).to eq(:text), "#{table}.#{name} must be text" }
+    end
+  end
+
+  it 'scopes uniqueness to the platform, so two platforms can hold the same owner' do
+    index = connection.indexes(:pay_customers).find { |i| i.name == 'pay_customer_owner_index' }
+
+    expect(index.columns).to eq(%w[platform_id owner_type owner_id deleted_at])
+    expect(index.unique).to be(true)
+  end
+
+  it 'keeps a processor id unique across platforms, as Pay itself assumes' do
+    index = connection.indexes(:pay_customers).find { |i| i.name == 'pay_customers_processor_index' }
+
+    expect(index.columns).to eq(%w[processor processor_id])
+    expect(index.unique).to be(true)
+    expect(connection.indexes(:pay_customers).map(&:name)).not_to include('pay_customers_platform_processor_index')
+  end
+
+  it 'lets a payment be tied to its charge\'s platform' do
+    index = connection.indexes(:pay_charges).find { |i| i.name == 'pay_charges_id_platform_index' }
+
+    expect(index.columns).to eq(%w[id platform_id])
+    expect(index.unique).to be(true)
+  end
+
+  it 'rolls back by dropping the Pay tables, and can be run again' do
+    # Later billing migrations point composite keys at pay_subscriptions and pay_charges. A real
+    # rollback reverses them first; here they are removed inside the example's transaction.
+    connection.remove_foreign_key :better_together_billing_orders, name: 'fk_bt_billing_orders_pay_subscription_platform'
+    connection.remove_foreign_key :better_together_billing_payments, name: 'fk_bt_billing_payments_pay_charge_platform'
+
+    migration.down
+    expect(connection.table_exists?(:pay_customers)).to be false
+    expect(connection.table_exists?(:pay_webhooks)).to be false
+
+    migration.up
+    expect(connection.table_exists?(:pay_customers)).to be true
+    expect(connection.foreign_keys(:pay_charges).count { |fk| fk.column.is_a?(Array) }).to eq(2)
+  end
+end

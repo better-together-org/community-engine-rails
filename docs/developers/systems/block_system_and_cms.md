@@ -38,6 +38,8 @@ Relevant code paths:
 - `Image`
 - `Markdown`
 - `MermaidDiagram`
+- `PlanButtonBlock`
+- `PlanCatalogBlock`
 - `NavigationAreaBlock`
 - `PeopleBlock`
 - `PostsBlock`

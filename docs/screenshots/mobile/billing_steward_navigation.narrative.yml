@@ -1,0 +1,15 @@
+---
+title: Billing steward menu
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I find every billing page in the host menu
+  without typing a URL.
+callouts:
+- :id: agreement_requirements
+  :title: Billing pages
+  :description: Purchase terms, subscribers, tax registrations, promotion codes, store
+    credit and allowances.
+accessibility_notes: Entries are links in a labelled dropdown; they are reachable
+  and openable from the keyboard.
+slug: billing_steward_navigation
+device: mobile

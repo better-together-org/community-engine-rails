@@ -1,0 +1,12 @@
+%% Billing — the life of a subscription Community Engine renews, in Pay's own status vocabulary.
+stateDiagram-v2
+  [*] --> active: first order paid (Start)
+  active --> active: renewal invoice paid (Renew advances the period)
+  active --> active: cancel at end → ends_at set, resume clears it
+  active --> past_due: period ended unpaid (grace_ends_at = end + grace_days)
+  past_due --> active: invoice paid inside the grace
+  past_due --> unpaid: grace over (ends_at = grace_ends_at; period lapsed)
+  unpaid --> active: invoice paid late → restarts from the day paid
+  unpaid --> past_due: a steward gives more time
+  active --> canceled: cancelled and ends_at reached, or cancelled now
+  canceled --> [*]

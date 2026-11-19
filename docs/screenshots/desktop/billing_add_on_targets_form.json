@@ -1,0 +1,48 @@
+{
+  "name": "billing_add_on_targets_form",
+  "device": "desktop",
+  "url": "/en/billing/plans/08d2e689-91d4-47b0-b110-3326063e3204/edit",
+  "title": "Edit Billing Plan — Conference lunch | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_add_on_targets",
+  "flow": "billing_add_on_targets_form",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_add_on_targets_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-add-on-targets",
+      "title": "Plans this add-on extends",
+      "bullets": [
+        "Ticked plans offer the add-on, and their holders may buy it alone later."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 677.1875,
+        "width": 1296.0,
+        "height": 102.1875,
+        "right": 1360.5,
+        "bottom": 779.375,
+        "center_x": 712.5,
+        "center_y": 728.28125
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 677.1875,
+        "width": 1296.0,
+        "height": 102.1875,
+        "right": 1360.5,
+        "bottom": 779.375,
+        "center_x": 712.5,
+        "center_y": 728.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 799.38,
+        "width": 380,
+        "height": 190,
+        "score": 677.625
+      }
+    }
+  ]
+}

@@ -2,7 +2,8 @@
 <div class="btn-group btn-group-sm" role="group" aria-label="<%= t('better_together.metrics.reports.actions.chart_toolbar') %>">
   <div class="btn-group" role="group">
     <button type="button"
-            class="btn btn-outline-secondary dropdown-toggle"
+            id="<%= chart_name.to_s.underscore.dasherize %>-export"
+            class="btn btn-outline-dark dropdown-toggle"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             aria-label="<%= t('better_together.metrics.reports.actions.export') %>">

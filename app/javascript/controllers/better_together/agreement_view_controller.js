@@ -5,6 +5,8 @@ import { Controller } from '@hotwired/stimulus'
 // has scrolled through the agreement content.
 export default class extends Controller {
   static values = {
+    // Spoken when the end of the agreement is reached and its box unlocks
+    completeMessage: String,
     // Selector for agreement checkboxes
     checkboxSelector: { type: String, default: '.agreement-checkbox' }
   }
@@ -68,6 +70,8 @@ export default class extends Controller {
     if (!this._userScrolled) {
       delete this._noticeShownFor[agreementId]
     }
+
+    this.announce('')
 
     // reset scroll state
     this._userScrolled = false
@@ -218,9 +222,14 @@ export default class extends Controller {
       checkbox.setAttribute('aria-disabled', 'false')
       checkbox.dataset.betterTogetherAgreementEnabled = 'true'
 
-      // Optionally focus the checkbox to signal it's now actionable
-      checkbox.focus()
+      // Do not move focus: the reader is open and the checkbox sits behind it. Say so instead.
+      this.announce(this.completeMessageValue)
     }
+  }
+
+  announce (message) {
+    const status = document.getElementById('agreement-modal-status')
+    if (status) status.textContent = message
   }
 
   scheduleCheckScrollPosition (delay) {
@@ -307,8 +316,11 @@ export default class extends Controller {
       // it may be shown again on subsequent attempts.
       if (agreementId) this._noticeShownFor[agreementId] = true
       modalEl.dataset.currentAgreementId = agreementId || ''
+      const returnTo = document.activeElement
 
       const onHidden = (e) => {
+        // Opened from script, so Bootstrap does not hand focus back to the box.
+        if (returnTo && returnTo.isConnected && returnTo !== document.body) returnTo.focus()
         const id = modalEl.dataset.currentAgreementId
         if (id) delete this._noticeShownFor[id]
         modalEl.removeEventListener('hidden.bs.modal', onHidden)

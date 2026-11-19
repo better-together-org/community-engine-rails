@@ -1,0 +1,13 @@
+---
+title: Billing plans
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I see my platform's plans and whether each
+  reached the processor.
+callouts:
+- :id: plans_table
+  :title: Sync status
+  :description: A failed push shows here and can be retried from the plan page.
+accessibility_notes: The table has column headers; status is text as well as colour.
+slug: billing_plans_index
+device: desktop

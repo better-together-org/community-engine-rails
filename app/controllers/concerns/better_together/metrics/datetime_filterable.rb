@@ -24,6 +24,8 @@ module BetterTogether
           user_confirmation_rate_data
           user_registration_sources_data
           user_cumulative_growth_data
+          billing_revenue_data
+          billing_tax_by_rate_data
         ]
       end
 

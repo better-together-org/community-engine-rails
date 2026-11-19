@@ -1,0 +1,14 @@
+---
+title: Checkout after an error
+audience:
+- buyer
+journey_step: As a buyer, I fix the address the form refused and place the order without
+  re-reading the agreements.
+callouts:
+- :id: ticked_box
+  :title: Still ticked
+  :description: Boxes ticked before the error stay ticked and unlocked.
+accessibility_notes: Each box keeps its label and its description; the error is an
+  alert.
+slug: billing_checkout_ticks_kept
+device: mobile

@@ -1,0 +1,26 @@
+<% content_for :page_title do %>
+  <%= @plan.name %>
+<% end %>
+
+<div id="billing-catalog-plan-page" class="container my-4">
+  <p><%= link_to t('better_together.billing.catalog.back'), billing_catalog_path(locale: I18n.locale), id: 'billing-catalog-back' %></p>
+  <article id="<%= dom_id(@plan, :catalog) %>">
+    <h1 class="mb-2"><%= @plan.name %></h1>
+    <p id="<%= dom_id(@plan, :catalog_price) %>" class="h3 mb-3"><%= render 'better_together/billing/catalog/price', plan: @plan %></p>
+    <% if @plan.description.present? %>
+      <p id="<%= dom_id(@plan, :catalog_description) %>"><%= @plan.description %></p>
+    <% end %>
+    <% if @plan.display_participant_summary.present? || @plan.participant_benefit_list.any? %>
+      <h2 class="h5"><%= t('better_together.billing.catalog.details') %></h2>
+      <% if @plan.display_participant_summary.present? %>
+        <p id="<%= dom_id(@plan, :catalog_summary) %>"><%= @plan.display_participant_summary %></p>
+      <% end %>
+      <% if @plan.participant_benefit_list.any? %>
+        <ul id="<%= dom_id(@plan, :catalog_benefits) %>">
+          <% @plan.participant_benefit_list.each do |benefit| %><li><%= benefit %></li><% end %>
+        </ul>
+      <% end %>
+    <% end %>
+    <%= render 'better_together/billing/catalog/buy_button', plan: @plan %>
+  </article>
+</div>

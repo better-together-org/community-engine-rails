@@ -21,11 +21,11 @@ module BetterTogether
                     alert: t('seed_catalog.plant.missing_prerequisites',
                              category: category_key.to_s.humanize,
                              prerequisites: missing.map { |key| key.to_s.humanize }.to_sentence)
-      elsif catalog.plant(category_key)
+      elsif plant_category(catalog, category_key)
         redirect_to seed_catalog_seeds_path,
                     notice: t('seed_catalog.plant.success', category: category_key.to_s.humanize)
       else
-        redirect_to seed_catalog_seeds_path, alert: t('seed_catalog.plant.unknown_category')
+        redirect_to seed_catalog_seeds_path, alert: @planting_problem || t('seed_catalog.plant.unknown_category')
       end
     end
 
@@ -37,6 +37,14 @@ module BetterTogether
     end
 
     private
+
+    # A tax packet names geography rows; one that is not there is said plainly instead of failing the page.
+    def plant_category(catalog, category_key)
+      catalog.plant(category_key)
+    rescue BetterTogether::Billing::Tax::Seeds::Planter::Missing => e
+      @planting_problem = e.message
+      false
+    end
 
     def authorize_seed_catalog
       authorize [:seed_catalog], :show?, policy_class: SeedCatalogPolicy

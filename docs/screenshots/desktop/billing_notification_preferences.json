@@ -1,0 +1,48 @@
+{
+  "name": "billing_notification_preferences",
+  "device": "desktop",
+  "url": "/en/billing/notification_preferences",
+  "title": "Billing notifications | Test Host Community",
+  "locale": "en",
+  "role": "buyer",
+  "feature_set": "billing_account_polish",
+  "flow": "billing_notification_preferences",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_account_polish_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-notification-preferences-form",
+      "title": "Billing emails",
+      "bullets": [
+        "Choose whether billing notices are also emailed."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 279.0,
+        "width": 1296.0,
+        "height": 137.0,
+        "right": 1368.0,
+        "bottom": 416.0,
+        "center_x": 720.0,
+        "center_y": 347.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 279.0,
+        "width": 1296.0,
+        "height": 137.0,
+        "right": 1368.0,
+        "bottom": 416.0,
+        "center_x": 720.0,
+        "center_y": 347.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 436.0,
+        "width": 380,
+        "height": 132,
+        "score": 1041.0
+      }
+    }
+  ]
+}

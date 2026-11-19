@@ -280,6 +280,58 @@ module CeSubsystemDiagramExport
       ]
     },
     {
+      key: 'billing',
+      title: 'Billing and payment processors',
+      prefix: 'ce_billing',
+      description: 'Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or linked from, the payment processor) and processor event log (payloads encrypted at rest). Pay\'s own tables are described in docs/diagrams/source/billing_schema_erd.mmd.',
+      models: %w[
+        BetterTogether::Billing::Event
+        BetterTogether::Billing::Plan
+        BetterTogether::Billing::ProcessorSetting
+        BetterTogether::Billing::Order
+        BetterTogether::Billing::LineItem
+        BetterTogether::Billing::Payment
+        BetterTogether::Billing::Refund
+        BetterTogether::Billing::AgreementRequirement
+        BetterTogether::Billing::OrderAgreementAcceptance
+        BetterTogether::Billing::NotificationReceipt
+        BetterTogether::Billing::OfflinePayment
+        BetterTogether::Billing::CreditAccount
+        BetterTogether::Billing::CreditLot
+        BetterTogether::Billing::CreditEntry
+        BetterTogether::Billing::Promotion
+        BetterTogether::Billing::PromotionRedemption
+        BetterTogether::Billing::SubscriptionTerm
+        BetterTogether::Billing::SubscriptionPeriod
+        BetterTogether::Billing::PlanGrant
+        BetterTogether::Billing::Entitlement
+        BetterTogether::Billing::EntitlementGrant
+      ],
+      controllers: %w[
+        BetterTogether::Billing::PlansController
+        BetterTogether::Billing::ProcessorOptionsController
+        BetterTogether::Billing::ProcessorSettingsController
+        BetterTogether::Billing::OrdersController
+        BetterTogether::Billing::SalesController
+        BetterTogether::Billing::CheckoutsController
+        BetterTogether::Billing::AgreementRequirementsController
+        BetterTogether::Billing::OfflinePaymentsController
+        BetterTogether::Billing::OrderClaimsController
+        BetterTogether::Billing::SaleRefundsController
+        BetterTogether::Billing::WalkUpSalesController
+        BetterTogether::Billing::CreditsController
+        BetterTogether::Billing::CreditAccountsController
+        BetterTogether::Billing::CreditGrantsController
+        BetterTogether::Billing::PromotionsController
+        BetterTogether::Billing::PromotionRedemptionsController
+        BetterTogether::Billing::SubscriptionsController
+        BetterTogether::Billing::SubscribersController
+        BetterTogether::Billing::PlanGrantsController
+        BetterTogether::Billing::EntitlementsController
+        BetterTogether::Billing::AllowancesController
+      ]
+    },
+    {
       key: 'shared_supporting',
       title: 'Shared and supporting runtime surfaces',
       prefix: 'ce_shared_supporting',

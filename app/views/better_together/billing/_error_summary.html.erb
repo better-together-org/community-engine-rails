@@ -1,0 +1,13 @@
+<%# locals: (record:, id:, field_ids: {}, prefix: nil) %>
+<%# The errors of a record, focused when shown. Each message names its field (by `field_ids` or `prefix` + attribute) so the field is marked invalid. %>
+<div class="alert alert-danger" role="alert" id="<%= id %>" tabindex="-1" data-controller="better_together--billing-error-summary">
+  <p class="fw-bold mb-1"><%= t('better_together.billing.errors.summary', count: record.errors.count) %></p>
+  <ul class="mb-0">
+    <% record.errors.each_with_index do |error, index| %>
+      <% field_id = field_ids[error.attribute] || (prefix && "#{prefix}#{error.attribute}") %>
+      <li id="<%= id %>-<%= index %>" <%= tag.attributes(data: { field_id: field_id }) if field_id %>>
+        <% if field_id %><a href="#<%= field_id %>" class="alert-link"><%= error.full_message %></a><% else %><%= error.full_message %><% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

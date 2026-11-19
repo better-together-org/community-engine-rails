@@ -1,0 +1,47 @@
+{
+  "name": "billing_buyer_refunds_order",
+  "device": "mobile",
+  "url": "/en/billing/orders/e934af6a-6f4c-4753-ae2c-a2ef30277364",
+  "title": "Order BT-T224HFJI | Test Host Community",
+  "locale": "en",
+  "role": "buyer",
+  "feature_set": "billing_refunds",
+  "flow": "billing_buyer_refunds_order",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_buyer_refunds_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-order-refunds",
+      "title": "Money given back",
+      "bullets": [
+        "Each refund with its date, status and amount, and the total refunded."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 558.390625,
+        "width": 461.0,
+        "height": 141.0,
+        "right": 473.0,
+        "bottom": 699.390625,
+        "center_x": 242.5,
+        "center_y": 628.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1230.390625,
+        "right": 485.0,
+        "bottom": 1230.390625,
+        "center_x": 242.5,
+        "center_y": 615.1953125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 184
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "billing_checkout_ticks_kept",
+  "device": "desktop",
+  "url": "/en/billing/checkout/new?plan_id=6b3c916d-5a4a-420e-b234-d69edb897963&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_checkout_agreements",
+  "flow": "billing_checkout_ticks_kept",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_agreements_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-agreement-accept-offline_payment_terms",
+      "title": "Still ticked",
+      "bullets": [
+        "The buyer does not read each agreement again."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 1086.5625,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 97.5,
+        "bottom": 1102.5625,
+        "center_x": 89.5,
+        "center_y": 1094.5625
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 727.1875,
+        "width": 1296.0,
+        "height": 431.375,
+        "right": 1360.5,
+        "bottom": 1158.5625,
+        "center_x": 712.5,
+        "center_y": 942.875
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 575.19,
+        "width": 380,
+        "height": 132,
+        "score": 727.1875
+      }
+    }
+  ]
+}

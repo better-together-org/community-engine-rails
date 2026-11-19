@@ -1,0 +1,115 @@
+{
+  "name": "billing_processor_settings_cash",
+  "device": "mobile",
+  "url": "/en/billing/processor_settings/cash/edit",
+  "title": "Cash | Payment methods | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_payment_methods",
+  "flow": "billing_processor_settings_cash",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_processor_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-processor-setting-fields",
+      "title": "What buyers are told",
+      "bullets": [
+        "Shown only on a buyer's own order, after they accept the terms. Stored encrypted."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 139.390625,
+        "width": 461.0,
+        "height": 263.0,
+        "right": 473.0,
+        "bottom": 402.390625,
+        "center_x": 242.5,
+        "center_y": 270.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1224.578125,
+        "right": 485.0,
+        "bottom": 1224.578125,
+        "center_x": 242.5,
+        "center_y": 612.2890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 242
+      }
+    },
+    {
+      "selector": "#billing-processor-disclosure",
+      "title": "The drawbacks",
+      "bullets": [
+        "No fee can be collected, nothing is tracked, and buyers have no dispute protection."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 752.390625,
+        "width": 461.0,
+        "height": 330.1875,
+        "right": 473.0,
+        "bottom": 1082.578125,
+        "center_x": 242.5,
+        "center_y": 917.484375
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1224.578125,
+        "right": 485.0,
+        "bottom": 1224.578125,
+        "center_x": 242.5,
+        "center_y": 612.2890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 306,
+        "width": 270.0,
+        "height": 210
+      }
+    },
+    {
+      "selector": "#billing-processor-enable-cash",
+      "title": "Turn it on",
+      "bullets": [
+        "Off until you accept the drawbacks."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1102.578125,
+        "width": 32.0,
+        "height": 16.0,
+        "right": 44.0,
+        "bottom": 1118.578125,
+        "center_x": 28.0,
+        "center_y": 1110.578125
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1224.578125,
+        "right": 485.0,
+        "bottom": 1224.578125,
+        "center_x": 242.5,
+        "center_y": 612.2890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 536,
+        "width": 270.0,
+        "height": 158
+      }
+    }
+  ]
+}

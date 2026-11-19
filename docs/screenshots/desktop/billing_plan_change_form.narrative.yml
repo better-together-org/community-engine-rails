@@ -1,0 +1,14 @@
+---
+title: Change plan
+audience:
+- end_user
+journey_step: As a subscriber, I pick another plan and choose whether it starts now
+  or at the next period.
+callouts:
+- :id: when
+  :title: When
+  :description: The default is the next period, so nothing is charged early by accident.
+accessibility_notes: The choices are a labelled radio group with a legend; the plan
+  select has a label.
+slug: billing_plan_change_form
+device: desktop

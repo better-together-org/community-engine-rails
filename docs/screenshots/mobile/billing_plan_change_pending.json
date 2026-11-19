@@ -1,0 +1,48 @@
+{
+  "name": "billing_plan_change_pending",
+  "device": "mobile",
+  "url": "/en/billing/subscriptions/bf93cc6f-4505-408c-9a6f-838593b53a1f",
+  "title": "Plan 05fb9b | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_plan_change",
+  "flow": "billing_plan_change_pending",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plan_change_spec.rb",
+  "callouts": [
+    {
+      "selector": "#subscription-plan-change-invoice-link",
+      "title": "Pay the difference",
+      "bullets": [
+        "The new plan starts once this invoice is paid. Withdraw the change to keep the current plan."
+      ],
+      "target": {
+        "x": 73.734375,
+        "y": 538.390625,
+        "width": 131.328125,
+        "height": 19.0,
+        "right": 205.0625,
+        "bottom": 557.390625,
+        "center_x": 139.3984375,
+        "center_y": 547.890625
+      },
+      "avoid": {
+        "x": 73.734375,
+        "y": 538.390625,
+        "width": 131.328125,
+        "height": 19.0,
+        "right": 205.0625,
+        "bottom": 557.390625,
+        "center_x": 139.3984375,
+        "center_y": 547.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 577.39,
+        "width": 270.0,
+        "height": 236,
+        "score": 699.609375
+      }
+    }
+  ]
+}

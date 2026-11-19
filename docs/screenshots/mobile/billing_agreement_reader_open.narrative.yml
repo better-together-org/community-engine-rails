@@ -1,0 +1,13 @@
+---
+title: Agreement reader opened with Enter or Space
+audience:
+- buyer
+journey_step: As a buyer using only the keyboard, I open an agreement and read it.
+callouts:
+- :id: reader_text
+  :title: Focus starts on the text
+  :description: The text region is focusable, so the keyboard can scroll it.
+accessibility_notes: The dialog is named after the agreement; Tab stays inside it;
+  Escape closes it and focus returns to the link.
+slug: billing_agreement_reader_open
+device: mobile

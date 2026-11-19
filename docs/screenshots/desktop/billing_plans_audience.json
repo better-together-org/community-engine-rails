@@ -1,0 +1,48 @@
+{
+  "name": "billing_plans_audience",
+  "device": "desktop",
+  "url": "/en/billing/plans/new",
+  "title": "New Billing Plan | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_audience",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-audience",
+      "title": "Who may see and buy it",
+      "bullets": [
+        "Limit a plan to members, subscribers, or either; leave both off for anyone."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 650.375,
+        "width": 1296.0,
+        "height": 156.1875,
+        "right": 1360.5,
+        "bottom": 806.5625,
+        "center_x": 712.5,
+        "center_y": 728.46875
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 650.375,
+        "width": 1296.0,
+        "height": 156.1875,
+        "right": 1360.5,
+        "bottom": 806.5625,
+        "center_x": 712.5,
+        "center_y": 728.46875
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 826.56,
+        "width": 380,
+        "height": 158,
+        "score": 650.4375
+      }
+    }
+  ]
+}

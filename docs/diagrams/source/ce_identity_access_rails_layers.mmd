@@ -130,8 +130,8 @@ classDiagram
       <<Model>>
       table: better_together_people
       translates: description, name, slug
-      concerns: Agentic, Author, BetterTogetherId, Communicator +21
-      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: page_contributions +25
+      concerns: Agentic, Author, BetterTogetherId, Billing::AgreementTarget +24
+      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: page_contributions +27
     }
     class BetterTogether__PersonAccessGrant["PersonAccessGrant"] {
       <<Model>>

@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_reports_saved",
+  "device": "mobile",
+  "url": "/en/host/metrics/billing_reports",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax_reports",
+  "flow": "billing_tax_reports_saved",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_reports_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-reports-table",
+      "title": "Saved reports",
+      "bullets": [
+        "Download the CSV when it is ready."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 174.84375,
+        "width": 500.0,
+        "height": 202.0,
+        "right": 500.0,
+        "bottom": 376.84375,
+        "center_x": 250.0,
+        "center_y": 275.84375
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 66.0,
+        "width": 500.0,
+        "height": 801.0,
+        "right": 500.0,
+        "bottom": 867.0,
+        "center_x": 250.0,
+        "center_y": 466.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 887.0,
+        "width": 270.0,
+        "height": 132,
+        "score": 390.0
+      }
+    }
+  ]
+}

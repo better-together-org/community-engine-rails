@@ -1,0 +1,15 @@
+---
+title: 'Tax seed packet: Plant All'
+audience:
+- platform_manager
+- developer
+journey_step: With the provinces planted, I can plant one tax packet or all of them.
+callouts:
+- :id: plant_all
+  :title: Plant All
+  :description: Plants every tax packet whose geography is in place. Idempotent.
+accessibility_notes: Plant buttons carry an aria-label naming the packet; a blocked
+  or planted packet has a real disabled attribute, and status is shown in text as
+  well as colour.
+slug: seed_catalog_billing_tax_ready_all
+device: mobile

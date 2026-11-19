@@ -13,22 +13,23 @@ module BetterTogether
     end
 
     # slim-select options: remote search narrowed by the level above, plus the "use my typed text" row.
-    def address_geography_slim_select_options(form, level)
+    def address_geography_slim_select_options(form, level, typed: true)
       parent = LEVELS[LEVELS.index(level) - 1] unless level == :country
       depends_on = {}
       depends_on[:country_id] = address_geography_select_id(form, :country) if parent
       depends_on[:state_id] = address_geography_select_id(form, :state) if level == :settlement
       # The parent select holds the id only when a record was picked; typed text must not narrow.
-      {
-        ajax: { url: geography_locations_path(locale: I18n.locale, level:), dependsOn: depends_on }.compact_blank,
-        createOptions: { simple: { label: t("#{LOCALE_SCOPE}.use_typed_text", q: Q_PLACEHOLDER) } }
-      }
+      options = { ajax: { url: geography_locations_path(locale: I18n.locale, level:), dependsOn: depends_on }.compact_blank }
+      return options unless typed
+
+      options.merge(createOptions: { simple: { label: t("#{LOCALE_SCOPE}.use_typed_text", q: Q_PLACEHOLDER) } })
     end
 
-    # The single initial option: the linked record, else the typed text, else none.
-    def address_geography_initial_option(address, level)
+    # The single initial option: the linked record, else the typed text (when text is allowed), else none.
+    def address_geography_initial_option(address, level, typed: true)
       record = address.association(level).reader
       return [[record.name, record.id]] if record
+      return [] unless typed
 
       typed = address.public_send(address_geography_string_column(level))
       typed.present? ? [[typed, typed]] : []

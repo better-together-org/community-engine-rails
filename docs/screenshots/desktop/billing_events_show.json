@@ -1,0 +1,48 @@
+{
+  "name": "billing_events_show",
+  "device": "desktop",
+  "url": "/en/billing/events/c578f9c6-31d1-4ba5-90e5-e1f472250657",
+  "title": "Payment event | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_events",
+  "flow": "billing_events_show",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_events_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-event-replay-btn",
+      "title": "Retry",
+      "bullets": [
+        "Asks for confirmation, then runs the event again. Safe to do twice."
+      ],
+      "target": {
+        "x": 89.0,
+        "y": 667.0,
+        "width": 119.21875,
+        "height": 38.0,
+        "right": 208.21875,
+        "bottom": 705.0,
+        "center_x": 148.609375,
+        "center_y": 686.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 104.0,
+        "width": 1440.0,
+        "height": 1141.0,
+        "right": 1440.0,
+        "bottom": 1245.0,
+        "center_x": 720.0,
+        "center_y": 674.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 1265.0,
+        "width": 380,
+        "height": 158,
+        "score": 212.0
+      }
+    }
+  ]
+}

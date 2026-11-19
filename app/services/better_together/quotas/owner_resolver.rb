@@ -26,24 +26,25 @@ module BetterTogether
 
       module_function
 
-      # Nil when the owner the chain lands on is not local (a federated or OAuth
-      # peer, or someone mirrored from one): external owners are not charged, and
-      # their usage is not redirected to the host platform either.
-      def resolve(record)
-        owner = resolve_unfiltered(record)
+      # `type:` is the quota type being charged. When it is given and the record's community has a pool for
+      # it (a paid allowance that charges the community rather than whoever made the content), the community
+      # is the owner; otherwise the usual chain applies. Nil when the owner is not local (a federated or
+      # OAuth peer, or someone mirrored from one): external owners are not charged.
+      def resolve(record, type: nil)
+        owner = resolve_unfiltered(record, type:)
         BetterTogether::Quotas::Locality.local_owner?(owner) ? owner : nil
       end
 
-      def resolve_unfiltered(record)
+      def resolve_unfiltered(record, type: nil)
         record = BetterTogether::ActiveStorageAttachmentRecord.resolve(record)
         return platform_fallback if record.nil?
         return record if owner_record?(record)
 
-        creator_like_owner(record) ||
-          community_owner(record) ||
-          platform_owner(record) ||
-          hopped_owner(record) ||
-          platform_fallback
+        pooled_community_owner(record, type) || usual_owner(record) || platform_fallback
+      end
+
+      def usual_owner(record)
+        creator_like_owner(record) || community_owner(record) || platform_owner(record) || hopped_owner(record)
       end
 
       def owner_record?(record)
@@ -58,6 +59,13 @@ module BetterTogether
           return value if value.present?
         end
         nil
+      end
+
+      def pooled_community_owner(record, type)
+        return nil if type.blank? || !record.respond_to?(:community)
+
+        community = record.community.presence
+        community if community && BetterTogether::Quotas::Allowances.pooled?(community, type)
       end
 
       def community_owner(record)

@@ -1,0 +1,47 @@
+{
+  "name": "billing_order_documents_language",
+  "device": "desktop",
+  "url": "/fr/billing/sales/4ab14988-4d91-4460-bff1-71529ee3af64",
+  "title": "Commande BT-8KMRMTWA | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_documents",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_order_documents_spec.rb",
+  "flow": "billing_order_documents_language",
+  "callouts": [
+    {
+      "selector": "#regenerate_documents_billing_order_4ab14988-4d91-4460-bff1-71529ee3af64",
+      "title": "Documents in another language",
+      "bullets": [
+        "Make the invoice and receipt again in the buyer's language."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 779.0,
+        "width": 1294.0,
+        "height": 47.0,
+        "right": 1367.0,
+        "bottom": 826.0,
+        "center_x": 720.0,
+        "center_y": 802.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 104.0,
+        "width": 1440.0,
+        "height": 1141.0,
+        "right": 1440.0,
+        "bottom": 1245.0,
+        "center_x": 720.0,
+        "center_y": 674.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 190
+      }
+    }
+  ]
+}

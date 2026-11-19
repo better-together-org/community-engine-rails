@@ -1,0 +1,14 @@
+---
+title: Allowances and usage
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I choose how strictly quotas are enforced and
+  see who has paid for more.
+callouts:
+- :id: enforcement
+  :title: Enforcement
+  :description: Nothing already stored is ever deleted when a limit drops.
+accessibility_notes: Each choice has a label; the usage meter has a text label as
+  well as a bar.
+slug: billing_allowances_index
+device: mobile

@@ -1,0 +1,48 @@
+{
+  "name": "billing_allowances_index",
+  "device": "mobile",
+  "url": "/en/billing/allowances",
+  "title": "Allowances and usage | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_entitlements",
+  "flow": "billing_allowances_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_entitlements_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-allowances-enforcement",
+      "title": "How strictly",
+      "bullets": [
+        "Shadow counts use but never refuses anything. Hard refuses new use past the limit."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 229.390625,
+        "width": 476.0,
+        "height": 300.0,
+        "right": 488.0,
+        "bottom": 529.390625,
+        "center_x": 250.0,
+        "center_y": 379.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 229.390625,
+        "width": 476.0,
+        "height": 300.0,
+        "right": 488.0,
+        "bottom": 529.390625,
+        "center_x": 250.0,
+        "center_y": 379.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 549.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 727.609375
+      }
+    }
+  ]
+}

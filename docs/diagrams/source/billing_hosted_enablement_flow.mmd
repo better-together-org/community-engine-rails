@@ -1,0 +1,7 @@
+flowchart LR
+  A[Host activates agreements] --> B[Platform steward accepts billing agreement]
+  B --> C[Billing configurable]
+  B --> D[Accepts local billing agreement]
+  D --> E[Cash, cheque, e-transfer can be switched on]
+  B --> F[Accepts merchant onboarding agreement ahead of time]
+  S[Host suspends] -. pauses every mode .-> C

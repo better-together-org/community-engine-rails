@@ -1,0 +1,12 @@
+---
+title: Add-on target plans
+audience:
+- platform_organizer
+journey_step: As a steward I choose which plans an add-on extends.
+callouts:
+- :id: targets
+  :title: Target plans
+  :description: None ticked means every plan.
+accessibility_notes: A labelled fieldset of checkboxes with a hint.
+slug: billing_add_on_targets_form
+device: desktop

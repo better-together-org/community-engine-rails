@@ -1,0 +1,27 @@
+%% Billing plans — how a plan reaches the payment processor, and which fields are then fixed.
+%% Core owns the idempotency key and the write-back; the adapter only talks to the processor.
+flowchart TD
+  S[Steward opens New plan] --> M{Mode}
+  M -->|Create in processor| C1[Choose new product or an existing one<br/>options fetched live: lookup products]
+  C1 --> C2[Currency and interval: lookup currencies, intervals<br/>amount typed]
+  C2 --> SAVE[Plan saved: sync_status pending<br/>price id empty]
+  M -->|Link existing price| L1[Choose a price<br/>lookup prices, narrowed by product]
+  L1 --> L2[adapter.fetch_price copies amount,<br/>currency, interval and product<br/>whatever was typed]
+  L2 --> L3{Found and active?}
+  L3 -->|No| ERR[Rejected on the price field:<br/>not found, archived, or processor unreachable]
+  L3 -->|Yes| SYNCED[Plan saved: sync_status synced<br/>nothing to push]
+  SAVE --> AC[after_commit: SyncPlanJob<br/>billing queue, plan id only]
+  AC --> CTX[Core builds the platform's ProcessorContext<br/>and the idempotency key]
+  CTX --> SP[adapter.sync_plan context, plan, idempotency_key]
+  SP --> R{Result}
+  R -->|PlanSyncResult| W[Core stores product id, price id,<br/>sync_status synced via update_columns]
+  W --> NOLOOP[No callbacks run, so the change is not pushed back]
+  R -->|error| RT[ActiveJob retries with growing waits]
+  RT --> SP
+  RT -->|attempts exhausted| F[sync_status failed<br/>sync_error: short code]
+  F --> RB[Steward presses Retry sync<br/>restart_sync! and enqueue again]
+  RB --> AC
+  SYNCED --> LOCK
+  W --> LOCK[Plan is linked: fields the adapter declares create_only<br/>are locked in the form, the permitted params and validation]
+  LOCK --> CP[Change price: a new plan prefilled from this one,<br/>sharing its product; the old price is untouched]
+  LOCK --> SNAP[Show page: live snapshot via fetch_price and fetch_product<br/>drift flagged, cached 30 seconds]

@@ -70,6 +70,8 @@ class SchemaRecorder
 
     def method_missing(type, name = nil, **options, &)
       return super unless name.is_a?(String)
+      # A check constraint is not a column and its SQL text would swell the table label.
+      return if type == :check_constraint
 
       @table.columns << Column.new(name, type.to_s, options.fetch(:null, true), options[:default], options[:limit],
                                    options.fetch(:array, false))

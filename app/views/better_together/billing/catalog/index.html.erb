@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.catalog.title') %>
+<% end %>
+
+<div id="billing-catalog-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.catalog.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.catalog.intro', platform: billing_owner.name) %></p>
+
+  <% if @plans.any? %>
+    <%= render 'better_together/billing/catalog/plans', plans: @plans %>
+  <% else %>
+    <p id="billing-catalog-empty" class="text-body-secondary"><%= t('better_together.billing.catalog.none') %></p>
+  <% end %>
+</div>

@@ -46,6 +46,25 @@
   queue: "maintenance"
   description: "Regenerate per-platform XML sitemaps for all locally-hosted platforms"
 
+# Billing jobs name no `queue:` on purpose. sidekiq-scheduler enqueues an ActiveJob class
+# with `enqueue(queue: <this value>)`, which sets the queue name literally and skips the
+# host's queue_name_prefix, so a prefixed host would never see the job. Leaving it out lets
+# BetterTogether::Billing::ApplicationJob (queue_as :billing) decide, prefix included.
+"better_together:billing:redact_expired_event_payloads_daily":
+  cron: "20 4 * * *" # daily at 04:20 UTC
+  class: "BetterTogether::Billing::RedactExpiredEventPayloadsJob"
+  description: "Redact retained billing event payloads after the replay window expires"
+
+"better_together:billing:dead_letter_stale_events_hourly":
+  cron: "15 * * * *" # hourly at :15 UTC
+  class: "BetterTogether::Billing::DeadLetterStaleBillingEventsJob"
+  description: "Promote exhausted or stale billing events into a dead-letter state for operator review"
+
+"better_together:billing:enqueue_stuck_events_10min":
+  cron: "*/10 * * * *" # every 10 minutes
+  class: "BetterTogether::Billing::EnqueueStuckBillingEventsJob"
+  description: "Give a processing job to billing events left pending with no job working on them"
+
 "better_together:quotas:reservation_sweep_5min":
   cron: "*/5 * * * *" # every 5 minutes
   class: "BetterTogether::Quotas::ReservationSweeperJob"
@@ -69,3 +88,48 @@
   class: "BetterTogether::Weather::PurgeJob"
   queue: "maintenance"
   description: "Apply weather retention windows to observations and superseded forecasts"
+
+"better_together:billing:prune_stale_pay_webhooks_daily":
+  cron: "40 4 * * *" # daily at 04:40 UTC
+  class: "BetterTogether::Billing::PruneStalePayWebhooksJob"
+  description: "Delete Pay webhook deliveries that were never processed once the replay window has passed"
+
+"better_together:billing:expire_orders_hourly":
+  cron: "10 * * * *" # hourly at :10 UTC
+  class: "BetterTogether::Billing::ExpireOrdersJob"
+  description: "Let orders that were not paid in time lapse and release what they held"
+
+"better_together:billing:expire_offline_payments_hourly":
+  cron: "20 * * * *" # hourly at :20 UTC
+  class: "BetterTogether::Billing::ExpireOfflinePaymentsJob"
+  description: "Close offline payments whose hold ran out and align any left waiting beside a closed order"
+
+"better_together:billing:remind_offline_confirmations_daily":
+  cron: "15 14 * * *" # daily at 14:15 UTC
+  class: "BetterTogether::Billing::RemindOfflineConfirmationsJob"
+  description: "Remind sellers of offline payments waiting for them and buyers whose hold is about to run out"
+
+"better_together:billing:expire_quota_reservations_hourly":
+  cron: "35 * * * *" # hourly at :35 UTC
+  class: "BetterTogether::Billing::ExpireQuotaReservationsJob"
+  description: "Release quota holds whose time ran out, so abandoned uploads stop counting against the limit"
+
+"better_together:billing:expire_credit_lots_daily":
+  cron: "50 4 * * *" # daily at 04:50 UTC
+  class: "BetterTogether::Billing::ExpireCreditLotsJob"
+  description: "Let store credit past its date go, with an entry for what was lost"
+
+"better_together:billing:generate_renewals_daily":
+  cron: "10 5 * * *" # daily at 05:10 UTC
+  class: "BetterTogether::Billing::GenerateRenewalsJob"
+  description: "Make the invoice for the next period of each subscription Community Engine renews"
+
+"better_together:billing:advance_subscriptions_hourly":
+  cron: "25 * * * *" # hourly at :25 UTC
+  class: "BetterTogether::Billing::AdvanceSubscriptionsJob"
+  description: "Move subscriptions through past due, unpaid and cancelled as their dates arrive"
+
+"better_together:billing:remind_renewals_daily":
+  cron: "30 14 * * *" # daily at 14:30 UTC
+  class: "BetterTogether::Billing::RemindRenewalsJob"
+  description: "Remind payers of unpaid renewal invoices, and warn before the grace runs out"

@@ -1,0 +1,14 @@
+---
+title: Change waiting for payment
+audience:
+- end_user
+journey_step: As a subscriber, I see the plan change is waiting on an invoice and
+  can open it or withdraw.
+callouts:
+- :id: invoice
+  :title: Invoice
+  :description: Links to the prorated order.
+accessibility_notes: The state is text, not colour; the link and the withdraw button
+  are keyboard reachable.
+slug: billing_plan_change_pending
+device: desktop

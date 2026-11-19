@@ -1,0 +1,14 @@
+---
+title: Subscribers
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I see whose renewal is overdue and can cover,
+  extend or cancel it.
+callouts:
+- :id: filters
+  :title: Filters
+  :description: Each filter follows the state Pay records for the subscription.
+accessibility_notes: The filters are links with text; the state is text as well as
+  colour.
+slug: billing_subscribers_index
+device: desktop

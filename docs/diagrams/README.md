@@ -7,6 +7,7 @@ The subsystem diagram package is generated from live Rails reflections so the ex
 ```bash
 bin/export_schema_diagrams            # DBML + full-schema ERD + subsystem ERDs
 bin/export_schema_diagrams --skip-subsystems   # no database needed
+bin/check_diagrams --fix                    # regenerate everything and stage it (the pre-commit hook runs this)
 ```
 
 Run it after any migration or change to `spec/dummy/db/schema.rb`. It:
@@ -46,3 +47,4 @@ Cross-cutting exports:
 
 - `ce_subsystem_interaction_map.mmd`
 - `ce_polymorphic_association_map.mmd` for subsystem-level weak-reference summaries grouped by live model family
+- `ce_localized_attributes.mmd` for every model with localized (Mobility) attributes, each attribute's storage type, grouped by namespace; regenerate with `bin/export_localized_attributes` (`--check` fails on a stale diagram or an untyped `translates`), also run by `bin/export_schema_diagrams` and `bin/check_diagrams`

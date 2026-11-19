@@ -1,0 +1,81 @@
+{
+  "name": "billing_processor_settings_etransfer",
+  "device": "mobile",
+  "url": "/en/billing/processor_settings/etransfer/edit",
+  "title": "Interac e-Transfer | Payment methods | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_payment_methods",
+  "flow": "billing_processor_settings_etransfer",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_processor_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-processor-setting-fields",
+      "title": "Where buyers send it",
+      "bullets": [
+        "An email address or a phone number, so buyers know where to send the e-transfer."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 56.390625,
+        "width": 461.0,
+        "height": 435.0,
+        "right": 473.0,
+        "bottom": 491.390625,
+        "center_x": 242.5,
+        "center_y": 273.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 242
+      }
+    },
+    {
+      "selector": "#billing-processor-disclosure",
+      "title": "Canada only",
+      "bullets": [
+        "Available in Canada, in Canadian dollars."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 841.390625,
+        "width": 461.0,
+        "height": 359.1875,
+        "right": 473.0,
+        "bottom": 1200.578125,
+        "center_x": 242.5,
+        "center_y": 1020.984375
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 306,
+        "width": 270.0,
+        "height": 158
+      }
+    }
+  ]
+}
