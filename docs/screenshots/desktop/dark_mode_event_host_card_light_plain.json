@@ -1,0 +1,11 @@
+{
+  "name": "dark_mode_event_host_card_light_plain",
+  "device": "desktop",
+  "url": "/en/events/0356b691-e828-412f-bc55-117085ce4ae4/edit",
+  "title": "Edit Voluptatem Nulla Itaque | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_event_host_card_light_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb"
+}

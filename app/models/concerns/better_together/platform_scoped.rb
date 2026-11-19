@@ -20,6 +20,29 @@ module BetterTogether
       scope :for_platform, ->(platform) { where(platform:) }
     end
 
+    class_methods do
+      # Records of the given platform (else the current or host platform) plus records that
+      # belong to no platform yet. Never another platform's records. With no platform at all
+      # (bootstrap, rake tasks) nothing is there to isolate against and nothing is filtered.
+      def in_current_platform(platform = nil)
+        platform ||= Current.platform || Current.host_platform
+        platform ? where(platform_id: [platform.id, nil]) : all
+      end
+
+      # friendly.find limited to one platform, so a slug, slug history entry or id owned by
+      # another platform is not found. The platform's own record wins over a platform-less one.
+      def friendly_find_in_platform(id, platform: nil)
+        platform ||= Current.platform || Current.host_platform
+        return friendly.find(id) unless platform
+
+        for_platform(platform).friendly.find(id)
+      rescue ActiveRecord::RecordNotFound
+        raise unless platform
+
+        where(platform_id: nil).friendly.find(id)
+      end
+    end
+
     # Platform presence is optional while the system has no platform at all —
     # i.e. before the very first Platform has been created. Every PlatformScoped
     # record created during that narrow bootstrap window (the host platform's own

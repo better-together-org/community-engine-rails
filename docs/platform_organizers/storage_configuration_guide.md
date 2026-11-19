@@ -81,6 +81,43 @@ Use an S3-compatible backend when:
 
 For S3-compatible backends, an explicit endpoint is required and the system enables `force_path_style`.
 
+## Using Garage (solo host app)
+
+A host app that runs one platform can use a self-hosted Garage bucket today, with environment variables only:
+
+| Variable | Value |
+| --- | --- |
+| `ACTIVE_STORAGE_SERVICE` | `s3_compatible` |
+| `S3_ENDPOINT` | the Garage S3 endpoint, for example `https://s3.example.org` (or `http://garage:3900` on the same Docker network) |
+| `S3_REGION` | any non-empty string, by convention `garage` |
+| `S3_BUCKET_NAME` | the bucket for this app |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | the key pair granted on that bucket |
+| `AWS_REQUEST_CHECKSUM_CALCULATION`, `AWS_RESPONSE_CHECKSUM_VALIDATION` | `when_required` for both |
+| `ACTIVE_STORAGE_ROUTE` | `proxy`, so the app serves files and no public bucket read is needed |
+
+Notes that save time:
+
+- The host app's `config/storage.yml` needs an `s3_compatible` service with `force_path_style: true`. Copy the one from this repository's dummy app.
+- Garage signs with SigV4 only and has no IAM or bucket policy. Access is per key per bucket, so give each app its own key and grant it read, write and owner on its own bucket only.
+- Garage cannot set CORS with a normal app key. Set the bucket CORS rule once with the owner key, with your site origins and the methods GET, PUT, POST and HEAD, before using direct uploads.
+- Add the storage origin (the endpoint host) to the Content Security Policy image and connect sources. Use `BetterTogether.register_content_security_policy_sources` from a host initializer.
+- Garage has no per-bucket data directory, so back up through an S3 reader that has read access to the bucket, not by copying the data directory.
+- Run a small upload, download and delete round trip against the bucket before switching traffic.
+
+## Hosted platforms (design, not yet implemented)
+
+Today the Active Storage service is process-wide and bound at boot from the host platform. A platform that
+is not the host can save a `StorageConfiguration`, but its uploads still land in the host's bucket.
+Per-platform buckets are planned in these steps:
+
+1. A service router resolves the storage service from the current platform and stamps it on each new blob, so every blob remembers its own service.
+2. `StorageConfiguration` gains a connection test, a health state, key rotation and a rule that a bucket belongs to one platform only.
+3. The platform form gets a Storage tab with a test connection button.
+4. The media gate, direct uploads, variants, seed packet imports and quota accounting follow the blob's platform service.
+5. Platform export and deletion include the platform's blobs.
+
+Until step 1 ships, a hosted platform must not be given a separate bucket and must not be told its files are isolated. See [storage requirements for tier 3 tenancy](../implementation/multi_tenancy/storage_requirements.md).
+
 ## Credentials and safety
 
 `StorageConfiguration` encrypts the following fields at rest:

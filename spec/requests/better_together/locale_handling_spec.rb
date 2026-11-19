@@ -19,7 +19,7 @@ RSpec.describe 'Locale handling in ApplicationController#set_locale' do
     # No sitemap is attached in this test DB, so :not_found is the correct response —
     # the regression this guards against is an unhandled 500 (I18n::InvalidLocale), not
     # the routine 404.
-    expect(response).not_to have_http_status(:server_error)
+    expect(response).not_to be_server_error
   end
 
   it 'does not raise on any locale value not in I18n.available_locales' do
@@ -27,7 +27,7 @@ RSpec.describe 'Locale handling in ApplicationController#set_locale' do
       get '/sitemap.xml.gz', params: { locale: 'not-a-real-locale' }
     end.not_to raise_error
 
-    expect(response).not_to have_http_status(:server_error)
+    expect(response).not_to be_server_error
   end
 
   # I18n.locale is reset after each request completes, so it can't be inspected from the
@@ -114,6 +114,6 @@ RSpec.describe 'Locale handling in ApplicationController#set_locale' do
       get '/sitemap.xml.gz', headers: { 'Accept-Language' => '*' }
     end.not_to raise_error
 
-    expect(response).not_to have_http_status(:server_error)
+    expect(response).not_to be_server_error
   end
 end

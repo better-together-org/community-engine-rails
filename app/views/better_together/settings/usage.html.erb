@@ -1,7 +1,11 @@
-<% if @quotas.any? %>
-  <% @quotas.each do |quota| %>
-    <%= render 'better_together/quotas/usage_meter', quota: quota %>
+<%# Must wrap its content in the turbo frame the settings Usage tab lazy-loads, or Turbo shows "Content missing". %>
+<%= turbo_frame_tag 'usage-settings' do %>
+  <% visible = visible_quotas(@quotas) %>
+  <% if visible.any? %>
+    <% visible.each do |quota| %>
+      <%= render 'better_together/quotas/usage_meter', quota: quota %>
+    <% end %>
+  <% else %>
+    <p id="usage-settings-none" class="text-muted mb-0"><%= t('.none') %></p>
   <% end %>
-<% else %>
-  <p class="text-muted mb-0"><%= t('.none') %></p>
 <% end %>

@@ -1,0 +1,14 @@
+---
+title: Preparing public pages behind a private platform
+audience:
+- host_admin
+journey_step: As a platform manager, I can prepare a public page before the platform
+  is public.
+callouts:
+- :id: notice
+  :title: Visibility notice
+  :description: Explains who can see the page today.
+accessibility_notes: The notice is a labelled note linked to the select, with a decorative
+  icon.
+slug: privacy_ceiling_notice
+device: mobile

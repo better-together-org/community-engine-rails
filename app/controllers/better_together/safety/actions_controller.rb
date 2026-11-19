@@ -51,7 +51,7 @@ module BetterTogether
         @safety_case = policy_scope(BetterTogether::Safety::Case).find(params[:safety_case_id])
       end
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable-next Metrics/MethodLength
       def safety_action_params
         params.require(:safety_action).permit(
           :action_type,
@@ -69,7 +69,6 @@ module BetterTogether
           :expires_at
         )
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

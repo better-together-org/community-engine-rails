@@ -1,0 +1,49 @@
+{
+  "name": "image_gallery",
+  "device": "desktop",
+  "url": "/en/gallery-spec-page-51503dce?gallery_layout=grid&gallery_lightbox=0&gallery_token=51503dce",
+  "title": "Harbour gallery | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "image_gallery",
+  "flow": "annotated",
+  "source_spec": "./spec/docs_screenshots/better_together/image_gallery_spec.rb",
+  "callouts": [
+    {
+      "selector": ".image-gallery__list",
+      "title": "Gallery grid",
+      "bullets": [
+        "Each image is a figure with its own alt text and caption.",
+        "Lazy loaded, with reserved size."
+      ],
+      "target": {
+        "x": 84.0,
+        "y": 152.0,
+        "width": 1272.0,
+        "height": 207.0625,
+        "right": 1356.0,
+        "bottom": 359.0625,
+        "center_x": 720.0,
+        "center_y": 255.53125
+      },
+      "avoid": {
+        "x": 84.0,
+        "y": 152.0,
+        "width": 1272.0,
+        "height": 207.0625,
+        "right": 1356.0,
+        "bottom": 359.0625,
+        "center_x": 720.0,
+        "center_y": 255.53125
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 379.06,
+        "width": 380,
+        "height": 184,
+        "score": 1097.9375
+      }
+    }
+  ]
+}

@@ -41,7 +41,7 @@
         <% recent_items.each do |item| %>
           <li class="d-flex justify-content-between align-items-center mb-1" id="<%= dom_id(item) %>">
             <%= link_to item.to_s, item, class: 'text-decoration-none' %>
-            <span class="badge text-bg-light border">
+            <span class="badge bg-body-secondary text-body border">
               <%= t("attributes.federation_visibility_list.#{item.federation_visibility}") %>
             </span>
           </li>

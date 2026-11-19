@@ -67,7 +67,7 @@ module BetterTogether
     # For Action Text backends, compares on plain text.
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def first_present_translation_of(attr) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       return nil unless self.class.respond_to?(:localized_attribute_list)
 
@@ -119,7 +119,6 @@ module BetterTogether
 
       nil
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
   end

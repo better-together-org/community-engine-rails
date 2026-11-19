@@ -6,41 +6,41 @@ classDiagram
     class BetterTogether__AgreementsController["AgreementsController"] {
       <<Controller>>
       models: Agreement
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__AgreementsStatusController["AgreementsStatusController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__ChecklistItemsController["ChecklistItemsController"] {
       <<Controller>>
       models: ChecklistItem
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__ChecklistsController["ChecklistsController"] {
       <<Controller>>
       models: Checklist
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__Joatu__AgreementsController["Joatu::AgreementsController"] {
       <<Controller>>
       models: Joatu::Agreement
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__Joatu__OffersController["Joatu::OffersController"] {
       <<Controller>>
       models: Joatu::Offer
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__Joatu__RequestsController["Joatu::RequestsController"] {
       <<Controller>>
       models: Joatu::Request
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__SeedsController["SeedsController"] {
       <<Controller>>
       models: Seed
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
   }
 
@@ -62,7 +62,7 @@ classDiagram
       <<Model>>
       table: better_together_agreement_terms
       translates: content, slug, summary
-      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +4
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformFromParent +5
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations +6
     }
     class BetterTogether__Checklist["Checklist"] {
@@ -76,7 +76,7 @@ classDiagram
       <<Model>>
       table: better_together_checklist_items
       translates: description, label, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +7
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +8
       weak refs: owner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description +5
     }
     class BetterTogether__Joatu__Agreement["Joatu::Agreement"] {
@@ -191,6 +191,7 @@ classDiagram
   BetterTogether__Joatu__ResponseLink --> BetterTogether__Platform : platform
   BetterTogether__Joatu__ResponseLink --> BetterTogether__Person : creator
   BetterTogether__Seed --> BetterTogether__Person : creator
+  BetterTogether__Seed --> BetterTogether__Platform : platform
   BetterTogether__SeedPlanting --> BetterTogether__Person : creator
   BetterTogether__SeedPlanting --> BetterTogether__Seed : seed
   BetterTogether__SeedPlanting --> BetterTogether__Platform : platform

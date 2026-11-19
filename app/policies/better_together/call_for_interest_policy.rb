@@ -34,7 +34,7 @@ module BetterTogether
         base = platform_scoped
         table = scope.arel_table
 
-        query = table[:privacy].eq('public')
+        query = effective_public_query(table)
 
         if agent.present?
           community_query = scoped_community_privacy_query(table)

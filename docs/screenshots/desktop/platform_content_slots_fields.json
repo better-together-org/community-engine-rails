@@ -1,0 +1,11 @@
+{
+  "name": "platform_content_slots_fields",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_content_slots",
+  "flow": "platform_content_slots_fields",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_content_slots_spec.rb"
+}

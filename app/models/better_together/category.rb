@@ -48,6 +48,10 @@ module BetterTogether
       true
     end
 
+    def self.privacy_ceiling_wrapper_columns
+      []
+    end
+
     # Distinct categories in use across a relation of categorizable records
     # (e.g. a policy-scoped Posts or Events relation), alphabetically sorted
     # by translated name. Centralizes the "in-use categories" sidebar query

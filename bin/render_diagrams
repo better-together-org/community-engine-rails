@@ -6,7 +6,8 @@ SEED_HASHES=0
 SPECIFIED_FILES=()
 # Bump when the rendering logic changes in a way that should re-render every diagram.
 RENDER_HASH_VERSION=1
-HASH_MANIFEST="docs/diagrams/exports/.source-hashes"
+# One small file per source diagram, so two branches changing different diagrams never conflict on a shared manifest.
+HASH_DIR="docs/diagrams/exports/.hashes"
 
 usage() {
   cat <<USAGE
@@ -27,8 +28,8 @@ Options:
   -h, --help  Show this help
 
 A diagram is skipped when its source content and render settings hash to the value recorded
-in docs/diagrams/exports/.source-hashes and its export exists. File timestamps are not used,
-so a fresh checkout or a touched file never triggers a re-render. Commit the manifest.
+in docs/diagrams/exports/.hashes/<source>.hash and its export exists. File timestamps are not used,
+so a fresh checkout or a touched file never triggers a re-render. Commit the hash files.
 
 Arguments:
   file1.mmd   Specific diagram files to render (relative to docs/diagrams/source/)
@@ -559,11 +560,13 @@ declare -A MANIFEST_HASHES=()
 MANIFEST_DIRTY=0
 
 load_manifest() {
-  [ -f "$HASH_MANIFEST" ] || return 0
-  local hash key
-  while read -r hash key; do
-    [ -n "${key:-}" ] && MANIFEST_HASHES["$key"]="$hash"
-  done < "$HASH_MANIFEST"
+  [ -d "$HASH_DIR" ] || return 0
+  local file hash key
+  for file in "$HASH_DIR"/*.hash; do
+    while read -r hash key; do
+      [ -n "${key:-}" ] && MANIFEST_HASHES["$key"]="$hash"
+    done < "$file"
+  done
 }
 
 # Hash of what determines a diagram's output: the normalized source plus render settings.
@@ -586,24 +589,37 @@ record_hash() {
   fi
 }
 
-# Rewrites the manifest sorted, only when an entry changed, so reruns never churn it.
-# On a full run, entries for sources that no longer exist are dropped.
+# Writes one hash file per source (a line per export format), only when its content changed, so reruns
+# never churn them. On a full run, files for sources that no longer exist are removed.
 save_manifest() {
-  local prune_missing="$1" key base
+  local prune_missing="$1" key base file desired
+  local -A wanted=()
+  for key in "${!MANIFEST_HASHES[@]}"; do
+    base="${key%.*}"
+    if [ "$prune_missing" = "1" ] && [ ! -f "docs/diagrams/source/${base}.mmd" ]; then
+      unset 'MANIFEST_HASHES[$key]'
+      MANIFEST_DIRTY=1
+      continue
+    fi
+  done
+  [ "$MANIFEST_DIRTY" = "1" ] || return 0
+  mkdir -p "$HASH_DIR"
+  for key in "${!MANIFEST_HASHES[@]}"; do
+    base="${key%.*}"
+    wanted["$base"]+="${MANIFEST_HASHES[$key]} ${key}"$'\n'
+  done
+  for base in "${!wanted[@]}"; do
+    file="$HASH_DIR/${base}.hash"
+    desired="$(printf '%s' "${wanted[$base]}" | LC_ALL=C sort -k2)"
+    if [ ! -f "$file" ] || [ "$(cat "$file")" != "$desired" ]; then
+      printf '%s\n' "$desired" > "$file"
+    fi
+  done
   if [ "$prune_missing" = "1" ]; then
-    for key in "${!MANIFEST_HASHES[@]}"; do
-      base="${key%.*}"
-      if [ ! -f "docs/diagrams/source/${base}.mmd" ]; then
-        unset 'MANIFEST_HASHES[$key]'
-        MANIFEST_DIRTY=1
-      fi
+    for file in "$HASH_DIR"/*.hash; do
+      [ -n "${wanted[$(basename "$file" .hash)]:-}" ] || rm -f "$file"
     done
   fi
-  [ "$MANIFEST_DIRTY" = "1" ] || return 0
-  mkdir -p "$(dirname "$HASH_MANIFEST")"
-  for key in "${!MANIFEST_HASHES[@]}"; do
-    printf '%s %s\n' "${MANIFEST_HASHES[$key]}" "$key"
-  done | LC_ALL=C sort -k2 > "$HASH_MANIFEST"
 }
 
 # True when the export exists and was rendered from this exact content and settings.

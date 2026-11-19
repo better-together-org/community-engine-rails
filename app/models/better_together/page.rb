@@ -5,7 +5,9 @@ require 'storext'
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
+    include Attachments::Images
     include Authorable
+    include Base64ImageInput
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
@@ -30,6 +32,11 @@ module BetterTogether
     include ::Storext.model
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+
+    attachable_feature_image
+    accepts_base64_image :feature_image_data, attachment: :feature_image, filename_field: :feature_image_filename,
+                                              default_name: 'feature'
+    configure_attachment_cleanup
 
     before_validation :sync_name_and_title
 
@@ -105,16 +112,51 @@ module BetterTogether
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
-    def hero_block
-      @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
-    end
-
+    # Every block of the page, in position order. A hero is a block like any other.
     def content_blocks
-      @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
+      @content_blocks ||= blocks.with_attached_background_image_file.with_translations
     end
 
+    # Deprecated: the first hero block's background, only used as a share image fallback for one release.
     def primary_image
-      hero_block&.background_image_file
+      heroes = blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file
+      heroes.detect { |hero| hero.background_image_file.attached? }&.background_image_file
+    end
+
+    # The picture used for link previews: the feature image, else the hero block background
+    # (deprecated fallback for one release), else nil so the caller falls back to the site logo.
+    def share_image
+      return feature_image if feature_image.attached?
+
+      hero_image = primary_image
+      hero_image if hero_image&.attached?
+    end
+
+    # True when a visible hero already shows the feature image (same blob), so the banner would
+    # draw the picture twice.
+    def hero_shows_feature_image?(visible_blocks)
+      return false unless feature_image.attached?
+
+      visible_blocks.any? do |block|
+        block.is_a?(BetterTogether::Content::Hero) && block.background_image_file.attached? &&
+          block.background_image_file.blob_id == feature_image.blob_id
+      end
+    end
+
+    # The banner renders when there is a feature image that no visible hero already shows.
+    def feature_banner?(visible_blocks)
+      feature_image.attached? && !hero_shows_feature_image?(visible_blocks)
+    end
+
+    # Where the title is shown, given the page's visible blocks in order:
+    #   :hero    the first block is a hero, which carries the page heading
+    #   :banner  the banner renders, so the title is the banner heading
+    #   :heading a plain h1 above the content
+    # Only :banner and :heading are controlled by show_title.
+    def title_placement(visible_blocks)
+      return :hero if visible_blocks.first.is_a?(BetterTogether::Content::Hero)
+
+      feature_banner?(visible_blocks) ? :banner : :heading
     end
 
     # Payload for search indexing (database fallback and future external backends).
@@ -151,11 +193,11 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || last_synced_at.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.remote?
     end
 
     def preserved_remote_uuid?
-      source_id.blank? && platform&.external?
+      source_id.blank? && platform&.remote?
     end
 
     def source_identifier
@@ -171,25 +213,6 @@ module BetterTogether
 
     def remote_to_platform?(local_platform = Current.platform)
       mirrored? && !local_to_platform?(local_platform)
-    end
-
-    # Transient (non-persisted) flag: builder/seed code (NavigationBuilder,
-    # AgreementBuilder) sets this on a brand-new built-in page (About, FAQ,
-    # legal/policy pages, contributor agreements) that must render for
-    # guests regardless of the platform's own privacy ceiling -- the same
-    # reasoning Agreement already gets its own exemption for. Deliberately
-    # NOT tied to `protected?` -- that flag is reused across many contexts
-    # (including page_spec.rb's own privacy-ceiling coverage, via the page
-    # factory's randomized `protected` value) that have nothing to do with
-    # this exemption. Mirrors Community#bootstrapping_primary_community's
-    # transient-flag pattern. Only matters at creation: the ceiling
-    # validation only fires when privacy is new or changing (see
-    # PrivacyCeilingValidatable), so a later, unrelated save of an
-    # already-seeded page is never affected by this flag's absence.
-    attr_accessor :seed_privacy_ceiling_exempt
-
-    def privacy_ceiling_exempt?
-      super || seed_privacy_ceiling_exempt
     end
 
     private
@@ -217,7 +240,7 @@ module BetterTogether
       return true unless block.respond_to?(:privacy_public?)
 
       visible = block.respond_to?(:visible?) ? block.visible? : true
-      visible && block.privacy_public?
+      visible && block.effective_privacy_public?
     end
 
     # Template blocks render their content from a file rather than storing it directly,

@@ -96,12 +96,12 @@ erDiagram
     creator_id uuid
     storage_configuration_id uuid
     identifier string
+    locality string
     privacy string
     time_zone string
+    type string
     url string
-    external boolean
     host boolean
-    protected boolean
   }
 
   PLATFORM_CONNECTIONS {
@@ -161,6 +161,8 @@ erDiagram
     platform_id uuid
     bucket string
     endpoint string
+    health_message string
+    health_status string
     name string
     region string
     secret_access_key string

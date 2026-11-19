@@ -206,5 +206,5 @@
     </div>
   </div>
 
-  <%= share_buttons(shareable: @event) if @event.privacy_public? %>
+  <%= share_buttons(shareable: @event) if @event.effective_privacy_public? %>
 </div>

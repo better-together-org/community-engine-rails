@@ -15,6 +15,7 @@ FactoryBot.define do
     user
     person { user&.person }
     platform # Let the spec provide the platform explicitly
+    local_platform { BetterTogether::Platform.find_by(host: true) }
 
     before :create do |instance|
       instance.person = instance.user&.person if instance.user&.person.present?

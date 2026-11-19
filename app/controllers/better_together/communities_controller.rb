@@ -10,9 +10,8 @@ module BetterTogether
 
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/ClassLength
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/ClassLength
     prepend_before_action :set_community_for_privacy_check, only: [:show]
     prepend_before_action :process_community_invitation_token, only: %i[show]
@@ -166,6 +165,12 @@ module BetterTogether
       ::BetterTogether::Community
     end
 
+    # Two platforms can share a community slug: this platform's community wins. A slug that only
+    # another platform owns still resolves, as it did before.
+    def find_by_translatable(**)
+      super(**, collection: resource_collection.in_current_platform) || super
+    end
+
     def resource_collection
       # Set invitation token for policy scope
       invitation_token = params[:invitation_token] || session[:community_invitation_token]
@@ -211,7 +216,7 @@ module BetterTogether
     end
 
     def find_community_invitation(token)
-      BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
+      BetterTogether::CommunityInvitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
     end
 
     def store_valid_community_invitation(token, invitation)
@@ -264,7 +269,7 @@ module BetterTogether
     end
 
     def handle_valid_invitation_token(token)
-      invitation = ::BetterTogether::CommunityInvitation.pending.not_expired.find_by(token: token)
+      invitation = ::BetterTogether::CommunityInvitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       unless invitation&.invitable.present?
         render_not_found
         return true # Return true to stop further processing
@@ -282,7 +287,7 @@ module BetterTogether
     end
 
     def load_community_safely
-      @community || resource_class.friendly.find(params[:id])
+      @community || resource_class.friendly_find_in_platform(params[:id])
     rescue ActiveRecord::RecordNotFound
       nil
     end
@@ -306,6 +311,7 @@ module BetterTogether
 
     def load_community_roles_data
       @community_roles = BetterTogether::Role
+                         .for_platform(@community.platform)
                          .where(resource_type: 'BetterTogether::Community')
                          .includes(:string_translations, :resource_permissions)
                          .order(:position)

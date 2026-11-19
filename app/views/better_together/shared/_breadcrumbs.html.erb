@@ -1,0 +1,18 @@
+<%# locals: (trail:, current_url:) %>
+<% if trail.size > 1 %>
+  <nav id="breadcrumbs" class="bt-breadcrumbs container pt-3" aria-label="<%= t('breadcrumbs.label') %>">
+    <ol id="breadcrumbs-list" class="breadcrumb mb-0">
+      <% trail.each_with_index do |crumb, index| %>
+        <% last = index == trail.size - 1 %>
+        <li class="breadcrumb-item<%= ' active' if last %>"<%= raw(' aria-current="page"') if last %>>
+          <% if crumb.url.present? && !last %>
+            <%= link_to crumb.title, crumb.url, class: 'bt-breadcrumb-link' %>
+          <% else %>
+            <%= crumb.title %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+  <script type="application/ld+json" id="breadcrumbs-json-ld"><%= raw json_escape(breadcrumb_list_json_ld(trail, current_url: current_url).to_json) %></script>
+<% end %>

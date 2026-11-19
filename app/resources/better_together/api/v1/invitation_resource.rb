@@ -61,7 +61,7 @@ module BetterTogether
           return scope.none unless user.present?
 
           person = user.person
-          return scope.all if person&.permitted_to?('manage_platform')
+          return scope.where(platform_id: Current.platform&.id) if person&.platform_manager?
 
           # Regular users see invitations they sent or received
           scope.where(inviter: person).or(scope.where(invitee: person))

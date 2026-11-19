@@ -1,0 +1,48 @@
+{
+  "name": "platform_form_tab_features_annotated",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_form_tabs",
+  "flow": "platform_edit_features",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_form_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-features-tab",
+      "title": "Features and quotas tab",
+      "bullets": [
+        "Rollout gates and quota defaults."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 449.390625,
+        "width": 461.0,
+        "height": 40.0,
+        "right": 473.0,
+        "bottom": 489.390625,
+        "center_x": 242.5,
+        "center_y": 469.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 449.390625,
+        "width": 461.0,
+        "height": 40.0,
+        "right": 473.0,
+        "bottom": 489.390625,
+        "center_x": 242.5,
+        "center_y": 469.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 509.39,
+        "width": 270.0,
+        "height": 164,
+        "score": 767.609375
+      }
+    }
+  ]
+}

@@ -10,7 +10,7 @@ RSpec.describe BetterTogether::Sitemaps::Generator do
   end
 
   let!(:tenant_platform) do
-    create(:better_together_platform, :public, host: false, external: false,
+    create(:better_together_platform, :public, host: false, locality: 'local',
                                                host_url: 'https://tenant.example.test')
   end
 
@@ -23,7 +23,7 @@ RSpec.describe BetterTogether::Sitemaps::Generator do
 
   describe '#initialize' do
     it 'rejects an external platform' do
-      external = create(:better_together_platform, :external)
+      external = create(:better_together_platform, :remote)
 
       expect { described_class.new(external) }.to raise_error(described_class::NotLocalHostedError)
     end

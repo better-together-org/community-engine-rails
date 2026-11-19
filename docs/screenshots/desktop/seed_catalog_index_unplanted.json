@@ -2,7 +2,7 @@
   "name": "seed_catalog_index_unplanted",
   "device": "desktop",
   "url": "/en/host/seeds/catalog",
-  "title": "Hyatt, Herzog and Swaniawski",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "seed_catalog",
@@ -17,29 +17,29 @@
         "Idempotent: safe to click even if some categories are already planted."
       ],
       "target": {
-        "x": 1259.765625,
-        "y": 214.0,
+        "x": 89.0,
+        "y": 289.0,
         "width": 91.234375,
         "height": 38.0,
-        "right": 1351.0,
-        "bottom": 252.0,
-        "center_x": 1305.3828125,
-        "center_y": 233.0
+        "right": 180.234375,
+        "bottom": 327.0,
+        "center_x": 134.6171875,
+        "center_y": 308.0
       },
       "avoid": {
-        "x": 1259.765625,
-        "y": 214.0,
+        "x": 89.0,
+        "y": 289.0,
         "width": 91.234375,
         "height": 38.0,
-        "right": 1351.0,
-        "bottom": 252.0,
-        "center_x": 1305.3828125,
-        "center_y": 233.0
+        "right": 180.234375,
+        "bottom": 327.0,
+        "center_x": 134.6171875,
+        "center_y": 308.0
       },
       "placement": {
-        "side": "left",
-        "x": 859.77,
-        "y": 115.0,
+        "side": "right",
+        "x": 200.23,
+        "y": 190.0,
         "width": 380,
         "height": 236,
         "score": 1259.765625
@@ -54,31 +54,31 @@
       ],
       "target": {
         "x": 538.765625,
-        "y": 317.8125,
+        "y": 387.8125,
         "width": 95.609375,
         "height": 20.375,
         "right": 634.375,
-        "bottom": 338.1875,
+        "bottom": 408.1875,
         "center_x": 586.5703125,
-        "center_y": 328.0
+        "center_y": 398.0
       },
       "avoid": {
         "x": 538.765625,
-        "y": 317.8125,
+        "y": 387.8125,
         "width": 95.609375,
         "height": 20.375,
         "right": 634.375,
-        "bottom": 338.1875,
+        "bottom": 408.1875,
         "center_x": 586.5703125,
-        "center_y": 328.0
+        "center_y": 398.0
       },
       "placement": {
-        "side": "below",
-        "x": 396.57,
-        "y": 358.19,
+        "side": "right",
+        "x": 654.38,
+        "y": 293.0,
         "width": 380,
         "height": 210,
-        "score": 1122.8125
+        "score": 805.625
       }
     },
     {
@@ -90,31 +90,31 @@
       ],
       "target": {
         "x": 1305.71875,
-        "y": 315.0,
+        "y": 385.0,
         "width": 53.28125,
         "height": 31.0,
         "right": 1359.0,
-        "bottom": 346.0,
+        "bottom": 416.0,
         "center_x": 1332.359375,
-        "center_y": 330.5
+        "center_y": 400.5
       },
       "avoid": {
         "x": 1305.71875,
-        "y": 315.0,
+        "y": 385.0,
         "width": 53.28125,
         "height": 31.0,
         "right": 1359.0,
-        "bottom": 346.0,
+        "bottom": 416.0,
         "center_x": 1332.359375,
-        "center_y": 330.5
+        "center_y": 400.5
       },
       "placement": {
-        "side": "below",
-        "x": 1036,
-        "y": 366.0,
+        "side": "floating",
+        "x": 24,
+        "y": 534,
         "width": 380,
         "height": 340,
-        "score": 1115.0
+        "score": 0
       }
     },
     {
@@ -126,31 +126,31 @@
       ],
       "target": {
         "x": 801.375,
-        "y": 411.0,
+        "y": 481.0,
         "width": 557.625,
         "height": 21.0,
         "right": 1359.0,
-        "bottom": 432.0,
+        "bottom": 502.0,
         "center_x": 1080.1875,
-        "center_y": 421.5
+        "center_y": 491.5
       },
       "avoid": {
         "x": 801.375,
-        "y": 411.0,
+        "y": 481.0,
         "width": 557.625,
         "height": 21.0,
         "right": 1359.0,
-        "bottom": 432.0,
+        "bottom": 502.0,
         "center_x": 1080.1875,
-        "center_y": 421.5
+        "center_y": 491.5
       },
       "placement": {
-        "side": "floating",
-        "x": 24,
-        "y": 716,
+        "side": "below",
+        "x": 890.19,
+        "y": 522.0,
         "width": 380,
         "height": 346,
-        "score": 0
+        "score": 955.0
       }
     }
   ]

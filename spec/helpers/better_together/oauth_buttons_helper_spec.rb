@@ -53,6 +53,8 @@ RSpec.describe BetterTogether::OauthButtonsHelper do
     end
 
     it 'includes GitHub when both required credentials are present' do
+      configure_host_platform
+      ensure_host_platform_domain
       allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return('client_id_123')
       allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('client_secret_456')
 

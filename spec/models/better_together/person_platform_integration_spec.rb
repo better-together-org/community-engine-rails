@@ -15,7 +15,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
     let(:person) { user.person }
     let(:github_platform) do
       BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |platform|
-        platform.external = true
+        platform.locality = 'remote'
         platform.host = false
         platform.name = 'GitHub'
         platform.url = 'https://github.com'
@@ -62,7 +62,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
       it 'allows same uid for different providers' do
         facebook_platform = BetterTogether::Platform.find_or_create_by!(identifier: 'facebook') do |platform|
-          platform.external = true
+          platform.locality = 'remote'
           platform.host = false
           platform.name = 'Facebook'
           platform.url = 'https://facebook.com'
@@ -134,7 +134,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
       expect(attributes[:name]).to eq('Test User')
       expect(attributes[:image_url]).to be_a(URI)
       expect(attributes[:image_url].to_s).to eq('https://avatars.githubusercontent.com/u/123456?v=4')
-      expect(attributes[:auth]).to eq(github_auth_hash.to_hash)
+      expect(attributes[:auth]).to eq(described_class.scrubbed_auth_hash(github_auth_hash))
     end
 
     it 'handles expires_at when present' do
@@ -296,9 +296,8 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
 
       before do
         # Mock the strategy and OAuth2 token behavior
-        # rubocop:todo RSpec/VerifiedDoubles
+        # rubocop:todo-next RSpec/VerifiedDoubles
         allow(integration).to receive_messages(strategy: double('strategy', client: double('client')), current_token: double('token'))
-        # rubocop:enable RSpec/VerifiedDoubles
         allow(integration.current_token).to receive(:refresh!).and_return(mock_oauth_token)
       end
 

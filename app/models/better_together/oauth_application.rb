@@ -30,11 +30,19 @@ module BetterTogether
 
     TRUSTED_ONLY_SCOPES = %w[admin mcp_access].freeze
 
-    # Check if this application is trusted (owned by a platform manager).
-    # Trusted applications skip the OAuth authorization screen.
+    # Trusted (skips the consent screen) only when the application belongs to the host
+    # platform and is owned by a manager of it. Tenant owned apps always get consent.
     # @return [Boolean]
     def trusted?
-      !!owner&.permitted_to?('manage_platform')
+      !!(platform&.host? && owner&.platform_manager?(platform))
+    end
+
+    # A token is only valid on the platform its application was registered for.
+    # Legacy applications without a platform are treated as host platform only.
+    def usable_on?(request_platform)
+      return false if request_platform.blank?
+
+      (platform || BetterTogether::Platform.find_by(host: true))&.id == request_platform.id
     end
 
     # An agent credential authenticates as a Robot instead of its owner.
@@ -71,7 +79,7 @@ module BetterTogether
     end
 
     def validate_scopes_for_owner
-      return if trusted?
+      return if trusted? || owner&.platform_manager?(platform || Current.platform)
 
       invalid_scopes = untrusted_scopes
       return if invalid_scopes.empty?

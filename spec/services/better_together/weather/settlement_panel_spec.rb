@@ -8,6 +8,10 @@ RSpec.describe BetterTogether::Weather::SettlementPanel do
   let(:location) { create(:weather_location) }
   let(:now) { Time.utc(2026, 11, 10, 15, 30) }
 
+  def panel_key(time = now)
+    described_class.new(location.reload, now: time).cache_key
+  end
+
   def forecast(kind, periods)
     create(:weather_forecast, location: location, kind: kind, payload: { 'periods' => periods })
   end
@@ -56,5 +60,66 @@ RSpec.describe BetterTogether::Weather::SettlementPanel do
   it 'exposes the adapter attribution and licence link' do
     expect(panel.attribution).to include('Environment and Climate Change Canada')
     expect(panel.licence_url).to start_with('https://')
+  end
+
+  it 'shows the forecast issue fetched most recently even when an older document claims a later issue' do
+    create(:weather_forecast, location: location, kind: 'hourly', issued_at: now + 4.hours, fetched_at: now - 7.hours,
+                              payload: { 'periods' => [{ 'starts_at' => (now + 1.hour).iso8601, 'temperature_c' => -9 }] })
+    create(:weather_forecast, location: location, kind: 'hourly', issued_at: now - 1.hour, fetched_at: now - 5.minutes,
+                              payload: { 'periods' => [{ 'starts_at' => (now + 1.hour).iso8601, 'temperature_c' => 2 }] })
+
+    expect(panel.hourly_periods.map { |period| period['temperature_c'] }).to eq([2])
+  end
+
+  describe 'freshness' do
+    before do
+      create(:weather_current_condition, location: location, observed_at: now - 5.hours, fetched_at: now - 4.hours)
+    end
+
+    it 'reports the observation time, not the fetch time, as the last update' do
+      expect(panel.last_updated).to eq(now - 5.hours)
+    end
+
+    it 'says the station is silent when the source answered after the last observation' do
+      location.update!(last_refreshed_at: now - 10.minutes)
+
+      expect(panel).to be_source_silent
+      expect(panel.last_checked).to eq(now - 10.minutes)
+    end
+
+    it 'is not silent when the source has not been reached since' do
+      location.update!(last_refreshed_at: now - 6.hours)
+
+      expect(panel).not_to be_source_silent
+    end
+  end
+
+  describe '#cache_key' do
+    before do
+      create(:weather_current_condition, location: location, observed_at: now, fetched_at: now)
+      create(:weather_observation, location: location, observed_at: now - 2.hours)
+    end
+
+    it 'is stable while nothing changes' do
+      first = panel_key
+
+      expect(panel_key).to eq(first)
+    end
+
+    it 'changes when a new observation arrives' do
+      expect { create(:weather_observation, location: location, observed_at: now - 1.hour) }.to(change { panel_key })
+    end
+
+    it 'changes when an observation is updated, a forecast arrives or conditions change' do
+      expect { location.observations.first.update!(temperature_c: 42) }.to(change { panel_key })
+      expect { create(:weather_forecast, location: location) }.to(change { panel_key })
+      expect { location.current_condition.update!(observed_at: now + 1.minute) }.to(change { panel_key })
+    end
+
+    it 'changes with the hour, the locale and a refresh' do
+      expect(panel_key(now + 1.hour)).not_to eq(panel_key)
+      expect(I18n.with_locale(:fr) { panel_key }).not_to eq(panel_key)
+      expect { location.update!(last_refreshed_at: now) }.to(change { panel_key })
+    end
   end
 end

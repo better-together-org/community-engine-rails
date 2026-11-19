@@ -2,7 +2,7 @@
   "name": "seed_subprocessors",
   "device": "desktop",
   "url": "/en/subprocessors",
-  "title": "Subprocessors | Community Engine Host",
+  "title": "Subprocessors | Test Host Community",
   "locale": "en",
   "role": "public",
   "source_spec": "./spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb",

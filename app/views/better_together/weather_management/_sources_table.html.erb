@@ -1,0 +1,64 @@
+<%# locals: (overview:) -%>
+<section id="weather-sources" class="card shadow-sm mt-4" aria-labelledby="weather-sources-heading">
+  <div class="card-body">
+    <h2 id="weather-sources-heading" class="h4 mb-2"><%= t('host_dashboard.weather.sources.heading') %></h2>
+    <p class="text-muted"><%= t('host_dashboard.weather.sources.description') %></p>
+
+    <% if overview.source_rows.empty? %>
+      <p id="weather-sources-empty" class="text-muted mb-0"><%= t('host_dashboard.weather.sources.empty') %></p>
+    <% else %>
+      <div class="table-responsive">
+        <table id="weather-sources-table" class="table align-middle mb-0">
+          <caption class="visually-hidden"><%= t('host_dashboard.weather.sources.caption') %></caption>
+          <thead>
+            <tr>
+              <th scope="col"><%= t('host_dashboard.weather.columns.source') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.columns.status') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.columns.locations') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.columns.last_refresh') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.columns.last_success') %></th>
+              <th scope="col" class="text-end"><%= t('host_dashboard.weather.columns.actions') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% overview.source_rows.each do |row| %>
+              <% source = row.source %>
+              <tr id="<%= dom_id(source) %>" class="weather-source-row">
+                <th scope="row">
+                  <div class="fw-semibold weather-source-identifier"><%= source.identifier %></div>
+                  <div class="text-muted small weather-source-adapter">
+                    <%= t('host_dashboard.weather.sources.adapter', adapter: source.adapter_key) %>
+                  </div>
+                </th>
+                <td>
+                  <%= render 'better_together/weather_management/status_badges', enabled: source.enabled?, stale: row.stale? %>
+                </td>
+                <td class="weather-source-location-count">
+                  <%= t('host_dashboard.weather.sources.location_count', enabled: row.locations_enabled,
+                                                                         count: row.locations_total) %>
+                </td>
+                <td class="weather-source-last-refresh">
+                  <%= render 'better_together/weather_management/time', time: row.last_refresh_at %>
+                </td>
+                <td class="weather-source-last-success">
+                  <%= render 'better_together/weather_management/time', time: row.last_success_at %>
+                </td>
+                <td class="text-end">
+                  <div class="weather-source-actions d-flex flex-wrap justify-content-end gap-2">
+                    <%= link_to t('host_dashboard.weather.sources.view_locations'),
+                                host_dashboard_weather_source_path(source),
+                                class: 'btn btn-outline-secondary btn-sm weather-source-locations-link',
+                                aria: { label: t('host_dashboard.weather.sources.view_locations_for', name: source.identifier) } %>
+                    <%= render 'better_together/weather_management/toggle_link',
+                               enabled: source.enabled?, name: source.identifier, css_class: 'weather-source-toggle-btn',
+                               url: confirm_host_dashboard_weather_source_path(source, enabled: !source.enabled?) %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</section>

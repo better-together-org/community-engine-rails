@@ -60,7 +60,7 @@ module BetterTogether
         end
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def add_timezone_component(calendar, tz_id)
         tz = TZInfo::Timezone.get(tz_id)
         calendar.timezone do |cal_tz|
@@ -90,9 +90,8 @@ module BetterTogether
         # Skip invalid timezones
         nil
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable-next Metrics/MethodLength
       def find_timezone_period(timezone, period_type) # rubocop:todo Metrics/AbcSize
         # For timezones with DST, find both standard and daylight periods
         # For timezones without DST, return only standard period
@@ -130,7 +129,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       def format_offset(seconds)
         hours = seconds / 3600
