@@ -1,0 +1,48 @@
+{
+  "name": "dark_mode_seed_payload_light",
+  "device": "desktop",
+  "url": "/en/host/seeds/74c6a327-6050-4968-b6d4-4b18c2480cce",
+  "title": "dark-mode-seed-9709fc | Seeds | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_seed_payload_light",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb",
+  "callouts": [
+    {
+      "selector": "pre.bg-body-tertiary",
+      "title": "Origin and payload (light)",
+      "bullets": [
+        "Code blocks use the tertiary surface and body text."
+      ],
+      "target": {
+        "x": 732.0,
+        "y": 229.5,
+        "width": 636.0,
+        "height": 415.0,
+        "right": 1368.0,
+        "bottom": 644.5,
+        "center_x": 1050.0,
+        "center_y": 437.0
+      },
+      "avoid": {
+        "x": 732.0,
+        "y": 229.5,
+        "width": 636.0,
+        "height": 415.0,
+        "right": 1368.0,
+        "bottom": 644.5,
+        "center_x": 1050.0,
+        "center_y": 437.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 860.0,
+        "y": 664.5,
+        "width": 380,
+        "height": 190,
+        "score": 812.5
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "weather_management_confirm_off_plain",
+  "device": "mobile",
+  "url": "/en/host/weather/switch/confirm?enabled=false",
+  "title": "Weather | Test Host Community",
+  "locale": "en",
+  "role": "host_steward",
+  "feature_set": "weather_management",
+  "flow": "confirm_off",
+  "source_spec": "./spec/docs_screenshots/better_together/weather_management_spec.rb"
+}

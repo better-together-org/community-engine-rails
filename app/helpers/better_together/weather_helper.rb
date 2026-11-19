@@ -18,7 +18,7 @@ module BetterTogether
     # Panel for the current-conditions card, or nil when the settlement has no enabled location or no
     # stored current conditions. Reads stored rows only.
     def weather_summary_panel(settlement)
-      return unless BetterTogether.weather_enabled
+      return unless BetterTogether::Weather.feature_enabled?
 
       location = @weather_location if @weather_location&.settlement_id == settlement.id
       location ||= BetterTogether::Weather::Location.active.includes(:source, :current_condition)

@@ -17,6 +17,7 @@ require 'better_together/generator_templates'
 require 'better_together/profiling'
 require 'better_together/friendly_id_slug_platform'
 require 'better_together/safe_outbound_host'
+require 'better_together/signed_verifier_rotation'
 require 'better_together/tenancy_audit'
 require 'better_together/storage_resolver'
 require 'better_together/storage/tenant_registry'
@@ -391,6 +392,11 @@ module BetterTogether
       content_security.malware_scanning = malware_scanning
       app.config.content_security = content_security
       BetterTogether.content_security = content_security
+    end
+
+    # Signed global ids (Action Text attachments) must verify whichever key digest the app booted with.
+    config.after_initialize do |app|
+      BetterTogether::SignedVerifierRotation.install!(app)
     end
 
     config.to_prepare do

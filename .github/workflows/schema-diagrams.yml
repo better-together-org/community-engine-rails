@@ -42,7 +42,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
 
       - name: Set up Node
         uses: actions/setup-node@v7
@@ -107,7 +107,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
           bundler-cache: true
 
       - name: Load the schema

@@ -1,0 +1,48 @@
+{
+  "name": "host_jobs_sidekiq_frame_annotated",
+  "device": "desktop",
+  "url": "/en/host/jobs",
+  "title": "Background Jobs | Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "host_jobs",
+  "flow": "host_jobs_sidekiq_frame_annotated",
+  "source_spec": "./spec/docs_screenshots/better_together/host_jobs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#host-jobs-sidekiq-embed",
+      "title": "Sidekiq in the page",
+      "bullets": [
+        "Same-origin iframe in the current language.",
+        "Open it in a new tab with the button above."
+      ],
+      "target": {
+        "x": 406.5,
+        "y": 159.390625,
+        "width": 942.0,
+        "height": 1138.75,
+        "right": 1348.5,
+        "bottom": 1298.140625,
+        "center_x": 877.5,
+        "center_y": 728.765625
+      },
+      "avoid": {
+        "x": 406.5,
+        "y": 159.390625,
+        "width": 942.0,
+        "height": 1138.75,
+        "right": 1348.5,
+        "bottom": 1298.140625,
+        "center_x": 877.5,
+        "center_y": 728.765625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 184
+      }
+    }
+  ]
+}

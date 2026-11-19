@@ -119,6 +119,7 @@ This assessment is generated from the current live class set and the concern cap
 | `PlatformScoped` | Platformscoped | `RoleResourcePermission`, `ResourcePermission`, `PersonDeletionRequest`, `PersonDataExport`, `PersonChecklistItem`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformSubtype` | Platformsubtype | `OperatorPlatform`, `OauthPlatform`, `HostedPlatform`, `FederatedPlatform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformThemeSettings` | Platformthemesettings | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformWeatherSetting` | Platformweathersetting | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Positioned` | Positioned | `ResourcePermission`, `Role` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PostsIndexPreload` | Postsindexpreload | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PrimaryCommunity` | Adds default/host community linkage and delegation helpers. | `Person` | Host-community fallbacks are powerful and need careful tenant/platform context boundaries. |

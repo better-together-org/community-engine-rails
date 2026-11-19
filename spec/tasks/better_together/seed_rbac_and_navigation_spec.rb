@@ -152,6 +152,10 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(safety_review_nav_item.visibility_strategy).to eq('permission')
     expect(safety_review_nav_item.privacy).to eq('private')
 
+    weather_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard-weather')
+    expect(weather_nav_item.permission_identifier).to eq('manage_platform_settings')
+    expect(weather_nav_item.route_name).to eq('host_dashboard_weather_url')
+
     legacy_permission = BetterTogether::ResourcePermission.find_by(identifier: 'view_platform_analytics')
     expect(legacy_permission).to be_nil
 

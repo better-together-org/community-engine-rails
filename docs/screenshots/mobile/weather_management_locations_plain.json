@@ -1,0 +1,11 @@
+{
+  "name": "weather_management_locations_plain",
+  "device": "mobile",
+  "url": "/en/host/weather/sources/2bc86920-b8ca-4eb8-bacb-186e2cbd26c4",
+  "title": "Weather | Test Host Community",
+  "locale": "en",
+  "role": "host_steward",
+  "feature_set": "weather_management",
+  "flow": "locations",
+  "source_spec": "./spec/docs_screenshots/better_together/weather_management_spec.rb"
+}

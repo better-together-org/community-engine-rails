@@ -38,7 +38,7 @@
 
 .page-block-fields:hover {
   background-color: var(--bs-secondary-bg);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for focus */
+  box-shadow: 0 0 10px rgba(var(--bs-emphasis-color-rgb), 0.1);
   border-color: var(--bs-border-color-translucent);
 }
 

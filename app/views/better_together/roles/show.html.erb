@@ -48,7 +48,7 @@
           <% if summary[:labels].any? %>
             <div class="d-flex flex-wrap gap-1">
               <% summary[:labels].each do |label| %>
-                <span class="badge bg-light text-dark"><%= label %></span>
+                <span class="badge bg-body-secondary text-body border"><%= label %></span>
               <% end %>
               <% if summary[:remaining].positive? %>
                 <span class="badge bg-secondary">

@@ -20,7 +20,7 @@
   <% if @trusted_domains.any? %>
     <div class="table-responsive">
       <table id="platform-trusted-domains-table" class="table table-hover" aria-label="<%= t('.table_aria') %>">
-        <thead class="table-light">
+        <thead class="bt-table-head">
           <tr>
             <th scope="col"><%= t('.header_domain') %></th>
             <th scope="col"><%= t('.header_role') %></th>
@@ -61,7 +61,7 @@
     <% if @recent_events.any? %>
       <div class="table-responsive">
         <table id="trusted-domain-activity-table" class="table table-sm" aria-label="<%= t('.activity_heading') %>">
-          <thead class="table-light">
+          <thead class="bt-table-head">
             <tr>
               <th scope="col"><%= t('.activity_when') %></th>
               <th scope="col"><%= t('.activity_event') %></th>

@@ -76,7 +76,7 @@
         <dd class="col-sm-9">
           <% if @oauth_application.scopes.present? %>
             <% @oauth_application.scopes.to_a.each do |scope| %>
-              <span class="badge bg-light text-dark border"><%= scope %></span>
+              <span class="badge bg-body-secondary text-body border"><%= scope %></span>
             <% end %>
           <% else %>
             <span class="text-muted"><%= t('better_together.oauth_applications.default_scopes', default: 'Default scopes') %></span>

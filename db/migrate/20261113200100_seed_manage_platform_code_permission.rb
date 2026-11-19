@@ -9,15 +9,26 @@ class SeedManagePlatformCodePermission < ActiveRecord::Migration[7.2]
 
     permission = BetterTogether::ResourcePermission.find_or_initialize_by(identifier: 'manage_platform_code')
     permission.assign_attributes(action: 'manage', target: 'platform_code', resource_type: 'BetterTogether::Platform',
-                                 protected: true, position: 28)
+                                 protected: true)
+    permission.position = free_position(permission, 28)
     permission.save!(validate: false)
 
     role = BetterTogether::Role.find_or_initialize_by(identifier: 'platform_code_manager')
-    role.assign_attributes(protected: true, position: 10, resource_type: 'BetterTogether::Platform',
+    role.assign_attributes(protected: true, resource_type: 'BetterTogether::Platform',
                            name: 'Platform Code Manager',
                            description: 'May add scripts, styles and meta tags to the platform head and body.')
+    role.position = free_position(role, 10)
     role.save!(validate: false)
     role.assign_resource_permissions(%w[read_platform manage_platform_code], sync: true)
+  end
+
+  # Keeps an existing record's position. A new one takes the preferred slot, or the next free one when the host
+  # app already uses it for a role or permission of its own (the position index is unique per resource type).
+  def free_position(record, preferred)
+    return record.position unless record.new_record?
+
+    taken = record.class.where(resource_type: record.resource_type).pluck(:position).compact
+    taken.include?(preferred) ? taken.max + 1 : preferred
   end
 
   def down

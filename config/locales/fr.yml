@@ -4570,6 +4570,8 @@ fr:
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
+        host_dashboard_weather: Météo
+        host_jobs: Tâches en arrière-plan
         hub: Hub
         joatu_hub: Hub Joatu
         joatu_offers: Offres
@@ -7813,6 +7815,58 @@ fr:
       infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
+    jobs:
+      description: Compteurs en direct de la file de tâches et tableau de bord Sidekiq
+        de cette installation.
+      heading: Tâches en arrière-plan
+      page_title: Tâches en arrière-plan
+      sidekiq:
+        heading: Tableau de bord Sidekiq
+        hint: Sidekiq s’affiche dans cette page. Ses liens et actions restent dans
+          le cadre.
+        iframe_title: Tableau de bord des tâches en arrière-plan Sidekiq
+        loading: Chargement du tableau de bord Sidekiq...
+        new_tab_notice: "(s’ouvre dans un nouvel onglet)"
+        open_new_tab: Ouvrir Sidekiq dans un nouvel onglet
+      summary:
+        announcement: 'Tâches en arrière-plan : %{failed} en échec, %{retrying} en
+          nouvel essai, %{dead} mortes, %{stalled} bloquées, %{processes} processus
+          de travail.'
+        heading: Résumé des tâches en arrière-plan
+        links:
+          dead: 'Tâches mortes : %{count}. Ouvrir la page des tâches mortes Sidekiq'
+          failed: 'Tâches en échec : %{count}. Ouvrir le tableau de bord Sidekiq'
+          retrying: 'Tâches en nouvel essai : %{count}. Ouvrir la page des nouveaux
+            essais Sidekiq'
+          scheduled: 'Tâches planifiées : %{count}. Ouvrir la page des tâches planifiées
+            Sidekiq'
+        loading: Chargement des compteurs de tâches...
+        longest_latency: 'Attente la plus longue en file : %{latency}'
+        no_latency: aucune
+        no_processes_body: Des tâches peuvent être mises en file, mais rien ne les
+          traite. Vérifiez le service Sidekiq sur le serveur.
+        no_processes_title: Aucun processus de travail n’est en cours.
+        no_queues: Aucune tâche n’attend dans les files.
+        open_jobs_tab: Ouvrir les tâches en arrière-plan
+        queue: File
+        queue_latency: Tâche la plus ancienne en attente
+        queue_size: En file
+        queues_caption: Tâches en file par file
+        stalled_hint: Une tâche est considérée comme bloquée après plus de %{threshold}
+          d’exécution.
+        stats:
+          busy: En cours
+          dead: Mortes
+          enqueued: En file
+          failed: En échec (total)
+          processes: Processus de travail
+          retrying: Nouvel essai
+          scheduled: Planifiées
+          stalled: Bloquées
+        unavailable_body: La file de tâches (Redis) est injoignable. Les compteurs
+          reviendront dès qu’elle sera de retour.
+        unavailable_title: Les compteurs de tâches sont indisponibles.
+        updated_at: Mis à jour %{time}
     membership_review:
       anonymous_requester: Personne anonyme
       columns:
@@ -7902,6 +7956,115 @@ fr:
       visible_reports_badge:
         one: 1 signalement visible
         other: "%{count} signalements visibles"
+    weather:
+      actions:
+        disable: Désactiver
+        disable_named: Désactiver %{name}
+        enable: Activer
+        enable_named: Activer %{name}
+      audit:
+        caption: Modifications récentes des réglages météo, de la plus récente à la
+          plus ancienne
+        change: "%{before} à %{after}"
+        columns:
+          change: Modification
+          what: Quoi
+          when: Quand
+          who: Qui
+        empty: Aucun réglage météo n'a encore été modifié.
+        heading: Historique des modifications
+        kinds:
+          feature: Météo sur cet hôte
+          location: Emplacement
+          source: Source
+        unknown_actor: Personne inconnue
+      back: Retour à la météo
+      columns:
+        actions: Actions
+        last_refresh: Dernière mise à jour
+        last_success: Dernière mise à jour réussie
+        locations: Emplacements
+        settlement: Localité
+        source: Source
+        status: État
+      confirm:
+        cancel: Annuler
+        disable: Oui, désactiver
+        enable: Oui, activer
+        feature:
+          disable_effect: Désactiver la météo arrête toutes les tâches météo et masque
+            l'onglet Météo et la carte des conditions actuelles sur toutes les plateformes
+            de cet hôte. Les relevés enregistrés sont conservés.
+          disable_heading: Désactiver la météo pour cet hôte ?
+          enable_effect: Activer la météo relance les tâches météo et affiche l'onglet
+            Météo sur les localités ayant un emplacement actif d'une source active,
+            sur toutes les plateformes de cet hôte.
+          enable_heading: Activer la météo pour cet hôte ?
+        location:
+          disable_effect: Désactiver la météo de %{name} arrête ses mises à jour et
+            masque l'onglet Météo de cette localité sur toutes les plateformes de
+            cet hôte. Les relevés enregistrés sont conservés.
+          disable_heading: Désactiver la météo de %{name} ?
+          enable_effect: Activer la météo de %{name} reprend ses mises à jour et affiche
+            l'onglet Météo de cette localité tant que sa source est active.
+          enable_heading: Activer la météo de %{name} ?
+        source:
+          disable_effect: Désactiver %{name} arrête les mises à jour de ses %{count}
+            emplacements et masque leur onglet Météo sur toutes les plateformes de
+            cet hôte. Les relevés enregistrés sont conservés.
+          disable_heading: Désactiver la source %{name} ?
+          enable_effect: Activer %{name} reprend les mises à jour de ses emplacements
+            actifs et affiche leur onglet Météo sur toutes les plateformes de cet
+            hôte.
+          enable_heading: Activer la source %{name} ?
+      description: La météo des localités pour toutes les plateformes de cet hôte.
+        Les modifications s'appliquent à la prochaine tâche météo et au prochain affichage,
+        sans redémarrage.
+      feature:
+        description: L'interrupteur général de l'hôte. Lorsqu'il est éteint, aucune
+          tâche météo ne s'exécute et aucune météo n'est affichée sur les plateformes.
+        env_forced_off_html: Le réglage serveur <code>%{variable}</code> vaut false,
+          la météo est donc éteinte pour cet hôte quel que soit cet interrupteur.
+          Retirez ce réglage et redémarrez pour utiliser l'interrupteur.
+        heading: Météo sur cet hôte
+        status:
+          forced_off: Éteinte (réglage serveur)
+          'off': Éteinte
+          'on': Allumée
+        turn_off: Éteindre la météo
+        turn_on: Allumer la météo
+      flash:
+        env_forced_off: La météo est éteinte par un réglage serveur, l'interrupteur
+          ne peut donc pas être modifié ici.
+        feature_disabled: La météo est maintenant éteinte pour cet hôte.
+        feature_enabled: La météo est maintenant allumée pour cet hôte.
+        location_disabled: La météo de %{name} est maintenant désactivée.
+        location_enabled: La météo de %{name} est maintenant activée.
+        source_disabled: La source %{name} est maintenant désactivée.
+        source_enabled: La source %{name} est maintenant activée.
+        unchanged: Rien n'a changé ; le réglage avait déjà cette valeur.
+      heading: Météo
+      locations:
+        caption: Emplacements météo de %{source}
+        empty: Cette source n'a aucun emplacement. Les emplacements sont ajoutés par
+          les données initiales de l'hôte.
+        heading: Emplacements
+      never: Jamais
+      page_title: Météo
+      sources:
+        adapter: 'Adaptateur : %{adapter}'
+        caption: Sources météo avec leurs emplacements et heures de mise à jour
+        description: Les sources et emplacements sont ajoutés par les données initiales
+          de l'hôte. Ici, vous pouvez les activer ou les désactiver.
+        empty: Aucune source météo n'est configurée sur cet hôte.
+        heading: Sources
+        location_count: "%{enabled} sur %{count} actifs"
+        view_locations: Emplacements
+        view_locations_for: Emplacements de %{name}
+      status:
+        disabled: Désactivée
+        enabled: Activée
+        stale: Périmée
   invitations:
     calculating: Calcul en cours
   layouts:

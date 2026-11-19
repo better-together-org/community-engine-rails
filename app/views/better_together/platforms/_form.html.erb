@@ -356,13 +356,13 @@
               <% feature_gate_catalog.each do |gate| %>
                 <% field_id = "#{dom_id(platform)}_feature_gate_#{gate[:key]}" %>
                 <div class="col-lg-6">
-                  <div class="border rounded-3 p-3 h-100 bg-white">
+                  <div class="border rounded-3 p-3 h-100 bg-body">
                     <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                       <div>
                         <label class="form-label fw-semibold mb-1" for="<%= field_id %>"><%= gate[:name] %></label>
                         <div class="small text-muted"><%= gate[:description] %></div>
                       </div>
-                      <span class="badge text-bg-light"><%= gate[:category].to_s.humanize %></span>
+                      <span class="badge bg-body-secondary text-body border"><%= gate[:category].to_s.humanize %></span>
                     </div>
 
                     <%= select_tag "platform[feature_gate_rollouts][#{gate[:key]}]",

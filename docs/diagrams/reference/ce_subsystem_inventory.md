@@ -915,6 +915,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Geography::RegionsController | `BetterTogether::FriendlyResourceController` | `Geography::Region` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Geography::SettlementsController | `BetterTogether::FriendlyResourceController` | `Geography::Settlement` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Geography::StatesController | `BetterTogether::ApplicationController` | `Geography::State` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| HostJobsController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | InboundEmailsController | `ActionMailbox::BaseController` | — | — |
 | Joatu::CategoriesController | `BetterTogether::CategoriesController` | `Joatu::Category` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Joatu::HubController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
@@ -957,6 +958,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Users::RegistrationsController | `Devise::RegistrationsController` | — | `BotProtectedSubmissions`<br>`ConsentCookieSync`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup` |
 | Users::SessionsController | `Devise::SessionsController` | — | `ConsentCookieSync`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Users::UnlocksController | `Devise::UnlocksController` | — | `ConsentCookieSync`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| WeatherManagementController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 

@@ -319,6 +319,10 @@ classDiagram
       <<Controller>>
       concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
+    class BetterTogether__HostJobsController["HostJobsController"] {
+      <<Controller>>
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+    }
     class BetterTogether__InboundEmailsController["InboundEmailsController"] {
       <<Controller>>
     }
@@ -493,6 +497,10 @@ classDiagram
     class BetterTogether__Users__UnlocksController["Users::UnlocksController"] {
       <<Controller>>
       concerns: ConsentCookieSync, DeviseLocales, InvitationSessionManagement, InvitationTokenSession +3
+    }
+    class BetterTogether__WeatherManagementController["WeatherManagementController"] {
+      <<Controller>>
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
   }
 
@@ -942,6 +950,7 @@ classDiagram
   BetterTogether__Geography__RegionsController --|> BetterTogether__FriendlyResourceController
   BetterTogether__Geography__SettlementsController --|> BetterTogether__FriendlyResourceController
   BetterTogether__Geography__StatesController --|> BetterTogether__ApplicationController
+  BetterTogether__HostJobsController --|> BetterTogether__ApplicationController
   BetterTogether__Joatu__CategoriesController --|> BetterTogether__CategoriesController
   BetterTogether__Joatu__HubController --|> BetterTogether__ApplicationController
   BetterTogether__Joatu__JoatuController --|> BetterTogether__FriendlyResourceController
@@ -985,6 +994,7 @@ classDiagram
   BetterTogether__ShortLinksController ..> BetterTogether__ShortLink : manages
   BetterTogether__ShortLinksController --|> BetterTogether__ResourceController
   BetterTogether__Users__OmniauthCallbacksController --|> BetterTogether__OmniauthCallbacksController
+  BetterTogether__WeatherManagementController --|> BetterTogether__ApplicationController
   BetterTogether__Activity --> BetterTogether__Platform : platform
   BetterTogether__AgentGrant --> BetterTogether__Robot : robot
   BetterTogether__AgentGrant --> BetterTogether__Platform : platform

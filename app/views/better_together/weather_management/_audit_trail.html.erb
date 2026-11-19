@@ -1,0 +1,42 @@
+<%# locals: (overview:) -%>
+<% entries = overview.audit_entries %>
+<section id="weather-audit" class="card shadow-sm mt-4" aria-labelledby="weather-audit-heading">
+  <div class="card-body">
+    <h2 id="weather-audit-heading" class="h4 mb-2"><%= t('host_dashboard.weather.audit.heading') %></h2>
+    <% if entries.empty? %>
+      <p id="weather-audit-empty" class="text-muted mb-0"><%= t('host_dashboard.weather.audit.empty') %></p>
+    <% else %>
+      <div class="table-responsive">
+        <table id="weather-audit-table" class="table table-sm align-middle mb-0">
+          <caption class="visually-hidden"><%= t('host_dashboard.weather.audit.caption') %></caption>
+          <thead>
+            <tr>
+              <th scope="col"><%= t('host_dashboard.weather.audit.columns.when') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.audit.columns.who') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.audit.columns.what') %></th>
+              <th scope="col"><%= t('host_dashboard.weather.audit.columns.change') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% entries.each do |entry| %>
+              <% details = entry.parameters || {} %>
+              <tr id="<%= dom_id(entry, :weather_audit) %>" class="weather-audit-row">
+                <td><%= render 'better_together/weather_management/time', time: entry.created_at %></td>
+                <td class="weather-audit-actor"><%= entry.owner&.name || t('host_dashboard.weather.audit.unknown_actor') %></td>
+                <td class="weather-audit-target">
+                  <%= t("host_dashboard.weather.audit.kinds.#{entry.key.to_s.split('.').second}", default: entry.key) %>:
+                  <%= details['label'] %>
+                </td>
+                <td class="weather-audit-change">
+                  <%= t('host_dashboard.weather.audit.change',
+                        before: t("host_dashboard.weather.status.#{details['before'] ? 'enabled' : 'disabled'}"),
+                        after: t("host_dashboard.weather.status.#{details['after'] ? 'enabled' : 'disabled'}")) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</section>

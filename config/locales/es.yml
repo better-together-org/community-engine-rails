@@ -4493,6 +4493,8 @@ es:
         host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
+        host_dashboard_weather: Clima
+        host_jobs: Trabajos en segundo plano
         hub: Centro
         joatu_hub: Centro Joatu
         joatu_offers: Ofertas
@@ -7701,6 +7703,59 @@ es:
       infrastructure: Infraestructura
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
+    jobs:
+      description: Recuentos en vivo de la cola de trabajos y el panel de Sidekiq
+        de esta instalación.
+      heading: Trabajos en segundo plano
+      page_title: Trabajos en segundo plano
+      sidekiq:
+        heading: Panel de Sidekiq
+        hint: Sidekiq se muestra dentro de esta página. Sus enlaces y acciones permanecen
+          en el marco.
+        iframe_title: Panel de trabajos en segundo plano de Sidekiq
+        loading: Cargando el panel de Sidekiq...
+        new_tab_notice: "(se abre en una pestaña nueva)"
+        open_new_tab: Abrir Sidekiq en una pestaña nueva
+      summary:
+        announcement: 'Trabajos en segundo plano: %{failed} fallidos, %{retrying}
+          en reintento, %{dead} muertos, %{stalled} estancados, %{processes} procesos
+          de trabajo.'
+        heading: Resumen de trabajos en segundo plano
+        links:
+          dead: 'Trabajos muertos: %{count}. Abrir la página de trabajos muertos de
+            Sidekiq'
+          failed: 'Trabajos fallidos: %{count}. Abrir el panel de Sidekiq'
+          retrying: 'Trabajos en reintento: %{count}. Abrir la página de reintentos
+            de Sidekiq'
+          scheduled: 'Trabajos programados: %{count}. Abrir la página de programados
+            de Sidekiq'
+        loading: Cargando recuentos de trabajos...
+        longest_latency: 'Mayor espera en cola: %{latency}'
+        no_latency: ninguna
+        no_processes_body: Los trabajos pueden ponerse en cola, pero nada los procesa.
+          Revise el servicio Sidekiq en el servidor.
+        no_processes_title: No hay procesos de trabajo en ejecución.
+        no_queues: No hay trabajos esperando en ninguna cola.
+        open_jobs_tab: Abrir trabajos en segundo plano
+        queue: Cola
+        queue_latency: Trabajo más antiguo en espera
+        queue_size: En cola
+        queues_caption: Trabajos en cola por cola
+        stalled_hint: Un trabajo se considera estancado cuando lleva más de %{threshold}
+          en ejecución.
+        stats:
+          busy: En ejecución
+          dead: Muertos
+          enqueued: En cola
+          failed: Fallidos (histórico)
+          processes: Procesos de trabajo
+          retrying: En reintento
+          scheduled: Programados
+          stalled: Estancados
+        unavailable_body: No se pudo acceder a la cola de trabajos (Redis). Los recuentos
+          volverán cuando esté disponible.
+        unavailable_title: Los recuentos de trabajos no están disponibles.
+        updated_at: Actualizado %{time}
     membership_review:
       anonymous_requester: Persona solicitante anónima
       columns:
@@ -7789,6 +7844,116 @@ es:
       visible_reports_badge:
         one: 1 informe visible
         other: "%{count} informes visibles"
+    weather:
+      actions:
+        disable: Desactivar
+        disable_named: Desactivar %{name}
+        enable: Activar
+        enable_named: Activar %{name}
+      audit:
+        caption: Cambios recientes en la configuración del clima, del más reciente
+          al más antiguo
+        change: "%{before} a %{after}"
+        columns:
+          change: Cambio
+          what: Qué
+          when: Cuándo
+          who: Quién
+        empty: Todavía no se ha cambiado ninguna configuración del clima.
+        heading: Historial de cambios
+        kinds:
+          feature: Clima en este servidor
+          location: Ubicación
+          source: Fuente
+        unknown_actor: Persona desconocida
+      back: Volver al clima
+      columns:
+        actions: Acciones
+        last_refresh: Última actualización
+        last_success: Última actualización correcta
+        locations: Ubicaciones
+        settlement: Localidad
+        source: Fuente
+        status: Estado
+      confirm:
+        cancel: Cancelar
+        disable: Sí, desactivar
+        enable: Sí, activar
+        feature:
+          disable_effect: Al desactivar el clima se detienen todas las tareas del
+            clima y se oculta la pestaña Clima y la tarjeta de condiciones actuales
+            en todas las plataformas de este servidor. Las lecturas guardadas se conservan.
+          disable_heading: "¿Desactivar el clima en este servidor?"
+          enable_effect: Al activar el clima las tareas del clima vuelven a ejecutarse
+            y se muestra la pestaña Clima en las localidades con una ubicación activa
+            de una fuente activa, en todas las plataformas de este servidor.
+          enable_heading: "¿Activar el clima en este servidor?"
+        location:
+          disable_effect: Al desactivar el clima de %{name} se detienen sus actualizaciones
+            y se oculta la pestaña Clima de esa localidad en todas las plataformas
+            de este servidor. Las lecturas guardadas se conservan.
+          disable_heading: "¿Desactivar el clima de %{name}?"
+          enable_effect: Al activar el clima de %{name} se reanudan sus actualizaciones
+            y se muestra la pestaña Clima de esa localidad mientras su fuente esté
+            activa.
+          enable_heading: "¿Activar el clima de %{name}?"
+        source:
+          disable_effect: Al desactivar %{name} se detienen las actualizaciones de
+            sus %{count} ubicaciones y se oculta su pestaña Clima en todas las plataformas
+            de este servidor. Las lecturas guardadas se conservan.
+          disable_heading: "¿Desactivar la fuente %{name}?"
+          enable_effect: Al activar %{name} se reanudan las actualizaciones de sus
+            ubicaciones activas y se muestra su pestaña Clima en todas las plataformas
+            de este servidor.
+          enable_heading: "¿Activar la fuente %{name}?"
+      description: El clima de las localidades para todas las plataformas de este
+        servidor. Los cambios se aplican en la siguiente tarea del clima y la siguiente
+        visita, sin reiniciar.
+      feature:
+        description: El interruptor general del servidor. Cuando está apagado no se
+          ejecuta ninguna tarea del clima y no se muestra el clima en ninguna plataforma.
+        env_forced_off_html: La configuración del servidor <code>%{variable}</code>
+          es false, así que el clima está apagado en este servidor sin importar este
+          interruptor. Quite esa configuración y reinicie para usar el interruptor.
+        heading: Clima en este servidor
+        status:
+          forced_off: Apagado (configuración del servidor)
+          'off': Apagado
+          'on': Encendido
+        turn_off: Apagar el clima
+        turn_on: Encender el clima
+      flash:
+        env_forced_off: El clima está apagado por una configuración del servidor,
+          así que el interruptor no se puede cambiar aquí.
+        feature_disabled: El clima está ahora apagado en este servidor.
+        feature_enabled: El clima está ahora encendido en este servidor.
+        location_disabled: El clima de %{name} está ahora desactivado.
+        location_enabled: El clima de %{name} está ahora activado.
+        source_disabled: La fuente %{name} está ahora desactivada.
+        source_enabled: La fuente %{name} está ahora activada.
+        unchanged: No ha cambiado nada; la configuración ya tenía ese valor.
+      heading: Clima
+      locations:
+        caption: Ubicaciones del clima de %{source}
+        empty: Esta fuente no tiene ubicaciones. Las ubicaciones se añaden con los
+          datos iniciales del servidor.
+        heading: Ubicaciones
+      never: Nunca
+      page_title: Clima
+      sources:
+        adapter: 'Adaptador: %{adapter}'
+        caption: Fuentes del clima con sus ubicaciones y horas de actualización
+        description: Las fuentes y ubicaciones se añaden con los datos iniciales del
+          servidor. Aquí puede activarlas o desactivarlas.
+        empty: No hay fuentes del clima configuradas en este servidor.
+        heading: Fuentes
+        location_count: "%{enabled} de %{count} activas"
+        view_locations: Ubicaciones
+        view_locations_for: Ubicaciones de %{name}
+      status:
+        disabled: Desactivada
+        enabled: Activada
+        stale: Desactualizada
   invitations:
     calculating: Calculando
   layouts:

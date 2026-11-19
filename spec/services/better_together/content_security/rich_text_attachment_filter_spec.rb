@@ -59,6 +59,13 @@ RSpec.describe BetterTogether::ContentSecurity::RichTextAttachmentFilter, type: 
         expect(placeholder.to_s).to include('held-review')
       end
 
+      it 'placeholder uses colour-mode aware classes so it stays readable in dark mode' do
+        filter = described_class.new(content)
+        placeholder = filter.send(:held_attachment_placeholder, held_attachment).to_s
+        expect(placeholder).to include('bg-body-tertiary', 'text-body-secondary')
+        expect(placeholder).not_to include('bg-light', 'text-muted')
+      end
+
       it 'placeholder has role=status for accessibility' do
         filter = described_class.new(content)
         placeholder = filter.send(:held_attachment_placeholder, held_attachment)
