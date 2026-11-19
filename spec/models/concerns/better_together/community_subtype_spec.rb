@@ -38,7 +38,7 @@ module BetterTogether
     end
 
     it 'uses the community member role as the default member role' do
-      role = BetterTogether::Role.find_by(identifier: 'community_member', resource_type: 'BetterTogether::Community') ||
+      role = HostRoles.find('community_member') ||
              create(:better_together_role, :community_role, identifier: 'community_member')
 
       expect(subtype.new.default_member_role).to eq(role)

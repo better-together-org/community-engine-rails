@@ -53,14 +53,14 @@ RSpec.describe BetterTogether::OauthApplication do
       person = create(:person)
       app = build(:oauth_application, owner: person)
       # Regular person without manage_platform permission
-      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(false)
+      allow(person).to receive(:platform_manager?).and_return(false)
       expect(app.trusted?).to be false
     end
 
     it 'returns true for applications owned by platform managers' do
       person = create(:person)
-      app = build(:oauth_application, owner: person)
-      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(true)
+      app = build(:oauth_application, owner: person, platform: BetterTogether::Platform.find_by(host: true))
+      allow(person).to receive(:platform_manager?).and_return(true)
       expect(app.trusted?).to be true
     end
   end
@@ -94,7 +94,7 @@ RSpec.describe BetterTogether::OauthApplication do
 
     it 'rejects MCP-scoped applications for untrusted owners' do
       person = create(:person)
-      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(false)
+      allow(person).to receive(:platform_manager?).and_return(false)
 
       app = build(:oauth_application, owner: person, scopes: 'read mcp_access')
 
@@ -104,7 +104,7 @@ RSpec.describe BetterTogether::OauthApplication do
 
     it 'allows MCP-scoped applications for trusted owners' do
       person = create(:person)
-      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(true)
+      allow(person).to receive(:platform_manager?).and_return(true)
 
       app = create(:oauth_application, owner: person, scopes: 'read mcp_access')
 

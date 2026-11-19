@@ -18,6 +18,8 @@ class AddCommunityToBetterTogetherPages < ActiveRecord::Migration[7.2]
   private
 
   def backfill_pages_with_host_community
+    return unless table_has_rows?(:better_together_pages)
+
     host_community = BetterTogether::Community.find_by(host: true) || host_from_platform
 
     return unless host_community

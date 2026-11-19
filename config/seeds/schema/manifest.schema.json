@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://communityengine.app/schemas/seed-packet/2.0/manifest.schema.json",
+  "title": "Seed packet MANIFEST.json",
+  "type": "object",
+  "required": ["schema", "algorithm", "files"],
+  "properties": {
+    "schema": { "type": "string", "pattern": "^2\\.[0-9]+$" },
+    "algorithm": { "const": "sha256" },
+    "packet_id": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "size", "media_type"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^(packet\\.yml|records/[A-Za-z0-9_./-]+\\.yml|blobs/[0-9a-f]{64})$" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "size": { "type": "integer", "minimum": 0 },
+          "media_type": { "type": "string", "pattern": "^[a-z0-9.+-]+/[A-Za-z0-9.+-]+$" },
+          "owner": { "type": "string" },
+          "license": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

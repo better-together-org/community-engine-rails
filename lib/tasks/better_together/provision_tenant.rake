@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   desc 'Provision a new tenant platform. ' \
        'Args: name (required), host_url (required), time_zone (default UTC), ' \
        'admin_email (optional), admin_password (optional), admin_name (optional). ' \
        'Example: rails better_together:provision_tenant[MyTenant,https://tenant.example.com,UTC,admin@example.com,SecurePass1!,Admin]'
-  # rubocop:disable Metrics/BlockLength
+  # rubocop:disable-next Metrics/BlockLength
   task :provision_tenant, %i[name host_url time_zone admin_email admin_password admin_name] => :environment do |_t, args|
     name       = args[:name]
     host_url   = args[:host_url]
@@ -40,6 +40,4 @@ namespace :better_together do
       abort "❌ Provisioning failed:\n  #{result.errors.join("\n  ")}"
     end
   end
-  # rubocop:enable Metrics/BlockLength
 end
-# rubocop:enable Metrics/BlockLength

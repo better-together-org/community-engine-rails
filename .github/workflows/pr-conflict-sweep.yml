@@ -1,0 +1,71 @@
+name: PR Conflict Sweep
+
+# Finds open pull requests that conflict with their base branch after a push to it (which includes a PR
+# being merged into it), and labels them `merge-conflict` with one comment naming the conflicted files.
+# It only reports: it never changes a PR's branch. See bin/ci-pr-conflict-sweep.
+#
+# Writes use BTS_ROBOT_PUSH_TOKEN so the label and comment come from bts-robot. A merge made with the
+# default GITHUB_TOKEN does not fire a push-triggered workflow, so the schedule is the backstop.
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+      - "billing/**"
+      - "release/**"
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "Only PRs targeting this branch (blank for every open PR)"
+        required: false
+        default: ""
+      apply:
+        description: "Write labels and comments (off prints what would be done)"
+        type: boolean
+        default: false
+
+# One sweep per branch at a time; a newer push makes the older sweep pointless.
+concurrency:
+  group: pr-conflict-sweep-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN || github.token }}
+      # off | dry-run | apply: whether a generated-files-only conflict starts the Diagram Conflict Resolver.
+      CONFLICT_RESOLVER_MODE: ${{ vars.CONFLICT_RESOLVER_MODE || 'off' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Sweep open pull requests
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_BASE: ${{ inputs.base }}
+          INPUT_APPLY: ${{ inputs.apply }}
+          PUSHED_BRANCH: ${{ github.ref_name }}
+        run: |
+          args=()
+          if [[ "${EVENT}" == "push" ]]; then
+            args+=(--base "${PUSHED_BRANCH}" --apply)
+          elif [[ "${EVENT}" == "schedule" ]]; then
+            args+=(--apply)
+          else
+            [[ -n "${INPUT_BASE}" ]] && args+=(--base "${INPUT_BASE}")
+            [[ "${INPUT_APPLY}" == "true" ]] && args+=(--apply)
+          fi
+          bin/ci-pr-conflict-sweep "${args[@]}"

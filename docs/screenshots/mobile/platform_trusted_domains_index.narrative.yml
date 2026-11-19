@@ -1,0 +1,18 @@
+---
+title: Trusted domains - index
+audience:
+- platform_manager
+- platform_steward
+journey_step: As a steward, I list the email domains whose verified addresses join
+  this platform automatically.
+callouts:
+- :id: explanation
+  :title: What a trusted domain does
+  :description: States that only verified or confirmed addresses qualify and every
+    grant is logged.
+- :id: new_button
+  :title: Add trusted domain
+  :description: Starts a new trusted domain entry.
+accessibility_notes: The table has an aria-label and a visually hidden actions header.
+slug: platform_trusted_domains_index
+device: mobile

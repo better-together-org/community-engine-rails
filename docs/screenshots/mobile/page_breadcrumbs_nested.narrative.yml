@@ -1,0 +1,15 @@
+---
+title: Page breadcrumbs
+audience:
+- content_editor
+- developer
+journey_step: As a visitor on a nested page, I see where it sits in the site and can
+  step back up.
+callouts:
+- :id: breadcrumb_trail
+  :title: Breadcrumb trail
+  :description: Built from the navigation hierarchy; also emitted as BreadcrumbList
+    JSON-LD.
+accessibility_notes: nav with aria-label, ordered list, aria-current on the last item.
+slug: page_breadcrumbs_nested
+device: mobile

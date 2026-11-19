@@ -1,0 +1,48 @@
+{
+  "name": "privacy_ceiling_notice",
+  "device": "mobile",
+  "url": "/en/pages/opening-day/edit",
+  "title": "Edit Opening day | Pages | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "privacy_ceiling_notice",
+  "flow": "privacy_ceiling_notice",
+  "source_spec": "./spec/docs_screenshots/better_together/privacy_ceiling_notice_spec.rb",
+  "callouts": [
+    {
+      "selector": "#privacy_ceiling_notice_page_21e800d5-369d-4f21-984a-dd3188577b95",
+      "title": "Visibility notice",
+      "bullets": [
+        "Saves as public, goes live when the platform opens."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 0.390625,
+        "width": 461.0,
+        "height": 81.0,
+        "right": 473.0,
+        "bottom": 81.390625,
+        "center_x": 242.5,
+        "center_y": 40.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 0.390625,
+        "width": 461.0,
+        "height": 81.0,
+        "right": 473.0,
+        "bottom": 81.390625,
+        "center_x": 242.5,
+        "center_y": 40.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 101.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 1175.609375
+      }
+    }
+  ]
+}

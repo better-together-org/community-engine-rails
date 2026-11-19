@@ -1,16 +1,7 @@
 <%# locals: (events_block:) -%>
 <%
-  order_scope = case events_block.event_scope
-                when 'upcoming' then ->(s) { s.where('starts_at >= ?', Time.current).reorder(starts_at: :asc) }
-                when 'recent'   then ->(s) { s.where('starts_at < ?', Time.current).reorder(starts_at: :desc) }
-                else                 ->(s) { s.reorder(starts_at: :desc) }
-                end
-
-  events = resource_block_collection(events_block, BetterTogether::Event, extra_scope: order_scope)
-  cache_key = [events_block, events_block.community_scope_id, events_block.event_scope,
-               BetterTogether::Event.maximum(:updated_at)&.to_i,
-               BetterTogether::Event.count,
-               I18n.locale]
+  events = event_block_collection(events_block)
+  cache_key = [events_block, dynamic_block_cache_stamp(events_block), I18n.locale]
 %>
 <%= render layout: 'better_together/content/blocks/block', locals: { block: events_block } do %>
   <%= cache cache_key do %>

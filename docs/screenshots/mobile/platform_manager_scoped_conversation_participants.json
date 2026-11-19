@@ -2,7 +2,7 @@
   "name": "platform_manager_scoped_conversation_participants",
   "device": "mobile",
   "url": "/en/conversations/new",
-  "title": "Community Engine Host",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_manager_least_privilege_review",

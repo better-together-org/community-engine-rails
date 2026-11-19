@@ -32,9 +32,8 @@ module BetterTogether
                                         allow_destroy: true,
                                         reject_if: lambda { |attrs|
                                           attrs.blank? || (
-                                            # rubocop:todo Layout/LineLength
+                                            # rubocop:todo-next Layout/LineLength
                                             attrs['id'].blank? && attrs['name'].blank? && attrs['location_id'].blank? && attrs['location_type'].blank?
-                                            # rubocop:enable Layout/LineLength
                                           )
                                         }
         end

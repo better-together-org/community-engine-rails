@@ -139,6 +139,24 @@ entries:
     action: retain
     reverse_association: reviewed_person_deletion_requests
 
+  - key: BetterTogether::PlatformDeletionRequest#requested_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformDeletionRequest
+    association: requested_by
+    foreign_key: requested_by_id
+    action: destroy
+    reverse_association: platform_deletion_requests
+
+  - key: BetterTogether::PlatformDeletionRequest#reviewed_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformDeletionRequest
+    association: reviewed_by
+    foreign_key: reviewed_by_id
+    action: retain
+    reverse_association: reviewed_platform_deletion_requests
+
   - key: BetterTogether::PersonPurgeAudit#person
     kind: model_reference
     owner: person
@@ -345,6 +363,30 @@ entries:
     reverse_association: created_communities
     concern: BetterTogether::CreatedRecords
 
+  - key: BetterTogether::PlatformTrustedDomain#created_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformTrustedDomain
+    association: created_by
+    foreign_key: created_by_id
+    action: anonymize
+
+  - key: BetterTogether::TrustedDomainEvent#actor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::TrustedDomainEvent
+    association: actor
+    foreign_key: actor_id
+    action: anonymize
+
+  - key: BetterTogether::TrustedDomainEvent#subject
+    kind: model_reference
+    owner: person
+    model: BetterTogether::TrustedDomainEvent
+    association: subject
+    foreign_key: subject_id
+    action: anonymize
+
   - key: BetterTogether::PlatformInvitation#inviter
     kind: model_reference
     owner: person
@@ -364,6 +406,14 @@ entries:
     action: destroy
     reverse_association: received_platform_invitations
     concern: BetterTogether::InvitationParticipant
+
+  - key: BetterTogether::PlatformSnippet#updated_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformSnippet
+    association: updated_by
+    foreign_key: updated_by_id
+    action: retain
 
   - key: BetterTogether::GuestAccess#inviter
     kind: model_reference

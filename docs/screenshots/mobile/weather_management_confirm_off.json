@@ -1,0 +1,48 @@
+{
+  "name": "weather_management_confirm_off",
+  "device": "mobile",
+  "url": "/en/host/weather/switch/confirm?enabled=false",
+  "title": "Weather | Test Host Community",
+  "locale": "en",
+  "role": "host_steward",
+  "feature_set": "weather_management",
+  "flow": "confirm_off",
+  "source_spec": "./spec/docs_screenshots/better_together/weather_management_spec.rb",
+  "callouts": [
+    {
+      "selector": "#weather-confirm-effect",
+      "title": "Confirm with the effect stated",
+      "bullets": [
+        "Turning weather off stops every job and hides weather on every platform on this host."
+      ],
+      "target": {
+        "x": 24.0,
+        "y": 267.390625,
+        "width": 452.0,
+        "height": 130.0,
+        "right": 476.0,
+        "bottom": 397.390625,
+        "center_x": 250.0,
+        "center_y": 332.390625
+      },
+      "avoid": {
+        "x": 24.0,
+        "y": 267.390625,
+        "width": 452.0,
+        "height": 130.0,
+        "right": 476.0,
+        "bottom": 397.390625,
+        "center_x": 250.0,
+        "center_y": 332.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 417.39,
+        "width": 270.0,
+        "height": 242,
+        "score": 859.609375
+      }
+    }
+  ]
+}

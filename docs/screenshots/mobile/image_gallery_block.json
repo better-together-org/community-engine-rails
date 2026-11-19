@@ -1,0 +1,48 @@
+{
+  "name": "image_gallery_block",
+  "device": "mobile",
+  "url": "/en/gallery-block-89fa30a5",
+  "title": "Harbour | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "image_gallery_block",
+  "flow": "annotated",
+  "source_spec": "./spec/docs_screenshots/better_together/image_gallery_block_spec.rb",
+  "callouts": [
+    {
+      "selector": ".image-gallery-block",
+      "title": "Gallery",
+      "bullets": [
+        "The heading and image order come from the block.",
+        "Each thumbnail opens the viewer."
+      ],
+      "target": {
+        "x": 24.0,
+        "y": 0,
+        "width": 437.0,
+        "height": 1257,
+        "right": 461.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "avoid": {
+        "x": 24.0,
+        "y": 0,
+        "width": 437.0,
+        "height": 1257,
+        "right": 461.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 210
+      }
+    }
+  ]
+}

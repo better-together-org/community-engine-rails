@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :seed do
     desc 'Seed new roles, permissions, assignments, and navigation items'
@@ -49,10 +49,9 @@ namespace :better_together do
         resource_type: 'BetterTogether::Platform',
         name: 'Platform Analytics Viewer',
         # rubocop:todo Lint/CopDirectiveSyntax
-        # rubocop:todo Lint/CopDirectiveSyntax
+        # rubocop:todo-next Lint/CopDirectiveSyntax
         description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
                      'reports without access to other platform management functions.'
-        # rubocop:enable Lint/CopDirectiveSyntax
         # rubocop:enable Lint/CopDirectiveSyntax
       )
       role.save! if role.changed?
@@ -183,7 +182,7 @@ namespace :better_together do
       }
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def host_dashboard_review_nav_items
       [
         {
@@ -241,10 +240,38 @@ namespace :better_together do
           privacy: 'private',
           visibility_strategy: 'permission',
           permission_identifier: 'manage_platform_safety'
+        },
+        # Weather tab: host stewards only (WeatherPolicy checks the same permission on the host platform).
+        {
+          identifier: 'host-dashboard-weather',
+          title: 'Weather',
+          slug: 'host-dashboard-weather',
+          position: 22,
+          item_type: 'link',
+          route_name: 'host_dashboard_weather_url',
+          icon: 'cloud-sun',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform_settings'
+        },
+        {
+          identifier: 'host-dashboard-jobs',
+          title: 'Background Jobs',
+          slug: 'host-dashboard-jobs',
+          position: 23,
+          item_type: 'link',
+          route_name: 'host_jobs_url',
+          icon: 'gears',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform_jobs'
         }
       ]
     end
-    # rubocop:enable Metrics/MethodLength
 
     def shift_host_nav_positions_for_analytics(host_nav)
       scope = BetterTogether::NavigationItem
@@ -372,8 +399,12 @@ namespace :better_together do
         'view_metrics_dashboard'
       when 'host-dashboard-safety-review'
         'manage_platform_safety'
+      when 'host-dashboard-jobs'
+        'manage_platform_jobs'
       when 'host-dashboard-platform-connection-review'
         'manage_network_connections'
+      when 'host-dashboard-weather'
+        'manage_platform_settings'
       else
         'manage_platform'
       end
@@ -444,4 +475,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

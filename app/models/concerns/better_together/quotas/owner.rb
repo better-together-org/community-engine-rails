@@ -35,7 +35,7 @@ module BetterTogether
       # not owner erasure. Rows where this record was only the *actor* on someone
       # else's quota keep the usage but drop the reference to it, since owner/actor
       # are polymorphic (no FK) and so are invisible to PersonAssociationAudit.
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def erase_quota_ledger
         quota_ids = BetterTogether::Quota.where(owner: self).select(:id)
 
@@ -51,7 +51,6 @@ module BetterTogether
         BetterTogether::QuotaReservation.where(actor: self).update_all(actor_type: nil, actor_id: nil)
         BetterTogether::QuotaGrant.where(granted_by: self).update_all(granted_by_type: nil, granted_by_id: nil)
       end
-      # rubocop:enable Metrics/AbcSize
     end
   end
 end

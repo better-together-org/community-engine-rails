@@ -1,7 +1,7 @@
 {
   "name": "comment_permission_controls_email",
   "device": "mobile",
-  "url": "/community-engine/spec/dummy/tmp/comment_permission_controls_notification_email.html",
+  "url": "/home/runner/work/community-engine-rails/community-engine-rails/spec/dummy/tmp/comment_permission_controls_notification_email.html",
   "title": "",
   "locale": "en",
   "role": "user",

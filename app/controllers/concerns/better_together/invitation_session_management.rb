@@ -4,7 +4,7 @@ module BetterTogether
   # Concern for managing invitation tokens in user sessions across all invitation types
   # Provides unified session handling for registration and authentication flows
   # This module coordinates multiple invitation concerns and provides a unified interface
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module InvitationSessionManagement
     extend ActiveSupport::Concern
 
@@ -60,7 +60,7 @@ module BetterTogether
 
       # Check invitation exists and is valid
       invitation_class = invitation_class_for_type(invitation_type)
-      invitation_class.pending.not_expired.exists?(token: token)
+      invitation_class.redeemable_on(Current.platform).pending.not_expired.exists?(token: token)
     end
 
     # Unified invitation handling in user creation
@@ -145,10 +145,10 @@ module BetterTogether
     # the platform_member role when the invitation carries no explicit role.
     def handle_platform_invitation_acceptance(user, invitation)
       role = invitation.platform_role ||
-             BetterTogether::Role.find_by(identifier: 'platform_member')
+             BetterTogether::Role.find_default('platform_member', platform: invitation.invitable)
 
       if role
-        helpers.host_platform.person_platform_memberships.find_or_create_by!(
+        invitation.invitable.person_platform_memberships.find_or_create_by!(
           member: user.person,
           role: role
         ) { |m| m.status = 'active' }
@@ -173,7 +173,7 @@ module BetterTogether
       return unless invitation_token.present?
 
       invitation_class = invitation_class_for_type(invitation_type)
-      invitation = invitation_class.pending.not_expired.find_by(
+      invitation = invitation_class.redeemable_on(Current.platform).pending.not_expired.find_by(
         token: invitation_token,
         invitable: resource
       )
@@ -204,7 +204,7 @@ module BetterTogether
     # Find invitation by token for given type
     def find_invitation_by_token(invitation_type, token)
       invitation_class = invitation_class_for_type(invitation_type)
-      invitation_class.pending.not_expired.find_by(token: token)
+      invitation_class.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
     end
 
     # Store invitation instance in instance variable
@@ -238,5 +238,4 @@ module BetterTogether
       end
     end
   end
-  # rubocop:enable Metrics/ModuleLength
 end

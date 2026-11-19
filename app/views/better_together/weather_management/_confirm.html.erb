@@ -1,0 +1,16 @@
+<%# locals: (heading:, effect:, url:, enabled:, cancel_url:) -%>
+<div id="weather-confirm">
+  <h1 id="weather-confirm-heading" class="mb-3"><%= heading %></h1>
+  <div id="weather-confirm-effect" class="alert <%= enabled ? 'alert-info' : 'alert-warning' %>" role="status">
+    <%= effect %>
+  </div>
+  <div id="weather-confirm-actions" class="d-flex flex-wrap gap-2">
+    <%= button_to url, method: :patch, params: { enabled: },
+                       id: 'weather-confirm-btn', form: { id: 'weather-confirm-form' },
+                       class: "btn #{enabled ? 'btn-primary' : 'btn-danger'}" do %>
+      <%= t(enabled ? 'host_dashboard.weather.confirm.enable' : 'host_dashboard.weather.confirm.disable') %>
+    <% end %>
+    <%= link_to t('host_dashboard.weather.confirm.cancel'), cancel_url, id: 'weather-confirm-cancel',
+                                                                        class: 'btn btn-outline-secondary' %>
+  </div>
+</div>

@@ -7,8 +7,8 @@ RSpec.describe BetterTogether::Federation::Transport::TransportResolver do
     subject(:resolution) { described_class.call(connection:) }
 
     context 'when both platforms are locally hosted' do
-      let(:source_platform) { create(:better_together_platform, external: false) }
-      let(:target_platform) { create(:better_together_platform, external: false) }
+      let(:source_platform) { create(:better_together_platform, locality: 'local') }
+      let(:target_platform) { create(:better_together_platform, locality: 'local') }
       let(:connection) { create(:better_together_platform_connection, source_platform:, target_platform:) }
 
       it 'chooses the direct adapter' do
@@ -18,8 +18,8 @@ RSpec.describe BetterTogether::Federation::Transport::TransportResolver do
     end
 
     context 'when either platform is external' do
-      let(:source_platform) { create(:better_together_platform, :community_engine_peer, external: true) }
-      let(:target_platform) { create(:better_together_platform, external: false) }
+      let(:source_platform) { create(:better_together_platform, :community_engine_peer, locality: 'remote') }
+      let(:target_platform) { create(:better_together_platform, locality: 'local') }
       let(:connection) { create(:better_together_platform_connection, source_platform:, target_platform:) }
 
       it 'chooses the http adapter' do

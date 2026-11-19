@@ -77,3 +77,11 @@ RSpec.configure do |config|
     Capybara.asset_host = "http://#{host}:#{port}"
   end
 end
+
+# Quit every browser the run started, so none outlives the suite (a leaked Chrome per session once hung a host).
+RSpec.configure do |config|
+  config.after(:suite) do
+    Capybara.send(:session_pool).each_value { |session| session.driver.quit if session.driver.respond_to?(:quit) }
+    Capybara.reset_sessions!
+  end
+end

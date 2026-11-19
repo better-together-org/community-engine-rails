@@ -9,9 +9,19 @@ module BetterTogether
           return true unless Configuration.enabled?
 
           context = attachment_context_for(blob)
-          return true unless context
+          return item_for_context(blob, context)&.releasable? == true if context
 
-          item_for_context(blob, context)&.releasable? == true
+          catch_all_releasable?(blob)
+        end
+
+        # Blobs attached only through undeclared models are gated by the catch-all
+        # surface: released once any Item for the blob is clean. Auth rules are not
+        # touched, this only withholds unscanned files.
+        def catch_all_releasable?(blob)
+          return true unless Configuration.enabled_for_surface?(AttachmentEnrollment::CATCH_ALL_SURFACE)
+          return true unless blob.attachments.includes(:record).any? { |a| AttachmentEnrollment.catch_all_attachment?(a) }
+
+          Item.where(blob_id: blob.id).any?(&:releasable?)
         end
 
         def download_allowed_for_record?(record, attachment_name)

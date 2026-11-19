@@ -2,7 +2,7 @@
   "name": "release_0_11_0_settings_account_deletion",
   "device": "desktop",
   "url": "/en/settings",
-  "title": "Settings | Community Engine Host",
+  "title": "Settings | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "settings_embed_review",

@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: '20'
 
-      # Sources are skipped when their recorded content hash matches (docs/diagrams/exports/.source-hashes).
+      # Sources are skipped when their recorded content hash matches (docs/diagrams/exports/.hashes/<source>.hash).
       # The renderer or this workflow changing can alter every export, so those changes re-render everything.
       - name: Render Mermaid diagrams
         run: |

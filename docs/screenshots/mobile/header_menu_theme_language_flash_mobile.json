@@ -1,0 +1,49 @@
+{
+  "name": "header_menu_theme_language_flash_mobile",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "header_menu_theme",
+  "flow": "language_flash_mobile",
+  "source_spec": "./spec/docs_screenshots/better_together/header_menu_theme_spec.rb",
+  "callouts": [
+    {
+      "selector": "#locale-switcher .dropdown-menu",
+      "title": "Language",
+      "bullets": [
+        "Opens above the saved alert.",
+        "Hover and current item visible."
+      ],
+      "target": {
+        "x": 20.0,
+        "y": 100.0,
+        "width": 445.0,
+        "height": 146.0,
+        "right": 465.0,
+        "bottom": 246.0,
+        "center_x": 242.5,
+        "center_y": 173.0
+      },
+      "avoid": {
+        "x": 20.0,
+        "y": 100.0,
+        "width": 445.0,
+        "height": 146.0,
+        "right": 465.0,
+        "bottom": 246.0,
+        "center_x": 242.5,
+        "center_y": 173.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 266.0,
+        "width": 270.0,
+        "height": 184,
+        "score": 1011.0
+      }
+    }
+  ]
+}

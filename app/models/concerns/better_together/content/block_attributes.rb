@@ -28,9 +28,8 @@ module BetterTogether
 
         has_one_attached :background_image_file do |attachable|
           attachable.variant :optimized_jpeg, resize_to_limit: [1920, 1080],
-                                              # rubocop:todo Layout/LineLength
+                                              # rubocop:todo-next Layout/LineLength
                                               saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
-          # rubocop:enable Layout/LineLength
           attachable.variant :optimized_png, resize_to_limit: [1920, 1080], saver: { strip: true, quality: 90 },
                                              format: 'png'
         end
@@ -42,9 +41,8 @@ module BetterTogether
         validate :validate_css_units
 
         validates :container_class,
-                  # rubocop:todo Layout/LineLength
+                  # rubocop:todo-next Layout/LineLength
                   inclusion: { in: VALID_CONTAINER_CLASSES, message: 'must be a valid Bootstrap container class (container, container-fluid) or none.' }, allow_blank: true
-        # rubocop:enable Layout/LineLength
 
         store_attributes :accessibility_attributes do
           aria_label String, default: ''
@@ -118,7 +116,7 @@ module BetterTogether
         include ::BetterTogether::RemoveableAttachment
       end
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def block_styles # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         styles = {
           background_color:,
@@ -168,7 +166,6 @@ module BetterTogether
 
         styles
       end
-      # rubocop:enable Metrics/MethodLength
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
@@ -221,7 +218,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def validate_css_units # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         BORDER_ATTRIBUTES.each do |attribute|
           value = send(attribute)
@@ -243,7 +240,6 @@ module BetterTogether
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
     end

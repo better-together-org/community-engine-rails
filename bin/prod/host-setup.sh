@@ -1,23 +1,28 @@
 #!/bin/bash
 set -e
 
-# Ensure the script is run as root.
-if [ "$EUID" -ne 0 ]; then
-  printf -- "This script must be run as root. Please run it with sudo or as the root user.\n"
-  exit 1
-fi
-
-#############################################
-# Trap signals for clean exit
-#############################################
-cleanup() {
-  printf -- "\nReceived termination signal. Cleaning up and exiting...\n"
-  stty sane 2>/dev/null  # Restore terminal settings in case of disruption
-  exit 0
+# Dry runs and tests need no privileges; real runs do.
+require_root() {
+  if [ "$DRY_RUN" = true ]; then return 0; fi
+  if [ "$EUID" -ne 0 ]; then
+    printf -- "This script must be run as root. Please run it with sudo or as the root user.\n"
+    exit 1
+  fi
 }
 
-# Trap SIGINT (Ctrl+C), SIGTERM, and SIGQUIT
-trap cleanup SIGINT SIGTERM SIGQUIT
+#############################################
+# Trap signals: restore the terminal, exit non-zero
+#############################################
+cleanup() {
+  local code="$1"
+  printf -- "\nReceived termination signal. Exiting with status %s.\n" "$code" >&2
+  stty sane 2>/dev/null || true
+  exit "$code"
+}
+
+trap 'cleanup 130' SIGINT
+trap 'cleanup 143' SIGTERM
+trap 'cleanup 131' SIGQUIT
 
 #############################################
 # Global Variables (Defaults)
@@ -33,6 +38,37 @@ NORDVPN_LOGIN_URL=""
 NEW_HOSTNAME=""
 STORAGE_PATH=""
 RUN_STEP=""
+WITH_ELASTICSEARCH=false
+VERSIONS_FILE=""
+DRY_RUN=false
+YES=false
+FORCE=false
+UPDATE_OS=false
+LOG_FILE="/var/log/ce-host-setup.log"
+SKIP_STEPS=""
+FROM_STEP=""
+APP_NAME=""
+APP_DOMAIN=""
+DOKKU_GLOBAL_DOMAIN=""
+DOKKU_SSH_KEY_FILE=""
+LETSENCRYPT_EMAIL=""
+RECREATE_SERVICE=""
+CONFIRM_DESTROY=""
+SNAPSHOT_DIR="/var/backups/ce-host-setup"
+WITH_CLOUDFLARED=false
+WITH_NORDVPN=false
+WITH_FLEET_BASELINE=false
+FLEET_EXTENSION=""
+STORAGE_BACKEND="local"
+S3_ENDPOINT_ARG=""
+S3_BUCKET_ARG=""
+S3_REGION_ARG=""
+FAIL2BAN_IGNOREIP=""
+SKIP_FIREWALL=false
+OS_ID=""
+OS_VERSION=""
+OS_CODENAME=""
+DPKG_ARCH=""
 
 #############################################
 # Function: Display Detailed Usage/Help Text
@@ -61,13 +97,47 @@ Options:
   --hostname=NAME          Assign a custom hostname.
   --storage-path=PATH      Specify a folder for backups and Cosmos data.
   -v, --verbose            Enable verbose debug messages.
-  --step=NAME              Run only a specific step. Valid names:
-                           welcome, specs, network, hardening, backup, tweaks,
-                           update, docker, cloudflared, nordvpn, hostname, storage.
+  --versions-file=PATH     Version manifest (default: host-setup.versions next to
+                           this script). Every pinned version comes from it.
+  --dry-run                Print every command and write nothing.
+  --yes                    Non-interactive. Prompts take their default; anything
+                           that needs input must be given as a flag below, or that
+                           sub-step is skipped.
+  --app=NAME --domain=HOST --letsencrypt-email=ADDR
+                           App name, its domain, certificate contact.
+  --dokku-domain=HOST      Global Dokku domain to add.
+  --dokku-ssh-key-file=F   Public key file to register as the Dokku admin key.
+  --update-os              Allow apt-get upgrade in the update step.
+  --skip=A,B               Omit these steps.
+  --from-step=NAME         Run NAME and every step after it.
+  --log-file=PATH          Log location (default /var/log/ce-host-setup.log).
+  --force                  Needed with --recreate-service on a host with apps.
+  --recreate-service=NAME  Snapshot, then destroy and recreate one Postgres or
+                           Redis service. Needs --app, --force and
+                           --confirm-destroy=NAME. Apps are never destroyed.
+  --with-cloudflared       Also install Cloudflared (off by default).
+  --with-nordvpn           Also install NordVPN (off by default).
+  --with-fleet-baseline    Also run the BTS fleet baseline through a sourced
+                           extension; needs --fleet-extension=FILE.
+  --fleet-extension=FILE   Root-owned file defining fleet_baseline_run.
+  --storage-backend=NAME   local (default), garage or aws. Settings only; keys
+                           are never read or stored by this script.
+  --s3-endpoint=URL --s3-bucket=NAME --s3-region=NAME
+                           Garage or AWS bucket settings.
+  --skip-firewall          Leave the firewall alone (implied by --with-fleet-baseline,
+                           whose managed profile owns it).
+  --fail2ban-ignoreip=LIST Space-separated addresses fail2ban must never ban.
+  --with-elasticsearch     Also install the Elasticsearch plugin. Off by default:
+                           search uses Postgres (SEARCH_BACKEND=pg_search).
+  --step=NAME              Run only this step. Valid names:
+                           welcome, specs, os_check, network, hardening, backup, tweaks,
+                           update, docker, dokku, hostname, storage, community_engine;
+                           optional: elasticsearch, cloudflared, nordvpn,
+                           fleet_baseline.
   --help                   Display this help message.
 
 EOF
-  exit 0
+  exit "${1:-0}"
 }
 
 #############################################
@@ -76,6 +146,7 @@ EOF
 debug() {
   if [ "$VERBOSE" = true ]; then
     # Use "$1" as the format string and the rest as substitutions.
+    # shellcheck disable=SC2059 # callers pass a printf format as $1
     printf -- "[DEBUG] $1\n" "${@:2}"
   fi
 }
@@ -131,6 +202,39 @@ parse_args() {
         debug "Storage path set to $STORAGE_PATH"
         shift
         ;;
+      --dry-run) DRY_RUN=true; shift ;;
+      --yes|-y) YES=true; shift ;;
+      --force) FORCE=true; shift ;;
+      --update-os) UPDATE_OS=true; shift ;;
+      --app=*) APP_NAME="${1#*=}"; shift ;;
+      --domain=*) APP_DOMAIN="${1#*=}"; shift ;;
+      --dokku-domain=*) DOKKU_GLOBAL_DOMAIN="${1#*=}"; shift ;;
+      --dokku-ssh-key-file=*) DOKKU_SSH_KEY_FILE="${1#*=}"; shift ;;
+      --letsencrypt-email=*) LETSENCRYPT_EMAIL="${1#*=}"; shift ;;
+      --skip=*) SKIP_STEPS="${1#*=}"; shift ;;
+      --from-step=*) FROM_STEP="${1#*=}"; shift ;;
+      --log-file=*) LOG_FILE="${1#*=}"; shift ;;
+      --recreate-service=*) RECREATE_SERVICE="${1#*=}"; shift ;;
+      --confirm-destroy=*) CONFIRM_DESTROY="${1#*=}"; shift ;;
+      --with-cloudflared) WITH_CLOUDFLARED=true; shift ;;
+      --with-nordvpn) WITH_NORDVPN=true; shift ;;
+      --with-fleet-baseline) WITH_FLEET_BASELINE=true; shift ;;
+      --fleet-extension=*) FLEET_EXTENSION="${1#*=}"; shift ;;
+      --storage-backend=*) STORAGE_BACKEND="${1#*=}"; shift ;;
+      --s3-endpoint=*) S3_ENDPOINT_ARG="${1#*=}"; shift ;;
+      --s3-bucket=*) S3_BUCKET_ARG="${1#*=}"; shift ;;
+      --s3-region=*) S3_REGION_ARG="${1#*=}"; shift ;;
+      --skip-firewall) SKIP_FIREWALL=true; shift ;;
+      --fail2ban-ignoreip=*) FAIL2BAN_IGNOREIP="${1#*=}"; shift ;;
+      --versions-file=*)
+        VERSIONS_FILE="${1#*=}"
+        shift
+        ;;
+      --with-elasticsearch)
+        WITH_ELASTICSEARCH=true
+        debug "Elasticsearch plugin step enabled."
+        shift
+        ;;
       -v|--verbose)
         VERBOSE=true
         debug "Verbose mode enabled."
@@ -142,14 +246,120 @@ parse_args() {
         shift
         ;;
       --help)
-        usage
+        usage 0
         ;;
       *)
-        printf -- "Unknown option: %s\n" "$1"
-        usage
+        printf -- "Unknown option: %s\n" "$1" >&2
+        usage 2
         ;;
     esac
   done
+}
+
+#############################################
+# Version manifest and OS detection
+#############################################
+MANIFEST_KEYS="DOKKU_TAG DOKKU_BOOTSTRAP_SHA256 DOKKU_POSTGRES_TAG DOKKU_REDIS_TAG
+DOKKU_LETSENCRYPT_TAG DOKKU_ELASTICSEARCH_TAG POSTGIS_IMAGE POSTGIS_IMAGE_VERSION
+REDIS_IMAGE REDIS_IMAGE_VERSION ELASTICSEARCH_IMAGE ELASTICSEARCH_IMAGE_VERSION
+DOCKER_ENGINE_VERSION CLOUDFLARED_VERSION BORG_VERSION"
+
+# Parses KEY=value lines; the file is never sourced, so it cannot run code.
+load_versions() {
+  local file="${VERSIONS_FILE:-$(dirname "${BASH_SOURCE[0]}")/host-setup.versions}"
+  local line key value
+  if [ ! -r "$file" ]; then
+    printf -- "Version manifest not found: %s\n" "$file" >&2
+    exit 1
+  fi
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue ;; esac
+    if [[ ! "$line" =~ ^([A-Z0-9_]+)=([A-Za-z0-9._:/@+~-]*)$ ]]; then
+      printf -- "Invalid line in %s: %s\n" "$file" "$line" >&2
+      exit 1
+    fi
+    key="${BASH_REMATCH[1]}"
+    value="${BASH_REMATCH[2]}"
+    case " ${MANIFEST_KEYS//$'\n'/ } " in
+      *" $key "*) printf -v "$key" '%s' "$value" ;;
+      *) printf -- "Unknown manifest key: %s\n" "$key" >&2; exit 1 ;;
+    esac
+  done < "$file"
+  for key in ${MANIFEST_KEYS//$'\n'/ }; do
+    if [ -z "${!key:-}" ]; then
+      printf -- "Manifest key %s is missing or empty in %s\n" "$key" "$file" >&2
+      exit 1
+    fi
+  done
+  debug "Loaded version manifest %s" "$file"
+}
+
+# Reads one KEY=value field from /etc/os-release without sourcing it.
+os_release_field() {
+  sed -n "s/^$1=//p" /etc/os-release | head -1 | tr -d '"'
+}
+
+# Sets OS_ID, OS_VERSION, OS_CODENAME and DPKG_ARCH, or stops on an unsupported host.
+detect_os() {
+  if [ ! -r /etc/os-release ]; then
+    printf -- "Cannot read /etc/os-release; unsupported host.\n" >&2
+    exit 1
+  fi
+  OS_ID="$(os_release_field ID)"
+  OS_VERSION="$(os_release_field VERSION_ID)"
+  OS_CODENAME="$(os_release_field VERSION_CODENAME)"
+  DPKG_ARCH="$(dpkg --print-architecture 2>/dev/null || echo unknown)"
+  case "$DPKG_ARCH" in
+    amd64|arm64) ;;
+    *) printf -- "Unsupported architecture: %s (need amd64 or arm64).\n" "$DPKG_ARCH" >&2; exit 1 ;;
+  esac
+  case "$OS_ID:$OS_VERSION" in
+    debian:12|debian:13|ubuntu:22.04|ubuntu:24.04|ubuntu:26.04) ;;
+    *) printf -- "Unsupported OS: %s %s (supported: Debian 12/13, Ubuntu 22.04/24.04/26.04).\n" "$OS_ID" "$OS_VERSION" >&2; exit 1 ;;
+  esac
+  debug "Detected OS %s %s (%s) on %s" "$OS_ID" "$OS_VERSION" "$OS_CODENAME" "$DPKG_ARCH"
+}
+
+step_os_check() {
+  detect_os
+  printf -- "OS check passed: %s %s (%s), %s.\n" "$OS_ID" "$OS_VERSION" "$OS_CODENAME" "$DPKG_ARCH"
+  if [ "$OS_ID:$OS_VERSION" = "ubuntu:26.04" ]; then
+    printf -- "Note: Ubuntu 26.04 is supported by Dokku; the Docker repository for it is unverified.\n"
+  fi
+}
+
+#############################################
+# Command helpers (a dry run prints instead of acting)
+#############################################
+run() {
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run]"
+    printf -- " %q" "$@"
+    printf -- "\n"
+    return 0
+  fi
+  "$@"
+}
+
+# Writes stdin to a file with the given mode; prints it on a dry run.
+write_file() {
+  local path="$1" mode="${2:-0644}"
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run] write %s (mode %s):\n" "$path" "$mode"
+    sed 's/^/    /'
+    return 0
+  fi
+  install -m "$mode" /dev/stdin "$path"
+}
+
+# Runs a command with a file on stdin.
+run_stdin_file() {
+  local file="$1"; shift
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run]"; printf -- " %q" "$@"; printf -- " < %s\n" "$file"
+    return 0
+  fi
+  "$@" < "$file"
 }
 
 #############################################
@@ -158,6 +368,7 @@ parse_args() {
 prompt_continue() {
   local step_name="$1"
   local step_help="$2"
+  if [ "$YES" = true ] || [ "$DRY_RUN" = true ]; then return 0; fi
   printf -- "\n-------------------------------\n"
   printf -- "Step: %s\n" "$step_name"
   printf -- "-------------------------------\n"
@@ -201,18 +412,18 @@ step_welcome() {
   printf -- "################################################\n\n"
   printf -- "✨ Hello and welcome! ✨\n\n"
   printf -- "You're about to set up your system with Better Together's Community Engine.\n"
-  printf -- "This platform is more than technology—it's a movement dedicated to kindness,\n"
+  printf -- "This platform is more than technology, it's a movement dedicated to kindness,\n"
   printf -- "connection, and cooperation, helping communities become stronger together.\n\n"
   printf -- "With this simple setup wizard, you will:\n"
   printf -- "  1. Assign a fixed internet address to easily locate your device.\n"
   printf -- "  2. Secure your system by optionally disabling Wi-Fi and Bluetooth.\n"
   printf -- "  3. Mute audio settings for a quieter, more focused environment.\n"
   printf -- "  4. Ensure your system has the latest security updates and features.\n"
-  printf -- "  5. Install essential tools like Docker, Cloudflared, and NordVPN.\n"
+  printf -- "  5. Install Docker and Dokku at pinned versions (Cloudflared, NordVPN and Elasticsearch are opt-in).\n"
   printf -- "  6. Strengthen security and keep your data safe.\n\n"
   printf -- "This script is optimized for systems similar to a Raspberry Pi 5 with at least 8GB RAM,\n"
   printf -- "but aims to support various hardware configurations.\n\n"
-  printf -- "Let's create a more connected, resilient, and empowered community—together.\n\n"
+  printf -- "Let's create a more connected, resilient, and empowered community, together.\n\n"
   prompt_continue "Welcome & Overview" "When you're ready, press (y) to begin your journey."
   debug "Finished step_welcome"
 }
@@ -258,19 +469,6 @@ step_check_specs() {
 }
 
 #############################################
-# Function: Set Static IP (Stub)
-#############################################
-set_static_ip() {
-  printf -- "\nStatic IP Configuration\n"
-  printf -- "-------------------------\n"
-  printf -- "Enter the desired static IP for eth0 (e.g., 192.168.1.100/24): "
-  read -r new_ip
-  printf -- "Configuring static IP %s for eth0... (this is a simulation)\n" "$new_ip"
-  sleep 1
-  printf -- "Static IP %s has been configured for eth0.\n" "$new_ip"
-}
-
-#############################################
 # Function: Summarize Network Context
 #############################################
 summarize_network_context() {
@@ -285,7 +483,7 @@ summarize_network_context() {
   printf -- "\n"
   
   printf -- "Default Gateway:\n"
-  ip route | grep '^default'
+  ip route | grep '^default' || true
   printf -- "\n"
   
   printf -- "DNS Servers:\n"
@@ -294,7 +492,6 @@ summarize_network_context() {
   
   # Check for a static IP on the Ethernet interface (eth0)
   ETH_INTERFACE="eth0"
-  STATIC_IP_SET=false
   printf -- "\n"
   debug "Checking if interface %s exists..." "$ETH_INTERFACE"
   if ip addr show "$ETH_INTERFACE" &>/dev/null; then
@@ -312,7 +509,6 @@ summarize_network_context() {
       CONFIGURED_IP=$(echo "$STATIC_CONF" | awk -F'=' '{print $2}' | xargs)
       printf -- "A static IP is configured for %s: %s\n" "$ETH_INTERFACE" "$CONFIGURED_IP"
       debug "Static IP found: %s" "$CONFIGURED_IP"
-      STATIC_IP_SET=true
     else
       debug "No static configuration found in /etc/dhcpcd.conf. Checking current IP on %s..." "$ETH_INTERFACE"
       CURRENT_IP=$(ip -4 addr show "$ETH_INTERFACE" | awk '/inet / {print $2}' | cut -d/ -f1)
@@ -329,23 +525,6 @@ summarize_network_context() {
   fi
 
   printf -- "------------------------------\n\n"
-  
-  if [ "$STATIC_IP_SET" = false ]; then
-    debug "No static IP set for %s. Prompting user for static IP configuration." "$ETH_INTERFACE"
-    printf -- "Would you like to configure a static IP address for %s? (y/n): " "$ETH_INTERFACE"
-    read -r answer
-    debug "User input for static IP configuration: %s" "$answer"
-    case "$answer" in
-      y|Y|yes)
-        debug "User opted to configure a static IP."
-        set_static_ip
-        ;;
-      *)
-        printf -- "Proceeding without configuring a static IP.\n"
-        debug "User opted not to configure a static IP."
-        ;;
-    esac
-  fi
 }
 
 #############################################
@@ -358,13 +537,11 @@ configure_network() {
   summarize_network_context
   
   if [[ -n "$STATIC_IP_ETH" ]]; then
-    printf -- "Setting static IP for Ethernet to %s\n" "$STATIC_IP_ETH"
-    # Insert commands to set static IP for Ethernet here.
+    printf -- "Static IP for Ethernet (%s) is not automated; configure it with your OS network tools. No change made.\n" "$STATIC_IP_ETH"
   fi
   
   if [[ -n "$STATIC_IP_WLAN" ]]; then
-    printf -- "Setting static IP for Wi-Fi to %s\n" "$STATIC_IP_WLAN"
-    # Insert commands to set static IP for Wi-Fi here.
+    printf -- "Static IP for Wi-Fi (%s) is not automated; configure it with your OS network tools. No change made.\n" "$STATIC_IP_WLAN"
   fi
   
   prompt_continue "Network Configuration" "Network settings applied (or skipped if none provided). Press (y) to continue."
@@ -378,40 +555,16 @@ hardware_tweaks() {
   debug "Starting hardware_tweaks"
   printf -- "Applying hardware and security tweaks...\n"
   if [[ "$DISABLE_WIFI" == true ]]; then
-    printf -- "Disabling Wi-Fi...\n"
+    printf -- "Disabling Wi-Fi is not automated yet. No change made.\n"
   fi
   if [[ "$DISABLE_BLUETOOTH" == true ]]; then
-    printf -- "Disabling Bluetooth...\n"
+    printf -- "Disabling Bluetooth is not automated yet. No change made.\n"
   fi
   if [[ "$MUTE_AUDIO" == true ]]; then
-    printf -- "Muting audio...\n"
+    printf -- "Muting audio is not automated yet. No change made.\n"
   fi
   prompt_continue "Hardware & Security Tweaks" "Hardware tweaks applied (or skipped if none provided). Press (y) to continue."
   debug "Finished hardware_tweaks"
-}
-
-#############################################
-# New Step: Security Hardening
-#############################################
-security_hardening() {
-  debug "Starting security hardening"
-  printf -- "Applying security hardening measures...\n"
-  # Insert your security hardening commands here.
-  printf -- "Security hardening measures applied. (Placeholder)\n"
-  debug "Finished security hardening"
-  prompt_continue "Security Hardening" "Press Enter to continue after security hardening."
-}
-
-#############################################
-# New Step: Backup Configuration
-#############################################
-backup_config() {
-  debug "Starting backup configuration"
-  printf -- "Configuring backup settings...\n"
-  # Insert your backup configuration commands here.
-  printf -- "Backup configuration complete. (Placeholder)\n"
-  debug "Finished backup configuration"
-  prompt_continue "Backup Configuration" "Press Enter to continue after backup configuration."
 }
 
 #############################################
@@ -419,130 +572,190 @@ backup_config() {
 #############################################
 update_system() {
   debug "Starting system update..."
-  printf -- "Updating system packages...\n"
-  sudo apt update && sudo apt upgrade -y
+  run apt-get update
+  if [ "$UPDATE_OS" = true ]; then
+    printf -- "Upgrading packages (--update-os). Docker and Dokku upgrades are guided; check the list first.\n"
+    run env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -o Dpkg::Options::=--force-confold
+  else
+    printf -- "Package index refreshed. Upgrades are skipped; pass --update-os to allow them.\n"
+  fi
   debug "Finished system update."
 }
 
 install_docker() {
   debug "Starting Docker installation..."
-  
-  # Check if Docker is present and working.
-  if command -v docker &>/dev/null; then
-    debug "Docker is already installed."
-    printf -- "Docker is already installed and appears to be ready to use.\n"
-    printf -- "Would you like to reinstall/update Docker, or skip Docker installation? (r to reinstall / s to skip): "
-    read -r docker_choice
-    case "$docker_choice" in
-      s|skip)
-        debug "User chose to skip Docker installation."
-        return 0
-        ;;
-      r|reinstall)
-        debug "User chose to reinstall/update Docker."
-        ;;
-      *)
-        debug "No valid input received; defaulting to skip Docker installation."
-        return 0
-        ;;
-    esac
-  fi
-  
-  # Proceed with installation if Docker is not present or user opts to reinstall.
-  if [[ -n "$DOCKER_VERSION" ]]; then
-    printf -- "Installing Docker version %s...\n" "$DOCKER_VERSION"
-    # Insert commands to install the specified Docker version.
-  else
-    printf -- "Installing latest Docker...\n"
-    # Insert commands to install the latest Docker.
-    
-    # Add Docker's official GPG key:
-    apt-get update
-    apt-get install ca-certificates curl -y
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
+  detect_os
 
-    # Add the repository to Apt sources:
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      tee /etc/apt/sources.list.d/docker.list > /dev/null
-    apt-get update
-    
-    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-    
-    groupadd docker
-    usermod -aG docker $USER
-    newgrp docker
-    docker run hello-world
+  if command -v docker &>/dev/null; then
+    printf -- "Docker is already installed (%s). Leaving it unchanged.\n" "$(docker --version)"
+    printf -- "Engine upgrades are a guided operation; see the fleet-upgrade procedure.\n"
+    return 0
   fi
-  
+
+  local want="${DOCKER_VERSION:-$DOCKER_ENGINE_VERSION}"
+  local repo_os="$OS_ID"
+
+  run apt-get update
+  run apt-get install -y ca-certificates curl
+  run install -m 0755 -d /etc/apt/keyrings
+  run curl -fsSL "https://download.docker.com/linux/${repo_os}/gpg" -o /etc/apt/keyrings/docker.asc
+  run chmod a+r /etc/apt/keyrings/docker.asc
+
+  write_file /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/${repo_os}
+Suites: ${OS_CODENAME}
+Components: stable
+Architectures: ${DPKG_ARCH}
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+  run apt-get update
+
+  local pkg_version
+  pkg_version="$(apt-cache madison docker-ce 2>/dev/null | awk -v v="$want" 'index($3, "5:" v "-") == 1 {print $3; exit}')"
+  if [ "$DRY_RUN" = true ] && [ -z "$pkg_version" ]; then
+    pkg_version="5:${want}-*"
+  fi
+  if [ -z "$pkg_version" ]; then
+    printf -- "No docker-ce package matches version %s in the Docker repository.\n" "$want" >&2
+    exit 1
+  fi
+  printf -- "Installing Docker Engine %s...\n" "$pkg_version"
+  run apt-get install -y "docker-ce=$pkg_version" "docker-ce-cli=$pkg_version" containerd.io docker-buildx-plugin docker-compose-plugin
+
+  if [ -n "${SUDO_USER:-}" ]; then
+    run usermod -aG docker "$SUDO_USER"
+    printf -- "Added %s to the docker group; log out and back in to use it.\n" "$SUDO_USER"
+  fi
+  run docker run --rm hello-world
   debug "Finished Docker installation."
 }
 
 install_cloudflared() {
   debug "Starting Cloudflared installation..."
-  printf -- "Installing Cloudflared...\n"
-  
-  mkdir -p --mode=0755 /usr/share/keyrings
-  curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
-  
-  echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" | tee /etc/apt/sources.list.d/cloudflared.list > /dev/null
-  apt-get update && apt-get install cloudflared -y
-  
+  run mkdir -p --mode=0755 /usr/share/keyrings
+  run curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg -o /usr/share/keyrings/cloudflare-main.gpg
+  echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" |
+    write_file /etc/apt/sources.list.d/cloudflared.list
+  run apt-get update
+  run apt-get install -y "cloudflared=${CLOUDFLARED_VERSION}"
   debug "Finished Cloudflared installation."
 }
 
+# Uses NordVPN's signed apt repository instead of piping their installer to a shell.
 configure_nordvpn() {
   debug "Starting NordVPN configuration..."
   if command -v nordvpn &>/dev/null; then
-    printf -- "NordVPN is already installed and appears to be ready to use.\n"
-    printf -- "Would you like to reconfigure (login) NordVPN? (y/n): "
-    read -r nordvpn_choice
-    if [ "$nordvpn_choice" = "y" ] || [ "$nordvpn_choice" = "yes" ]; then
-      if [[ -n "$NORDVPN_LOGIN_URL" ]]; then
-        printf -- "Configuring NordVPN with login URL: %s...\n" "$NORDVPN_LOGIN_URL"
-        sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
-        nordvpn login --help
-      else
-        printf -- "No NordVPN login URL provided. Skipping NordVPN reconfiguration.\n"
-      fi
-    else
-      printf -- "Skipping NordVPN reconfiguration.\n"
-    fi
+    printf -- "NordVPN is already installed. Leaving it unchanged.\n"
+    return 0
+  fi
+  run curl -fsSL https://repo.nordvpn.com/gpg/nordvpn_public.asc -o /usr/share/keyrings/nordvpn.asc
+  echo "deb [signed-by=/usr/share/keyrings/nordvpn.asc] https://repo.nordvpn.com/deb/nordvpn/debian stable main" |
+    write_file /etc/apt/sources.list.d/nordvpn.list
+  run apt-get update
+  run apt-get install -y nordvpn
+  if [[ -n "$NORDVPN_LOGIN_URL" ]]; then
+    run nordvpn login --callback "$NORDVPN_LOGIN_URL"
   else
-    if [[ -n "$NORDVPN_LOGIN_URL" ]]; then
-      printf -- "NordVPN is not installed. Configuring NordVPN with login URL: %s...\n" "$NORDVPN_LOGIN_URL"
-      sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
-      nordvpn login --help
-    else
-      printf -- "No NordVPN login URL provided. Skipping NordVPN configuration.\n"
-    fi
+    printf -- "Run 'nordvpn login' yourself to finish.\n"
   fi
   debug "Finished NordVPN configuration."
 }
 
 configure_hostname() {
   debug "Starting hostname configuration..."
-  if [[ -n "$NEW_HOSTNAME" ]]; then
-    printf -- "Changing hostname to %s...\n" "$NEW_HOSTNAME"
-    # Insert commands to change the hostname.
-  else
+  if [[ -z "$NEW_HOSTNAME" ]]; then
     printf -- "No new hostname provided. Skipping hostname configuration.\n"
+    return 0
   fi
+  if [[ ! "$NEW_HOSTNAME" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]]; then
+    printf -- "Invalid hostname: %s\n" "$NEW_HOSTNAME" >&2
+    exit 1
+  fi
+  printf -- "Changing hostname to %s...\n" "$NEW_HOSTNAME"
+  run hostnamectl set-hostname "$NEW_HOSTNAME"
   debug "Finished hostname configuration."
 }
 
+# Validates the storage choice and prepares a host directory when one is given.
 configure_storage() {
   debug "Starting storage configuration..."
+  case "$STORAGE_BACKEND" in
+    local|garage|aws) ;;
+    *) printf -- "Unknown --storage-backend: %s (use local, garage or aws).\n" "$STORAGE_BACKEND" >&2; exit 1 ;;
+  esac
+  printf -- "Storage backend: %s\n" "$STORAGE_BACKEND"
   if [[ -n "$STORAGE_PATH" ]]; then
-    printf -- "Setting storage path to %s...\n" "$STORAGE_PATH"
-    # Insert commands to configure the storage path.
-  else
-    printf -- "No storage path provided. Skipping storage configuration.\n"
+    printf -- "Preparing storage path %s...\n" "$STORAGE_PATH"
+    run mkdir -p "$STORAGE_PATH"
+  fi
+  if [ "$STORAGE_BACKEND" = "garage" ]; then
+    printf -- "Garage needs a per-client bucket and key; create them with the Garage\n"
+    printf -- "bucket provisioning procedure first. Keys are not handled by this script.\n"
   fi
   debug "Finished storage configuration."
+}
+
+# Applies non-secret storage settings to an app. Key pairs are set by the operator.
+configure_app_storage() {
+  local app_name="$1"
+  case "$STORAGE_BACKEND" in
+    garage|aws)
+      if [ -z "$S3_BUCKET_ARG" ] || { [ "$STORAGE_BACKEND" = "garage" ] && [ -z "$S3_ENDPOINT_ARG" ]; }; then
+        printf -- "Storage backend %s needs --s3-bucket (and --s3-endpoint for garage).\n" "$STORAGE_BACKEND" >&2
+        exit 1
+      fi
+      ;;
+  esac
+  case "$STORAGE_BACKEND" in
+    garage)
+      run dokku config:set --no-restart "$app_name" \
+        ACTIVE_STORAGE_SERVICE=s3_compatible ACTIVE_STORAGE_ROUTE=proxy \
+        "S3_ENDPOINT=$S3_ENDPOINT_ARG" "S3_BUCKET_NAME=$S3_BUCKET_ARG" "S3_REGION=${S3_REGION_ARG:-garage}" \
+        AWS_REQUEST_CHECKSUM_CALCULATION=when_required AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+      printf -- "Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for %s yourself (never on a command line).\n" "$app_name"
+      ;;
+    aws)
+      run dokku config:set --no-restart "$app_name" \
+        ACTIVE_STORAGE_SERVICE=amazon ACTIVE_STORAGE_ROUTE=proxy \
+        "S3_BUCKET_NAME=$S3_BUCKET_ARG" "S3_REGION=${S3_REGION_ARG:-us-east-1}"
+      printf -- "Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for %s yourself (never on a command line).\n" "$app_name"
+      ;;
+    local)
+      run dokku storage:ensure-directory "$app_name/storage"
+      run dokku storage:mount "$app_name" "/var/lib/dokku/data/storage/$app_name/storage:/bt/storage"
+      run dokku config:set --no-restart "$app_name" ACTIVE_STORAGE_SERVICE=local
+      ;;
+  esac
+}
+
+# Downloads the pinned bootstrap script, verifies its checksum, then runs it.
+install_dokku_bootstrap() {
+  local dir script
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run] download dokku %s bootstrap, verify sha256 %s, run it\n" "$DOKKU_TAG" "$DOKKU_BOOTSTRAP_SHA256"
+    return 0
+  fi
+  dir="$(mktemp -d)"
+  script="$dir/bootstrap.sh"
+  curl -fsSL "https://dokku.com/install/${DOKKU_TAG}/bootstrap.sh" -o "$script"
+  if ! echo "${DOKKU_BOOTSTRAP_SHA256}  $script" | sha256sum -c --quiet -; then
+    printf -- "Dokku bootstrap checksum mismatch; not running it.\n" >&2
+    rm -rf "$dir"
+    exit 1
+  fi
+  DOKKU_TAG="$DOKKU_TAG" bash "$script"
+  rm -rf "$dir"
+}
+
+# Installs a Dokku plugin at a pinned tag; leaves an installed plugin untouched.
+install_dokku_plugin() {
+  local name="$1" url="$2" tag="$3"
+  if command -v dokku &>/dev/null && dokku plugin:installed "$name" &>/dev/null; then
+    printf -- "Dokku plugin %s already installed (manifest pins %s).\n" "$name" "$tag"
+    return 0
+  fi
+  run dokku plugin:install "$url" --committish "$tag" --name "$name"
 }
 
 #############################################
@@ -563,9 +776,9 @@ install_dokku() {
     if prompt_substep "Sub-step: Install Dokku (Platform as a Service)?\nDokku is a lightweight PaaS that runs on your server. Press Enter to proceed, or type 'skip' to skip installation."; then
   
       printf -- "📥 Installing Dokku...\n"
-      wget -qO- https://dokku.com/install/v0.34.3/bootstrap.sh | DOKKU_TAG=v0.34.3 bash
+      install_dokku_bootstrap
       
-      printf -- "✅ Dokku installation complete.\n"
+      if [ "$DRY_RUN" != true ]; then printf -- "Dokku installation complete.\n"; fi
       
       if prompt_substep "Sub-step: Configure Dokku?\nThis will set up SSH access, global domains, and optional app creation."; then
         configure_dokku
@@ -579,333 +792,331 @@ install_dokku() {
 #############################################
 # Step: Configure Dokku
 #############################################
+# True when dokku exists, or on a dry run (to preview what would follow its install).
+dokku_available() {
+  command -v dokku &>/dev/null || [ "$DRY_RUN" = true ]
+}
+
+user_home() {
+  getent passwd "${SUDO_USER:-root}" | cut -d: -f6
+}
+
 configure_dokku() {
   debug "Starting Dokku configuration..."
-  
-  if ! command -v dokku &>/dev/null; then
-    printf -- "❌ Dokku is not installed. Skipping configuration.\n"
+  if ! dokku_available; then
+    printf -- "Dokku is not installed yet; skipping configuration.\n"
     return 0
   fi
 
-  # Step 1: Configure SSH Access
-  printf -- "\n🔑 Configuring SSH access for Dokku...\n"
-
-  # Determine the full path for the current user's authorized keys file
-  USER_HOME=$(eval echo ~"$SUDO_USER")
-  AUTH_KEYS_FILE="$USER_HOME/.ssh/authorized_keys"
-
-  # Check if a Dokku SSH key named "admin" already exists
-  if dokku ssh-keys:list | grep -q 'NAME="admin"'; then
-    printf -- "✅ A Dokku SSH key named 'admin' already exists. Skipping SSH key addition.\n"
+  # SSH access: the admin key comes from a flag, else the invoking user's keys.
+  local keys_file="${DOKKU_SSH_KEY_FILE:-$(user_home)/.ssh/authorized_keys}"
+  if dokku ssh-keys:list 2>/dev/null | grep -q 'NAME="admin"'; then
+    printf -- "A Dokku SSH key named 'admin' already exists. Skipping.\n"
+  elif [ -s "$keys_file" ]; then
+    printf -- "Adding keys from %s to Dokku as 'admin'.\n" "$keys_file"
+    run_stdin_file "$keys_file" dokku ssh-keys:add admin
   else
-    if [ -s "$AUTH_KEYS_FILE" ]; then
-      printf -- "✅ Found existing SSH keys in '%s'. Adding them to Dokku...\n" "$AUTH_KEYS_FILE"
-      cat "$AUTH_KEYS_FILE" | dokku ssh-keys:add admin
-      printf -- "✅ SSH keys added successfully.\n"
-    else
-      if prompt_substep "Sub-step: Manually add an SSH key for Dokku?\nNo existing keys were found. You will need an SSH key to push applications to Dokku."; then
-        printf -- "🔑 Please enter your public SSH key (or path to a key file): "
-        read -r ssh_key
-
-        if [ -f "$ssh_key" ]; then
-          ssh_key_contents=$(cat "$ssh_key")
-        else
-          ssh_key_contents="$ssh_key"
-        fi
-
-        echo "$ssh_key_contents" | dokku ssh-keys:add admin
-        printf -- "✅ SSH key added successfully.\n"
-      else
-        printf -- "❌ Skipping SSH key setup.\n"
-      fi
-    fi
+    printf -- "No SSH key found (%s); pass --dokku-ssh-key-file to register one.\n" "$keys_file"
   fi
 
-  # Step 2: Set a Global Domain
-  if prompt_substep "Sub-step: Set a global domain for Dokku?\nThis domain should have an A record or CNAME pointing to your server's IP."; then
-    printf -- "\n🌐 Current Dokku Global Domains:\n"
-    dokku domains:report --global | grep "Domains global vhosts" | cut -d ":" -f2 | xargs
-    
-    printf -- "\nWould you like to add another global domain? (y/n): "
-    read -r add_domain
-
-    if [[ "$add_domain" =~ ^[Yy]$ ]]; then
-      printf -- "🌍 Enter the domain name you want to add as a global domain (e.g., example.com): "
-      read -r dokku_domain
-
-      if [ -n "$dokku_domain" ]; then
-        dokku domains:add-global "$dokku_domain"
-        printf -- "✅ Global domain '%s' added successfully.\n" "$dokku_domain"
-      else
-        printf -- "❌ No domain entered. Skipping global domain setup.\n"
-      fi
-    else
-      printf -- "❌ No additional domain added.\n"
-    fi
+  # Global domain: only from the flag, or an interactive answer.
+  local domain="$DOKKU_GLOBAL_DOMAIN"
+  if [ -z "$domain" ] && [ "$YES" != true ] && [ "$DRY_RUN" != true ]; then
+    printf -- "Global Dokku domain to add (blank to skip): "
+    read -r domain
+  fi
+  if [ -n "$domain" ]; then
+    run dokku domains:add-global "$domain"
   fi
 
-  # Step 3: Install Essential Dokku Plugins
-  if prompt_substep "Sub-step: Install Dokku Plugins?\nThis will install commonly used plugins like Postgres, Redis, LetsEncrypt, and Elasticsearch."; then
-    printf -- "🔧 Installing Dokku plugins...\n"
-    
-    dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
-    dokku plugin:install https://github.com/dokku/dokku-redis.git redis
-    dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
-    dokku plugin:install https://github.com/dokku/dokku-elasticsearch.git elasticsearch
-
-    printf -- "✅ Dokku plugins installed successfully.\n"
-  else
-    printf -- "❌ Skipping Dokku plugin installation.\n"
+  if prompt_substep "Sub-step: Install Dokku plugins?\nPostgres, Redis and Let's Encrypt at the manifest tags. Elasticsearch is optional (--with-elasticsearch)."; then
+    install_dokku_plugin postgres https://github.com/dokku/dokku-postgres.git "$DOKKU_POSTGRES_TAG"
+    install_dokku_plugin redis https://github.com/dokku/dokku-redis.git "$DOKKU_REDIS_TAG"
+    install_dokku_plugin letsencrypt https://github.com/dokku/dokku-letsencrypt.git "$DOKKU_LETSENCRYPT_TAG"
   fi
-
-
   debug "Finished Dokku configuration."
 }
 
-
-install_tools() {
-  debug "Starting install_tools"
-  printf -- "Starting full system update and tool installation...\n"
-  
-  prompt_continue "System Update" "Press Enter to update system packages."
-  update_system
-  
-  prompt_continue "Docker Installation" "Press Enter to install Docker."
-  install_docker
-  
-  prompt_continue "Cloudflared Installation" "Press Enter to install Cloudflared."
-  install_cloudflared
-  
-  prompt_continue "NordVPN Configuration" "Press Enter to configure NordVPN."
-  configure_nordvpn
-  
-  prompt_continue "Hostname Configuration" "Press Enter to configure hostname."
-  configure_hostname
-  
-  prompt_continue "Storage Configuration" "Press Enter to configure storage."
-  configure_storage
-  
-  prompt_continue "Tool Installation Summary" "Tools installed/updated. Press Enter to continue."
-  debug "Finished install_tools"
+# AWS builds read the old AWS/FOG build args; Garage and local builds need none.
+configure_build_args() {
+  local app_name="$1" arg
+  if [ "$STORAGE_BACKEND" != "aws" ]; then return 0; fi
+  for arg in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY FOG_DIRECTORY FOG_HOST FOG_REGION ASSET_HOST CDN_DISTRIBUTION_ID; do
+    run dokku docker-options:add "$app_name" build "--build-arg $arg"
+  done
 }
 
+create_dokku_app() {
+  local app_name="$1"
+  run dokku apps:create "$app_name"
+  configure_build_args "$app_name"
+  configure_app_storage "$app_name"
+}
 
-#############################################
-# Step: Setup Dokku App
-#############################################
+# Existing apps are never touched here; there is no app destroy path.
 setup_dokku_app() {
   local app_name="$1"
-
-  if dokku apps:exists "$app_name"; then
-    printf -- "⚠️  The Dokku app '%s' already exists. Showing details:\n" "$app_name"
-    dokku apps:report "$app_name"
-
-    if prompt_substep "Sub-step: Recreate the Dokku app '$app_name'?\nThis will delete and recreate the app and all associated configurations."; then
-      dokku apps:destroy "$app_name" --force
-      dokku apps:create "$app_name"
-      dokku docker-options:add "$app_name" build '--build-arg AWS_ACCESS_KEY_ID'
-      dokku docker-options:add "$app_name" build '--build-arg AWS_SECRET_ACCESS_KEY'
-      dokku docker-options:add "$app_name" build '--build-arg FOG_DIRECTORY'
-      dokku docker-options:add "$app_name" build '--build-arg FOG_HOST'
-      dokku docker-options:add "$app_name" build '--build-arg FOG_REGION'
-      dokku docker-options:add "$app_name" build '--build-arg ASSET_HOST'
-      dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
-      printf -- "✅ Dokku app '%s' recreated.\n" "$app_name"
-    else
-      printf -- "⏩ Skipping Dokku app creation.\n"
-    fi
+  if dokku apps:exists "$app_name" &>/dev/null; then
+    printf -- "Dokku app '%s' already exists; leaving it unchanged.\n" "$app_name"
   else
-    dokku apps:create "$app_name"
-    dokku docker-options:add "$app_name" build '--build-arg AWS_ACCESS_KEY_ID'
-    dokku docker-options:add "$app_name" build '--build-arg AWS_SECRET_ACCESS_KEY'
-    dokku docker-options:add "$app_name" build '--build-arg FOG_DIRECTORY'
-    dokku docker-options:add "$app_name" build '--build-arg FOG_HOST'
-    dokku docker-options:add "$app_name" build '--build-arg FOG_REGION'
-    dokku docker-options:add "$app_name" build '--build-arg ASSET_HOST'
-dokku docker-options:add "$app_name" build '--build-arg CDN_DISTRIBUTION_ID'
-    printf -- "✅ Dokku app '%s' created.\n" "$app_name"
+    create_dokku_app "$app_name"
   fi
 }
 
-#############################################
-# Step: Setup PostgreSQL (PostGIS)
-#############################################
+# Exports a service to a root-only file; stops if the snapshot is empty.
+snapshot_service() {
+  local kind="$1" name="$2" file
+  file="$SNAPSHOT_DIR/${name}-$(date -u +%Y%m%dT%H%M%SZ).${kind}.export"
+  run install -d -m 0700 "$SNAPSHOT_DIR"
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run] dokku %s:export %s > %s\n" "$kind" "$name" "$file"
+    return 0
+  fi
+  (umask 077; dokku "$kind:export" "$name" > "$file")
+  if [ ! -s "$file" ]; then
+    printf -- "Snapshot %s is empty; refusing to continue.\n" "$file" >&2
+    exit 1
+  fi
+  printf -- "Snapshot written: %s\n" "$file"
+}
+
+# Typed confirmation; with --yes the same words come from --confirm-destroy.
+confirm_destroy() {
+  local name="$1" typed="$CONFIRM_DESTROY"
+  if [ "$FORCE" != true ]; then
+    printf -- "Recreating %s destroys data: pass --force.\n" "$name" >&2
+    exit 1
+  fi
+  if [ -z "$typed" ] && [ "$YES" != true ] && [ "$DRY_RUN" != true ]; then
+    printf -- "Type the service name (%s) to confirm destruction: " "$name"
+    read -r typed
+  fi
+  if [ "$DRY_RUN" != true ] && [ "$typed" != "$name" ]; then
+    printf -- "Confirmation did not match %s; nothing destroyed.\n" "$name" >&2
+    exit 1
+  fi
+}
+
+# Replaces the old "recreate" prompt: snapshot, confirm, destroy, create, link.
+recreate_service() {
+  local name="$1" kind image version
+  if [ -z "$APP_NAME" ]; then
+    printf -- "--recreate-service needs --app=NAME for the link.\n" >&2
+    exit 1
+  fi
+  if dokku postgres:exists "$name" &>/dev/null; then
+    kind=postgres; image="$POSTGIS_IMAGE"; version="$POSTGIS_IMAGE_VERSION"
+  elif dokku redis:exists "$name" &>/dev/null; then
+    kind=redis; image="$REDIS_IMAGE"; version="$REDIS_IMAGE_VERSION"
+  elif [ "$DRY_RUN" = true ]; then
+    printf -- "[dry-run] no service named %s found here; would stop.\n" "$name"
+    return 0
+  else
+    printf -- "No Postgres or Redis service named %s.\n" "$name" >&2
+    exit 1
+  fi
+  confirm_destroy "$name"
+  snapshot_service "$kind" "$name"
+  run dokku "$kind:destroy" "$name" --force
+  run dokku "$kind:create" "$name" --image "$image" --image-version "$version"
+  run dokku "$kind:link" "$name" "$APP_NAME"
+}
+
+# Creates a service when absent and never replaces an existing one.
+ensure_service() {
+  local kind="$1" name="$2" app_name="$3" image="$4" version="$5"
+  if ! dokku plugin:installed "$kind" &>/dev/null; then
+    case "$kind" in
+      postgres) install_dokku_plugin postgres https://github.com/dokku/dokku-postgres.git "$DOKKU_POSTGRES_TAG" ;;
+      redis) install_dokku_plugin redis https://github.com/dokku/dokku-redis.git "$DOKKU_REDIS_TAG" ;;
+    esac
+  fi
+  if dokku "$kind:exists" "$name" &>/dev/null; then
+    printf -- "%s service '%s' exists; leaving it. Use --recreate-service=%s to replace it.\n" "$kind" "$name" "$name"
+    return 0
+  fi
+  run dokku "$kind:create" "$name" --image "$image" --image-version "$version"
+  if [ "$kind" = "postgres" ]; then
+    run dokku config:set --no-restart "$app_name" POSTGRES_DATABASE_SCHEME=postgis
+  fi
+  run dokku "$kind:link" "$name" "$app_name"
+}
+
 setup_postgis_database() {
-  local app_name="$1"
-  local db_name="${app_name}_db"
-
-  if dokku plugin:installed postgres; then
-    printf -- "✅ Dokku Postgres plugin is installed.\n"
-  else
-    printf -- "🔧 Installing Dokku Postgres plugin...\n"
-    dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
-  fi
-
-  if dokku postgres:exists "$db_name"; then
-    printf -- "⚠️  Database '%s' already exists. Showing details:\n" "$db_name"
-    dokku postgres:info "$db_name"
-
-    if prompt_substep "Sub-step: Recreate the PostGIS database '$db_name'?\nThis will delete and recreate the database."; then
-      dokku postgres:destroy "$db_name" --force
-      dokku postgres:create "$db_name" --image postgis/postgis --image-version latest
-      dokku postgres:link "$db_name" "$app_name"
-      printf -- "✅ PostGIS database '%s' recreated and linked.\n" "$db_name"
-    else
-      printf -- "⏩ Skipping database creation.\n"
-    fi
-  else
-    dokku postgres:create "$db_name" --image postgis/postgis --image-version latest
-    dokku postgres:link "$db_name" "$app_name"
-    printf -- "✅ PostGIS database '%s' created and linked.\n" "$db_name"
-  fi
+  ensure_service postgres "${1}_db" "$1" "$POSTGIS_IMAGE" "$POSTGIS_IMAGE_VERSION"
 }
 
-#############################################
-# Step: Setup Redis
-#############################################
 setup_redis() {
-  local app_name="$1"
-  local redis_name="${app_name}_redis"
-
-  if dokku plugin:installed redis; then
-    printf -- "✅ Dokku Redis plugin is installed.\n"
-  else
-    printf -- "🔧 Installing Dokku Redis plugin...\n"
-    dokku plugin:install https://github.com/dokku/dokku-redis.git redis
-  fi
-
-  if dokku redis:exists "$redis_name"; then
-    printf -- "⚠️  Redis instance '%s' already exists. Showing details:\n" "$redis_name"
-    dokku redis:info "$redis_name"
-
-    if prompt_substep "Sub-step: Recreate the Redis instance '$redis_name'?\nThis will delete and recreate the Redis instance."; then
-      dokku redis:destroy "$redis_name" --force
-      dokku redis:create "$redis_name"
-      dokku redis:link "$redis_name" "$app_name"
-      printf -- "✅ Redis instance '%s' recreated and linked.\n" "$redis_name"
-    else
-      printf -- "⏩ Skipping Redis creation.\n"
-    fi
-  else
-    dokku redis:create "$redis_name"
-    dokku redis:link "$redis_name" "$app_name"
-    printf -- "✅ Redis instance '%s' created and linked.\n" "$redis_name"
-  fi
+  ensure_service redis "${1}_redis" "$1" "$REDIS_IMAGE" "$REDIS_IMAGE_VERSION"
 }
 
-#############################################
-# Step: Setup Let's Encrypt
-#############################################
 setup_letsencrypt() {
-  local app_name="$1"
-
-  if dokku plugin:installed letsencrypt; then
-    printf -- "✅ Dokku Let's Encrypt plugin is installed.\n"
-  else
-    printf -- "🔧 Installing Dokku Let's Encrypt plugin...\n"
-    dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+  local app_name="$1" email="$LETSENCRYPT_EMAIL"
+  if ! dokku plugin:installed letsencrypt &>/dev/null; then
+    install_dokku_plugin letsencrypt https://github.com/dokku/dokku-letsencrypt.git "$DOKKU_LETSENCRYPT_TAG"
   fi
-
-  printf -- "🔎 Checking existing Let's Encrypt email for '%s'...\n" "$app_name"
-
-  # Get the existing Let's Encrypt email (app-specific first, then global)
-  letsencrypt_email=$(dokku config:get "$app_name" DOKKU_LETSENCRYPT_EMAIL 2>/dev/null || true)
-  if [ -z "$letsencrypt_email" ]; then
-    letsencrypt_email=$(dokku config:get --global DOKKU_LETSENCRYPT_EMAIL 2>/dev/null || true)
+  if [ -z "$email" ]; then
+    email="$(dokku config:get "$app_name" DOKKU_LETSENCRYPT_EMAIL 2>/dev/null || true)"
   fi
-
-  # If no email is set, prompt the user
-  if [ -z "$letsencrypt_email" ]; then
-    printf -- "⚠️  No Let's Encrypt email is configured for '%s'.\n" "$app_name"
-    
-    if prompt_substep "Sub-step: Set a Let's Encrypt email address for '${app_name}'?\nThis email is required for SSL certificate renewal notifications."; then
-      printf -- "📧 Enter your email address for Let's Encrypt notifications: "
-      read -r letsencrypt_email
-
-      if [ -n "$letsencrypt_email" ]; then
-        dokku letsencrypt:set "$app_name" email "$letsencrypt_email"
-        printf -- "✅ Let's Encrypt email set to '%s' for '%s'.\n" "$letsencrypt_email" "$app_name"
-      else
-        printf -- "❌ No email entered. Skipping email configuration.\n"
-      fi
-    fi
-  else
-    printf -- "✅ Existing Let's Encrypt email for '%s': %s\n" "$app_name" "$letsencrypt_email"
+  if [ -z "$email" ]; then
+    email="$(dokku config:get --global DOKKU_LETSENCRYPT_EMAIL 2>/dev/null || true)"
   fi
-
-  # Check if SSL is already enabled for the app
-  if dokku letsencrypt:ls | grep -q "$app_name"; then
-    printf -- "⚠️  Let's Encrypt is already enabled for '%s'. Showing certificate details:\n" "$app_name"
-    dokku letsencrypt:info "$app_name"
-
-    if prompt_substep "Sub-step: Reapply Let's Encrypt SSL for '${app_name}'?\nThis will force renew the certificate."; then
-      dokku letsencrypt:auto-renew "$app_name"
-      printf -- "✅ Let's Encrypt SSL certificate renewed for '%s'.\n" "$app_name"
-    else
-      printf -- "⏩ Skipping SSL renewal.\n"
-    fi
+  if [ -z "$email" ] && [ "$YES" != true ] && [ "$DRY_RUN" != true ]; then
+    printf -- "Let's Encrypt contact email for %s (blank to skip certificates): " "$app_name"
+    read -r email
+  fi
+  if [ -z "$email" ]; then
+    printf -- "No Let's Encrypt email; skipping certificates (pass --letsencrypt-email).\n"
+    return 0
+  fi
+  run dokku letsencrypt:set "$app_name" email "$email"
+  if dokku letsencrypt:ls 2>/dev/null | grep -q "$app_name"; then
+    printf -- "Let's Encrypt is already enabled for %s; auto-renew handles renewal.\n" "$app_name"
   else
-    printf -- "🔐 Enabling Let's Encrypt SSL for '%s'...\n" "$app_name"
-    dokku letsencrypt:enable "$app_name"
-    printf -- "✅ Let's Encrypt enabled for '%s'.\n" "$app_name"
+    run dokku letsencrypt:enable "$app_name"
   fi
 }
 
-#############################################
-# Step: Report & Add Domain for Dokku App
-#############################################
 report_and_add_app_domain() {
-  local app_name="$1"
-
-  printf -- "\n🌍 Retrieving existing domains for app '%s'...\n" "$app_name"
-  dokku domains:report "$app_name"
-
-  if prompt_substep "Sub-step: Add a new domain to '$app_name'?\nThis domain should have an A record or CNAME pointing to your server's IP."; then
-    printf -- "🌍 Enter the domain name you want to add (e.g., example.com): "
-    read -r new_domain
-
-    if [ -n "$new_domain" ]; then
-      dokku domains:set "$app_name" "$new_domain"
-      printf -- "✅ Domain '%s' added successfully to '%s'.\n" "$new_domain" "$app_name"
-    else
-      printf -- "❌ No domain entered. Skipping domain addition.\n"
-    fi
+  local app_name="$1" domain="$APP_DOMAIN"
+  if [ -z "$domain" ] && [ "$YES" != true ] && [ "$DRY_RUN" != true ]; then
+    printf -- "Domain for %s (blank to skip): " "$app_name"
+    read -r domain
+  fi
+  if [ -n "$domain" ]; then
+    run dokku domains:set "$app_name" "$domain"
   else
-    printf -- "⏩ Skipping domain addition for '%s'.\n" "$app_name"
+    printf -- "No domain given for %s; skipping.\n" "$app_name"
   fi
 }
-
 
 #############################################
 # Step: Set Up Community Engine App
 #############################################
 setup_community_engine_app() {
   debug "Starting Community Engine setup..."
-
-  if ! command -v dokku &>/dev/null; then
-    printf -- "❌ Dokku is not installed. Skipping Community Engine setup.\n"
+  if ! dokku_available; then
+    printf -- "Dokku is not installed here; skipping the app, services, domain and certificate steps.\n"
     return 0
   fi
 
-  if prompt_substep "Sub-step: Set up a new Community Engine application?"; then
-    printf -- "📦 Enter your app name: "
-    read -r app_name
-
-    if [ -z "$app_name" ]; then
-      printf -- "❌ No app name entered. Skipping app setup.\n"
-      return 0
-    fi
-
-    setup_dokku_app "$app_name"
-    setup_postgis_database "$app_name"
-    setup_redis "$app_name"
-    report_and_add_app_domain "$app_name"
-    setup_letsencrypt "$app_name"
-
-    printf -- "🎉 Community Engine app '%s' setup is complete!\n" "$app_name"
+  if [ -n "$RECREATE_SERVICE" ]; then
+    recreate_service "$RECREATE_SERVICE"
+    return 0
   fi
 
+  local app_name="$APP_NAME"
+  if [ -z "$app_name" ] && [ "$YES" != true ] && [ "$DRY_RUN" != true ]; then
+    printf -- "App name (blank to skip app setup): "
+    read -r app_name
+  fi
+  if [ -z "$app_name" ]; then
+    printf -- "No app name; skipping app setup (pass --app=NAME).\n"
+    return 0
+  fi
+  if [[ ! "$app_name" =~ ^[a-z][a-z0-9-]{0,62}$ ]]; then
+    printf -- "Invalid app name: %s\n" "$app_name" >&2
+    exit 1
+  fi
+
+  setup_dokku_app "$app_name"
+  setup_postgis_database "$app_name"
+  setup_redis "$app_name"
+  report_and_add_app_domain "$app_name"
+  setup_letsencrypt "$app_name"
+  printf -- "Community Engine app '%s' setup complete.\n" "$app_name"
   debug "Finished Community Engine setup."
+}
+
+#############################################
+# Optional Step: Elasticsearch plugin
+#############################################
+install_elasticsearch() {
+  debug "Starting install_elasticsearch"
+  if ! dokku_available; then
+    printf -- "Dokku is not installed here; run the dokku step first.\n"
+    return 0
+  fi
+  if command -v dokku &>/dev/null && dokku plugin:installed elasticsearch &>/dev/null; then
+    printf -- "Elasticsearch plugin is already installed.\n"
+  else
+    install_dokku_plugin elasticsearch https://github.com/dokku/dokku-elasticsearch.git "$DOKKU_ELASTICSEARCH_TAG"
+  fi
+  printf -- "The plugin alone changes nothing for your app. To use it you also need\n"
+  printf -- "SEARCH_BACKEND=elasticsearch and the better_together-elasticsearch gem.\n"
+  printf -- "The default search backend is Postgres (pg_search).\n"
+  debug "Finished install_elasticsearch"
+}
+
+#############################################
+# Run one step by name
+#############################################
+run_step() {
+  case "$1" in
+    welcome) step_welcome ;;
+    specs) step_check_specs ;;
+    os_check) step_os_check ;;
+    network) configure_network ;;
+    hardening) security_hardening ;;
+    backup) backup_config ;;
+    tweaks) hardware_tweaks ;;
+    update) update_system ;;
+    docker) install_docker ;;
+    dokku) install_dokku ;;
+    elasticsearch) install_elasticsearch ;;
+    cloudflared) install_cloudflared ;;
+    fleet_baseline) step_fleet_baseline ;;
+    nordvpn) configure_nordvpn ;;
+    hostname) configure_hostname ;;
+    storage) configure_storage ;;
+    community_engine) setup_community_engine_app ;;
+  esac
+}
+
+#############################################
+# Step list
+#############################################
+KNOWN_STEPS="welcome specs os_check network hardening backup tweaks update docker dokku elasticsearch hostname storage community_engine cloudflared nordvpn fleet_baseline"
+
+# Builds ALL_STEPS from the defaults, the opt-in flags and --skip.
+build_step_list() {
+  local step skipped
+  ALL_STEPS=(welcome specs os_check)
+  if [ -n "$STATIC_IP_ETH$STATIC_IP_WLAN" ] || [ "$DISABLE_WIFI" = true ]; then ALL_STEPS+=(network); fi
+  ALL_STEPS+=(hardening backup)
+  if [ "$DISABLE_BLUETOOTH" = true ] || [ "$MUTE_AUDIO" = true ]; then ALL_STEPS+=(tweaks); fi
+  ALL_STEPS+=(update docker dokku)
+  if [ "$WITH_ELASTICSEARCH" = true ]; then ALL_STEPS+=(elasticsearch); fi
+  if [ -n "$NEW_HOSTNAME" ]; then ALL_STEPS+=(hostname); fi
+  ALL_STEPS+=(storage community_engine)
+  if [ "$WITH_CLOUDFLARED" = true ]; then ALL_STEPS+=(cloudflared); fi
+  if [ "$WITH_NORDVPN" = true ]; then ALL_STEPS+=(nordvpn); fi
+  if [ "$WITH_FLEET_BASELINE" = true ]; then ALL_STEPS+=(fleet_baseline); fi
+
+  if [ -n "$SKIP_STEPS" ]; then
+    local kept=()
+    for step in "${ALL_STEPS[@]}"; do
+      skipped=false
+      for s in ${SKIP_STEPS//,/ }; do
+        if [ "$s" = "$step" ]; then skipped=true; fi
+      done
+      if [ "$skipped" = false ]; then kept+=("$step"); fi
+    done
+    ALL_STEPS=("${kept[@]}")
+  fi
+}
+
+step_is_known() {
+  [[ " $KNOWN_STEPS " == *" $1 "* ]]
+}
+
+# Sends all output to the log as well, unless this is a dry run.
+start_logging() {
+  if [ "$DRY_RUN" = true ]; then return 0; fi
+  install -d -m 0755 "$(dirname "$LOG_FILE")"
+  (umask 077; touch "$LOG_FILE")
+  exec > >(tee -a "$LOG_FILE") 2>&1
+  printf -- "--- ce-host-setup run %s ---\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
 
 #############################################
@@ -913,237 +1124,181 @@ setup_community_engine_app() {
 #############################################
 main() {
   parse_args "$@"
+  require_root
+  load_versions
+  start_logging
+  if [ "$DRY_RUN" = true ]; then
+    printf -- "DRY RUN: every command is printed, nothing is changed.\n"
+  fi
   printf -- "Starting setup for %s...\n\n" "$(hostname)"
-  debug "Entering main function"
 
-  # Define a combined ordered list of all steps.
-  ALL_STEPS=("welcome" "specs" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku" "cloudflared" "nordvpn" "hostname" "storage" "community_engine")
-  
-  if [ -n "$RUN_STEP" ]; then
-    debug "RUN_STEP is set to: %s" "$RUN_STEP"
-    start_index=-1
-    debug "Searching for step '%s' in list: %s" "$RUN_STEP" "${ALL_STEPS[*]}"
-    
-    # Find the index for the requested step.
-    for i in "${!ALL_STEPS[@]}"; do
-      debug "Checking index %s: %s" "$i" "${ALL_STEPS[$i]}"
-      if [ "${ALL_STEPS[$i]}" = "$RUN_STEP" ]; then
-        start_index=$i
-        debug "Found step '%s' at index %s" "$RUN_STEP" "$i"
-        break
-      fi
-    done
-
-    if [ $start_index -eq -1 ]; then
-      debug "No matching step found for '%s'" "$RUN_STEP"
-      printf -- "Unknown step: %s\n" "$RUN_STEP"
+  local name
+  for name in "$RUN_STEP" "$FROM_STEP"; do
+    if [ -n "$name" ] && ! step_is_known "$name"; then
+      printf -- "Unknown step: %s\n" "$name" >&2
       exit 1
     fi
+  done
+  # Naming an optional step explicitly implies its flag.
+  case "${RUN_STEP:-$FROM_STEP}" in
+    elasticsearch) WITH_ELASTICSEARCH=true ;;
+    cloudflared) WITH_CLOUDFLARED=true ;;
+    nordvpn) WITH_NORDVPN=true ;;
+    fleet_baseline) WITH_FLEET_BASELINE=true ;;
+    hostname) : ;;
+  esac
+  build_step_list
 
-    debug "Starting to process steps from index %s to %s" "$start_index" "$((${#ALL_STEPS[@]} - 1))"
-    
-    # Loop over the steps from the chosen starting step.
-    for i in $(seq $start_index $((${#ALL_STEPS[@]} - 1))); do
-      debug "Executing step: %s (index %s)" "${ALL_STEPS[$i]}" "$i"
-      case "${ALL_STEPS[$i]}" in
-        welcome) step_welcome ;;
-        specs) step_check_specs ;;
-        network) configure_network ;;
-        hardening) security_hardening ;;
-        backup) backup_config ;;
-        tweaks) hardware_tweaks ;;
-        update) update_system ;;
-        docker) install_docker ;;
-        dokku) install_dokku ;;
-        cloudflared) install_cloudflared ;;
-        nordvpn) configure_nordvpn ;;
-        hostname) configure_hostname ;;
-        storage) configure_storage ;;
-        community_engine) setup_community_engine_app ;;
-      esac
-
-      debug "Finished executing step: %s (index %s)" "${ALL_STEPS[$i]}" "$i"
-
-      # If there is a next step, prompt the user whether to continue.
-      if [ $i -lt $((${#ALL_STEPS[@]} - 1)) ]; then
-        debug "Prompting user to continue with next step: %s" "${ALL_STEPS[$((i+1))]}"
-        printf -- "Press Enter to continue with the next step (%s), or type n/no to exit: " "${ALL_STEPS[$((i+1))]}"
-        read -r next_choice
-        debug "User response for continuing: %s" "$next_choice"
-
-        if [ "$next_choice" = "n" ] || [ "$next_choice" = "no" ]; then
-          debug "User chose not to continue further. Exiting."
-          exit 0
-        else
-          debug "User chose to continue with the next step."
-        fi
-      fi
-    done
-
-    debug "Completed all requested steps."
-    exit 0
+  if [ -n "$RUN_STEP" ]; then
+    run_step "$RUN_STEP"
+    return 0
   fi
 
-  # Run all steps sequentially if no specific step is given.
-  for step in "${ALL_STEPS[@]}"; do
-    debug "Executing step: %s" "$step"
-    case "$step" in
-      welcome) step_welcome ;;
-      specs) step_check_specs ;;
-      network) configure_network ;;
-      hardening) security_hardening ;;
-      backup) backup_config ;;
-      tweaks) hardware_tweaks ;;
-      update) update_system ;;
-      docker) install_docker ;;
-      dokku) install_dokku ;;
-      cloudflared) install_cloudflared ;;
-      nordvpn) configure_nordvpn ;;
-      hostname) configure_hostname ;;
-      storage) configure_storage ;;
-      community_engine) setup_community_engine_app ;;
-    esac
-    prompt_continue "$step" "Press Enter to continue."
+  local started=true
+  if [ -n "$FROM_STEP" ]; then started=false; fi
+  for name in "${ALL_STEPS[@]}"; do
+    if [ "$started" = false ] && [ "$name" = "$FROM_STEP" ]; then started=true; fi
+    if [ "$started" = false ]; then continue; fi
+    printf -- "\n== Step: %s ==\n" "$name"
+    run_step "$name"
+    prompt_continue "$name" "Press Enter to continue."
   done
 
-  printf -- "\n#############################################\n"
-  printf -- "# 🎉 All done! Your system is now ready!   #\n"
-  printf -- "#############################################\n"
-  debug "Exiting main function"
+  printf -- "\nDone.%s\n" "$([ "$DRY_RUN" = true ] && echo ' (dry run, nothing changed)')"
 }
 
+#############################################
+# Optional Step: BTS fleet baseline (sourced extension)
+#############################################
+step_fleet_baseline() {
+  local ext="$FLEET_EXTENSION" owner mode
+  if [ -z "$ext" ] || [ ! -f "$ext" ]; then
+    printf -- "--fleet-extension=FILE is required for the fleet_baseline step.\n" >&2
+    exit 1
+  fi
+  read -r owner mode < <(stat -c '%u %a' "$ext")
+  if [ "$owner" != "0" ] || [ $((8#$mode & 8#022)) -ne 0 ]; then
+    printf -- "Refusing %s: it is sourced as root, so it must be root-owned and not group or world writable.\n" "$ext" >&2
+    exit 1
+  fi
+  # shellcheck disable=SC1090
+  source "$ext"
+  if ! declare -F fleet_baseline_run >/dev/null; then
+    printf -- "%s does not define fleet_baseline_run.\n" "$ext" >&2
+    exit 1
+  fi
+  DRY_RUN="$DRY_RUN" fleet_baseline_run
+}
 
 #############################################
-# New Step: Security Hardening
-#############################################
-#############################################
-# Function: Prompt for Sub-Step Execution
+# Step: Security hardening
 #############################################
 prompt_substep() {
   local sub_message="$1"
+  if [ "$YES" = true ] || [ "$DRY_RUN" = true ]; then return 0; fi
   printf -- "\n%s\n" "$sub_message"
   printf -- "Press Enter to run this sub-step, type skip to skip it, n/no to exit, h for overall help, or s to repeat this help: "
   read -r sub_choice
   case "$sub_choice" in
-    n|no)
-      debug "User chose to exit during sub-step prompt."
-      exit 0
-      ;;
-    h|help)
-      usage
-      ;;
-    s|step)
-      printf -- "%s\n" "$sub_message"
-      prompt_substep "$sub_message"
-      return $?  # Pass along the result.
-      ;;
-    skip)
-      return 1  # Indicate that the sub-step should be skipped.
-      ;;
-    *) 
-      return 0  # Default: execute the sub-step.
-      ;;
+    n|no) debug "User chose to exit during sub-step prompt."; exit 0 ;;
+    h|help) usage ;;
+    s|step) printf -- "%s\n" "$sub_message"; prompt_substep "$sub_message"; return $? ;;
+    skip) return 1 ;;
+    *) return 0 ;;
   esac
 }
 
-#############################################
-# New Step: Security Hardening
-#############################################
+# True when the invoking user (or root) has at least one authorized ssh key.
+ssh_keys_present() {
+  local home
+  home="$(getent passwd "${SUDO_USER:-root}" | cut -d: -f6)"
+  [ -s "$home/.ssh/authorized_keys" ] || [ -s /root/.ssh/authorized_keys ]
+}
+
+harden_ssh() {
+  if ! ssh_keys_present; then
+    printf -- "No authorized ssh keys found for the invoking user or root; not disabling password login.\n" >&2
+    return 1
+  fi
+  run mkdir -p /etc/ssh/sshd_config.d
+  write_file /etc/ssh/sshd_config.d/90-ce-hardening.conf 0644 <<'EOF'
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin prohibit-password
+EOF
+  if [ "$DRY_RUN" != true ]; then
+    if ! sshd -t; then
+      rm -f /etc/ssh/sshd_config.d/90-ce-hardening.conf
+      printf -- "sshd rejected the hardening file; removed it.\n" >&2
+      return 1
+    fi
+  fi
+  run systemctl reload ssh
+}
+
+setup_firewall() {
+  run apt-get install -y ufw
+  run ufw default deny incoming
+  run ufw default allow outgoing
+  run ufw allow 22/tcp
+  run ufw allow 80/tcp
+  run ufw allow 443/tcp
+  run ufw --force enable
+  printf -- "Note: ports published by Docker bypass ufw; Dokku proxies through nginx on 80/443.\n"
+}
+
+setup_fail2ban() {
+  run apt-get install -y fail2ban
+  {
+    printf -- "[sshd]\nenabled = true\nbackend = systemd\nmaxretry = 5\nbantime = 1h\n"
+    if [ -n "$FAIL2BAN_IGNOREIP" ]; then
+      printf -- "ignoreip = 127.0.0.1/8 ::1 %s\n" "$FAIL2BAN_IGNOREIP"
+    fi
+  } | write_file /etc/fail2ban/jail.d/ce-sshd.local
+  run systemctl enable --now fail2ban
+  run systemctl restart fail2ban
+}
+
+setup_unattended_upgrades() {
+  run apt-get install -y unattended-upgrades
+  write_file /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+  printf -- "Distribution defaults apply: security origins only; Docker and Dokku stay manual.\n"
+}
+
 security_hardening() {
   debug "Starting security hardening"
-  printf -- "\nApplying security hardening measures...\n"
-
-  # Sub-step 1: Disable Unused Services
-  if prompt_substep "Sub-step 1: Disable unused services (Placeholder: disabling example-service)"; then
-    printf -- "Disabling unused services...\n"
-    # Replace with actual command(s), e.g.:
-    # systemctl disable example-service
-    sleep 1
-    printf -- "Unused services disabled. (Placeholder)\n\n"
-  else
-    printf -- "Skipping disabling unused services.\n\n"
+  if [ "$SKIP_FIREWALL" = true ] || [ "$WITH_FLEET_BASELINE" = true ]; then
+    printf -- "Skipping the ufw sub-step (--skip-firewall or fleet baseline owns the firewall).\n"
+  elif prompt_substep "Sub-step 1: Firewall (ufw)\nDefault deny incoming; allow ssh, http, https; then enable."; then
+    setup_firewall
   fi
-
-  # Sub-step 2: Harden SSH Configuration
-  if prompt_substep "Sub-step 2: Harden SSH configuration (Placeholder: modifying /etc/ssh/sshd_config)"; then
-    printf -- "Hardening SSH configuration...\n"
-    # Example commands to harden SSH:
-    sed -i -E 's/^(#)?PermitRootLogin (prohibit-password|yes)/PermitRootLogin no/' /etc/ssh/sshd_config
-    sed -i -E 's/^(#)?PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-    systemctl restart ssh
-    sleep 1
-    printf -- "SSH configuration hardened. (Placeholder)\n\n"
-  else
-    printf -- "Skipping SSH hardening.\n\n"
+  if prompt_substep "Sub-step 2: ssh key-only login\nOnly applied when an authorized key exists; the config is validated before reload."; then
+    harden_ssh || true
   fi
-
-  # Sub-step 3: Configure Firewall (UFW)
-  if prompt_substep "Sub-step 3: Configure UFW firewall (Placeholder: enabling UFW and setting default rules)"; then
-    printf -- "Configuring UFW firewall...\n"
-    apt-get install ufw -y
-    ufw default deny incoming
-    ufw default allow outgoing
-    ufw allow http
-    ufw allow https
-    ufw limit ssh
-    ufw enable
-    sleep 1
-    printf -- "UFW firewall configured. (Placeholder)\n\n"
-  else
-    printf -- "Skipping UFW firewall configuration.\n\n"
+  if prompt_substep "Sub-step 3: fail2ban for ssh"; then
+    setup_fail2ban
   fi
-
-  # Sub-step 4: Setup Fail2Ban
-  if prompt_substep "Sub-step 4: Setup Fail2Ban (Placeholder: installing and configuring Fail2Ban)"; then
-    printf -- "Setting up Fail2Ban...\n"
-    apt-get install fail2ban -y
-    cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-    systemctl restart fail2ban
-    sleep 1
-    printf -- "Fail2Ban setup complete. (Placeholder)\n\n"
-  else
-    printf -- "Skipping Fail2Ban setup.\n\n"
+  if prompt_substep "Sub-step 4: unattended security upgrades"; then
+    setup_unattended_upgrades
   fi
-  
-  # Sub-step 5: Setup Unattended Upgrades
-  if prompt_substep "Sub-step 5: Setup Unattended Upgrades\nThis will install unattended-upgrades and enable automatic updates." ; then
-    printf -- "Installing unattended-upgrades...\n"
-    apt-get install unattended-upgrades -y
-    printf -- "Enabling unattended-upgrades...\n"
-    dpkg-reconfigure --priority=low unattended-upgrades
-    sleep 1
-    printf -- "Unattended upgrades configured. (Placeholder)\n\n"
-  else
-    printf -- "Skipping unattended upgrades configuration.\n\n"
-  fi
-
   debug "Finished security hardening"
-  prompt_continue "Security Hardening" "Press Enter to continue after security hardening."
 }
 
-#############################################
-# New Step: Backup Configuration
-#############################################
 backup_config() {
   debug "Starting backup configuration"
-  printf -- "Configuring backup settings...\n"
-  
-  # Sub-step 1: Install BorgBackup
-  if prompt_substep "Sub-step 1: Install BorgBackup\nThis will install BorgBackup using: sudo apt-get install borgbackup -y"; then
-    printf -- "Installing BorgBackup...\n"
-    apt-get install borgbackup -y
-    sleep 1
-    printf -- "BorgBackup installed.\n\n"
-  else
-    printf -- "Skipping BorgBackup installation.\n\n"
+  if prompt_substep "Sub-step: Install the BorgBackup client\nNo repository or schedule is configured; the fleet layer or you do that."; then
+    run apt-get install -y borgbackup
+    if [ "$DRY_RUN" != true ]; then
+      printf -- "BorgBackup installed: %s (manifest reference %s).\n" "$(borg --version 2>/dev/null || echo unknown)" "$BORG_VERSION"
+    fi
   fi
-
-  printf -- "Backup configuration complete. (Placeholder)\n"
   debug "Finished backup configuration"
-  prompt_continue "Backup Configuration" "Press Enter to continue after backup configuration."
 }
 
-#############################################
-# Run the Script
-#############################################
-main "$@"
+# Run only when executed, so tests can source the functions.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi

@@ -1,0 +1,52 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title') %></h1>
+  <p class="text-muted"><%= t('.subtitle', platform_name: @platform.name) %></p>
+
+  <%= form_with url: import_platform_redirects_path(@platform), method: :post, id: 'redirects-import-form', data: { turbo: false } do |form| %>
+    <div class="mb-3">
+      <%= label_tag :redirects_import_rows, t('.rows_label'), class: 'form-label' %>
+      <%= text_area_tag :rows, params[:rows], id: 'redirects_import_rows', rows: 10, class: 'form-control font-monospace',
+                        placeholder: "/old/page.html,/en/new-page\n/pdf/old.pdf,/en/f/report,301" %>
+      <div class="form-text"><%= t('.rows_hint') %></div>
+    </div>
+
+    <div class="form-check mb-3">
+      <%= check_box_tag :mode, 'upsert', params[:mode] == 'upsert', id: 'redirects_import_upsert', class: 'form-check-input' %>
+      <%= label_tag :redirects_import_upsert, t('.upsert_label'), class: 'form-check-label' %>
+    </div>
+
+    <div class="d-flex gap-2">
+      <%= submit_tag t('.preview_btn'), id: 'redirects-import-preview-btn', name: nil, class: 'btn btn-outline-primary' %>
+      <%= submit_tag t('.import_btn'), id: 'redirects-import-apply-btn', name: 'commit_import', class: 'btn btn-primary',
+                     data: { turbo_confirm: t('.import_confirm') } %>
+      <%= link_to t('.back'), platform_redirects_path(@platform), id: 'redirects-import-back-btn', class: 'btn btn-outline-secondary' %>
+    </div>
+  <% end %>
+
+  <% if @report %>
+    <section id="redirects-import-report" class="mt-4" aria-labelledby="redirects-import-report-heading">
+      <h2 id="redirects-import-report-heading" class="h5">
+        <%= t(@report.dry_run ? '.report_preview' : '.report_applied') %>
+      </h2>
+      <dl class="row mb-2">
+        <% %i[created updated unchanged skipped].each do |key| %>
+          <dt class="col-sm-3"><%= t(".report_#{key}") %></dt>
+          <dd class="col-sm-9" id="redirects-import-<%= key %>"><%= @report.public_send(key) %></dd>
+        <% end %>
+      </dl>
+      <% if @report.errors.any? %>
+        <div class="alert alert-danger" id="redirects-import-errors">
+          <ul class="mb-0">
+            <% @report.errors.each do |error| %>
+              <li><%= t('.report_error_line', row: error[:row] + 1, path: error[:from_path], message: error[:message]) %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+</div>

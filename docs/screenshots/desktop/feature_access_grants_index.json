@@ -1,8 +1,8 @@
 {
   "name": "feature_access_grants_index",
   "device": "desktop",
-  "url": "/en/host/platforms/docs-feature-gate-platform-5687d772/feature_access_grants",
-  "title": "Community Engine Host",
+  "url": "/en/host/platforms/docs-feature-gate-platform-d92235a2/feature_access_grants",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "feature_access_grants_and_developer_settings",

@@ -1,0 +1,49 @@
+{
+  "name": "account_deletion_member",
+  "device": "desktop",
+  "url": "/en/users/edit",
+  "title": "Edit User | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "account_deletion",
+  "flow": "member",
+  "source_spec": "./spec/docs_screenshots/better_together/account_deletion_spec.rb",
+  "callouts": [
+    {
+      "selector": "#person-deletion-request-form",
+      "title": "Request deletion",
+      "bullets": [
+        "Optionally say why, then send the request.",
+        "It is reviewed before anything is removed."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 627.0,
+        "width": 1296.0,
+        "height": 172.0,
+        "right": 1368.0,
+        "bottom": 799.0,
+        "center_x": 720.0,
+        "center_y": 713.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 627.0,
+        "width": 1296.0,
+        "height": 172.0,
+        "right": 1368.0,
+        "bottom": 799.0,
+        "center_x": 720.0,
+        "center_y": 713.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 819.0,
+        "width": 380,
+        "height": 184,
+        "score": 658.0
+      }
+    }
+  ]
+}

@@ -26,7 +26,15 @@ module BetterTogether
 
       module_function
 
+      # Nil when the owner the chain lands on is not local (a federated or OAuth
+      # peer, or someone mirrored from one): external owners are not charged, and
+      # their usage is not redirected to the host platform either.
       def resolve(record)
+        owner = resolve_unfiltered(record)
+        BetterTogether::Quotas::Locality.local_owner?(owner) ? owner : nil
+      end
+
+      def resolve_unfiltered(record)
         record = BetterTogether::ActiveStorageAttachmentRecord.resolve(record)
         return platform_fallback if record.nil?
         return record if owner_record?(record)
@@ -69,7 +77,7 @@ module BetterTogether
         return nil unless method_name && record.respond_to?(method_name)
 
         hop_target = record.public_send(method_name)
-        hop_target.present? ? resolve(hop_target) : nil
+        hop_target.present? ? resolve_unfiltered(hop_target) : nil
       end
 
       def platform_fallback

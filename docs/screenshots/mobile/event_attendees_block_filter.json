@@ -1,7 +1,7 @@
 {
   "name": "event_attendees_block_filter",
   "device": "mobile",
-  "url": "/en/events/997fedbc-3320-45fb-bb70-c27477cc2f8b",
+  "url": "/en/events/0718ef2c-96c1-4b66-8563-d95aed9a728d",
   "title": "Harbour cleanup | Events | Test Host Community",
   "locale": "en",
   "role": "event_organizer",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 29.0,
-        "y": 657.578125,
+        "y": 725.578125,
         "width": 427.0,
         "height": 42.0,
         "right": 456.0,
-        "bottom": 699.578125,
+        "bottom": 767.578125,
         "center_x": 242.5,
-        "center_y": 678.578125
+        "center_y": 746.578125
       },
       "avoid": {
         "x": 29.0,
-        "y": 657.578125,
+        "y": 725.578125,
         "width": 427.0,
         "height": 42.0,
         "right": 456.0,
-        "bottom": 699.578125,
+        "bottom": 767.578125,
         "center_x": 242.5,
-        "center_y": 678.578125
+        "center_y": 746.578125
       },
       "placement": {
         "side": "above",
         "x": 107.5,
-        "y": 453.58,
+        "y": 521.58,
         "width": 270.0,
         "height": 184,
-        "score": 657.578125
+        "score": 725.578125
       }
     }
   ]

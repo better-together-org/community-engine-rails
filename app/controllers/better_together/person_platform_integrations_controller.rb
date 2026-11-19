@@ -4,7 +4,7 @@ module BetterTogether
   # Manages user's external platform integrations (OAuth connections).
   # Allows users to view, create, update, and remove their connected accounts
   # from external platforms like GitHub, Facebook, Google, etc.
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PersonPlatformIntegrationsController < ApplicationController
     before_action :authenticate_user!
     before_action :set_person_platform_integration, only: %i[show edit update destroy]
@@ -62,7 +62,7 @@ module BetterTogether
     end
 
     # DELETE /better_together/person_platform_integrations/1
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def destroy
       authorize @person_platform_integration
       provider_name = @person_platform_integration.provider.titleize
@@ -116,12 +116,11 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
     # Handle attempt to delete last OAuth integration for OAuth-only user
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
     def handle_cannot_delete_last_oauth_integration(provider_name)
       respond_to do |format|
         format.html do
@@ -140,7 +139,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # Use callbacks to share common setup or constraints between actions.
     def set_person_platform_integration
@@ -164,5 +162,4 @@ module BetterTogether
       )
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

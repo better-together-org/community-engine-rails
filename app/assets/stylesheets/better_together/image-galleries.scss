@@ -1,4 +1,54 @@
-
+// Default layout is a CSS grid, so DOM order equals visual order.
 .image-gallery {
-  // min-height: 50vh;
+  &__list {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    padding-left: 0;
+  }
+
+  &__item--single {
+    grid-column: 1 / -1;
+  }
+
+  &__image {
+    display: block;
+    height: auto;
+    width: 100%;
+  }
+
+  // Masonry positions items itself and needs explicit column widths.
+  &--masonry &__list {
+    display: block;
+  }
+
+  &--masonry &__item {
+    margin-bottom: 1rem;
+    width: calc(33.333% - 0.67rem);
+  }
+
+  &--masonry &__item--single {
+    width: 100%;
+  }
+
+  @media (max-width: 767.98px) {
+    &--masonry &__item {
+      width: 100%;
+    }
+  }
+}
+
+.image-gallery__open {
+  cursor: zoom-in;
+  line-height: 0;
+
+  &:focus-visible {
+    outline: 3px solid var(--bs-primary, #0d6efd);
+    outline-offset: 2px;
+  }
+}
+
+.image-gallery__modal-image {
+  max-height: 75vh;
+  object-fit: contain;
 }

@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import "chart.js"
+import { watchChartColours } from "better_together/chart_colour_mode"
 
 // Draws the stored 14 day weather history. The server provides the series, the translated
 // dataset names and the axis units; this controller only renders them. A null value is a
@@ -7,7 +8,7 @@ import "chart.js"
 const COLORS = {
   hot: "#b02a37",
   cold: "#0a58ca",
-  neutral: "#495057",
+  neutral: "#8b949e",
   rain: "#0a58ca",
   wind: "#087990",
   gust: "#b35900"
@@ -19,12 +20,14 @@ export default class extends Controller {
 
   connect() {
     this.charts = []
+    this.stopColourWatch = watchChartColours(() => this.charts)
     if (this.hasTemperatureTarget) this.draw(this.temperatureTarget, this.temperatureConfig())
     if (this.hasPrecipitationTarget) this.draw(this.precipitationTarget, this.precipitationConfig())
     if (this.hasWindTarget) this.draw(this.windTarget, this.windConfig())
   }
 
   disconnect() {
+    if (this.stopColourWatch) this.stopColourWatch()
     this.charts.forEach((chart) => chart.destroy())
     this.charts = []
   }
