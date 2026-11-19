@@ -7,7 +7,7 @@ module BetterTogether
     belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 
     # Enumerations for platforms
-    PLATFORMS = %w[Facebook Instagram LinkedIn YouTube TikTok Reddit What'sApp].freeze
+    PLATFORMS = %w[Facebook Instagram LinkedIn YouTube TikTok Reddit What'sApp Flickr].freeze
 
     URL_TEMPLATES = {
       'Facebook' => 'https://www.facebook.com/%<handle>s',
@@ -16,7 +16,8 @@ module BetterTogether
       'LinkedIn' => 'https://www.linkedin.com/in/%<handle>s',
       'YouTube' => 'https://www.youtube.com/%<handle>s',
       'TikTok' => 'https://www.tiktok.com/@%<handle>s',
-      'Reddit' => 'https://www.reddit.com/user/%<handle>s'
+      'Reddit' => 'https://www.reddit.com/user/%<handle>s',
+      'Flickr' => 'https://www.flickr.com/photos/%<handle>s'
       # 'WhatsApp' does not have a URL template
     }.freeze
 

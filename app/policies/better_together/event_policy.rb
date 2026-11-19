@@ -89,7 +89,7 @@ module BetterTogether
                                      string_translations cover_image_attachment cover_image_blob
                                    ]
                                  }).order(
-                                   starts_at: :desc, created_at: :desc
+                                   starts_at: :asc, created_at: :desc
                                  ).where(permitted_query)
       end
 
@@ -100,7 +100,7 @@ module BetterTogether
       # { category: ... }) is a polymorphic association ActiveRecord cannot
       # eagerly load via includes(), which is why EventResource needs the
       # predicate alone, applied to its own relation.
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         events_table = ::BetterTogether::Event.arel_table
         event_hosts_table = ::BetterTogether::EventHost.arel_table
@@ -160,7 +160,6 @@ module BetterTogether
 
         query.and(excluding_block_related_creators(events_table))
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 

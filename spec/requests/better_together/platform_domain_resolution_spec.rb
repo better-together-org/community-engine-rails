@@ -156,7 +156,7 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
     end
 
     it 'does not create domain for external platforms' do
-      external_platform = create(:better_together_platform, :external,
+      external_platform = create(:better_together_platform, :remote,
                                  host_url: 'https://external.example.test')
 
       # External platforms should not auto-create domains

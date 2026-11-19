@@ -1,0 +1,78 @@
+version: '2.0'
+type: page_block
+records:
+- key: home-template-on-home
+  refs:
+    page: page:home
+    block: content_block:home-template
+  position: 0
+- key: about-text-on-about
+  refs:
+    page: page:about
+    block: content_block:about-text
+  position: 0
+- key: better-together-template-on-better-together
+  refs:
+    page: page:better-together
+    block: content_block:better-together-template
+  position: 0
+- key: better-together/community-engine-template-on-better-together/community-engine
+  refs:
+    page: page:better-together/community-engine
+    block: content_block:better-together/community-engine-template
+  position: 0
+- key: subprocessors-template-on-subprocessors
+  refs:
+    page: page:subprocessors
+    block: content_block:subprocessors-template
+  position: 0
+- key: faq-template-on-faq
+  refs:
+    page: page:faq
+    block: content_block:faq-template
+  position: 0
+- key: privacy-policy-template-on-privacy-policy
+  refs:
+    page: page:privacy-policy
+    block: content_block:privacy-policy-template
+  position: 0
+- key: terms-of-service-template-on-terms-of-service
+  refs:
+    page: page:terms-of-service
+    block: content_block:terms-of-service-template
+  position: 0
+- key: code-of-conduct-template-on-code-of-conduct
+  refs:
+    page: page:code-of-conduct
+    block: content_block:code-of-conduct-template
+  position: 0
+- key: accessibility-template-on-accessibility
+  refs:
+    page: page:accessibility
+    block: content_block:accessibility-template
+  position: 0
+- key: cookie-policy-template-on-cookie-policy
+  refs:
+    page: page:cookie-policy
+    block: content_block:cookie-policy-template
+  position: 0
+- key: contact-text-on-contact
+  refs:
+    page: page:contact
+    block: content_block:contact-text
+  position: 0
+- key: contact-contact-details-on-contact
+  refs:
+    page: page:contact
+    block: content_block:contact-contact-details
+  position: 1
+- key: code_contributor_agreement-template-on-code_contributor_agreement
+  refs:
+    page: page:code_contributor_agreement
+    block: content_block:code_contributor_agreement-template
+  position: 0
+- key: content_contributor_agreement-template-on-content_contributor_agreement
+  refs:
+    page: page:content_contributor_agreement
+    block: content_block:content_contributor_agreement-template
+  position: 0

@@ -231,7 +231,7 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
-  describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+  describe 'privacy ceiling (PrivacyCeilingValidatable never blocks saving)' do
     let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
     let(:community_platform) { create(:better_together_platform, privacy: 'community') }
     let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
@@ -260,10 +260,11 @@ RSpec.describe BetterTogether::Post do
     end
 
     context 'public platform + community-privacy community' do
-      it 'rejects public privacy' do
+      it 'saves public but caps effective privacy at community' do
         post = post_for.call(platform: public_platform, community: community_community, privacy: 'public')
-        expect(post).not_to be_valid
-        expect(post.errors[:privacy].join).to include('community')
+        expect(post).to be_valid
+        expect(post.privacy).to eq('public')
+        expect(post.effective_privacy).to eq('community')
       end
 
       it 'allows community privacy' do
@@ -272,10 +273,11 @@ RSpec.describe BetterTogether::Post do
     end
 
     context 'public platform + private community' do
-      it 'rejects public privacy' do
+      it 'saves public but caps effective privacy at community' do
         post = post_for.call(platform: public_platform, community: private_community, privacy: 'public')
-        expect(post).not_to be_valid
-        expect(post.errors[:privacy].join).to include('community')
+        expect(post).to be_valid
+        expect(post.privacy).to eq('public')
+        expect(post.effective_privacy).to eq('community')
       end
 
       it 'allows community privacy (members can still share within the community)' do
@@ -288,10 +290,11 @@ RSpec.describe BetterTogether::Post do
     end
 
     context 'community-privacy platform' do
-      it 'rejects public privacy' do
+      it 'saves public but caps effective privacy at community' do
         post = post_for.call(platform: community_platform, privacy: 'public')
-        expect(post).not_to be_valid
-        expect(post.errors[:privacy].join).to include('community')
+        expect(post).to be_valid
+        expect(post.privacy).to eq('public')
+        expect(post.effective_privacy).to eq('community')
       end
 
       it 'allows community privacy' do
@@ -304,10 +307,11 @@ RSpec.describe BetterTogether::Post do
     end
 
     context 'private platform' do
-      it 'rejects public privacy' do
+      it 'saves public but caps effective privacy at community' do
         post = post_for.call(platform: private_platform, privacy: 'public')
-        expect(post).not_to be_valid
-        expect(post.errors[:privacy].join).to include('community')
+        expect(post).to be_valid
+        expect(post.privacy).to eq('public')
+        expect(post.effective_privacy).to eq('community')
       end
 
       it 'allows community privacy' do
@@ -322,7 +326,7 @@ RSpec.describe BetterTogether::Post do
       end
     end
 
-    it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+    it 'stays valid on unrelated attribute updates' do
       post = create(:better_together_post, platform: public_platform, community: public_community, privacy: 'public')
       post.title = 'Updated title'
       expect(post).to be_valid

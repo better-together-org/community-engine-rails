@@ -280,6 +280,7 @@ fr:
         scopes: Portées
       better_together/page:
         blocks: Blocs
+        feature_image: Image principale
         identifier: Identifiant
         image_blocks: Blocs d'images
         keywords: Mots-clés
@@ -401,6 +402,10 @@ fr:
         type: Type
         valid_from: Valide à partir de
         valid_until: Valide jusqu'à
+      better_together/redirect:
+        from_path: Ancien chemin
+        status: Réponse
+        to_path: Nouveau chemin
       better_together/resource_permission:
         action: Action
         identifier: Identifiant
@@ -587,6 +592,11 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_deletion_request:
+          attributes:
+            base:
+              last_platform_steward: ne peut pas être supprimé tant que vous êtes
+                la seule personne stewarde de votre plateforme
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -598,6 +608,10 @@ fr:
               inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
             uid:
               taken: a déjà été lié à un autre compte
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} a une valeur non autorisée"
         better_together/platform_domain:
           attributes:
             active:
@@ -605,6 +619,12 @@ fr:
               must_be_true_for_share_domain: doit être vrai pour un domaine de partage
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: doit être un chemin commençant par une barre oblique ou une
+                adresse http ou https complète
+              redirect_loop: ramène à elle-même par d'autres redirections
         better_together/short_link:
           attributes:
             target_url:
@@ -629,10 +649,12 @@ fr:
       better_together/content/communities_block: Communautés
       better_together/content/css: CSS Personnalisé
       better_together/content/events_block: Événements
+      better_together/content/file_download_block: Téléchargement de fichier
       better_together/content/hero: Héros
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Galerie d'images
       better_together/content/link: Lien
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagramme Mermaid
@@ -684,6 +706,7 @@ fr:
       better_together/platform_domain: Domaine de plateforme
       better_together/platform_invitation: Invitation à la Plateforme
       better_together/post: Publication
+      better_together/redirect: Redirection
       better_together/resource_permission: Autorisation des Ressources
       better_together/role: Rôle
       better_together/role_resource_permission: Autorisation des Ressources de Rôle
@@ -764,6 +787,11 @@ fr:
       address: Adresse
       city_name: Ville
       country_name: Pays
+      geography:
+        country: Pays
+        settlement: Ville ou localité
+        state: État ou province
+        use_typed_text: Utiliser « %{q} » tel que saisi
       label: Libellé
       labels:
         billing: Facturation
@@ -978,6 +1006,16 @@ fr:
         completed_message: Liste de contrôle complète
         items_title: Éléments
         no_items: Aucun élément à afficher
+    color_mode:
+      announce:
+        dark: 'Mode de couleur : sombre.'
+        light: 'Mode de couleur : clair.'
+      auto: Auto
+      dark: Sombre
+      label: Mode de couleur
+      light: Clair
+      switch_to_dark: Passer au mode sombre
+      switch_to_light: Passer au mode clair
     comment_config:
       hints:
         permission: Détermine qui est autorisé à publier de nouveaux commentaires.
@@ -1113,6 +1151,38 @@ fr:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Tout accepter
+      analytics: 'Analyse : nous aide à comprendre l''utilisation du site'
+      body: Ce site souhaite utiliser du code d'analyse et de marketing. Les fonctions
+        essentielles fonctionnent toujours. Vous pouvez changer d'avis à tout moment.
+      choices_legend: Catégories facultatives
+      choose: Choisir
+      essential_note: Les fonctions essentielles sont toujours actives.
+      essential_only: L'essentiel seulement
+      marketing: 'Marketing : mesurer et personnaliser la communication'
+      policy_link: Lire la politique relative aux cookies.
+      preferences: Préférences des cookies
+      save: Enregistrer mes choix
+      saved: Vos choix de confidentialité ont été enregistrés.
+      settings:
+        analytics_help: Aident la plateforme à comprendre comment le site est utilisé.
+        device_note: Vos choix suivent votre compte et sont appliqués à chaque connexion.
+        essential: Témoins essentiels (toujours actifs)
+        essential_help: Nécessaires pour vous connecter, sécuriser le site et mémoriser
+          ces choix.
+        marketing_help: Mesurent et personnalisent la communication.
+        none: 'Cette plateforme n''utilise actuellement aucun témoin facultatif :
+          il n''y a rien à choisir. Les témoins essentiels sont toujours actifs.'
+        not_decided: Vous n'avez pas encore fait de choix. D'ici là, seuls les témoins
+          essentiels sont utilisés.
+        not_stored: Enregistré sur cet appareil, mais impossible de l'enregistrer
+          sur votre compte. Veuillez réessayer.
+        outdated: Cette plateforme a modifié les consentements demandés depuis votre
+          dernier choix. Veuillez choisir à nouveau.
+        saved_on: Vos choix ont été enregistrés le %{date}.
+        withdraw_all: Retirer tous les consentements facultatifs
+      title: Vos choix de confidentialité
     contact_details:
       contact_information: Informations de contact
       title: Détails de contact
@@ -1127,6 +1197,10 @@ fr:
     contacts:
       add: Ajouter un contact
     content:
+      block_picker:
+        create: Créer un nouveau bloc %{block}
+        create_for_page: Créer un nouveau bloc %{block} pour la page
+        icon: Icône %{block}
       blocks:
         accordion_block:
           answer: Answer
@@ -1180,6 +1254,13 @@ fr:
                 ici.
               title: Choisir depuis la bibliothèque
               view_uploads: Voir les téléversements et leurs statuts de révision
+        file_download_block:
+          description_help: Brève description (facultatif)
+          empty: Ce fichier n'est pas disponible.
+          label_help: Texte du lien (facultatif, par défaut le nom du fichier)
+          meta: "%{type}, %{size}"
+          open_inline: Ouvrir dans le navigateur au lieu de télécharger
+          select_prompt: Sélectionner un fichier
         hero:
           editor:
             background: Arrière-plan
@@ -1198,6 +1279,16 @@ fr:
           missing_url: Aucune URL d'iframe configurée.
           url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
             ou une autre intégration de confiance d'un espace communautaire.
+        image_gallery_block:
+          empty: Aucune image à afficher.
+          heading_help: Titre affiché au-dessus de la galerie (facultatif)
+          images: Images
+          images_help: Choisissez les blocs d'image dans l'ordre souhaité.
+          layout: Disposition
+          layouts:
+            grid: Grille
+            masonry: Mosaïque
+          lightbox: Ouvrir les images dans une visionneuse au clic
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
@@ -1409,6 +1500,60 @@ fr:
       sidebar:
         conversations: Conversations
         new: Nouveau
+    cookie_policy:
+      categories:
+        analytics:
+          description: Ils nous aident à comprendre comment la plateforme est utilisée
+            afin de l'améliorer.
+          title: Témoins d'analyse
+        marketing:
+          description: Ils mesurent et personnalisent la communication.
+          title: Témoins de marketing
+      choices_optional: Les témoins facultatifs sont désactivés tant que vous ne les
+        acceptez pas. Vous pouvez modifier ou retirer votre choix à tout moment avec
+        le bouton des préférences de témoins ou, une fois connecté, dans vos paramètres.
+      columns:
+        duration: Durée
+        name: Nom du témoin
+        purpose: Objet
+        type: Type
+      core:
+        consent:
+          cookies:
+            consent: Conserve vos choix de consentement (analyse et marketing) et
+              la version de la politique à laquelle vous avez répondu
+          description: Mémorisent vos choix pour que nous ne vous les redemandions
+            pas à chaque visite.
+          title: Vos choix de témoins
+        durations:
+          consent_days: 180 jours, renouvelés à chaque visite
+          session: Session
+          session_inactivity: Session (6 heures d'inactivité)
+          two_weeks: 2 semaines
+        session:
+          cookies:
+            csrf: Jeton de sécurité qui protège contre les attaques de type falsification
+              de requête intersite (CSRF)
+            remember: Vous garde connecté lorsque vous choisissez « Se souvenir de
+              moi » à la connexion
+            session: Maintient votre session de connexion et conserve des données
+              temporaires comme les jetons d'invitation, la langue et les réglages
+              de débogage
+          description: Ils vous gardent connecté et protègent la plateforme contre
+            les requêtes falsifiées.
+          title: Connexion et sécurité
+      last_updated: 'Dernière mise à jour :'
+      manage_choices: Gérer vos choix de témoins dans vos paramètres
+      optional_intro: Les témoins facultatifs suivants ne sont utilisés que si vous
+        les acceptez. Vous pouvez changer d'avis à tout moment avec le bouton des
+        préférences de témoins ou, une fois connecté, dans vos paramètres.
+      party:
+        first: Interne
+        third: Tiers
+      privacy_link: Informations sur la confidentialité de %{provider}
+      third_party_listed: Cette plateforme utilise les services tiers énumérés ci-dessous.
+        Ils ne déposent de témoins ou de stockage de navigateur que de la façon décrite.
+      version: version de la politique %{version}
     default_member_name: Membre
     device_permissions:
       location:
@@ -1482,9 +1627,6 @@ fr:
           succeeded: Réussi
     errors:
       only_one_primary: ne peut être défini que sur un seul enregistrement%{scope_suffix}
-      privacy:
-        exceeds_context_bounds: ne peut pas être plus ouvert que '%{max}' — les paramètres
-          de la plateforme ou de la communauté empêchent ce niveau de visibilité
     event_invitations:
       index:
         invite_member: Invite member
@@ -1628,6 +1770,8 @@ fr:
           at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
       index:
+        map_truncated: Affichage des %{count} premiers événements sur la carte. Précisez
+          les filtres pour voir le reste.
         new_btn_text: Nouvel événement
         result_count:
           one: "%{count} événement"
@@ -2104,6 +2248,13 @@ fr:
         no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
           demande pour voir des correspondances.
         suggested_matches: Correspondances suggérées
+    image_gallery:
+      close: Fermer
+      counter: "{current} sur {total}"
+      dialog_label: 'Galerie d''images : %{name}'
+      next: Image suivante
+      open_image: 'Ouvrir l''image %{current} sur %{total} : %{name}'
+      previous: Image précédente
     infrastructure:
       locations: Emplacements
     invitations:
@@ -2793,11 +2944,13 @@ fr:
       new:
         title: Nouvel élément de navigation pour %{name}
       route_names:
+        agreements: Accords
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
         communities: Communautés
         content_blocks: Blocs de contenu
         events: Événements
+        federation_hub: Hub de fédération
         geography_continents: Continents
         geography_countries: Pays
         geography_maps: Cartes
@@ -2808,19 +2961,26 @@ fr:
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
+        host_dashboard_weather: Météo
+        host_jobs: Tâches en arrière-plan
+        hub: Hub
+        joatu_hub: Hub Joatu
         joatu_offers: Offres
         joatu_requests: Requêtes
         metrics_reports: Rapports de métriques
         navigation_areas: Zones de navigation
+        oauth_applications: Applications OAuth
         pages: Pages
         people: Personnes
         platform_connections: Connexions de plateforme
         platforms: Plateformes
+        posts: Publications
         reports: Signalements
         resource_permissions: Permissions des ressources
         roles: Rôles
         safety_cases: Revue de sécurité
         users: Utilisateurs
+        webhook_endpoints: Points de terminaison webhook
       visibility_strategies:
         authenticated: Utilisateurs connectés
         permission: Utilisateurs avec permission
@@ -2932,6 +3092,14 @@ fr:
           in the safety review queue
         title: New safety report requires review
       time_ago: il y a %{time}
+      trusted_domain_grant:
+        granted:
+          body: "%{person} a adhéré comme %{role} via %{domain}"
+          title: Le domaine de confiance %{domain} a accordé une adhésion
+        rate_limited:
+          body: La limite horaire de %{domain} a été atteinte. Les nouvelles personnes
+            restent en attente jusqu'à votre examen.
+          title: Le domaine de confiance %{domain} a atteint sa limite horaire
     oauth:
       applications:
         create:
@@ -3036,6 +3204,33 @@ fr:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
       preferences:
+        appearance:
+          color_mode:
+            hint: Automatique suit le réglage de votre appareil. Clair et sombre restent
+              tels que vous les choisissez.
+            title: Mode de couleur
+          contrast_note: 'Remarque : ce thème a des paires de couleurs sous le contraste
+            WCAG AA. Choisissez un autre thème si le texte est difficile à lire.'
+          description: Choisissez l'apparence de ce site pour vous. Vos choix vous
+            suivent sur chaque appareil où vous vous connectez.
+          platform_theme: Utiliser le thème de la plateforme
+          preview_button: Bouton
+          preview_card: Une carte sur une bande de section
+          preview_footer: Lien de pied de page
+          preview_heading: Un titre d'exemple
+          preview_label: Aperçu de l'apparence
+          preview_link: lien
+          preview_site_name: Votre site
+          preview_state: Aperçu de %{theme} en mode %{mode}. Chaque choix est enregistré
+            séparément.
+          preview_text: Du texte avec un
+          theme:
+            hint: Choisissez un des thèmes disponibles, ou celui retenu par cette
+              plateforme.
+            title: Thème
+          themes_disabled: Cette plateforme utilise un seul thème pour tout le monde.
+            Vous pouvez tout de même choisir votre mode de couleur ci-dessous.
+          title: Apparence
         language:
           title: Langue
         messaging:
@@ -3184,13 +3379,22 @@ fr:
         thanks: Merci
     person_platform_integrations:
       create:
+        account_not_on_platform: Nous n'avons pas pu associer ce compte %{provider}
+          à un compte existant sur cette plateforme. Connectez-vous avec votre méthode
+          habituelle ou demandez de l'aide à une personne organisatrice de la plateforme.
         already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
           d'abord le déconnecter si vous souhaitez connecter un compte différent.
         email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
           %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
           vous connecter avec le bon compte.'
+        email_missing: "%{provider} n'a pas fourni d'adresse e-mail. Rends une adresse
+          e-mail disponible pour cette application dans les paramètres de ton compte
+          %{provider}."
         failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
         success: Compte %{provider} connecté avec succès.
+        unverified_email_collision: Un compte existe déjà avec cet e-mail et %{provider}
+          n'a pas vérifié l'adresse. Connectez-vous avec votre méthode habituelle,
+          puis associez %{provider} depuis les Paramètres.
       destroy:
         cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
           car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
@@ -3277,8 +3481,6 @@ fr:
         title: Connexions de plateforme
       new:
         back: Retour
-        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
-        register_platform_link: Enregistrer une plateforme externe →
         title: Nouvelle connexion de plateforme
       show:
         api_read: Lecture API
@@ -3326,6 +3528,31 @@ fr:
           seront mises en pause.
         sync_cursor: Curseur de synchronisation
         sync_status: État de synchronisation
+    platform_deletion_requests:
+      back: Retour aux paramètres du compte
+      cancel: Annuler la demande
+      cancelled: Votre demande de suppression de la plateforme a été annulée.
+      created: Votre demande de suppression de la plateforme a été envoyée aux stewards
+        hôtes.
+      explanation: Supprimer votre compte laisserait cette plateforme sans steward,
+        ce qui n’est pas autorisé. Envoyez une demande aux stewards de la plateforme
+        hôte pour la faire supprimer, ou demandez d’abord à une autre personne de
+        devenir steward.
+      go_to_form: Demander la suppression de la plateforme
+      intro: Vous êtes la seule personne stewarde de %{platform}.
+      last_steward_notice: Vous êtes la seule personne stewarde de cette plateforme.
+        Pour partir, demandez aux stewards hôtes de supprimer la plateforme, ou nommez
+        d’abord quelqu’un d’autre steward.
+      pending: Votre demande a été envoyée le %{date} et attend l’examen des stewards
+        hôtes.
+      reason: Pourquoi souhaitez-vous supprimer la plateforme ?
+      reason_hint: Facultatif. Les stewards hôtes le liront lors de l’examen de la
+        demande.
+      redirected: Vous êtes la dernière personne stewarde de cette plateforme ; la
+        suppression du compte est donc traitée comme une demande de suppression de
+        la plateforme.
+      submit: Envoyer la demande de suppression
+      title: Demander la suppression de cette plateforme
     platform_domains:
       cancel: Annuler
       cannot_destroy_primary: Impossible de supprimer le domaine principal. Définissez
@@ -3376,6 +3603,77 @@ fr:
         subtitle: Ajouter un domaine pour %{platform_name}
         title: Nouveau domaine
       updated: Le domaine a été mis à jour avec succès.
+    platform_identity_providers:
+      create:
+        created: Le fournisseur de connexion a été ajouté.
+      destroy:
+        destroyed: Le fournisseur de connexion a été supprimé.
+      edit:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Modifier %{provider}
+      form:
+        cancel: Annuler
+        client_id_label: ID client
+        client_secret_hint: Stocké chiffré et jamais réaffiché.
+        client_secret_keep: Laisser vide pour conserver le secret actuel
+        client_secret_label: Secret client
+        create_btn: Ajouter le fournisseur
+        domains_hint: La connexion avec ce fournisseur ne fonctionne que sur les domaines
+          cochés. L'URL de rappel de chaque domaine doit aussi être enregistrée auprès
+          du fournisseur.
+        domains_label: Domaines autorisés
+        enabled_label: Activé
+        issuer_hint: OpenID Connect uniquement. L'URL https du fournisseur d'identité
+          (son document de découverte y est lu). Elle ne peut pas être modifiée après
+          l'ajout, et chaque émetteur ne peut être ajouté qu'une fois par plateforme.
+        issuer_label: URL de l'émetteur
+        label_hint: OpenID Connect uniquement. Affiché sur le bouton de connexion.
+          Par défaut, l'hôte de l'émetteur.
+        label_label: Libellé du bouton
+        scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
+        scopes_label: Portées
+        strategy_label: Fournisseur
+        trust_verified_email_hint: Désactivé par défaut. Si activé, un courriel que
+          cet émetteur marque comme vérifié peut connecter à un compte existant avec
+          cette adresse. À activer seulement pour les émetteurs qui vérifient les
+          adresses courriel.
+        trust_verified_email_label: Faire confiance aux courriels vérifiés de cet
+          émetteur
+        update_btn: Mettre à jour le fournisseur
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce fournisseur de connexion ?
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        env_description: Ces fournisseurs sont définis par des variables d'environnement
+          et s'appliquent aux domaines de cette plateforme indiqués ci-dessous. Les
+          secrets ne sont jamais affichés. Ajoute une ligne de fournisseur pour gérer
+          un domaine ici.
+        env_note: Les fournisseurs sans ligne ici utilisent les variables d'environnement
+          du serveur (par exemple GITHUB_CLIENT_ID).
+        env_serves: 'Dessert : %{domains}'
+        env_serves_none: Tous les domaines sont réclamés par une ligne de fournisseur,
+          l'environnement n'est donc pas utilisé.
+        env_title: Configurés par l'environnement du serveur
+        header_actions: Actions
+        header_client_id: ID client
+        header_provider: Fournisseur
+        header_secret: Secret client
+        header_status: Statut
+        new_btn: Ajouter un fournisseur
+        none: Aucun fournisseur de connexion n'est configuré pour cette plateforme.
+        secret_missing: Manquant
+        secret_set: Défini
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        table_aria: Fournisseurs de connexion
+        title: Fournisseurs de connexion
+      new:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Ajouter un fournisseur de connexion
+      update:
+        updated: Le fournisseur de connexion a été mis à jour.
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -3416,7 +3714,208 @@ fr:
         accepted: Accepté
         expired: Expiré
         pending: En attente
+    platform_snippets:
+      applies_to_options:
+        all: Tout le monde
+        signed_out: Visiteurs non connectés uniquement
+      audit_actions:
+        created: Créé
+        destroyed: Supprimé
+        disabled: Désactivé
+        enabled: Activé
+        updated: Mis à jour
+      consent_categories:
+        analytics: Analyse
+        marketing: Marketing
+        none: Non requis
+      destroyed: Extrait supprimé.
+      edit:
+        subtitle: Pour %{platform_name}.
+        title: Modifier %{name}
+      errors:
+        invalid_meta_markup: doit contenir des balises meta ou des liens preconnect
+        invalid_script_markup: doit être du JavaScript sans balises script ni commentaires
+          HTML
+        invalid_src: doit être une adresse https
+        invalid_style_markup: doit être du CSS sans balises style ni commentaires
+          HTML
+        meta_requires_head: les balises meta ne peuvent aller que dans le head
+        origin_not_allowed: l'origine %{origin} n'est pas autorisée par les paramètres
+          de sécurité des scripts de cette plateforme
+      form:
+        allow_origin: Autoriser l'origine de ce script dans la politique de sécurité
+          du contenu
+        allow_origin_hint: Ajoute l'origine aux origines de script autorisées de cette
+          plateforme.
+        applies_to: Affiché à
+        cancel: Annuler
+        consent_category: Consentement du visiteur
+        consent_hint: Les extraits d'analyse et de marketing sont retenus jusqu'au
+          consentement des visiteurs.
+        content: Code
+        content_hint: Les scripts en ligne s'exécutent avec le nonce de sécurité de
+          la page. N'incluez pas de balises script ou style. Pour le type meta, uniquement
+          des balises meta et des liens preconnect.
+        enabled: Activé
+        enabled_hint: Laissez désactivé jusqu'à ce que vous ayez testé l'extrait.
+        kind: Type
+        location: Emplacement
+        name: Nom
+        notes: Notes
+        save: Enregistrer l'extrait
+        src: Adresse du script
+        src_hint: Pour les scripts externes uniquement. L'adresse doit utiliser https
+          et son origine doit être autorisée dans les paramètres de sécurité de la
+          plateforme.
+        warning: Ce code s'exécute dans le navigateur de chaque visiteur. Testez avec
+          le mode sans échec et gardez l'extrait désactivé jusqu'à ce que vous soyez
+          prêt.
+      index:
+        audit_line: "%{action} : %{name}"
+        audit_title: Modifications récentes
+        back_to_platform: Retour aux paramètres de la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer cet extrait ?
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        header_actions: Actions
+        header_consent: Consentement
+        header_kind: Type
+        header_location: Emplacement
+        header_name: Nom
+        header_status: Statut
+        kill_switch_hint: Ajoutez ?safe_mode=1 à l'adresse d'une page pour voir le
+          site sans extraits.
+        kill_switch_off: Tous les extraits sont désactivés.
+        kill_switch_on: Les extraits sont actifs.
+        kill_switch_title: Tous les extraits
+        move_down: Descendre
+        move_up: Monter
+        new_btn: Nouvel extrait
+        none_yet: Aucun extrait pour l'instant.
+        subtitle: Scripts, styles et balises meta ajoutés à chaque page de %{platform_name}.
+        table_aria: Extraits de code personnalisé
+        title: Code personnalisé
+        turn_off: Tout désactiver
+        turn_on: Tout activer
+        warning: Les extraits s'exécutent dans le navigateur de chaque visiteur et
+          peuvent lire ce qu'il voit et saisit sur cette plateforme. N'ajoutez que
+          du code de confiance.
+      kinds:
+        html_meta: Balises meta
+        script_inline: Script en ligne
+        script_src: Script externe
+        style_inline: Style en ligne
+      locations:
+        body_end: Fin du body
+        body_start: Début du body
+        head_end: Fin du head
+        head_start: Début du head
+      new:
+        subtitle: Pour %{platform_name}. Les nouveaux extraits sont désactivés au
+          départ.
+        title: Nouvel extrait
+      saved: Extrait enregistré.
+      switch_updated: L'interrupteur des extraits a été mis à jour.
+    platform_trusted_domains:
+      created: Le domaine de confiance a été ajouté.
+      destroyed: Le domaine de confiance a été supprimé. Les comptes et adhésions
+        existants ne changent pas.
+      edit:
+        title: Modifier le domaine de confiance
+      events:
+        account_created: Compte créé
+        domain_added: Domaine ajouté
+        domain_removed: Domaine supprimé
+        domain_updated: Domaine modifié
+        grant_rate_limited: Limite horaire atteinte, attribution en attente d'examen
+        membership_granted: Adhésion accordée
+        membership_request_approved: Demande d'adhésion approuvée
+      form:
+        cancel: Annuler
+        domain_hint: Uniquement la partie après l'arobase, par exemple example.org.
+          Les fournisseurs publics comme gmail.com exigent la confirmation ci-dessous.
+        domain_label: Domaine de courriel
+        enabled_label: Activé
+        include_subdomains_label: Faire aussi confiance aux sous-domaines (par exemple
+          mail.example.org)
+        note_label: Note pour les autres stewards (facultatif)
+        public_domain_label: Je comprends qu'il s'agit d'un domaine de courriel public
+          et que n'importe qui peut y avoir une adresse
+        role_ceiling_label: Je comprends que les personnes ayant une adresse vérifiée
+          sur ce domaine reçoivent automatiquement ce rôle
+        role_hint: Rôles de communauté uniquement. Les rôles de plateforme et de steward
+          ne peuvent pas être accordés par domaine.
+        role_label: Rôle de communauté accordé
+        submit: Enregistrer le domaine de confiance
+      index:
+        activity_event: Événement
+        activity_heading: Activité récente
+        activity_none: Aucune activité pour le moment.
+        activity_person: Personne
+        activity_via: Par
+        activity_when: Quand
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce domaine de confiance ? Les comptes et adhésions
+          existants restent inchangés.
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        explanation: Les personnes qui se connectent avec un fournisseur vérifiant
+          leur courriel, ou qui confirment leur courriel après l'inscription, et dont
+          l'adresse se termine par un domaine de confiance obtiennent l'adhésion avec
+          le rôle choisi sans attendre d'examen. Chaque attribution est journalisée.
+        header_accounts: Comptes créés
+        header_actions: Actions
+        header_domain: Domaine
+        header_role: Rôle
+        header_status: Statut
+        header_subdomains: Sous-domaines
+        new_btn: Ajouter un domaine de confiance
+        no_domains: Aucun domaine de confiance pour le moment.
+        subdomains_no: Correspondance exacte seulement
+        subdomains_yes: Inclus
+        subtitle: Domaines de courriel de confiance de %{platform_name}
+        table_aria: Domaines de courriel de confiance
+        title: Domaines de confiance
+      new:
+        subtitle: Les personnes ayant une adresse vérifiée sur ce domaine reçoivent
+          le rôle choisi sur %{platform_name}.
+        title: Ajouter un domaine de confiance
+      updated: Le domaine de confiance a été mis à jour.
+      vias:
+        membership_request: Demande d'adhésion
+        oauth: Fournisseur de connexion
+        password_registration: Inscription par courriel
+        steward: Steward
     platforms:
+      content_slots:
+        errors:
+          invalid_type: "%{slot} ne peut pas utiliser ce type de contenu."
+          too_long: "%{slot} est trop long (la limite est de %{max} caractères par
+            langue)."
+        footer_above:
+          hint: Affiché au-dessus du pied de page du site, par exemple un avis de
+            bailleur de fonds ou une clause de non-responsabilité.
+          label: Au-dessus du pied de page
+        header_above:
+          hint: Affiché au-dessus de l'en-tête du site, par exemple une annonce.
+          label: Au-dessus de l'en-tête
+        hint: Blocs de contenu facultatifs affichés à des endroits fixes sur chaque
+          page de cette plateforme. Chaque langue est distincte; une langue manquante
+          revient à la langue par défaut. Laissez un emplacement vide pour conserver
+          la mise en page standard.
+        not_found_headlines:
+          hint: Un titre par ligne, jusqu'à 20. Un titre est choisi au hasard lorsqu'une
+            page est introuvable. Sans titre, le titre standard est utilisé.
+          label: Titres de la page 404
+        not_found_message:
+          hint: Affiché sous le titre lorsqu'une page est introuvable.
+          label: Message de la page 404
+        remove: Supprimer ce contenu
+        title: Contenu de l'en-tête, du pied de page et de la page 404
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
         allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
@@ -3435,12 +3934,53 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        csp_title: Sécurité / intégrations CSP
+        custom_code_hint: Ajoutez des scripts, styles et balises meta à chaque page.
+          Nécessite l'autorisation de gérer le code de la plateforme.
+        custom_code_link: Gérer le code personnalisé
+        custom_code_title: Code personnalisé
+        custom_css_hint: Réglage avancé. Les styles ajoutés ici se chargent après
+          le thème et ont priorité sur lui.
+        custom_css_title: CSS personnalisé
+        domains_after_save: Enregistrez d'abord la plateforme, puis gérez ici ses
+          domaines et ses fournisseurs de connexion.
+        domains_hint: Consultez les domaines sur lesquels cette plateforme répond
+          et les services de connexion utilisés.
         feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
           fonctionnalité sur cette plateforme.
         feature_gates_title: Contrôles de déploiement des fonctionnalités
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
+        integrations_empty: Aucune intégration n'est installée.
+        integrations_env_fallback: La variable d'environnement %{variable} est utilisée.
+          Une valeur enregistrée ici la remplace.
+        integrations_hint: Réglages des services connectés par des extensions. Chaque
+          plateforme garde ses propres valeurs.
+        integrations_secret_set: Une valeur est enregistrée. Laissez ce champ vide
+          pour la conserver.
+        quota_defaults_hint: Limite initiale pour chaque nouvelle personne, communauté
+          et pour cette plateforme. Laissez un champ vide pour utiliser la valeur
+          de la configuration de l'application. Modifier une valeur met aussi à jour
+          les quotas existants de cette plateforme ; les octrois de quota par propriétaire
+          ne sont pas touchés.
+        quota_defaults_title: Quotas par défaut
+        quota_kinds:
+          community: Communauté
+          person: Personne
+          platform: Plateforme
+        quota_types:
+          ai_translation_tokens: Jetons d'utilisation de LLM IA par mois
+          media_storage: Stockage
+        quota_use_default: Utiliser la valeur par défaut (%{size})
+        trusted_domains:
+          after_save: Enregistrez d'abord la plateforme, puis ajoutez ici les domaines
+            de courriel de confiance.
+          heading: Domaines de courriel de confiance
+          hint: Les adresses vérifiées de ces domaines adhèrent avec un rôle défini
+            sans attendre d'examen.
+          manage: Gérer les domaines de confiance
+          none: Aucun domaine de confiance.
       index:
         provision_new_platform: Provisionner une nouvelle plateforme
       new:
@@ -3456,6 +3996,149 @@ fr:
         title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
+      storage_tab:
+        bucket: Compartiment
+        description: Emplacement des fichiers téléversés par cette plateforme. Les
+          fichiers sont conservés dans le compartiment propre à la plateforme lorsqu'une
+          configuration de stockage est active.
+        health: État de la connexion
+        manage: Gérer les configurations de stockage
+        service_type: Type de service
+        shared_default: Valeur par défaut de l'installation
+        source: Configuration active
+        title: Stockage des fichiers
+      tabs:
+        access: Accès et confidentialité
+        appearance: Apparence
+        details: Détails
+        domains: Domaines et connexion
+        errors: erreurs dans cet onglet
+        features: Fonctionnalités et quotas
+        integrations: Intégrations
+        security: Sécurité
+        storage: Stockage
+      theme:
+        allow_user_themes: Laisser chacun choisir son thème
+        allow_user_themes_hint: Lorsque cette option est activée, les personnes connectées
+          peuvent choisir n'importe quel thème disponible dans leurs paramètres. Lorsqu'elle
+          est désactivée, tout le monde voit le thème de la plateforme. Chacun peut
+          toujours choisir son mode de couleur (automatique, clair ou sombre).
+        apply: Appliquer le thème
+        clear: Vider tous les champs du thème
+        colors:
+          accent: Couleur d'accent
+          accent_dark: Couleur d'accent (foncée, pour le texte)
+          band: Fond des bandeaux de section
+          body_text: Texte courant
+          footer_bg: Fond du pied de page
+          footer_link: Liens du pied de page
+          link: Couleur des liens
+          navbar_bg: Fond de la navigation
+          navbar_link: Texte et liens de la navigation
+          page_bg: Fond de la page
+          primary: Couleur principale
+          primary_text: Texte des boutons principaux
+        contrast_aaa: Conforme AAA
+        contrast_fail: Sous AA, difficile à lire
+        contrast_hint: Les rapports se mettent à jour pendant la saisie. Le texte
+          normal exige au moins 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} sur %{background}"
+        contrast_pass: Conforme AA
+        contrast_title: Vérifications du contraste
+        current_image: "%{name} actuel"
+        dark_color_label: 'Sombre : %{color}'
+        dark_logo_hint: Facultatif. Affiché en mode sombre à la place du logo du site.
+          Le logo du site est utilisé s'il est vide.
+        dark_logo_label: Logo du mode sombre
+        dark_mode_disabled: Désactivé (clair seulement)
+        dark_mode_enabled: Activé
+        dark_mode_label: Mode sombre
+        dark_source_custom: Définir les miennes
+        dark_source_derive: Dériver automatiquement
+        dark_source_label: Couleurs sombres
+        default_mode_label: Par défaut pour les nouveaux visiteurs
+        default_option: Par défaut
+        favicon_hint: Un petit PNG, SVG ou ICO carré affiché dans l'onglet du navigateur.
+        favicon_label: Favicon
+        font_label: Police
+        fonts:
+          georgia: Georgia (avec empattement)
+          monospace: Chasse fixe
+          system: Sans empattement du système
+          tahoma: Tahoma
+        header_banner_hint: Une image large pour l'en-tête. Disponible pour le thème
+          sous --bts-header-banner.
+        header_banner_label: Bannière d'en-tête
+        hint: Définissez les couleurs principales, la police et le style des coins.
+          Laissez un champ vide pour garder la valeur par défaut. Le CSS personnalisé
+          ci-dessous peut toujours remplacer ces réglages.
+        images_title: Images
+        logo_hint: Affiché dans la barre de navigation. C'est le logo de la communauté
+          de la plateforme.
+        logo_label: Logo du site
+        mode_summary_fail: "%{mode} : %{count} paire(s) sous AA."
+        mode_summary_ok: "%{mode} : toutes les paires respectent AA."
+        modes_hint: Les visiteurs peuvent choisir Auto, Clair ou Sombre. Les couleurs
+          sombres s'appliquent à chaque couleur définie ci-dessus. Laissez-les dérivées
+          ou fournissez les vôtres.
+        modes_title: Mode clair et sombre
+        picker_blank: Choisir un thème à prévisualiser
+        picker_label: Partir d'un thème
+        presets:
+          cool:
+            description: Sarcelle profond sur fond doux et coins plus arrondis.
+            name: Froid
+          dark:
+            description: Texte clair sur page sombre pour une vue en faible lumière.
+            name: Sombre
+          high_contrast:
+            description: Noir, blanc et jaune avec le contraste maximal et des coins
+              carrés.
+            name: Contraste élevé
+          neutral:
+            description: Bleu calme sur blanc. Un choix sûr au contraste fort.
+            name: Neutre clair
+          warm:
+            description: Rouille et crème avec une police à empattement.
+            name: Chaud
+        preview_alert: Un message d'information ressemble à ceci.
+        preview_badge: Nouveau
+        preview_band: Un bandeau de section pour le contenu mis en valeur
+        preview_card_text: Les cartes utilisent le fond de la page et la bordure d'accent.
+        preview_card_title: Une carte
+        preview_footer_link: Lien du pied de page
+        preview_heading: Un titre dans votre thème
+        preview_hint: Une page d'exemple qui se met à jour quand vous choisissez un
+          thème ou modifiez une couleur. Rien n'est enregistré avant l'enregistrement
+          de la plateforme.
+        preview_input_label: Champ de formulaire
+        preview_input_value: Texte d'exemple
+        preview_label: Aperçu du thème
+        preview_link: lien d'exemple
+        preview_mode_label: Mode de couleur de l'aperçu
+        preview_nav_one: Événements
+        preview_nav_two: À propos
+        preview_primary: Action principale
+        preview_secondary: Action secondaire
+        preview_site_name: Votre plateforme
+        preview_text: Le texte courant repose sur le fond de la page, avec un
+        preview_title: Aperçu
+        radii:
+          large: Grand
+          medium: Moyen
+          none: Carré
+          small: Petit
+        radius_label: Arrondi des coins
+        remove: Supprimer
+        reset: Revenir aux valeurs enregistrées
+        status_applied: "%{name} appliqué aux champs. Enregistrez la plateforme pour
+          le conserver."
+        status_current: 'Thème actuel : %{name}'
+        status_custom: 'Thème actuel : couleurs personnalisées'
+        status_none: Aucun thème défini, valeurs par défaut de la plateforme
+        status_previewing: Aperçu de %{name}. Pas encore appliqué.
+        title: Thème
+        white: page blanche
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
@@ -3465,13 +4148,6 @@ fr:
       delete: Supprimer l'enregistrement
       edit: Modifier la publication
       edit_post: Modifier la publication
-      hints:
-        privacy_limited_by_community: Certaines options de confidentialité sont désactivées
-          car cette communauté n'est pas publique. Les publications ici ne peuvent
-          être visibles que par les membres de la communauté ou l'auteur.
-        privacy_limited_by_platform: Certaines options de confidentialité sont désactivées
-          car la plateforme n'est pas publique. Les publications ne peuvent être visibles
-          que par les membres de la communauté ou l'auteur.
       index:
         map_unavailable: La vue carte n'est pas disponible pour les publications sans
           données de localisation.
@@ -3516,13 +4192,13 @@ fr:
       view_post: Voir la publication
     primary: Principal
     privacy:
-      hints:
-        privacy_limited_by_community: Certains paramètres de confidentialité sont
-          désactivés car cette communauté n'est pas publique. Le contenu peut seulement
-          être visible pour les membres de la communauté ou l'auteur.
-        privacy_limited_by_platform: Certains paramètres de confidentialité sont désactivés
-          car la plateforme n'est pas publique. Le contenu peut seulement être visible
-          pour les membres de la communauté ou l'auteur.
+      ceiling_notice:
+        community: Cette communauté n'est pas publique, donc ce contenu n'est visible
+          que comme %{level} pour le moment. Il sera publié au niveau choisi dès que
+          la communauté deviendra publique.
+        platform: Cette plateforme n'est pas publique, donc ce contenu n'est visible
+          que comme %{level} pour le moment. Il sera publié au niveau choisi dès que
+          la plateforme deviendra publique.
     quota_grants:
       created: Dérogation de quota créée.
       edit:
@@ -3574,14 +4250,89 @@ fr:
         usage: Utilisation
       updated: Dérogation de quota mise à jour.
     quotas:
+      errors:
+        not_local: doit être local à cette plateforme
       usage_meter:
         types:
-          ai_translation_tokens: Jetons de traduction IA
+          ai_translation_tokens: Jetons d'utilisation de LLM IA
           media_storage: Stockage
     rbac:
       nav:
         resource_permissions: Autorisations de ressources
         roles: Rôles
+    redirects:
+      created: La redirection a été ajoutée.
+      destroyed: La redirection a été supprimée.
+      edit:
+        subtitle: Redirection pour %{platform_name}
+        title: Modifier %{from_path}
+      form:
+        active_label: Active
+        cancel: Annuler
+        create_btn: Ajouter la redirection
+        from_path_hint: L'adresse utilisée par les visiteurs, commençant par une barre
+          oblique. La correspondance ignore la casse, la barre finale et la chaîne
+          de requête.
+        from_path_label: Ancien chemin
+        note_label: Note
+        preserve_query_label: Conserver la chaîne de requête lors de la redirection
+        status_label: Réponse
+        statuses:
+          s301: 301 Déplacée définitivement
+          s302: 302 Trouvée (temporaire)
+          s307: 307 Redirection temporaire
+          s308: 308 Redirection permanente
+          s410: 410 Disparue
+        to_path_hint: Un chemin de ce site commençant par une barre oblique, ou une
+          adresse http ou https complète. Laissez vide seulement pour 410 Disparue.
+        to_path_label: Nouveau chemin ou URL
+        update_btn: Mettre à jour la redirection
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer cette redirection ?
+        edit_btn: Modifier
+        gone_label: Disparue (aucune nouvelle adresse)
+        header_actions: Actions
+        header_from: Ancien chemin
+        header_hits: Visites
+        header_status: Statut
+        header_to: Nouveau chemin
+        import_btn: Importer
+        inactive_label: inactive
+        new_btn: Ajouter une redirection
+        no_redirects: Aucune redirection pour l'instant.
+        search_btn: Rechercher
+        search_label: Rechercher des redirections
+        search_placeholder: Rechercher par ancien chemin
+        subtitle: Anciennes adresses qui envoient les visiteurs vers un nouvel emplacement
+          sur %{platform_name}
+        table_aria: Redirections
+        title: Redirections
+      new:
+        subtitle: Ajouter une redirection pour %{platform_name}
+        title: Nouvelle redirection
+      new_import:
+        back: Retour aux redirections
+        import_btn: Importer
+        import_confirm: Importer ces redirections ?
+        preview_btn: Aperçu
+        report_applied: Importation terminée
+        report_created: Créées
+        report_error_line: 'Ligne %{row} (%{path}) : %{message}'
+        report_preview: Aperçu (rien n'a été enregistré)
+        report_skipped: Ignorées (existent déjà)
+        report_unchanged: Inchangées
+        report_updated: Mises à jour
+        rows_hint: 'Écrivez l''ancien chemin, le nouveau chemin et un statut facultatif
+          (301, 302, 307, 308 ou 410), séparés par des virgules. Les lignes commençant
+          par # sont ignorées. Faites d''abord un aperçu ; rien n''est enregistré
+          avant de choisir Importer.'
+        rows_label: Redirections, une par ligne
+        subtitle: Ajouter plusieurs redirections à %{platform_name} en une fois
+        title: Importer des redirections
+        upsert_label: Mettre aussi à jour les redirections existantes
+      updated: La redirection a été mise à jour.
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
       invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
@@ -3908,6 +4659,10 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        cookie_consent:
+          description: Choisissez les témoins facultatifs que cette plateforme peut
+            utiliser. Votre choix est enregistré dans votre compte.
+          title: Consentement aux témoins
         developer:
           apps:
             client_id_label: ID Client
@@ -4031,6 +4786,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          cookie_consent: Consentement aux témoins
           developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
@@ -4076,6 +4832,9 @@ fr:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      effective_privacy: Visible comme %{privacy}
+      effective_privacy_tooltip: 'Une plateforme ou une communauté non publique limite
+        qui peut voir ce contenu : %{privacy}'
       event_status_level: 'Statut de l''événement: %{status}'
       event_status_tooltip: 'Statut de l''événement: %{status}'
       map:
@@ -4165,15 +4924,16 @@ fr:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
-      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
-        selected storage configuration. Per-tenant storage isolation isn't available
-        yet — file uploads across the whole installation continue to use the shared/host
-        storage backend until multi-tenant storage support ships."
-      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
-        Other app processes will pick up the change on their next restart."
+      activated_for_platform: "« %{name} » est maintenant le stockage de fichiers
+        de cette plateforme. Les nouveaux téléversements l'utilisent immédiatement;
+        les fichiers existants restent où ils sont."
+      activated_with_restart: "« %{name} » activée. Les nouveaux téléversements l'utilisent
+        immédiatement; les autres processus la prennent en compte en environ 30 secondes."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
+      connection_failed: 'La connexion à « %{name} » a échoué : %{message}'
+      connection_ok: La connexion à « %{name} » a réussi.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
       edit:
@@ -4182,15 +4942,22 @@ fr:
       endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
         for Amazon S3. Path-style access is enabled automatically when an endpoint
         is set.
+      health:
+        failed: Échec
+        ok: En bon état
+        unknown: Non testé
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: Activer cette configuration? Les nouveaux téléversements
+          l'utilisent immédiatement et les autres processus la prennent en compte
+          en environ 30 secondes. Les fichiers existants restent sur l'ancien stockage;
+          la migration des blobs est une étape manuelle distincte.
         activation_blob_migration_note: Existing files remain on the previous backend.
           Blob migration between backends is a manual operator step and is not performed
           automatically.
-        activation_restart_note: Activating a new configuration rebinds storage in
-          the current process immediately. Other app processes will pick up the change
-          on their next restart (tmp/restart.txt has been touched).
+        activation_restart_note: L'activation d'une nouvelle configuration relie immédiatement
+          le stockage dans le processus courant. Les autres processus de l'application
+          la prennent en compte en environ 30 secondes.
         activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
@@ -4209,6 +4976,7 @@ fr:
         header_actions: Actions
         header_bucket: Bucket / Root
         header_endpoint: Endpoint
+        header_health: État
         header_name: Name
         header_status: Status
         header_type: Type
@@ -4221,6 +4989,7 @@ fr:
         service_type_label: Service type
         subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
+        test_btn: Tester la connexion
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
       name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
@@ -4372,6 +5141,8 @@ fr:
           à jour. Les informations affichées peuvent être périmées.
         stale: Ces conditions ont été mises à jour pour la dernière fois %{time} et
           peuvent être périmées.
+        station_silent: La station météo n'a pas transmis de conditions depuis %{time}.
+          Nous avons consulté la source pour la dernière fois %{checked}.
         summary:
           heading: La météo maintenant
           view_full: Voir la météo complète
@@ -4761,6 +5532,9 @@ fr:
               la description, la confidentialité et le fuseau horaire que vous choisissez.
             steward: Un compte de responsable est créé avec un accès de gestion complet
               à la nouvelle plateforme.
+  breadcrumbs:
+    home: Accueil
+    label: Fil d'Ariane
   community:
     create_failed: Échec de la création
     created: Créé
@@ -5024,6 +5798,11 @@ fr:
         submit: Soumettre
         terms_of_service:
           label: J'accepte les Conditions d'Utilisation
+        trusted_domains:
+          confirm_notice: Les adresses de %{domains} adhèrent après la confirmation
+            de votre courriel. Vérifiez votre boîte de réception une fois inscrit.
+          link: S'inscrire avec un courriel de confiance
+          notice: Avez-vous une adresse chez %{domains} ?
         view: Voir
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
@@ -5098,6 +5877,7 @@ fr:
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
+      denied_for_trusted_domain: ne peut pas être accordé par un domaine de courriel
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
@@ -5105,13 +5885,17 @@ fr:
       expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      immutable: ne peut pas être modifié après la création ; supprimez ce fournisseur
+        et ajoutez-en un nouveau
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_characters: ne doit pas contenir d'espaces ni de caractères de contrôle
       invalid_url: n'est pas une URL valide
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       model_invalid: 'Validation échouée : %{errors}'
+      not_a_community_role: doit être un rôle de communauté
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
       not_found: n’a pas été trouvé(e)
@@ -5123,7 +5907,11 @@ fr:
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
+      public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
+        confiance à toutes ses adresses
       required: doit exister
+      required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
+        de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
       too_long:
         one: est trop long (pas plus de %{count} caractère)
@@ -5138,6 +5926,8 @@ fr:
         one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
     models:
+      address_geography_conflict: 'Le texte saisi ne correspond pas au lieu sélectionné
+        : il devrait être « %{selected} ».'
       address_missing_type: L'adresse doit être physique, postale ou les deux.
       better_together/navigation_item:
         attributes:
@@ -5298,6 +6088,11 @@ fr:
           cover_image: Image de couverture
       images:
         cover_image: Image de couverture
+        feature_image: Affichée en haut de la page et utilisée comme image d'aperçu
+          lorsque la page est partagée.
+      page:
+        show_title: Affiche le titre en haut de la page. Les pages qui commencent
+          par un bloc héros utilisent plutôt le titre du héros.
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
@@ -5360,6 +6155,58 @@ fr:
       infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
+    jobs:
+      description: Compteurs en direct de la file de tâches et tableau de bord Sidekiq
+        de cette installation.
+      heading: Tâches en arrière-plan
+      page_title: Tâches en arrière-plan
+      sidekiq:
+        heading: Tableau de bord Sidekiq
+        hint: Sidekiq s’affiche dans cette page. Ses liens et actions restent dans
+          le cadre.
+        iframe_title: Tableau de bord des tâches en arrière-plan Sidekiq
+        loading: Chargement du tableau de bord Sidekiq...
+        new_tab_notice: "(s’ouvre dans un nouvel onglet)"
+        open_new_tab: Ouvrir Sidekiq dans un nouvel onglet
+      summary:
+        announcement: 'Tâches en arrière-plan : %{failed} en échec, %{retrying} en
+          nouvel essai, %{dead} mortes, %{stalled} bloquées, %{processes} processus
+          de travail.'
+        heading: Résumé des tâches en arrière-plan
+        links:
+          dead: 'Tâches mortes : %{count}. Ouvrir la page des tâches mortes Sidekiq'
+          failed: 'Tâches en échec : %{count}. Ouvrir le tableau de bord Sidekiq'
+          retrying: 'Tâches en nouvel essai : %{count}. Ouvrir la page des nouveaux
+            essais Sidekiq'
+          scheduled: 'Tâches planifiées : %{count}. Ouvrir la page des tâches planifiées
+            Sidekiq'
+        loading: Chargement des compteurs de tâches...
+        longest_latency: 'Attente la plus longue en file : %{latency}'
+        no_latency: aucune
+        no_processes_body: Des tâches peuvent être mises en file, mais rien ne les
+          traite. Vérifiez le service Sidekiq sur le serveur.
+        no_processes_title: Aucun processus de travail n’est en cours.
+        no_queues: Aucune tâche n’attend dans les files.
+        open_jobs_tab: Ouvrir les tâches en arrière-plan
+        queue: File
+        queue_latency: Tâche la plus ancienne en attente
+        queue_size: En file
+        queues_caption: Tâches en file par file
+        stalled_hint: Une tâche est considérée comme bloquée après plus de %{threshold}
+          d’exécution.
+        stats:
+          busy: En cours
+          dead: Mortes
+          enqueued: En file
+          failed: En échec (total)
+          processes: Processus de travail
+          retrying: Nouvel essai
+          scheduled: Planifiées
+          stalled: Bloquées
+        unavailable_body: La file de tâches (Redis) est injoignable. Les compteurs
+          reviendront dès qu’elle sera de retour.
+        unavailable_title: Les compteurs de tâches sont indisponibles.
+        updated_at: Mis à jour %{time}
     membership_review:
       anonymous_requester: Personne anonyme
       columns:
@@ -5449,6 +6296,115 @@ fr:
       visible_reports_badge:
         one: 1 signalement visible
         other: "%{count} signalements visibles"
+    weather:
+      actions:
+        disable: Désactiver
+        disable_named: Désactiver %{name}
+        enable: Activer
+        enable_named: Activer %{name}
+      audit:
+        caption: Modifications récentes des réglages météo, de la plus récente à la
+          plus ancienne
+        change: "%{before} à %{after}"
+        columns:
+          change: Modification
+          what: Quoi
+          when: Quand
+          who: Qui
+        empty: Aucun réglage météo n'a encore été modifié.
+        heading: Historique des modifications
+        kinds:
+          feature: Météo sur cet hôte
+          location: Emplacement
+          source: Source
+        unknown_actor: Personne inconnue
+      back: Retour à la météo
+      columns:
+        actions: Actions
+        last_refresh: Dernière mise à jour
+        last_success: Dernière mise à jour réussie
+        locations: Emplacements
+        settlement: Localité
+        source: Source
+        status: État
+      confirm:
+        cancel: Annuler
+        disable: Oui, désactiver
+        enable: Oui, activer
+        feature:
+          disable_effect: Désactiver la météo arrête toutes les tâches météo et masque
+            l'onglet Météo et la carte des conditions actuelles sur toutes les plateformes
+            de cet hôte. Les relevés enregistrés sont conservés.
+          disable_heading: Désactiver la météo pour cet hôte ?
+          enable_effect: Activer la météo relance les tâches météo et affiche l'onglet
+            Météo sur les localités ayant un emplacement actif d'une source active,
+            sur toutes les plateformes de cet hôte.
+          enable_heading: Activer la météo pour cet hôte ?
+        location:
+          disable_effect: Désactiver la météo de %{name} arrête ses mises à jour et
+            masque l'onglet Météo de cette localité sur toutes les plateformes de
+            cet hôte. Les relevés enregistrés sont conservés.
+          disable_heading: Désactiver la météo de %{name} ?
+          enable_effect: Activer la météo de %{name} reprend ses mises à jour et affiche
+            l'onglet Météo de cette localité tant que sa source est active.
+          enable_heading: Activer la météo de %{name} ?
+        source:
+          disable_effect: Désactiver %{name} arrête les mises à jour de ses %{count}
+            emplacements et masque leur onglet Météo sur toutes les plateformes de
+            cet hôte. Les relevés enregistrés sont conservés.
+          disable_heading: Désactiver la source %{name} ?
+          enable_effect: Activer %{name} reprend les mises à jour de ses emplacements
+            actifs et affiche leur onglet Météo sur toutes les plateformes de cet
+            hôte.
+          enable_heading: Activer la source %{name} ?
+      description: La météo des localités pour toutes les plateformes de cet hôte.
+        Les modifications s'appliquent à la prochaine tâche météo et au prochain affichage,
+        sans redémarrage.
+      feature:
+        description: L'interrupteur général de l'hôte. Lorsqu'il est éteint, aucune
+          tâche météo ne s'exécute et aucune météo n'est affichée sur les plateformes.
+        env_forced_off_html: Le réglage serveur <code>%{variable}</code> vaut false,
+          la météo est donc éteinte pour cet hôte quel que soit cet interrupteur.
+          Retirez ce réglage et redémarrez pour utiliser l'interrupteur.
+        heading: Météo sur cet hôte
+        status:
+          forced_off: Éteinte (réglage serveur)
+          'off': Éteinte
+          'on': Allumée
+        turn_off: Éteindre la météo
+        turn_on: Allumer la météo
+      flash:
+        env_forced_off: La météo est éteinte par un réglage serveur, l'interrupteur
+          ne peut donc pas être modifié ici.
+        feature_disabled: La météo est maintenant éteinte pour cet hôte.
+        feature_enabled: La météo est maintenant allumée pour cet hôte.
+        location_disabled: La météo de %{name} est maintenant désactivée.
+        location_enabled: La météo de %{name} est maintenant activée.
+        source_disabled: La source %{name} est maintenant désactivée.
+        source_enabled: La source %{name} est maintenant activée.
+        unchanged: Rien n'a changé ; le réglage avait déjà cette valeur.
+      heading: Météo
+      locations:
+        caption: Emplacements météo de %{source}
+        empty: Cette source n'a aucun emplacement. Les emplacements sont ajoutés par
+          les données initiales de l'hôte.
+        heading: Emplacements
+      never: Jamais
+      page_title: Météo
+      sources:
+        adapter: 'Adaptateur : %{adapter}'
+        caption: Sources météo avec leurs emplacements et heures de mise à jour
+        description: Les sources et emplacements sont ajoutés par les données initiales
+          de l'hôte. Ici, vous pouvez les activer ou les désactiver.
+        empty: Aucune source météo n'est configurée sur cet hôte.
+        heading: Sources
+        location_count: "%{enabled} sur %{count} actifs"
+        view_locations: Emplacements
+        view_locations_for: Emplacements de %{name}
+      status:
+        disabled: Désactivée
+        enabled: Activée
+        stale: Périmée
   invitations:
     calculating: Calcul en cours
   layouts:
@@ -5480,15 +6436,20 @@ fr:
       invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
+    account_navigation: Compte et outils
     conversations: Conversations
+    footer_legal_navigation: Informations sur le site
+    footer_navigation: Liens de pied de page
     host_mgmt_tooltip: Gestion de l'hôte
     locale_switcher_tooltip: Changer de langue
     log_out: Se déconnecter
+    main_navigation: Principale
     my_profile: Mon profil
     notifications_tooltip: Notifications
     search_tooltip: Rechercher
     settings: Paramètres
     sign_in: Se connecter
+    skip_to_content: Aller au contenu principal
     toggle_navigation: Basculer la navigation
     user_nav_tooltip: Menu du compte
   navigation:
@@ -5660,8 +6621,10 @@ fr:
           dépendre uniquement d'une URL directe.
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
+        identity_providers: Fournisseurs de connexion
         platform_domains: Domaines
         quota_grants: Dérogations de quota
+        redirects: Redirections
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage
         title: Opérations de la plateforme
@@ -5702,6 +6665,8 @@ fr:
     continent: Continent
     country: Pays
     download_failed: Échec du téléchargement
+    download_held: Ce fichier est encore en cours de vérification de sécurité. Veuillez
+      réessayer bientôt.
     invitation: Invitation
     invitation_email: E-mail d'invitation
     member: Membre
@@ -5726,6 +6691,7 @@ fr:
     confirm_destroy: Confirmer la destruction
   search:
     button: Rechercher
+    label: Rechercher sur le site
     placeholder: Rechercher...
   seed_catalog:
     geography:

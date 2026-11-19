@@ -1,0 +1,11 @@
+{
+  "name": "theme_warm_light_mode_desktop_plain",
+  "device": "desktop",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "theme_colour_modes",
+  "flow": "theme_warm_light_desktop_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/theme_colour_modes_spec.rb"
+}

@@ -485,8 +485,9 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
           accessible?: true,
           acceptable?: true,
           resource_owner_id: user.id,
-          application: nil
+          application: instance_double(BetterTogether::OauthApplication, usable_on?: true, agent?: false)
         )
+        allow(Current).to receive(:platform).and_return(configure_host_platform)
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
           .with(anything, :from_bearer_authorization)
           .and_return(doorkeeper_token)

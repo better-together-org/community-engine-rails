@@ -10,7 +10,7 @@ namespace :better_together do
         next
       end
 
-      platforms = BetterTogether::Platform.internal
+      platforms = BetterTogether::Platform.local
       if platforms.none?
         Rails.logger.warn 'Skipping sitemap generation: no locally-hosted platform configured'
         next

@@ -1,0 +1,11 @@
+{
+  "name": "mobile_navbar_locale_dropdown_plain",
+  "device": "mobile",
+  "url": "/en",
+  "title": "Home | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "mobile_navbar_dropdowns",
+  "flow": "mobile_navbar_locale_dropdown_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/mobile_navbar_dropdowns_spec.rb"
+}

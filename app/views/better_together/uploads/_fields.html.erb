@@ -15,6 +15,7 @@
       <div class="col-md-6">
         <%= required_label form, :privacy, class: "form-label" %>
         <%= privacy_field(form:, klass: form.object.class) %>
+        <%= privacy_ceiling_notice(form.object) %>
       </div>
     </div>
     <% if form.object.respond_to?(:file_content_security_held?) && form.object.file_content_security_held? %>

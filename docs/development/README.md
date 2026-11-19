@@ -19,7 +19,7 @@
 ## Development Tools
 
 ### Required Tools
-- Ruby 3.4.12 via rbenv
+- Ruby 3.4.13 via rbenv
 - Node.js 20.x
 - PostgreSQL 14+ with PostGIS
 - Redis (for caching and Sidekiq)
@@ -68,7 +68,7 @@ Useful commands:
 
 ```bash
 ./scripts/session_command_log.sh init
-./scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
+/home/rob/bts-cloud/n8n/management-tool/scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
 ```
 
 ## Related Documentation

@@ -2,7 +2,7 @@
   "name": "person_links_index",
   "device": "mobile",
   "url": "/en/person-links",
-  "title": "Community Engine Host",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "person_links",

@@ -1,0 +1,85 @@
+{
+  "name": "site_landmarks_skip_link_focused",
+  "device": "mobile",
+  "url": "/en/landmarks-docs",
+  "title": "About the foray | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "site_landmarks_review",
+  "flow": "site_landmarks",
+  "source_spec": "./spec/docs_screenshots/better_together/site_landmarks_spec.rb",
+  "callouts": [
+    {
+      "selector": "nav#header-nav",
+      "title": "Labelled main navigation",
+      "bullets": [
+        "Inside the header landmark.",
+        "Named so screen readers can list it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 48.0,
+        "width": 476.0,
+        "height": 8.0,
+        "right": 488.0,
+        "bottom": 56.0,
+        "center_x": 250.0,
+        "center_y": 52.0
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 48.0,
+        "width": 476.0,
+        "height": 8.0,
+        "right": 488.0,
+        "bottom": 56.0,
+        "center_x": 250.0,
+        "center_y": 52.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 76.0,
+        "width": 270.0,
+        "height": 216,
+        "score": 1201.0
+      }
+    },
+    {
+      "selector": "#skip-to-content",
+      "title": "Skip link",
+      "bullets": [
+        "First tab stop on every page.",
+        "Jumps past the header to the main content."
+      ],
+      "target": {
+        "x": 8.0,
+        "y": 8.0,
+        "width": 202.578125,
+        "height": 52.0,
+        "right": 210.578125,
+        "bottom": 60.0,
+        "center_x": 109.2890625,
+        "center_y": 34.0
+      },
+      "avoid": {
+        "x": 8.0,
+        "y": 8.0,
+        "width": 202.578125,
+        "height": 52.0,
+        "right": 210.578125,
+        "bottom": 60.0,
+        "center_x": 109.2890625,
+        "center_y": 34.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 339,
+        "width": 270.0,
+        "height": 210,
+        "score": 0
+      }
+    }
+  ]
+}

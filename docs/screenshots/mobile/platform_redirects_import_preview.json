@@ -1,0 +1,48 @@
+{
+  "name": "platform_redirects_import_preview",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/redirects/import",
+  "title": "Import redirects | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_redirects",
+  "flow": "redirects_import",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_redirects_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#redirects-import-report",
+      "title": "Preview",
+      "bullets": [
+        "Nothing is saved until Import."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 676.390625,
+        "width": 461.0,
+        "height": 346.0,
+        "right": 473.0,
+        "bottom": 1022.390625,
+        "center_x": 242.5,
+        "center_y": 849.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 676.390625,
+        "width": 461.0,
+        "height": 346.0,
+        "right": 473.0,
+        "bottom": 1022.390625,
+        "center_x": 242.5,
+        "center_y": 849.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 524.39,
+        "width": 270.0,
+        "height": 132,
+        "score": 676.390625
+      }
+    }
+  ]
+}

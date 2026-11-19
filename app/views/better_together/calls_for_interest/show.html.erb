@@ -70,5 +70,5 @@
     </section>
   </div>
 
-  <%= share_buttons(shareable: @call_for_interest) if @call_for_interest.privacy_public? %>
+  <%= share_buttons(shareable: @call_for_interest) if @call_for_interest.effective_privacy_public? %>
 </div>

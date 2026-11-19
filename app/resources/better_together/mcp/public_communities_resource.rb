@@ -21,6 +21,7 @@ module BetterTogether
           communities = policy_scope(BetterTogether::Community)
                         .includes(:person_community_memberships)
                         .where(privacy: 'public')
+                        .within_privacy_ceiling
                         .order(created_at: :desc)
 
           result = JSON.generate({

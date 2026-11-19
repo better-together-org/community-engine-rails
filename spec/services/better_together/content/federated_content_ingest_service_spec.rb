@@ -158,6 +158,7 @@ module BetterTogether # :nodoc:
       it 'records mirrored identifier conflicts without failing the batch' do
         create(
           :better_together_post,
+          platform: target_platform,
           identifier: "#{source_platform.identifier}--remote-post"
         )
 

@@ -1,6 +1,9 @@
 
+// Header menus open above flash alerts (#flash_messages, z-index 990), which sit above the page content. The
+// header needs a position for its z-index to apply; without one the alert covered open menu items.
 #main-nav {
-  z-index: 500;
+  position: relative;
+  z-index: 1020;
 
   .navbar {
     --bs-navbar-color: var(--bt-navbar-toggler-color, #212529);
@@ -16,16 +19,37 @@
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: var(--bs-dropdown-link-hover-bg);
       }
     }
 
+    // The Host toggle is rendered as a navbar list (centred, row on large screens). Lay it out and colour it like
+    // the other menu items, whatever header colours the theme or host stylesheet give navbar links.
     #host-nav-item {
       > ul {
-        display: block;
+        display: flex;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 0 !important;
 
         .admin-nav_navigation_item {
           width: 100%;
+        }
+      }
+
+      .nav-link.dropdown-toggle {
+        display: block;
+        padding: 8px 12px;
+        border: 0;
+        text-align: start !important;
+        color: var(--bs-dropdown-link-color);
+
+        &:hover,
+        &:focus-visible,
+        &.show {
+          color: var(--bs-dropdown-link-hover-color);
+          background-color: var(--bs-dropdown-link-hover-bg);
         }
       }
     }
@@ -230,11 +254,42 @@ table.nav-items-table tr.navigation_item_children > td > table {
   right: auto !important;
 }
 
-/* Mobile: full width, aligned to screen edges */
-@media (max-width: 576px) {
-  .dropdown-menu-center {
-    max-width: 75vw !important;
-    left: 0 !important;
-    transform: translateX(-43%) !important;
+// Small screens: header dropdowns span the navbar instead of hanging off their icon. Inside .navbar-nav Bootstrap
+// positions a menu against its own <li>, which is a small icon near the left edge, so wide menus (notifications is
+// 25rem) ran off-screen. A static <li> makes the navbar the containing block; left/right then pin the menu to the
+// screen edges and it keeps its natural position under the icon row.
+@media (max-width: 575.98px) {
+  #top-nav .nav-item.dropdown,
+  #header-nav .nav-item.dropdown {
+    position: static;
   }
+
+  #top-nav .dropdown-menu,
+  #header-nav .dropdown-menu {
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    width: auto;
+    min-width: 0 !important;
+    max-width: none !important;
+    transform: none !important;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+
+// Skip link: hidden until focused, then shown at the top left above the page chrome.
+.bt-skip-link:focus {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 2000;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 0.25rem;
+}
+
+main#main-content:focus {
+  outline: none;
 }

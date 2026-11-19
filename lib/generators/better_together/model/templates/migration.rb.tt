@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+class Create<%= table_name.camelize %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def up
+    return if table_exists?(:<%= table_name %>)
+
+    create_bt_table :<%= plural_file_name %><%= module_name == 'BetterTogether' ? '' : ', prefix: nil' %> do |t|
+<% column_attributes.each do |attribute| -%>
+      t.<%= attribute.type %> :<%= attribute.name %><%= attribute.inject_options %>
+<% end -%>
+<% reference_attributes.each do |attribute| -%>
+      t.bt_references :<%= attribute.name %><%= attribute.inject_options %>
+<% end -%>
+<% if options[:privacy] -%>
+      t.bt_privacy
+<% end -%>
+<% if options[:platform_scoped] -%>
+      t.bt_references :platform, null: false, index: { name: 'index_<%= table_name %>_on_platform_id' }
+<% end -%>
+    end
+  end
+
+  def down
+    drop_table :<%= table_name %> if table_exists?(:<%= table_name %>)
+  end
+end

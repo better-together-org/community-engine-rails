@@ -38,7 +38,7 @@ module BetterTogether
 
       # Page editors/managers see every block (the view badges the non-public
       # ones); everyone else sees only what BlockPolicy::Scope / #show? permits.
-      # Sets @viewer_is_page_editor, @content_blocks, @hero_block.
+      # Sets @viewer_is_page_editor, @content_blocks.
       assign_visible_page_content_blocks(@page)
 
       # STI block collections may contain Content::Template records that have no
@@ -269,7 +269,7 @@ module BetterTogether
       community_id = params[:community_id].presence
       return if community_id.blank?
 
-      BetterTogether::Community.friendly.find(community_id)
+      BetterTogether::Community.friendly_find_in_platform(community_id)
     rescue ActiveRecord::RecordNotFound
       nil
     end

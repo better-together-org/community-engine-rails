@@ -1,0 +1,14 @@
+---
+title: File download block
+audience:
+- visitor
+- editor
+journey_step: As a visitor, I download a document from a page.
+callouts:
+- :id: card
+  :title: Download card
+  :description: The link text is the block label, else the file name. Type and size
+    come from the upload.
+accessibility_notes: The title is a real link; the icon is hidden from AT.
+slug: file_download_block
+device: mobile

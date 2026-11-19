@@ -1,0 +1,11 @@
+{
+  "name": "weather_management_sources_plain",
+  "device": "desktop",
+  "url": "/en/host/weather",
+  "title": "Weather | Test Host Community",
+  "locale": "en",
+  "role": "host_steward",
+  "feature_set": "weather_management",
+  "flow": "sources",
+  "source_spec": "./spec/docs_screenshots/better_together/weather_management_spec.rb"
+}

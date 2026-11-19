@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import "chart.js"
+import { watchChartColours } from "better_together/chart_colour_mode"
 
 const sharedChartOptions = {
   scales: {
@@ -66,6 +67,7 @@ export default class extends Controller {
     this.charts = {}
     this.chartTargets = {}
     this.chartOrder = []
+    this.stopColourWatch = watchChartColours(() => Object.values(this.charts))
     
     // Initialize charts with data from data attributes (only if targets exist)
     if (this.hasPageViewsChartTarget) this.renderPageViewsChart()
@@ -92,6 +94,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this.stopColourWatch) this.stopColourWatch()
     // Clean up event listeners
     if (this.boundHandleDataUpdate) {
       this.element.removeEventListener('better-together--metrics-datetime-filter:dataLoaded', this.boundHandleDataUpdate)

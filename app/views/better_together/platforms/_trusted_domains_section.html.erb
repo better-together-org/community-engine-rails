@@ -1,0 +1,22 @@
+<fieldset id="<%= dom_id(platform, 'trusted_domains') %>" class="mb-3">
+  <legend class="fs-6 fw-bold"><%= t('better_together.platforms.form.trusted_domains.heading') %></legend>
+  <p class="form-text text-muted"><%= t('better_together.platforms.form.trusted_domains.hint') %></p>
+  <% if platform.persisted? %>
+    <% domains = platform.platform_trusted_domains.enabled.order(:domain) %>
+    <% if domains.any? %>
+      <ul id="<%= dom_id(platform, 'trusted_domains_list') %>" class="list-unstyled">
+        <% domains.each do |trusted_domain| %>
+          <li><code><%= trusted_domain.domain %></code> <span class="text-muted">(<%= trusted_domain.role&.name %>)</span></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted"><%= t('better_together.platforms.form.trusted_domains.none') %></p>
+    <% end %>
+    <% if policy(platform.platform_trusted_domains.build).index? %>
+      <%= link_to t('better_together.platforms.form.trusted_domains.manage'), platform_platform_trusted_domains_path(platform),
+                  id: "#{dom_id(platform)}_trusted_domains_link" %>
+    <% end %>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.platforms.form.trusted_domains.after_save') %></p>
+  <% end %>
+</fieldset>

@@ -64,7 +64,7 @@ module BetterTogether
     end
 
     def self.assign_platform_role!(platform, person)
-      role = platform_steward_role
+      role = platform_steward_role(platform)
       return unless role
 
       platform.person_platform_memberships.find_or_create_by!(
@@ -75,7 +75,7 @@ module BetterTogether
 
     def self.assign_community_role!(platform, person)
       community = platform.primary_community
-      role = community_governance_role
+      role = community_governance_role(platform)
       return unless community && role
 
       community.person_community_memberships.find_or_create_by!(
@@ -84,13 +84,22 @@ module BetterTogether
       )
     end
 
-    def self.platform_steward_role
-      ::BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-        ::BetterTogether::Role.find_by(identifier: 'platform_manager')
+    def self.platform_steward_role(platform)
+      ensure_default_roles!(platform)
+      ::BetterTogether::Role.find_default('platform_steward', platform:) ||
+        ::BetterTogether::Role.find_default('platform_manager', platform:)
     end
 
-    def self.community_governance_role
-      ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
+    def self.community_governance_role(platform)
+      ensure_default_roles!(platform)
+      ::BetterTogether::Role.find_default('community_governance_council', platform:)
+    end
+
+    # Every platform owns its own copy of the default roles and permissions.
+    def self.ensure_default_roles!(platform)
+      return if ::BetterTogether::Role.for_platform(platform).exists?
+
+      ::BetterTogether::AccessControlBuilder.seed_data(platform:)
     end
 
     def initialize(name:, host_url:, time_zone: 'UTC', host: false, admin: nil)
@@ -139,17 +148,19 @@ module BetterTogether
     end
 
     def provision_platform!
-      platform = ::BetterTogether::Platform.find_or_initialize_by(host_url: @host_url)
+      platform = ::BetterTogether::Platform.find_by(host_url: @host_url) ||
+                 (@host ? ::BetterTogether::OperatorPlatform : ::BetterTogether::HostedPlatform).new(host_url: @host_url)
 
       platform.assign_attributes(
         name: @name,
         time_zone: @time_zone,
-        external: false,
+        locality: 'local',
         host: @host,
         privacy: 'public'
       )
 
       platform.save!
+      self.class.ensure_default_roles!(platform)
       platform
     end
 

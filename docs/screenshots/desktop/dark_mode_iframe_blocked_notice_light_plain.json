@@ -1,0 +1,11 @@
+{
+  "name": "dark_mode_iframe_blocked_notice_light_plain",
+  "device": "desktop",
+  "url": "/en/dignissimos-suscipit-voluptatem",
+  "title": "Dignissimos suscipit voluptatem. | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_iframe_blocked_notice_light_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb"
+}

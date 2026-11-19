@@ -57,14 +57,14 @@ RSpec.describe BetterTogether::FederationConnectionProvisioningService do
       end
 
       it 'enqueues FederatedSyncScanJob when enqueue_sync is true' do
-        expect(BetterTogether::FederatedSyncScanJob).to receive(:perform_later)
-
-        described_class.call(
-          source_platform:,
-          target_platform:,
-          mode: :auto_accept,
-          enqueue_sync: true
-        )
+        expect do
+          described_class.call(
+            source_platform:,
+            target_platform:,
+            mode: :auto_accept,
+            enqueue_sync: true
+          )
+        end.to have_enqueued_job(BetterTogether::FederatedSyncScanJob)
       end
     end
 

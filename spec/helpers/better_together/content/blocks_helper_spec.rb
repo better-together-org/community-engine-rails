@@ -144,6 +144,33 @@ module BetterTogether # :nodoc:
         expect(sanitized).to include('aria-label="Menu"')
       end
 
+      it 'keeps an accessible data table with scope, colspan and caption' do
+        html = '<table class="table" id="species"><caption>Species</caption><thead><tr><th scope="col">Name</th>' \
+               '<th scope="col" colspan="2">Notes</th></tr></thead><tbody><tr><th scope="row">Morel</th>' \
+               '<td>Spring</td><td rowspan="2">Rare</td></tr></tbody></table>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<table class="table" id="species">', '<caption>Species</caption>',
+                                     'scope="col"', 'colspan="2"', 'rowspan="2"', 'scope="row"')
+      end
+
+      it 'keeps section, details and summary, id and role' do
+        html = '<section id="faq" role="region" aria-label="FAQ"><details open><summary>Q</summary><p>A</p></details></section>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<section id="faq" role="region" aria-label="FAQ">', '<details open>',
+                                     '<summary>Q</summary>')
+      end
+
+      it 'still strips scripts, handlers and javascript links from table markup' do
+        sanitized = helper.sanitize_block_html(
+          '<table onclick="x()"><tr><td><a href="javascript:alert(1)">x</a><script>alert(1)</script></td></tr></table>'
+        )
+
+        expect(sanitized).not_to include('onclick', 'javascript:', '<script')
+        expect(sanitized).to include('<table>')
+      end
+
       it 'removes iframe tags so embeds must use dedicated block types' do
         html = '<p>Before</p><iframe src="https://forms.btsdev.ca/s/example" title="Survey"></iframe><p>After</p>'
         sanitized = helper.sanitize_block_html(html)
@@ -226,6 +253,49 @@ module BetterTogether # :nodoc:
           result = helper.mermaid_controller_attributes(markdown_minimal)
           expect(result).to eq({})
         end
+      end
+    end
+
+    describe '#dynamic_block_cache_stamp' do
+      let(:community) { create(:better_together_community) }
+
+      before do
+        helper.extend(BetterTogether::PagesHelper)
+        helper.extend(Module.new { def policy_scope(scope) = scope.all })
+        allow(helper).to receive(:page_visibility_cache_context).and_return('viewer')
+      end
+
+      it 'is nil for blocks that list no records' do
+        expect(helper.dynamic_block_cache_stamp(create(:content_markdown))).to be_nil
+      end
+
+      it 'changes when a listed event is added, so a cached page is rebuilt' do
+        block = create(:content_events_block, event_scope: 'all')
+        before_stamp = helper.dynamic_block_cache_stamp(block)
+
+        create(:event)
+
+        expect(helper.dynamic_block_cache_stamp(block)).not_to eq(before_stamp)
+      end
+
+      it 'changes when an upcoming event leaves the upcoming window' do
+        block = create(:content_events_block, event_scope: 'upcoming')
+        event = create(:event, starts_at: 1.day.from_now, ends_at: 2.days.from_now)
+        before_stamp = helper.dynamic_block_cache_stamp(block)
+
+        event.update_columns(starts_at: 2.days.ago, ends_at: 1.day.ago) # rubocop:disable Rails/SkipsModelValidations
+
+        expect(helper.dynamic_block_cache_stamp(block)).not_to eq(before_stamp)
+      end
+
+      it 'changes when a checklist item is added to a checklist block' do
+        checklist = create(:better_together_checklist)
+        block = BetterTogether::Content::ChecklistBlock.new(checklist_id: checklist.id)
+        before_stamp = helper.dynamic_block_cache_stamp(block)
+
+        create(:better_together_checklist_item, checklist:)
+
+        expect(helper.dynamic_block_cache_stamp(block)).not_to eq(before_stamp)
       end
     end
   end

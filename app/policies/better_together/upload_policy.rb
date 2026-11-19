@@ -20,8 +20,12 @@ module BetterTogether
     end
 
     def download?
-      (record.privacy_public? || record.creator == agent) &&
+      (privacy_public?(record) || record.creator == agent) &&
         record.attached?
+    end
+
+    def inline?
+      download?
     end
 
     # Filtering and sorting for files according to permissions and context

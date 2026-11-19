@@ -42,7 +42,7 @@
           </dl>
         </div>
         <div class="col-lg-4">
-          <div class="border rounded p-3 bg-light">
+          <div class="border rounded p-3 bg-body-tertiary">
             <div class="small text-muted mb-1"><%= t('better_together.reports.show.status') %></div>
             <div class="fw-semibold mb-3"><%= safety_enum_label('reporter_visible_statuses', @report.safety_case&.reporter_visible_status || 'submitted') %></div>
 

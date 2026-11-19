@@ -182,11 +182,11 @@ module AutomaticTestConfiguration # :nodoc:
       platform_steward = BetterTogether::User.find_by!(email: 'manager@example.test')
     end
 
-    platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+    platform_steward_role = HostRoles.find('platform_steward')
     unless platform_steward_role
       BetterTogether::AccessControlBuilder.seed_data
-      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                              BetterTogether::Role.find_by(identifier: 'platform_manager')
+      platform_steward_role = HostRoles.find('platform_steward') ||
+                              HostRoles.find('platform_manager')
     end
 
     if platform_steward_role && platform_steward.person
@@ -398,8 +398,8 @@ module AutomaticTestConfiguration # :nodoc:
 
     if %i[platform_manager platform_steward].include?(role_type) && user.person
       host_platform = BetterTogether::Platform.find_by(host: true)
-      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                              BetterTogether::Role.find_by(identifier: 'platform_manager')
+      platform_steward_role = HostRoles.find('platform_steward') ||
+                              HostRoles.find('platform_manager')
 
       if host_platform && platform_steward_role
         membership = host_platform.person_platform_memberships.find_or_initialize_by(

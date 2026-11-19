@@ -1,0 +1,11 @@
+{
+  "name": "trix_active_button_light_mode_plain",
+  "device": "desktop",
+  "url": "/en/posts/new",
+  "title": "New Post | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "trix_editor_dark_mode",
+  "flow": "trix_active_button_light_mode_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/trix_editor_dark_mode_spec.rb"
+}

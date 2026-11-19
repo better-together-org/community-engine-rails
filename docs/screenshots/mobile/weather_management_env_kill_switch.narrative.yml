@@ -1,0 +1,14 @@
+---
+title: 'Weather management: env kill switch'
+audience:
+- platform_organizers
+journey_step: As a host steward, I can switch weather, its sources and locations on
+  or off.
+callouts:
+- :id: env_kill_switch
+  :title: Server setting wins
+  :description: The server environment setting turns weather off and locks the switch.
+accessibility_notes: Every switch goes through a confirm page that states its effect
+  in text.
+slug: weather_management_env_kill_switch
+device: mobile

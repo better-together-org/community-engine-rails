@@ -80,7 +80,7 @@ module BetterTogether
           base.where(published_pub.or(pt[:id].in(authored_subquery)))
         else
           # Guests only see published public pages
-          base.published.privacy_public
+          base.published.privacy_public.within_privacy_ceiling
         end
       end
 

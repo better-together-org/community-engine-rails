@@ -67,7 +67,7 @@
         <dd class="col-sm-9">
           <% if @webhook_endpoint.events.present? && @webhook_endpoint.events.any? %>
             <% @webhook_endpoint.events.each do |event| %>
-              <span class="badge bg-light text-dark border"><%= event %></span>
+              <span class="badge bg-body-secondary text-body border"><%= event %></span>
             <% end %>
           <% else %>
             <span class="text-muted"><%= t('better_together.webhook_endpoints.all_events', default: 'All events (no filter)') %></span>
@@ -106,7 +106,7 @@
       <% if deliveries.any? %>
         <div class="table-responsive">
           <table class="table table-sm table-hover mb-0" aria-label="<%= t('better_together.webhook_endpoints.deliveries_aria', default: 'Webhook delivery history') %>">
-            <thead class="table-light">
+            <thead class="bt-table-head">
               <tr>
                 <th scope="col"><%= t('better_together.webhook_endpoints.delivery_event', default: 'Event') %></th>
                 <th scope="col"><%= t('better_together.webhook_endpoints.delivery_status', default: 'Status') %></th>

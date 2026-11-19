@@ -37,13 +37,16 @@ RSpec.describe BetterTogether::Seed do
   end
 
   describe 'scopes' do
+    # Planting the default RBAC packet records its own seed, so count relative to the baseline.
+    let!(:baseline) { described_class.by_type('BetterTogether::Seed').count }
+
     before do
       create(:better_together_seed, identifier: 'generic_seed')
       create(:better_together_seed, identifier: 'home_page', type: 'BetterTogether::Seed')
     end
 
     it 'filters by type' do
-      expect(described_class.by_type('BetterTogether::Seed').count).to eq(2)
+      expect(described_class.by_type('BetterTogether::Seed').count).to eq(baseline + 2)
     end
 
     it 'filters by identifier' do
@@ -220,13 +223,42 @@ RSpec.describe BetterTogether::Seed do
       expect(updated_seed.payload_data[:attributes][:title]).to eq('Updated Title')
     end
 
+    context 'with a platform' do
+      let(:platform) { create(:better_together_platform) }
+      let(:other_platform) { create(:better_together_platform) }
+
+      it 'stores the same seed once per platform and once globally' do
+        global = described_class.import_or_update!(seed_data)
+        first = described_class.import_or_update!(seed_data, platform:)
+        second = described_class.import_or_update!(seed_data, platform: other_platform)
+
+        expect([global, first, second].map(&:id).uniq.size).to eq(3)
+        expect(described_class.for_platform(platform)).to contain_exactly(first)
+        expect(described_class.for_platform(nil)).to include(global)
+      end
+
+      it 'updates the platform\'s own row instead of creating another' do
+        first = described_class.import_or_update!(seed_data, platform:)
+
+        expect(described_class.import_or_update!(seed_data, platform:).id).to eq(first.id)
+      end
+
+      it 'is rejected by the database when the same platform stores two rows for one seed' do
+        row = described_class.import_or_update!(seed_data, platform:)
+
+        expect do
+          described_class.new(row.attributes.except('id').merge('lock_version' => 0)).save!(validate: false)
+        end.to raise_error(ActiveRecord::RecordNotUnique)
+      end
+    end
+
     context 'when an overlapping ingest raises ActiveRecord::StaleObjectError on save' do
       it 'retries once and succeeds' do
         original_find = described_class.method(:find_or_build_from_data)
         call_count = 0
-        allow(described_class).to receive(:find_or_build_from_data) do |*args|
+        allow(described_class).to receive(:find_or_build_from_data) do |*args, **kwargs|
           call_count += 1
-          record = original_find.call(*args)
+          record = original_find.call(*args, **kwargs)
           allow(record).to receive(:save!).and_raise(ActiveRecord::StaleObjectError) if call_count == 1
           record
         end
@@ -240,9 +272,9 @@ RSpec.describe BetterTogether::Seed do
       it 'does not retry more than once' do
         original_find = described_class.method(:find_or_build_from_data)
         call_count = 0
-        allow(described_class).to receive(:find_or_build_from_data) do |*args|
+        allow(described_class).to receive(:find_or_build_from_data) do |*args, **kwargs|
           call_count += 1
-          record = original_find.call(*args)
+          record = original_find.call(*args, **kwargs)
           allow(record).to receive(:save!).and_raise(ActiveRecord::StaleObjectError)
           record
         end

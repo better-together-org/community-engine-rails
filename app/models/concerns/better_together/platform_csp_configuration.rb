@@ -95,7 +95,7 @@ module BetterTogether
     end
 
     def seed_default_local_csp_settings
-      return if external?
+      return if remote?
 
       updated_settings = settings.deep_dup
       updated_settings['csp_img_src'] = merge_csp_setting_values(
