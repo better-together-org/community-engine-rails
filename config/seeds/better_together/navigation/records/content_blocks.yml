@@ -1,0 +1,120 @@
+version: '2.0'
+type: content_block
+records:
+- key: home-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/community_engine
+    css_settings:
+      container_class: ''
+- key: about-text
+  attributes:
+    type: BetterTogether::Content::RichText
+    privacy: public
+  translations:
+    en:
+      content: <p>This is a default about page. Be sure to write a real one!</p>
+- key: better-together-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/better_together
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: better-together/community-engine-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/community_engine
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: subprocessors-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/subprocessors
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: faq-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/faq
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: privacy-policy-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/privacy
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: terms-of-service-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/terms_of_service
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: code-of-conduct-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/code_of_conduct
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: accessibility-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/accessibility
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: cookie-policy-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/cookie_consent
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: contact-text
+  attributes:
+    type: BetterTogether::Content::RichText
+    privacy: public
+  translations:
+    en:
+      content: <p>This is a default contact page for your platform. Be sure to write a real one!</p>
+- key: contact-contact-details
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/content/blocks/template/host_community_contact_details
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: code_contributor_agreement-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/code_contributor_agreement
+    css_settings:
+      container_class: ''
+      css_classes: my-4
+- key: content_contributor_agreement-template
+  attributes:
+    type: BetterTogether::Content::Template
+    privacy: public
+    template_path: better_together/static_pages/content_contributor_agreement
+    css_settings:
+      container_class: ''
+      css_classes: my-4

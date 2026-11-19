@@ -1,0 +1,31 @@
+better_together:
+  version: '2.0'
+  seed:
+    type: BetterTogether::Seed
+    identifier: better-together-rbac
+    created_by: Community Engine
+    created_at: '2026-11-16T00:00:00Z'
+    description: Default roles, resource permissions and role-permission assignments, planted once per platform.
+    origin:
+      platforms: []
+      contributors: []
+      license: LGPL-3.0-or-later
+  seed_pack:
+    schema_version: '1.0'
+    pack_type: rbac
+    install_tier: core
+    marketing_name: Default roles and permissions
+    selectable_in_setup_wizard: false
+    dependencies: []
+  packet:
+    id: better-together-rbac
+    version: 1.0.0
+    mode: add_only
+    default_locale: en
+    locales:
+    - en
+    unsupported_locale_policy: skip
+    records:
+    - records/resource_permissions.yml
+    - records/roles.yml
+    - records/role_resource_permissions.yml

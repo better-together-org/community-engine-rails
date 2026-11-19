@@ -1,0 +1,48 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="image-gallery-block-fields">
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'heading',
+                       help_text: t('better_together.content.blocks.image_gallery_block.heading_help') } %>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}_image_ids_json_#{temp_id}", t('better_together.content.blocks.image_gallery_block.images'),
+                  class: 'form-label' %>
+    <input type="hidden" id="<%= "#{scope}_image_ids_json_#{temp_id}" %>" name="<%= scope %>[image_ids]"
+           value="<%= h(block.image_ids) %>">
+    <select class="form-select" multiple
+            data-controller="better_together--slim-select"
+            data-slim-select-json-field-id="<%= "#{scope}_image_ids_json_#{temp_id}" %>"
+            data-better_together--slim-select-options-value='<%= {
+              multiSelectJson: true,
+              ajax: { url: resource_search_content_blocks_path(resource_class: 'BetterTogether::Content::Image',
+                                                               locale: I18n.locale) }
+            }.to_json %>'>
+      <% block.images.each do |image| %>
+        <option value="<%= image.id %>" selected><%= image.picker_label %></option>
+      <% end %>
+    </select>
+    <div class="form-text"><%= t('better_together.content.blocks.image_gallery_block.images_help') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}_layout_#{temp_id}", t('better_together.content.blocks.image_gallery_block.layout'),
+                  class: 'form-label' %>
+    <%= select_tag "#{scope}[layout]",
+                   options_for_select(BetterTogether::Content::ImageGalleryBlock::LAYOUTS.map do |layout|
+                     [t("better_together.content.blocks.image_gallery_block.layouts.#{layout}"), layout]
+                   end, block.layout),
+                   id: "#{scope}_layout_#{temp_id}", class: 'form-select' %>
+    <% if block.errors[:layout].any? %>
+      <div class="invalid-feedback d-block"><%= block.errors[:layout].join(', ') %></div>
+    <% end %>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= hidden_field_tag "#{scope}[lightbox]", 'false', id: nil %>
+    <%= check_box_tag "#{scope}[lightbox]", 'true', block.lightbox?, class: 'form-check-input',
+                      id: "#{scope}_lightbox_#{temp_id}" %>
+    <%= label_tag "#{scope}_lightbox_#{temp_id}", t('better_together.content.blocks.image_gallery_block.lightbox'),
+                  class: 'form-check-label' %>
+  </div>
+</div>

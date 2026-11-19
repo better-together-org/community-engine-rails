@@ -4,7 +4,7 @@ module BetterTogether
   module Metrics
     # LinkCheckerReport maintains a generated report for link-checker results
     # including counts by host and failures over time.
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class LinkCheckerReport < PlatformRecord
       # Include URL helpers for generating edit links
       include Rails.application.routes.url_helpers
@@ -23,7 +23,7 @@ module BetterTogether
       after_destroy_commit :purge_report_file
 
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def generate_report!
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
@@ -44,10 +44,9 @@ module BetterTogether
           broken_links: broken_links_details
         }
       end
-      # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def export_file!
         file_path = if file_format == 'csv'
                       generate_csv_file
@@ -65,7 +64,6 @@ module BetterTogether
       ensure
         File.delete(file_path) if file_path && File.exist?(file_path)
       end
-      # rubocop:enable Metrics/MethodLength
 
       def purge_report_file
         report_file.purge_later if report_file.attached?
@@ -123,7 +121,7 @@ module BetterTogether
         end.compact
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def build_single_link_detail(link, rt_link)
         rich_text = rt_link.rich_text
         return unless rich_text
@@ -143,13 +141,12 @@ module BetterTogether
           edit_url: edit_url_for(record)
         }
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def generate_csv_file
         file_path = Rails.root.join('tmp', "#{SecureRandom.hex(8)}_#{build_filename}")
 
-        # rubocop:disable Metrics/BlockLength
+        # rubocop:disable-next Metrics/BlockLength
         CSV.open(file_path, 'w') do |csv|
           # Report summary
           csv << ['Link Checker Report Summary']
@@ -200,7 +197,6 @@ module BetterTogether
             csv << [date.to_s, count]
           end
         end
-        # rubocop:enable Metrics/BlockLength
 
         file_path
       end
@@ -210,7 +206,7 @@ module BetterTogether
       # rubocop:enable Metrics/AbcSize
 
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def build_filename
         filters_summary = []
 
@@ -231,7 +227,6 @@ module BetterTogether
 
         "LinkCheckerReport_#{timestamp}_#{filters_summary}.#{file_format}"
       end
-      # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
       def extract_invalid_by_host
@@ -332,6 +327,5 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

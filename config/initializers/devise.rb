@@ -291,7 +291,15 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   end
 
   # Request user:email scope to access email address (which may be private on GitHub)
-  config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'user:email'
+  # full_host never trusts a forged Host header (GHSA-m27g-v28p-f9fx, omniauth >= 2.2.0).
+  # Strategy names come from the identity provider catalog; credentials are resolved
+  # per request (platform row, host platform row, then ENV) so this never touches the DB at boot.
+  BetterTogether::IdentityProviders.each do |provider|
+    config.omniauth provider.key,
+                    scope: provider.scope,
+                    full_host: ->(env) { BetterTogether::OmniauthFullHost.call(env) },
+                    setup: ->(env) { BetterTogether::OmniauthSetup.call(provider.key, env) }
+  end
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

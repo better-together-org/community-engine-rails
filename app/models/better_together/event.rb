@@ -2,7 +2,7 @@
 
 module BetterTogether
   # A Schedulable Event
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class Event < PlatformRecord
     include Attachments::Images
     include Base64ImageInput
@@ -59,7 +59,8 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    slugged :name
+    # Identifier already enforces slug uniqueness per platform (see Post).
+    slugged :name, slug_uniqueness: false
 
     # Explicit lifecycle status, orthogonal to the timing-derived scopes below
     # (draft/scheduled/upcoming/ongoing/past): an event can be confirmed AND
@@ -258,11 +259,11 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || last_synced_at.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.remote?
     end
 
     def preserved_remote_uuid?
-      source_id.blank? && platform&.external?
+      source_id.blank? && platform&.remote?
     end
 
     def source_identifier
@@ -546,5 +547,4 @@ module BetterTogether
       errors.add(:base, 'One or more recurrence exception dates could not be understood')
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

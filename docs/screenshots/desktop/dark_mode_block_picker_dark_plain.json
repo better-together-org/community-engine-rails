@@ -1,0 +1,11 @@
+{
+  "name": "dark_mode_block_picker_dark_plain",
+  "device": "desktop",
+  "url": "/en/pages/vero-ut-dolores/edit",
+  "title": "Edit Vero ut dolores. | Pages | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_block_picker_dark_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb"
+}

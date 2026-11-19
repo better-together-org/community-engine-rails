@@ -15,6 +15,7 @@ module BetterTogether
     validates :limit, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :granted_by_type, inclusion: { in: BetterTogether::QuotaUsage::ACTOR_TYPES }, allow_nil: true
     validate :owner_is_quota_owner
+    validate :owner_is_local
 
     scope :active, -> { where(expires_at: nil).or(where(QuotaGrant.arel_table[:expires_at].gt(Time.current))) }
     scope :for_owner_and_type, ->(owner, quota_type) { where(owner:, quota_type:) }
@@ -33,6 +34,14 @@ module BetterTogether
       return if owner.is_a?(BetterTogether::Quotas::Owner)
 
       errors.add(:owner_type, :inclusion, value: owner_type)
+    end
+
+    # Only local owners get quotas (see Quotas::Locality).
+    def owner_is_local
+      return unless owner.is_a?(BetterTogether::Quotas::Owner)
+      return if BetterTogether::Quotas::Locality.local_owner?(owner)
+
+      errors.add(:owner, I18n.t('better_together.quotas.errors.not_local', default: 'must be local to this platform'))
     end
   end
 end

@@ -21,7 +21,6 @@ RSpec.describe BetterTogether::TranslationBot do
         prompt_tokens: 5,
         completion_tokens: 2
       )
-      allow(BetterTogether::Ai::Log::TranslationLoggerJob).to receive(:perform_later)
     end
 
     it 'settles exactly one ai_translation_tokens usage row when an initiator is present' do
@@ -78,10 +77,9 @@ RSpec.describe BetterTogether::TranslationBot do
       initiator = create(:better_together_person)
       bot = described_class.new(platform:)
 
-      bot.translate('Hello', target_locale: 'fr', source_locale: 'en', initiator:)
-
-      expect(BetterTogether::Ai::Log::TranslationLoggerJob).to have_received(:perform_later)
-        .with(hash_including(initiator:))
+      expect do
+        bot.translate('Hello', target_locale: 'fr', source_locale: 'en', initiator:)
+      end.to have_enqueued_job(BetterTogether::Ai::Log::TranslationLoggerJob).with(hash_including(initiator:))
     end
   end
 end

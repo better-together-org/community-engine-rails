@@ -1,5 +1,5 @@
 <%
-  quota_type_options = BetterTogether::Quotas::Type.keys.map { |key| [key.titleize, key] }
+  quota_type_options = (BetterTogether::Quotas::Type.available_keys(platform) | [quota_grant.quota_type].compact).map { |key| [quota_type_label(key), key] }
 %>
 
 <%= form_with model: [platform, quota_grant], local: true do |form| %>

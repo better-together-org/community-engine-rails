@@ -2,7 +2,7 @@
 
 require 'json'
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :people do
     desc 'Dry-run or execute a reviewed hard deletion for one or more people'
@@ -73,4 +73,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

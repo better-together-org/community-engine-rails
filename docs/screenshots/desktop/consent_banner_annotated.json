@@ -1,0 +1,48 @@
+{
+  "name": "consent_banner_annotated",
+  "device": "desktop",
+  "url": "/en/users/sign-in",
+  "title": "Sign In | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "consent",
+  "flow": "consent_banner",
+  "source_spec": "./spec/docs_screenshots/better_together/consent_banner_spec.rb",
+  "callouts": [
+    {
+      "selector": "#consent-choose",
+      "title": "Choose",
+      "bullets": [
+        "Opens analytics and marketing choices."
+      ],
+      "target": {
+        "x": 673.984375,
+        "y": 1380.0,
+        "width": 85.078125,
+        "height": 44.0,
+        "right": 759.0625,
+        "bottom": 1424.0,
+        "center_x": 716.5234375,
+        "center_y": 1402.0
+      },
+      "avoid": {
+        "x": 673.984375,
+        "y": 1380.0,
+        "width": 85.078125,
+        "height": 44.0,
+        "right": 759.0625,
+        "bottom": 1424.0,
+        "center_x": 716.5234375,
+        "center_y": 1402.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 526.52,
+        "y": 1228.0,
+        "width": 380,
+        "height": 132,
+        "score": 1380.0
+      }
+    }
+  ]
+}

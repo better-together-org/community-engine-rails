@@ -1,5 +1,8 @@
 <h1><%= t('host_dashboard.index.title') %></h1>
 
+<%# Background jobs summary (manage_platform_jobs only). %>
+<%= render partial: 'better_together/host_jobs/summary_panel', locals: { context: 'overview' } if host_jobs_visible? %>
+
 <!-- Custom section for the host app. See docs/host_dashboard_extensions.md for details. -->
 <%= render partial: 'host_app_resources' %>
 

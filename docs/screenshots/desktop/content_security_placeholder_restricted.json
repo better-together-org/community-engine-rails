@@ -1,8 +1,8 @@
 {
   "name": "content_security_placeholder_restricted",
   "device": "desktop",
-  "url": "/en/conversations/66da730f-eac9-47d1-a5b1-0331d2d3f5c1?person_id=user",
-  "title": "Nemo doloribus autem distinctio. | Conversations | Test Host Community",
+  "url": "/en/conversations/a463e783-55b3-4357-afaa-09766ad2bdd4?person_id=user",
+  "title": "Sed laborum beatae possimus. | Conversations | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "content_security_review_states",
@@ -19,31 +19,31 @@
       ],
       "target": {
         "x": 757.96875,
-        "y": 405.0,
+        "y": 437.0,
         "width": 643.03125,
         "height": 66.0,
         "right": 1401.0,
-        "bottom": 471.0,
+        "bottom": 503.0,
         "center_x": 1079.484375,
-        "center_y": 438.0
+        "center_y": 470.0
       },
       "avoid": {
         "x": 757.96875,
-        "y": 405.0,
+        "y": 437.0,
         "width": 643.03125,
         "height": 66.0,
         "right": 1401.0,
-        "bottom": 471.0,
+        "bottom": 503.0,
         "center_x": 1079.484375,
-        "center_y": 438.0
+        "center_y": 470.0
       },
       "placement": {
         "side": "below",
         "x": 889.48,
-        "y": 491.0,
+        "y": 523.0,
         "width": 380,
         "height": 346,
-        "score": 986.0
+        "score": 954.0
       }
     }
   ]

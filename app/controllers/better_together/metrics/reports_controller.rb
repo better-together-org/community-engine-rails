@@ -176,7 +176,7 @@ module BetterTogether
       end
 
       # Set minimum dates for each metric type
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def set_min_dates # rubocop:disable Metrics/CyclomaticComplexity
         @min_dates = {
           page_views: (metrics_scope(BetterTogether::Metrics::PageView).minimum(:viewed_at) || 1.year.ago) - 1.day,
@@ -188,7 +188,6 @@ module BetterTogether
           user_accounts: (metrics_scope(BetterTogether::User).minimum(:created_at) || 1.year.ago) - 1.day
         }
       end
-      # rubocop:enable Metrics/AbcSize
 
       def set_initial_metrics_data
         initialize_default_datetime_range
@@ -569,7 +568,7 @@ module BetterTogether
       end
 
       # Helper for HSL to RGB conversion
-      # rubocop:disable Naming/MethodParameterName
+      # rubocop:disable-next Naming/MethodParameterName
       def hue_to_rgb(min_value, max_value, hue_value)
         hue_value += 1 if hue_value.negative?
         hue_value -= 1 if hue_value > 1
@@ -579,7 +578,6 @@ module BetterTogether
 
         min_value
       end
-      # rubocop:enable Naming/MethodParameterName
 
       # Helper method to get localized model name
       def localized_model_name(model_class_name)

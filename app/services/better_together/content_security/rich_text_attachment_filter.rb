@@ -45,12 +45,12 @@ module BetterTogether
         state = placeholder_state(attachment)
 
         <<~HTML
-          <figure class="attachment attachment--file attachment--#{state} border rounded p-3 my-2 bg-light"
+          <figure class="attachment attachment--file attachment--#{state} border rounded p-3 my-2 bg-body-tertiary text-body"
                   role="status"
                   aria-live="polite"
                   data-content-security-state="#{state}">
-            <div class="fw-semibold">#{placeholder_title(state)}</div>
-            <figcaption class="mb-0 text-muted">#{placeholder_message(attachment, state)}</figcaption>
+            <div class="fw-semibold text-body">#{placeholder_title(state)}</div>
+            <figcaption class="mb-0 text-body-secondary">#{placeholder_message(attachment, state)}</figcaption>
           </figure>
         HTML
       end

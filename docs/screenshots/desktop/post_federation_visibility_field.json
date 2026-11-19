@@ -1,8 +1,8 @@
 {
   "name": "post_federation_visibility_field",
   "device": "desktop",
-  "url": "/en/posts/sample-post-10/edit",
-  "title": "Edit Post | Community Engine Host",
+  "url": "/en/posts/sample-post-40/edit",
+  "title": "Edit Post | Test Host Community",
   "locale": "en",
   "feature_set": "federation_item_consent",
   "flow": "post_federation_visibility_field",

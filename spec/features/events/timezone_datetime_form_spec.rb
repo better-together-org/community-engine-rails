@@ -15,7 +15,7 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     sleep 1 # Allow submission to process
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def choose_event_timezone(timezone)
     timezone_select = find("select[name='event[timezone]']", visible: false)
     option_label = timezone_select.find("option[value='#{timezone}']", visible: false).text
@@ -35,7 +35,6 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
       select.dispatchEvent(new Event('change', { bubbles: true }));
     JS
   end
-  # rubocop:enable Metrics/MethodLength
 
   before do
     # Ensure clean session state to prevent parallel test pollution

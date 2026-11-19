@@ -1,0 +1,57 @@
+<%
+  roles = BetterTogether::Role.where(resource_type: 'BetterTogether::Community')
+                              .where.not(identifier: BetterTogether::PlatformTrustedDomain::DENIED_ROLE_IDENTIFIERS)
+                              .positioned
+%>
+<%= form_with(model: [@platform, trusted_domain], id: 'platform-trusted-domain-form', class: 'form') do |form| %>
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: trusted_domain %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :domain, t('.domain_label'), for: 'platform_trusted_domain_domain', class: 'form-label' %>
+    <%= form.text_field :domain, id: 'platform_trusted_domain_domain', class: 'form-control', required: true,
+                                 placeholder: 'example.org', autocomplete: 'off',
+                                 'aria-describedby': 'platform_trusted_domain_domain_hint' %>
+    <div id="platform_trusted_domain_domain_hint" class="form-text"><%= t('.domain_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :role_id, t('.role_label'), for: 'platform_trusted_domain_role_id', class: 'form-label' %>
+    <%= form.select :role_id, roles.map { |role| [role.name, role.id] }, {},
+                    id: 'platform_trusted_domain_role_id', class: 'form-select',
+                    'aria-describedby': 'platform_trusted_domain_role_hint' %>
+    <div id="platform_trusted_domain_role_hint" class="form-text"><%= t('.role_hint') %></div>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= form.check_box :role_ceiling_confirmed, id: 'platform_trusted_domain_role_ceiling_confirmed', class: 'form-check-input' %>
+    <%= form.label :role_ceiling_confirmed, t('.role_ceiling_label'), for: 'platform_trusted_domain_role_ceiling_confirmed', class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= form.check_box :include_subdomains, id: 'platform_trusted_domain_include_subdomains', class: 'form-check-input' %>
+    <%= form.label :include_subdomains, t('.include_subdomains_label'), for: 'platform_trusted_domain_include_subdomains', class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= form.check_box :public_domain_confirmed, id: 'platform_trusted_domain_public_domain_confirmed', class: 'form-check-input' %>
+    <%= form.label :public_domain_confirmed, t('.public_domain_label'), for: 'platform_trusted_domain_public_domain_confirmed', class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= form.check_box :enabled, id: 'platform_trusted_domain_enabled', class: 'form-check-input' %>
+    <%= form.label :enabled, t('.enabled_label'), for: 'platform_trusted_domain_enabled', class: 'form-check-label' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :note, t('.note_label'), for: 'platform_trusted_domain_note', class: 'form-label' %>
+    <%= form.text_area :note, id: 'platform_trusted_domain_note', class: 'form-control', rows: 2, maxlength: 500 %>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <%= form.submit t('.submit'), id: 'platform-trusted-domain-submit-btn', class: 'btn btn-primary' %>
+    <%= link_to t('.cancel'), platform_platform_trusted_domains_path(@platform),
+                id: 'platform-trusted-domain-cancel-btn', class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

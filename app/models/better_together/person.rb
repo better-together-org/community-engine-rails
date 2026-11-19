@@ -54,6 +54,16 @@ module BetterTogether
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
 
     # Ids of people this person has blocked or who have blocked them.
+    # The platform this person's account belongs to (accounts are per platform).
+    def account_platform
+      BetterTogether::Platform.find_by(id: platform_id)
+    end
+
+    # True when removing this person would leave their platform without a steward.
+    def last_platform_steward?
+      account_platform&.last_steward?(self) || false
+    end
+
     def block_related_person_ids
       person_blocks.pluck(:blocked_id) | blocked_by_person_blocks.pluck(:blocker_id)
     end
@@ -149,6 +159,11 @@ module BetterTogether
 
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
+    has_many :platform_deletion_requests, class_name: 'BetterTogether::PlatformDeletionRequest',
+                                          foreign_key: :requested_by_id, dependent: :destroy, inverse_of: :requested_by
+    has_many :reviewed_platform_deletion_requests, class_name: 'BetterTogether::PlatformDeletionRequest',
+                                                   foreign_key: :reviewed_by_id, dependent: :nullify,
+                                                   inverse_of: :reviewed_by
     has_many :person_purge_audits,
              class_name: 'BetterTogether::PersonPurgeAudit',
              dependent: :nullify,
@@ -211,6 +226,10 @@ module BetterTogether
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
       federate_content Boolean, default: false
+      # Personal appearance: a theme id from PlatformThemeConfig.themes (blank = the platform's theme) and a
+      # colour mode (auto, light or dark; blank = the platform default).
+      theme String
+      color_mode String
     end
 
     store_attributes :notification_preferences do
@@ -229,6 +248,18 @@ module BetterTogether
     def time_zone=(value)
       prefs = (preferences || {}).dup
       prefs['time_zone'] = value&.to_s
+      self.preferences = prefs
+    end
+
+    def theme=(value)
+      prefs = (preferences || {}).dup
+      prefs['theme'] = value.to_s.strip.presence
+      self.preferences = prefs
+    end
+
+    def color_mode=(value)
+      prefs = (preferences || {}).dup
+      prefs['color_mode'] = value.to_s.strip.downcase.presence
       self.preferences = prefs
     end
 
@@ -268,6 +299,8 @@ module BetterTogether
     validates :locale,
               inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
               allow_nil: true
+    validates :theme, inclusion: { in: -> { BetterTogether::PlatformThemeConfig.themes.keys } }, allow_blank: true
+    validates :color_mode, inclusion: { in: BetterTogether::PlatformThemeConfig::COLOR_MODES }, allow_blank: true
 
     # Return email from user if available, otherwise from contact details
     def email

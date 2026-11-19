@@ -19,12 +19,12 @@ RSpec.describe BetterTogether::Federation::MirroredIdentifierResolution, type: :
     end
   end
 
-  # source_platform is the remote peer (external: true) and target_platform is
-  # the local platform (external: false) — matching how #mirrored_identifier_for
+  # source_platform is the remote peer (locality: 'remote') and target_platform is
+  # the local platform (locality: 'local') — matching how #mirrored_identifier_for
   # and #identifier_candidates resolve local/remote via PlatformConnection#local_platform
   # / #remote_platform rather than the raw source_platform/target_platform columns.
-  let(:source_platform) { create(:better_together_platform, identifier: 'source-host', external: true) }
-  let(:target_platform) { create(:better_together_platform, identifier: 'target-host', external: false) }
+  let(:source_platform) { create(:better_together_platform, identifier: 'source-host', locality: 'remote') }
+  let(:target_platform) { create(:better_together_platform, identifier: 'target-host', locality: 'local') }
 
   let(:connection) do
     Struct.new(:source_platform, :target_platform) do

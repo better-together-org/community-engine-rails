@@ -1,0 +1,84 @@
+<%= form_with(model: [@platform, snippet], id: dom_id(snippet, 'form'), class: 'form') do |form| %>
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: snippet %>
+  </div>
+
+  <div class="alert alert-warning" role="note"><%= t('.warning') %></div>
+
+  <div class="mb-3">
+    <%= form.label :name, t('.name'), for: 'platform_snippet_name', class: 'form-label' %>
+    <%= form.text_field :name, id: 'platform_snippet_name', class: 'form-control', required: true, maxlength: 120 %>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <%= form.label :location, t('.location'), for: 'platform_snippet_location', class: 'form-label' %>
+      <%= form.select :location,
+                      BetterTogether::PlatformSnippet::LOCATIONS.map { |l| [t("better_together.platform_snippets.locations.#{l}"), l] },
+                      {}, id: 'platform_snippet_location', class: 'form-select' %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :kind, t('.kind'), for: 'platform_snippet_kind', class: 'form-label' %>
+      <%= form.select :kind,
+                      BetterTogether::PlatformSnippet::KINDS.map { |k| [t("better_together.platform_snippets.kinds.#{k}"), k] },
+                      {}, id: 'platform_snippet_kind', class: 'form-select' %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :content, t('.content'), for: 'platform_snippet_content', class: 'form-label' %>
+    <%= form.text_area :content, id: 'platform_snippet_content', rows: 10, class: 'form-control font-monospace',
+                                 spellcheck: false, aria: { describedby: 'platform_snippet_content_hint' } %>
+    <div class="form-text" id="platform_snippet_content_hint"><%= t('.content_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :src, t('.src'), for: 'platform_snippet_src', class: 'form-label' %>
+    <%= form.url_field :src, id: 'platform_snippet_src', class: 'form-control', placeholder: 'https://example.com/script.js',
+                             aria: { describedby: 'platform_snippet_src_hint' } %>
+    <div class="form-text" id="platform_snippet_src_hint"><%= t('.src_hint') %></div>
+  </div>
+
+  <% if policy(snippet).allow_origin? %>
+    <div class="form-check mb-3">
+      <%= form.check_box :allow_csp_origin, id: 'platform_snippet_allow_csp_origin', class: 'form-check-input',
+                                            checked: snippet.allow_csp_origin.present? %>
+      <%= form.label :allow_csp_origin, t('.allow_origin'), for: 'platform_snippet_allow_csp_origin', class: 'form-check-label' %>
+      <div class="form-text"><%= t('.allow_origin_hint') %></div>
+    </div>
+  <% end %>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <%= form.label :consent_category, t('.consent_category'), for: 'platform_snippet_consent_category', class: 'form-label' %>
+      <%= form.select :consent_category,
+                      BetterTogether::PlatformSnippet::CONSENT_CATEGORIES.map { |c| [t("better_together.platform_snippets.consent_categories.#{c}"), c] },
+                      {}, id: 'platform_snippet_consent_category', class: 'form-select',
+                          aria: { describedby: 'platform_snippet_consent_hint' } %>
+      <div class="form-text" id="platform_snippet_consent_hint"><%= t('.consent_hint') %></div>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :applies_to, t('.applies_to'), for: 'platform_snippet_applies_to', class: 'form-label' %>
+      <%= form.select :applies_to,
+                      BetterTogether::PlatformSnippet::APPLIES_TO.map { |a| [t("better_together.platform_snippets.applies_to_options.#{a}"), a] },
+                      {}, id: 'platform_snippet_applies_to', class: 'form-select' %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :notes, t('.notes'), for: 'platform_snippet_notes', class: 'form-label' %>
+    <%= form.text_area :notes, id: 'platform_snippet_notes', rows: 2, class: 'form-control' %>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= form.check_box :enabled, id: 'platform_snippet_enabled', class: 'form-check-input' %>
+    <%= form.label :enabled, t('.enabled'), for: 'platform_snippet_enabled', class: 'form-check-label' %>
+    <div class="form-text"><%= t('.enabled_hint') %></div>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <%= form.submit t('.save'), id: 'platform-snippet-submit-btn', class: 'btn btn-primary' %>
+    <%= link_to t('.cancel'), platform_platform_snippets_path(@platform), id: 'platform-snippet-cancel-btn',
+                                                                           class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

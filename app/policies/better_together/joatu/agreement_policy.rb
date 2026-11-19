@@ -69,7 +69,7 @@ module BetterTogether
           return platform_scoped if can_manage_joatu?
           return platform_scoped if can_manage_network_connections? && connection_request_agreement_scope?
 
-          public_records = platform_scoped.where(privacy: 'public')
+          public_records = platform_scoped.where(privacy: 'public').within_privacy_ceiling
 
           # Agreements where the agent is either the offer or request creator
           offers = BetterTogether::Joatu::Offer.arel_table

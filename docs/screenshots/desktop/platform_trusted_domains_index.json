@@ -1,0 +1,83 @@
+{
+  "name": "platform_trusted_domains_index",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/trusted_domains",
+  "title": "Trusted domains | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "trusted_domains",
+  "flow": "trusted_domains_index",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_trusted_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#trusted-domains-explanation",
+      "title": "What a trusted domain does",
+      "bullets": [
+        "Verified or confirmed addresses on a listed domain join without waiting for review."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 216.0,
+        "width": 1296.0,
+        "height": 82.0,
+        "right": 1368.0,
+        "bottom": 298.0,
+        "center_x": 720.0,
+        "center_y": 257.0
+      },
+      "avoid": {
+        "x": 60.0,
+        "y": 120.0,
+        "width": 1320.0,
+        "height": 401.0,
+        "right": 1380.0,
+        "bottom": 521.0,
+        "center_x": 720.0,
+        "center_y": 320.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 541.0,
+        "width": 380,
+        "height": 216,
+        "score": 936.0
+      }
+    },
+    {
+      "selector": "#new-platform-trusted-domain-btn",
+      "title": "Add trusted domain",
+      "bullets": [
+        "Opens the form for a domain, a community role and the confirmations."
+      ],
+      "target": {
+        "x": 1164.234375,
+        "y": 141.0,
+        "width": 203.765625,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 179.0,
+        "center_x": 1266.1171875,
+        "center_y": 160.0
+      },
+      "avoid": {
+        "x": 60.0,
+        "y": 120.0,
+        "width": 1320.0,
+        "height": 401.0,
+        "right": 1380.0,
+        "bottom": 521.0,
+        "center_x": 720.0,
+        "center_y": 320.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 541.0,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}

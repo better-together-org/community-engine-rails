@@ -1,0 +1,326 @@
+---
+version: '2.0'
+type: resource_permission
+records:
+- key: create_community
+  attributes:
+    action: create
+    target: community
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 0
+- key: read_community
+  attributes:
+    action: read
+    target: community
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 1
+- key: update_community
+  attributes:
+    action: update
+    target: community
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 2
+- key: delete_community
+  attributes:
+    action: delete
+    target: community
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 3
+- key: list_community
+  attributes:
+    action: list
+    target: community
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 4
+- key: manage_community_settings
+  attributes:
+    action: manage
+    target: settings
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 7
+- key: manage_community_members
+  attributes:
+    action: manage
+    target: members
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 8
+- key: manage_community_content
+  attributes:
+    action: manage
+    target: content
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 9
+- key: manage_community_roles
+  attributes:
+    action: manage
+    target: roles
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 10
+- key: manage_community_notifications
+  attributes:
+    action: manage
+    target: notifications
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 11
+- key: invite_community_members
+  attributes:
+    action: manage
+    target: member_invitations
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 12
+- key: manage_community_events
+  attributes:
+    action: manage
+    target: events
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 13
+- key: create_platform
+  attributes:
+    action: create
+    target: platform
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 0
+- key: read_platform
+  attributes:
+    action: read
+    target: platform
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 1
+- key: update_platform
+  attributes:
+    action: update
+    target: platform
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 2
+- key: delete_platform
+  attributes:
+    action: delete
+    target: platform
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 3
+- key: list_platform
+  attributes:
+    action: list
+    target: platform
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 4
+- key: manage_platform
+  attributes:
+    action: manage
+    target: platform
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 6
+- key: manage_platform_members
+  attributes:
+    action: manage
+    target: platform_members
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 7
+- key: manage_joatu
+  attributes:
+    action: manage
+    target: joatu
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 8
+- key: manage_platform_api
+  attributes:
+    action: manage
+    target: platform_api
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 9
+- key: manage_platform_data_privacy
+  attributes:
+    action: manage
+    target: platform_data_privacy
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 10
+- key: manage_platform_database
+  attributes:
+    action: manage
+    target: platform_database
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 11
+- key: manage_platform_deployment
+  attributes:
+    action: manage
+    target: platform_deployment
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 12
+- key: manage_platform_roles
+  attributes:
+    action: manage
+    target: platform_roles
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 13
+- key: manage_platform_security
+  attributes:
+    action: manage
+    target: platform_security
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 14
+- key: manage_platform_settings
+  attributes:
+    action: manage
+    target: platform_settings
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 15
+- key: manage_platform_users
+  attributes:
+    action: manage
+    target: platform_users
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 16
+- key: view_metrics_dashboard
+  attributes:
+    action: view
+    target: metrics_dashboard
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 17
+- key: create_metrics_reports
+  attributes:
+    action: create
+    target: metrics_reports
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 18
+- key: download_metrics_reports
+  attributes:
+    action: download
+    target: metrics_reports
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 19
+- key: view_platform_logs
+  attributes:
+    action: view
+    target: platform_logs
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 20
+- key: view_network
+  attributes:
+    action: view
+    target: network
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 21
+- key: manage_network_connections
+  attributes:
+    action: manage
+    target: network_connections
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 22
+- key: approve_network_connections
+  attributes:
+    action: manage
+    target: network_connection_approvals
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 23
+- key: manage_federation_auth
+  attributes:
+    action: manage
+    target: federation_auth
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 24
+- key: manage_platform_safety
+  attributes:
+    action: manage
+    target: platform_safety
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 25
+- key: access_beta_features
+  attributes:
+    action: view
+    target: beta_features
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 26
+- key: access_alpha_features
+  attributes:
+    action: view
+    target: alpha_features
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 27
+- key: manage_platform_code
+  attributes:
+    action: manage
+    target: platform_code
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 28
+- key: manage_platform_jobs
+  attributes:
+    action: manage
+    target: platform_jobs
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 29
+- key: create_person
+  attributes:
+    action: create
+    target: person
+    resource_type: BetterTogether::Person
+    protected: true
+  position: 0
+- key: read_person
+  attributes:
+    action: read
+    target: person
+    resource_type: BetterTogether::Person
+    protected: true
+  position: 1
+- key: update_person
+  attributes:
+    action: update
+    target: person
+    resource_type: BetterTogether::Person
+    protected: true
+  position: 2
+- key: delete_person
+  attributes:
+    action: delete
+    target: person
+    resource_type: BetterTogether::Person
+    protected: true
+  position: 3
+- key: list_person
+  attributes:
+    action: list
+    target: person
+    resource_type: BetterTogether::Person
+    protected: true
+  position: 4

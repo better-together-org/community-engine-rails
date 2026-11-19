@@ -13,11 +13,11 @@
                     end %>
 <% unit = BetterTogether::Quotas::Type.find(quota.quota_type).unit %>
 <% formatted = lambda do |amount|
-     unit == :bytes ? number_to_human_size(amount) : number_with_delimiter(amount)
+     unit == :bytes ? quota_size_label(amount) : number_with_delimiter(amount)
    end %>
 <div class="mb-3" data-testid="quota-usage-meter-<%= quota.quota_type %>">
   <div class="d-flex justify-content-between small mb-1">
-    <span><%= t(".types.#{quota.quota_type}", default: quota.quota_type.titleize) %></span>
+    <span><%= quota_type_label(quota.quota_type) %></span>
     <span><%= formatted.call(consumed) %> / <%= formatted.call(limit) %></span>
   </div>
   <div class="progress" role="progressbar" aria-label="<%= quota.quota_type %>" aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100">

@@ -16,7 +16,7 @@ RSpec.describe BetterTogether::ContentSecurity::AttachableRegistry do
 
   it 'renders a registered block only while it is public and visible', :aggregate_failures do
     described_class.register('BetterTogether::Content::Image')
-    block = instance_double(BetterTogether::Content::Image, privacy_public?: false, visible?: true)
+    block = instance_double(BetterTogether::Content::Image, effective_privacy_public?: false, visible?: true)
     allow(block).to receive(:class).and_return(BetterTogether::Content::Image)
 
     expect(described_class.renderable?(block)).to be(false)

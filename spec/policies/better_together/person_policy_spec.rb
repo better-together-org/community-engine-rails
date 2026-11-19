@@ -7,12 +7,12 @@ RSpec.describe BetterTogether::PersonPolicy do
     user = create(:better_together_user, :confirmed)
     BetterTogether::PersonPlatformMembership.create!(
       joinable: platform, member: user.person,
-      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+      role: BetterTogether::Role.find_default('platform_steward', platform:), status: 'active'
     )
     user
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
@@ -27,7 +27,6 @@ RSpec.describe BetterTogether::PersonPolicy do
     membership.save!
     user.person.touch
   end
-  # rubocop:enable Metrics/AbcSize
 
   let(:platform_manager) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:people_reviewer) { create(:better_together_user, :confirmed) }

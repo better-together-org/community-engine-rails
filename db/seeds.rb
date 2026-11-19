@@ -5,10 +5,10 @@
 # Ensure a host platform record exists first — builders (NavigationBuilder, etc.)
 # create records with a platform_id FK, so the platform must exist before they run.
 # PLATFORM_NAME / PLATFORM_URL / PLATFORM_TIME_ZONE may be set via env.
-BetterTogether::Platform.find_or_create_by!(host: true) do |platform|
+BetterTogether::OperatorPlatform.find_or_create_by!(host: true) do |platform|
   platform.name       = ENV.fetch('PLATFORM_NAME', 'Community Engine')
   platform.url        = ENV.fetch('PLATFORM_URL',  'http://localhost:3000')
-  platform.external   = false
+  platform.locality   = 'local'
   platform.privacy    = 'private'
   platform.time_zone  = ENV.fetch('PLATFORM_TIME_ZONE', Time.zone.tzinfo.identifier)
   platform.protected           = true
