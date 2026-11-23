@@ -4420,19 +4420,38 @@ en:
         title: Navigation Items for %{name}
       new:
         title: New Navigation Item for %{name}
+      route_groups:
+        billing_buyer: Billing for members
+        billing_management: Billing management
+        geography: Geography
+        host_dashboard: Host dashboard
+        joatu: Joatu
+        other: Other
+        public: Public pages
+        safety: Safety
       route_names:
         agreements: Agreements
         billing_agreement_requirements: Purchase terms
         billing_allowances: Allowances and usage
+        billing_billing_addresses: Billing addresses
+        billing_catalog: Plan catalog
         billing_credit_accounts: Store credit accounts
+        billing_entitlements: My entitlements
         billing_events: Billing events
         billing_hosted_billing: Hosted billing
         billing_hosted_platforms: Hosted platforms
+        billing_hosting_plan: Hosting plan
+        billing_hub: Billing home
+        billing_notification_preferences: Billing notifications
+        billing_offline_payments: Offline payments
+        billing_orders: Orders
         billing_plans: Billing Plans
         billing_processor_settings: Payment Methods
         billing_promotions: Promotion codes
+        billing_refund_requests: Refund requests
         billing_sales: Sales
         billing_subscribers: Subscribers
+        billing_subscriptions: My subscriptions
         billing_tax_registrations: Tax registrations
         calendars: Calendars
         calls_for_interest: Calls for Interest
@@ -4456,6 +4475,7 @@ en:
         joatu_hub: Joatu Hub
         joatu_offers: Offers
         joatu_requests: Requests
+        metrics_billing_reports: Billing reports
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         oauth_applications: OAuth Applications

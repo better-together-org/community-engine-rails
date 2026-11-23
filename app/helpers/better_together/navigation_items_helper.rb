@@ -272,13 +272,22 @@ module BetterTogether
       ]
     end
 
+    # Route names as <optgroup>s (SlimSelect shows the group headings and searches across them).
+    # Names are sorted by label within a group; the selected route stays selected.
     def route_names_for_select(nav_item = nil)
-      options_for_select(
-        BetterTogether::NavigationItem.route_names.map do |name, route|
-          [navigation_route_name_label(name), route]
+      grouped_options_for_select(
+        BetterTogether::NavigationItem.route_name_groups.map do |group, names|
+          [navigation_route_group_label(group),
+           names.map { |name, route| [navigation_route_name_label(name), route] }.sort_by { |label, _| label.to_s.downcase }]
         end,
         nav_item&.route_name
       )
+    end
+
+    # Group headings are translated under route_groups; a group a host app adds shows humanized
+    # until it translates it.
+    def navigation_route_group_label(group)
+      I18n.t("better_together.navigation_items.route_groups.#{group}", default: group.to_s.humanize)
     end
 
     # Every key in NavigationItem.route_names needs a translation in each locale;

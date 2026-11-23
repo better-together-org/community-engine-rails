@@ -4540,19 +4540,38 @@ fr:
         title: Éléments de navigation pour %{name}
       new:
         title: Nouvel élément de navigation pour %{name}
+      route_groups:
+        billing_buyer: Facturation pour les membres
+        billing_management: Gestion de la facturation
+        geography: Géographie
+        host_dashboard: Tableau de bord de l'hôte
+        joatu: Joatu
+        other: Autres
+        public: Pages publiques
+        safety: Sécurité
       route_names:
         agreements: Accords
         billing_agreement_requirements: Conditions d’achat
         billing_allowances: Quotas et utilisation
+        billing_billing_addresses: Adresses de facturation
+        billing_catalog: Catalogue des forfaits
         billing_credit_accounts: Comptes de crédit en magasin
+        billing_entitlements: Mes droits d'accès
         billing_events: Événements de facturation
         billing_hosted_billing: Facturation hébergée
         billing_hosted_platforms: Plateformes hébergées
+        billing_hosting_plan: Forfait d'hébergement
+        billing_hub: Accueil de la facturation
+        billing_notification_preferences: Notifications de facturation
+        billing_offline_payments: Paiements hors ligne
+        billing_orders: Commandes
         billing_plans: Forfaits de facturation
         billing_processor_settings: Modes de paiement
         billing_promotions: Codes promotionnels
+        billing_refund_requests: Demandes de remboursement
         billing_sales: Ventes
         billing_subscribers: Abonnés
+        billing_subscriptions: Mes abonnements
         billing_tax_registrations: Inscriptions fiscales
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
@@ -4576,6 +4595,7 @@ fr:
         joatu_hub: Hub Joatu
         joatu_offers: Offres
         joatu_requests: Requêtes
+        metrics_billing_reports: Rapports de facturation
         metrics_reports: Rapports de métriques
         navigation_areas: Zones de navigation
         oauth_applications: Applications OAuth

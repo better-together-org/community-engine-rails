@@ -4460,19 +4460,38 @@ uk:
         title: Navigation Items for %{name}
       new:
         title: New Navigation Item for %{name}
+      route_groups:
+        billing_buyer: Оплата для учасників
+        billing_management: Керування оплатою
+        geography: Географія
+        host_dashboard: Панель хоста
+        joatu: Joatu
+        other: Інше
+        public: Публічні сторінки
+        safety: Безпека
       route_names:
         agreements: Угоди
         billing_agreement_requirements: Умови покупки
         billing_allowances: Квоти та використання
+        billing_billing_addresses: Платіжні адреси
+        billing_catalog: Каталог планів
         billing_credit_accounts: Рахунки кредиту магазину
+        billing_entitlements: Мої права доступу
         billing_events: Події виставлення рахунків
         billing_hosted_billing: Розміщені платежі
         billing_hosted_platforms: Розміщені платформи
+        billing_hosting_plan: План хостингу
+        billing_hub: Головна оплати
+        billing_notification_preferences: Сповіщення про оплату
+        billing_offline_payments: Офлайн-платежі
+        billing_orders: Замовлення
         billing_plans: Плани оплати
         billing_processor_settings: Способи оплати
         billing_promotions: Промокоди
+        billing_refund_requests: Запити на повернення коштів
         billing_sales: Продажі
         billing_subscribers: Підписники
+        billing_subscriptions: Мої підписки
         billing_tax_registrations: Податкові реєстрації
         calendars: Календарі
         calls_for_interest: Заклики до зацікавлення
@@ -4496,6 +4515,7 @@ uk:
         joatu_hub: Центр Joatu
         joatu_offers: Пропозиції
         joatu_requests: Запити
+        metrics_billing_reports: Звіти про оплату
         metrics_reports: Звіти метрик
         navigation_areas: Області навігації
         oauth_applications: Застосунки OAuth
