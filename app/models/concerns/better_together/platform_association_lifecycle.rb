@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Status transitions for PlatformManagement. The managed side drives them (the policy decides who);
+  # Status transitions for PlatformAssociation. The managed side drives them (the policy decides who);
   # revoked is terminal. Derived edges stop being effective on their own because effectiveness is computed.
-  module PlatformManagementLifecycle
+  module PlatformAssociationLifecycle
     extend ActiveSupport::Concern
 
     included do
@@ -53,7 +53,7 @@ module BetterTogether
     def require_status!(*allowed)
       return if allowed.any? { |name| status.to_s == name.to_s }
 
-      raise ArgumentError, "cannot change a #{status} platform management"
+      raise ArgumentError, "cannot change a #{status} platform association"
     end
 
     def stamp(by)

@@ -1,52 +1,53 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Directed join stating that an operator platform may act on a managed platform within granted scopes.
-  # Nothing is implied by type or location: every relationship is a consented, scoped, auditable row.
-  # platform_id (PlatformRecord) always mirrors managed_platform_id so tenancy scoping follows the managed side.
-  class PlatformManagement < PlatformRecord # rubocop:todo Metrics/ClassLength
-    include PlatformManagementRules
-    include PlatformManagementLifecycle
+  # Directed join between platforms; relation 'manages' lets the operator act on the managed platform in scope.
+  # Grants authority (PlatformConnection moves data). Each side of a remote pair stores a mirror row with the
+  # same primary key: the initiating side generates the UUID and the mirror inserts with that id (handshake later).
+  class PlatformAssociation < ApplicationRecord # rubocop:todo Metrics/ClassLength
+    include PlatformAssociationRules
+    include PlatformAssociationLifecycle
 
     SCOPES = %w[read support manage_members manage_content manage_settings billing].freeze
     TRANSPORTS = { direct: 'direct', http: 'http' }.freeze
     STATUSES = { requested: 'requested', active: 'active', suspended: 'suspended', revoked: 'revoked' }.freeze
+    RELATIONS = { manages: 'manages' }.freeze
+    AUTHORITY_RELATIONS = %w[manages].freeze
     MAX_DEPTH = 4
 
-    belongs_to :operator_platform, class_name: '::BetterTogether::Platform', inverse_of: :operating_platform_managements
-    belongs_to :managed_platform, class_name: '::BetterTogether::Platform', inverse_of: :managed_platform_managements
-    belongs_to :delegated_from, class_name: '::BetterTogether::PlatformManagement', optional: true,
+    belongs_to :operator_platform, class_name: '::BetterTogether::Platform', inverse_of: :operating_platform_associations
+    belongs_to :managed_platform, class_name: '::BetterTogether::Platform', inverse_of: :managed_platform_associations
+    belongs_to :delegated_from, class_name: '::BetterTogether::PlatformAssociation', optional: true,
                                 inverse_of: :derived_edges
     belongs_to :requested_by, class_name: '::BetterTogether::Person', optional: true
     belongs_to :accepted_by, class_name: '::BetterTogether::Person', optional: true
     belongs_to :status_changed_by, class_name: '::BetterTogether::Person', optional: true
-    has_many :derived_edges, class_name: '::BetterTogether::PlatformManagement', foreign_key: :delegated_from_id,
+    has_many :derived_edges, class_name: '::BetterTogether::PlatformAssociation', foreign_key: :delegated_from_id,
                              dependent: :destroy, inverse_of: :delegated_from
 
     enum :status, STATUSES, default: :requested, validate: true
+    enum :relation, RELATIONS, default: :manages, validate: true, prefix: true
     enum :transport, TRANSPORTS, default: :direct, validate: true, prefix: true
 
-    before_validation :mirror_managed_platform, prepend: true
     before_validation :normalize_scopes
 
-    validates :operator_platform_id, uniqueness: { scope: :managed_platform_id }
-    validates :edge_uid, uniqueness: true, allow_nil: true
+    validates :operator_platform_id, uniqueness: { scope: %i[managed_platform_id relation] }
     validates :granted_scopes, presence: true
     validate :scopes_known
-    validate :platform_types_allowed
+    validate :platform_types_allowed, if: :authority_relation?
     validate :platforms_differ
-    validate :platform_matches_managed
     validate :transport_matches_locality
     validate :endpoints_immutable, on: :update
     validate :expiry_in_future, on: :create
-    validate :acceptable_graph, on: :create
-    validate :acceptable_delegation, if: :delegated_from_id?
+    validate :acceptable_graph, on: :create, if: :authority_relation?
+    validate :acceptable_delegation, if: -> { authority_relation? && delegated_from_id? }
 
     after_create_commit { audit('requested', scopes: granted_scopes, actor_id: requested_by_id) }
 
     scope :in_force, lambda {
       active.where(expires_at: nil).or(active.where(arel_table[:expires_at].gt(Time.current)))
     }
+    scope :authority, -> { where(relation: AUTHORITY_RELATIONS) }
     scope :for_managed, ->(platform) { where(managed_platform_id: platform) }
     scope :for_operator, ->(platform) { where(operator_platform_id: platform) }
 
@@ -72,7 +73,7 @@ module BetterTogether
     def upstream_edge
       return unless delegated_from
 
-      self.class.find_by(operator_platform_id:, managed_platform_id: delegated_from.operator_platform_id)
+      self.class.find_by(operator_platform_id:, managed_platform_id: delegated_from.operator_platform_id, relation:)
     end
 
     def to_s
@@ -81,15 +82,15 @@ module BetterTogether
 
     class << self
       def operators_of(platform)
-        BetterTogether::Platform.where(id: for_managed(platform).in_force.select(&:effective?).map(&:operator_platform_id))
+        BetterTogether::Platform.where(id: authority.for_managed(platform).in_force.select(&:effective?).map(&:operator_platform_id))
       end
 
       def managed_by(platform)
-        BetterTogether::Platform.where(id: for_operator(platform).in_force.select(&:effective?).map(&:managed_platform_id))
+        BetterTogether::Platform.where(id: authority.for_operator(platform).in_force.select(&:effective?).map(&:managed_platform_id))
       end
 
       def effective_scopes_for(operator, managed)
-        edge = find_by(operator_platform: operator, managed_platform: managed)
+        edge = authority.find_by(operator_platform: operator, managed_platform: managed)
         edge ? edge.effective_scopes : []
       end
 
@@ -99,7 +100,7 @@ module BetterTogether
         person = actor.respond_to?(:person) ? actor.person : actor
         return false if person.blank? || platform.blank?
 
-        edges = for_managed(platform).in_force.where(operator_platform_id: operator_platform_ids_of(person))
+        edges = authority.for_managed(platform).in_force.where(operator_platform_id: operator_platform_ids_of(person))
         edges.any? { |edge| edge.effective? && (scope.nil? || edge.effective_scopes.include?(scope.to_s)) }
       end
 
@@ -110,8 +111,8 @@ module BetterTogether
 
     private
 
-    def mirror_managed_platform
-      self.platform_id = managed_platform_id if managed_platform_id.present?
+    def authority_relation?
+      AUTHORITY_RELATIONS.include?(relation)
     end
 
     def normalize_scopes
@@ -119,9 +120,9 @@ module BetterTogether
     end
 
     def audit(event, **details)
-      BetterTogether::TenancyAudit.record("platform_management.#{event}", edge_id: id, edge_uid:,
-                                                                          operator_platform_id:, managed_platform_id:,
-                                                                          platform_id: managed_platform_id, **details)
+      BetterTogether::TenancyAudit.record("platform_association.#{event}", association_id: id, relation:,
+                                                                           operator_platform_id:, managed_platform_id:,
+                                                                           **details)
     end
   end
 end

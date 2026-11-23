@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PlatformManagement do
+RSpec.describe BetterTogether::PlatformAssociation do
   def operator(**attrs)
     create(:better_together_platform, type: 'BetterTogether::OperatorPlatform', **attrs)
   end
@@ -12,11 +12,11 @@ RSpec.describe BetterTogether::PlatformManagement do
   end
 
   def edge(operator_side, managed, **attrs)
-    create(:better_together_platform_management, :active, operator_platform: operator_side, managed_platform: managed, **attrs)
+    create(:better_together_platform_association, :active, operator_platform: operator_side, managed_platform: managed, **attrs)
   end
 
   def build_derived(**attrs)
-    build(:better_together_platform_management, :active,
+    build(:better_together_platform_association, :active,
           { operator_platform: bts, managed_platform: site, delegated_from: host_over_site,
             granted_scopes: %w[read] }.merge(attrs))
   end
@@ -24,21 +24,21 @@ RSpec.describe BetterTogether::PlatformManagement do
   let(:steward) { create(:better_together_person) }
 
   describe 'validations' do
-    it 'builds a valid requested edge and mirrors the managed platform' do
-      record = build(:better_together_platform_management)
+    it 'builds a valid requested manages edge' do
+      record = build(:better_together_platform_association)
       expect(record).to be_valid
-      expect(record.platform_id).to eq(record.managed_platform_id)
+      expect(record).to be_relation_manages
       expect(record).to be_requested
     end
 
     it 'rejects an operator that is not an OperatorPlatform' do
-      record = build(:better_together_platform_management, operator_platform: hosted)
+      record = build(:better_together_platform_association, operator_platform: hosted)
       expect(record).not_to be_valid
       expect(record.errors[:operator_platform]).to be_present
     end
 
     it 'rejects a managed platform that is federated or oauth' do
-      record = build(:better_together_platform_management,
+      record = build(:better_together_platform_association,
                      managed_platform: create(:better_together_platform, :remote, type: 'BetterTogether::FederatedPlatform'),
                      transport: 'http')
       expect(record).not_to be_valid
@@ -46,38 +46,38 @@ RSpec.describe BetterTogether::PlatformManagement do
     end
 
     it 'allows an operator platform to be managed' do
-      expect(build(:better_together_platform_management, managed_platform: operator)).to be_valid
+      expect(build(:better_together_platform_association, managed_platform: operator)).to be_valid
     end
 
     it 'rejects a self edge' do
       op = operator
-      expect(build(:better_together_platform_management, operator_platform: op, managed_platform: op)).not_to be_valid
+      expect(build(:better_together_platform_association, operator_platform: op, managed_platform: op)).not_to be_valid
     end
 
     it 'enforces one edge per operator and managed pair' do
       first = edge(operator, hosted)
-      dup = build(:better_together_platform_management, operator_platform: first.operator_platform,
-                                                        managed_platform: first.managed_platform)
+      dup = build(:better_together_platform_association, operator_platform: first.operator_platform,
+                                                         managed_platform: first.managed_platform)
       expect(dup).not_to be_valid
     end
 
     it 'rejects unknown and empty scopes' do
-      expect(build(:better_together_platform_management, granted_scopes: %w[root])).not_to be_valid
-      expect(build(:better_together_platform_management, granted_scopes: [])).not_to be_valid
+      expect(build(:better_together_platform_association, granted_scopes: %w[root])).not_to be_valid
+      expect(build(:better_together_platform_association, granted_scopes: [])).not_to be_valid
     end
 
     it 'rejects an unknown status' do
-      expect(build(:better_together_platform_management, status: 'bogus')).not_to be_valid
+      expect(build(:better_together_platform_association, status: 'bogus')).not_to be_valid
     end
 
     it 'requires http transport for a remote operator and direct for local platforms' do
-      expect(build(:better_together_platform_management, :remote_operator)).to be_valid
-      expect(build(:better_together_platform_management, :remote_operator, transport: 'direct')).not_to be_valid
-      expect(build(:better_together_platform_management, transport: 'http')).not_to be_valid
+      expect(build(:better_together_platform_association, :remote_operator)).to be_valid
+      expect(build(:better_together_platform_association, :remote_operator, transport: 'direct')).not_to be_valid
+      expect(build(:better_together_platform_association, transport: 'http')).not_to be_valid
     end
 
     it 'rejects an expiry in the past on create' do
-      expect(build(:better_together_platform_management, expires_at: 1.hour.ago)).not_to be_valid
+      expect(build(:better_together_platform_association, expires_at: 1.hour.ago)).not_to be_valid
     end
 
     it 'does not let the endpoints change' do
@@ -87,12 +87,32 @@ RSpec.describe BetterTogether::PlatformManagement do
     end
   end
 
+  describe 'relations' do
+    it 'registers manages as the only relation and as an authority relation' do
+      expect(described_class::RELATIONS.values).to eq(%w[manages])
+      expect(described_class::AUTHORITY_RELATIONS).to all(satisfy { |name| described_class::RELATIONS.value?(name) })
+    end
+
+    it 'defaults to manages and rejects unknown relations' do
+      expect(described_class.new.relation).to eq('manages')
+      expect(build(:better_together_platform_association, relation: 'owns')).not_to be_valid
+    end
+
+    it 'makes the relation part of the uniqueness key' do
+      first = edge(operator, hosted)
+      dup = build(:better_together_platform_association, operator_platform: first.operator_platform,
+                                                         managed_platform: first.managed_platform)
+      expect(dup).not_to be_valid
+      expect(described_class.column_names).not_to include('platform_id', 'edge_uid')
+    end
+  end
+
   describe 'cycles and depth' do
     it 'rejects a direct cycle' do
       a = operator
       b = operator
       edge(a, b)
-      expect(build(:better_together_platform_management, operator_platform: b, managed_platform: a, transport: 'direct'))
+      expect(build(:better_together_platform_association, operator_platform: b, managed_platform: a, transport: 'direct'))
         .not_to be_valid
     end
 
@@ -102,7 +122,7 @@ RSpec.describe BetterTogether::PlatformManagement do
       c = operator
       edge(a, b)
       edge(b, c)
-      cycle = build(:better_together_platform_management, operator_platform: c, managed_platform: a)
+      cycle = build(:better_together_platform_association, operator_platform: c, managed_platform: a)
       expect(cycle).not_to be_valid
       expect(cycle.errors[:managed_platform_id]).to be_present
     end
@@ -113,7 +133,7 @@ RSpec.describe BetterTogether::PlatformManagement do
       edge(ops[1], ops[2])
       edge(ops[2], ops[3])
       edge(ops[3], ops[4])
-      too_long = build(:better_together_platform_management, operator_platform: ops[4], managed_platform: ops[5])
+      too_long = build(:better_together_platform_association, operator_platform: ops[4], managed_platform: ops[5])
       expect(too_long).not_to be_valid
       expect(too_long.errors[:base]).to be_present
     end
@@ -121,8 +141,8 @@ RSpec.describe BetterTogether::PlatformManagement do
     it 'ignores revoked edges when checking the graph' do
       a = operator
       b = operator
-      create(:better_together_platform_management, :revoked, operator_platform: a, managed_platform: b)
-      expect(build(:better_together_platform_management, operator_platform: b, managed_platform: a)).to be_valid
+      create(:better_together_platform_association, :revoked, operator_platform: a, managed_platform: b)
+      expect(build(:better_together_platform_association, operator_platform: b, managed_platform: a)).to be_valid
     end
   end
 
@@ -201,8 +221,15 @@ RSpec.describe BetterTogether::PlatformManagement do
     end
   end
 
+  describe 'platform deletion' do
+    it 'removes associations from both sides when a platform is destroyed' do
+      record = edge(operator, hosted)
+      expect { record.managed_platform.destroy! }.to change(described_class, :count).by(-1)
+    end
+  end
+
   describe 'lifecycle' do
-    let(:record) { create(:better_together_platform_management, granted_scopes: %w[read support billing]) }
+    let(:record) { create(:better_together_platform_association, granted_scopes: %w[read support billing]) }
 
     before do
       allow(BetterTogether::TenancyAudit).to receive(:record).and_call_original
@@ -214,7 +241,7 @@ RSpec.describe BetterTogether::PlatformManagement do
       expect(record.granted_scopes).to eq(%w[read])
       expect(record.accepted_by).to eq(steward)
       expect(record.accepted_at).to be_present
-      expect(BetterTogether::TenancyAudit).to have_received(:record).with('platform_management.accepted', anything)
+      expect(BetterTogether::TenancyAudit).to have_received(:record).with('platform_association.accepted', anything)
     end
 
     it 'refuses to widen scopes on accept or narrow' do
@@ -243,8 +270,8 @@ RSpec.describe BetterTogether::PlatformManagement do
 
     it 'emits an audit event when requested' do
       allow(BetterTogether::TenancyAudit).to receive(:record)
-      create(:better_together_platform_management)
-      expect(BetterTogether::TenancyAudit).to have_received(:record).with('platform_management.requested', anything)
+      create(:better_together_platform_association)
+      expect(BetterTogether::TenancyAudit).to have_received(:record).with('platform_association.requested', anything)
     end
 
     it 'treats a requested edge as not effective' do

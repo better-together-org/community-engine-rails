@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Validation rules for PlatformManagement: platform types, locality, graph shape (no cycles, bounded depth)
+  # Validation rules for PlatformAssociation: platform types, locality, graph shape (no cycles, bounded depth)
   # and delegation (a derived edge can only narrow what its parent edge holds).
-  module PlatformManagementRules
+  module PlatformAssociationRules
     extend ActiveSupport::Concern
 
     OPERATOR_TYPE = 'BetterTogether::OperatorPlatform'
@@ -16,7 +16,7 @@ module BetterTogether
         seen = []
         queue = [platform_id]
         while (current = queue.shift)
-          next_ids = where.not(status: 'revoked').where(from => current).pluck(to) - seen
+          next_ids = authority.where.not(status: 'revoked').where(from => current).pluck(to) - seen
           seen.concat(next_ids)
           queue.concat(next_ids)
         end
@@ -27,7 +27,7 @@ module BetterTogether
         return 0 if trail.include?(platform_id)
 
         from, to = direction == :down ? %i[operator_platform_id managed_platform_id] : %i[managed_platform_id operator_platform_id]
-        ids = where.not(status: 'revoked').where(from => platform_id).distinct.pluck(to)
+        ids = authority.where.not(status: 'revoked').where(from => platform_id).distinct.pluck(to)
         ids.map { |id| 1 + chain_length(id, direction, trail + [platform_id]) }.max || 0
       end
     end
@@ -35,7 +35,7 @@ module BetterTogether
     private
 
     def scopes_known
-      unknown = Array(granted_scopes) - BetterTogether::PlatformManagement::SCOPES
+      unknown = Array(granted_scopes) - BetterTogether::PlatformAssociation::SCOPES
       errors.add(:granted_scopes, :inclusion) if unknown.any?
     end
 
@@ -46,10 +46,6 @@ module BetterTogether
 
     def platforms_differ
       errors.add(:managed_platform_id, :invalid) if operator_platform_id.present? && operator_platform_id == managed_platform_id
-    end
-
-    def platform_matches_managed
-      errors.add(:platform_id, :invalid) if platform_id != managed_platform_id
     end
 
     def transport_matches_locality
@@ -74,7 +70,7 @@ module BetterTogether
 
       if downstream_of_managed?
         errors.add(:managed_platform_id, :cycle)
-      elsif chain_depth > BetterTogether::PlatformManagement::MAX_DEPTH
+      elsif chain_depth > BetterTogether::PlatformAssociation::MAX_DEPTH
         errors.add(:base, :too_deep)
       end
     end
@@ -96,12 +92,13 @@ module BetterTogether
 
       validate_parent_edge
       errors.add(:granted_scopes, :exceeds_parent) if (Array(granted_scopes) - delegated_from.granted_scopes).any?
-      errors.add(:delegated_from, :too_deep) if delegation_depth > BetterTogether::PlatformManagement::MAX_DEPTH
+      errors.add(:delegated_from, :too_deep) if delegation_depth > BetterTogether::PlatformAssociation::MAX_DEPTH
     end
 
     def validate_parent_edge
       parent = delegated_from
-      errors.add(:delegated_from, :invalid) unless parent.managed_platform_id == managed_platform_id && parent.id != id
+      same_target = parent.managed_platform_id == managed_platform_id && parent.relation == relation
+      errors.add(:delegated_from, :invalid) unless same_target && parent.id != id
       errors.add(:delegated_from, :no_upstream_edge) unless upstream_edge
     end
 
@@ -110,7 +107,7 @@ module BetterTogether
       node = delegated_from
       while node
         depth += 1
-        return Float::INFINITY if depth > BetterTogether::PlatformManagement::MAX_DEPTH + 1
+        return Float::INFINITY if depth > BetterTogether::PlatformAssociation::MAX_DEPTH + 1
 
         node = node.delegated_from
       end

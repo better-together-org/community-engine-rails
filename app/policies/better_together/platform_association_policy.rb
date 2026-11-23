@@ -3,7 +3,7 @@
 module BetterTogether
   # Managed-platform stewards decide: accept, narrow, suspend, resume and revoke. Operator stewards may read
   # their edges and request new ones. Every check passes the platform record, never a bare permitted_to?.
-  class PlatformManagementPolicy < PlatformRecordPolicy
+  class PlatformAssociationPolicy < ApplicationPolicy
     def index?
       agent.present?
     end
@@ -33,7 +33,7 @@ module BetterTogether
     end
 
     # Edges touching a platform the agent stewards, on either side.
-    class Scope < PlatformRecordPolicy::Scope
+    class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
 

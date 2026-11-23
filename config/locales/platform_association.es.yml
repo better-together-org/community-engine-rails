@@ -1,12 +1,12 @@
 es:
   activerecord:
     models:
-      better_together/platform_management:
-        one: Gestión de plataforma
-        other: Gestiones de plataforma
+      better_together/platform_association:
+        one: Asociación de plataforma
+        other: Asociaciones de plataforma
     errors:
       models:
-        better_together/platform_management:
+        better_together/platform_association:
           attributes:
             managed_platform_id:
               cycle: "crearía un ciclo de gestión"

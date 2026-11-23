@@ -1,12 +1,12 @@
 uk:
   activerecord:
     models:
-      better_together/platform_management:
-        one: Керування платформою
-        other: Керування платформами
+      better_together/platform_association:
+        one: Асоціація платформ
+        other: Асоціації платформ
     errors:
       models:
-        better_together/platform_management:
+        better_together/platform_association:
           attributes:
             managed_platform_id:
               cycle: "створило б цикл керування"

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :better_together_platform_management, class: 'BetterTogether::PlatformManagement',
-                                                aliases: %i[platform_management] do
+  factory :better_together_platform_association, class: 'BetterTogether::PlatformAssociation',
+                                                 aliases: %i[platform_association] do
     operator_platform { create(:better_together_platform, type: 'BetterTogether::OperatorPlatform') }
     managed_platform { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
     granted_scopes { %w[read support] }

@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PlatformManagementPolicy do
+RSpec.describe BetterTogether::PlatformAssociationPolicy do
   let(:operator_platform) { create(:better_together_platform, type: 'BetterTogether::OperatorPlatform') }
   let(:managed_platform) { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
   let(:edge) do
-    create(:better_together_platform_management, :active, operator_platform:, managed_platform:)
+    create(:better_together_platform_association, :active, operator_platform:, managed_platform:)
   end
 
   def steward_of(platform)
@@ -30,7 +30,7 @@ RSpec.describe BetterTogether::PlatformManagementPolicy do
     end
 
     it 'cannot create an edge naming an operator it does not steward' do
-      expect(described_class.new(steward_of(managed_platform), build(:better_together_platform_management,
+      expect(described_class.new(steward_of(managed_platform), build(:better_together_platform_association,
                                                                      operator_platform:, managed_platform:)).create?)
         .to be(false)
     end
@@ -43,13 +43,13 @@ RSpec.describe BetterTogether::PlatformManagementPolicy do
       policy = described_class.new(user, edge)
       expect(policy.show?).to be(true)
       expect([policy.accept?, policy.suspend?, policy.revoke?]).to all(be(false))
-      expect(described_class.new(user, build(:better_together_platform_management, operator_platform:,
-                                                                                   managed_platform:)).create?)
+      expect(described_class.new(user, build(:better_together_platform_association, operator_platform:,
+                                                                                    managed_platform:)).create?)
         .to be(true)
     end
 
     it 'cannot create an already active edge' do
-      record = build(:better_together_platform_management, :active, operator_platform:, managed_platform:)
+      record = build(:better_together_platform_association, :active, operator_platform:, managed_platform:)
       expect(described_class.new(user, record).create?).to be(false)
     end
   end
@@ -72,9 +72,9 @@ RSpec.describe BetterTogether::PlatformManagementPolicy do
 
   describe 'Scope' do
     it 'lists only edges touching platforms the user stewards' do
-      other = create(:better_together_platform_management, :active)
+      other = create(:better_together_platform_association, :active)
       edge
-      resolved = described_class::Scope.new(steward_of(managed_platform), BetterTogether::PlatformManagement).resolve
+      resolved = described_class::Scope.new(steward_of(managed_platform), BetterTogether::PlatformAssociation).resolve
       expect(resolved).to include(edge)
       expect(resolved).not_to include(other)
     end
