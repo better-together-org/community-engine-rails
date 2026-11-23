@@ -7833,9 +7833,11 @@ fr:
       done: Fait
       intro: Configurez la facturation, puis gérez ici les forfaits, les ventes et
         les abonnés.
+      loading: Chargement...
       nav_label: Écrans de facturation
       not_ready: La facturation n'est pas encore prête. Terminez les éléments ci-dessous;
         d'ici là, les pages de facturation restent masquées ou répondent introuvable.
+      overview: Aperçu
       page_title: Facturation
       purposes:
         one_time: les achats uniques

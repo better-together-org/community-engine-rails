@@ -3,34 +3,63 @@
   <p class="text-muted"><%= t('host_dashboard.billing.intro') %></p>
 
   <% billing_links = @billing_nav_item ? navigation_item_children_for(@billing_nav_item) : [] %>
-  <% if billing_links.any? %>
-    <nav aria-label="<%= t('host_dashboard.billing.nav_label') %>">
-      <ul id="host-dashboard-billing-nav" class="nav nav-pills flex-wrap gap-2 mb-4">
-        <% billing_links.each do |item| %>
-          <li class="nav-item">
-            <%= link_to item.title, item.url, class: 'nav-link', target: '_top' %>
-          </li>
-        <% end %>
-      </ul>
-    </nav>
-  <% end %>
+  <% billing_links = billing_links.reject { |item| item.identifier == 'billing-dashboard' } %>
 
-  <div id="host-dashboard-billing-readiness" class="card">
-    <div class="card-body">
-      <h2 class="h5 card-title"><%= t('host_dashboard.billing.readiness_title') %></h2>
-      <p class="<%= @billing_readiness.ready? ? 'text-success' : 'text-warning-emphasis' %>">
-        <%= t(@billing_readiness.ready? ? 'host_dashboard.billing.ready' : 'host_dashboard.billing.not_ready') %>
-      </p>
-      <ul class="list-unstyled mb-0">
-        <% @billing_readiness.checks.each do |check| %>
-          <li class="mb-2" data-check="<%= check.key %>" data-ok="<%= check.ok %>">
-            <span class="badge <%= check.ok ? 'bg-success' : 'bg-warning text-dark' %>">
-              <%= t(check.ok ? 'host_dashboard.billing.done' : 'host_dashboard.billing.todo') %>
-            </span>
-            <%= t("host_dashboard.billing.checks.#{check.key}", purpose: check.purpose ? t("host_dashboard.billing.purposes.#{check.purpose}") : nil) %>
-          </li>
-        <% end %>
-      </ul>
+  <div data-controller="better_together--tabs">
+    <ul id="host-dashboard-billing-nav" class="nav nav-pills flex-wrap gap-2 mb-4" role="tablist"
+        aria-label="<%= t('host_dashboard.billing.nav_label') %>">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="billing-overview-tab" type="button" role="tab"
+                data-bs-toggle="tab" data-bs-target="#billing-overview"
+                data-better_together--tabs-target="tab"
+                aria-controls="billing-overview" aria-selected="true">
+          <%= t('host_dashboard.billing.overview') %>
+        </button>
+      </li>
+      <% billing_links.each do |item| %>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="billing-tab-<%= item.identifier %>-tab" type="button" role="tab"
+                  data-bs-toggle="tab" data-bs-target="#billing-pane-<%= item.identifier %>"
+                  data-better_together--tabs-target="tab"
+                  aria-controls="billing-pane-<%= item.identifier %>" aria-selected="false">
+            <%= item.title %>
+          </button>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="tab-content" id="host-dashboard-billing-panes">
+      <div class="tab-pane fade show active" id="billing-overview" role="tabpanel"
+           aria-labelledby="billing-overview-tab" tabindex="0">
+        <div id="host-dashboard-billing-readiness" class="card">
+          <div class="card-body">
+            <h2 class="h5 card-title"><%= t('host_dashboard.billing.readiness_title') %></h2>
+            <p class="<%= @billing_readiness.ready? ? 'text-success' : 'text-warning-emphasis' %>">
+              <%= t(@billing_readiness.ready? ? 'host_dashboard.billing.ready' : 'host_dashboard.billing.not_ready') %>
+            </p>
+            <ul class="list-unstyled mb-0">
+              <% @billing_readiness.checks.each do |check| %>
+                <li class="mb-2" data-check="<%= check.key %>" data-ok="<%= check.ok %>">
+                  <span class="badge <%= check.ok ? 'bg-success' : 'bg-warning text-dark' %>">
+                    <%= t(check.ok ? 'host_dashboard.billing.done' : 'host_dashboard.billing.todo') %>
+                  </span>
+                  <%= t("host_dashboard.billing.checks.#{check.key}", purpose: check.purpose ? t("host_dashboard.billing.purposes.#{check.purpose}") : nil) %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <% billing_links.each do |item| %>
+        <% path = item.route_name.present? ? public_send(item.route_name.sub(/_url\z/, '_path'), locale: I18n.locale) : item.url %>
+        <div class="tab-pane fade" id="billing-pane-<%= item.identifier %>" role="tabpanel"
+             aria-labelledby="billing-tab-<%= item.identifier %>-tab" tabindex="0">
+          <%= turbo_frame_tag "billing-tab-#{item.identifier}", src: path, loading: :lazy, target: '_self' do %>
+            <p class="text-muted" role="status"><%= t('host_dashboard.billing.loading') %></p>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 </section>

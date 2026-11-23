@@ -7592,9 +7592,11 @@ en:
         method_enabled: At least one payment method is switched on.
       done: Done
       intro: Set up billing, then manage plans, sales and subscribers from here.
+      loading: Loading...
       nav_label: Billing screens
       not_ready: Billing is not ready yet. Finish the items below; until then billing
         pages stay hidden or answer not found.
+      overview: Overview
       page_title: Billing
       purposes:
         one_time: one-time purchases

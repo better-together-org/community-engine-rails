@@ -7721,10 +7721,12 @@ es:
       done: Hecho
       intro: Configure la facturación y luego gestione planes, ventas y suscriptores
         desde aquí.
+      loading: Cargando...
       nav_label: Pantallas de facturación
       not_ready: La facturación aún no está lista. Complete los elementos siguientes;
         mientras tanto las páginas de facturación permanecen ocultas o responden no
         encontrado.
+      overview: Resumen
       page_title: Facturación
       purposes:
         one_time: compras únicas
