@@ -27,6 +27,16 @@ module BetterTogether
       render :safety_review
     end
 
+    # Billing landing page: what is set up, what is still needed, and the billing screens.
+    def billing
+      authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
+
+      @billing_readiness = BetterTogether::Billing::Readiness.call(helpers.host_platform)
+      @billing_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'billing',
+                                                                 navigation_area: helpers.platform_host_nav_area)
+      render :billing
+    end
+
     def platform_connection_review
       authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
       authorize ::BetterTogether::PlatformConnection, :index?

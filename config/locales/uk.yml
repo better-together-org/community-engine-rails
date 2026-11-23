@@ -4506,6 +4506,7 @@ uk:
         geography_settlements: Населені пункти
         geography_states: Штати
         host_dashboard: Панель керування хоста
+        host_dashboard_billing: Огляд оплати
         host_dashboard_membership_review: Перегляд членства
         host_dashboard_platform_connection_review: Перегляд федерації
         host_dashboard_safety_review: Перегляд безпеки
@@ -7693,6 +7694,25 @@ uk:
       type: Тип
     type_select_field: Оберіть тип для цього поля.
   host_dashboard:
+    billing:
+      checks:
+        agreements: 'Діють угоди про купівлю для: %{purpose}.'
+        configured: Оплату налаштовано (увімкнено, назва й адреса компанії, пошта
+          підтримки).
+        method_enabled: Увімкнено принаймні один спосіб оплати.
+      done: Готово
+      intro: Налаштуйте оплату, а потім керуйте планами, продажами й підписниками
+        звідси.
+      nav_label: Екрани оплати
+      not_ready: Оплата ще не готова. Завершіть пункти нижче; доти сторінки оплати
+        приховані або відповідають «не знайдено».
+      page_title: Оплата
+      purposes:
+        one_time: разові покупки
+        subscription: підписки
+      readiness_title: Готовність оплати
+      ready: 'Оплата готова: учасники можуть оформлювати покупки.'
+      todo: Потрібно зробити
     index:
       better_together: Разом краще
       content: Контент

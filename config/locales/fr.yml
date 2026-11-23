@@ -4586,6 +4586,7 @@ fr:
         geography_settlements: Localités
         geography_states: États
         host_dashboard: Tableau de bord de l'hôte
+        host_dashboard_billing: Aperçu de la facturation
         host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
@@ -7823,6 +7824,25 @@ fr:
       type: Type
     type_select_field: Sélectionnez le type pour ce champ.
   host_dashboard:
+    billing:
+      checks:
+        agreements: Des ententes d'achat sont en vigueur pour %{purpose}.
+        configured: La facturation est configurée (activée, nom et adresse de l'entreprise,
+          courriel de soutien).
+        method_enabled: Au moins un mode de paiement est activé.
+      done: Fait
+      intro: Configurez la facturation, puis gérez ici les forfaits, les ventes et
+        les abonnés.
+      nav_label: Écrans de facturation
+      not_ready: La facturation n'est pas encore prête. Terminez les éléments ci-dessous;
+        d'ici là, les pages de facturation restent masquées ou répondent introuvable.
+      page_title: Facturation
+      purposes:
+        one_time: les achats uniques
+        subscription: les abonnements
+      readiness_title: État de préparation de la facturation
+      ready: 'La facturation est prête : les membres peuvent payer.'
+      todo: À faire
     index:
       better_together: Mieux ensemble
       content: Contenu

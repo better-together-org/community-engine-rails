@@ -34,7 +34,7 @@ module BetterTogether
       ],
       joatu: %i[joatu_hub joatu_offers joatu_requests],
       billing_management: %i[
-        billing_plans billing_processor_settings billing_sales billing_events billing_subscribers
+        host_dashboard_billing billing_plans billing_processor_settings billing_sales billing_events billing_subscribers
         billing_tax_registrations billing_agreement_requirements billing_promotions billing_credit_accounts
         billing_allowances billing_offline_payments billing_hosted_platforms metrics_billing_reports
       ],

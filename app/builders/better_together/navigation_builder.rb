@@ -21,6 +21,9 @@ module BetterTogether
           I18n.with_locale(:en) do
             build_header
             build_host
+            # The navigation packet is the source for items added after this builder's own list
+            # (review pages, jobs, the Billing menu); it also moves legacy billing items under Billing.
+            BetterTogether::Navigation::EnsurePacketItems.call
             build_better_together
             build_footer
             # DocumentationBuilder.build # TODO: Re-enable when documentation is ready

@@ -4466,6 +4466,7 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_billing: Billing overview
         host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
@@ -7583,6 +7584,24 @@ en:
       type: Type
     type_select_field: Select the type for this field.
   host_dashboard:
+    billing:
+      checks:
+        agreements: Purchase agreements are in force for %{purpose}.
+        configured: Billing is configured (billing switched on, business name and
+          address, support email).
+        method_enabled: At least one payment method is switched on.
+      done: Done
+      intro: Set up billing, then manage plans, sales and subscribers from here.
+      nav_label: Billing screens
+      not_ready: Billing is not ready yet. Finish the items below; until then billing
+        pages stay hidden or answer not found.
+      page_title: Billing
+      purposes:
+        one_time: one-time purchases
+        subscription: subscriptions
+      readiness_title: Billing readiness
+      ready: 'Billing is ready: members can check out.'
+      todo: To do
     index:
       better_together: Better together
       content: Content
