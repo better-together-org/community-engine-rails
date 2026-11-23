@@ -154,4 +154,45 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       expect(BetterTogether::NavigationItem.exists?(protected_item.id)).to be(true)
     end
   end
+
+  describe 'child navigation items' do
+    let!(:parent_item) { create(:better_together_navigation_item, navigation_area:, protected: false) }
+    let!(:child_item) do
+      create(:better_together_navigation_item, navigation_area:, parent: parent_item, protected: false)
+    end
+
+    it 'opens the edit form for a child item' do
+      get better_together.edit_navigation_area_navigation_item_path(
+        locale:, navigation_area_id: navigation_area.slug, id: child_item.slug
+      )
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'saves a route name on a child item and keeps it editable', :aggregate_failures do
+      put better_together.navigation_area_navigation_item_path(
+        locale:, navigation_area_id: navigation_area.slug, id: child_item.slug
+      ), params: { navigation_item: { route_name: 'billing_plans_url' } }
+
+      expect(response).to have_http_status(:found)
+      expect(child_item.reload.route_name).to eq('billing_plans_url')
+
+      get better_together.edit_navigation_area_navigation_item_path(
+        locale:, navigation_area_id: navigation_area.slug, id: child_item.slug
+      )
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'lists items when the area is addressed by id' do
+      get better_together.navigation_area_navigation_items_path(locale:, navigation_area_id: navigation_area.id)
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'renders not found for an unknown navigation area' do
+      get better_together.navigation_area_navigation_items_path(locale:, navigation_area_id: 'no-such-area')
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

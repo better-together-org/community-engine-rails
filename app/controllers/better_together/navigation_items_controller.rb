@@ -22,7 +22,7 @@ module BetterTogether
     def index
       authorize resource_class
       @navigation_items =
-        policy_scope(resource_collection)
+        policy_scope(tree_collection)
     end
 
     def show
@@ -139,11 +139,23 @@ module BetterTogether
       # in resource_collection below). Using it here to look up the NavigationArea itself
       # would be circular and never match, since navigation_area_id ids don't match
       # navigation_item ids.
+      areas = policy_scope(::BetterTogether::NavigationArea)
       @navigation_area ||= find_by_translatable(
         translatable_type: ::BetterTogether::NavigationArea.name,
         friendly_id: params[:navigation_area_id],
-        collection: policy_scope(::BetterTogether::NavigationArea)
-      )
+        collection: areas
+      ) || navigation_area_by_id(areas)
+      raise ActiveRecord::RecordNotFound, 'navigation area not found' unless @navigation_area
+
+      @navigation_area
+    end
+
+    # Links built from a record id (rather than its slug) still resolve.
+    def navigation_area_by_id(areas)
+      id = params[:navigation_area_id].to_s
+      return unless id.match?(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
+
+      areas.find_by(id:)
     end
 
     def navigation_item
@@ -158,29 +170,33 @@ module BetterTogether
       ::BetterTogether::NavigationItem
     end
 
-    def resource_collection # rubocop:todo Metrics/MethodLength
-      resource_class.top_level
-                    .where(navigation_area: @navigation_area)
-                    .includes(
-                      :navigation_area,
-                      :string_translations,
-                      linkable: [:string_translations],
-                      children: [
-                        :navigation_area,
-                        :string_translations,
-                        { linkable: [:string_translations],
-                          children: [
-                            :navigation_area,
-                            :string_translations,
-                            { linkable: [:string_translations],
-                              children: [
-                                :navigation_area,
-                                :string_translations,
-                                { linkable: [:string_translations] }
-                              ] }
-                          ] }
-                      ]
-                    )
+    # Every item in the area, at any depth. Member actions (show, edit, update, destroy)
+    # look the record up here, so child items such as the billing links can be edited.
+    def resource_collection
+      resource_class.where(navigation_area: @navigation_area)
+                    .includes(:navigation_area, :string_translations, linkable: [:string_translations])
+    end
+
+    # Top-level items with their children preloaded, for the index tree.
+    def tree_collection # rubocop:todo Metrics/MethodLength
+      resource_collection.top_level
+                         .includes(
+                           children: [
+                             :navigation_area,
+                             :string_translations,
+                             { linkable: [:string_translations],
+                               children: [
+                                 :navigation_area,
+                                 :string_translations,
+                                 { linkable: [:string_translations],
+                                   children: [
+                                     :navigation_area,
+                                     :string_translations,
+                                     { linkable: [:string_translations] }
+                                   ] }
+                               ] }
+                           ]
+                         )
     end
   end
 end
