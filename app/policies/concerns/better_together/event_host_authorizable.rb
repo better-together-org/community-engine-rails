@@ -8,6 +8,7 @@ module BetterTogether
   # requires duplicating EventHost/creator data).
   module EventHostAuthorizable
     extend ActiveSupport::Concern
+    include PlatformEditorialContent
 
     # The Event whose event_hosts/creator should be checked. Override in
     # including policies whose `record` isn't itself the Event (e.g.
@@ -47,7 +48,22 @@ module BetterTogether
     end
 
     def creator_or_platform_steward
-      user.present? && (creator_of?(event_for_authorization) || platform_manager?)
+      event = event_for_authorization
+      user.present? && (creator_of?(event) || (platform_manager? && platform_operable_event?(event)))
+    end
+
+    # Platform managers operate public and community events and the platform's own events (hosted by the platform's
+    # community). Events with no host, or hosted by people or other communities, stay
+    # with their creators, hosts and community event managers.
+    def platform_operable_event?(event)
+      event.privacy != 'private' || platform_editorial_event?(event)
+    end
+
+    def platform_editorial_event?(event)
+      event.event_hosts.to_a.any? do |host|
+        host.host_type == 'BetterTogether::Community' &&
+          platform_editorial_community?(host.host_id, event.platform)
+      end
     end
   end
 end
