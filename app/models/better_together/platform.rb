@@ -148,6 +148,10 @@ module BetterTogether
     has_many :platform_trusted_domains, class_name: '::BetterTogether::PlatformTrustedDomain',
                                         dependent: :destroy, inverse_of: :platform
     has_many :trusted_domain_events, class_name: '::BetterTogether::TrustedDomainEvent', dependent: :delete_all
+    has_many :operating_platform_managements, class_name: '::BetterTogether::PlatformManagement',
+                                              foreign_key: :operator_platform_id, dependent: :destroy, inverse_of: :operator_platform
+    has_many :managed_platform_managements, class_name: '::BetterTogether::PlatformManagement',
+                                            foreign_key: :managed_platform_id, dependent: :destroy, inverse_of: :managed_platform
     has_many :outgoing_platform_connections,
              class_name: '::BetterTogether::PlatformConnection',
              foreign_key: :source_platform_id,

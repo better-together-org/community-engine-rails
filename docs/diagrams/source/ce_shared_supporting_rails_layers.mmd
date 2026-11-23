@@ -621,6 +621,12 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformManagement["PlatformManagement"] {
+      <<Model>>
+      table: better_together_platform_managements
+      concerns: BetterTogetherId, PlatformManagementLifecycle, PlatformManagementRules, PlatformScoped +1
+      weak refs: owner: seeds
+    }
     class BetterTogether__PlatformSnippet["PlatformSnippet"] {
       <<Model>>
       table: better_together_platform_snippets
@@ -920,6 +926,13 @@ classDiagram
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformDomain : platform_domain
+  BetterTogether__PlatformManagement --> BetterTogether__Platform : platform
+  BetterTogether__PlatformManagement --> BetterTogether__Platform : operator_platform
+  BetterTogether__PlatformManagement --> BetterTogether__Platform : managed_platform
+  BetterTogether__PlatformManagement --> BetterTogether__PlatformManagement : delegated_from
+  BetterTogether__PlatformManagement --> BetterTogether__Person : requested_by
+  BetterTogether__PlatformManagement --> BetterTogether__Person : accepted_by
+  BetterTogether__PlatformManagement --> BetterTogether__Person : status_changed_by
   BetterTogether__PlatformSnippet --> BetterTogether__Platform : platform
   BetterTogether__PlatformSnippet --> BetterTogether__Person : updated_by
   BetterTogether__PlatformSnippetAudit --> BetterTogether__Platform : platform

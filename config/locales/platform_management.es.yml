@@ -1,0 +1,19 @@
+es:
+  activerecord:
+    models:
+      better_together/platform_management:
+        one: Gestión de plataforma
+        other: Gestiones de plataforma
+    errors:
+      models:
+        better_together/platform_management:
+          attributes:
+            managed_platform_id:
+              cycle: "crearía un ciclo de gestión"
+            delegated_from:
+              too_deep: "supera la profundidad máxima de la cadena de gestión"
+              no_upstream_edge: "requiere una relación de gestión existente de este operador sobre la plataforma que delega"
+            granted_scopes:
+              exceeds_parent: "no puede otorgar más de lo que posee la relación principal"
+          immutable_endpoints: "no puede cambiar el operador, la plataforma gestionada ni la relación principal"
+          too_deep: "supera la profundidad máxima de la cadena de gestión"

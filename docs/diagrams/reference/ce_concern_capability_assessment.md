@@ -99,6 +99,8 @@ This assessment is generated from the current live class set and the concern cap
 | `PlatformFederationStatus` | Platformfederationstatus | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformFromParent` | Platformfromparent | `WizardStepDefinition`, `WizardStep` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformHost` | Platformhost | `Platform`, `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformManagementLifecycle` | Platformmanagementlifecycle | `PlatformManagement` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformManagementRules` | Platformmanagementrules | `PlatformManagement` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformMembershipDisplay` | Platformmembershipdisplay | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformRegistryDefaults` | Platformregistrydefaults | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformScoped` | Platformscoped | `RoleResourcePermission`, `ResourcePermission`, `PersonDeletionRequest`, `PersonDataExport`, `PersonChecklistItem`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
