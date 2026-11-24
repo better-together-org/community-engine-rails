@@ -27,6 +27,7 @@
       <div class="col-md-8">
         <!-- Member role -->
         <p class="card-text text-muted mb-1"><%= membership.role.name %></p>
+        <%= render 'better_together/memberships/lifecycle', membership: membership %>
       </div>
       <div class="col-md-4 text-center">
         <%= profile_image_tag(membership.member, class: 'card-image') %>

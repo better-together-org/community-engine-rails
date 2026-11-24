@@ -2629,6 +2629,37 @@ uk:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: Завершити членство
+          leave: Вийти
+          reinstate: Відновити
+          suspend: Призупинити
+        confirm_end: Завершити це членство? Воно залишиться в історії, і його можна
+          відновити.
+        confirm_leave: Вийти? Ви зможете знову подати запит.
+        flash:
+          ended: Членство завершено.
+          left: Ви вийшли.
+          reinstated: Членство відновлено.
+          suspended: Членство призупинено.
+        since: Від
+        source:
+          backfill: Наявний учасник
+          direct: Додано напряму
+          entitlement: План або право
+          invitation: Запрошення
+          registration: Приєднався під час реєстрації
+          request: Запит на членство
+          trusted_domain: Довірений домен пошти
+          wizard: Майстер налаштування
+        status:
+          current: Чинне
+          ended: Завершене
+          pending: Очікує
+          suspended: Призупинене
+        until: До
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.

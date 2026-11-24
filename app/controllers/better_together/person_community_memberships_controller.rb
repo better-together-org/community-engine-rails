@@ -2,8 +2,10 @@
 
 module BetterTogether
   class PersonCommunityMembershipsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include MembershipLifecycleActions
+
     before_action :set_community
-    before_action :set_person_community_membership, only: [:destroy]
+    before_action :set_person_community_membership, only: %i[destroy end_membership suspend reinstate leave]
     after_action :verify_authorized
 
     # POST /communities/:community_id/person_community_memberships
@@ -82,6 +84,10 @@ module BetterTogether
       redirect_to @community, alert: t('better_together.person_community_memberships.errors.last_organizer'),
                               status: :see_other
     end
+
+    def lifecycle_membership = @person_community_membership
+
+    def lifecycle_redirect_path = @community
 
     def set_community
       @community = ::BetterTogether::Community.find(params[:community_id])

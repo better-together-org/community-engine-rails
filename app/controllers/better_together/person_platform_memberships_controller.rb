@@ -3,8 +3,10 @@
 module BetterTogether
   # Allows for CRUD operations for Person Platform Memberships
   class PersonPlatformMembershipsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include MembershipLifecycleActions
+
     before_action :set_platform
-    before_action :set_person_platform_membership, only: %i[show edit update destroy]
+    before_action :set_person_platform_membership, only: %i[show edit update destroy end_membership suspend reinstate]
     before_action :authorize_person_platform_membership, only: %i[show edit update destroy]
     before_action :authorize_index, only: %i[index]
     before_action :authorize_new_action, only: %i[new]
@@ -151,6 +153,10 @@ module BetterTogether
     end
 
     private
+
+    def lifecycle_membership = @person_platform_membership
+
+    def lifecycle_redirect_path = @platform
 
     # Set the platform for scoped operations
     def set_platform

@@ -1,0 +1,49 @@
+{
+  "name": "membership_lifecycle_suspended",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/person_platform_memberships",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "membership_lifecycle",
+  "flow": "suspended",
+  "source_spec": "./spec/docs_screenshots/better_together/membership_lifecycle_spec.rb",
+  "callouts": [
+    {
+      "selector": "#lifecycle_person_platform_membership_e475255b-8be4-4011-9d54-a6a897e086d5",
+      "title": "Suspended",
+      "bullets": [
+        "A suspended member keeps the row but loses access.",
+        "Reinstate restores it."
+      ],
+      "target": {
+        "x": 16.0,
+        "y": 729.171875,
+        "width": 453.0,
+        "height": 88.0,
+        "right": 469.0,
+        "bottom": 817.171875,
+        "center_x": 242.5,
+        "center_y": 773.171875
+      },
+      "avoid": {
+        "x": 16.0,
+        "y": 729.171875,
+        "width": 453.0,
+        "height": 88.0,
+        "right": 469.0,
+        "bottom": 817.171875,
+        "center_x": 242.5,
+        "center_y": 773.171875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 499.17,
+        "width": 270.0,
+        "height": 210,
+        "score": 729.171875
+      }
+    }
+  ]
+}

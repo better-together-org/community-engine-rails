@@ -1,0 +1,12 @@
+---
+title: Membership status and actions
+audience:
+- platform_steward
+journey_step: As a steward, I can see a member status and suspend or end the membership.
+callouts:
+- :id: lifecycle
+  :title: Status and actions
+  :description: Lifecycle controls.
+accessibility_notes: Buttons have visible text labels.
+slug: membership_lifecycle_current
+device: desktop

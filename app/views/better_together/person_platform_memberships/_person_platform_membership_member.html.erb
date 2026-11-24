@@ -19,6 +19,8 @@
           </div>
         </div>
         
+        <%= render 'better_together/memberships/lifecycle', membership: person_platform_membership %>
+
         <% if policy(person_platform_membership).edit? || policy(person_platform_membership).destroy? %>
           <div class="d-flex gap-2 mt-2">
             <% if policy(person_platform_membership).edit? %>

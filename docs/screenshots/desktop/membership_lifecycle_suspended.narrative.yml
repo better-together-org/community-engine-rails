@@ -1,0 +1,12 @@
+---
+title: Suspended membership
+audience:
+- platform_steward
+journey_step: As a steward, I can reinstate a suspended member.
+callouts:
+- :id: lifecycle
+  :title: Suspended
+  :description: Reinstate control.
+accessibility_notes: Status is text, not color alone.
+slug: membership_lifecycle_suspended
+device: desktop

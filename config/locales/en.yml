@@ -2589,6 +2589,36 @@ en:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: End membership
+          leave: Leave
+          reinstate: Reinstate
+          suspend: Suspend
+        confirm_end: End this membership? It stays in the history and can be reinstated.
+        confirm_leave: Leave? You can ask to join again later.
+        flash:
+          ended: Membership ended.
+          left: You left.
+          reinstated: Membership reinstated.
+          suspended: Membership suspended.
+        since: Since
+        source:
+          backfill: Existing member
+          direct: Added directly
+          entitlement: Plan or entitlement
+          invitation: Invitation
+          registration: Joined at registration
+          request: Membership request
+          trusted_domain: Trusted email domain
+          wizard: Setup wizard
+        status:
+          current: Current
+          ended: Ended
+          pending: Pending
+          suspended: Suspended
+        until: Until
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.

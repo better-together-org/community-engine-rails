@@ -2636,6 +2636,37 @@ fr:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: Mettre fin à l'adhésion
+          leave: Quitter
+          reinstate: Rétablir
+          suspend: Suspendre
+        confirm_end: Mettre fin à cette adhésion ? Elle reste dans l'historique et
+          peut être rétablie.
+        confirm_leave: Quitter ? Vous pourrez demander à rejoindre de nouveau.
+        flash:
+          ended: Adhésion terminée.
+          left: Vous êtes parti.
+          reinstated: Adhésion rétablie.
+          suspended: Adhésion suspendue.
+        since: Depuis
+        source:
+          backfill: Membre existant
+          direct: Ajouté directement
+          entitlement: Forfait ou droit
+          invitation: Invitation
+          registration: Inscrit à l'inscription
+          request: Demande d'adhésion
+          trusted_domain: Domaine de courriel de confiance
+          wizard: Assistant d'installation
+        status:
+          current: Actuelle
+          ended: Terminée
+          pending: En attente
+          suspended: Suspendue
+        until: Jusqu'au
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.

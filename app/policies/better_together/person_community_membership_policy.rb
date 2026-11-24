@@ -30,6 +30,22 @@ module BetterTogether
       :last_organizer if user.present? && me? && sole_organizer?
     end
 
+    def end?
+      user.present? && !me? && can_manage_community_members?
+    end
+
+    def suspend?
+      end?
+    end
+
+    def reinstate?
+      user.present? && !me? && can_manage_community_members? && !record.current?
+    end
+
+    def leave?
+      user.present? && me? && record.current?
+    end
+
     class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless user.present?

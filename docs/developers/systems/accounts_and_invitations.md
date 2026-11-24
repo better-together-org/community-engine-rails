@@ -88,3 +88,21 @@ Platform and community memberships share `BetterTogether::MembershipLifecycle`.
 ![Membership lifecycle](../../diagrams/exports/png/membership_lifecycle_state.png)
 
 Source: [membership_lifecycle_state.mmd](../../diagrams/source/membership_lifecycle_state.mmd)
+
+## Managing memberships in the UI (MBR-4)
+
+Platform and community member cards now show each membership's status (current, pending, suspended, ended), where it came from (`source`) and its since/until dates, using the shared `better_together/memberships/_lifecycle` partial.
+
+| Action | Route | Who | Effect |
+|---|---|---|---|
+| End membership | `PATCH .../:id/end_membership` | stewards and community managers, not on themselves | status `ended`, `ends_at` now, optional reason; row kept |
+| Suspend | `PATCH .../:id/suspend` | same | status `suspended`; row kept |
+| Reinstate | `PATCH .../:id/reinstate` | same | status `active`, end date cleared |
+| Leave | `DELETE /communities/:id/person_community_memberships/:id/leave` | the member | ends their own community membership with reason `left` |
+
+- The last current steward cannot be ended or suspended; the flash shows the model's error.
+- There is no platform self-leave: every account holds the baseline platform membership.
+- Ended and suspended rows appear on the community page only for people who manage members; everyone else sees current members.
+- `destroy` still hard-deletes and is unchanged.
+
+Screenshots: `docs/screenshots/{desktop,mobile}/membership_lifecycle_current.png` and `membership_lifecycle_suspended.png`.

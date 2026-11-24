@@ -2618,6 +2618,37 @@ es:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: Finalizar membresía
+          leave: Salir
+          reinstate: Restablecer
+          suspend: Suspender
+        confirm_end: "¿Finalizar esta membresía? Queda en el historial y se puede
+          restablecer."
+        confirm_leave: "¿Salir? Podrás solicitar unirte de nuevo."
+        flash:
+          ended: Membresía finalizada.
+          left: Saliste.
+          reinstated: Membresía restablecida.
+          suspended: Membresía suspendida.
+        since: Desde
+        source:
+          backfill: Miembro existente
+          direct: Añadido directamente
+          entitlement: Plan o derecho
+          invitation: Invitación
+          registration: Se unió al registrarse
+          request: Solicitud de membresía
+          trusted_domain: Dominio de correo de confianza
+          wizard: Asistente de configuración
+        status:
+          current: Vigente
+          ended: Finalizada
+          pending: Pendiente
+          suspended: Suspendida
+        until: Hasta
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.
