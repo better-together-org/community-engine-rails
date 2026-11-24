@@ -1,0 +1,246 @@
+# Access contract: people subsystem (pilot).
+# See communities.yml for how rows are matched.
+subsystem: people
+title: People
+summary: Person profiles, the blocks people place on each other, and the contact details attached to them.
+
+policy_pattern: person|contact_detail|email_address|phone_number|address|social_media
+deferred_policies:
+  Address: Contact component carrying its own privacy; next pilot stage.
+  EmailAddress: Contact component carrying its own privacy; next pilot stage.
+  PhoneNumber: Contact component carrying its own privacy; next pilot stage.
+  SocialMediaAccount: Contact component carrying its own privacy; next pilot stage.
+  PersonAccessGrant: Feature-flagged grant flow; contract with the break-glass design.
+  PersonLink: Profile links; next pilot stage.
+  PersonLinkedSeed: Federated seeds; next pilot stage.
+  PersonPlatformIntegration: Third-party integrations; next pilot stage.
+  PersonPlatformMembership: Platform membership and role grants; contract with the platform subsystem.
+  PersonSeed: Personal seed exports; next pilot stage.
+
+opt_in_permissions:
+  create_person: Opt-in profile administration; no default role holds it.
+  read_person: Opt-in read of private profiles; no default role holds it.
+  update_person: Opt-in profile administration; no default role holds it.
+  delete_person: Opt-in profile deletion; no default role holds it.
+  list_person: Opt-in full directory listing; no default role holds it.
+
+controllers:
+  - better_together/people
+  - better_together/person_blocks
+  - better_together/api/v1/people
+  - better_together/api/v1/person_blocks
+controller_allowlist:
+  better_together/people#index: The index action scopes through resource_collection, which calls policy_scope.
+
+decisions:
+  PD-1:
+    kind: known_deviation
+    title: Platform managers can edit any person profile
+    app_does: PersonPolicy#update? allows platform_manager?. The edit form shows the person's private contact details.
+    privacy_rule: Editing a profile discloses personal data. Managers operate member status (suspend, restore), not profile content.
+    source: "PR #2321 deferred decision, 'PersonPolicy#update?/create?'."
+  PD-2:
+    kind: undecided
+    title: Platform managers can create people
+    app_does: PersonPolicy#create? allows platform_manager?, bypassing the opt-in create_person permission.
+    privacy_rule: Creating a profile does not disclose existing data, but the seeded create_person permission suggests profile administration is an opt-in grant.
+    source: "PR #2321 deferred decision, 'PersonPolicy#update?/create?'."
+  PD-3:
+    kind: known_deviation
+    title: Contact detail scope lists every contact detail to everyone
+    app_does: ContactDetailPolicy::Scope returns all contact details of the platform, including private people's, even to anonymous visitors, because the model has no privacy column.
+    privacy_rule: Personal data of private people is visible only to the person themself.
+    source: Found by this contract; not in PR #2321.
+  PD-4:
+    kind: known_deviation
+    title: Anyone can create or destroy any contact detail at policy level
+    app_does: "ContactDetailPolicy#create? and #destroy? return true for every actor, including anonymous."
+    privacy_rule: Only the owner of the contactable may change its contact details.
+    source: Found by this contract; the policy carries a comment that the logic was never written.
+  PD-5:
+    kind: undecided
+    title: Blocker cannot show their own block record
+    app_does: PersonBlockPolicy has no show?, so it denies everyone, while the scope and destroy? work for the blocker.
+    privacy_rule: The blocker likely may read their own block.
+    source: Found by this contract.
+
+resources:
+  person:
+    model: BetterTogether::Person
+    policy: BetterTogether::PersonPolicy
+    classification: personal
+    title: Person profile
+    states: [public, community, private]
+    permissions: [create_person, read_person, update_person, delete_person, list_person]
+    controllers: [better_together/people, better_together/api/v1/people]
+    rules:
+      - {id: self, question: "Is the actor the person themself?", on_yes: allow}
+      - {id: block, question: "Has the person blocked the actor (or the actor the person)?", on_yes: deny}
+      - {id: privacy_gate, question: "Is the profile effectively public?", on_yes: allow}
+      - {id: shared_community, question: "Is the profile community-level and does the actor share an active community with the person?", on_yes: allow}
+      - {id: directory_permission, question: "Does a custom role grant read_person or list_person?", on_yes: allow, unprobed: "No persona holds a custom role; opt-in permission."}
+      - id: platform_manager
+        question: "Is the actor a platform manager (update and create only)?"
+        on_yes: allow
+        intended: false
+        note: Opens profile editing, which shows private contact details; see PD-1.
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "The directory needs a signed-in actor; the scope then filters."}
+          - {outcome: allow, rule: privacy_gate, reason: "Signed-in people may open the directory; the scope filters the rows."}
+      show:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: self, reason: "People always read their own profile."}
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "A block hides the blocker's profile from the blocked person."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public profiles are readable by anyone."}
+          - {states: [community], personas: [community_member, community_contributor, community_organizer], outcome: allow,
+             rule: shared_community, reason: "Community-level profiles are visible to people who share a community."}
+          - {outcome: deny, rule: default_deny, reason: "Private profiles and profiles outside one's communities are not readable; standing roles do not read them."}
+      download:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: self, reason: "Download follows show."}
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "Download follows show."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Download follows show."}
+          - {states: [community], personas: [community_member, community_contributor, community_organizer], outcome: allow,
+             rule: shared_community, reason: "Download follows show."}
+          - {outcome: deny, rule: default_deny, reason: "Download follows show."}
+      create:
+        states: [new]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: PD-2}
+          - {outcome: deny, rule: default_deny, reason: "Creating a profile needs the opt-in create_person grant; no default role holds it."}
+      update:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: self, reason: "People edit their own profile."}
+          - personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "Profile editing shows private contact details; managers operate member status, not profile content."
+            deviation: {actual: allow, actual_rule: platform_manager, decision: PD-1}
+          - {outcome: deny, rule: default_deny, reason: "Only the person (or an opt-in update_person grant) edits a profile."}
+      destroy:
+        rows:
+          - {outcome: deny, rule: default_deny, reason: "Deletion is a reviewed deletion request, not a policy action; the opt-in delete_person grant is held by no default role."}
+      scope:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: self, reason: "People list themselves."}
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "Blocks remove the blocker from the blocked person's results."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public profiles are listed for everyone."}
+          - {states: [community], personas: [community_member, community_contributor, community_organizer], outcome: allow,
+             rule: shared_community, reason: "Shared-community people are listed."}
+          - {outcome: deny, rule: default_deny, reason: "Other profiles are not listed; standing roles do not list private people."}
+
+  person_block:
+    model: BetterTogether::PersonBlock
+    policy: BetterTogether::PersonBlockPolicy
+    classification: personal
+    title: Person block
+    states: [own, someone_elses]
+    permissions: []
+    controllers: [better_together/person_blocks, better_together/api/v1/person_blocks]
+    rules:
+      - {id: blocker, question: "Is the actor the person who placed the block?", on_yes: allow}
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner], outcome: na}
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "Blocking needs a signed-in actor."}
+          - {outcome: allow, rule: blocker, reason: "Signed-in people open their own block list; the scope filters it."}
+      show:
+        rows:
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - personas: [record_owner]
+            outcome: undecided
+            rule: default_deny
+            undecided: {actual: deny, suggests: allow, decision: PD-5}
+          - {states: [own], outcome: na}
+          - {outcome: deny, rule: default_deny, reason: "Blocks are private to the blocker; nobody else reads them, including the blocked person and standing roles."}
+      create:
+        rows:
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: allow, rule: blocker, reason: "People place their own blocks (except on platform managers)."}
+          - {states: [own], outcome: na}
+          - {outcome: deny, rule: default_deny, reason: "Nobody places a block on someone else's behalf."}
+      destroy:
+        rows:
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: allow, rule: blocker, reason: "The blocker lifts their own block."}
+          - {states: [own], outcome: na}
+          - {outcome: deny, rule: default_deny, reason: "Only the blocker lifts a block."}
+      scope:
+        rows:
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: allow, rule: blocker, reason: "The blocker lists their own blocks."}
+          - {states: [own], outcome: na}
+          - {outcome: deny, rule: default_deny, reason: "Blocks are visible to the blocker only."}
+
+  contact_detail:
+    model: BetterTogether::ContactDetail
+    policy: BetterTogether::ContactDetailPolicy
+    classification: personal
+    title: Contact detail
+    states: [public, private]
+    permissions: []
+    controllers: []
+    rules:
+      - {id: owner, question: "Is the actor the owner of the contactable?", on_yes: allow}
+      - {id: public_owner, question: "Does the contactable belong to a public profile?", on_yes: allow}
+      - id: open_policy
+        question: "Is the policy method an unconditional true?"
+        on_yes: allow
+        intended: false
+        note: "ContactDetailPolicy#create? and #destroy? are placeholders that return true; see PD-4."
+      - id: unscoped_listing
+        question: "Does the scope fall back to the whole platform?"
+        on_yes: allow
+        intended: false
+        note: The model has no privacy column, so the scope returns every contact detail; see PD-3.
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      show:
+        rows:
+          - {outcome: deny, rule: default_deny, reason: "Contact details render through their owner's profile and are never fetched directly (no show? method)."}
+      create:
+        states: [new]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - personas: [anonymous]
+            outcome: deny
+            rule: default_deny
+            reason: "Creating a contact detail needs a signed-in owner of the contactable."
+            deviation: {actual: allow, actual_rule: open_policy, decision: PD-4}
+          - personas: [signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "Only the contactable's owner creates its contact detail; the new record has no owner context here."
+            deviation: {actual: allow, actual_rule: open_policy, decision: PD-4}
+      update:
+        rows:
+          - {outcome: deny, rule: default_deny, reason: "Contact details are edited through the owner's profile form (no update? method)."}
+      destroy:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner removes their own contact detail."}
+          - personas: [anonymous, signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward, blocked_user]
+            outcome: deny
+            rule: default_deny
+            reason: "Only the owner removes a contact detail; standing roles do not."
+            deviation: {actual: allow, actual_rule: open_policy, decision: PD-4}
+      scope:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: owner, reason: "Owners list their own contact details."}
+          - {states: [public], outcome: allow, rule: public_owner, reason: "A public profile's contact detail container is listed to everyone."}
+          - personas: [anonymous, signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward, blocked_user]
+            outcome: deny
+            rule: default_deny
+            reason: "A private person's contact detail is personal data visible to the person only."
+            deviation: {actual: allow, actual_rule: unscoped_listing, decision: PD-3}
