@@ -12,7 +12,7 @@ namespace :better_together do
       if BetterTogether::GeographyBuilder.seeded?
         puts 'Geography reference data already installed — nothing to do.'
       else
-        BetterTogether::Geography::Geospatial::One.without_auto_geocoding do
+        BetterTogether::Geography::Continent.without_auto_geocoding do
           BetterTogether::GeographyBuilder.build_if_missing
         end
         puts 'Geography reference data installed. Run ' \
