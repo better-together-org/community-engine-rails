@@ -12,7 +12,7 @@ An access contract records what access we decided each persona should have to ea
 | resources | 8 |
 | personas | 12 |
 | cells | 1332 |
-| known deviations | 30 |
+| known deviations | 0 |
 | undecided | 0 |
 
 ## Persona by classification heatmaps
@@ -53,8 +53,8 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 | `community_member` | allow | mixed | mixed | mixed | allow | mixed |
 | `community_contributor` | allow | mixed | mixed | mixed | allow | mixed |
 | `community_organizer` | allow | mixed | mixed | mixed | allow | mixed |
-| `platform_manager` | allow | deny | mixed | mixed | allow | allow |
-| `platform_steward` | allow | deny | mixed | mixed | allow | allow |
+| `platform_manager` | allow | deny | mixed | mixed | allow | mixed |
+| `platform_steward` | allow | deny | mixed | mixed | allow | mixed |
 | `safety_reviewer` | pending | pending | pending | pending | pending | pending |
 | `remote_operator` | pending | pending | pending | pending | pending | pending |
 | `support_grantee` | pending | pending | pending | pending | pending | pending |

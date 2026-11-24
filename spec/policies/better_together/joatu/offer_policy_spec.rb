@@ -41,13 +41,41 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
     it { expect(described_class.new(nil, offer).create?).to be false }
   end
 
+  describe '#respond_with_request?' do
+    it 'denies a signed-in user who cannot see a private offer' do
+      expect(described_class.new(normal_user, offer).respond_with_request?).to be false
+    end
+
+    it 'allows a signed-in user to respond to a public offer' do
+      offer.update_column(:privacy, 'public')
+      expect(described_class.new(normal_user, offer).respond_with_request?).to be true
+    end
+
+    it 'denies a person the creator has blocked' do
+      offer.update_column(:privacy, 'public')
+      creator_person.person_blocks.create!(blocked: normal_user.person)
+      expect(described_class.new(normal_user, offer).respond_with_request?).to be false
+    end
+  end
+
+  describe '#show? for stewards' do
+    it 'hides a private offer from a steward' do
+      expect(described_class.new(steward_user, offer).show?).to be false
+    end
+  end
+
   describe '#update?' do
     it 'allows the creator' do
       expect(described_class.new(creator_user, offer).update?).to be true
     end
 
-    it 'allows a steward' do
+    it 'allows a steward on a public offer' do
+      offer.update_column(:privacy, 'public')
       expect(described_class.new(steward_user, offer).update?).to be true
+    end
+
+    it 'denies a steward on a private offer' do
+      expect(described_class.new(steward_user, offer).update?).to be false
     end
 
     it 'denies other users' do
