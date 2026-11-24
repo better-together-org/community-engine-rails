@@ -242,6 +242,9 @@ jobs:
                 jq -r '.examples[] | select(.status == "failed") | "- \(.file_path):\(.line_number) \(.full_description | .[0:100]) :: \(.exception.message | split("\n")[0] | .[0:140])"' "$f" 2>/dev/null
                 jq -r '.messages[]? | select(test("error occurred")) | "- load error: \(split("\n")[1:4] | join(" "))"' "$f" 2>/dev/null
               } >> "$GITHUB_STEP_SUMMARY"
+              # Also name each failed example in the log (and as a PR annotation); the
+              # step summary alone is not exposed by the API or visible in the raw log.
+              jq -r '.examples[] | select(.status == "failed") | "::error file=\(.file_path | ltrimstr("./")),line=\(.line_number)::\(((.full_description | .[0:150] | gsub("[\r\n]"; " ")) + " :: " + ((.exception.message // "") | split("\n")[0] | .[0:200])) | gsub("%"; "%25"))"' "$f" 2>/dev/null || true
             done
             # A run that executed no examples, or hit load errors, is a hard failure even
             # when failure_count is 0 (e.g. a missing system library aborts spec loading).
