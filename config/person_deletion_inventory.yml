@@ -244,6 +244,22 @@ entries:
     action: destroy
     reverse_association: person_platform_integrations
 
+  - key: BetterTogether::MembershipEvent#member
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MembershipEvent
+    association: member
+    foreign_key: member_id
+    action: destroy
+
+  - key: BetterTogether::MembershipEvent#actor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MembershipEvent
+    association: actor
+    foreign_key: actor_id
+    action: anonymize
+
   - key: BetterTogether::PersonCommunityMembership#member
     kind: model_reference
     owner: person
