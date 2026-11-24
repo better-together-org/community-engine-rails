@@ -4,7 +4,7 @@
   <% end %>
 
   <% content_for :editor_status do %>
-    <% if permitted_to?('manage_platform') %>
+    <% if current_person&.platform_manager? %>
       <% if policy(BetterTogether::Page).index? %>
         <li class="nav-item record-list" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('globals.back_to_list') %>">
           <%= link_to pages_path, class: 'nav-link active' do %>
