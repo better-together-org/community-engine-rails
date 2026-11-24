@@ -65,7 +65,10 @@ concern :billing_plans do # rubocop:disable Metrics/BlockLength
       post :decide, on: :member
     end
     resource :checkout, only: %i[new create]
-    resources :agreement_requirements, only: %i[index create destroy]
+    resources :agreement_requirements, only: %i[index create edit update destroy] do
+      # Put the requirement's agreement in force (a draft agreement keeps checkout closed).
+      patch :activate_agreement, on: :member
+    end
     resources :sales, only: %i[index show] do
       # Return what was paid toward a sale that will not be completed, then cancel it.
       post :return_payments, on: :member

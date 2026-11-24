@@ -31,23 +31,8 @@
     <div class="tab-content" id="host-dashboard-billing-panes">
       <div class="tab-pane fade show active" id="billing-overview" role="tabpanel"
            aria-labelledby="billing-overview-tab" tabindex="0">
-        <div id="host-dashboard-billing-readiness" class="card">
-          <div class="card-body">
-            <h2 class="h5 card-title"><%= t('host_dashboard.billing.readiness_title') %></h2>
-            <p class="<%= @billing_readiness.ready? ? 'text-success' : 'text-warning-emphasis' %>">
-              <%= t(@billing_readiness.ready? ? 'host_dashboard.billing.ready' : 'host_dashboard.billing.not_ready') %>
-            </p>
-            <ul class="list-unstyled mb-0">
-              <% @billing_readiness.checks.each do |check| %>
-                <li class="mb-2" data-check="<%= check.key %>" data-ok="<%= check.ok %>">
-                  <span class="badge <%= check.ok ? 'bg-success' : 'bg-warning text-dark' %>">
-                    <%= t(check.ok ? 'host_dashboard.billing.done' : 'host_dashboard.billing.todo') %>
-                  </span>
-                  <%= t("host_dashboard.billing.checks.#{check.key}", purpose: check.purpose ? t("host_dashboard.billing.purposes.#{check.purpose}") : nil) %>
-                </li>
-              <% end %>
-            </ul>
-          </div>
+        <div id="host-dashboard-billing-readiness">
+          <%= render 'better_together/billing/shared/readiness', owner: host_platform, tab_ids: billing_links.map(&:identifier) %>
         </div>
       </div>
 

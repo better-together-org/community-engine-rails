@@ -14,29 +14,17 @@ module BetterTogether
     module OwnerScoped
       extend ActiveSupport::Concern
 
+      include TabFrameLayout
+
       included do
         before_action :require_billing_enabled
         before_action :authenticate_user!
         helper_method :billing_owner
       end
 
-      # Frame id prefix of the billing tabs on the host billing page. A request from one of those
-      # frames gets just the page content, wrapped in the frame it asked for.
-      TAB_FRAME_PREFIX = 'billing-tab-'
-
       private
 
       def billing_owner = Current.platform
-
-      def determine_layout
-        return 'better_together/billing_tab_frame' if billing_tab_frame_request?
-
-        super
-      end
-
-      def billing_tab_frame_request?
-        turbo_frame_request? && turbo_frame_request_id.to_s.start_with?(TAB_FRAME_PREFIX)
-      end
 
       def require_billing_enabled
         render_not_found unless billing_available?

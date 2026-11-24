@@ -125,6 +125,60 @@ RSpec.describe BetterTogether::Billing::AgreementRequirementsController do
       expect(response).to redirect_to(path)
     end
 
+    it 'links each row to its agreement, edit and removal, and offers activation for a draft' do
+      draft = create(:better_together_agreement, agreement_kind: 'transactional_agreement', platform: host_platform,
+                                                 identifier: 'draft-terms', lifecycle_state: 'draft')
+      requirement = host_platform.billing_agreement_requirements.create!(agreement: draft, mode: 'additional')
+
+      get path
+
+      expect(response.body).to include("#{ActionView::RecordIdentifier.dom_id(requirement)}_activate",
+                                       "#{ActionView::RecordIdentifier.dom_id(requirement)}_edit",
+                                       "#{ActionView::RecordIdentifier.dom_id(requirement)}_edit_agreement")
+    end
+
+    it 'edits a requirement' do
+      requirement = host_platform.billing_agreement_requirements.create!(agreement:, mode: 'additional')
+
+      get better_together.edit_billing_agreement_requirement_path(requirement, locale:)
+
+      expect(response.body).to include('billing-agreement-requirement-edit-page', 'billing-requirement-save-btn')
+    end
+
+    it 'updates a requirement and re-renders on a mistake', :aggregate_failures do
+      requirement = host_platform.billing_agreement_requirements.create!(agreement:, mode: 'additional')
+      url = better_together.billing_agreement_requirement_path(requirement, locale:)
+
+      patch url, params: { billing_agreement_requirement: { target_plan_id: plan.id, purpose: 'ticket' } }
+      expect(response).to redirect_to(path)
+      expect(requirement.reload).to have_attributes(target: plan, purpose: 'ticket')
+
+      patch url, params: { billing_agreement_requirement: { purpose: 'barter' } }
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'puts a draft agreement in force' do
+      draft = create(:better_together_agreement, agreement_kind: 'transactional_agreement', platform: host_platform,
+                                                 identifier: 'draft-2', lifecycle_state: 'draft')
+      requirement = host_platform.billing_agreement_requirements.create!(agreement: draft, mode: 'additional')
+
+      patch better_together.activate_agreement_billing_agreement_requirement_path(requirement, locale:)
+
+      expect(draft.reload).to be_lifecycle_state_active
+    end
+
+    it 'cannot edit or activate another platform\'s requirement', :aggregate_failures do
+      foreign_agreement = create(:better_together_agreement, agreement_kind: 'transactional_agreement', platform: other_platform,
+                                                             identifier: 'foreign-5', lifecycle_state: 'draft')
+      foreign = other_platform.billing_agreement_requirements.create!(agreement: foreign_agreement, mode: 'additional')
+
+      get better_together.edit_billing_agreement_requirement_path(foreign, locale:)
+      expect(response).to have_http_status(:not_found)
+
+      patch better_together.activate_agreement_billing_agreement_requirement_path(foreign, locale:)
+      expect(foreign_agreement.reload).to be_lifecycle_state_draft
+    end
+
     it 'cannot remove another platform\'s requirement' do
       foreign_agreement = create(:better_together_agreement, agreement_kind: 'transactional_agreement', platform: other_platform,
                                                              identifier: 'foreign-4')

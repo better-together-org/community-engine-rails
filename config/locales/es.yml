@@ -2098,11 +2098,16 @@ es:
         withdraw: Retirar la solicitud
         withdrawn: Se retiró su solicitud de reembolso.
       requirements:
+        activated: El acuerdo ya está en vigor.
         add: Añadir
         add_title: Añadir un requisito
         any: Cualquiera
         applies_to_everything: Todo lo que vende la plataforma
+        back: Volver a las condiciones de compra
         created: Requisito añadido.
+        edit: Editar requisito
+        edit_agreement: Editar acuerdo
+        edit_title: Editar requisito
         field_agreement: Acuerdo
         field_applies_to: Se aplica a
         field_mode: Cómo se aplica
@@ -2112,15 +2117,18 @@ es:
           Los predeterminados se aplican a todo; un plan o un método de pago puede
           añadir los suyos.
         index_title: Condiciones de compra
+        make_active: Activar
         mode_additional: Se añade a los predeterminados
         mode_replaces_default: Sustituye a los predeterminados
         none: Todavía no se exige ningún acuerdo. No se puede vender nada hasta que
           haya uno.
         remove: Quitar
         removed: Requisito quitado.
+        save: Guardar
         state_active: En vigor
         state_draft: Borrador
         state_retired: Retirado
+        updated: Requisito actualizado.
       sales:
         cancel_btn: Cancelar este pedido
         cancel_confirm: "¿Cancelar este pedido? Se liberará lo que reservaba."
@@ -7713,27 +7721,12 @@ es:
     type_select_field: Seleccione el tipo para este campo.
   host_dashboard:
     billing:
-      checks:
-        agreements: Hay acuerdos de compra vigentes para %{purpose}.
-        configured: La facturación está configurada (activada, nombre y dirección
-          de la empresa, correo de soporte).
-        method_enabled: Al menos un método de pago está activado.
-      done: Hecho
       intro: Configure la facturación y luego gestione planes, ventas y suscriptores
         desde aquí.
       loading: Cargando...
       nav_label: Pantallas de facturación
-      not_ready: La facturación aún no está lista. Complete los elementos siguientes;
-        mientras tanto las páginas de facturación permanecen ocultas o responden no
-        encontrado.
       overview: Resumen
       page_title: Facturación
-      purposes:
-        one_time: compras únicas
-        subscription: suscripciones
-      readiness_title: Preparación de la facturación
-      ready: 'La facturación está lista: los miembros pueden pagar.'
-      todo: Pendiente
     index:
       better_together: Mejor juntos
       content: Contenido

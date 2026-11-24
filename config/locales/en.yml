@@ -2095,11 +2095,16 @@ en:
         withdraw: Withdraw request
         withdrawn: Your refund request was withdrawn.
       requirements:
+        activated: The agreement is now in force.
         add: Add
         add_title: Add a requirement
         any: Any
         applies_to_everything: Everything the platform sells
+        back: Back to purchase terms
         created: Requirement added.
+        edit: Edit requirement
+        edit_agreement: Edit agreement
+        edit_title: Edit requirement
         field_agreement: Agreement
         field_applies_to: Applies to
         field_mode: How it applies
@@ -2108,14 +2113,17 @@ en:
         index_intro: Choose the agreements a buyer must accept before they pay. Defaults
           apply to everything; a plan or a payment method can add its own.
         index_title: Purchase terms
+        make_active: Make active
         mode_additional: Added to the defaults
         mode_replaces_default: Replaces the defaults
         none: No agreement is required yet. Nothing can be sold until there is one.
         remove: Remove
         removed: Requirement removed.
+        save: Save
         state_active: In force
         state_draft: Draft
         state_retired: Retired
+        updated: Requirement updated.
       sales:
         cancel_btn: Cancel this order
         cancel_confirm: Cancel this order? What it held will be released.
@@ -7585,25 +7593,11 @@ en:
     type_select_field: Select the type for this field.
   host_dashboard:
     billing:
-      checks:
-        agreements: Purchase agreements are in force for %{purpose}.
-        configured: Billing is configured (billing switched on, business name and
-          address, support email).
-        method_enabled: At least one payment method is switched on.
-      done: Done
       intro: Set up billing, then manage plans, sales and subscribers from here.
       loading: Loading...
       nav_label: Billing screens
-      not_ready: Billing is not ready yet. Finish the items below; until then billing
-        pages stay hidden or answer not found.
       overview: Overview
       page_title: Billing
-      purposes:
-        one_time: one-time purchases
-        subscription: subscriptions
-      readiness_title: Billing readiness
-      ready: 'Billing is ready: members can check out.'
-      todo: To do
     index:
       better_together: Better together
       content: Content

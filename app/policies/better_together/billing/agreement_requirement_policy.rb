@@ -10,7 +10,10 @@ module BetterTogether
       def create? = manage_billing?
       def destroy? = manage_billing?
       def show? = false
-      def update? = false
+      def update? = manage_billing?
+      def edit? = update?
+      # Putting the agreement itself in force also needs the right to manage that agreement.
+      def activate_agreement? = manage_billing?
 
       # Requirements are visible once billing is configurable.
       class Scope < OwnerPolicy::Scope

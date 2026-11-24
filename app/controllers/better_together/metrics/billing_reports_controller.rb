@@ -7,6 +7,7 @@ module BetterTogether
     # download), but every lookup is inside the current platform.
     class BillingReportsController < ApplicationController
       include PlatformContext
+      include Billing::TabFrameLayout
 
       before_action :authorize_index, only: %i[index]
       before_action :authorize_create, only: %i[new create]
@@ -14,7 +15,7 @@ module BetterTogether
 
       def index
         @billing_reports = reports.includes(:creator)
-        if turbo_frame?
+        if turbo_frame? && !billing_tab_frame_request?
           return render partial: 'better_together/metrics/billing_reports/index', locals: { billing_reports: @billing_reports },
                         layout: false
         end
