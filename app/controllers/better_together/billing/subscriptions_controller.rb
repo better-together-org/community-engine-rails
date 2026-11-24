@@ -7,6 +7,7 @@ module BetterTogether
     # loaded, so another person's subscription is a 404 whatever id is sent.
     class SubscriptionsController < ApplicationController
       include OwnerScoped
+      include BackTo
 
       before_action :set_term, except: :index
       after_action :verify_authorized

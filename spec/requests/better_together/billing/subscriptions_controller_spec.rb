@@ -62,6 +62,15 @@ RSpec.describe BetterTogether::Billing::SubscriptionsController do
       expect(response.body).not_to include('subscription-cancel-btn')
     end
 
+    it 'sends the back button to the screen the subscription was opened from', :aggregate_failures do
+      hub = "/#{locale}/billing/"
+      get "#{show_path}?back_to=#{CGI.escape(hub)}"
+      expect(response.body).to include("href=\"#{hub}\"")
+
+      get show_path
+      expect(response.body).to include("href=\"/#{locale}/billing/subscriptions\"")
+    end
+
     it 'asks before cancelling, resuming and changing the plan or the way of paying', :aggregate_failures do
       get show_path
       expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscription-cancel-btn"}m)

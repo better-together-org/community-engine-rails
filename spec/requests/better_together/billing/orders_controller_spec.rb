@@ -93,6 +93,15 @@ RSpec.describe BetterTogether::Billing::OrdersController do
   context 'when signed in as the buyer' do
     before { sign_in member }
 
+    it 'sends the back button to the screen the order was opened from, else to the list', :aggregate_failures do
+      hub = "/#{locale}/billing/"
+      get "#{order_path(order)}?back_to=#{CGI.escape(hub)}"
+      expect(response.body).to include("href=\"#{hub}\"")
+
+      get order_path(order)
+      expect(response.body).to include("href=\"#{orders_path}\"")
+    end
+
     describe 'the stored invoice and receipt' do
       let(:dom_id) { ActionView::RecordIdentifier }
 

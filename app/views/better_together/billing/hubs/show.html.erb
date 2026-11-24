@@ -18,7 +18,7 @@
             <% @terms.each do |term| %>
               <li id="<%= dom_id(term, :hub) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
                 <span>
-                  <%= link_to term.plan.name, billing_subscription_path(term, locale: I18n.locale) %>
+                  <%= link_to term.plan.name, billing_subscription_path(term, locale: I18n.locale, back_to: billing_hub_path(locale: I18n.locale)) %>
                   <span class="d-block small text-body-secondary">
                     <%= t('better_together.billing.hub.renews', date: billing_time_text(term.pay_subscription.current_period_end, date_only: true)) %>
                   </span>
@@ -45,7 +45,7 @@
             <% @orders.each do |order| %>
               <li id="<%= dom_id(order, :hub) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
                 <span>
-                  <%= link_to order.number, billing_order_path(order, locale: I18n.locale) %>
+                  <%= link_to order.number, billing_order_path(order, locale: I18n.locale, back_to: billing_hub_path(locale: I18n.locale)) %>
                   <span class="d-block small"><%= billing_order_status_badge(order) %></span>
                   <% if @refunded_by_order[order.id].to_i.positive? %>
                     <span id="<%= dom_id(order, :hub_refunded) %>" class="d-block small text-body-secondary">

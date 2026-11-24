@@ -4,7 +4,7 @@
 <% end %>
 
 <div id="<%= dom_id(@term, :show_page) %>" class="container my-4">
-  <%= render 'shared/resource_toolbar', back_to_list_path: billing_subscriptions_path(locale: I18n.locale), edit_path: nil %>
+  <%= render 'shared/resource_toolbar', back_to_list_path: back_to_path(billing_subscriptions_path(locale: I18n.locale)), edit_path: nil %>
   <h1 class="mb-1"><%= @term.plan.name %></h1>
   <p class="mb-4"><%= billing_subscription_status_badge(subscription) %></p>
 
@@ -63,7 +63,7 @@
           <p id="subscription-plan-change-pending">
             <% if @term.pending_plan_order %>
               <%= t('better_together.billing.subscriptions.plan_change_pending_invoice', plan: @term.pending_plan.name) %>
-              <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale), id: 'subscription-plan-change-invoice-link' %>
+              <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale, back_to: billing_subscription_path(@term, locale: I18n.locale)), id: 'subscription-plan-change-invoice-link' %>
             <% else %>
               <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: billing_time_text(subscription.current_period_end, date_only: true)) %>
             <% end %>
@@ -142,7 +142,7 @@
               <td><%= billing_period_status_badge(period) %></td>
               <td class="text-end">
                 <% if period.order %>
-                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_order_path(period.order, locale: I18n.locale),
+                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_order_path(period.order, locale: I18n.locale, back_to: billing_subscription_path(@term, locale: I18n.locale)),
                               class: 'btn btn-outline-secondary btn-sm' %>
                 <% end %>
               </td>
