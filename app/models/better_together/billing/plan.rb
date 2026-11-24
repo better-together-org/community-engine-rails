@@ -23,13 +23,14 @@ module BetterTogether
       include PlatformBound
       include SellerScoped
       include Purchasable
+      # Before the concerns below: the typed amount is applied first, then a linked price overrides it.
+      include MajorAmount
       include Pricing
       include PaymentMethods
       include ProcessorMirror
       include SubscriptionTerms
       include Listing
       include AgreementTarget
-      include MajorAmount
       include Translatable
 
       self.table_name = 'better_together_billing_plans'
