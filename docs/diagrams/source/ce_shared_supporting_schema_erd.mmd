@@ -19,6 +19,7 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PLAN_ADD_ONS : "platform / platform_id"
   EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "plan / plan_id"
   EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "add_on / add_on_id"
+  EXT_PLATFORM ||--o{ BILLING_PURCHASE_REQUIREMENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_REFUND_REQUESTS : "platform / platform_id"
   EXT_BILLING_ORDER ||--o{ BILLING_REFUND_REQUESTS : "order / order_id"
   EXT_PERSON ||--o{ BILLING_REFUND_REQUESTS : "requester / requester_id"
@@ -202,6 +203,18 @@ erDiagram
     add_on_id uuid
     plan_id uuid
     platform_id uuid
+  }
+
+  BILLING_PURCHASE_REQUIREMENTS {
+    dependent_id uuid
+    platform_id uuid
+    prerequisite_id uuid
+    dependent_type string
+    met_by string
+    on_prerequisite_end string
+    prerequisite_kind string
+    prerequisite_type string
+    required boolean
   }
 
   BILLING_REFUND_REQUESTS {

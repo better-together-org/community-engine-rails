@@ -179,7 +179,7 @@ classDiagram
       <<Model>>
       table: better_together_billing_plans
       translates: beneficiary_label, description, name, participant_benefits +2
-      concerns: Billing::AgreementTarget, Billing::MajorAmount, Billing::PlatformBound, Billing::Purchasable +2
+      concerns: Billing::AgreementTarget, Billing::Listing, Billing::MajorAmount, Billing::PaymentMethods +7
       weak refs: target: seller, owner: string_translations, owner: text_translations
     }
     class BetterTogether__Billing__PlanGrant["Billing::PlanGrant"] {

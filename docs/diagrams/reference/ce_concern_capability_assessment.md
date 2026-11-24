@@ -25,17 +25,22 @@ This assessment is generated from the current live class set and the concern cap
 | `Billing::Billable` | Billable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::CheckoutTaxPreview` | Checkouttaxpreview | `Billing::CheckoutsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::EncryptedAttributes` | Encryptedattributes | `Billing::Order`, `Billing::OfflinePayment`, `Billing::ProcessorSetting`, `Billing::Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Listing` | Listing | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::LocalizedSnapshot` | Localizedsnapshot | `Billing::OrderAgreementAcceptance`, `Billing::LineItem` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::MajorAmount` | Majoramount | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::OwnerScoped` | Ownerscoped | `Billing::WalkUpSalesController`, `Billing::SubscriptionsController`, `Billing::SubscribersController`, `Billing::SalesController`, `Billing::SaleRefundsController`, `Billing::PromotionsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::ParentBound` | Parentbound | `Billing::SubscriptionPeriod`, `Billing::Refund`, `Billing::PromotionRedemption`, `Billing::PlanGrant`, `Billing::Payment`, `Billing::OrderAgreementAcceptance` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::PayCustomerOwner` | Paycustomerowner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PaymentMethods` | Paymentmethods | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::PersonLookup` | Personlookup | `Billing::WalkUpSalesController`, `Billing::CreditGrantsController`, `Billing::CreditAccountsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::PlatformBound` | Platformbound | `Billing::SubscriptionTerm`, `Billing::SubscriptionPeriod`, `Billing::Refund`, `Billing::PromotionRedemption`, `Billing::Promotion`, `Billing::PlanGrant` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Pricing` | Pricing | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ProcessorMirror` | Processormirror | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::Purchasable` | Purchasable | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::SellerScoped` | Sellerscoped | `Billing::Order`, `Billing::Plan`, `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::SettingAudit` | Settingaudit | `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::Subjectable` | Subjectable | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SubscriptionTerms` | Subscriptionterms | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::TabFrameLayout` | Tabframelayout | `Billing::WalkUpSalesController`, `Billing::SubscriptionsController`, `Billing::SubscribersController`, `Billing::SalesController`, `Billing::SaleRefundsController`, `Billing::PromotionsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAttachments` | Blockattachments | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAwareInvitation` | Blockawareinvitation | `GuestAccess`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |

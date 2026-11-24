@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T13:12:18Z",
+  "generated_at": "2026-11-24T22:34:19Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -8543,6 +8543,12 @@
         },
         {
           "from": "BetterTogether::Billing::RefundRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::PurchaseRequirement",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -28699,9 +28705,9 @@
           ],
           "validations": [
             "PresenceValidator: platform (message=:required)",
-            "PresenceValidator: identifier, name, currency",
-            "UniquenessValidator: identifier (scope=[:platform_id, :seller_type, :seller_id])",
+            "PresenceValidator: currency",
             "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "NumericalityValidator: amount_cents (greater_than_or_equal_to=0, only_integer=true)",
             "FormatValidator: processor (allow_blank=true, with=/\\A[a-z][a-z0-9_]*\\z/)",
             "PresenceValidator: processor (if=:link_existing)",
             "PresenceValidator: processor_price_id (if=:price_id_required?)",
@@ -28751,10 +28757,15 @@
           ],
           "concerns": [
             "BetterTogether::Billing::AgreementTarget",
+            "BetterTogether::Billing::Listing",
             "BetterTogether::Billing::MajorAmount",
+            "BetterTogether::Billing::PaymentMethods",
             "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Pricing",
+            "BetterTogether::Billing::ProcessorMirror",
             "BetterTogether::Billing::Purchasable",
             "BetterTogether::Billing::SellerScoped",
+            "BetterTogether::Billing::SubscriptionTerms",
             "BetterTogether::Translatable"
           ],
           "concern_notes": [],
@@ -29860,6 +29871,15 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::Listing",
+          "label": "Billing::Listing",
+          "capability": "Listing",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::LocalizedSnapshot",
           "label": "Billing::LocalizedSnapshot",
           "capability": "Localizedsnapshot",
@@ -29927,6 +29947,15 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::PaymentMethods",
+          "label": "Billing::PaymentMethods",
+          "capability": "Paymentmethods",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::PersonLookup",
           "label": "Billing::PersonLookup",
           "capability": "Personlookup",
@@ -29964,6 +29993,24 @@
             "Billing::ProcessorSetting",
             "Billing::AgreementRequirement",
             "Billing::Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Pricing",
+          "label": "Billing::Pricing",
+          "capability": "Pricing",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProcessorMirror",
+          "label": "Billing::ProcessorMirror",
+          "capability": "Processormirror",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
           ]
         },
         {
@@ -30007,6 +30054,15 @@
             "Billing::OfflinePayment",
             "Billing::Entitlement",
             "Billing::ProcessorSetting"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SubscriptionTerms",
+          "label": "Billing::SubscriptionTerms",
+          "capability": "Subscriptionterms",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
           ]
         },
         {
@@ -31166,6 +31222,95 @@
               "target": "BetterTogether::Billing::Plan",
               "optional": false,
               "target_subsystem": "billing"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PurchaseRequirement",
+          "label": "Billing::PurchaseRequirement",
+          "source_path": "app/models/better_together/billing/purchase_requirement.rb",
+          "table_name": "better_together_billing_purchase_requirements",
+          "columns": [
+            [
+              "dependent_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "prerequisite_id",
+              "uuid FK"
+            ],
+            [
+              "dependent_type",
+              "string"
+            ],
+            [
+              "met_by",
+              "string"
+            ],
+            [
+              "on_prerequisite_end",
+              "string"
+            ],
+            [
+              "prerequisite_kind",
+              "string"
+            ],
+            [
+              "prerequisite_type",
+              "string"
+            ],
+            [
+              "required",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "InclusionValidator: met_by (in=[\"holding\", \"in_order\", \"either\"])",
+            "InclusionValidator: on_prerequisite_end (in=[\"keep\", \"revoke\"])",
+            "InclusionValidator: required (in=[true, false])",
+            "InclusionValidator: prerequisite_kind (allow_nil=true, in=[\"plan\"])",
+            "UniquenessValidator: prerequisite_kind (allow_nil=true, scope=[:dependent_type, :dependent_id])",
+            "UniquenessValidator: prerequisite_id (allow_nil=true, scope=[:dependent_type, :dependent_id, :prerequisite_type])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "dependent",
+              "foreign_key": "dependent_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "prerequisite",
+              "foreign_key": "prerequisite_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
             }
           ]
         },
@@ -41587,6 +41732,7 @@
             "Billing::TaxLine",
             "Billing::TaxCategory",
             "Billing::RefundRequest",
+            "Billing::PurchaseRequirement",
             "Billing::PlanAddOn",
             "Billing::OrderDocument",
             "Billing::HostedAccount",
@@ -42943,6 +43089,12 @@
         },
         {
           "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::PurchaseRequirement",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

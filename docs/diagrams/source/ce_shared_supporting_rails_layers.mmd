@@ -537,6 +537,12 @@ classDiagram
       table: better_together_billing_plan_add_ons
       concerns: Billing::ParentBound, Billing::PlatformBound
     }
+    class BetterTogether__Billing__PurchaseRequirement["Billing::PurchaseRequirement"] {
+      <<Model>>
+      table: better_together_billing_purchase_requirements
+      concerns: Billing::PlatformBound
+      weak refs: target: dependent, target: prerequisite
+    }
     class BetterTogether__Billing__RefundRequest["Billing::RefundRequest"] {
       <<Model>>
       table: better_together_billing_refund_requests
@@ -1012,6 +1018,7 @@ classDiagram
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Platform : platform
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : add_on
+  BetterTogether__Billing__PurchaseRequirement --> BetterTogether__Platform : platform
   BetterTogether__Billing__RefundRequest --> BetterTogether__Platform : platform
   BetterTogether__Billing__RefundRequest --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__RefundRequest --> BetterTogether__Person : requester
