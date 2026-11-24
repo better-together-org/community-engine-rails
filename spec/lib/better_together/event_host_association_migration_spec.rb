@@ -3,7 +3,7 @@
 require 'rails_helper'
 require BetterTogether::Engine.root.join('db/migrate/20260530193000_require_event_host_associations')
 
-RSpec.describe 'Event host association migration', :migration_output do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Event host association migration' do # rubocop:disable RSpec/DescribeClass
   let(:migration) { RequireEventHostAssociations.new }
 
   after do
@@ -29,7 +29,7 @@ RSpec.describe 'Event host association migration', :migration_output do # ruboco
     expect { migration.up }.not_to change(BetterTogether::EventHost, :count)
   end
 
-  it 'logs how many rows it removes rather than deleting silently' do
+  it 'logs how many rows it removes rather than deleting silently', :migration_output do
     migration.down
     insert_invalid_event_host(SecureRandom.uuid)
 

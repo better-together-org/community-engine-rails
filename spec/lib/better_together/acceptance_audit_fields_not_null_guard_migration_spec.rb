@@ -3,7 +3,7 @@
 require 'rails_helper'
 require BetterTogether::Engine.root.join('db/migrate/20260330203000_add_acceptance_audit_fields_to_agreement_participants')
 
-RSpec.describe 'Agreement participant acceptance audit fields NOT NULL guard', :migration_output do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Agreement participant acceptance audit fields NOT NULL guard' do # rubocop:disable RSpec/DescribeClass
   let(:migration) { AddAcceptanceAuditFieldsToAgreementParticipants.new }
   let(:connection) { ActiveRecord::Base.connection }
   let(:audit_columns) do
@@ -17,7 +17,7 @@ RSpec.describe 'Agreement participant acceptance audit fields NOT NULL guard', :
     audit_columns.each { |c| connection.change_column_null(:better_together_agreement_participants, c, false) }
   end
 
-  it 'warns and skips the NOT NULL constraints rather than hard-failing on an orphaned participant' do
+  it 'warns and skips the NOT NULL constraints rather than hard-failing on an orphaned participant', :migration_output do
     participant = create(:better_together_agreement_participant)
     participant.update_columns(audit_columns.index_with { nil })
 
