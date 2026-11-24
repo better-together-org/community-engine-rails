@@ -112,6 +112,15 @@ Keep `Plan` as the recurring subscription offer. Everything else sold becomes a 
   "until used" behaves depends on the quota type: a consumable one (tokens, sends) is drawn down, while a capacity one (storage bytes) is not consumed, so
   until used simply means it stays while the purchase stands. Phase 1 confirms how `Entitlements::QuotaAllowances` and the quota framework combine an
   allowance with a base limit, so a top-up is added to the limit and the draw-down is recorded in one place.
+- **What the quota code does today (PS-1 finding).** A quota grant is not a balance. `Quotas.effective_limit` is the type's default plus the sum of
+  every live applied grant (`Entitlements::QuotaAllowances`), and `sync_limit!` writes that onto the quota. Usage is counted separately against the
+  limit for a period key: `cumulative` (media storage), `monthly` (AI translation tokens) or `daily`. Nothing is drawn down from the grant, and an
+  entitlement with no end date keeps its grant for good. Two consequences for top-ups:
+  1. A storage top-up (cumulative, reversible) works as designed: it raises the limit for as long as the purchase stands.
+  2. A token top-up would raise the monthly limit every month with no end, which is a subscription-sized benefit from a one-off payment. "Until used"
+     therefore needs something the quota code does not have: a consumable balance (a lot with a remaining amount, like store credit lots) that the
+     check draws on after the monthly limit is spent. PS-5 must decide between building that, or limiting token top-ups to a fixed term. Until it is
+     decided, a top-up product is allowed only for cumulative quota types, and the product form refuses a monthly or daily type.
 - **Dependent purchases** replace the add-on flag and the `plan_add_ons` table with one generic rule table (below).
 
 ## Dependent purchases
