@@ -1,0 +1,25 @@
+---
+title: Community membership show decision tree (generated from the access contract)
+---
+flowchart TD
+  start(["show community membership"])
+  start --> r0
+  r0{"own_record: Is this the actor's own membership?"}
+  r0 -- yes --> r0o(["allow"])
+  class r0o out_allow
+  r0 -- no --> r1
+  r1{"role_permission: Does the actor's role in that community grant manage_community_members or manage_community_roles or is the actor the creator?"}
+  r1 -- yes --> r1o(["allow"])
+  class r1o out_allow
+  r1 -- no --> r2
+  r2{"self_service: Does the community allow direct join or membership requests, and is this the actor's own record?"}
+  r2 -- yes --> r2o(["conditional"])
+  class r2o out_conditional
+  r2 -- no --> r3
+  r3["default_deny: Nothing above matched"]
+  r3 --> r3o(["deny"])
+  class r3o out_deny
+  classDef out_allow fill:#cfe8cf,stroke:#2e6b2e,color:#111
+  classDef out_deny fill:#f3d0d0,stroke:#8a2a2a,color:#111
+  classDef out_conditional fill:#f6e7b4,stroke:#8a6d1a,color:#111
+  classDef unintended stroke:#b00020,stroke-width:3px,stroke-dasharray:6 3,fill:#fde8ea,color:#111

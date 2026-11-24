@@ -48,6 +48,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
 - [README](developers/README.md) - Developer documentation overview
+- [How to add or change an access contract entry](developers/access_contracts.md) - Declarative access contract, probe snapshot and generated matrices
 
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
