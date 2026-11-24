@@ -55,6 +55,42 @@ RSpec.describe BetterTogether::ContactDetailPolicy, type: :policy do
     end
   end
 
+  describe 'an unclaimed person (no confirmed linked user)' do
+    let(:person) { create(:better_together_person, privacy: 'public') }
+    let(:detail) { person.contact_detail.reload }
+
+    it 'is unclaimed' do
+      expect(person).not_to be_claimed
+    end
+
+    %i[create? update? destroy?].each do |action|
+      it "lets whoever may update the person (managers, stewards) use #{action}", :aggregate_failures do
+        expect(described_class.new(manager, detail).public_send(action)).to be true
+        expect(described_class.new(steward, detail).public_send(action)).to be true
+      end
+
+      it "denies anonymous and ordinary users for #{action}", :aggregate_failures do
+        expect(described_class.new(nil, detail).public_send(action)).to be false
+        expect(described_class.new(stranger, detail).public_send(action)).to be false
+      end
+    end
+
+    it 'treats a person whose user is unconfirmed as unclaimed', :aggregate_failures do
+      unconfirmed = create(:better_together_user)
+      unconfirmed.update_columns(confirmed_at: nil) # rubocop:disable Rails/SkipsModelValidations
+      expect(unconfirmed.person.reload).not_to be_claimed
+      expect(owner.person.reload).to be_claimed
+    end
+
+    it 'still hides private rows from managers (visibility follows the row settings)', :aggregate_failures do
+      hidden = create(:email_address, contact_detail: detail, privacy: 'private', primary_flag: false)
+      shown = create(:email_address, contact_detail: detail.reload, privacy: 'public', primary_flag: false)
+      rows = visible_to(manager, BetterTogether::EmailAddress)
+      expect(rows).to include(shown)
+      expect(rows).not_to include(hidden)
+    end
+  end
+
   describe 'create? update? destroy? on a community contact detail' do
     let(:community) { create(:better_together_community, creator: owner.person, privacy: 'private') }
     let(:detail) { community.contact_detail }

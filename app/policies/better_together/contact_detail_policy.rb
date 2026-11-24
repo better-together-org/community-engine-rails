@@ -31,9 +31,17 @@ module BetterTogether
 
       target = contactable
       return false if target.nil?
-      return target == agent if target.is_a?(BetterTogether::Person)
+      return manages_person?(target) if target.is_a?(BetterTogether::Person)
 
       Pundit.policy(user, target)&.update? || false
+    end
+
+    # A claimed person owns their details alone. An unclaimed person has no owner, so whoever may update
+    # the person record may edit them; reading private rows still follows each detail's own privacy.
+    def manages_person?(person)
+      return person == agent if person.claimed?
+
+      Pundit.policy(user, person)&.update? || false
     end
 
     # Contact details are listed only through the visibility of their contactable. Components that carry

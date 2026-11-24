@@ -82,10 +82,11 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | 1 | `self` | Is the actor the person themself? | allow |  |
 | 2 | `block` | Has the person blocked the actor (or the actor the person)? | deny |  |
 | 3 | `privacy_gate` | Is the profile effectively public? | allow |  |
-| 4 | `shared_community` | Is the profile community-level and does the actor share an active community with the person? | allow |  |
-| 5 | `directory_permission` | Does a custom role grant read_person or list_person? | allow |  |
-| 6 | `platform_manager` | Is the actor a platform manager (update and create only)? | not intended | Opens profile editing, which shows private contact details; see PD-1. |
-| 7 | `default_deny` | Nothing above matched | deny |  |
+| 4 | `unclaimed_editor` | Is the person unclaimed (no confirmed linked user) and the actor allowed to update person records? | allow |  |
+| 5 | `shared_community` | Is the profile community-level and does the actor share an active community with the person? | allow |  |
+| 6 | `directory_permission` | Does a custom role grant read_person or list_person? | allow |  |
+| 7 | `platform_manager` | Is the actor a platform manager (update and create only)? | not intended | Opens profile editing, which shows private contact details; see PD-1. |
+| 8 | `default_deny` | Nothing above matched | deny |  |
 
 ### index
 
@@ -113,24 +114,24 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### show
 
-| Persona | public | community | private |
-| --- | --- | --- | --- |
-| `anonymous` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending | pending |
-| `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
-| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> |
-| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
+| Persona | public | community | private | unclaimed |
+| --- | --- | --- | --- | --- |
+| `anonymous` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `signed_in_non_member` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_member` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending | pending |
+| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
+| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> | allow <sub>privacy_gate</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Public profiles are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Public profiles are readable by anyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 - allow via `self`: People always read their own profile. (record_owner)
 - allow via `shared_community`: Community-level profiles are visible to people who share a community. (community_contributor, community_member, community_organizer)
 - deny via `block`: A block hides the blocker's profile from the blocked person. (blocked_user)
@@ -140,24 +141,24 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### download
 
-| Persona | public | community | private |
-| --- | --- | --- | --- |
-| `anonymous` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending | pending |
-| `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
-| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> |
-| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
+| Persona | public | community | private | unclaimed |
+| --- | --- | --- | --- | --- |
+| `anonymous` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `signed_in_non_member` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_member` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending | pending |
+| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
+| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> | allow <sub>privacy_gate</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Download follows show. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Download follows show. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 - allow via `self`: Download follows show. (record_owner)
 - allow via `shared_community`: Download follows show. (community_contributor, community_member, community_organizer)
 - deny via `block`: Download follows show. (blocked_user)
@@ -192,26 +193,27 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### update
 
-| Persona | public | community | private |
-| --- | --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `platform_steward` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `safety_reviewer` (pending) | pending | pending | pending |
-| `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
-| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| Persona | public | community | private | unclaimed |
+| --- | --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] | allow <sub>unclaimed_editor</sub> |
+| `platform_steward` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] | allow <sub>unclaimed_editor</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending | pending |
+| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 [^1]: PD-1, known deviation: Platform managers can edit any person profile.
 
 <details><summary>Reasons</summary>
 
 - allow via `self`: People edit their own profile. (record_owner)
+- allow via `unclaimed_editor`: An unclaimed profile has no owner; staff who may update person records maintain it. (platform_manager, platform_steward)
 - deny via `default_deny`: Only the person (or an opt-in update_person grant) edits a profile. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
 - deny via `default_deny`: Profile editing shows private contact details; managers operate member status, not profile content. (platform_manager, platform_steward)
 
@@ -219,20 +221,20 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### destroy
 
-| Persona | public | community | private |
-| --- | --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending | pending |
-| `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
-| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| Persona | public | community | private | unclaimed |
+| --- | --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
@@ -242,24 +244,24 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### scope
 
-| Persona | public | community | private |
-| --- | --- | --- | --- |
-| `anonymous` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending | pending |
-| `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
-| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> |
-| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
+| Persona | public | community | private | unclaimed |
+| --- | --- | --- | --- | --- |
+| `anonymous` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `signed_in_non_member` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_member` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>shared_community</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending | pending |
+| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
+| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> | allow <sub>privacy_gate</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Public profiles are listed for everyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Public profiles are listed for everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 - allow via `self`: People list themselves. (record_owner)
 - allow via `shared_community`: Shared-community people are listed. (community_contributor, community_member, community_organizer)
 - deny via `block`: Blocks remove the blocker from the blocked person's results. (blocked_user)
@@ -423,26 +425,26 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 | # | Rule | Question | Decides | Note |
 | --- | --- | --- | --- | --- |
-| 1 | `owner` | Is the actor the owner of the contactable (the person themself, or whoever may update the contactable record)? | allow |  |
+| 1 | `owner` | Is the actor the owner of the contactable (a claimed person themself; for an unclaimed person or another record, whoever may update it)? | allow |  |
 | 2 | `public_owner` | Is the contactable effectively public and visible to the actor? | allow |  |
 | 3 | `default_deny` | Nothing above matched | deny |  |
 
 ### show
 
-| Persona | public | private |
-| --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending |
-| `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
-| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| Persona | public | private | unclaimed |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
@@ -452,23 +454,24 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### create
 
-| Persona | public | private |
-| --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending |
-| `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
-| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| Persona | public | private | unclaimed |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
+- allow via `owner`: An unclaimed person has no owner; staff who may update the person maintain its details. (platform_manager, platform_steward)
 - allow via `owner`: The owner adds contact details to their own record. (record_owner)
 - deny via `default_deny`: Only the contactable's owner creates its contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
@@ -476,23 +479,24 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### update
 
-| Persona | public | private |
-| --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending |
-| `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
-| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| Persona | public | private | unclaimed |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
+- allow via `owner`: An unclaimed person has no owner; staff who may update the person maintain its details. (platform_manager, platform_steward)
 - allow via `owner`: The owner edits their own contact details. (record_owner)
 - deny via `default_deny`: Only the owner edits contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
@@ -500,23 +504,24 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### destroy
 
-| Persona | public | private |
-| --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending |
-| `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
-| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| Persona | public | private | unclaimed |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
+- allow via `owner`: An unclaimed person has no owner; staff who may update the person maintain its details. (platform_manager, platform_steward)
 - allow via `owner`: The owner removes their own contact detail. (record_owner)
 - deny via `default_deny`: Only the owner removes a contact detail; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
@@ -524,20 +529,20 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### scope
 
-| Persona | public | private |
-| --- | --- | --- |
-| `anonymous` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `community_member` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `platform_steward` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
-| `safety_reviewer` (pending) | pending | pending |
-| `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
-| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
-| `blocked_user` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| Persona | public | private | unclaimed |
+| --- | --- | --- | --- |
+| `anonymous` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `signed_in_non_member` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `community_member` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `community_contributor` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `community_organizer` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `platform_manager` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `platform_steward` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
+| `blocked_user` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
 
 <details><summary>Reasons</summary>
 

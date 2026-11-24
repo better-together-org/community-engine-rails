@@ -58,13 +58,14 @@ resources:
     policy: BetterTogether::PersonPolicy
     classification: personal
     title: Person profile
-    states: [public, community, private]
+    states: [public, community, private, unclaimed]
     permissions: [create_person, read_person, update_person, delete_person, list_person]
     controllers: [better_together/people, better_together/api/v1/people]
     rules:
       - {id: self, question: "Is the actor the person themself?", on_yes: allow}
       - {id: block, question: "Has the person blocked the actor (or the actor the person)?", on_yes: deny}
       - {id: privacy_gate, question: "Is the profile effectively public?", on_yes: allow}
+      - {id: unclaimed_editor, question: "Is the person unclaimed (no confirmed linked user) and the actor allowed to update person records?", on_yes: allow}
       - {id: shared_community, question: "Is the profile community-level and does the actor share an active community with the person?", on_yes: allow}
       - {id: directory_permission, question: "Does a custom role grant read_person or list_person?", on_yes: allow, unprobed: "No persona holds a custom role; opt-in permission."}
       - id: platform_manager
@@ -82,17 +83,19 @@ resources:
           - {outcome: allow, rule: privacy_gate, reason: "Signed-in people may open the directory; the scope filters the rows."}
       show:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "People always read their own profile."}
-          - {personas: [blocked_user], outcome: deny, rule: block, reason: "A block hides the blocker's profile from the blocked person."}
-          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public profiles are readable by anyone."}
+          - {personas: [blocked_user], states: [public, community, private], outcome: deny, rule: block, reason: "A block hides the blocker's profile from the blocked person."}
+          - {states: [public, unclaimed], outcome: allow, rule: privacy_gate, reason: "Public profiles are readable by anyone."}
           - {states: [community], personas: [community_member, community_contributor, community_organizer], outcome: allow,
              rule: shared_community, reason: "Community-level profiles are visible to people who share a community."}
           - {outcome: deny, rule: default_deny, reason: "Private profiles and profiles outside one's communities are not readable; standing roles do not read them."}
       download:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "Download follows show."}
-          - {personas: [blocked_user], outcome: deny, rule: block, reason: "Download follows show."}
-          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Download follows show."}
+          - {personas: [blocked_user], states: [public, community, private], outcome: deny, rule: block, reason: "Download follows show."}
+          - {states: [public, unclaimed], outcome: allow, rule: privacy_gate, reason: "Download follows show."}
           - {states: [community], personas: [community_member, community_contributor, community_organizer], outcome: allow,
              rule: shared_community, reason: "Download follows show."}
           - {outcome: deny, rule: default_deny, reason: "Download follows show."}
@@ -107,6 +110,8 @@ resources:
           - {outcome: deny, rule: default_deny, reason: "Creating a profile needs the opt-in create_person grant; no default role holds it."}
       update:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
+          - {personas: [platform_manager, platform_steward], states: [unclaimed], outcome: allow, rule: unclaimed_editor, reason: "An unclaimed profile has no owner; staff who may update person records maintain it."}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "People edit their own profile."}
           - personas: [platform_manager, platform_steward]
             outcome: deny
@@ -116,12 +121,14 @@ resources:
           - {outcome: deny, rule: default_deny, reason: "Only the person (or an opt-in update_person grant) edits a profile."}
       destroy:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {outcome: deny, rule: default_deny, reason: "Deletion is a reviewed deletion request, not a policy action; the opt-in delete_person grant is held by no default role."}
       scope:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "People list themselves."}
-          - {personas: [blocked_user], outcome: deny, rule: block, reason: "Blocks remove the blocker from the blocked person's results."}
-          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public profiles are listed for everyone."}
+          - {personas: [blocked_user], states: [public, community, private], outcome: deny, rule: block, reason: "Blocks remove the blocker from the blocked person's results."}
+          - {states: [public, unclaimed], outcome: allow, rule: privacy_gate, reason: "Public profiles are listed for everyone."}
           - {states: [community], personas: [community_member, community_contributor, community_organizer], outcome: allow,
              rule: shared_community, reason: "Shared-community people are listed."}
           - {outcome: deny, rule: default_deny, reason: "Other profiles are not listed; standing roles do not list private people."}
@@ -177,33 +184,41 @@ resources:
     policy: BetterTogether::ContactDetailPolicy
     classification: personal
     title: Contact detail
-    states: [public, private]
+    states: [public, private, unclaimed]
     permissions: []
     controllers: []
     rules:
-      - {id: owner, question: "Is the actor the owner of the contactable (the person themself, or whoever may update the contactable record)?", on_yes: allow}
+      - {id: owner, question: "Is the actor the owner of the contactable (a claimed person themself; for an unclaimed person or another record, whoever may update it)?", on_yes: allow}
       - {id: public_owner, question: "Is the contactable effectively public and visible to the actor?", on_yes: allow}
       - {id: default_deny, question: "Nothing above matched", on_yes: deny}
     actions:
       show:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {outcome: deny, rule: default_deny, reason: "Contact details render through their owner's profile and are never fetched directly (no show? method)."}
       create:
-        states: [public, private]
+        states: [public, private, unclaimed]
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
+          - {personas: [platform_manager, platform_steward], states: [unclaimed], outcome: allow, rule: owner, reason: "An unclaimed person has no owner; staff who may update the person maintain its details."}
           - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner adds contact details to their own record."}
           - {outcome: deny, rule: default_deny, reason: "Only the contactable's owner creates its contact details; standing roles do not."}
       update:
-        states: [public, private]
+        states: [public, private, unclaimed]
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
+          - {personas: [platform_manager, platform_steward], states: [unclaimed], outcome: allow, rule: owner, reason: "An unclaimed person has no owner; staff who may update the person maintain its details."}
           - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner edits their own contact details."}
           - {outcome: deny, rule: default_deny, reason: "Only the owner edits contact details; standing roles do not."}
       destroy:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
+          - {personas: [platform_manager, platform_steward], states: [unclaimed], outcome: allow, rule: owner, reason: "An unclaimed person has no owner; staff who may update the person maintain its details."}
           - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner removes their own contact detail."}
           - {outcome: deny, rule: default_deny, reason: "Only the owner removes a contact detail; standing roles do not."}
       scope:
         rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: owner, reason: "Owners list their own contact details."}
-          - {states: [public], outcome: allow, rule: public_owner, reason: "A public profile's contact detail container is listed to everyone."}
+          - {states: [public, unclaimed], outcome: allow, rule: public_owner, reason: "A public profile's contact detail container is listed to everyone."}
           - {outcome: deny, rule: default_deny, reason: "A private person's contact detail is personal data visible to the person only, never to standing roles."}

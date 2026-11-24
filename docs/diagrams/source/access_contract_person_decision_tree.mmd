@@ -16,22 +16,26 @@ flowchart TD
   r2 -- yes --> r2o(["allow"])
   class r2o out_allow
   r2 -- no --> r3
-  r3{"shared_community: Is the profile community-level and does the actor share an active community with the person?"}
+  r3{"unclaimed_editor: Is the person unclaimed no confirmed linked user and the actor allowed to update person records?"}
   r3 -- yes --> r3o(["allow"])
   class r3o out_allow
   r3 -- no --> r4
-  r4{"directory_permission: Does a custom role grant read_person or list_person?"}
+  r4{"shared_community: Is the profile community-level and does the actor share an active community with the person?"}
   r4 -- yes --> r4o(["allow"])
   class r4o out_allow
   r4 -- no --> r5
-  r5{"platform_manager: Is the actor a platform manager update and create only? (app only)"}
+  r5{"directory_permission: Does a custom role grant read_person or list_person?"}
   r5 -- yes --> r5o(["allow"])
   class r5o out_allow
-  class r5 unintended
   r5 -- no --> r6
-  r6["default_deny: Nothing above matched"]
-  r6 --> r6o(["deny"])
-  class r6o out_deny
+  r6{"platform_manager: Is the actor a platform manager update and create only? (app only)"}
+  r6 -- yes --> r6o(["allow"])
+  class r6o out_allow
+  class r6 unintended
+  r6 -- no --> r7
+  r7["default_deny: Nothing above matched"]
+  r7 --> r7o(["deny"])
+  class r7o out_deny
   classDef out_allow fill:#cfe8cf,stroke:#2e6b2e,color:#111
   classDef out_deny fill:#f3d0d0,stroke:#8a2a2a,color:#111
   classDef out_conditional fill:#f6e7b4,stroke:#8a6d1a,color:#111

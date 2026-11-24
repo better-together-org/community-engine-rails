@@ -61,6 +61,9 @@ states:
   private:
     label: Private
     description: Privacy is private.
+  unclaimed:
+    label: Unclaimed
+    description: A person with no confirmed linked user (see Person#claimed?), for example an elected official's profile. The probe fixture is a public profile, so staff who may update person records are its owners.
   hidden:
     label: Hidden
     description: Soft-hidden or suspended by moderation. No pilot resource has this state yet.

@@ -189,6 +189,7 @@ module AccessContractProbe
 
       def record_for(target, state)
         return BetterTogether::Person.new if target == :new
+        return @unclaimed if state == 'unclaimed'
 
         @subjects.fetch(state).person
       end
@@ -208,6 +209,13 @@ module AccessContractProbe
                                               platform: world.host)
           [privacy, user]
         end
+        @unclaimed = make_privacy(create(:better_together_person), 'public')
+      end
+
+      def applicable?(persona, state)
+        return false if state == 'unclaimed' && persona == 'record_owner'
+
+        super
       end
     end
 
@@ -256,12 +264,18 @@ module AccessContractProbe
       }.freeze
 
       def record_for(target, state)
-        return BetterTogether::ContactDetail.new(contactable: @owners.fetch(state).person) if target == :new
+        return BetterTogether::ContactDetail.new(contactable: @details.fetch(state).contactable) if target == :new
 
         @details.fetch(state)
       end
 
       def owner_for(state) = @owners.fetch(state)
+
+      def applicable?(persona, state)
+        return false if state == 'unclaimed' && persona == 'record_owner'
+
+        super
+      end
 
       private
 
@@ -272,6 +286,8 @@ module AccessContractProbe
           [privacy, user]
         end
         @details = @owners.transform_values { |user| user.person.contact_detail }
+        unclaimed = make_privacy(create(:better_together_person), 'public')
+        @details['unclaimed'] = unclaimed.contact_detail.reload
       end
     end
   end

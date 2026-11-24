@@ -4,7 +4,7 @@ title: Contact detail show decision tree (generated from the access contract)
 flowchart TD
   start(["show contact detail"])
   start --> r0
-  r0{"owner: Is the actor the owner of the contactable the person themself, or whoever may update the contactable record?"}
+  r0{"owner: Is the actor the owner of the contactable a claimed person themself; for an unclaimed person or another record, whoever may update it?"}
   r0 -- yes --> r0o(["allow"])
   class r0o out_allow
   r0 -- no --> r1
