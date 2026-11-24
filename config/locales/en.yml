@@ -2599,13 +2599,18 @@ en:
         confirm_end: End this membership? It stays in the history and can be reinstated.
         confirm_leave: Leave? You can ask to join again later.
         confirm_reinstate: Reinstate this membership? The member regains access.
+        confirm_remove: Remove this member? This deletes the membership and its history.
+          Use End membership to keep the history.
         confirm_suspend: Suspend this membership? The member loses access until you
           reinstate it.
+        edit: Edit membership
         flash:
           ended: Membership ended.
           left: You left.
           reinstated: Membership reinstated.
           suspended: Membership suspended.
+        remove: Remove membership
+        remove_member: Remove %{name}
         since: Since
         source:
           backfill: Existing member
@@ -6404,7 +6409,8 @@ en:
   people:
     confirm_delete: Confirm delete
   person_platform_memberships:
-    confirm_delete: Are you sure you want to remove this member from the platform?
+    confirm_delete: Remove this member from the platform? This deletes the membership
+      and its history. Use End membership to keep the history.
     edit:
       title: Edit Platform Membership
     form:

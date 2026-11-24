@@ -42,4 +42,17 @@ RSpec.describe 'Membership lifecycle DOM contract', :as_platform_manager, type: 
     reinstate = page_html.at_css("##{ActionView::RecordIdentifier.dom_id(membership, :reinstate_form)}")
     expect(reinstate['data-turbo-confirm']).to be_present
   end
+
+  %w[en fr es uk].each do |locale|
+    it "localizes every confirm message in #{locale}", :aggregate_failures do
+      membership.suspend!(actor: nil)
+      get better_together.platform_person_platform_memberships_path(platform.id, locale:)
+      confirms = page_html.css('[data-turbo-confirm]').map { |node| node['data-turbo-confirm'] }
+
+      expect(response).to have_http_status(:ok)
+      expect(confirms.size).to be >= 3
+      expect(confirms).to all(satisfy { |text| text.exclude?('translation missing') })
+      expect(confirms.uniq.size).to eq(confirms.size)
+    end
+  end
 end

@@ -27,7 +27,7 @@
               <%= link_to edit_platform_person_platform_membership_path(person_platform_membership.joinable, person_platform_membership),
                           class: 'btn btn-sm btn-outline-primary',
                           data: { turbo_frame: dom_id(person_platform_membership, :member_card) },
-                          'aria-label': 'Edit membership' do %>
+                          'aria-label': t('better_together.memberships.lifecycle.edit') do %>
                 <i class="fas fa-edit"></i> <%= t('globals.edit') %>
               <% end %>
             <% end %>
@@ -40,7 +40,7 @@
                             turbo_confirm: t('person_platform_memberships.confirm_delete'),
                             turbo_method: :delete
                           },
-                          'aria-label': 'Remove membership' do %>
+                          'aria-label': t('better_together.memberships.lifecycle.remove') do %>
                 <i class="fas fa-trash"></i> <%= t('globals.delete') %>
               <% end %>
             <% end %>

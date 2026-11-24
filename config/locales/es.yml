@@ -2629,13 +2629,18 @@ es:
           restablecer."
         confirm_leave: "¿Salir? Podrás solicitar unirte de nuevo."
         confirm_reinstate: "¿Restablecer esta membresía? El miembro recupera el acceso."
+        confirm_remove: "¿Quitar a este miembro? Esto elimina la membresía y su historial.
+          Usa «Finalizar membresía» para conservar el historial."
         confirm_suspend: "¿Suspender esta membresía? El miembro pierde el acceso hasta
           que la restablezcas."
+        edit: Editar membresía
         flash:
           ended: Membresía finalizada.
           left: Saliste.
           reinstated: Membresía restablecida.
           suspended: Membresía suspendida.
+        remove: Quitar membresía
+        remove_member: Quitar a %{name}
         since: Desde
         source:
           backfill: Miembro existente
@@ -6534,7 +6539,8 @@ es:
   people:
     confirm_delete: Confirmar eliminación
   person_platform_memberships:
-    confirm_delete: "¿Estás seguro de que quieres eliminar este miembro de la plataforma?"
+    confirm_delete: "¿Quitar a este miembro de la plataforma? Esto elimina la membresía
+      y su historial. Usa «Finalizar membresía» para conservar el historial."
     edit:
       title: Editar membresía de plataforma
     form:
