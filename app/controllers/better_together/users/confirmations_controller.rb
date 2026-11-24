@@ -27,12 +27,24 @@ module BetterTogether
 
       private
 
+      # Confirming an address proves the address, not approval. Memberships that wait on a steward
+      # (community requests, elevated roles) stay pending; only the baseline rows activate here.
       def activate_pending_memberships(user)
         return unless user&.person
 
-        # Activate all pending memberships for this person
-        user.person.person_community_memberships.pending.find_each(&:activate!)
-        user.person.person_platform_memberships.pending.find_each(&:activate!)
+        user.person.person_platform_memberships.pending.joins(:role)
+            .where(better_together_roles: { identifier: 'platform_member' }).find_each(&:activate!)
+
+        user.person.person_community_memberships.pending.includes(:joinable).find_each do |membership|
+          next if community_awaits_approval?(membership.joinable)
+
+          membership.activate!
+        end
+      end
+
+      def community_awaits_approval?(community)
+        platform = community&.primary_platform
+        platform.present? && platform.membership_requests_enabled_for?(community)
       end
     end
   end

@@ -67,6 +67,9 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
         expect(person.person_community_memberships.joins(:role)
           .where(better_together_roles: { identifier: 'community_governance_council' })
           .where(joinable: result.community)).to exist
+        expect(person.person_platform_memberships.where(joinable: result.platform).pluck(:status)).to all(eq('active'))
+        expect(person.person_community_memberships.where(joinable: result.community).pluck(:status))
+          .to all(eq('active'))
       end
     end
 
