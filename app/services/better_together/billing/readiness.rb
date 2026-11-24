@@ -12,6 +12,11 @@ module BetterTogether
 
       PURPOSES = %w[subscription one_time].freeze
 
+      # A paid order is followed up by jobs on the billing queue (starting the subscription, renewals, reminders).
+      # A queued job older than this means nothing is taking them.
+      BACKLOG_AFTER = 5.minutes
+      REDIS_ERRORS = [RedisClient::Error, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError, Timeout::Error].freeze
+
       def self.call(platform) = new(platform).call
 
       def initialize(platform)
@@ -30,13 +35,31 @@ module BetterTogether
       attr_reader :platform
 
       def checks
-        [configured, method_enabled, *PURPOSES.map { |purpose| agreements_for(purpose) }]
+        [configured, method_enabled, worker, *PURPOSES.map { |purpose| agreements_for(purpose) }]
       end
 
       def configured = Check.new(key: :configured, ok: Billing.configurable?(platform), purpose: nil, detail: nil)
 
       def method_enabled
         Check.new(key: :method_enabled, ok: Configuration.processors_for(platform).any?, purpose: nil, detail: nil)
+      end
+
+      # Whether a background worker is taking jobs from the billing queue. Without one, a paid order never turns
+      # into a subscription. Only a Sidekiq deployment can be checked; any other queue adapter counts as fine.
+      def worker
+        problem = worker_problem
+        Check.new(key: :worker, ok: problem.nil?, purpose: nil, detail: Array(problem))
+      end
+
+      def worker_problem
+        return unless ActiveJob::Base.queue_adapter_name.to_s == 'sidekiq'
+
+        queue = ApplicationJob.new.queue_name.to_s
+        return :no_worker unless Sidekiq::ProcessSet.new(false).any? { |process| Array(process['queues']).include?(queue) }
+
+        :backlog if Sidekiq::Queue.new(queue).latency > BACKLOG_AFTER
+      rescue *REDIS_ERRORS
+        :unreachable
       end
 
       def agreements_for(purpose)

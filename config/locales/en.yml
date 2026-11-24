@@ -1291,6 +1291,21 @@ en:
         title: Billing and plans
         view_access: View my access
         view_credit: View credit
+      not_enabled:
+        back: Back to the host dashboard
+        intro: Only people who run this platform see this page. Everyone else gets
+          a page not found. Billing turns on when each step below is done.
+        none: Every setting is in place. If this page still shows, reload it.
+        note: The deployment settings are environment variables, changed by whoever
+          deploys the platform. After they change, restart the app.
+        open_settings: Open payment method settings
+        problem_flag: Switch billing on in the deployment settings (BT_BILLING_ENABLED).
+        problem_hosted: This platform is not allowed to bill yet. Its hosting agreements
+          must be in force.
+        problem_identity: 'Set your organisation details in the deployment settings.
+          Still missing:'
+        problem_method_enabled: Turn on at least one payment method.
+        title: Billing is not switched on
       notification_preferences:
         always_hint: These need your attention, so they are always shown in the app
           and emailed.
@@ -2048,9 +2063,16 @@ en:
         check_configured: Billing is switched on and your organisation details are
           set.
         check_method_enabled: At least one payment method is turned on.
+        check_worker: A background worker is taking billing jobs.
+        detail_backlog: Billing jobs are waiting and none is being taken. Check that
+          the worker is running.
         detail_no_agreement: No agreement is required for this kind of purchase yet.
+        detail_no_worker: No background worker is running the billing queue. A paid
+          order will not start its subscription until one is.
         detail_not_in_force: An agreement is still a draft or retired. Review its
           text and set it to active.
+        detail_unreachable: The job queue could not be reached, so the worker could
+          not be checked.
         done: 'Done:'
         not_ready: Not ready
         plant_agreements: Plant the draft purchase agreements

@@ -43,7 +43,8 @@ order filters, address editor and notification preferences. Each is listed in th
 
 1. **Browser acceptance pass.** Core buyer journey passes in CI-style browser specs; a pass on a configured
    instance by a person is still open (see the [assessment refresh](assessments/2026-11-billing-assessment-refresh.md)).
-2. **Billing not configured** page for stewards in place of a bare 404.
+2. ~~Billing not configured page~~ Built: a host steward sees what is still to set up (same 404 status, everyone else
+   sees the plain 404), and the readiness checklist now checks that a worker is taking the billing queue.
 3. **Navigation**: the billing menu and route-name list changes in this PR chain, and the migration that adds
    missing items to existing host apps.
 4. **Translations** for es, fr and uk are unreviewed.

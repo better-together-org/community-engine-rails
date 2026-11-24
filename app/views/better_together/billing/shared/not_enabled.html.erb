@@ -1,0 +1,32 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.not_enabled.title') %>
+<% end %>
+
+<%# Shown to stewards of the host platform instead of a bare 404 while billing is off. Everyone else still gets the 404. %>
+<% scope = 'better_together.billing.not_enabled' %>
+<div id="billing-not-enabled-page" class="container my-4">
+  <h1 class="mb-2"><%= t("#{scope}.title") %></h1>
+  <p class="text-body-secondary mb-4" id="billing-not-enabled-intro"><%= t("#{scope}.intro") %></p>
+
+  <% if @enablement.empty? %>
+    <p id="billing-not-enabled-none"><%= t("#{scope}.none") %></p>
+  <% else %>
+    <ol id="billing-not-enabled-steps" class="list-group list-group-numbered mb-4">
+      <% @enablement.each do |problem| %>
+        <li id="billing-not-enabled-<%= problem.key.to_s.dasherize %>" class="list-group-item">
+          <%= t("#{scope}.problem_#{problem.key}") %>
+          <% if problem.detail.any? %>
+            <code class="d-block small mt-1"><%= problem.detail.join(', ') %></code>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  <% end %>
+
+  <% if BetterTogether::Billing.configurable?(billing_owner) %>
+    <%= link_to t("#{scope}.open_settings"), better_together.billing_processor_settings_path(locale: I18n.locale),
+                id: 'billing-not-enabled-settings-link', class: 'btn btn-primary' %>
+  <% end %>
+  <%= link_to t("#{scope}.back"), better_together.host_dashboard_path(locale: I18n.locale), id: 'billing-not-enabled-back-link', class: 'btn btn-outline-secondary' %>
+  <p class="small text-body-secondary mt-4" id="billing-not-enabled-note"><%= t("#{scope}.note") %></p>
+</div>

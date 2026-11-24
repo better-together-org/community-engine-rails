@@ -33,6 +33,11 @@ RSpec.describe 'Billing buyer account', :js, :no_auth, :skip_host_setup, retry: 
     find("#{content} .ss-option", text: /#{Regexp.escape(name)}/i, match: :first, wait: 10).click
   end
 
+  # The picker sets its hidden id field after the click, so wait for it.
+  def expect_hidden_value_set(selector)
+    page.document.synchronize(10) { raise Capybara::ElementNotFound, selector if find(selector, visible: :all).value.blank? }
+  end
+
   def read_and_tick_refund_policy # rubocop:disable Metrics/AbcSize
     return unless page.has_css?('#billing-refund-policy-accept', visible: :all, wait: 2)
 
@@ -100,8 +105,7 @@ RSpec.describe 'Billing buyer account', :js, :no_auth, :skip_host_setup, retry: 
       pick_geography(:country, 'CA')
       pick_geography(:state, 'NL')
 
-      expect(find('#billing_address_country_select_id', visible: :all).value).to be_present
-      expect(find('#billing_address_state_select_id', visible: :all).value).to be_present
+      %w[country state].each { |level| expect_hidden_value_set("#billing_address_#{level}_select_id") }
     end
   end
 

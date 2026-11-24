@@ -46,6 +46,26 @@ RSpec.describe BetterTogether::Billing::AgreementRequirementsController do
     expect(response).to have_http_status(:not_found)
   end
 
+  it 'tells a steward what is still to set up, with the same 404 status', :aggregate_failures do
+    sign_in steward
+    allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+    get path
+
+    expect(response).to have_http_status(:not_found)
+    expect(response.body).to include('billing-not-enabled-page', 'billing-not-enabled-flag', 'billing-not-enabled-back-link')
+  end
+
+  it 'gives a signed-in member no hint that the page exists', :aggregate_failures do
+    sign_in member
+    allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+    get path
+
+    expect(response).to have_http_status(:not_found)
+    expect(response.body).not_to include('billing-not-enabled-page')
+  end
+
   context 'when signed in as a steward' do
     before { sign_in steward }
 

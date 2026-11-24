@@ -1285,6 +1285,23 @@ es:
         title: Facturación y planes
         view_access: Ver mi acceso
         view_credit: Ver crédito
+      not_enabled:
+        back: Volver al panel del anfitrión
+        intro: Solo ven esta página quienes administran la plataforma. Los demás ven
+          una página no encontrada. La facturación se activa cuando se completa cada
+          paso siguiente.
+        none: Todos los ajustes están en su sitio. Si esta página sigue apareciendo,
+          recárguela.
+        note: Los ajustes de despliegue son variables de entorno que cambia quien
+          despliega la plataforma. Tras cambiarlas, reinicie la aplicación.
+        open_settings: Abrir los ajustes de métodos de pago
+        problem_flag: Active la facturación en los ajustes de despliegue (BT_BILLING_ENABLED).
+        problem_hosted: Esta plataforma aún no puede facturar. Sus acuerdos de alojamiento
+          deben estar en vigor.
+        problem_identity: 'Defina los datos de su organización en los ajustes de despliegue.
+          Aún faltan:'
+        problem_method_enabled: Active al menos un método de pago.
+        title: La facturación no está activada
       notification_preferences:
         always_hint: Estos requieren su atención, por lo que siempre se muestran en
           la aplicación y se envían por correo.
@@ -2048,10 +2065,17 @@ es:
         check_configured: La facturación está activada y los datos de su organización
           están definidos.
         check_method_enabled: Al menos un método de pago está activado.
+        check_worker: Un proceso en segundo plano atiende los trabajos de facturación.
+        detail_backlog: Hay trabajos de facturación esperando y nadie los atiende.
+          Compruebe que el proceso esté en marcha.
         detail_no_agreement: Todavía no se exige ningún acuerdo para este tipo de
           compra.
+        detail_no_worker: Ningún proceso en segundo plano atiende la cola de facturación.
+          Un pedido pagado no iniciará su suscripción hasta que haya uno.
         detail_not_in_force: Un acuerdo sigue siendo un borrador o está retirado.
           Revise su texto y póngalo en activo.
+        detail_unreachable: No se pudo contactar con la cola de trabajos, así que
+          no se pudo comprobar el proceso.
         done: 'Hecho:'
         not_ready: No está listo
         plant_agreements: Plantar los acuerdos de compra en borrador

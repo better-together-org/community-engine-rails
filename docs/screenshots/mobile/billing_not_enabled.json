@@ -1,0 +1,48 @@
+{
+  "name": "billing_not_enabled",
+  "device": "mobile",
+  "url": "/en/billing/plans",
+  "title": "Billing is not switched on | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_readiness",
+  "flow": "billing_not_enabled",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_not_enabled_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-not-enabled-steps",
+      "title": "What is still to set up",
+      "bullets": [
+        "Each missing step, in the order to fix it, instead of a page not found."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 269.390625,
+        "width": 476.0,
+        "height": 156.0,
+        "right": 488.0,
+        "bottom": 425.390625,
+        "center_x": 250.0,
+        "center_y": 347.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 269.390625,
+        "width": 476.0,
+        "height": 156.0,
+        "right": 488.0,
+        "bottom": 425.390625,
+        "center_x": 250.0,
+        "center_y": 347.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 445.39,
+        "width": 270.0,
+        "height": 216,
+        "score": 831.609375
+      }
+    }
+  ]
+}
