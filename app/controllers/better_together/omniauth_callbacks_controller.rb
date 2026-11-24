@@ -134,7 +134,8 @@ module BetterTogether
       # A trusted domain (no invitation) grants its role and writes the audit entry before the default fallback
       record_trusted_domain_grant(user)
 
-      # Ensure user has community membership
+      # Everyone holds the baseline platform membership; then the community one
+      ensure_baseline_platform_membership(user)
       ensure_community_membership(user)
 
       # Invitations are consumed only once the address is confirmed: an unverified provider email
@@ -173,6 +174,17 @@ module BetterTogether
         trusted_domain: oauth_trusted_domain, person: user.person, via: 'oauth',
         created_account: !@user_existed_before_oauth
       )
+    end
+
+    # Ensure OAuth user has the baseline platform membership on the platform the account belongs to.
+    # Provider-verified sign-ins are confirmed accounts, so it is active.
+    def ensure_baseline_platform_membership(user)
+      BetterTogether::BaselinePlatformMembership.call(
+        person: user.person, platform: user.platform || helpers.host_platform,
+        status: user.confirmed? ? 'active' : 'pending'
+      )
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error "Failed to create baseline platform membership for OAuth user: #{e.message}"
     end
 
     # Ensure OAuth user has community membership

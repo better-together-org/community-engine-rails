@@ -27,6 +27,7 @@ This guide explains user account flows (Devise), platform invitations, required 
   - A `Person` is created via nested params/build helper.
   - Memberships are created:
     - Adds the person to the host community with role `community_member` (or role from an invitation, see below).
+    - Adds the person to the platform their account belongs to with the platform's own `platform_member` role (the baseline membership, `BaselinePlatformMembership`). It is `pending` until the email address is confirmed, which activates it.
 
 ## Invitations Flow
 
@@ -66,7 +67,7 @@ This guide explains user account flows (Devise), platform invitations, required 
 ## Post-registration Side Effects
 
 - Community membership: new `Person` is added to the host community (role from invitation or default `community_member`).
-- Platform membership: added only if the invitation specified a platform role.
+- Platform membership: every account gets the baseline `platform_member` row on its own platform, at sign-up and on OAuth sign-in. A platform invitation that names a role adds that role as a separate row; roles stack. The baseline is free, read-only and never billed; paid or elevated roles are separate rows. Accounts created before this existed were given the row by `BackfillBaselinePlatformMemberships`.
 - Agreements: `AgreementParticipant` rows created.
 
 ## Diagram

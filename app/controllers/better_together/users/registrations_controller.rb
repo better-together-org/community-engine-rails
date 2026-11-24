@@ -253,7 +253,17 @@ module BetterTogether
         setup_community_membership(user, person)
         record_trusted_registration(user)
         handle_all_invitations(user)
+        setup_baseline_platform_membership(user, person)
         create_agreement_participants(person)
+      end
+
+      # Runs after the invitations, so an invited person keeps the active membership the invitation made.
+      # Pending until the address is confirmed; confirming activates it.
+      def setup_baseline_platform_membership(user, person)
+        BetterTogether::BaselinePlatformMembership.call(
+          person:, platform: user.platform || helpers.host_platform,
+          status: user.confirmed? ? 'active' : 'pending'
+        )
       end
 
       def ensure_person_exists?(user)
