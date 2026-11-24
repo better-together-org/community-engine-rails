@@ -27,10 +27,14 @@ module BetterTogether
       role = Role.find_default(IDENTIFIER, platform: @platform)
       return if role.blank?
 
-      @platform.person_platform_memberships.find_or_create_by!(member: @person, role:) do |membership|
-        membership.status = @status
-        # Everyone gets this row, so it is not an event worth a notification.
-        membership.suppress_notifications = true
+      # The membership would touch its member, bumping the person's lock_version and leaving the caller's
+      # in-memory person stale for the community membership it creates next (StaleObjectError).
+      BetterTogether::Person.no_touching do
+        @platform.person_platform_memberships.find_or_create_by!(member: @person, role:) do |membership|
+          membership.status = @status
+          # Everyone gets this row, so it is not an event worth a notification.
+          membership.suppress_notifications = true
+        end
       end
     end
   end
