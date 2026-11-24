@@ -9,7 +9,7 @@
   <% if @platforms.empty? %>
     <p id="billing-hosted-platforms-empty" class="text-body-secondary"><%= t('better_together.billing.hosted_platforms.none') %></p>
   <% else %>
-    <div class="table-responsive">
+    <div class="table-responsive position-relative">
       <table id="billing-hosted-platforms-table" class="table align-middle">
         <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.hosted_platforms') %></caption>
         <thead>
