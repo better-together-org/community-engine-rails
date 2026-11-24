@@ -117,10 +117,9 @@ Keep `Plan` as the recurring subscription offer. Everything else sold becomes a 
   limit for a period key: `cumulative` (media storage), `monthly` (AI translation tokens) or `daily`. Nothing is drawn down from the grant, and an
   entitlement with no end date keeps its grant for good. Two consequences for top-ups:
   1. A storage top-up (cumulative, reversible) works as designed: it raises the limit for as long as the purchase stands.
-  2. A token top-up would raise the monthly limit every month with no end, which is a subscription-sized benefit from a one-off payment. "Until used"
-     therefore needs something the quota code does not have: a consumable balance (a lot with a remaining amount, like store credit lots) that the
-     check draws on after the monthly limit is spent. PS-5 must decide between building that, or limiting token top-ups to a fixed term. Until it is
-     decided, a top-up product is allowed only for cumulative quota types, and the product form refuses a monthly or daily type.
+  2. A token top-up would raise the monthly limit every month with no end, which is a subscription-sized benefit from a one-off payment.
+     **Decided (2026-11-24): token grants stay time-limited.** A top-up for a monthly or daily quota type must be a fixed term, so no consumable
+     balance is built. The product form offers `until_used` only for cumulative types (storage) and requires a fixed term for the others.
 - **Dependent purchases** replace the add-on flag and the `plan_add_ons` table with one generic rule table (below).
 
 ## Dependent purchases
