@@ -9,6 +9,8 @@ module BetterTogether
     end
 
     def notify_creation_if_active
+      return if @membership.try(:suppress_notifications)
+
       return unless @membership.active?
       return unless @membership.member
 
@@ -19,6 +21,8 @@ module BetterTogether
     end
 
     def notify_activation
+      return if @membership.try(:suppress_notifications)
+
       return unless @membership.saved_change_to_status?(from: 'pending', to: 'active')
       return unless @membership.member
 
@@ -29,6 +33,8 @@ module BetterTogether
     end
 
     def notify_role_update(old_role)
+      return if @membership.try(:suppress_notifications)
+
       return unless old_role && old_role != @membership.role
       return unless @membership.member
 
@@ -37,6 +43,8 @@ module BetterTogether
     end
 
     def notify_removal(member_data)
+      return if @membership.try(:suppress_notifications)
+
       return unless member_data && @membership.member
 
       send_in_app_removal_notification(member_data)

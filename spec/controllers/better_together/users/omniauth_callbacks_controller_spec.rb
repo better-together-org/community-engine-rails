@@ -330,8 +330,8 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
           get :github
 
           user = BetterTogether.user_class.last
-          membership = user.person.person_platform_memberships.find_by(joinable: platform)
-          expect(membership.role).to eq(organizer_role)
+          # Roles stack: the invited role comes with the baseline platform_member row.
+          expect(user.person.person_platform_memberships.where(joinable: platform).map(&:role)).to include(organizer_role)
         end
 
         it 'creates user with correct attributes' do
