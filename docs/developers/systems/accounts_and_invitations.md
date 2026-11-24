@@ -73,3 +73,18 @@ This guide explains user account flows (Devise), platform invitations, required 
 ## Diagram
 
 See the Mermaid diagram in `accounts_flow.mmd` for the end-to-end flows.
+
+## Membership lifecycle (MBR-3)
+
+Platform and community memberships share `BetterTogether::MembershipLifecycle`.
+
+- Statuses: `pending`, `active`, `suspended`, `ended`. A membership is current only when active and inside `starts_at`..`ends_at`; `.active` and `current?` honour the dates.
+- `end!(reason:)`, `suspend!(reason:)` and `reinstate!` keep the row as history. Ending stamps `ends_at`; the unique key (joinable, member, role) ignores ended rows so the role can be granted again.
+- `source` records where a membership came from (direct, registration, invitation, request, trusted_domain, entitlement, wizard, backfill).
+- Every create, activation, suspension, reinstatement, end, role change and removal writes an append-only `BetterTogether::MembershipEvent` with the actor and reason. A person purge deletes that person's events with them.
+- `end!` and `suspend!` refuse to remove the last current steward (or governance council member). Plain `destroy` is unchanged; the management UI (MBR-4) will use `end!`.
+- Quiet changes: these methods send no notification. Existing role-change and removal notifications still fire on `update`/`destroy`.
+
+![Membership lifecycle](../../diagrams/exports/png/membership_lifecycle_state.png)
+
+Source: [membership_lifecycle_state.mmd](../../diagrams/source/membership_lifecycle_state.mmd)

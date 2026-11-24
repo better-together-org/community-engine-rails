@@ -50,6 +50,9 @@ erDiagram
   EXT_COMMUNITY ||--o{ INFRASTRUCTURE_ROOMS : "community / community_id"
   INFRASTRUCTURE_FLOORS ||--o{ INFRASTRUCTURE_ROOMS : "floor / floor_id"
   EXT_PLATFORM o|--o{ JWT_DENYLISTS : "platform / platform_id"
+  EXT_PERSON ||--o{ MEMBERSHIP_EVENTS : "member / member_id"
+  EXT_PERSON o|--o{ MEMBERSHIP_EVENTS : "actor / actor_id"
+  EXT_PLATFORM o|--o{ MEMBERSHIP_EVENTS : "platform / platform_id"
   EXT_PERSON ||--o{ MESSAGE_REQUESTS : "sender / sender_id"
   EXT_PERSON ||--o{ MESSAGE_REQUESTS : "recipient / recipient_id"
   EXT_PLATFORM ||--o{ MESSAGE_REQUESTS : "platform / platform_id"
@@ -338,6 +341,19 @@ erDiagram
     platform_id uuid
     jti string
     exp datetime
+  }
+
+  MEMBERSHIP_EVENTS {
+    actor_id uuid
+    from_role_id uuid
+    joinable_id uuid
+    member_id uuid
+    membership_id uuid
+    platform_id uuid
+    to_role_id uuid
+    event_type string
+    from_status string
+    joinable_type string
   }
 
   MESSAGE_REQUESTS {

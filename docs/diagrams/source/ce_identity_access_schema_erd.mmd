@@ -191,7 +191,11 @@ erDiagram
     member_id uuid
     platform_id uuid
     role_id uuid
+    ended_reason string
+    source string
     status string
+    ends_at datetime
+    starts_at datetime
   }
 
   PERSON_DATA_EXPORTS {
@@ -258,7 +262,11 @@ erDiagram
     joinable_id uuid
     member_id uuid
     role_id uuid
+    ended_reason string
+    source string
     status string
+    ends_at datetime
+    starts_at datetime
   }
 
   PERSON_PURGE_AUDITS {

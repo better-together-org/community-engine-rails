@@ -1,0 +1,14 @@
+stateDiagram-v2
+  [*] --> pending: request or invitation awaiting approval
+  [*] --> active: direct grant, baseline, entitlement
+  pending --> active: approved or email confirmed
+  active --> suspended: suspend!(reason)
+  suspended --> active: reinstate!
+  active --> ended: end!(reason), or ends_at passes
+  suspended --> ended: end!(reason)
+  ended --> [*]: kept as history
+  note right of ended
+    The unique key ignores ended rows,
+    so the same role can be granted again.
+    Every change writes a membership event.
+  end note
