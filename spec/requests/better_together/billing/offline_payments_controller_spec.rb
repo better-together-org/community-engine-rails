@@ -95,7 +95,7 @@ RSpec.describe BetterTogether::Billing::OfflinePaymentsController do
       clear_notices
       deliver_now { patch act_path(:receive), params: { seller_reference: 'envelope 3', received_on: 3.days.ago.to_date.iso8601 } }
 
-      expect(response).to redirect_to(queue_path)
+      expect(response).to redirect_to_billing_screen(queue_path)
       expect(flash[:notice]).to be_present
       expect(offline.reload).to have_attributes(status: 'confirmed', seller_reference: 'envelope 3', received_on: 3.days.ago.to_date,
                                                 confirmed_by: steward)
@@ -106,7 +106,7 @@ RSpec.describe BetterTogether::Billing::OfflinePaymentsController do
     it 'goes back to the sale it came from' do
       patch act_path(:receive, from: 'sale')
 
-      expect(response).to redirect_to(better_together.billing_sale_path(order, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_sale_path(order, locale:))
     end
 
     it 'ignores a date that is not a date' do
@@ -127,7 +127,7 @@ RSpec.describe BetterTogether::Billing::OfflinePaymentsController do
 
       patch act_path(:receive)
 
-      expect(response).to redirect_to(queue_path)
+      expect(response).to redirect_to_billing_screen(queue_path)
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.offline_payments.refused.not_allowed'))
     end
 

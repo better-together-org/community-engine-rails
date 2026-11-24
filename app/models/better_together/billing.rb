@@ -54,13 +54,21 @@ module BetterTogether
       # platform but work for a seller only after a steward enables them
       # (see ProcessorSetting).
       def register_builtin_processors!
-        builtin_processors.each { |name, adapter_class| register_processor(name, -> { adapter_class.new }) }
+        builtin_processors.each { |name, adapter_class| register_processor(name, builtin_factory(adapter_class)) }
       end
 
       # Registers any built-in method that is not installed yet (it never replaces one that is).
       def ensure_builtin_processors!
         missing = builtin_processors.except(*processor_names)
-        missing.each { |name, adapter_class| register_processor(name, -> { adapter_class.new }) }
+        missing.each { |name, adapter_class| register_processor(name, builtin_factory(adapter_class)) }
+      end
+
+      # Looks the class up by name on each build. Holding the class itself would keep the
+      # pre-reload class after a development code reload, and the adapter would then fail
+      # the is_a?(ProcessorAdapter) contract check, hiding every method.
+      def builtin_factory(adapter_class)
+        class_name = adapter_class.name
+        -> { class_name.constantize.new }
       end
 
       # Name => adapter class, for the methods core ships. A method so classes load lazily.

@@ -55,7 +55,7 @@ RSpec.describe 'Checkout for a free plan', :request do # rubocop:disable RSpec/D
          params: { plan_id: free_plan.id }.merge(ticks)
 
     order = host_platform.billing_orders.order(:created_at).last
-    expect(response).to redirect_to(better_together.billing_order_path(order, locale:))
+    expect(response).to redirect_to_billing_screen(better_together.billing_order_path(order, locale:))
     expect(order).to be_paid
     expect(order.payments).to be_empty
   end

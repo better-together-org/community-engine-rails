@@ -30,8 +30,15 @@ RSpec.describe BetterTogether::Billing::AgreementRequirementPolicy do
     end
   end
 
-  it 'never offers show or update' do
-    expect([described_class.new(steward, requirement).show?, described_class.new(steward, requirement).update?]).to all(be(false))
+  it 'never offers show' do
+    expect(described_class.new(steward, requirement).show?).to be(false)
+  end
+
+  it 'lets a steward edit, update and activate the agreement, and nobody else' do
+    allowed = %i[edit? update? activate_agreement?].map { |action| described_class.new(steward, requirement).public_send(action) }
+    refused = %i[edit? update? activate_agreement?].map { |action| described_class.new(member, requirement).public_send(action) }
+
+    expect(allowed + refused).to eq(([true] * 3) + ([false] * 3))
   end
 
   it 'refuses a requirement of another platform' do

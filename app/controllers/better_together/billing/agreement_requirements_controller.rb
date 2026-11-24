@@ -31,6 +31,35 @@ module BetterTogether
         end
       end
 
+      def edit
+        @requirement = platform_requirements.find(params[:id])
+        authorize @requirement
+        load_form_options
+      end
+
+      def update
+        @requirement = platform_requirements.find(params[:id])
+        authorize @requirement
+
+        if @requirement.update(requirement_params)
+          redirect_to billing_agreement_requirements_path(locale: I18n.locale), notice: t('better_together.billing.requirements.updated')
+        else
+          load_form_options
+          render :edit, status: :unprocessable_content
+        end
+      end
+
+      # Puts a draft or retired agreement in force from the purchase terms list.
+      def activate_agreement
+        requirement = platform_requirements.find(params[:id])
+        authorize requirement
+        agreement = requirement.agreement
+        authorize agreement, :update?, policy_class: BetterTogether::AgreementPolicy
+
+        agreement.update!(lifecycle_state: 'active')
+        redirect_to billing_agreement_requirements_path(locale: I18n.locale), notice: t('better_together.billing.requirements.activated')
+      end
+
       def destroy
         requirement = platform_requirements.find(params[:id])
         authorize requirement
@@ -48,9 +77,13 @@ module BetterTogether
 
       def load_page
         @requirements = platform_requirements.includes(:agreement, :target).order(:purpose, :payment_method, :position)
-        @agreements = BetterTogether::Agreement.for_platform(billing_owner).where(agreement_kind: 'transactional_agreement').order(:identifier)
-        @plans = platform_plans.order(:identifier)
+        load_form_options
         @readiness = BetterTogether::Billing::Readiness.call(billing_owner)
+      end
+
+      def load_form_options
+        @agreements = platform_agreements.where(agreement_kind: 'transactional_agreement').order(:identifier)
+        @plans = platform_plans.order(:identifier)
       end
 
       # The agreement and the plan are looked up inside this platform, so an id from another
@@ -58,10 +91,23 @@ module BetterTogether
       def requirement_params
         permitted = params.require(:billing_agreement_requirement).permit(:agreement_id, :target_plan_id, :purpose, :payment_method, :mode,
                                                                           :position)
-        plan = platform_plans.find_by(id: permitted.delete(:target_plan_id))
-        permitted[:agreement_id] = BetterTogether::Agreement.for_platform(billing_owner).find_by(id: permitted[:agreement_id])&.id
-        permitted.merge(target: plan).to_h.symbolize_keys
+        attributes = permitted.except(:target_plan_id, :agreement_id).to_h.symbolize_keys
+        attributes.merge!(agreement_attribute(permitted), target_attribute(permitted))
       end
+
+      def agreement_attribute(permitted)
+        return {} unless permitted.key?(:agreement_id)
+
+        { agreement_id: platform_agreements.find_by(id: permitted[:agreement_id])&.id }
+      end
+
+      def target_attribute(permitted)
+        return {} unless permitted.key?(:target_plan_id)
+
+        { target: platform_plans.find_by(id: permitted[:target_plan_id]) }
+      end
+
+      def platform_agreements = BetterTogether::Agreement.for_platform(billing_owner)
     end
   end
 end

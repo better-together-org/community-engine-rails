@@ -135,7 +135,7 @@ RSpec.describe BetterTogether::Billing::EventsController do
     it 'queues the event again and records who asked' do
       expect { post replay_path(dead) }.to have_enqueued_job(BetterTogether::Billing::ProcessBillingEventJob).with(dead.id)
 
-      expect(response).to redirect_to(event_path(dead))
+      expect(response).to redirect_to_billing_screen(event_path(dead))
       expect(dead.reload).to have_attributes(processing_status: 'replayed', last_replay_requested_by_id: steward.person.id)
     end
 

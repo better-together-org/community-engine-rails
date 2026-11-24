@@ -68,7 +68,7 @@ Stable ids: `billing-offline-heading`, `billing-offline-status-message`, `billin
 
 ## What the seller sees and does
 
-Stewards reach the seller side from **Sales** (`billing-sales-offline-queue-link`, `new-walk-up-sale-btn`).
+Stewards start a sale in person from **Sales** (`new-walk-up-sale-btn`). The payments queue and refund requests are their own tabs in the billing dashboard.
 
 - **The queue** (`/billing/offline_payments`): everything waiting for the seller, a cheque not yet cleared, and payments that lapsed in the last 30 days (a late payment can still turn up). Payments the buyer said they sent come first and are marked (`billing-offline-claimed-badge`), but **unclaimed ones are listed and confirmable too**. Each row has a one-click *Mark received* (`billing-offline-confirm-btn-<order id>`).
 - **The sale page** (`/billing/sales/:id`): whether the buyer said they sent it and their note; the fee shown as uncollected; forms to mark it received (with an optional reference and date) or to reject it with a reason the buyer sees; for a cheque *received*, buttons to mark it cleared or bounced; and, once money was paid, **Record a refund** (below).

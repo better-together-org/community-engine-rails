@@ -7,12 +7,10 @@
 
 <div id="billing-processor-setting-edit-page" class="container my-4">
   <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <%= link_to t('better_together.billing.processor_settings.index_title'), billing_processor_settings_path(locale: I18n.locale) %>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page"><%= billing_payment_method_label(name) %></li>
-    </ol>
+    <%= link_to billing_processor_settings_path(locale: I18n.locale), id: 'billing-processor-back-link', class: 'btn btn-link ps-0' do %>
+      <span aria-hidden="true">&larr;</span>
+      <%= t('better_together.billing.processor_settings.back') %>
+    <% end %>
   </nav>
 
   <h1 class="mb-3"><%= billing_payment_method_label(name) %></h1>
@@ -73,7 +71,7 @@
 
         <fieldset id="billing-processor-purposes" class="mb-0">
           <legend class="form-label fs-6"><%= t('better_together.billing.processor_settings.field_purposes') %></legend>
-          <%= form.collection_check_boxes :purposes, BetterTogether::Billing::ProcessorSetting::PURPOSES.map { |purpose| [t("better_together.billing.processor_settings.purpose_#{purpose}"), purpose] }, :last, :first do |box| %>
+          <%= form.collection_check_boxes :purposes, BetterTogether::Billing::ProcessorSetting::AVAILABLE_PURPOSES.map { |purpose| [t("better_together.billing.processor_settings.purpose_#{purpose}"), purpose] }, :last, :first do |box| %>
             <div class="form-check">
               <%= box.check_box(class: 'form-check-input', id: "billing-processor-purpose-#{box.value}") %>
               <%= box.label(class: 'form-check-label', for: "billing-processor-purpose-#{box.value}") %>
@@ -115,7 +113,7 @@
 
     <div id="billing-processor-setting-actions" class="d-flex gap-2">
       <%= form.submit t('globals.save'), class: 'btn btn-primary', id: 'billing-processor-setting-save-btn' %>
-      <%= link_to t('globals.cancel'), billing_processor_settings_path(locale: I18n.locale), class: 'btn btn-outline-secondary' %>
+      <%= link_to t('globals.cancel'), billing_processor_settings_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-processor-setting-cancel-link' %>
     </div>
   <% end %>
 </div>

@@ -83,7 +83,7 @@ RSpec.describe 'Theme and colour mode contrast sweep', :js, :no_auth, :skip_host
   end
 
   def open_menu(toggle, menu)
-    find(toggle).click unless page.has_css?("#{menu}.show", wait: 0)
+    first(toggle, minimum: 1).click unless page.has_css?("#{menu}.show", wait: 0)
     expect(page).to have_css("#{menu}.show")
   end
 
@@ -139,6 +139,7 @@ RSpec.describe 'Theme and colour mode contrast sweep', :js, :no_auth, :skip_host
   def all_menu_problems
     problems = []
     open_menu('#userNavbarDropdownMenuLink', '#user-nav > .dropdown-menu')
+    # The host area holds one dropdown per top-level item (Host, Billing); the Host one is measured here.
     open_menu('#host-nav-item .dropdown-toggle', '#host-nav-item .dropdown-menu')
     problems += menu_problems('#user-nav > .dropdown-menu') + host_alignment_problems
     open_menu('#notification-icon', '#notification-list')

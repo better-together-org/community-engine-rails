@@ -73,7 +73,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
     it 'shows one with its actions and what price it was sold at' do
       get show_path
 
-      expect(response.body).to include('subscriber-actions', 'subscriber-waive-btn', 'subscriber-price-btn', 'subscriber-cancel-btn',
+      expect(response.body).to include('subscriber-actions', 'subscriber-waive-btn', 'subscriber-cancel-btn',
                                        'subscriber-cancel-now-btn', 'subscriber-extend-form',
                                        ActionView::RecordIdentifier.dom_id(term, :periods))
     end
@@ -81,7 +81,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
     it 'covers the next period without payment' do
       patch action_path(:waive)
 
-      expect(response).to redirect_to(show_path)
+      expect(response).to redirect_to_billing_screen(show_path)
       expect(term.reload.periods.last).to be_waived
       expect(term.pay_subscription.current_period_end).to eq(Time.utc(2027, 3, 31, 15))
     end
@@ -96,12 +96,54 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
       expect(term.reload.grace_ends_at).to be > Time.utc(2027, 3, 7, 15)
     end
 
+    it 'asks before every change to an ongoing subscription', :aggregate_failures do
+      get show_path
+
+      %w[subscriber-waive-btn subscriber-cancel-btn subscriber-cancel-now-btn].each do |id|
+        expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="#{id}"}m)
+      end
+      expect(response.body).to match(/id="subscriber-extend-form"[^>]*data-turbo-confirm|data-turbo-confirm[^>]*id="subscriber-extend-form"/)
+    end
+
+    it 'lets a steward reinstate a subscription cancelled at the end of its period', :aggregate_failures do
+      patch action_path(:cancel)
+      get show_path
+      expect(response.body).to include('subscriber-resume-btn')
+      expect(response.body).not_to include('subscriber-cancel-btn')
+
+      patch action_path(:resume)
+
+      expect(term.reload.pay_subscription.ends_at).to be_nil
+      expect(response).to redirect_to_billing_screen(show_path)
+    end
+
+    it 'says so when there is nothing to reinstate' do
+      patch action_path(:resume)
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.subscribers.refused'))
+    end
+
     it 'cancels at the end of the period, or now' do
       patch action_path(:cancel)
       expect(term.reload.pay_subscription.ends_at).to eq(Time.utc(2027, 2, 28, 15))
 
       patch action_path(:cancel, now: '1')
       expect(term.reload.pay_subscription.status).to eq('canceled')
+    end
+
+    it 'offers to move to the current price only when the price differs', :aggregate_failures do
+      get show_path
+      expect(response.body).not_to include('subscriber-price-btn')
+
+      sub_plan.update_columns(amount_cents: 4000) # rubocop:disable Rails/SkipsModelValidations
+      get show_path
+      expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscriber-price-btn"}m)
+    end
+
+    it 'refuses to move one who already pays the current price' do
+      patch action_path(:move_to_current_price)
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.subscribers.refused'))
     end
 
     it 'moves one to the current price' do

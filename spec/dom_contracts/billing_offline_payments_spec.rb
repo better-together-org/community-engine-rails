@@ -140,10 +140,10 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
       expect_ids(ActionView::RecordIdentifier.dom_id(offline_for(taxed).payment, :refund_tax))
     end
 
-    it 'exposes the links to the queue and to a sale in person on the sales list' do
+    it 'exposes the link to a sale in person on the sales list' do
       get "/#{locale}/billing/sales"
 
-      expect_ids('billing-sales-actions', 'billing-sales-offline-queue-link', 'new-walk-up-sale-btn')
+      expect_ids('billing-sales-actions', 'new-walk-up-sale-btn')
     end
   end
 

@@ -14,7 +14,8 @@ module BetterTogether
 
       def index
         authorize BetterTogether::Billing::Plan
-        @plans = policy_scope(platform_plans).order(:identifier)
+        @plans = policy_scope(platform_plans).order(:identifier).load
+        @subscriber_counts = BetterTogether::Billing::PlanAudience.active_subscriber_counts(@plans)
       end
 
       def show

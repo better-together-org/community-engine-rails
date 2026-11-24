@@ -41,7 +41,7 @@ RSpec.describe BetterTogether::Billing::SaleRefundsController do
       clear_notices
       deliver_now { post refund_path, params: { payment_id: payment.id, token: 'a', reason: 'requested_by_buyer' } }
 
-      expect(response).to redirect_to(sale_path)
+      expect(response).to redirect_to_billing_screen(sale_path)
       expect(payment.reload.refunds.first).to have_attributes(amount_cents: 4500, status: 'recorded', reason: 'requested_by_buyer',
                                                               recorded_by: steward)
       expect(order.reload).to be_refunded

@@ -15,11 +15,13 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
 
   def settings_path = better_together.billing_processor_settings_path(locale:)
+  # Sent outside a Turbo frame, a save goes back to the host billing page with this tab open.
+  def tab_page_path = better_together.host_dashboard_billing_path(locale:, anchor: 'billing-pane-billing-processor-settings')
   def setting_path(name) = better_together.billing_processor_setting_path(name, locale:)
   def edit_path(name) = better_together.edit_billing_processor_setting_path(name, locale:)
 
   def enable_params(_name = 'cash', **overrides)
-    { billing_processor_setting: { enabled: '1', acknowledge: '1', hold_hours: '48', purposes: ['', 'one_time', 'ticket'],
+    { billing_processor_setting: { enabled: '1', acknowledge: '1', hold_hours: '48', purposes: ['', 'one_time', 'subscription'],
                                    settings: { instructions: 'At the hall, Saturdays' } }.merge(overrides) }
   end
 
@@ -100,12 +102,13 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
         expect_html_content('CAD')
       end
 
-      it 'does not list a vendor processor' do
+      it 'lists a vendor processor too, as managed by the deployment, with no edit link', :aggregate_failures do
         BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new })
 
         get settings_path
 
-        expect(response.body).not_to include('billing-processor-setting-fake')
+        expect(response.body).to include('billing-processor-setting-fake', 'billing-processor-managed-fake')
+        expect(response.body).not_to include('billing-processor-edit-fake')
       end
 
       it 'does not show another platform\'s state' do
@@ -163,6 +166,19 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
         expect(response.body).not_to include('id="billing-processor-acknowledge"')
       end
 
+      it 'offers a way back to the payment methods list' do
+        get edit_path('cash')
+
+        expect(response.body).to include('billing-processor-back-link', 'billing-processor-setting-cancel-link')
+      end
+
+      it 'loads inside a billing tab frame', :aggregate_failures do
+        get edit_path('cash'), headers: { 'Turbo-Frame' => 'billing-tab-billing-processor-settings' }
+
+        expect(response.body).to include('id="billing-tab-billing-processor-settings"', 'billing-processor-setting-form')
+        expect(response.body).not_to include('<html')
+      end
+
       it 'is a 404 for a method that is not installed or is a vendor processor' do
         BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new })
 
@@ -186,8 +202,8 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
           .to change { host_platform.billing_processor_settings.count }.by(1)
 
         setting = host_platform.billing_processor_settings.find_by(processor: 'cash')
-        expect(response).to redirect_to(settings_path)
-        expect(setting).to have_attributes(enabled: true, hold_hours: 48, purposes: %w[one_time ticket])
+        expect(response).to redirect_to(tab_page_path)
+        expect(setting).to have_attributes(enabled: true, hold_hours: 48, purposes: %w[one_time subscription])
         expect(setting.settings).to eq({ 'instructions' => 'At the hall, Saturdays' })
         expect(setting).to be_acknowledged
         expect(setting.acknowledged_by).to eq(steward.person)
@@ -198,7 +214,7 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
         patch setting_path('store_credit'), params: { billing_processor_setting: { enabled: '1', acknowledge: '1', purposes: ['', 'one_time'] } }
 
         setting = host_platform.billing_processor_settings.find_by(processor: 'store_credit')
-        expect(response).to redirect_to(settings_path)
+        expect(response).to redirect_to(tab_page_path)
         expect(setting).to have_attributes(enabled: true, purposes: %w[one_time], grant_on: nil)
         expect(setting.settings).to eq({})
         expect(setting.instructions).to eq({})
@@ -264,6 +280,16 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       patch setting_path('cash'), params: enable_params
 
       expect(host_platform.billing_processor_settings).to be_empty
+    end
+  end
+
+  describe 'purposes offered' do
+    it 'offers only what can be bought today', :aggregate_failures do
+      sign_in steward
+      get edit_path('cash')
+
+      expect(response.body).to include('value="one_time"')
+      expect(response.body).not_to include('value="ticket"')
     end
   end
 end

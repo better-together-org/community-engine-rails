@@ -52,7 +52,7 @@
       <div class="col-12">
         <fieldset id="billing-promotion-purposes">
           <legend class="form-label fs-6"><%= t('better_together.billing.promotions.field_purposes') %></legend>
-          <% BetterTogether::Billing::ProcessorSetting::PURPOSES.each do |purpose| %>
+          <% BetterTogether::Billing::ProcessorSetting::AVAILABLE_PURPOSES.each do |purpose| %>
             <div class="form-check form-check-inline">
               <%= check_box_tag 'purposes[]', purpose, Array(params[:purposes]).include?(purpose), id: "billing-promotion-purpose-#{purpose}", class: 'form-check-input' %>
               <%= label_tag "billing-promotion-purpose-#{purpose}", t("better_together.billing.processor_settings.purpose_#{purpose}"), class: 'form-check-label' %>

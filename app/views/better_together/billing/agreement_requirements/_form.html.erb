@@ -1,0 +1,41 @@
+<%= form_with(model: requirement, scope: :billing_agreement_requirement, url: url, method: method, id: form_id) do |form| %>
+  <div class="card mb-4">
+    <div class="card-header"><strong><%= title %></strong></div>
+    <div class="card-body">
+      <% if requirement.errors.any? %>
+        <%= render 'better_together/billing/error_summary', record: requirement, id: 'billing-agreement-requirement-errors',
+                   field_ids: { agreement: 'billing-requirement-agreement', agreement_id: 'billing-requirement-agreement' } %>
+      <% end %>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <%= form.label :agreement_id, t('better_together.billing.requirements.field_agreement'), class: 'form-label', for: 'billing-requirement-agreement' %>
+          <%= form.select :agreement_id, @agreements.map { |agreement| ["#{agreement.title} (#{t("better_together.billing.requirements.state_#{agreement.lifecycle_state}")})", agreement.id] },
+                          { include_blank: true }, class: 'form-select', id: 'billing-requirement-agreement', required: true %>
+        </div>
+        <div class="col-md-6">
+          <%= form.label :target_plan_id, t('better_together.billing.requirements.field_applies_to'), class: 'form-label', for: 'billing-requirement-plan' %>
+          <%= select_tag 'billing_agreement_requirement[target_plan_id]', options_for_select(@plans.map { |plan| [plan.name, plan.id] }, requirement.target_id),
+                         include_blank: t('better_together.billing.requirements.applies_to_everything'), class: 'form-select', id: 'billing-requirement-plan' %>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :purpose, t('better_together.billing.requirements.field_purpose'), class: 'form-label', for: 'billing-requirement-purpose' %>
+          <%= form.select :purpose, BetterTogether::Billing::ProcessorSetting::AVAILABLE_PURPOSES.map { |purpose| [t("better_together.billing.orders.purpose_#{purpose}"), purpose] },
+                          { include_blank: t('better_together.billing.requirements.any') }, class: 'form-select', id: 'billing-requirement-purpose' %>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :payment_method, t('better_together.billing.requirements.field_payment_method'), class: 'form-label', for: 'billing-requirement-method' %>
+          <%= form.select :payment_method, billing_offline_method_choices,
+                          { include_blank: t('better_together.billing.requirements.any') }, class: 'form-select', id: 'billing-requirement-method' %>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :mode, t('better_together.billing.requirements.field_mode'), class: 'form-label', for: 'billing-requirement-mode' %>
+          <%= form.select :mode, BetterTogether::Billing::AgreementRequirement::MODES.map { |mode| [t("better_together.billing.requirements.mode_#{mode}"), mode] },
+                          {}, class: 'form-select', id: 'billing-requirement-mode' %>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <%= form.submit submit_label, class: 'btn btn-primary', id: submit_id %>
+    </div>
+  </div>
+<% end %>

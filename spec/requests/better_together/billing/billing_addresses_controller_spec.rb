@@ -53,7 +53,7 @@ RSpec.describe BetterTogether::Billing::BillingAddressesController do
 
       expect { post list_path, params: { billing_address: params, make_default_billing: '1' } }.to change { buyer.addresses.count }.by(1)
 
-      expect(response).to redirect_to(list_path)
+      expect(response).to redirect_to_billing_screen(list_path)
       expect(default_for(buyer)).to eq(buyer.addresses.find_by(line1: '7 Pine').id)
     end
 

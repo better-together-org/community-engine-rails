@@ -4,7 +4,7 @@
 <% end %>
 
 <div id="<%= dom_id(@term, :show_page) %>" class="container my-4">
-  <%= render 'shared/resource_toolbar', back_to_list_path: billing_subscriptions_path(locale: I18n.locale), edit_path: nil %>
+  <%= render 'shared/resource_toolbar', back_to_list_path: back_to_path(billing_subscriptions_path(locale: I18n.locale)), edit_path: nil %>
   <h1 class="mb-1"><%= @term.plan.name %></h1>
   <p class="mb-4"><%= billing_subscription_status_badge(subscription) %></p>
 
@@ -23,12 +23,13 @@
 
   <div id="subscription-actions" class="d-flex gap-2 mb-4">
     <% if billing_subscription_cancelable?(subscription) %>
-      <%= button_to t('better_together.billing.subscriptions.cancel'), cancel_billing_subscription_path(@term, locale: I18n.locale), method: :patch,
+      <%= button_to t('better_together.billing.subscriptions.cancel'), cancel_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)), method: :patch,
                     class: 'btn btn-outline-danger', id: 'subscription-cancel-btn',
                     form: { data: { turbo_confirm: t('better_together.billing.subscriptions.cancel_confirm') } } %>
     <% elsif billing_subscription_resumable?(subscription) %>
-      <%= button_to t('better_together.billing.subscriptions.resume'), resume_billing_subscription_path(@term, locale: I18n.locale), method: :patch,
-                    class: 'btn btn-outline-primary', id: 'subscription-resume-btn' %>
+      <%= button_to t('better_together.billing.subscriptions.resume'), resume_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)), method: :patch,
+                    class: 'btn btn-outline-primary', id: 'subscription-resume-btn',
+                    form: { data: { turbo_confirm: t('better_together.billing.subscriptions.resume_confirm') } } %>
     <% end %>
   </div>
 
@@ -38,7 +39,8 @@
       <div class="card-body">
         <% if @method_options.any? %>
           <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.method_change_intro', method: billing_payment_method_label(@term.payment_method)) %></p>
-          <%= form_with url: change_method_billing_subscription_path(@term, locale: I18n.locale), method: :patch, id: 'subscription-method-change-form', class: 'row g-2' do %>
+          <%= form_with url: change_method_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)), method: :patch, id: 'subscription-method-change-form', class: 'row g-2',
+                    data: { turbo_confirm: t('better_together.billing.subscriptions.method_change_confirm') } do %>
             <div class="col-md-8">
               <%= label_tag 'subscription-method-change-select', t('better_together.billing.subscriptions.method_change_label'), class: 'form-label' %>
               <%= select_tag :payment_method, options_for_select(@method_options.map { |choice| [billing_payment_method_label(choice.name), choice.name] }),
@@ -61,16 +63,18 @@
           <p id="subscription-plan-change-pending">
             <% if @term.pending_plan_order %>
               <%= t('better_together.billing.subscriptions.plan_change_pending_invoice', plan: @term.pending_plan.name) %>
-              <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale), id: 'subscription-plan-change-invoice-link' %>
+              <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale, back_to: billing_subscription_path(@term, locale: I18n.locale)), id: 'subscription-plan-change-invoice-link' %>
             <% else %>
               <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: billing_time_text(subscription.current_period_end, date_only: true)) %>
             <% end %>
           </p>
-          <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale),
-                        method: :delete, id: 'subscription-plan-change-withdraw-btn', class: 'btn btn-outline-secondary' %>
+          <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)),
+                        method: :delete, id: 'subscription-plan-change-withdraw-btn', class: 'btn btn-outline-secondary',
+                        form: { data: { turbo_confirm: t('better_together.billing.subscriptions.plan_change_withdraw_confirm') } } %>
         <% elsif @plan_options.any? %>
           <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.plan_change_intro') %></p>
-          <%= form_with url: change_plan_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-plan-change-form', class: 'row g-2' do %>
+          <%= form_with url: change_plan_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)), method: :post, id: 'subscription-plan-change-form', class: 'row g-2',
+                    data: { turbo_confirm: t('better_together.billing.subscriptions.plan_change_confirm') } do %>
             <div class="col-md-8">
               <%= label_tag :plan_id, t('better_together.billing.subscriptions.plan_change_label'), class: 'form-label' %>
               <%= select_tag :plan_id, options_for_select(@plan_options.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }),
@@ -104,7 +108,7 @@
       <div class="card-header"><strong id="subscription-agreements-title"><%= t('better_together.billing.subscriptions.review_title') %></strong></div>
       <div class="card-body">
         <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.review_intro') %></p>
-        <%= form_with url: accept_agreements_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-agreements-form' do %>
+        <%= form_with url: accept_agreements_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)), method: :post, id: 'subscription-agreements-form' do %>
           <% @gate.missing.each do |agreement| %>
             <div class="form-check mb-2" id="<%= dom_id(agreement, :review) %>">
               <%= check_box_tag 'accepted_agreement_ids[]', agreement.id, false, id: "accept-agreement-#{agreement.id}", class: 'form-check-input', required: true %>
@@ -138,7 +142,7 @@
               <td><%= billing_period_status_badge(period) %></td>
               <td class="text-end">
                 <% if period.order %>
-                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_order_path(period.order, locale: I18n.locale),
+                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_order_path(period.order, locale: I18n.locale, back_to: billing_subscription_path(@term, locale: I18n.locale)),
                               class: 'btn btn-outline-secondary btn-sm' %>
                 <% end %>
               </td>

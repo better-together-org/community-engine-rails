@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T16:21:11Z",
+  "generated_at": "2026-11-24T13:12:18Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -29438,6 +29438,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29454,6 +29455,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29473,6 +29475,7 @@
           "concerns": [
             "BetterTogether::Billing::CheckoutTaxPreview",
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29492,6 +29495,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29509,6 +29513,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29527,6 +29532,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29545,6 +29551,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29563,6 +29570,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29579,6 +29587,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29596,7 +29605,9 @@
             "BetterTogether::Billing::Order"
           ],
           "concerns": [
+            "BetterTogether::Billing::BackTo",
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29615,6 +29626,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29633,6 +29645,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29649,6 +29662,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29667,6 +29681,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29685,6 +29700,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29703,6 +29719,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29719,6 +29736,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29734,7 +29752,9 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Billing::BackTo",
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29751,6 +29771,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29766,7 +29787,9 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Billing::BackTo",
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29784,6 +29807,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -29801,6 +29825,17 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::Plan"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::BackTo",
+          "label": "Billing::BackTo",
+          "capability": "Backto",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::SubscriptionsController",
+            "Billing::SalesController",
+            "Billing::OrdersController"
           ]
         },
         {
@@ -29972,6 +30007,35 @@
             "Billing::OfflinePayment",
             "Billing::Entitlement",
             "Billing::ProcessorSetting"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::TabFrameLayout",
+          "label": "Billing::TabFrameLayout",
+          "capability": "Tabframelayout",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::PlanGrantsController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
+            "Billing::CreditsController",
+            "Billing::CreditGrantsController",
+            "Billing::CreditAccountsController",
+            "Billing::CheckoutsController",
+            "Billing::AllowancesController",
+            "Billing::AgreementRequirementsController"
           ]
         },
         {
@@ -39959,6 +40023,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39975,6 +40040,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -39993,6 +40059,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40011,6 +40078,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40027,6 +40095,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40043,6 +40112,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40059,6 +40129,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40075,6 +40146,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40093,6 +40165,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40109,6 +40182,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40126,6 +40200,7 @@
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40144,6 +40219,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40160,6 +40236,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40178,6 +40255,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -40654,6 +40732,7 @@
             "BetterTogether::Metrics::BillingReport"
           ],
           "concerns": [
+            "BetterTogether::Billing::TabFrameLayout",
             "BetterTogether::ConsentCookieSync",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -41534,6 +41613,29 @@
             "HostedPlatform",
             "FederatedPlatform",
             "Billing::RefundRequest"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::TabFrameLayout",
+          "label": "Billing::TabFrameLayout",
+          "capability": "Tabframelayout",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Metrics::BillingReportsController",
+            "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
+            "Billing::PeopleController",
+            "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
+            "Billing::HubsController",
+            "Billing::HostingPlansController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::EventsController",
+            "Billing::CatalogController",
+            "Billing::BillingAddressesController"
           ]
         },
         {

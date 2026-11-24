@@ -40,10 +40,40 @@ RSpec.describe 'Navigation item route name translations', type: :helper do # rub
     expect(untranslated).to be_empty, "Translate into Ukrainian: #{untranslated.join(', ')}"
   end
 
+  describe 'route group headings' do
+    let(:groups) { BetterTogether::NavigationItem.route_name_groups.keys }
+
+    I18n.available_locales.each do |locale|
+      it "translates every group heading in #{locale}" do
+        missing = groups.reject { |group| I18n.exists?("better_together.navigation_items.route_groups.#{group}", locale) }
+
+        expect(missing).to be_empty,
+                           "Add better_together.navigation_items.route_groups.{#{missing.join(', ')}} to config/locales/#{locale}.yml"
+      end
+    end
+
+    it 'has no translation for a group that does not exist (stale keys)' do
+      known = BetterTogether::NavigationItem::ROUTE_NAME_GROUPS.keys + [BetterTogether::NavigationItem::DEFAULT_ROUTE_NAME_GROUP]
+      stale = I18n.t('better_together.navigation_items.route_groups', locale: :en).keys.map(&:to_sym) - known
+
+      expect(stale).to be_empty, "Remove unused route group translations: #{stale.join(', ')}"
+    end
+  end
+
   describe 'the route name picker options' do
     before { helper.extend(BetterTogether::NavigationItemsHelper) }
 
     I18n.available_locales.each do |locale|
+      it "renders group headings with their routes in #{locale}" do
+        I18n.with_locale(locale) do
+          html = Nokogiri::HTML.fragment(helper.route_names_for_select)
+          headings = html.css('optgroup').map { |group| group['label'] }
+
+          expect(headings).to include(I18n.t('better_together.navigation_items.route_groups.billing_management'))
+          expect(html.css('optgroup option').size).to eq(route_names.size)
+        end
+      end
+
       it "renders only translated labels in #{locale}" do
         I18n.with_locale(locale) do
           html = helper.route_names_for_select

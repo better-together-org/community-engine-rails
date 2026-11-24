@@ -9,7 +9,7 @@ module BetterTogether
       def destroy? = platform_plan? && manage_billing?
       def index? = false
       def show? = false
-      def update? = false
+      def update? = platform_plan? && manage_billing?
 
       private
 

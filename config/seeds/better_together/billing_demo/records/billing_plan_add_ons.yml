@@ -1,0 +1,7 @@
+version: '2.0'
+type: billing_plan_add_on
+records:
+- key: demo-supporter-monthly-extra-storage
+  refs: { plan: "billing_plan:demo-supporter-monthly", add_on: "billing_plan:demo-extra-storage" }
+- key: demo-supporter-annual-extra-storage
+  refs: { plan: "billing_plan:demo-supporter-annual", add_on: "billing_plan:demo-extra-storage" }

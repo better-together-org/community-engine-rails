@@ -92,7 +92,7 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
       post_checkout(parts: { 'store_credit' => '10.00' })
 
       order = BetterTogether::Billing::Order.last
-      expect(response).to redirect_to(better_together.billing_order_path(order, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_order_path(order, locale:))
       expect(order).to be_partially_paid
       paid_by = order.payments.map { |payment| [payment.processor, payment.amount_cents] }
       expect(paid_by).to contain_exactly(['store_credit', 1000], ['cash', 3000])

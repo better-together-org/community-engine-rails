@@ -37,7 +37,32 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
 
       expect(response.body).to include(ActionView::RecordIdentifier.dom_id(sub_plan, :grants), 'billing-grant-role-form',
                                        'billing-grant-feature-form',
-                                       'billing-grant-quota-form', ActionView::RecordIdentifier.dom_id(sub_plan.plan_grants.first))
+                                       'billing-grant-storage-form', ActionView::RecordIdentifier.dom_id(sub_plan.plan_grants.first))
+    end
+
+    it 'asks before every change to what a plan includes, saying how many people it reaches', :aggregate_failures do
+      start_subscription
+      get plan_path
+
+      expect(response.body.scan('data-turbo-confirm').size).to be >= 3
+      expect(response.body).to include("(#{BetterTogether::Billing::PlanAudience.new(sub_plan).count})")
+    end
+
+    it 'changes the amount of a storage grant in place, and brings the subscribers up to date', :aggregate_failures do
+      grant = add_grant('quota_allowance', { 'quota_type' => 'media_storage', 'amount' => 1_000_000_000 })
+      patch "#{grants_path}/#{grant.id}", params: { amount: '5000000000' }
+
+      expect(grant.reload.parameters['amount'].to_i).to eq(5_000_000_000)
+      expect(BetterTogether::Billing::SyncPlanEntitlementsJob).to have_been_enqueued.with(sub_plan)
+    end
+
+    it 'refuses a second grant of the same thing, and a bad amount on an edit', :aggregate_failures do
+      grant = add_grant('quota_allowance', { 'quota_type' => 'media_storage', 'amount' => 1_000_000_000 })
+
+      expect { post grants_path, params: { kind: 'quota_allowance', quota_type: 'media_storage', amount: '2000000000' } }
+        .not_to(change { sub_plan.plan_grants.count })
+      patch "#{grants_path}/#{grant.id}", params: { amount: '-1' }
+      expect(grant.reload.parameters['amount'].to_i).to eq(1_000_000_000)
     end
 
     it 'adds a role, then queues the plan\'s people to be brought up to date' do
@@ -45,11 +70,18 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
         post grants_path, params: { kind: 'membership_role', joinable: 'platform', role: supporter_role.identifier }
       end.to have_enqueued_job(BetterTogether::Billing::SyncPlanEntitlementsJob).with(sub_plan)
 
-      expect(response).to redirect_to(plan_path)
+      expect(response).to redirect_to_billing_screen(plan_path)
       expect(sub_plan.plan_grants.sole).to have_attributes(kind: 'membership_role',
                                                            parameters: {
                                                              'joinable' => 'platform', 'role' => supporter_role.identifier
                                                            })
+    end
+
+    it 'offers storage as the same sizes the platform quota form does, in bytes', :aggregate_failures do
+      get plan_path
+
+      expect(response.body).to include('id="billing-grant-storage-amount"', '>5 GB</option>', 'value="5000000000"')
+      expect(response.body).not_to include('billing-grant-storage-unit')
     end
 
     it 'adds feature access and a quota allowance' do

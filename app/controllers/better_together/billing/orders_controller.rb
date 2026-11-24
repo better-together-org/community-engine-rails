@@ -7,6 +7,7 @@ module BetterTogether
     # order is a 404 whatever id is sent.
     class OrdersController < ApplicationController
       include OwnerScoped
+      include BackTo
 
       PER_PAGE = 25
 

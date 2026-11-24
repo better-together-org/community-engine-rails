@@ -33,7 +33,7 @@ RSpec.describe 'Billing plan price entry', :accessibility, :js, :skip_host_setup
     fill_in 'billing_plan_amount', with: '99.99'
     click_button 'billing-plan-submit'
 
-    expect(page).to have_current_path(%r{/billing/plans/#{plan.id}\z})
+    expect(page).to have_current_path(/billing_path=%2Fen%2Fbilling%2Fplans%2F#{plan.id}\z/)
     expect(plan.reload.amount_cents).to eq(9999)
   end
 

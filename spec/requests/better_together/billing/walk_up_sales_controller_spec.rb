@@ -75,7 +75,7 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
       expect { post path, params: }.to change(BetterTogether::Billing::Order, :count).by(1)
 
       order = BetterTogether::Billing::Order.order(:created_at).last
-      expect(response).to redirect_to(better_together.billing_sale_path(order, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_sale_path(order, locale:))
       expect(order).to be_awaiting_payment
       expect(order.buyer).to eq(buyer)
       expect(order.offline_payments.first).to have_attributes(seller_assisted: true, status: 'awaiting')
@@ -196,13 +196,13 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
 
         it 'gives the steward the same outcome as for an email nobody has' do
           post path, params: typed
-          guest_redirect = response.location.sub(%r{/sales/[^/?]+}, '/sales/X')
+          guest_redirect = response.location.sub(%r{(/|%2F)sales(/|%2F)[^/?&#]+}, '\\1sales\\2X')
           guest_notice = flash[:notice]
 
           post path, params: typed.merge(buyer_name: 'Odalys Fortier', buyer_email: 'nobody-has-this@example.test')
 
           expect(response).to have_http_status(:found)
-          expect(response.location.sub(%r{/sales/[^/?]+}, '/sales/X')).to eq(guest_redirect)
+          expect(response.location.sub(%r{(/|%2F)sales(/|%2F)[^/?&#]+}, '\\1sales\\2X')).to eq(guest_redirect)
           expect(flash[:notice]).to eq(guest_notice).and eq(I18n.t('better_together.billing.walk_up.placed', locale:))
         end
       end

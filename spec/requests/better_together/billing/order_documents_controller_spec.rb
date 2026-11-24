@@ -27,7 +27,7 @@ RSpec.describe BetterTogether::Billing::OrderDocumentsController do
         post sale_documents_path, params: { document_locale: 'fr' }
       end.to change { order.documents.count }.by(1)
 
-      expect(response).to redirect_to(better_together.billing_sale_path(order, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_sale_path(order, locale:))
       expect(order.reload.document_locale).to eq('fr')
       expect(order.invoice_document).to be_current
       expect(order.locale_for_documents).to eq(:fr)
@@ -80,7 +80,7 @@ RSpec.describe BetterTogether::Billing::OrderDocumentsController do
     it 'makes their own documents again in another language', :aggregate_failures do
       post order_documents_path, params: { document_locale: 'es' }
 
-      expect(response).to redirect_to(better_together.billing_order_path(order, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_order_path(order, locale:))
       expect(order.reload.document_locale).to eq('es')
     end
 

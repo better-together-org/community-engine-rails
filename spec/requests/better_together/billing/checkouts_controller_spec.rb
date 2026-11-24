@@ -188,7 +188,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
         expect { post_checkout }.to change(BetterTogether::Billing::Order, :count).by(1)
 
         order = BetterTogether::Billing::Order.order(:created_at).last
-        expect(response).to redirect_to(better_together.billing_order_path(order, locale:))
+        expect(response).to redirect_to_billing_screen(better_together.billing_order_path(order, locale:))
         expect(order).to have_attributes(buyer:, status: 'awaiting_payment', total_cents: 2500, purpose: 'one_time')
         expect(order.agreement_acceptances.map(&:agreement_identifier)).to contain_exactly('one_time_purchase_agreement',
                                                                                            'offline_payment_terms')

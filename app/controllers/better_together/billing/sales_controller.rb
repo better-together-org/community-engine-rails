@@ -6,6 +6,7 @@ module BetterTogether
     # each payment stands. Orders sold by a community or person are theirs, not listed here.
     class SalesController < ApplicationController
       include OwnerScoped
+      include BackTo
 
       PER_PAGE = 50
 

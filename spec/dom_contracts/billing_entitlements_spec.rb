@@ -53,16 +53,12 @@ RSpec.describe 'Billing entitlements DOM contract', type: :request do # rubocop:
     expect_ids(dom_id(sub_plan, :grants), dom_id(sub_plan, :grants_list), dom_id(grant), dom_id(grant, :remove_btn), 'billing-grant-role-form',
                'billing-grant-role-joinable', 'billing-grant-role-community', 'billing-grant-role-role', 'billing-grant-role-btn',
                'billing-grant-feature-form', 'billing-grant-feature-key', 'billing-grant-feature-level', 'billing-grant-feature-btn',
-               'billing-grant-quota-form', 'billing-grant-quota-type', 'billing-grant-quota-amount', 'billing-grant-quota-btn')
+               'billing-grant-storage-form', 'billing-grant-storage-type', 'billing-grant-storage-amount', 'billing-grant-storage-btn')
   end
 
-  it 'links to them from the orders list and the payment methods list' do
+  it 'links to them from the orders list' do
     sign_in buyer_user
     get "/#{locale}/billing/orders"
     expect_ids('billing-entitlements-link')
-
-    sign_in steward_user
-    get "/#{locale}/billing/processor_settings"
-    expect_ids('billing-allowances-link')
   end
 end

@@ -51,7 +51,7 @@
                                   id: "billing-offline-confirm-btn-#{order.id}", class: 'btn btn-success btn-sm',
                                   form: { class: 'd-inline', data: { turbo_confirm: billing_receive_confirm(offline) } } %>
                   <% end %>
-                  <%= link_to t('globals.view'), billing_sale_path(order, locale: I18n.locale), class: 'btn btn-outline-dark btn-sm' %>
+                  <%= link_to t('globals.view'), billing_sale_path(order, locale: I18n.locale, back_to: billing_offline_payments_path(locale: I18n.locale)), class: 'btn btn-outline-dark btn-sm' %>
                 </td>
               </tr>
             <% end %>

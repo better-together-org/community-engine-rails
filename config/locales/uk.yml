@@ -1723,17 +1723,23 @@ uk:
         recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
       plan_grants:
         add: Додати
+        add_confirm: Додати це до плану?
         add_feature: Доступ до функції
         add_quota: Більше квоти
         add_role: Роль
+        add_storage: Більше сховища
         added: Додано до плану.
-        amount_hint: В одиницях квоти (байти для сховища, токени для ШІ).
+        amount_hint: У власній одиниці квоти, наприклад токени ШІ.
+        audience: Ті, хто вже має цей план (%{count}), буде оновлено за кілька хвилин.
+        audience_none: Цього плану ще ніхто не має, тож нікого це не стосується.
+        edit_confirm: Змінити цю кількість?
         field_amount: Додаткова кількість
         field_community: Спільнота (якщо спільнота)
         field_feature: Функція
         field_level: Рівень доступу
         field_quota: Квота
         field_role: Роль
+        field_storage: Сховище
         field_where: Де
         intro: Ті, хто оплачує цей план, отримують це, поки він оплачений. Коли він
           спливає, прибирається лише те, що дав сам план; ролі та доступ, які вже
@@ -1752,8 +1758,10 @@ uk:
         role_hint: Пропонуються лише ролі без прав керування.
         summary_feature: Доступ до %{feature} (%{level})
         summary_quota: На %{amount} %{unit} більше для %{quota}
+        summary_quota_size: На %{amount} більше для %{quota}
         summary_role: Роль %{role} у %{where}
         title: Що входить до цього плану
+        updated: Кількість змінено.
       plans:
         actions_heading: Дії
         add_on_targets_hint: Лише для додатка. Позначте плани, з якими він пропонується
@@ -1828,6 +1836,7 @@ uk:
         field_solidarity_description: Opys solidarnosti
         field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
           shchob poyasnyty, dlya koho pryznachenyj tsej riven'.
+        field_subscribers: Активні підписники
         field_support_tier: Riven' pidtrymky
         hosted_access_placeholder: Стандартний
         identifier_placeholder: наприклад, hosted_stewardship_monthly
@@ -1903,6 +1912,7 @@ uk:
         acknowledged_on: Ви прийняли ці обмеження %{date}.
         available_anywhere: Будь-де
         available_only_in: Лише в %{countries} (%{currencies})
+        back: Назад до способів оплати
         disclosure_country: Працює лише в %{countries}, у %{currencies}.
         disclosure_credit_expires: Кожна сума кредиту може мати власний термін дії;
           кредит, що спливає першим, витрачається першим.
@@ -1920,12 +1930,14 @@ uk:
         disclosure_title: Перш ніж увімкнути
         disclosure_untracked: Оплата відбувається поза цією платформою. Її не можна
           відстежити, тому кожну ви підтверджуєте самі.
+        edit_method: 'Редагувати: %{method}'
         field_enabled: Приймати цей спосіб оплати
         field_grant_on: Надавати доступ, коли платіж
         field_grant_on_hint: Чек можуть повернути. Безпечніше дочекатися його проведення.
         field_hold_hours: Утримувати неоплачене замовлення (годин)
         field_hold_hours_hint: Якщо за цей час оплати немає, замовлення спливає, а
           те, що воно утримувало, вивільняється.
+        field_kind: Тип
         field_method: Спосіб
         field_purposes: Приймати для
         field_status: Стан
@@ -1948,9 +1960,14 @@ uk:
         how_to_pay_hint: Показується покупцеві лише у його власному замовленні, після
           прийняття умов. Зберігається зашифрованим і ніколи не потрапляє в електронний
           лист.
-        index_intro: Способи отримати оплату поза платіжним процесором. Кожен установлений
-          для всіх платформ, але працює лише після ввімкнення.
+        index_intro: Усі встановлені способи оплати. Способи, що приймаються напряму
+          (готівка, чеки, електронні перекази, кредит магазину), працюють лише після
+          ввімкнення. Платіжний сервіс на кшталт Stripe налаштовує розгортання, тож
+          ця сторінка лише показує, чи він доступний.
         index_title: Способи оплати
+        kind_direct: Приймається напряму
+        kind_service: Платіжний сервіс
+        managed_by_deployment: Налаштовано розгортанням
         purpose_exchange: Обміни
         purpose_one_time: Разові покупки
         purpose_subscription: Підписки та членства
@@ -1958,6 +1975,8 @@ uk:
         saved: Спосіб оплати збережено.
         status_disabled: Вимкнено
         status_enabled: Увімкнено
+        status_managed_off: Недоступно
+        status_managed_on: Увімкнено
         status_not_set_up: Не налаштовано
       promotions:
         activate: Увімкнути
@@ -2071,11 +2090,16 @@ uk:
         withdraw: Відкликати запит
         withdrawn: Ваш запит на повернення коштів відкликано.
       requirements:
+        activated: Угода тепер діє.
         add: Додати
         add_title: Додати вимогу
         any: Будь-який
         applies_to_everything: Усе, що продає платформа
+        back: Назад до умов купівлі
         created: Вимогу додано.
+        edit: Редагувати вимогу
+        edit_agreement: Редагувати угоду
+        edit_title: Редагувати вимогу
         field_agreement: Угода
         field_applies_to: Застосовується до
         field_mode: Як застосовується
@@ -2084,14 +2108,17 @@ uk:
         index_intro: Виберіть угоди, які покупець має прийняти перед оплатою. Типові
           застосовуються до всього; план або спосіб оплати може додати власні.
         index_title: Умови покупки
+        make_active: Активувати
         mode_additional: Додається до типових
         mode_replaces_default: Замінює типові
         none: Жодна угода ще не вимагається. Нічого не можна продавати, поки її немає.
         remove: Прибрати
         removed: Вимогу прибрано.
+        save: Зберегти
         state_active: Чинна
         state_draft: Чернетка
         state_retired: Виведена з дії
+        updated: Вимогу оновлено.
       sales:
         cancel_btn: Скасувати це замовлення
         cancel_confirm: Скасувати це замовлення? Зарезервоване ним буде звільнено.
@@ -2136,10 +2163,12 @@ uk:
         returned: Кредит повернено покупцеві.
       subscribers:
         cancel_at_end: Скасувати наприкінці періоду
+        cancel_at_end_confirm: Скасувати цю підписку наприкінці сплаченого періоду?
         cancel_now: Скасувати зараз
         cancel_now_confirm: Завершити цю підписку зараз? Сплачене не повертається.
         cancelled: Підписку скасовано.
         extend: Додати час
+        extend_confirm: Дати цій особі більше часу, перш ніж підписка втратить чинність?
         extend_days: Додати днів до спливання
         field_subscriber: Підписник
         filter_active: Активні
@@ -2154,10 +2183,15 @@ uk:
           — спливла.'
         index_title: Підписники
         move_to_current_price: Перейти на поточну ціну
+        move_to_current_price_confirm: Перевести цю особу на поточну ціну з наступного
+          рахунку?
         none: Немає відповідних підписників.
         price_line: Продано за %{price}. Сьогодні план коштує %{current}.
         price_moved: Підписник переходить на поточну ціну з наступного рахунку.
         refused: Цього не вдалося зробити для цієї підписки.
+        resume: Залишити цю підписку
+        resume_confirm: Скасувати скасування? Підписка знову поновлюватиметься.
+        resumed: Підписка й далі поновлюватиметься.
         waive: Покрити цей період без оплати
         waive_confirm: Покрити наступний період без оплати? Його рахунок буде скасовано.
         waived: Період покрито.
@@ -2177,6 +2211,7 @@ uk:
         field_through: Сплачено до
         index_title: Підписки
         invoice: Рахунок %{number}
+        method_change_confirm: Сплачувати наступні поновлення так?
         method_change_intro: Поновлення сплачуються через %{method}. Виберіть інший
           спосіб для наступних поновлень. Уже виставлений рахунок зберігає свій спосіб.
         method_change_label: Сплачувати поновлення через
@@ -2197,6 +2232,8 @@ uk:
         period_waived: Покрито
         periods_caption: Кожен період цієї підписки та його рахунок
         periods_title: Періоди та рахунки
+        plan_change_confirm: Змінити ваш план? Перевірте вибір і дату початку перед
+          підтвердженням.
         plan_change_credit_note: Пропорційна різниця за зміну плану
         plan_change_credited: Ви на новому плані. %{amount} додано до вашого кредиту
           магазину.
@@ -2232,8 +2269,11 @@ uk:
         plan_change_when_next: З мого наступного періоду (без оплати зараз)
         plan_change_when_now: Зараз (пропорційно до решти періоду)
         plan_change_withdraw: Залишити мій поточний план
+        plan_change_withdraw_confirm: Відкликати зміну плану?
         plan_change_withdrawn: Зміну плану скасовано.
         resume: Зберегти мою підписку
+        resume_confirm: Залишити вашу підписку? Вона знову поновиться наприкінці цього
+          періоду.
         resumed: Вашу підписку буде продовжено.
         review_intro: Умови цієї підписки змінилися. Прийміть їх, і ми створимо наступний
           рахунок на продовження.
@@ -4460,19 +4500,38 @@ uk:
         title: Navigation Items for %{name}
       new:
         title: New Navigation Item for %{name}
+      route_groups:
+        billing_buyer: Оплата для учасників
+        billing_management: Керування оплатою
+        geography: Географія
+        host_dashboard: Панель хоста
+        joatu: Joatu
+        other: Інше
+        public: Публічні сторінки
+        safety: Безпека
       route_names:
         agreements: Угоди
         billing_agreement_requirements: Умови покупки
         billing_allowances: Квоти та використання
+        billing_billing_addresses: Платіжні адреси
+        billing_catalog: Каталог планів
         billing_credit_accounts: Рахунки кредиту магазину
+        billing_entitlements: Мої права доступу
         billing_events: Події виставлення рахунків
         billing_hosted_billing: Розміщені платежі
         billing_hosted_platforms: Розміщені платформи
+        billing_hosting_plan: План хостингу
+        billing_hub: Головна оплати
+        billing_notification_preferences: Сповіщення про оплату
+        billing_offline_payments: Офлайн-платежі
+        billing_orders: Замовлення
         billing_plans: Плани оплати
         billing_processor_settings: Способи оплати
         billing_promotions: Промокоди
+        billing_refund_requests: Запити на повернення коштів
         billing_sales: Продажі
         billing_subscribers: Підписники
+        billing_subscriptions: Мої підписки
         billing_tax_registrations: Податкові реєстрації
         calendars: Календарі
         calls_for_interest: Заклики до зацікавлення
@@ -4487,6 +4546,7 @@ uk:
         geography_settlements: Населені пункти
         geography_states: Штати
         host_dashboard: Панель керування хоста
+        host_dashboard_billing: Огляд оплати
         host_dashboard_membership_review: Перегляд членства
         host_dashboard_platform_connection_review: Перегляд федерації
         host_dashboard_safety_review: Перегляд безпеки
@@ -4496,6 +4556,7 @@ uk:
         joatu_hub: Центр Joatu
         joatu_offers: Пропозиції
         joatu_requests: Запити
+        metrics_billing_reports: Звіти про оплату
         metrics_reports: Звіти метрик
         navigation_areas: Області навігації
         oauth_applications: Застосунки OAuth
@@ -7360,6 +7421,7 @@ uk:
       add_on_locked_by_orders: не можна змінити, коли замовлення вже містять цей план
       after_start: має бути пізніше за початок
       already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
+      already_on_the_plan: уже є в плані; змініть його замість цього
       already_pending: Для цього замовлення вже очікує запит на повернення коштів.
       blank: не може бути пустим
       cannot_be_the_host: не може бути платформою-хостом
@@ -7673,6 +7735,13 @@ uk:
       type: Тип
     type_select_field: Оберіть тип для цього поля.
   host_dashboard:
+    billing:
+      intro: Налаштуйте оплату, а потім керуйте планами, продажами й підписниками
+        звідси.
+      loading: Завантаження...
+      nav_label: Екрани оплати
+      overview: Огляд
+      page_title: Оплата
     index:
       better_together: Разом краще
       content: Контент

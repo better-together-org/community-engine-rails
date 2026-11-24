@@ -51,12 +51,6 @@ RSpec.describe 'Billing tax registration DOM', type: :request do # rubocop:disab
     expect(page.at_css('#billing_tax_registration_country_select_id')['name']).to eq('billing_tax_registration[country_id]')
   end
 
-  it 'is linked from the payment methods page' do
-    get better_together.billing_processor_settings_path(locale:)
-
-    expect(Nokogiri::HTML(response.body).at_css('#billing-tax-registrations-link')).to be_present
-  end
-
   it 'connects every label to its field and names every control' do
     get better_together.new_billing_tax_registration_path(locale:)
 

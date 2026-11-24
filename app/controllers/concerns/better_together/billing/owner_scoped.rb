@@ -14,6 +14,8 @@ module BetterTogether
     module OwnerScoped
       extend ActiveSupport::Concern
 
+      include TabFrameLayout
+
       included do
         before_action :require_billing_enabled
         before_action :authenticate_user!

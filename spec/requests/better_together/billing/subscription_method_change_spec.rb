@@ -29,7 +29,7 @@ RSpec.describe 'Billing subscription payment method change', type: :request do #
     patch change_path, params: { payment_method: 'store_credit' }
 
     expect(term.reload.payment_method).to eq('store_credit')
-    expect(response).to redirect_to(better_together.billing_subscription_path(term, locale:))
+    expect(response).to redirect_to_billing_screen(better_together.billing_subscription_path(term, locale:))
   end
 
   it 'refuses the method it already has' do

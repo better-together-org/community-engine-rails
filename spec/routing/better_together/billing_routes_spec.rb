@@ -21,6 +21,7 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
 
   it 'keeps billing routes out of routes.rb except the draw line' do
     billing_lines = routes_file.lines.grep(/billing|Pay::Engine/i).map(&:strip).reject { |line| line.start_with?('#') }
+                               .reject { |line| line.include?('host_dashboard_billing') } # the host dashboard tab sits with its siblings
 
     expect(billing_lines).to eq(['draw :billing'])
   end
@@ -127,7 +128,7 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
         .each { |verb_path| expect(verb_path).not_to be_routable }
     end
 
-    it 'has one checkout, and steward-managed purchase terms that can be listed, added and removed only' do
+    it 'has one checkout, and steward-managed purchase terms that can be listed, added, edited and removed' do
       expect(get: '/en/billing/checkout/new').to route_to(controller: 'better_together/billing/checkouts', action: 'new', locale: 'en')
       expect(post: '/en/billing/checkout').to route_to(controller: 'better_together/billing/checkouts', action: 'create', locale: 'en')
       expect(get: '/en/billing/agreement_requirements').to route_to(controller: 'better_together/billing/agreement_requirements',
@@ -136,7 +137,8 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
                                                                      action: 'create', locale: 'en')
       expect(delete: '/en/billing/agreement_requirements/abc')
         .to route_to(controller: 'better_together/billing/agreement_requirements', action: 'destroy', locale: 'en', id: 'abc')
-      expect(patch: '/en/billing/agreement_requirements/abc').not_to be_routable
+      expect(patch: '/en/billing/agreement_requirements/abc')
+        .to route_to(controller: 'better_together/billing/agreement_requirements', action: 'update', locale: 'en', id: 'abc')
       # An unmatched GET falls through to the pages catch-all, never to a billing controller.
       expect(get: '/en/billing/checkout').not_to route_to(controller: 'better_together/billing/checkouts', action: 'show', locale: 'en')
       expect(get: '/en/billing/agreement_requirements/abc')

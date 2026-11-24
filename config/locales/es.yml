@@ -1741,18 +1741,24 @@ es:
         recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
       plan_grants:
         add: Añadir
+        add_confirm: "¿Añadir esto al plan?"
         add_feature: Acceso a una función
         add_quota: Más de una cuota
         add_role: Un rol
+        add_storage: Más almacenamiento
         added: Añadido al plan.
-        amount_hint: En la unidad de la cuota (bytes para almacenamiento, tokens para
-          IA).
+        amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
+        audience: Las personas que ya tienen este plan (%{count}) se actualizan en
+          unos minutos.
+        audience_none: Nadie tiene este plan todavía, así que nadie se ve afectado.
+        edit_confirm: "¿Cambiar esta cantidad?"
         field_amount: Cantidad adicional
         field_community: Comunidad (si es una comunidad)
         field_feature: Función
         field_level: Nivel de acceso
         field_quota: Cuota
         field_role: Rol
+        field_storage: Almacenamiento
         field_where: Dónde
         intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
           solo se retira lo que dio el plan; los roles y accesos que ya tenían se
@@ -1771,8 +1777,10 @@ es:
         role_hint: Solo se ofrecen roles que no pueden administrar.
         summary_feature: Acceso a %{feature} (%{level})
         summary_quota: "%{amount} %{unit} más de %{quota}"
+        summary_quota_size: "%{amount} más de %{quota}"
         summary_role: El rol %{role} en %{where}
         title: Qué incluye este plan
+        updated: Se cambió la cantidad.
       plans:
         actions_heading: Acciones
         add_on_targets_hint: Solo para un complemento. Marque los planes con los que
@@ -1850,6 +1858,7 @@ es:
         field_solidarity_description: Descripcion de solidaridad
         field_solidarity_description_hint: Se muestra a los posibles suscriptores
           para explicar a quien va dirigido este nivel.
+        field_subscribers: Suscriptores activos
         field_support_tier: Nivel de soporte
         hosted_access_placeholder: Estándar
         identifier_placeholder: p. ej. hosted_stewardship_monthly
@@ -1926,6 +1935,7 @@ es:
         acknowledged_on: Aceptó estos límites el %{date}.
         available_anywhere: En cualquier lugar
         available_only_in: Solo en %{countries} (%{currencies})
+        back: Volver a los métodos de pago
         disclosure_country: Solo funciona en %{countries}, en %{currencies}.
         disclosure_credit_expires: Cada cantidad de crédito puede tener su propia
           fecha de vencimiento; el crédito que vence primero se gasta primero.
@@ -1943,6 +1953,7 @@ es:
         disclosure_title: Antes de activarlo
         disclosure_untracked: El pago ocurre fuera de esta plataforma. No se puede
           rastrear, así que usted confirma cada uno.
+        edit_method: Editar %{method}
         field_enabled: Aceptar este método de pago
         field_grant_on: Dar acceso cuando el pago esté
         field_grant_on_hint: Un cheque puede ser rechazado. Esperar a que se cobre
@@ -1950,6 +1961,7 @@ es:
         field_hold_hours: Retener un pedido sin pagar durante (horas)
         field_hold_hours_hint: Pasado este tiempo sin pago, el pedido caduca y se
           libera lo que retenía.
+        field_kind: Tipo
         field_method: Método
         field_purposes: Aceptar para
         field_status: Estado
@@ -1971,10 +1983,14 @@ es:
         how_to_pay: Lo que ven los compradores
         how_to_pay_hint: Se muestra al comprador solo en su propio pedido, después
           de aceptar las condiciones. Se guarda cifrado y nunca se incluye en un correo.
-        index_intro: Formas de cobrar fuera de un procesador de pagos. Cada una está
-          instalada para todas las plataformas, pero solo funciona una vez que la
-          activa.
+        index_intro: Todos los métodos de pago instalados. Los de cobro directo (efectivo,
+          cheques, transferencias electrónicas, crédito de la tienda) solo funcionan
+          una vez que los activa. Un servicio de pago como Stripe lo configura la
+          instalación, así que esta página solo muestra si está disponible.
         index_title: Métodos de pago
+        kind_direct: Cobro directo
+        kind_service: Servicio de pago
+        managed_by_deployment: Configurado por la instalación
         purpose_exchange: Intercambios
         purpose_one_time: Compras únicas
         purpose_subscription: Suscripciones y membresías
@@ -1982,6 +1998,8 @@ es:
         saved: Método de pago guardado.
         status_disabled: Desactivado
         status_enabled: Activado
+        status_managed_off: No disponible
+        status_managed_on: Activado
         status_not_set_up: Sin configurar
       promotions:
         activate: Activar
@@ -2098,11 +2116,16 @@ es:
         withdraw: Retirar la solicitud
         withdrawn: Se retiró su solicitud de reembolso.
       requirements:
+        activated: El acuerdo ya está en vigor.
         add: Añadir
         add_title: Añadir un requisito
         any: Cualquiera
         applies_to_everything: Todo lo que vende la plataforma
+        back: Volver a las condiciones de compra
         created: Requisito añadido.
+        edit: Editar requisito
+        edit_agreement: Editar acuerdo
+        edit_title: Editar requisito
         field_agreement: Acuerdo
         field_applies_to: Se aplica a
         field_mode: Cómo se aplica
@@ -2112,15 +2135,18 @@ es:
           Los predeterminados se aplican a todo; un plan o un método de pago puede
           añadir los suyos.
         index_title: Condiciones de compra
+        make_active: Activar
         mode_additional: Se añade a los predeterminados
         mode_replaces_default: Sustituye a los predeterminados
         none: Todavía no se exige ningún acuerdo. No se puede vender nada hasta que
           haya uno.
         remove: Quitar
         removed: Requisito quitado.
+        save: Guardar
         state_active: En vigor
         state_draft: Borrador
         state_retired: Retirado
+        updated: Requisito actualizado.
       sales:
         cancel_btn: Cancelar este pedido
         cancel_confirm: "¿Cancelar este pedido? Se liberará lo que reservaba."
@@ -2165,11 +2191,15 @@ es:
         returned: Se devolvió el crédito al comprador.
       subscribers:
         cancel_at_end: Cancelar al final del periodo
+        cancel_at_end_confirm: "¿Cancelar esta suscripción al final del periodo que
+          ya pagó?"
         cancel_now: Cancelar ahora
         cancel_now_confirm: "¿Terminar esta suscripción ahora? No se reembolsa nada
           de lo ya pagado."
         cancelled: La suscripción está cancelada.
         extend: Dar más tiempo
+        extend_confirm: "¿Dar más tiempo a esta persona antes de que la suscripción
+          caduque?"
         extend_days: Dar más días antes de que caduque
         field_subscriber: Suscriptor
         filter_active: Activas
@@ -2184,10 +2214,15 @@ es:
           adicional, caducada después.'
         index_title: Suscriptores
         move_to_current_price: Pasar al precio actual
+        move_to_current_price_confirm: "¿Pasar a esta persona al precio actual desde
+          la próxima factura?"
         none: Ningún suscriptor coincide.
         price_line: Vendida a %{price}. El plan cuesta %{current} hoy.
         price_moved: El suscriptor pasa al precio actual desde la próxima factura.
         refused: No se pudo hacer eso con esta suscripción.
+        resume: Mantener esta suscripción
+        resume_confirm: "¿Anular la cancelación? La suscripción volverá a renovarse."
+        resumed: La suscripción seguirá renovándose.
         waive: Cubrir este periodo sin pago
         waive_confirm: "¿Cubrir el siguiente periodo sin pago? Su factura se cancela."
         waived: El periodo está cubierto.
@@ -2207,6 +2242,7 @@ es:
         field_through: Pagado hasta
         index_title: Suscripciones
         invoice: Factura %{number}
+        method_change_confirm: "¿Pagar las próximas renovaciones de esta forma?"
         method_change_intro: Las renovaciones se pagan con %{method}. Elija otra forma
           para las próximas renovaciones. Una factura ya emitida conserva su método.
         method_change_label: Pagar las renovaciones con
@@ -2227,6 +2263,8 @@ es:
         period_waived: Cubierto
         periods_caption: Cada periodo de esta suscripción y su factura
         periods_title: Periodos y facturas
+        plan_change_confirm: "¿Cambiar su plan? Revise la elección y cuándo empieza
+          antes de confirmar."
         plan_change_credit_note: Diferencia prorrateada por un cambio de plan
         plan_change_credited: Ya está en el nuevo plan. Se añadieron %{amount} a su
           crédito de tienda.
@@ -2260,8 +2298,11 @@ es:
         plan_change_when_next: Desde mi próximo periodo (sin cargo ahora)
         plan_change_when_now: Ahora (prorrateado por el resto del periodo)
         plan_change_withdraw: Mantener mi plan actual
+        plan_change_withdraw_confirm: "¿Retirar el cambio de plan?"
         plan_change_withdrawn: Se canceló su cambio de plan.
         resume: Mantener mi suscripción
+        resume_confirm: "¿Mantener su suscripción? Se renovará de nuevo al final de
+          este periodo."
         resumed: Tu suscripción continuará.
         review_intro: Los términos de esta suscripción cambiaron. Acéptalos y haremos
           tu próxima factura de renovación.
@@ -4463,19 +4504,38 @@ es:
         title: Elementos de navegación para %{name}
       new:
         title: Nuevo elemento de navegación para %{name}
+      route_groups:
+        billing_buyer: Facturación para miembros
+        billing_management: Gestión de facturación
+        geography: Geografía
+        host_dashboard: Panel del anfitrión
+        joatu: Joatu
+        other: Otros
+        public: Páginas públicas
+        safety: Seguridad
       route_names:
         agreements: Acuerdos
         billing_agreement_requirements: Condiciones de compra
         billing_allowances: Cuotas y uso
+        billing_billing_addresses: Direcciones de facturación
+        billing_catalog: Catálogo de planes
         billing_credit_accounts: Cuentas de crédito de la tienda
+        billing_entitlements: Mis derechos de acceso
         billing_events: Eventos de facturación
         billing_hosted_billing: Facturación alojada
         billing_hosted_platforms: Plataformas alojadas
+        billing_hosting_plan: Plan de alojamiento
+        billing_hub: Inicio de facturación
+        billing_notification_preferences: Notificaciones de facturación
+        billing_offline_payments: Pagos fuera de línea
+        billing_orders: Pedidos
         billing_plans: Planes de facturación
         billing_processor_settings: Métodos de pago
         billing_promotions: Códigos promocionales
+        billing_refund_requests: Solicitudes de reembolso
         billing_sales: Ventas
         billing_subscribers: Suscriptores
+        billing_subscriptions: Mis suscripciones
         billing_tax_registrations: Registros de impuestos
         calendars: Calendarios
         calls_for_interest: Convocatorias de interés
@@ -4490,6 +4550,7 @@ es:
         geography_settlements: Localidades
         geography_states: Estados
         host_dashboard: Panel de control del anfitrión
+        host_dashboard_billing: Resumen de facturación
         host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
@@ -4499,6 +4560,7 @@ es:
         joatu_hub: Centro Joatu
         joatu_offers: Ofertas
         joatu_requests: Solicitudes
+        metrics_billing_reports: Informes de facturación
         metrics_reports: Informes de métricas
         navigation_areas: Áreas de navegación
         oauth_applications: Aplicaciones OAuth
@@ -7386,6 +7448,7 @@ es:
         plan
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
+      already_on_the_plan: ya está en el plan; edítelo en su lugar
       already_pending: Ya hay una solicitud de reembolso en espera para este pedido.
       blank: no puede estar en blanco
       cannot_be_the_host: no puede ser la plataforma anfitriona
@@ -7691,6 +7754,13 @@ es:
       type: Tipo
     type_select_field: Seleccione el tipo para este campo.
   host_dashboard:
+    billing:
+      intro: Configure la facturación y luego gestione planes, ventas y suscriptores
+        desde aquí.
+      loading: Cargando...
+      nav_label: Pantallas de facturación
+      overview: Resumen
+      page_title: Facturación
     index:
       better_together: Mejor juntos
       content: Contenido

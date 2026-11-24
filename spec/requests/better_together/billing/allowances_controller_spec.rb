@@ -42,7 +42,7 @@ RSpec.describe BetterTogether::Billing::AllowancesController do
     it 'changes the mode of one quota type for the platform' do
       patch type_path('media_storage'), params: { mode: 'soft' }
 
-      expect(response).to redirect_to(list_path)
+      expect(response).to redirect_to_billing_screen(list_path)
       expect(host_platform.reload.quota_enforcement_mode('media_storage')).to eq('soft')
       expect(host_platform.quota_enforcement_mode('ai_translation_tokens')).to eq('shadow')
     end

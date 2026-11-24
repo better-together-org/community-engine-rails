@@ -55,11 +55,39 @@ RSpec.describe BetterTogether::Billing::SubscriptionsController do
     it 'cancels at the end of the paid period, and offers to keep it afterwards' do
       patch action_path(:cancel)
 
-      expect(response).to redirect_to(show_path)
+      expect(response).to redirect_to_billing_screen(show_path)
       expect(term.reload.pay_subscription.ends_at).to eq(Time.utc(2027, 2, 28, 15))
       get show_path
       expect(response.body).to include('subscription-resume-btn')
       expect(response.body).not_to include('subscription-cancel-btn')
+    end
+
+    it 'sends the back button to the screen the subscription was opened from', :aggregate_failures do
+      hub = "/#{locale}/billing/"
+      get "#{show_path}?back_to=#{CGI.escape(hub)}"
+      expect(response.body).to include("href=\"#{hub}\"")
+
+      get show_path
+      expect(response.body).to include("href=\"/#{locale}/billing/subscriptions\"")
+    end
+
+    it 'keeps where it was opened from through an action, and offers it on the next screen', :aggregate_failures do
+      hub = "/#{locale}/billing/"
+      patch "#{action_path(:cancel)}?back_to=#{CGI.escape(hub)}"
+
+      expect(response).to redirect_to("#{show_path}?back_to=#{CGI.escape(hub)}")
+      follow_redirect!
+      expect(response.body).to include("href=\"#{hub}\"")
+      expect(response.body).to include("back_to=#{CGI.escape(hub)}")
+    end
+
+    it 'asks before cancelling, resuming and changing the plan or the way of paying', :aggregate_failures do
+      get show_path
+      expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscription-cancel-btn"}m)
+
+      patch action_path(:cancel)
+      get show_path
+      expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscription-resume-btn"}m)
     end
 
     it 'resumes a cancellation' do
@@ -72,7 +100,7 @@ RSpec.describe BetterTogether::Billing::SubscriptionsController do
     it 'says so when there is nothing to resume' do
       patch action_path(:resume)
 
-      expect(response).to redirect_to(show_path)
+      expect(response).to redirect_to_billing_screen(show_path)
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.subscriptions.cannot_resume'))
     end
 

@@ -502,6 +502,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
             get 'membership-review', to: 'host_dashboard#membership_review', as: 'host_dashboard_membership_review'
             get 'safety-review', to: 'host_dashboard#safety_review', as: 'host_dashboard_safety_review'
+            get 'billing', to: 'host_dashboard#billing', as: 'host_dashboard_billing'
             get 'federation-review',
                 to: 'host_dashboard#platform_connection_review',
                 as: 'host_dashboard_platform_connection_review'

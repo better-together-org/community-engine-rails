@@ -30,7 +30,7 @@ RSpec.describe BetterTogether::Billing::OrderPaymentsController do
 
       post payments_path, params: { payment_method: 'store_credit', amount: '15.00', token: 'a' }
 
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(order.reload).to be_partially_paid
       expect(order.balance_cents).to eq(3000)
       expect(order.payments.find_by(processor: 'store_credit')).to have_attributes(amount_cents: 1500, status: 'succeeded')
@@ -52,7 +52,7 @@ RSpec.describe BetterTogether::Billing::OrderPaymentsController do
 
       expect { post payments_path, params: { payment_method: 'store_credit', amount: '10.00', token: ' ' } }
         .not_to(change { order.payments.count })
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
     end
 
     it 'uses all the credit it can when no amount is typed, and shows one card per waiting cash part' do
@@ -78,7 +78,7 @@ RSpec.describe BetterTogether::Billing::OrderPaymentsController do
 
     it 'refuses an amount that is more than is left, or credit the buyer does not have, with a message and no payment' do
       post payments_path, params: { payment_method: 'store_credit', amount: '10.00', token: 'a' }
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(flash[:alert]).to be_present
 
       post payments_path, params: { payment_method: 'cash', amount: '999.00', token: 'b' }

@@ -54,6 +54,20 @@ RSpec.describe BetterTogether::Billing::SalesController do
       expect(response.body).to start_with('%PDF')
     end
 
+    it 'sends the invoice back button to the screen it was opened from, and only to a billing screen of this site', :aggregate_failures do
+      back = "/#{locale}/billing/subscribers/abc"
+      get "#{sale_path(order)}?back_to=#{CGI.escape(back)}"
+      expect(response.body).to include("href=\"#{back}\"")
+
+      get sale_path(order)
+      expect(response.body).to include("href=\"#{sales_path}\"")
+
+      get "#{sale_path(order)}?back_to=#{CGI.escape('//evil.example/en/billing/')}"
+      expect(response.body).to include("href=\"#{sales_path}\"")
+      get "#{sale_path(order)}?back_to=#{CGI.escape('https://evil.example')}"
+      expect(response.body).to include("href=\"#{sales_path}\"")
+    end
+
     it 'lists what the platform sells, with the buyer' do
       get sales_path
 

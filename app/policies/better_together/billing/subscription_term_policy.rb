@@ -24,6 +24,7 @@ module BetterTogether
       def waive? = manage_billing?
       def extend_grace? = manage_billing?
       def steward_cancel? = manage_billing?
+      def steward_resume? = manage_billing?
       def move_to_current_price? = manage_billing?
 
       def create? = false

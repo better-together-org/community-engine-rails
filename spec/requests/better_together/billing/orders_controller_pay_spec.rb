@@ -64,7 +64,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     it 'redirects to the processor\'s checkout' do
       post pay_path
 
-      expect(response).to redirect_to("https://fake.test/checkout/checkout:#{payment.id}")
+      expect(response).to redirect_to_billing_screen("https://fake.test/checkout/checkout:#{payment.id}")
     end
 
     it 'goes back to the order, with a message, when there is nothing to pay or the processor gives no safe address' do
@@ -73,7 +73,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
 
       post pay_path
 
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.orders.pay_unavailable'))
     end
 
@@ -82,7 +82,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
 
       get return_path(stripe_checkout_session_id: payment.reload.processor_session_reference)
 
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(flash[:notice]).to eq(I18n.t('better_together.billing.orders.return_paid'))
     end
 
@@ -98,7 +98,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     it 'does not believe a session that is not the one sent for this order' do
       get return_path(session_id: 'cs_someone_elses')
 
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.orders.pay_unavailable'))
       expect(adapter.calls.map(&:first)).not_to include(:sync_checkout_session)
     end

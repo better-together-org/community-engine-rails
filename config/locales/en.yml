@@ -1748,17 +1748,24 @@ en:
         recurring_participant_summary: Ongoing hosted access and stewardship support
       plan_grants:
         add: Add
+        add_confirm: Add this to the plan?
         add_feature: Access to a feature
         add_quota: More of a quota
         add_role: A role
+        add_storage: Extra storage
         added: Added to the plan.
-        amount_hint: In the quota’s own unit (bytes for storage, tokens for AI).
+        amount_hint: In the quota’s own unit, such as tokens for AI.
+        audience: People who already have this plan (%{count}) are updated within
+          a few minutes.
+        audience_none: Nobody has this plan yet, so nobody is affected.
+        edit_confirm: Change this amount?
         field_amount: Extra amount
         field_community: Community (if a community)
         field_feature: Feature
         field_level: Access level
         field_quota: Quota
         field_role: Role
+        field_storage: Storage
         field_where: Where
         intro: People who pay for this plan get these while it is paid. When it lapses,
           only what the plan itself gave is taken away; roles and access someone already
@@ -1777,8 +1784,10 @@ en:
         role_hint: Only roles that cannot manage things are offered.
         summary_feature: Access to %{feature} (%{level})
         summary_quota: "%{amount} %{unit} more of %{quota}"
+        summary_quota_size: "%{amount} more %{quota}"
         summary_role: The role %{role} in %{where}
         title: What this plan includes
+        updated: The amount was changed.
       plans:
         actions_heading: Actions
         add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
@@ -1854,6 +1863,7 @@ en:
         field_solidarity_description: Solidarity description
         field_solidarity_description_hint: Shown to potential subscribers to explain
           who this tier is for.
+        field_subscribers: Active subscribers
         field_support_tier: Support tier
         hosted_access_placeholder: Standard
         identifier_placeholder: e.g. hosted_stewardship_monthly
@@ -1927,6 +1937,7 @@ en:
         acknowledged_on: You accepted these limits on %{date}.
         available_anywhere: Anywhere
         available_only_in: Only in %{countries} (%{currencies})
+        back: Back to payment methods
         disclosure_country: It works only in %{countries}, in %{currencies}.
         disclosure_credit_expires: Each amount of credit can have its own expiry date;
           credit that expires first is spent first.
@@ -1944,12 +1955,14 @@ en:
         disclosure_title: Before you turn this on
         disclosure_untracked: The payment happens outside this platform. It cannot
           be tracked, so you confirm each one yourself.
+        edit_method: Edit %{method}
         field_enabled: Accept this payment method
         field_grant_on: Start access when the payment is
         field_grant_on_hint: A cheque can bounce. Waiting until it clears is safer.
         field_hold_hours: Hold an unpaid order for (hours)
         field_hold_hours_hint: After this long without payment, the order expires
           and what it held is released.
+        field_kind: Type
         field_method: Method
         field_purposes: Accept it for
         field_status: Status
@@ -1971,9 +1984,14 @@ en:
         how_to_pay: What buyers are told
         how_to_pay_hint: Shown to a buyer only on their own order, after they accept
           the terms. It is stored encrypted and never put in an email.
-        index_intro: Ways to be paid outside a payment processor. Each is installed
-          for every platform but works only after you turn it on.
+        index_intro: Every payment method installed here. Taken-directly methods (cash,
+          cheques, e-transfers, store credit) work only after you turn them on. A
+          payment service such as Stripe is set up by the deployment, so this page
+          shows whether it is available.
         index_title: Payment methods
+        kind_direct: Taken directly
+        kind_service: Payment service
+        managed_by_deployment: Set up by the deployment
         purpose_exchange: Exchanges
         purpose_one_time: One-time purchases
         purpose_subscription: Subscriptions and memberships
@@ -1981,6 +1999,8 @@ en:
         saved: Payment method saved.
         status_disabled: 'Off'
         status_enabled: 'On'
+        status_managed_off: Not available
+        status_managed_on: Enabled
         status_not_set_up: Not set up
       promotions:
         activate: Switch on
@@ -2095,11 +2115,16 @@ en:
         withdraw: Withdraw request
         withdrawn: Your refund request was withdrawn.
       requirements:
+        activated: The agreement is now in force.
         add: Add
         add_title: Add a requirement
         any: Any
         applies_to_everything: Everything the platform sells
+        back: Back to purchase terms
         created: Requirement added.
+        edit: Edit requirement
+        edit_agreement: Edit agreement
+        edit_title: Edit requirement
         field_agreement: Agreement
         field_applies_to: Applies to
         field_mode: How it applies
@@ -2108,14 +2133,17 @@ en:
         index_intro: Choose the agreements a buyer must accept before they pay. Defaults
           apply to everything; a plan or a payment method can add its own.
         index_title: Purchase terms
+        make_active: Make active
         mode_additional: Added to the defaults
         mode_replaces_default: Replaces the defaults
         none: No agreement is required yet. Nothing can be sold until there is one.
         remove: Remove
         removed: Requirement removed.
+        save: Save
         state_active: In force
         state_draft: Draft
         state_retired: Retired
+        updated: Requirement updated.
       sales:
         cancel_btn: Cancel this order
         cancel_confirm: Cancel this order? What it held will be released.
@@ -2160,10 +2188,13 @@ en:
         returned: The credit was given back to the buyer.
       subscribers:
         cancel_at_end: Cancel at the end of the period
+        cancel_at_end_confirm: Cancel this subscription at the end of the period they
+          have paid for?
         cancel_now: Cancel now
         cancel_now_confirm: End this subscription now? Nothing already paid is refunded.
         cancelled: The subscription is cancelled.
         extend: Give more time
+        extend_confirm: Give this subscriber more time before the subscription lapses?
         extend_days: Give more days before it lapses
         field_subscriber: Subscriber
         filter_active: Active
@@ -2178,10 +2209,15 @@ en:
           lapsed after.'
         index_title: Subscribers
         move_to_current_price: Move to the current price
+        move_to_current_price_confirm: Move this subscriber to the current price from
+          the next invoice?
         none: No subscribers match.
         price_line: Sold at %{price}. The plan costs %{current} today.
         price_moved: The subscriber is on the current price from the next invoice.
         refused: That could not be done for this subscription.
+        resume: Keep this subscription going
+        resume_confirm: Cancel the cancellation? The subscription will renew again.
+        resumed: The subscription will keep renewing.
         waive: Cover this period without payment
         waive_confirm: Cover the next period without payment? Its invoice is cancelled.
         waived: The period is covered.
@@ -2202,6 +2238,7 @@ en:
         field_through: Paid through
         index_title: Subscriptions
         invoice: Invoice %{number}
+        method_change_confirm: Pay later renewals this way?
         method_change_intro: Renewals are paid by %{method}. Choose another way for
           later renewals. An invoice already made keeps its method.
         method_change_label: Pay renewals by
@@ -2222,6 +2259,8 @@ en:
         period_waived: Covered
         periods_caption: Each period of this subscription and its invoice
         periods_title: Periods and invoices
+        plan_change_confirm: Change your plan? Check the choice and when it starts
+          before you confirm.
         plan_change_credit_note: Prorated difference for a plan change
         plan_change_credited: You are on the new plan. %{amount} was added to your
           store credit.
@@ -2255,8 +2294,11 @@ en:
         plan_change_when_next: From my next period (no charge now)
         plan_change_when_now: Now (prorated for the rest of this period)
         plan_change_withdraw: Keep my current plan
+        plan_change_withdraw_confirm: Take back the plan change?
         plan_change_withdrawn: Your plan change was cancelled.
         resume: Keep my subscription
+        resume_confirm: Keep your subscription going? It will renew again at the end
+          of this period.
         resumed: Your subscription will continue.
         review_intro: The terms for this subscription changed. Accept them and we
           will make your next renewal invoice.
@@ -4420,19 +4462,38 @@ en:
         title: Navigation Items for %{name}
       new:
         title: New Navigation Item for %{name}
+      route_groups:
+        billing_buyer: Billing for members
+        billing_management: Billing management
+        geography: Geography
+        host_dashboard: Host dashboard
+        joatu: Joatu
+        other: Other
+        public: Public pages
+        safety: Safety
       route_names:
         agreements: Agreements
         billing_agreement_requirements: Purchase terms
         billing_allowances: Allowances and usage
+        billing_billing_addresses: Billing addresses
+        billing_catalog: Plan catalog
         billing_credit_accounts: Store credit accounts
+        billing_entitlements: My entitlements
         billing_events: Billing events
         billing_hosted_billing: Hosted billing
         billing_hosted_platforms: Hosted platforms
+        billing_hosting_plan: Hosting plan
+        billing_hub: Billing home
+        billing_notification_preferences: Billing notifications
+        billing_offline_payments: Offline payments
+        billing_orders: Orders
         billing_plans: Billing Plans
         billing_processor_settings: Payment Methods
         billing_promotions: Promotion codes
+        billing_refund_requests: Refund requests
         billing_sales: Sales
         billing_subscribers: Subscribers
+        billing_subscriptions: My subscriptions
         billing_tax_registrations: Tax registrations
         calendars: Calendars
         calls_for_interest: Calls for Interest
@@ -4447,6 +4508,7 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_billing: Billing overview
         host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
@@ -4456,6 +4518,7 @@ en:
         joatu_hub: Joatu Hub
         joatu_offers: Offers
         joatu_requests: Requests
+        metrics_billing_reports: Billing reports
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         oauth_applications: OAuth Applications
@@ -7263,6 +7326,7 @@ en:
       add_on_locked_by_orders: cannot be changed once orders include this plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
+      already_on_the_plan: is already on the plan; edit it instead
       already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
       cannot_be_the_host: cannot be the host platform
@@ -7563,6 +7627,12 @@ en:
       type: Type
     type_select_field: Select the type for this field.
   host_dashboard:
+    billing:
+      intro: Set up billing, then manage plans, sales and subscribers from here.
+      loading: Loading...
+      nav_label: Billing screens
+      overview: Overview
+      page_title: Billing
     index:
       better_together: Better together
       content: Content

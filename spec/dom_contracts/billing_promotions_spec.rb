@@ -57,12 +57,4 @@ RSpec.describe 'Billing promotions DOM contract', type: :request do # rubocop:di
     expect_ids('billing-promotion-created-page', 'billing-promotion-code-warning', 'billing-promotion-code-display',
                'billing-promotion-done-btn')
   end
-
-  it 'links to the promotions from the steward\'s credit accounts' do
-    sign_in steward_user
-
-    get "/#{locale}/billing/credit_accounts"
-
-    expect_ids('billing-promotions-link')
-  end
 end
