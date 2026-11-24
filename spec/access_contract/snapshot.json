@@ -67,9 +67,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -114,9 +114,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -284,9 +284,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -331,9 +331,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -566,9 +566,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -660,9 +660,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",

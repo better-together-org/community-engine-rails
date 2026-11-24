@@ -5,6 +5,30 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Community, :skip_host_setup do
   subject(:community) { build(:better_together_community) }
 
+  describe 'creator membership' do
+    it 'gives the creator an explicit, active Organizer membership' do
+      creator = create(:better_together_person)
+      community = create(:better_together_community, creator:)
+
+      membership = community.person_community_memberships.find_by(member: creator)
+      expect(membership).to be_active
+      expect(membership.role.identifier).to eq('community_organizer')
+    end
+
+    it 'adds no membership when there is no creator' do
+      community = create(:better_together_community)
+
+      expect(community.person_community_memberships).to be_empty
+    end
+
+    it 'does not duplicate the membership on later saves' do
+      community = create(:better_together_community, :creator)
+
+      expect { community.update!(description: 'changed') }
+        .not_to change(BetterTogether::PersonCommunityMembership, :count)
+    end
+  end
+
   describe 'Factory' do
     it 'has a valid factory' do
       expect(community).to be_valid
