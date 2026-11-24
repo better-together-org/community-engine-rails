@@ -8,8 +8,8 @@ Items still marked open need an answer before the phase that depends on them.
 - The new purchasable is named `Product`.
 - A top-up lasts until used by default, and each top-up product can be configured instead to last for a fixed term.
 - A buyer can order several units of a product on one line. Grants multiply by quantity.
-- Ticket types are a kind of `Product`, like other one-off purchasables. A product whose behaviour is not standard carries an extension record that
-  holds its own attributes and behaviour (for tickets, `Billing::ProductTicketType`). Nothing ticket-specific lives on the product table itself.
+- Ticket types are a subtype of `Product`, like other one-off purchasables, using single table inheritance. The subclass carries the behaviour, and a
+  detail record holds the subtype's own attributes (for tickets, `Billing::ProductTicketType`). Nothing ticket-specific lives on the product table.
 - Add-ons are not a type. They are one case of a general **dependent purchases** mechanism: any purchasable can require that the buyer holds, or is
   ordering, some other purchasable. It applies to plans, products, ticket types and later purchasables alike. Both "must already hold" and "or is buying
   it now" are available and configurable per rule. Examples: a gala ticket only for people ordering or already holding a conference registration
@@ -88,12 +88,13 @@ Keep `Plan` as the recurring subscription offer. Everything else sold becomes a 
   Plan keeps its embedded price for now and can move to this table later without affecting the order engine.
 - **Shared parts** pulled out of Plan into concerns used by both Plan and Product: catalog listing and restriction, processor mirror and lock rules,
   translated presentation, agreement targeting. This shrinks Plan without changing its schema first.
-- **Product extensions.** A product has a `kind` (standard, ticket type, and later others) and, for a non-standard kind, one extension record in its own
-  table, registered by kind the same way purchasable types are allow-listed. The extension supplies the behaviour the purchasable contract asks of
-  the product: for a ticket type, `reserve!` and `release!` against capacity, `fulfil` creating the registration, `revoke` cancelling it, and
-  "does this person hold you" meaning a valid registration. A standard product (a top-up, a one-time add-on) needs no extension and fulfils through
-  its grants. The extension's attributes for tickets are expected to include the event or occurrence, capacity, per-person limit and sales window;
-  they are designed with D7, not in this stack. This stack builds only the hook and the registry, with a test extension in specs.
+- **Product subtypes (STI).** `Product` is the standard product (a top-up or one-time add-on), fulfilled through its grants. A non-standard kind is a
+  subclass, such as `Billing::Products::Ticket`, that overrides the hooks the purchasable contract asks of a product: for a ticket, `reserve!` and
+  `release!` against capacity, `fulfil` creating the registration, `revoke` cancelling it, and "does this person hold you" meaning a valid
+  registration. Attributes that only one subtype has live in a `has_one` detail record, so the shared table has no empty columns. For tickets they are
+  expected to include the event or occurrence, capacity, per-person limit and sales window, and are designed with D7, not in this stack. The `type`
+  column is only ever set from an allow-list of subclasses (never from a parameter), and line items and translations store the base class name, so
+  one allow-list entry for `Billing::Product` covers every subclass. This stack builds the base class and the subtype seam, with a test subclass in specs.
 - **Purchasable contract** gains fulfilment hooks, so the order engine never tests a class: what happens when an order line is paid
   (`fulfil`), refunded or cancelled (`revoke`), and what purpose the line implies. Plan answers "start a subscription". Product answers "grant
   these allowances for the quantity bought". Ticket types and donations answer in their own way later.
@@ -197,8 +198,8 @@ Not translatable, on purpose: `identifier`, the Stripe `lookup_key`, processor p
 length, quantity limits, the requirement mode and scope, and the grant parameters (they are structured data, and the readable sentence is built from
 I18n). Order and entitlement records hold no authored text.
 
-Ticket types are Products, so they take `name`, `description` and `summary` from the product and need no separate copy. Any text the ticket
-extension adds (for example attendee instructions such as "what to bring") is decided with D7, as text if it is more than a line, and is outside this
+Ticket types are a Product subclass, so they take `name`, `description` and `summary` from the product and need no separate copy. Any text the ticket
+detail record adds (for example attendee instructions such as "what to bring") is decided with D7, as text if it is more than a line, and is outside this
 stack.
 
 ### Static I18n keys needed in all four locales
@@ -230,8 +231,9 @@ Answered: name (`Product`), top-up lifetime (until used by default, fixed term p
 
 1. **Recurring extras.** Is a monthly extra (seats, storage) ever sold? If so it stays a recurring Plan that depends on another plan through a purchase
    requirement, and a later change maps it to a Stripe subscription item. Not part of this work.
-2. **Extension shape.** Ticket types are decided: a kind of Product with an extension record. Still to confirm is whether top-ups also get an
-   extension, or keep lifetime on the product because any product with grants can have a lifetime. The plan keeps it on the product.
+2. **Subtype shape.** Ticket types are decided: an STI subclass of Product with a detail record. Still to confirm is whether top-ups become a
+   subclass too, or stay the standard product with lifetime on the product because any product with grants can have a lifetime. The plan keeps it on the
+   product.
 3. **Migration policy.** Confirm new migrations rather than editing unreleased ones, and whether to squash before merging to main.
 4. **Revoking a dependent.** The default when a prerequisite is refunded or ends: keep the dependent, or revoke it? The plan makes it a per-rule
    setting. A default is needed (proposal: keep, except for tickets, which revoke).
