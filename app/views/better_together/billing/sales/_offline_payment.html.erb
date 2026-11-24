@@ -83,7 +83,7 @@
                       data: billing_refund_confirm_data(order, payment, 'refund_confirm') do %>
           <%= hidden_field_tag :payment_id, payment.id %>
           <%= hidden_field_tag :token, SecureRandom.hex(8) %>
-          <div class="row g-2">
+          <div class="row g-2 align-items-end">
             <div class="col-md-4">
               <%= label_tag "refund_amount_#{offline.id}", t('better_together.billing.sales.refund_amount_label', max: billing_amount(payment.refundable_cents, payment.currency)),
                             class: 'form-label' %>

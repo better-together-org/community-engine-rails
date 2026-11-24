@@ -140,6 +140,12 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
       expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscriber-price-btn"}m)
     end
 
+    it 'refuses to move one who already pays the current price' do
+      patch action_path(:move_to_current_price)
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.subscribers.refused'))
+    end
+
     it 'moves one to the current price' do
       sub_plan.update_columns(amount_cents: 4000) # rubocop:disable Rails/SkipsModelValidations
 

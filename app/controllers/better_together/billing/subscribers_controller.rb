@@ -59,6 +59,8 @@ module BetterTogether
         authorize @term
         Subscriptions::MoveToCurrentPrice.call(term: @term)
         back(:notice, 'price_moved')
+      rescue Subscriptions::MoveToCurrentPrice::Refused
+        back(:alert, 'refused')
       end
 
       private
