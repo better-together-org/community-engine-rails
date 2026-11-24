@@ -28,7 +28,8 @@
                     form: { data: { turbo_confirm: t('better_together.billing.subscriptions.cancel_confirm') } } %>
     <% elsif billing_subscription_resumable?(subscription) %>
       <%= button_to t('better_together.billing.subscriptions.resume'), resume_billing_subscription_path(@term, locale: I18n.locale), method: :patch,
-                    class: 'btn btn-outline-primary', id: 'subscription-resume-btn' %>
+                    class: 'btn btn-outline-primary', id: 'subscription-resume-btn',
+                    form: { data: { turbo_confirm: t('better_together.billing.subscriptions.resume_confirm') } } %>
     <% end %>
   </div>
 
@@ -38,7 +39,8 @@
       <div class="card-body">
         <% if @method_options.any? %>
           <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.method_change_intro', method: billing_payment_method_label(@term.payment_method)) %></p>
-          <%= form_with url: change_method_billing_subscription_path(@term, locale: I18n.locale), method: :patch, id: 'subscription-method-change-form', class: 'row g-2' do %>
+          <%= form_with url: change_method_billing_subscription_path(@term, locale: I18n.locale), method: :patch, id: 'subscription-method-change-form', class: 'row g-2',
+                    data: { turbo_confirm: t('better_together.billing.subscriptions.method_change_confirm') } do %>
             <div class="col-md-8">
               <%= label_tag 'subscription-method-change-select', t('better_together.billing.subscriptions.method_change_label'), class: 'form-label' %>
               <%= select_tag :payment_method, options_for_select(@method_options.map { |choice| [billing_payment_method_label(choice.name), choice.name] }),
@@ -67,10 +69,12 @@
             <% end %>
           </p>
           <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale),
-                        method: :delete, id: 'subscription-plan-change-withdraw-btn', class: 'btn btn-outline-secondary' %>
+                        method: :delete, id: 'subscription-plan-change-withdraw-btn', class: 'btn btn-outline-secondary',
+                        form: { data: { turbo_confirm: t('better_together.billing.subscriptions.plan_change_withdraw_confirm') } } %>
         <% elsif @plan_options.any? %>
           <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.plan_change_intro') %></p>
-          <%= form_with url: change_plan_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-plan-change-form', class: 'row g-2' do %>
+          <%= form_with url: change_plan_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-plan-change-form', class: 'row g-2',
+                    data: { turbo_confirm: t('better_together.billing.subscriptions.plan_change_confirm') } do %>
             <div class="col-md-8">
               <%= label_tag :plan_id, t('better_together.billing.subscriptions.plan_change_label'), class: 'form-label' %>
               <%= select_tag :plan_id, options_for_select(@plan_options.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }),

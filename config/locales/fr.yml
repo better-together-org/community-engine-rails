@@ -2231,11 +2231,15 @@ fr:
         returned: Le crédit a été rendu à l'acheteur.
       subscribers:
         cancel_at_end: Annuler à la fin de la période
+        cancel_at_end_confirm: Annuler cet abonnement à la fin de la période déjà
+          payée ?
         cancel_now: Annuler maintenant
         cancel_now_confirm: Mettre fin à cet abonnement maintenant ? Rien de ce qui
           a été payé n’est remboursé.
         cancelled: L’abonnement est annulé.
         extend: Accorder plus de temps
+        extend_confirm: Accorder plus de temps à cette personne avant la déchéance
+          de l’abonnement ?
         extend_days: Accorder plus de jours avant l’expiration
         field_subscriber: Abonné
         filter_active: Actifs
@@ -2250,10 +2254,15 @@ fr:
           délai supplémentaire, expiré ensuite.'
         index_title: Abonnés
         move_to_current_price: Passer au prix actuel
+        move_to_current_price_confirm: Passer cette personne au prix actuel dès la
+          prochaine facture ?
         none: Aucun abonné ne correspond.
         price_line: Vendu à %{price}. Le forfait coûte %{current} aujourd’hui.
         price_moved: L’abonné passe au prix actuel dès la prochaine facture.
         refused: Cela n’a pas pu être fait pour cet abonnement.
+        resume: Maintenir cet abonnement
+        resume_confirm: Annuler l’annulation ? L’abonnement sera de nouveau renouvelé.
+        resumed: L’abonnement continuera de se renouveler.
         waive: Couvrir cette période sans paiement
         waive_confirm: Couvrir la prochaine période sans paiement ? Sa facture est
           annulée.
@@ -2274,6 +2283,7 @@ fr:
         field_through: Payé jusqu’au
         index_title: Abonnements
         invoice: Facture %{number}
+        method_change_confirm: Payer les prochains renouvellements ainsi ?
         method_change_intro: Les renouvellements sont payés par %{method}. Choisissez
           un autre mode pour les prochains renouvellements. Une facture déjà émise
           garde son mode.
@@ -2297,6 +2307,8 @@ fr:
         period_waived: Couvert
         periods_caption: Chaque période de cet abonnement et sa facture
         periods_title: Périodes et factures
+        plan_change_confirm: Changer de forfait ? Vérifiez votre choix et sa date
+          d’effet avant de confirmer.
         plan_change_credit_note: Différence au prorata pour un changement de forfait
         plan_change_credited: Vous êtes sur le nouveau forfait. %{amount} a été ajouté
           à votre crédit de magasin.
@@ -2332,8 +2344,11 @@ fr:
         plan_change_when_next: À partir de ma prochaine période (aucun frais maintenant)
         plan_change_when_now: Maintenant (au prorata du reste de la période)
         plan_change_withdraw: Garder mon forfait actuel
+        plan_change_withdraw_confirm: Retirer le changement de forfait ?
         plan_change_withdrawn: Votre changement de forfait a été annulé.
         resume: Conserver mon abonnement
+        resume_confirm: Maintenir votre abonnement ? Il sera de nouveau renouvelé
+          à la fin de cette période.
         resumed: Votre abonnement continuera.
         review_intro: Les conditions de cet abonnement ont changé. Acceptez-les et
           nous créerons votre prochaine facture de renouvellement.

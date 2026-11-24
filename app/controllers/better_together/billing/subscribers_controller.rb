@@ -47,6 +47,14 @@ module BetterTogether
         back(:notice, 'cancelled')
       end
 
+      def resume
+        authorize @term, :steward_resume?
+        Subscriptions::Resume.call(term: @term)
+        back(:notice, 'resumed')
+      rescue Subscriptions::Resume::Refused
+        back(:alert, 'refused')
+      end
+
       def move_to_current_price
         authorize @term
         Subscriptions::MoveToCurrentPrice.call(term: @term)

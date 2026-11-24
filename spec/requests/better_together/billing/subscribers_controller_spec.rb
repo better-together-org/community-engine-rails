@@ -96,6 +96,33 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
       expect(term.reload.grace_ends_at).to be > Time.utc(2027, 3, 7, 15)
     end
 
+    it 'asks before every change to an ongoing subscription', :aggregate_failures do
+      get show_path
+
+      %w[subscriber-waive-btn subscriber-price-btn subscriber-cancel-btn subscriber-cancel-now-btn].each do |id|
+        expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="#{id}"}m)
+      end
+      expect(response.body).to match(/id="subscriber-extend-form"[^>]*data-turbo-confirm|data-turbo-confirm[^>]*id="subscriber-extend-form"/)
+    end
+
+    it 'lets a steward reinstate a subscription cancelled at the end of its period', :aggregate_failures do
+      patch action_path(:cancel)
+      get show_path
+      expect(response.body).to include('subscriber-resume-btn')
+      expect(response.body).not_to include('subscriber-cancel-btn')
+
+      patch action_path(:resume)
+
+      expect(term.reload.pay_subscription.ends_at).to be_nil
+      expect(response).to redirect_to_billing_screen(show_path)
+    end
+
+    it 'says so when there is nothing to reinstate' do
+      patch action_path(:resume)
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.subscribers.refused'))
+    end
+
     it 'cancels at the end of the period, or now' do
       patch action_path(:cancel)
       expect(term.reload.pay_subscription.ends_at).to eq(Time.utc(2027, 2, 28, 15))

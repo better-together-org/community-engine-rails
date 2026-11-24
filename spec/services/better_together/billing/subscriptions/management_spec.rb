@@ -60,6 +60,17 @@ RSpec.describe 'Managing subscriptions' do # rubocop:disable RSpec/DescribeClass
       expect(subscription).to have_attributes(status: 'active', ends_at: nil)
     end
 
+    it 'brings back the renewal the cancellation lapsed, so it is billed again instead of skipped', :aggregate_failures do
+      subscriptions::GenerateRenewal.call(term:, now: period_end - 3.days)
+      subscriptions::Cancel.call(term:)
+      expect(term.periods.reload.last).to have_attributes(sequence: 1, status: 'lapsed')
+
+      described_class.call(term:)
+
+      expect(term.periods.reload.map(&:sequence)).to eq([0])
+      expect(subscriptions::GenerateRenewal.call(term:, now: period_end - 3.days)).to have_attributes(sequence: 1, status: 'pending')
+    end
+
     it 'refuses a subscription that was not cancelled, and one that has ended' do
       expect { described_class.call(term:) }.to raise_error(described_class::Refused)
 

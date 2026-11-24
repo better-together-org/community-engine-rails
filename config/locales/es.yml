@@ -2182,11 +2182,15 @@ es:
         returned: Se devolvió el crédito al comprador.
       subscribers:
         cancel_at_end: Cancelar al final del periodo
+        cancel_at_end_confirm: "¿Cancelar esta suscripción al final del periodo que
+          ya pagó?"
         cancel_now: Cancelar ahora
         cancel_now_confirm: "¿Terminar esta suscripción ahora? No se reembolsa nada
           de lo ya pagado."
         cancelled: La suscripción está cancelada.
         extend: Dar más tiempo
+        extend_confirm: "¿Dar más tiempo a esta persona antes de que la suscripción
+          caduque?"
         extend_days: Dar más días antes de que caduque
         field_subscriber: Suscriptor
         filter_active: Activas
@@ -2201,10 +2205,15 @@ es:
           adicional, caducada después.'
         index_title: Suscriptores
         move_to_current_price: Pasar al precio actual
+        move_to_current_price_confirm: "¿Pasar a esta persona al precio actual desde
+          la próxima factura?"
         none: Ningún suscriptor coincide.
         price_line: Vendida a %{price}. El plan cuesta %{current} hoy.
         price_moved: El suscriptor pasa al precio actual desde la próxima factura.
         refused: No se pudo hacer eso con esta suscripción.
+        resume: Mantener esta suscripción
+        resume_confirm: "¿Anular la cancelación? La suscripción volverá a renovarse."
+        resumed: La suscripción seguirá renovándose.
         waive: Cubrir este periodo sin pago
         waive_confirm: "¿Cubrir el siguiente periodo sin pago? Su factura se cancela."
         waived: El periodo está cubierto.
@@ -2224,6 +2233,7 @@ es:
         field_through: Pagado hasta
         index_title: Suscripciones
         invoice: Factura %{number}
+        method_change_confirm: "¿Pagar las próximas renovaciones de esta forma?"
         method_change_intro: Las renovaciones se pagan con %{method}. Elija otra forma
           para las próximas renovaciones. Una factura ya emitida conserva su método.
         method_change_label: Pagar las renovaciones con
@@ -2244,6 +2254,8 @@ es:
         period_waived: Cubierto
         periods_caption: Cada periodo de esta suscripción y su factura
         periods_title: Periodos y facturas
+        plan_change_confirm: "¿Cambiar su plan? Revise la elección y cuándo empieza
+          antes de confirmar."
         plan_change_credit_note: Diferencia prorrateada por un cambio de plan
         plan_change_credited: Ya está en el nuevo plan. Se añadieron %{amount} a su
           crédito de tienda.
@@ -2277,8 +2289,11 @@ es:
         plan_change_when_next: Desde mi próximo periodo (sin cargo ahora)
         plan_change_when_now: Ahora (prorrateado por el resto del periodo)
         plan_change_withdraw: Mantener mi plan actual
+        plan_change_withdraw_confirm: "¿Retirar el cambio de plan?"
         plan_change_withdrawn: Se canceló su cambio de plan.
         resume: Mantener mi suscripción
+        resume_confirm: "¿Mantener su suscripción? Se renovará de nuevo al final de
+          este periodo."
         resumed: Tu suscripción continuará.
         review_intro: Los términos de esta suscripción cambiaron. Acéptalos y haremos
           tu próxima factura de renovación.

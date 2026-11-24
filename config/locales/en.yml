@@ -2178,10 +2178,13 @@ en:
         returned: The credit was given back to the buyer.
       subscribers:
         cancel_at_end: Cancel at the end of the period
+        cancel_at_end_confirm: Cancel this subscription at the end of the period they
+          have paid for?
         cancel_now: Cancel now
         cancel_now_confirm: End this subscription now? Nothing already paid is refunded.
         cancelled: The subscription is cancelled.
         extend: Give more time
+        extend_confirm: Give this subscriber more time before the subscription lapses?
         extend_days: Give more days before it lapses
         field_subscriber: Subscriber
         filter_active: Active
@@ -2196,10 +2199,15 @@ en:
           lapsed after.'
         index_title: Subscribers
         move_to_current_price: Move to the current price
+        move_to_current_price_confirm: Move this subscriber to the current price from
+          the next invoice?
         none: No subscribers match.
         price_line: Sold at %{price}. The plan costs %{current} today.
         price_moved: The subscriber is on the current price from the next invoice.
         refused: That could not be done for this subscription.
+        resume: Keep this subscription going
+        resume_confirm: Cancel the cancellation? The subscription will renew again.
+        resumed: The subscription will keep renewing.
         waive: Cover this period without payment
         waive_confirm: Cover the next period without payment? Its invoice is cancelled.
         waived: The period is covered.
@@ -2220,6 +2228,7 @@ en:
         field_through: Paid through
         index_title: Subscriptions
         invoice: Invoice %{number}
+        method_change_confirm: Pay later renewals this way?
         method_change_intro: Renewals are paid by %{method}. Choose another way for
           later renewals. An invoice already made keeps its method.
         method_change_label: Pay renewals by
@@ -2240,6 +2249,8 @@ en:
         period_waived: Covered
         periods_caption: Each period of this subscription and its invoice
         periods_title: Periods and invoices
+        plan_change_confirm: Change your plan? Check the choice and when it starts
+          before you confirm.
         plan_change_credit_note: Prorated difference for a plan change
         plan_change_credited: You are on the new plan. %{amount} was added to your
           store credit.
@@ -2273,8 +2284,11 @@ en:
         plan_change_when_next: From my next period (no charge now)
         plan_change_when_now: Now (prorated for the rest of this period)
         plan_change_withdraw: Keep my current plan
+        plan_change_withdraw_confirm: Take back the plan change?
         plan_change_withdrawn: Your plan change was cancelled.
         resume: Keep my subscription
+        resume_confirm: Keep your subscription going? It will renew again at the end
+          of this period.
         resumed: Your subscription will continue.
         review_intro: The terms for this subscription changed. Accept them and we
           will make your next renewal invoice.

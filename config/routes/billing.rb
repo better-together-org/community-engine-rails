@@ -135,6 +135,7 @@ concern :billing_subscriptions do
         patch :waive
         patch :extend_grace
         patch :cancel
+        patch :resume
         patch :move_to_current_price
       end
     end
