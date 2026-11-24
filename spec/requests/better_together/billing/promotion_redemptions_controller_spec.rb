@@ -32,7 +32,7 @@ RSpec.describe BetterTogether::Billing::PromotionRedemptionsController do
     it 'adds the credit and goes back to the credit page' do
       post redemptions_path, params: { promotion_code: made.code }
 
-      expect(response).to redirect_to(credit_path)
+      expect(response).to redirect_to_billing_screen(credit_path)
       follow_redirect!
       expect_html_content(I18n.t('better_together.billing.promotions.redeemed'))
       account = host_platform.billing_credit_accounts.find_by(holder: buyer, currency: 'USD')

@@ -55,7 +55,7 @@ RSpec.describe BetterTogether::Billing::SubscriptionsController do
     it 'cancels at the end of the paid period, and offers to keep it afterwards' do
       patch action_path(:cancel)
 
-      expect(response).to redirect_to(show_path)
+      expect(response).to redirect_to_billing_screen(show_path)
       expect(term.reload.pay_subscription.ends_at).to eq(Time.utc(2027, 2, 28, 15))
       get show_path
       expect(response.body).to include('subscription-resume-btn')
@@ -72,7 +72,7 @@ RSpec.describe BetterTogether::Billing::SubscriptionsController do
     it 'says so when there is nothing to resume' do
       patch action_path(:resume)
 
-      expect(response).to redirect_to(show_path)
+      expect(response).to redirect_to_billing_screen(show_path)
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.subscriptions.cannot_resume'))
     end
 

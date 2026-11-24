@@ -86,7 +86,7 @@ RSpec.describe BetterTogether::Billing::AgreementRequirementsController do
         post path, params: params_for(target_plan_id: plan.id, purpose: 'ticket', payment_method: 'cash')
       end.to change(host_platform.billing_agreement_requirements, :count).by(1)
 
-      expect(response).to redirect_to(path)
+      expect(response).to redirect_to_billing_screen(path)
       expect(host_platform.billing_agreement_requirements.find_by(agreement:)).to have_attributes(target: plan, purpose: 'ticket',
                                                                                                   payment_method: 'cash')
     end
@@ -122,7 +122,7 @@ RSpec.describe BetterTogether::Billing::AgreementRequirementsController do
 
       expect { delete better_together.billing_agreement_requirement_path(requirement, locale:) }
         .to change(host_platform.billing_agreement_requirements, :count).by(-1)
-      expect(response).to redirect_to(path)
+      expect(response).to redirect_to_billing_screen(path)
     end
 
     it 'links each row to its agreement, edit and removal, and offers activation for a draft' do
@@ -150,7 +150,7 @@ RSpec.describe BetterTogether::Billing::AgreementRequirementsController do
       url = better_together.billing_agreement_requirement_path(requirement, locale:)
 
       patch url, params: { billing_agreement_requirement: { target_plan_id: plan.id, purpose: 'ticket' } }
-      expect(response).to redirect_to(path)
+      expect(response).to redirect_to_billing_screen(path)
       expect(requirement.reload).to have_attributes(target: plan, purpose: 'ticket')
 
       patch url, params: { billing_agreement_requirement: { purpose: 'barter' } }

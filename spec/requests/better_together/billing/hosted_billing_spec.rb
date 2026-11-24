@@ -58,7 +58,7 @@ RSpec.describe 'Hosted billing enablement', :skip_host_setup do
 
       post hosted_page, params: { mode: 'billing', hosted_platform_billing_agreement: '1' }
 
-      expect(response).to redirect_to(hosted_page)
+      expect(response).to redirect_to_billing_screen(hosted_page)
       expect(BetterTogether::Billing::HostedBilling.accepted?(hosted, :billing)).to be true
       expect(BetterTogether::Billing::HostedBilling.permits?(hosted, :local)).to be false
     end

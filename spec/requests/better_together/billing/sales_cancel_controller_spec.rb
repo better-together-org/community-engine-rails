@@ -41,7 +41,7 @@ RSpec.describe 'Returning payments and cancelling a sale' do # rubocop:disable R
 
     it 'returns the credit, then offers and performs the cancel' do
       post return_path
-      expect(response).to redirect_to(sale_path)
+      expect(response).to redirect_to_billing_screen(sale_path)
       expect(order.reload).to be_awaiting_payment
 
       get sale_path
@@ -49,7 +49,7 @@ RSpec.describe 'Returning payments and cancelling a sale' do # rubocop:disable R
       expect(response.body).not_to include('billing-sale-return-credit-btn')
 
       post cancel_path
-      expect(response).to redirect_to(sale_path)
+      expect(response).to redirect_to_billing_screen(sale_path)
       expect(order.reload).to be_cancelled
     end
 

@@ -49,7 +49,7 @@ RSpec.describe BetterTogether::Billing::SaleRefundsController, 'for store credit
     it 'puts the money back on the buyer\'s credit, in full when no amount is given' do
       post refund_path, params: { payment_id: payment.id, token: 'a', reason: 'requested_by_buyer' }
 
-      expect(response).to redirect_to(sale_path)
+      expect(response).to redirect_to_billing_screen(sale_path)
       expect(payment.reload.refunds.first).to have_attributes(amount_cents: 4500, status: 'succeeded', recorded_by: steward)
       expect(order.reload).to be_refunded
       expect(balance).to eq(6000)

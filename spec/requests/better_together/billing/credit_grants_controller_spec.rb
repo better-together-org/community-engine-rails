@@ -42,7 +42,7 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
       post grants_path, params: params_for(note: 'Volunteer thanks', expires_in_days: '30')
 
       account = account_for
-      expect(response).to redirect_to(better_together.billing_credit_account_path(account, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_credit_account_path(account, locale:))
       expect(account.balance_cents).to eq(2500)
       lot = account.lots.sole
       expect(lot).to have_attributes(origin: 'steward_grant', granted_by: steward, note: 'Volunteer thanks')
@@ -85,7 +85,7 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
     it 'never lets a steward give themselves credit' do
       post grants_path, params: params_for(steward)
 
-      expect(response).to redirect_to(better_together.billing_credit_accounts_path(locale:, person_id: steward.id))
+      expect(response).to redirect_to_billing_screen(better_together.billing_credit_accounts_path(locale:, person_id: steward.id))
       expect(account_for(steward)).to be_nil
     end
 

@@ -78,7 +78,7 @@ RSpec.describe 'BetterTogether::Metrics::BillingReports' do # rubocop:disable RS
         post metrics_billing_reports_path(locale:), params:
       end.to change(BetterTogether::Metrics::BillingReport, :count).by(1)
                                                                    .and have_enqueued_job(BetterTogether::Metrics::GenerateBillingReportJob)
-      expect(response).to redirect_to(metrics_billing_reports_path(locale:))
+      expect(response).to redirect_to_billing_screen(metrics_billing_reports_path(locale:))
     end
 
     it 'downloads the CSV', :aggregate_failures do

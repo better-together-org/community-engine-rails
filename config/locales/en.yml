@@ -1927,6 +1927,7 @@ en:
         acknowledged_on: You accepted these limits on %{date}.
         available_anywhere: Anywhere
         available_only_in: Only in %{countries} (%{currencies})
+        back: Back to payment methods
         disclosure_country: It works only in %{countries}, in %{currencies}.
         disclosure_credit_expires: Each amount of credit can have its own expiry date;
           credit that expires first is spent first.
@@ -1944,12 +1945,14 @@ en:
         disclosure_title: Before you turn this on
         disclosure_untracked: The payment happens outside this platform. It cannot
           be tracked, so you confirm each one yourself.
+        edit_method: Edit %{method}
         field_enabled: Accept this payment method
         field_grant_on: Start access when the payment is
         field_grant_on_hint: A cheque can bounce. Waiting until it clears is safer.
         field_hold_hours: Hold an unpaid order for (hours)
         field_hold_hours_hint: After this long without payment, the order expires
           and what it held is released.
+        field_kind: Type
         field_method: Method
         field_purposes: Accept it for
         field_status: Status
@@ -1971,10 +1974,14 @@ en:
         how_to_pay: What buyers are told
         how_to_pay_hint: Shown to a buyer only on their own order, after they accept
           the terms. It is stored encrypted and never put in an email.
-        index_intro: 'Take payment directly: cash, cheques, e-transfers and store
-          credit. Each is installed for every platform but works only after you turn
-          it on. Card payments through a service such as Stripe are set up separately.'
+        index_intro: Every payment method installed here. Taken-directly methods (cash,
+          cheques, e-transfers, store credit) work only after you turn them on. A
+          payment service such as Stripe is set up by the deployment, so this page
+          shows whether it is available.
         index_title: Payment methods
+        kind_direct: Taken directly
+        kind_service: Payment service
+        managed_by_deployment: Set up by the deployment
         purpose_exchange: Exchanges
         purpose_one_time: One-time purchases
         purpose_subscription: Subscriptions and memberships
@@ -1982,6 +1989,8 @@ en:
         saved: Payment method saved.
         status_disabled: 'Off'
         status_enabled: 'On'
+        status_managed_off: Not available
+        status_managed_on: Enabled
         status_not_set_up: Not set up
       promotions:
         activate: Switch on

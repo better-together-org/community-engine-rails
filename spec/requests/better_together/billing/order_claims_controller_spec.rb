@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::Billing::OrderClaimsController do
       clear_notices
       deliver_now { post claim_path, params: { reference: 'left it in the box' } }
 
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(offline.reload).to have_attributes(status: 'claimed', buyer_reference: 'left it in the box')
       expect(kinds_for(steward)).to eq(['payment_claimed'])
 
@@ -41,7 +41,7 @@ RSpec.describe BetterTogether::Billing::OrderClaimsController do
 
       post claim_path, params: { reference: 'late' }
 
-      expect(response).to redirect_to(order_path)
+      expect(response).to redirect_to_billing_screen(order_path)
       expect(offline.reload).to have_attributes(status: 'confirmed', buyer_reference: nil)
     end
 

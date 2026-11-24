@@ -45,7 +45,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
         post grants_path, params: { kind: 'membership_role', joinable: 'platform', role: supporter_role.identifier }
       end.to have_enqueued_job(BetterTogether::Billing::SyncPlanEntitlementsJob).with(sub_plan)
 
-      expect(response).to redirect_to(plan_path)
+      expect(response).to redirect_to_billing_screen(plan_path)
       expect(sub_plan.plan_grants.sole).to have_attributes(kind: 'membership_role',
                                                            parameters: {
                                                              'joinable' => 'platform', 'role' => supporter_role.identifier

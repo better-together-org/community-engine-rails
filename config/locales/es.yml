@@ -1926,6 +1926,7 @@ es:
         acknowledged_on: Aceptó estos límites el %{date}.
         available_anywhere: En cualquier lugar
         available_only_in: Solo en %{countries} (%{currencies})
+        back: Volver a los métodos de pago
         disclosure_country: Solo funciona en %{countries}, en %{currencies}.
         disclosure_credit_expires: Cada cantidad de crédito puede tener su propia
           fecha de vencimiento; el crédito que vence primero se gasta primero.
@@ -1943,6 +1944,7 @@ es:
         disclosure_title: Antes de activarlo
         disclosure_untracked: El pago ocurre fuera de esta plataforma. No se puede
           rastrear, así que usted confirma cada uno.
+        edit_method: Editar %{method}
         field_enabled: Aceptar este método de pago
         field_grant_on: Dar acceso cuando el pago esté
         field_grant_on_hint: Un cheque puede ser rechazado. Esperar a que se cobre
@@ -1950,6 +1952,7 @@ es:
         field_hold_hours: Retener un pedido sin pagar durante (horas)
         field_hold_hours_hint: Pasado este tiempo sin pago, el pedido caduca y se
           libera lo que retenía.
+        field_kind: Tipo
         field_method: Método
         field_purposes: Aceptar para
         field_status: Estado
@@ -1971,11 +1974,14 @@ es:
         how_to_pay: Lo que ven los compradores
         how_to_pay_hint: Se muestra al comprador solo en su propio pedido, después
           de aceptar las condiciones. Se guarda cifrado y nunca se incluye en un correo.
-        index_intro: 'Cobre directamente: efectivo, cheques, transferencias electrónicas
-          y crédito de la tienda. Cada método está instalado para todas las plataformas,
-          pero solo funciona una vez que lo activa. Los pagos con tarjeta mediante
-          un servicio como Stripe se configuran por separado.'
+        index_intro: Todos los métodos de pago instalados. Los de cobro directo (efectivo,
+          cheques, transferencias electrónicas, crédito de la tienda) solo funcionan
+          una vez que los activa. Un servicio de pago como Stripe lo configura la
+          instalación, así que esta página solo muestra si está disponible.
         index_title: Métodos de pago
+        kind_direct: Cobro directo
+        kind_service: Servicio de pago
+        managed_by_deployment: Configurado por la instalación
         purpose_exchange: Intercambios
         purpose_one_time: Compras únicas
         purpose_subscription: Suscripciones y membresías
@@ -1983,6 +1989,8 @@ es:
         saved: Método de pago guardado.
         status_disabled: Desactivado
         status_enabled: Activado
+        status_managed_off: No disponible
+        status_managed_on: Activado
         status_not_set_up: Sin configurar
       promotions:
         activate: Activar

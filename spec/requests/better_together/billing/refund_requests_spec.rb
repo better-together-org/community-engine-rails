@@ -75,7 +75,7 @@ RSpec.describe 'Billing refund requests', type: :request do # rubocop:disable RS
       clear_notices
       deliver_now { ask(amount: '10', details: 'Too small') }
 
-      expect(response).to redirect_to(better_together.billing_order_path(order, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_order_path(order, locale:))
       expect(request_model.last).to have_attributes(order:, requester: buyer, amount_cents: 1000, status: 'pending', details: 'Too small')
       expect(kinds_for(steward)).to include('refund_requested')
     end

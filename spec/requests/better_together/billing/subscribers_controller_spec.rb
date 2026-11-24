@@ -81,7 +81,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
     it 'covers the next period without payment' do
       patch action_path(:waive)
 
-      expect(response).to redirect_to(show_path)
+      expect(response).to redirect_to_billing_screen(show_path)
       expect(term.reload.periods.last).to be_waived
       expect(term.pay_subscription.current_period_end).to eq(Time.utc(2027, 3, 31, 15))
     end

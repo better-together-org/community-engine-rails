@@ -235,7 +235,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
       end.to change(BetterTogether::Billing::Plan, :count).by(1).and have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
 
       plan = BetterTogether::Billing::Plan.order(:created_at).last
-      expect(response).to redirect_to(plan_path(plan))
+      expect(response).to redirect_to_billing_screen(plan_path(plan))
       expect(plan).to have_attributes(platform: Current.platform || BetterTogether::Platform.find_by(host: true), sync_status: 'pending',
                                       processor_price_id: nil)
     end
@@ -379,7 +379,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
     it 'updates the name and redirects to show' do
       patch plan_path(billing_plan), params: { billing_plan: { name: 'Updated Name' } }
 
-      expect(response).to redirect_to(plan_path(billing_plan))
+      expect(response).to redirect_to_billing_screen(plan_path(billing_plan))
       expect(billing_plan.reload.name).to eq('Updated Name')
     end
 
@@ -451,7 +451,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
       expect { post sync_path }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob).with(billing_plan.id)
 
       expect(billing_plan.reload).to have_attributes(sync_status: 'pending', sync_error: nil)
-      expect(response).to redirect_to(plan_path(billing_plan))
+      expect(response).to redirect_to_billing_screen(plan_path(billing_plan))
     end
 
     it 'says so when the processor cannot push plans' do

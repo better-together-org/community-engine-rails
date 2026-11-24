@@ -82,7 +82,7 @@ RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
       post better_together.billing_checkout_path(locale:), params: with_token
 
       expect(BetterTogether::Billing::Order.count).to eq(1)
-      expect(response).to redirect_to(better_together.billing_order_path(BetterTogether::Billing::Order.last, locale:))
+      expect(response).to redirect_to_billing_screen(better_together.billing_order_path(BetterTogether::Billing::Order.last, locale:))
     end
   end
 

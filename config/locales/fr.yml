@@ -1966,6 +1966,7 @@ fr:
         acknowledged_on: Vous avez accepté ces limites le %{date}.
         available_anywhere: Partout
         available_only_in: Seulement en %{countries} (%{currencies})
+        back: Retour aux modes de paiement
         disclosure_country: Il ne fonctionne que dans %{countries}, en %{currencies}.
         disclosure_credit_expires: Chaque montant de crédit peut avoir sa propre date
           d'expiration ; le crédit qui expire en premier est dépensé en premier.
@@ -1985,6 +1986,7 @@ fr:
         disclosure_title: Avant de l’activer
         disclosure_untracked: 'Le paiement se fait en dehors de cette plateforme.
           Il ne peut pas être suivi : vous confirmez chacun vous-même.'
+        edit_method: Modifier %{method}
         field_enabled: Accepter ce mode de paiement
         field_grant_on: Donner l'accès quand le paiement est
         field_grant_on_hint: Un chèque peut être refusé. Attendre son encaissement
@@ -1992,6 +1994,7 @@ fr:
         field_hold_hours: Garder une commande impayée pendant (heures)
         field_hold_hours_hint: Passé ce délai sans paiement, la commande expire et
           ce qu'elle retenait est libéré.
+        field_kind: Type
         field_method: Mode
         field_purposes: Accepter pour
         field_status: État
@@ -2013,11 +2016,14 @@ fr:
         how_to_pay: Ce que les acheteurs voient
         how_to_pay_hint: Montré à un acheteur seulement sur sa propre commande, après
           qu'il a accepté les conditions. Stocké chiffré et jamais mis dans un courriel.
-        index_intro: 'Encaissez directement : espèces, chèques, virements Interac
-          et crédit en magasin. Chaque mode est installé pour toutes les plateformes,
-          mais ne fonctionne qu''une fois activé. Les paiements par carte via un service
-          comme Stripe se configurent séparément.'
+        index_intro: Tous les modes de paiement installés. Ceux encaissés directement
+          (espèces, chèques, virements Interac, crédit en magasin) ne fonctionnent
+          qu'une fois activés. Un service de paiement comme Stripe est configuré par
+          le déploiement; cette page indique donc seulement s'il est disponible.
         index_title: Modes de paiement
+        kind_direct: Encaissé directement
+        kind_service: Service de paiement
+        managed_by_deployment: Configuré par le déploiement
         purpose_exchange: Échanges
         purpose_one_time: Achats uniques
         purpose_subscription: Abonnements et adhésions
@@ -2025,6 +2031,8 @@ fr:
         saved: Mode de paiement enregistré.
         status_disabled: Désactivé
         status_enabled: Activé
+        status_managed_off: Non disponible
+        status_managed_on: Activé
         status_not_set_up: Non configuré
       promotions:
         activate: Activer

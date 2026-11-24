@@ -7,12 +7,10 @@
 
 <div id="billing-processor-setting-edit-page" class="container my-4">
   <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <%= link_to t('better_together.billing.processor_settings.index_title'), billing_processor_settings_path(locale: I18n.locale) %>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page"><%= billing_payment_method_label(name) %></li>
-    </ol>
+    <%= link_to billing_processor_settings_path(locale: I18n.locale), id: 'billing-processor-back-link', class: 'btn btn-link ps-0' do %>
+      <span aria-hidden="true">&larr;</span>
+      <%= t('better_together.billing.processor_settings.back') %>
+    <% end %>
   </nav>
 
   <h1 class="mb-3"><%= billing_payment_method_label(name) %></h1>
@@ -115,7 +113,7 @@
 
     <div id="billing-processor-setting-actions" class="d-flex gap-2">
       <%= form.submit t('globals.save'), class: 'btn btn-primary', id: 'billing-processor-setting-save-btn' %>
-      <%= link_to t('globals.cancel'), billing_processor_settings_path(locale: I18n.locale), class: 'btn btn-outline-secondary' %>
+      <%= link_to t('globals.cancel'), billing_processor_settings_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-processor-setting-cancel-link' %>
     </div>
   <% end %>
 </div>

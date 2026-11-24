@@ -38,6 +38,9 @@
 
       <% billing_links.each do |item| %>
         <% path = item.route_name.present? ? public_send(item.route_name.sub(/_url\z/, '_path'), locale: I18n.locale) : item.url %>
+        <%# A save that came back here asks for a particular screen of this tab (the plan just made, say). %>
+        <% asked = params[:billing_path].to_s %>
+        <% path = asked if asked.start_with?("#{path}/", "#{path}?") && !asked.include?('//') %>
         <div class="tab-pane fade" id="billing-pane-<%= item.identifier %>" role="tabpanel"
              aria-labelledby="billing-tab-<%= item.identifier %>-tab" tabindex="0">
           <%= turbo_frame_tag "billing-tab-#{item.identifier}", src: path, loading: :lazy, target: '_self' do %>

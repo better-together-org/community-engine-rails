@@ -16,7 +16,7 @@ module BetterTogether
 
       def index
         authorize BetterTogether::Billing::ProcessorSetting
-        @methods = offline_method_names.map { |name| [name, existing_settings[name]] }
+        @methods = installed_method_names.map { |name| [name, existing_settings[name]] }
       end
 
       def edit
@@ -44,6 +44,10 @@ module BetterTogether
       def platform_settings = billing_owner.billing_processor_settings.sold_by_platform
 
       def existing_settings = @existing_settings ||= platform_settings.index_by(&:processor)
+
+      # Every installed payment method: the ones settled here and the vendor processors, whose
+      # credentials belong to the deployment and are only shown.
+      def installed_method_names = BetterTogether::Billing.processor_names.map(&:to_s)
 
       # Installed methods outside a vendor. Anything else named in the URL is a 404.
       def offline_method_names
