@@ -41,13 +41,13 @@ order filters, address editor and notification preferences. Each is listed in th
 
 ## Open items against MVP 1
 
-1. **Browser acceptance pass** on a configured instance (the test instance could not be configured; see the
-   [assessment refresh](assessments/2026-11-billing-assessment-refresh.md) for what the dev app walk showed).
+1. **Browser acceptance pass.** Core buyer journey passes in CI-style browser specs; a pass on a configured
+   instance by a person is still open (see the [assessment refresh](assessments/2026-11-billing-assessment-refresh.md)).
 2. **Billing not configured** page for stewards in place of a bare 404.
 3. **Navigation**: the billing menu and route-name list changes in this PR chain, and the migration that adds
    missing items to existing host apps.
 4. **Translations** for es, fr and uk are unreviewed.
 5. **Stale trackers**: tick #1581 and keep this file and the stories doc current.
 6. **Anonymous storefront** was not exercised (the dev platform is private). Verify on a public platform.
-7. **Paid checkout end to end** in a browser (address entry, agreement acceptance, cash order, steward
-   confirmation, renewal) was not completed in the scripted walk.
+7. **Paid checkout in a browser** now passes (buyer journey spec). Still to do: a new-address entry, plan change,
+   cancel, anonymous visitor, mobile width, renewal.

@@ -56,6 +56,30 @@ planted, one steward and one buyer. Scripted over HTTP with a session per user. 
 | Hosting plan page on the host | 404, by design (hosted platforms only). Not walked. |
 | Anonymous catalog | Redirected to sign in because the dev platform is private. **Not verified** as public. |
 
+## Browser acceptance run (real Chrome through Capybara)
+
+New spec `spec/features/better_together/billing/billing_buyer_journey_spec.rb` drives one full journey: a buyer opens
+the catalog (axe clean), clicks Subscribe, picks cash and continues, chooses a saved billing address, opens and reads
+every agreement in the modal and ticks it, places the order; a steward opens the sale, confirms the cash was
+received through the confirmation prompt; the buyer then sees the active subscription and the billing page.
+It passes. With it, all 38 billing browser specs pass (agreement modal, keyboard, ticks, refunds, confirmations,
+steward navigation, accessibility sweep, price entry, lookups).
+
+What this settles: paid cash checkout end to end (the item the HTTP walk could not finish), agreement reading and
+ticking, steward confirmation, and the subscription and entitlement appearing for the buyer.
+
+What it does not cover: anonymous catalog on a public platform, plan change and cancel in a browser, a refund
+request in a browser beyond the existing spec, a hosted platform's hosting plan page, a first-time buyer who must
+type a new address with the country and state selects, mobile width, a screen reader, and real processors.
+
+Two observations from writing it:
+
+- Choosing a payment method is a separate step with a Continue button, then the address and agreements appear.
+  Fine, but a buyer who skips Continue sees no address section. Worth a hint.
+- The order stays awaiting payment after a steward marks cash received until a background job runs, so the
+  buyer's subscription appears only once the billing queue is working. On a configured instance the worker must
+  run, or buyers see nothing after payment. The readiness checklist should check for the queue.
+
 ## Findings from this pass
 
 1. **No explanation when billing is off or half configured.** Gated pages answer 404. A steward cannot tell
