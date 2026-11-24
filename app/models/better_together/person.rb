@@ -37,6 +37,12 @@ module BetterTogether
     member joinable_type: 'platform', member_type: 'person', dependent: :destroy
     member joinable_type: 'community', member_type: 'person', dependent: :destroy
 
+    # Membership history is about the person, so it goes with them; events they only acted on keep their row.
+    has_many :membership_events, foreign_key: :member_id, class_name: 'BetterTogether::MembershipEvent',
+                                 inverse_of: :member, dependent: :delete_all
+    has_many :acted_membership_events, foreign_key: :actor_id, class_name: 'BetterTogether::MembershipEvent',
+                                       inverse_of: :actor, dependent: :nullify
+
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations,

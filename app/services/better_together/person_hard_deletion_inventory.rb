@@ -5,6 +5,7 @@ module BetterTogether
   # rubocop:disable-next Metrics/ClassLength
   class PersonHardDeletionInventory
     DELETE_ONLY_MODELS = [
+      'BetterTogether::MembershipEvent',
       'BetterTogether::ConversationParticipant',
       'BetterTogether::PersonCommunityMembership',
       'BetterTogether::PersonPlatformMembership'
