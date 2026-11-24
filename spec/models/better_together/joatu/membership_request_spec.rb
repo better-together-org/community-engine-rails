@@ -144,10 +144,10 @@ module BetterTogether
       describe 'notifications' do
         let(:community) { create(:better_together_community, :membership_requests_enabled) }
         let(:community_manager_role) do
-          BetterTogether::Role.find_by(identifier: 'community_manager',
+          BetterTogether::Role.find_by(identifier: 'community_organizer',
                                        resource_type: 'BetterTogether::Community') ||
             create(:better_together_role,
-                   identifier: 'community_manager',
+                   identifier: 'community_organizer',
                    name: 'Community Manager',
                    resource_type: 'BetterTogether::Community')
         end

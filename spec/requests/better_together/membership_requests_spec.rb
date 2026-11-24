@@ -158,9 +158,9 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
       create(:better_together_user, :confirmed, person: manager_person, password: 'SecureTest123!@#')
     end
     let!(:community_manager_role) do
-      BetterTogether::Role.find_by(identifier: 'community_manager',
+      BetterTogether::Role.find_by(identifier: 'community_organizer',
                                    resource_type: 'BetterTogether::Community') ||
-        create(:better_together_role, identifier: 'community_manager',
+        create(:better_together_role, identifier: 'community_organizer',
                                       name: 'Community Manager', resource_type: 'BetterTogether::Community')
     end
     let!(:membership) do

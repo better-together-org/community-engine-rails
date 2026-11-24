@@ -44,6 +44,7 @@ module BetterTogether
         BetterTogether::PersonCommunityMembership
           .joins(role: { role_resource_permissions: :resource_permission })
           .where(member_id: agent.id)
+          .active
           .where(better_together_resource_permissions: { identifier: %w[manage_community_members manage_community_roles] })
           .select(:joinable_id)
       end

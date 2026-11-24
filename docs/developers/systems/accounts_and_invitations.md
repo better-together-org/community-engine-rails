@@ -53,7 +53,7 @@ This guide explains user account flows (Devise), platform invitations, required 
 ## Passwords and Sessions (Devise)
 
 - Sign-in/out: handled by Devise sessions controller.
-- Confirmations: Devise confirmable module sends confirmation email on registration.
+- Confirmations: Devise confirmable module sends confirmation email on registration. Confirming proves the address only: it activates the baseline `platform_member` row and community memberships that need no approval. Memberships waiting on a steward (elevated platform roles, community join requests) stay pending.
 - Password reset: Devise passwords controller handles reset requests and emails.
 
 ## Relationship: Users and People

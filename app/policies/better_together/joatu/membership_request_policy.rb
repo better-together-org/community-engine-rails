@@ -78,7 +78,7 @@ module BetterTogether
             .joins(:role)
             .where(member_id: person.id)
             .active
-            .where(better_together_roles: { identifier: %w[community_manager community_administrator] })
+            .where(better_together_roles: { identifier: %w[community_organizer community_coordinator community_governance_council] })
             .pluck(:joinable_id)
         end
       end
@@ -96,7 +96,7 @@ module BetterTogether
               .joins(:role)
               .where(member_id: agent&.id)
               .active
-              .where(better_together_roles: { identifier: %w[community_manager community_administrator] })
+              .where(better_together_roles: { identifier: %w[community_organizer community_coordinator community_governance_council] })
               .exists?
       end
     end

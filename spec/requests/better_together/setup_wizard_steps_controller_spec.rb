@@ -280,6 +280,7 @@ module BetterTogether # :nodoc:
           membership = host_platform.person_platform_memberships.find_by(member: user.person)
           expect(membership).to be_present
           expect(membership.role).to eq(platform_steward_role)
+          expect(membership).to be_active
         end
 
         it 'creates community membership with governance role' do
@@ -288,6 +289,7 @@ module BetterTogether # :nodoc:
           membership = host_community.person_community_memberships.find_by(member: user.person)
           expect(membership).to be_present
           expect(membership.role).to eq(governance_role)
+          expect(membership).to be_active
         end
 
         it 'sets user as community creator' do
