@@ -1,6 +1,17 @@
 # Splitting one-off purchases out of Plan: remediation plan
 
-Status: proposed 2026-11-24 against `feature/billing` at `920635b8a`. Nothing here is decided until the project owner approves it.
+Status: proposed 2026-11-24 against `feature/billing` at `920635b8a`. Revised the same day with the owner's answers (see "Decisions made").
+Items still marked open need an answer before the phase that depends on them.
+
+## Decisions made
+
+- The new purchasable is named `Product`.
+- A top-up lasts until used by default, and each top-up product can be configured instead to last for a fixed term.
+- A buyer can order several units of a product on one line. Grants multiply by quantity.
+- Add-ons are not a type. They are one case of a general **dependent purchases** mechanism: any purchasable can require that the buyer holds, or is
+  ordering, some other purchasable. It applies to plans, products, ticket types and later purchasables alike. Both "must already hold" and "or is buying
+  it now" are available and configurable per rule. Examples: a gala ticket only for people ordering or already holding a conference registration
+  ticket; a plan add-on only for people holding or ordering a particular plan.
 
 ## The problem in one paragraph
 
@@ -81,29 +92,66 @@ Keep `Plan` as the recurring subscription offer. Everything else sold becomes a 
 - **Grants** become attachable to either a plan or a product, with the amount multiplied by line quantity for products (three of a 10 GB
   top-up gives 30 GB).
 - **Entitlement** gains a second possible source of "what gave this": a plan or a product, exactly one.
+- **Top-up lifetime** is a per-product setting. `until_used` (the default) means the grant has no end date and is spent as the buyer uses it. `fixed_term`
+  means it ends after a configured length (for example 12 months from payment). A refund or cancellation revokes the grant in both cases. How
+  "until used" behaves depends on the quota type: a consumable one (tokens, sends) is drawn down, while a capacity one (storage bytes) is not consumed, so
+  until used simply means it stays while the purchase stands. Phase 1 confirms how `Entitlements::QuotaAllowances` and the quota framework combine an
+  allowance with a base limit, so a top-up is added to the limit and the draw-down is recorded in one place.
+- **Dependent purchases** replace the add-on flag and the `plan_add_ons` table with one generic rule table (below).
+
+## Dependent purchases
+
+A **purchase requirement** says: this purchasable may only be bought by someone who meets one of its prerequisites. It is a record with:
+
+- the dependent purchasable (a plan, product, ticket type or any other registered purchasable, resolved through the same allow-list the line items use);
+- a prerequisite, either one specific purchasable or a kind (for example "any plan", which is what an add-on with no links means today);
+- how it is met: `holding` (the buyer already has it), `in_order` (the same order contains it), or `either` (the default);
+- optional scope, so a gala ticket's prerequisite is a conference ticket for the same event and not any ticket;
+- what happens to the dependent when the prerequisite ends: keep it, or revoke it with the prerequisite.
+
+A purchasable with several rules is available when any one rule is met by default, and a rule can be marked required so it must be met as well. Cycles
+are refused when a rule is saved.
+
+How it is evaluated, always on the server:
+
+- The catalog and the checkout offer a dependent only to people who qualify, and show an unqualified buyer a short reason instead of hiding it when the
+  seller chooses to list it.
+- `Orders::Place` checks every line against the buyer's holdings plus the other lines in the same order. The checkout add-on step becomes "things that go
+  with what you are buying" and is built from the rules, so it works for any prerequisite and not only plans.
+- Each purchasable answers one question for the engine: "does this person hold you right now?" A plan says yes for a live subscription or entitlement, a
+  product for a live grant or a paid order that stands, a ticket type for a valid registration. That one hook replaces `Plans::Holdings`.
+- Refund or cancellation of a prerequisite follows the rule's setting. Unpaid dependent lines in the same order are cancelled with it.
+
+Today's add-ons convert directly: an add-on plan becomes a product, its `plan_add_ons` links become rules ("holding or ordering this plan"), and an
+add-on with no links becomes a rule on the kind "any plan".
 
 ## Phases
 
 Each phase is a separate PR, stacked on `feature/billing`, and each leaves the branch green.
 
-1. **Decide and pin behaviour.** Owner answers the open questions below. Add characterization specs for what one-time plans and add-ons do today
-   (checkout, settle, entitlement, refund, holdings) so later phases can prove nothing regressed.
+1. **Pin behaviour and read the quota code.** Add characterization specs for what one-time plans and add-ons do today (checkout, settle, entitlement,
+   refund, holdings, add-on eligibility) so later phases can prove nothing regressed. Confirm how quota allowances combine with base limits, which
+   fixes how a top-up is added and drawn down.
 2. **Extract shared concerns from Plan.** No schema change. Move catalog, processor mirror and presentation code into concerns. Plan shrinks and
    the seam for a second class appears.
-3. **Fulfilment hooks.** Add the purchasable fulfil and revoke hooks, make Plan implement them, and replace the class checks in `Orders::Settle`,
-   `Checkout::Methods`, `Subscriptions::Start`, `Plans::Holdings` and `PlanAudience`. Behaviour is unchanged, which the pinned specs prove.
-   This is the most valuable phase, and tickets, donations and shares (D5 to D7) depend on it.
-4. **Product and Price.** New tables, models, policies, steward screens, catalog and checkout step for products, grants for products, entitlement
-   source change, seeds and locales in four languages. Top-ups work end to end here, through the offline methods.
-5. **Move existing data.** Convert one-time plans and add-on plans to products, repoint line items, entitlements and `plan_add_ons`, then remove
-   `one_time` and `add_on` from Plan along with their validations. The branch is not in a release yet and prod apps have billing off, so only test
-   instances hold such rows. Use new migrations (not edits to unreleased ones) so test.communityengine.app migrates cleanly, and decide at merge time
-   whether to squash.
-6. **Processor contract.** Generalize `sync_plan` to sync a catalog item (product plus its prices, returning a result with a list of prices).
+3. **Fulfilment and holding hooks.** Add the purchasable `fulfil`, `revoke` and "does this person hold you" hooks, make Plan implement them, and replace
+   the class checks in `Orders::Settle`, `Checkout::Methods`, `Subscriptions::Start`, `Plans::Holdings` and `PlanAudience`. Behaviour is unchanged,
+   which the pinned specs prove. This is the most valuable phase, and tickets, donations and shares (D5 to D7) depend on it.
+4. **Dependent purchases.** Add the purchase requirement table and its evaluation in the catalog, checkout and `Orders::Place`, with plans as the
+   first dependents and prerequisites. Existing add-ons keep working through a compatibility reader until phase 6. Steward screens to define rules,
+   in four languages, with DOM contracts and screenshots.
+5. **Product and Price.** New tables, models, policies, steward screens, catalog and checkout for products, grants for products with quantity, the
+   per-product lifetime setting, entitlement source change, seeds and locales. Top-ups work end to end here, through the offline methods, including
+   fixed-term expiry and revocation on refund.
+6. **Move existing data.** Convert one-time plans and add-on plans to products, links to purchase requirements, and repoint line items and
+   entitlements. Then remove `one_time` and `add_on` from Plan, the `plan_add_ons` table and their validations. The branch is not in a release yet
+   and prod apps have billing off, so only test instances hold such rows. Use new migrations (not edits to unreleased ones) so
+   test.communityengine.app migrates cleanly, and decide at merge time whether to squash.
+7. **Processor contract.** Generalize `sync_plan` to sync a catalog item (product plus its prices, returning a result with a list of prices).
    Derive Checkout Session mode from the lines. Allow inline `price_data` for items with no processor mirror. Bump the contract version and keep a
    shim for adapters on the old version. Update `PriceInfo` and `processor-adapters.md`, and write the Stripe mapping table for the extension team.
-7. **Cleanup.** Remove the dead plan add-on code, update nav route names, DOM contracts, screenshots, docs (`plan_catalog.md`, stories doc, MVP
-   definition) and the assessment.
+8. **Cleanup.** Remove dead add-on code, update nav route names, DOM contracts, screenshots, docs (`plan_catalog.md`, stories doc, MVP definition)
+   and the assessment.
 
 ## Compatibility checks for the Stripe work
 
@@ -117,16 +165,18 @@ Each phase is a separate PR, stacked on `feature/billing`, and each leaves the b
 
 ## Open questions for the owner
 
-1. **Name.** Is `Product` acceptable? It matches Stripe, but community-commerce (Solidus, a different app) also has products. Alternatives: `Offer`,
-   `Extra`, `Item`.
-2. **Top-up lifetime.** Does a quota top-up last as long as the account, for a fixed term (a year), or until used? This decides whether an
-   entitlement needs an end date and whether a refund claws it back.
-3. **Quantity.** Can a buyer order several of a product in one line? Recommended yes, with grants multiplied.
-4. **Add-ons that recur.** Is a monthly extra (seats, storage) ever sold? If so it stays a recurring Plan attached to a subscription, which is
-   a later subscription-items change and not part of this work.
-5. **Add-on targeting.** Keep "this product extends these plans" and "buyer must hold a plan" (the `plan_add_ons` rules), or let products sell to anyone?
-6. **Tickets.** Confirm ticket types are their own purchasable with their own capacity, not products.
-7. **Migration policy.** Confirm new migrations rather than editing unreleased ones, and whether to squash before merging to main.
+Answered: name (`Product`), top-up lifetime (until used by default, fixed term per product), quantity (yes), dependent purchases (generic, "holding" and
+"in order" both available).
+
+1. **Recurring extras.** Is a monthly extra (seats, storage) ever sold? If so it stays a recurring Plan that depends on another plan through a purchase
+   requirement, and a later change maps it to a Stripe subscription item. Not part of this work.
+2. **Tickets.** Confirm ticket types are their own purchasable with their own capacity and event scope, and not products. They use the same purchase
+   requirement and fulfilment hooks.
+3. **Migration policy.** Confirm new migrations rather than editing unreleased ones, and whether to squash before merging to main.
+4. **Revoking a dependent.** The default when a prerequisite is refunded or ends: keep the dependent, or revoke it? The plan makes it a per-rule
+   setting. A default is needed (proposal: keep, except for tickets, which revoke).
+5. **Locked listings.** When a buyer does not qualify, should a dependent be hidden or shown with a reason? The plan makes it a per-purchasable
+   setting. A default is needed (proposal: shown with a reason).
 
 ## Risks
 
