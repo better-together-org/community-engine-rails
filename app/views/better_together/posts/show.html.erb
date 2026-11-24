@@ -4,7 +4,7 @@
 
 <%# Full-width hero/cover image (no containing .container) — capped to 40vh and uses object-fit:cover for consistent cropping %>
 <% if defined?(cover_image_tag) %>
-  <%= cache [@post, :cover_image] do %>
+  <%= cache [:cover_image, cover_image_cache_key(@post)] do %>
     <div class="post-hero mb-4 overflow-hidden shadow-sm" role="img" aria-label="<%= @post.title %>" style="height:40vh; max-height:40vh;">
       <%= cover_image_tag(@post, class: "w-100", alt: @post.title.to_s, style: "object-fit:cover; height:100%; width:100%") %>
     </div>
@@ -105,7 +105,7 @@
 
       <%# Social share buttons (only when post is public) %>
       <div class="my-4">
-        <%= share_buttons(shareable: @post) if @post.privacy_public? %>
+        <%= share_buttons(shareable: @post) if @post.effective_privacy_public? %>
       </div>
 
       <%= render 'better_together/comments/comments_section', commentable: @post %>

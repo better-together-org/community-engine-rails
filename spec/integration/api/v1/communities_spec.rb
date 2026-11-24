@@ -332,7 +332,7 @@ RSpec.describe 'API V1 - Communities', :skip_host_setup do
                 }
 
       response '200', 'community updated' do
-        let!(:test_community) { create(:better_together_community, creator: platform_manager_user.person) }
+        let!(:test_community) { create(:better_together_community, privacy: 'public', creator: platform_manager_user.person) }
         let(:id) { test_community.id }
         let(:Authorization) { "Bearer #{platform_manager_token}" }
         let(:'Content-Type') { 'application/vnd.api+json' }

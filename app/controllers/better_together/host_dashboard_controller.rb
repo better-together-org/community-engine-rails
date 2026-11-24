@@ -2,6 +2,7 @@
 
 module BetterTogether
   class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    skip_third_party_tracking
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/AbcSize
     # rubocop:todo Metrics/CyclomaticComplexity
@@ -39,7 +40,7 @@ module BetterTogether
 
     protected
 
-    # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:todo-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def build_overview_resources
       root_classes = [
         NavigationArea, Page, Platform, Role, ResourcePermission, Category
@@ -145,7 +146,6 @@ module BetterTogether
 
       build_sensitive_directory_cards
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def set_resource_variables(klass, prefix: nil)
       variable_name = klass.model_name.name.demodulize.underscore

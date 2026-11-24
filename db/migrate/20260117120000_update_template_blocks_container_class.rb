@@ -3,6 +3,8 @@
 # Updates template block container classes to the new layout utility
 class UpdateTemplateBlocksContainerClass < ActiveRecord::Migration[7.1]
   def up
+    return unless table_has_rows?(:better_together_pages)
+
     BetterTogether::Content::Template
       .joins(:pages)
       .where(better_together_pages: { layout: 'layouts/better_together/full_width_page' })

@@ -1,0 +1,47 @@
+<%# locals: (overview:) -%>
+<section id="weather-feature-switch" class="card shadow-sm mt-4" aria-labelledby="weather-feature-switch-heading">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3">
+      <div>
+        <h2 id="weather-feature-switch-heading" class="h4 mb-2"><%= t('host_dashboard.weather.feature.heading') %></h2>
+        <p class="mb-2"><%= t('host_dashboard.weather.feature.description') %></p>
+        <% if overview.env_forced_off? %>
+          <span id="weather-feature-status-badge" class="weather-feature-status-badge badge rounded-pill text-bg-danger">
+            <%= t('host_dashboard.weather.feature.status.forced_off') %>
+          </span>
+        <% elsif overview.setting_enabled? %>
+          <span id="weather-feature-status-badge" class="weather-feature-status-badge badge rounded-pill text-bg-success">
+            <%= t('host_dashboard.weather.feature.status.on') %>
+          </span>
+        <% else %>
+          <span id="weather-feature-status-badge" class="weather-feature-status-badge badge rounded-pill text-bg-secondary">
+            <%= t('host_dashboard.weather.feature.status.off') %>
+          </span>
+        <% end %>
+      </div>
+
+      <div id="weather-feature-actions">
+        <% if overview.env_forced_off? %>
+          <button id="weather-feature-toggle-btn" type="button" class="btn btn-outline-secondary" disabled
+                  aria-describedby="weather-env-kill-switch-notice">
+            <%= t('host_dashboard.weather.feature.turn_on') %>
+          </button>
+        <% elsif overview.setting_enabled? %>
+          <%= link_to t('host_dashboard.weather.feature.turn_off'),
+                      confirm_host_dashboard_weather_feature_path(enabled: false),
+                      id: 'weather-feature-toggle-btn', class: 'btn btn-outline-danger' %>
+        <% else %>
+          <%= link_to t('host_dashboard.weather.feature.turn_on'),
+                      confirm_host_dashboard_weather_feature_path(enabled: true),
+                      id: 'weather-feature-toggle-btn', class: 'btn btn-primary' %>
+        <% end %>
+      </div>
+    </div>
+
+    <% if overview.env_forced_off? %>
+      <div id="weather-env-kill-switch-notice" class="alert alert-warning mt-3 mb-0" role="status">
+        <%= t('host_dashboard.weather.feature.env_forced_off_html', variable: 'BETTER_TOGETHER_WEATHER_ENABLED') %>
+      </div>
+    <% end %>
+  </div>
+</section>

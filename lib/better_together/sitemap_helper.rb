@@ -68,7 +68,7 @@ module BetterTogether
       # @param platform [BetterTogether::Platform] restricts to this platform's own posts
       def add_posts(sitemap, locale = I18n.default_locale, platform: default_platform)
         sitemap.add helpers.posts_path(locale: locale), lastmod: false
-        BetterTogether::Post.for_platform(platform).published.privacy_public.find_each do |post|
+        BetterTogether::Post.for_platform(platform).published.privacy_public.within_privacy_ceiling.find_each do |post|
           sitemap.add helpers.post_path(post, locale: locale),
                       lastmod: post.updated_at
         end
@@ -80,7 +80,7 @@ module BetterTogether
       # @param platform [BetterTogether::Platform] restricts to this platform's own events
       def add_events(sitemap, locale = I18n.default_locale, platform: default_platform)
         sitemap.add helpers.events_path(locale: locale), lastmod: false
-        BetterTogether::Event.for_platform(platform).privacy_public.find_each do |event|
+        BetterTogether::Event.for_platform(platform).privacy_public.within_privacy_ceiling.find_each do |event|
           sitemap.add helpers.event_path(event, locale: locale),
                       lastmod: event.updated_at
         end
@@ -91,7 +91,7 @@ module BetterTogether
       # @param locale [Symbol, String] The locale to generate URLs for
       # @param platform [BetterTogether::Platform] restricts to this platform's own pages
       def add_pages(sitemap, locale = I18n.default_locale, platform: default_platform)
-        BetterTogether::Page.for_platform(platform).published.privacy_public.find_each do |page|
+        BetterTogether::Page.for_platform(platform).published.privacy_public.within_privacy_ceiling.find_each do |page|
           sitemap.add helpers.render_page_path(path: page.slug, locale: locale),
                       lastmod: page.updated_at
         end

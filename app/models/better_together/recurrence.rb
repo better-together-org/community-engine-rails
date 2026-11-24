@@ -192,7 +192,7 @@ module BetterTogether
     end
 
     # Extract frequency from the ice_cube rule for quick queries
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable-next Metrics/CyclomaticComplexity, Metrics/MethodLength
     def extract_frequency_from_rule
       return if rule.blank?
 
@@ -216,7 +216,6 @@ module BetterTogether
       # If we can't extract frequency, leave it nil
       nil
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     # Permitted attributes for mass assignment
     # @param id [Boolean] Whether to include :id

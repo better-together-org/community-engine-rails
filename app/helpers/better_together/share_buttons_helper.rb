@@ -4,7 +4,7 @@ module BetterTogether
   # app/helpers/share_buttons_helper.rb
   module ShareButtonsHelper # rubocop:todo Metrics/ModuleLength
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
       url = share_button_url
       title = if shareable.respond_to? :title
@@ -44,9 +44,8 @@ module BetterTogether
                       shareable_type: shareable_type.to_s,
                       shareable_id:
                     },
-                    # rubocop:todo Layout/LineLength
+                    # rubocop:todo-next Layout/LineLength
                     aria: { label: I18n.t('better_together.share_buttons.aria_label', platform: platform.to_s.capitalize) },
-                    # rubocop:enable Layout/LineLength
                     rel: 'noopener noreferrer',
                     target: '_blank'
           end
@@ -56,7 +55,6 @@ module BetterTogether
         heading + buttons
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
 
     private
@@ -122,7 +120,7 @@ module BetterTogether
 
     def share_icon(platform) # rubocop:todo Metrics/MethodLength
       # rubocop:disable Metrics/CyclomaticComplexity
-      content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
+      content_tag :div, class: 'fa-stack fa-2x', aria: { hidden: 'true' } do
         bg = content_tag :i, '', class: 'bg fas fa-circle fa-stack-2x'
 
         icon =

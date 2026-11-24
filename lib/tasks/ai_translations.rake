@@ -196,7 +196,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Metrics/CyclomaticComplexity
+      # rubocop:todo-next Metrics/CyclomaticComplexity
       def translate_rich_text_content(block, mobility_attrs, target_locales, translation_bot)
         translated_attrs = []
 
@@ -232,7 +232,6 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
 
         translated_attrs
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity

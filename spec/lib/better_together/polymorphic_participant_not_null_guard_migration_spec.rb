@@ -19,7 +19,7 @@ RSpec.describe 'Agreement participant polymorphic participant NOT NULL guard' do
     participant = create(:better_together_agreement_participant)
     participant.update_columns(participant_type: nil, participant_id: nil, person_id: nil)
 
-    expect { migration.send(:enforce_participant_not_null!) }.to output(/WARNING.*NULL participant_type/).to_stdout
+    expect { with_migration_output { migration.send(:enforce_participant_not_null!) } }.to output(/WARNING.*NULL participant_type/).to_stdout
 
     expect(
       connection.columns(:better_together_agreement_participants).find { |c| c.name == 'participant_type' }.null

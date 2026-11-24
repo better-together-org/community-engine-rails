@@ -13,6 +13,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
 
   describe 'GET /host/platforms/new' do
     it 'renders the registration form for network admins' do
+      skip 'platforms#new is unrouted until platform provisioning is settled'
       sign_in network_admin
 
       get better_together.new_platform_path(locale:)
@@ -22,6 +23,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
     end
 
     it 'denies the form to regular users' do
+      skip 'platforms#new is unrouted until platform provisioning is settled'
       sign_in regular_user
 
       get better_together.new_platform_path(locale:)
@@ -38,7 +40,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
           identifier: "peer-#{SecureRandom.hex(4)}",
           host_url: "https://peer-#{SecureRandom.hex(4)}.example.com",
           time_zone: 'America/New_York',
-          external: true
+          locality: 'remote'
         }
       }
     end
@@ -52,7 +54,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
 
       expect(response).to have_http_status(:see_other)
       platform = BetterTogether::Platform.last
-      expect(platform.external).to be true
+      expect(platform.locality).to eq('remote')
     end
 
     it 'denies creation to regular users' do
@@ -70,7 +72,7 @@ RSpec.describe 'BetterTogether::Platforms', :no_auth do
 
       expect do
         post better_together.platforms_path(locale:),
-             params: { platform: { identifier: '', host_url: 'not-a-url', time_zone: 'Invalid', external: true } }
+             params: { platform: { identifier: '', host_url: 'not-a-url', time_zone: 'Invalid', locality: 'remote' } }
       end.not_to change(BetterTogether::Platform, :count)
 
       expect(response).to have_http_status(:unprocessable_content)

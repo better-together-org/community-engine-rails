@@ -1,0 +1,49 @@
+{
+  "name": "image_gallery_lightbox",
+  "device": "mobile",
+  "url": "/en/gallery-spec-page-cd5f6458?gallery_layout=grid&gallery_lightbox=1&gallery_token=cd5f6458",
+  "title": "Harbour gallery | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "image_gallery",
+  "flow": "lightbox",
+  "source_spec": "./spec/docs_screenshots/better_together/image_gallery_spec.rb",
+  "callouts": [
+    {
+      "selector": ".image-gallery__modal-image",
+      "title": "Lightbox viewer",
+      "bullets": [
+        "Opens from any thumbnail; arrow keys, swipe and buttons move between images.",
+        "Escape closes it and focus returns to the thumbnail."
+      ],
+      "target": {
+        "x": 25.0,
+        "y": 455.5,
+        "width": 450.0,
+        "height": 300.0,
+        "right": 475.0,
+        "bottom": 755.5,
+        "center_x": 250.0,
+        "center_y": 605.5
+      },
+      "avoid": {
+        "x": 25.0,
+        "y": 455.5,
+        "width": 450.0,
+        "height": 300.0,
+        "right": 475.0,
+        "bottom": 755.5,
+        "center_x": 250.0,
+        "center_y": 605.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 775.5,
+        "width": 270.0,
+        "height": 288,
+        "score": 501.5
+      }
+    }
+  ]
+}

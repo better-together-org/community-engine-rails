@@ -1,0 +1,7 @@
+<% state = @target_enabled ? 'enable' : 'disable' %>
+<%= render 'better_together/weather_management/confirm',
+           heading: t("host_dashboard.weather.confirm.source.#{state}_heading", name: @source.identifier),
+           effect: t("host_dashboard.weather.confirm.source.#{state}_effect",
+                     name: @source.identifier, count: @source.locations.count),
+           url: host_dashboard_weather_source_path(@source), enabled: @target_enabled,
+           cancel_url: host_dashboard_weather_path %>

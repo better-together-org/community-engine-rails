@@ -1,0 +1,8 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('host_dashboard.jobs.page_title') %>
+  <% end %>
+
+  <%= render partial: 'better_together/host_dashboard/content_frame',
+             locals: { content_partial: 'better_together/host_jobs/jobs_tab' } %>
+<% end %>

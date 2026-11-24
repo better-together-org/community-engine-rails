@@ -21,6 +21,9 @@ module BetterTogether
         attribute :category_identifiers
         attribute :content_excerpt
         attribute :contributions_attributes
+        attribute :feature_image_url
+        # Write-only: a base64 feature image (never returned, feature_image_url is)
+        attributes :feature_image_data, :feature_image_filename
         CONTRIBUTOR_ID_ATTRIBUTES.each { |attribute_name| attribute attribute_name }
 
         # Relationships
@@ -47,6 +50,14 @@ module BetterTogether
           @model.show_title
         end
 
+        def feature_image_url
+          attachment_url(:feature_image)
+        end
+
+        def fetchable_fields
+          super - %i[feature_image_data feature_image_filename]
+        end
+
         def contributions_attributes
           @model.contributions.map do |contribution|
             {
@@ -64,7 +75,7 @@ module BetterTogether
           %i[
             title content slug privacy layout show_title published_at category_identifiers
             community creator sidebar_nav contributions
-            contributions_attributes
+            contributions_attributes feature_image_data feature_image_filename
           ] + CONTRIBUTOR_ID_ATTRIBUTES
         end
 

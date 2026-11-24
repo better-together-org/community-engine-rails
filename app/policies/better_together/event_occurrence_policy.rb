@@ -27,7 +27,7 @@ module BetterTogether
     end
 
     def update?
-      creator_or_platform_steward || event_host_member?
+      creator_or_platform_steward || event_host_member? || community_event_manager?
     end
 
     def edit?

@@ -1,0 +1,14 @@
+---
+title: 'Settlement weather: station_silent'
+audience:
+- end_user
+journey_step: As a visitor, I can see current conditions, the forecast and recent
+  weather.
+callouts:
+- :id: silent
+  :title: Station not reporting
+  :description: Says when the station last reported and when the source was last checked.
+accessibility_notes: Charts have a text alternative and a data table with the same
+  values.
+slug: settlement_weather_station_silent
+device: mobile

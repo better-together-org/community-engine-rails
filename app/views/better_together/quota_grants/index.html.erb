@@ -19,7 +19,8 @@
   </div>
 
   <h2 class="h5 mb-3"><%= t('better_together.quota_grants.index.overview_title', default: 'Usage overview (busiest first)') %></h2>
-  <% if @quotas_overview.any? %>
+  <% overview_quotas = visible_quotas(@quotas_overview, @platform) %>
+  <% if overview_quotas.any? %>
     <div class="table-responsive mb-5">
       <table class="table align-middle">
         <thead>
@@ -31,13 +32,13 @@
           </tr>
         </thead>
         <tbody>
-          <% @quotas_overview.each do |quota| %>
+          <% overview_quotas.each do |quota| %>
             <tr id="<%= dom_id(quota) %>">
               <td>
                 <%= quota.owner_type.demodulize %>:
                 <%= quota.owner.respond_to?(:select_option_title) ? quota.owner.select_option_title : quota.owner.name %>
               </td>
-              <td><%= quota.quota_type.titleize %></td>
+              <td><%= quota_type_label(quota.quota_type) %></td>
               <td class="w-25">
                 <%= render 'better_together/quotas/usage_meter', quota: quota %>
               </td>

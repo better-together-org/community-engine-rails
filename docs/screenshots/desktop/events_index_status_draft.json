@@ -2,7 +2,7 @@
   "name": "events_index_status_draft",
   "device": "desktop",
   "url": "/en/events?status=draft",
-  "title": "Events | Community Engine",
+  "title": "Events | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "events_index_filters",
@@ -53,28 +53,28 @@
       ],
       "target": {
         "x": 72.0,
-        "y": 799.0,
+        "y": 885.0,
         "width": 120.890625,
         "height": 38.0,
         "right": 192.890625,
-        "bottom": 837.0,
+        "bottom": 923.0,
         "center_x": 132.4453125,
-        "center_y": 818.0
+        "center_y": 904.0
       },
       "avoid": {
         "x": 72.0,
-        "y": 799.0,
+        "y": 885.0,
         "width": 120.890625,
         "height": 38.0,
         "right": 192.890625,
-        "bottom": 837.0,
+        "bottom": 923.0,
         "center_x": 132.4453125,
-        "center_y": 818.0
+        "center_y": 904.0
       },
       "placement": {
         "side": "right",
         "x": 212.89,
-        "y": 739.0,
+        "y": 825.0,
         "width": 380,
         "height": 158,
         "score": 1247.109375
@@ -88,23 +88,23 @@
       ],
       "target": {
         "x": 418.0,
-        "y": 770.8125,
+        "y": 746.8125,
         "width": 50.53125,
         "height": 20.375,
         "right": 468.53125,
-        "bottom": 791.1875,
+        "bottom": 767.1875,
         "center_x": 443.265625,
-        "center_y": 781.0
+        "center_y": 757.0
       },
       "avoid": {
         "x": 418.0,
-        "y": 770.8125,
+        "y": 746.8125,
         "width": 50.53125,
         "height": 20.375,
         "right": 468.53125,
-        "bottom": 791.1875,
+        "bottom": 767.1875,
         "center_x": 443.265625,
-        "center_y": 781.0
+        "center_y": 757.0
       },
       "placement": {
         "side": "right",

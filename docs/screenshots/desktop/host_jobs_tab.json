@@ -1,0 +1,11 @@
+{
+  "name": "host_jobs_tab",
+  "device": "desktop",
+  "url": "/en/host/jobs",
+  "title": "Background Jobs | Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "host_jobs",
+  "flow": "host_jobs_tab",
+  "source_spec": "./spec/docs_screenshots/better_together/host_jobs_spec.rb"
+}

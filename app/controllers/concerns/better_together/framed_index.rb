@@ -38,7 +38,7 @@ module BetterTogether
 
       return @scoped_community = nil if params[:community_id].blank?
 
-      @scoped_community = BetterTogether::Community.friendly.find(params[:community_id].to_s)
+      @scoped_community = BetterTogether::Community.friendly_find_in_platform(params[:community_id].to_s)
     rescue ActiveRecord::RecordNotFound
       @scoped_community = nil
     end

@@ -1,5 +1,5 @@
 <%= render layout: 'better_together/content/blocks/block', locals: { block: image } do %>
-  <%= cache image.cache_key_with_version do %>
+  <%= cache [image.cache_key_with_version, media_url_cache_context] do %>
     <% if image.caption.present? || image.attribution.present? %>
       <figure class="figure text-center w-100">
         <%= image_tag storage_proxy_url_for(image.media), class: 'figure-img img-fluid d-block mx-auto', alt: image.alt_text %>

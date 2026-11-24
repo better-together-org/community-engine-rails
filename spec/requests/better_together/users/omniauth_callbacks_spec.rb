@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/RepeatedExample
+# rubocop:disable-next RSpec/RepeatedExample
 RSpec.describe 'OAuth Callbacks for Signed-in Users' do
   # NOTE: These specs test signed-in user OAuth scenarios which are complex to test
   # in both controller and request specs due to authentication/session handling.
@@ -29,4 +29,3 @@ RSpec.describe 'OAuth Callbacks for Signed-in Users' do
     # PersonPlatformIntegration created and linked to signed-in user
   end
 end
-# rubocop:enable RSpec/RepeatedExample

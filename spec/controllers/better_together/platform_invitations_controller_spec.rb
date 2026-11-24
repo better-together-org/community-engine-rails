@@ -227,8 +227,9 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
     let!(:invitation) { create(:better_together_platform_invitation, invitable: platform, status: 'pending') }
 
     it 'queues the mailer job' do
-      expect(BetterTogether::PlatformInvitationMailerJob).to receive(:perform_later).with(invitation.id)
-      patch :resend, params: { locale: locale, platform_id: platform_slug, id: invitation.id }
+      expect do
+        patch :resend, params: { locale: locale, platform_id: platform_slug, id: invitation.id }
+      end.to have_enqueued_job(BetterTogether::PlatformInvitationMailerJob).with(invitation.id)
     end
 
     it 'redirects to platform invitations index' do

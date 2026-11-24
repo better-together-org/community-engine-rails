@@ -1,0 +1,24 @@
+
+<%# locals: (form:) %>
+
+<div id="feature-image-fields" class="mb-3" data-controller="better_together--image-preview"
+  data-image-preview-clear-value="<%= t('globals.clear') %>"
+  data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+  <%= label_tag 'feature-image-input' do %>
+    <%= form.object.class.human_attribute_name(:feature_image) %>
+    <% if form.object.feature_image.attached? %>
+      : <%= form.object.feature_image.filename %>
+    <% end %>
+  <% end %>
+
+  <div class="input-group">
+    <%= form.file_field :feature_image, id: 'feature-image-input', accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%= form.hidden_field :remove_feature_image, id: 'feature-image-remove', value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+    <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+  </div>
+
+  <small class="form-text text-muted"><%= t('helpers.hint.images.feature_image') %></small>
+
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="feature-image" data-url="<%= storage_proxy_url_for(form.object.feature_image) if form.object.feature_image.attached? %>">
+  </div>
+</div>

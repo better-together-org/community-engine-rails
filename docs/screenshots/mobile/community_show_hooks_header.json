@@ -1,7 +1,7 @@
 {
   "name": "community_show_hooks_header",
   "device": "mobile",
-  "url": "/en/c/community-fc741f4a6a4a05f9491a",
+  "url": "/en/c/community-ff8e090547b757459b27",
   "title": "Harbour Arts Collective | Communities | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 0.0,
-        "y": 96.0,
-        "width": 485.0,
+        "y": 56.0,
+        "width": 500.0,
         "height": 200.0,
-        "right": 485.0,
-        "bottom": 296.0,
-        "center_x": 242.5,
-        "center_y": 196.0
+        "right": 500.0,
+        "bottom": 256.0,
+        "center_x": 250.0,
+        "center_y": 156.0
       },
       "avoid": {
         "x": 0.0,
-        "y": 96.0,
-        "width": 485.0,
+        "y": 56.0,
+        "width": 500.0,
         "height": 200.0,
-        "right": 485.0,
-        "bottom": 296.0,
-        "center_x": 242.5,
-        "center_y": 196.0
+        "right": 500.0,
+        "bottom": 256.0,
+        "center_x": 250.0,
+        "center_y": 156.0
       },
       "placement": {
         "side": "below",
-        "x": 107.5,
-        "y": 316.0,
+        "x": 115.0,
+        "y": 276.0,
         "width": 270.0,
         "height": 184,
-        "score": 961.0
+        "score": 1001.0
       }
     }
   ]

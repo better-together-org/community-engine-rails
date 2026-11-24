@@ -53,6 +53,10 @@
           <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
           <%= t('.tabs.preferences') %>
         </button>
+        <button class="nav-link text-start" id="cookie-consent-tab" data-bs-toggle="pill" data-bs-target="#consent-preferences" type="button" role="tab" aria-controls="consent-preferences" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-cookie-bite me-2" aria-hidden="true"></i>
+          <%= t('.tabs.cookie_consent') %>
+        </button>
         <button class="nav-link text-start" id="my-data-tab" data-bs-toggle="pill" data-bs-target="#my-data" type="button" role="tab" aria-controls="my-data" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
           <%= t('.tabs.my_data') %>
@@ -222,6 +226,22 @@
         </div>
       </div>
 
+      <!-- Cookie Consent Tab -->
+      <%# The pane id avoids "cookie" on purpose: cookie-notice filters in ad blockers and browser shields hide #cookie-consent and leave the pane blank. %>
+      <div class="nav-tab-pane tab-pane fade" id="consent-preferences" role="tabpanel" aria-labelledby="cookie-consent-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-cookie-bite me-2" aria-hidden="true"></i>
+              <%= t('.cookie_consent.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.cookie_consent.description') %></p>
+
+            <%= render 'better_together/settings/cookie_consent', person: current_user.person %>
+          </div>
+        </div>
+      </div>
+
       <!-- My Data Tab -->
       <div class="nav-tab-pane tab-pane fade" id="my-data" role="tabpanel" aria-labelledby="my-data-tab">
         <div class="card border-0 shadow-sm">
@@ -318,7 +338,7 @@
                           <% if app.scopes.present? %>
                             <div class="mt-1">
                               <% app.scopes.to_a.each do |scope| %>
-                                <span class="badge bg-light text-dark border me-1"><%= scope %></span>
+                                <span class="badge bg-body-secondary text-body border me-1"><%= scope %></span>
                               <% end %>
                             </div>
                           <% end %>
@@ -362,7 +382,7 @@
               <% if @access_tokens.any? %>
                 <div class="table-responsive">
                   <table class="table table-sm" aria-label="<%= t('.developer.tokens.table_aria') %>">
-                    <thead class="table-light">
+                    <thead class="bt-table-head">
                       <tr>
                         <th scope="col"><%= t('.developer.tokens.col_app') %></th>
                         <th scope="col"><%= t('.developer.tokens.col_scopes') %></th>
@@ -376,7 +396,7 @@
                           <td><%= token.application&.name || t('.developer.tokens.no_app') %></td>
                           <td>
                             <% token.scopes.to_a.each do |scope| %>
-                              <span class="badge bg-light text-dark border me-1 small"><%= scope %></span>
+                              <span class="badge bg-body-secondary text-body border me-1 small"><%= scope %></span>
                             <% end %>
                           </td>
                           <td class="small text-muted"><%= l(token.created_at, format: :short) %></td>

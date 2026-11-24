@@ -1,0 +1,49 @@
+{
+  "name": "page_breadcrumbs_nested",
+  "device": "desktop",
+  "url": "/en/crumbs-docs",
+  "title": "Our mission | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "page_breadcrumbs_review",
+  "flow": "page_breadcrumbs",
+  "source_spec": "./spec/docs_screenshots/better_together/breadcrumbs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#breadcrumbs-list",
+      "title": "Breadcrumb trail",
+      "bullets": [
+        "Home, navigation group, then the current page.",
+        "Current page is plain text with aria-current."
+      ],
+      "target": {
+        "x": 84.0,
+        "y": 110.0,
+        "width": 1272.0,
+        "height": 24.0,
+        "right": 1356.0,
+        "bottom": 134.0,
+        "center_x": 720.0,
+        "center_y": 122.0
+      },
+      "avoid": {
+        "x": 84.0,
+        "y": 110.0,
+        "width": 1272.0,
+        "height": 24.0,
+        "right": 1356.0,
+        "bottom": 134.0,
+        "center_x": 720.0,
+        "center_y": 122.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 154.0,
+        "width": 380,
+        "height": 184,
+        "score": 1323.0
+      }
+    }
+  ]
+}

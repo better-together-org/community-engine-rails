@@ -54,7 +54,7 @@
 
 /* Focus style for keyboard discoverability */
 .drag-handle:focus {
-  outline: 2px solid rgba(0,0,0,0.12);
+  outline: 2px solid rgba(var(--bs-emphasis-color-rgb), 0.12);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -64,7 +64,7 @@
   pointer-events: none;
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   opacity: 0.98;
-  background: white;
+  background: var(--bs-body-bg);
 }
 
 /* Visual cue for the list item currently being dragged */
@@ -142,7 +142,7 @@
   opacity: 0.55;
 }
 .list-group-item[data-person-toggle="false"] .text-muted {
-  color: rgba(0,0,0,0.45) !important;
+  color: var(--bs-secondary-color) !important;
 }
 
 /* Checklist checkbox visual refinements
@@ -172,8 +172,8 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px solid rgba(0,0,0,0.12);
-  background: white;
+  border: 2px solid rgba(var(--bs-emphasis-color-rgb), 0.12);
+  background: var(--bs-body-bg);
   box-sizing: border-box;
 }
 

@@ -26,11 +26,17 @@ module BetterTogether
         return unless context
 
         record = context.fetch(:attachment).record
-        return if record.respond_to?(:privacy_public?) && record.privacy_public?
+        return if public_blob_record?(record)
 
         enforce_authenticated_access!(record)
       rescue Pundit::NotAuthorizedError
         head :forbidden
+      end
+
+      def public_blob_record?(record)
+        return record.effective_privacy_public? if record.respond_to?(:effective_privacy_public?)
+
+        record.respond_to?(:privacy_public?) && record.privacy_public?
       end
 
       def enforce_authenticated_access!(record)

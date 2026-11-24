@@ -107,6 +107,10 @@ Available scopes:
 
 ## Security Considerations
 
+### Host Header Validation
+
+OAuth callback URLs are built from the platform's own domains, never from a raw `Host` or `X-Forwarded-Host` header (omniauth >= 2.2.0, GHSA-m27g-v28p-f9fx). Make sure every domain you serve is an active platform domain, and keep `config.hosts` set in the host app as a second layer of defence.
+
 ### Token Storage
 
 - OAuth tokens are **encrypted at rest** using Rails Active Record Encryption

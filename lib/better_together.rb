@@ -3,6 +3,9 @@
 require 'better_together/version'
 require 'better_together/adapter_registry'
 require 'better_together/profiling'
+require 'better_together/platform_settings_registry'
+require 'better_together/cookie_policy'
+require 'better_together/consent'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
@@ -36,11 +39,27 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
+
+  # When true, requests for hostnames with no active PlatformDomain get a 404
+  # instead of falling back to the host platform. See PlatformContextMiddleware.
+  # Single-platform installs (one local platform) are never affected.
+  mattr_accessor :fail_closed_unknown_hosts
+  self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
   mattr_accessor :head_tag_providers
+  mattr_accessor :third_party_tracking_exclusions
+  # Settlement weather. Hosts may turn it off; when on, it still needs an enabled source with
+  # an enabled location before any weather job is queued or any weather surface renders.
+  # Default on; operators turn it off with BETTER_TOGETHER_WEATHER_ENABLED=false.
+  mattr_accessor :weather_enabled
+  self.weather_enabled = !%w[false 0 off no].include?(ENV.fetch('BETTER_TOGETHER_WEATHER_ENABLED', 'true').to_s.downcase)
+  # :gem (engine migrations run in place) or :install (copied into db/migrate); recorded by the installer
+  mattr_accessor :host_migrations_mode
+  self.host_migrations_mode = :gem
   mattr_accessor :registered_content_security_policy_sources
   mattr_accessor :content_security
   self.swagger_additional_endpoints = []
   self.head_tag_providers = {}
+  self.third_party_tracking_exclusions = {}
   self.registered_content_security_policy_sources = Hash.new { |hash, key| hash[key] = [] }
   self.adapter_registry = BetterTogether::AdapterRegistry.new
 
@@ -209,6 +228,15 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       raise ArgumentError, 'provider must respond to call' unless provider.respond_to?(:call)
 
       head_tag_providers[key.to_sym] = provider
+    end
+
+    # Extensions and host apps add their own reasons to keep a page away from third-party vendors.
+    # The block receives the controller and returns true to exclude the request.
+    def register_third_party_tracking_exclusion(key, callable = nil, &block)
+      rule = callable || block
+      raise ArgumentError, 'rule must respond to call' unless rule.respond_to?(:call)
+
+      third_party_tracking_exclusions[key.to_sym] = rule
     end
 
     def register_content_security_policy_sources(directive, *sources)

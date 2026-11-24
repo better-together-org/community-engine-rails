@@ -10,9 +10,8 @@ module BetterTogether
 
     # Token-based invitation handling (public access)
     # rubocop:todo Metrics/ClassLength
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :find_invitation_by_token, only: %i[show accept decline]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/ClassLength
     skip_before_action :check_platform_privacy, if: -> { @invitation.present? }, only: %i[show accept decline]
 
@@ -164,7 +163,9 @@ module BetterTogether
         error_class: NameError
       )
 
-      @invitable_resource = if invitable_class.respond_to?(:friendly)
+      @invitable_resource = if invitable_class.respond_to?(:friendly_find_in_platform)
+                              invitable_class.friendly_find_in_platform(invitable_id)
+                            elsif invitable_class.respond_to?(:friendly)
                               invitable_class.friendly.find(invitable_id)
                             else
                               invitable_class.find(invitable_id)
@@ -443,7 +444,7 @@ module BetterTogether
 
     def find_invitation_by_token
       token = params[:invitation_token].presence || params[:token].presence
-      @invitation = BetterTogether::Invitation.pending.not_expired.find_by(token: token)
+      @invitation = BetterTogether::Invitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       render_not_found unless @invitation
     end
 

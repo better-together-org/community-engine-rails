@@ -1,0 +1,48 @@
+{
+  "name": "markdown_block_dark_mode",
+  "device": "mobile",
+  "url": "/en/dark-mode-page",
+  "title": "Dark mode page | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "markdown_block_dark_mode",
+  "flow": "markdown_block_dark_mode",
+  "source_spec": "./spec/docs_screenshots/better_together/markdown_block_dark_mode_spec.rb",
+  "callouts": [
+    {
+      "selector": ".markdown-content",
+      "title": "Markdown block (dark)",
+      "bullets": [
+        "Text, headings and borders follow the colour mode."
+      ],
+      "target": {
+        "x": 24.0,
+        "y": 223.390625,
+        "width": 452.0,
+        "height": 218.46875,
+        "right": 476.0,
+        "bottom": 441.859375,
+        "center_x": 250.0,
+        "center_y": 332.625
+      },
+      "avoid": {
+        "x": 24.0,
+        "y": 223.390625,
+        "width": 452.0,
+        "height": 218.46875,
+        "right": 476.0,
+        "bottom": 441.859375,
+        "center_x": 250.0,
+        "center_y": 332.625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 461.86,
+        "width": 270.0,
+        "height": 190,
+        "score": 815.140625
+      }
+    }
+  ]
+}

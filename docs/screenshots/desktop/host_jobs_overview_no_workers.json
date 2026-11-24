@@ -1,0 +1,11 @@
+{
+  "name": "host_jobs_overview_no_workers",
+  "device": "desktop",
+  "url": "/en/host",
+  "title": "Host Dashboard | Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "host_jobs",
+  "flow": "host_jobs_overview_no_workers",
+  "source_spec": "./spec/support/automatic_test_configuration.rb"
+}

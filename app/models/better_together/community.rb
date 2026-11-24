@@ -87,7 +87,7 @@ module BetterTogether
     joinable joinable_type: 'community',
              member_type: 'person'
 
-    slugged :name
+    slugged :name, slug_uniqueness: false
 
     translates :name, type: :string
     translates :description, backend: :action_text
@@ -178,7 +178,7 @@ module BetterTogether
 
     # Communities the sitemap indexes for a platform. Host apps narrow this to keep communities out of it.
     def self.sitemap_listable(platform)
-      for_platform(platform).privacy_public
+      for_platform(platform).privacy_public.within_privacy_ceiling
     end
 
     def self.host_community
@@ -285,8 +285,9 @@ module BetterTogether
 
     def build_default_calendar(calendar_identifier)
       calendars.find_or_initialize_by(identifier: calendar_identifier).tap do |calendar|
-        # Calendar slugs are globally unique, so the default calendar also needs
-        # a deterministic unique slug rather than the shared "default" slug.
+        # Same platform as the community, so its identifier is unique per platform; the slug
+        # is deterministic rather than the shared "default" slug.
+        calendar.platform_id ||= platform_id
         calendar.slug = calendar_identifier if calendar.slug.blank?
         calendar.name = 'Default' if calendar.name.blank?
         calendar.description = I18n.t(

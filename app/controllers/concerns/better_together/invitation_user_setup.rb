@@ -69,12 +69,12 @@ module BetterTogether
 
     # Determine community role from any available invitation
     def determine_community_role_from_invitations
-      return @platform_invitation.community_role if @platform_invitation&.community_role
-      return @community_invitation.role if @community_invitation&.role.present?
-      return @event_invitation.role if @event_invitation&.role.present?
+      invited_role = [@platform_invitation&.community_role, @community_invitation&.role,
+                      @event_invitation&.role].find(&:present?)
+      return invited_role if invited_role
 
       # Default role
-      ::BetterTogether::Role.find_by(identifier: 'community_member')
+      ::BetterTogether::Role.find_default('community_member', platform: @platform_invitation&.invitable)
     end
 
     # Get redirect path after sign up based on available invitations

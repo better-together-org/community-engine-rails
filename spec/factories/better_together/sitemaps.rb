@@ -53,7 +53,7 @@ module BetterTogether # :nodoc:
     module_function
 
     # Helper method to generate compressed sitemap content
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def gzipped_sitemap_content
       require 'zlib'
       sitemap_xml = <<~XML
@@ -74,10 +74,9 @@ module BetterTogether # :nodoc:
       gz.close
       string_io.string
     end
-    # rubocop:enable Metrics/MethodLength
 
     # Helper method to generate compressed sitemap index content
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def gzipped_sitemap_index_content
       require 'zlib'
       sitemap_index_xml = <<~XML
@@ -100,6 +99,5 @@ module BetterTogether # :nodoc:
       gz.close
       string_io.string
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

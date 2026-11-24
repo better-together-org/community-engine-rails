@@ -6,18 +6,19 @@ module BetterTogether
     class Ingest
       Result = Data.define(:seed_record, :payload, :imported_record)
 
-      def self.call(seed_data:, connection: nil, record_importer: nil)
-        new(seed_data:, connection:, record_importer:).call
+      def self.call(seed_data:, connection: nil, record_importer: nil, platform: nil)
+        new(seed_data:, connection:, record_importer:, platform:).call
       end
 
-      def initialize(seed_data:, connection:, record_importer:)
+      def initialize(seed_data:, connection:, record_importer:, platform: nil)
         @seed_data = seed_data
+        @platform = platform
         @connection = connection
         @record_importer = record_importer
       end
 
       def call
-        seed = ::BetterTogether::Seed.import_or_update!(seed_data)
+        seed = ::BetterTogether::Seed.import_or_update!(seed_data, platform:)
         payload = seed.payload_data
         imported_record = import_record(seed, payload)
 
@@ -26,7 +27,7 @@ module BetterTogether
 
       private
 
-      attr_reader :seed_data, :connection, :record_importer
+      attr_reader :seed_data, :connection, :record_importer, :platform
 
       def import_record(seed, payload)
         return nil unless record_importer

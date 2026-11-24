@@ -64,12 +64,12 @@ module BetterTogether
 
     def perform(platform_id = nil)
       if platform_id.present?
-        platform = BetterTogether::Platform.internal.find_by(id: platform_id)
+        platform = BetterTogether::Platform.local.find_by(id: platform_id)
         return unless platform
 
         BetterTogether::Sitemaps::Generator.new(platform).call
       else
-        BetterTogether::Platform.internal.find_each do |platform|
+        BetterTogether::Platform.local.find_each do |platform|
           BetterTogether::Sitemaps::Generator.new(platform).call
         rescue StandardError => e
           Rails.logger.error "Sitemap generation failed for platform #{platform.id}: #{e.message}"

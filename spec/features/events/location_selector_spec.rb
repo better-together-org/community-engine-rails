@@ -191,7 +191,7 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     expect(simple_name_field.value).to be_blank
   end
 
-  # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  # rubocop:todo-next RSpec/ExampleLength, RSpec/MultipleExpectations
   scenario 'creates an event with a brand-new inline address', skip: <<~REASON do
     Verified working through the panel-open flow below (Address IS built and
     persisted on submit - observed count 0 -> 1 on the first attempt). What
@@ -230,5 +230,4 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     expect(event.location.location).to be_a(BetterTogether::Address)
     expect(event.location.location.line1).to eq('123 Test St')
   end
-  # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
 end

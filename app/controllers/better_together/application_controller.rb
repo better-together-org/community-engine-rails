@@ -8,11 +8,16 @@ module BetterTogether
     include Pundit::Authorization
     include InvitationSessionManagement
     include MentionPrefetch
+    include ConsentCookieSync
+    include ThirdPartyTracking
     include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception
 
     layout :determine_layout
+
+    # Sign-in, sign-up and password flows carry tokens and are never measured by vendors.
+    skip_third_party_tracking if: :devise_controller?
 
     around_action :with_current_platform_context
     before_action :check_platform_setup
@@ -25,6 +30,7 @@ module BetterTogether
 
     before_action :set_platform_invitation
     before_action :check_platform_privacy
+    before_action :sync_consent_cookie
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
@@ -67,7 +73,7 @@ module BetterTogether
     def authorize_mini_profiler_if_enabled
       return unless BetterTogether::Profiling.enabled?
       return unless defined?(Rack::MiniProfiler)
-      return unless current_user&.permitted_to?('manage_platform')
+      return unless current_user&.host_platform_manager?
 
       Rack::MiniProfiler.authorize_request
     end
@@ -82,7 +88,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Only proceed if there's an invitation token in the URL or already in the session.
       return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
@@ -98,7 +104,7 @@ module BetterTogether
 
       return unless token.present?
 
-      @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
+      @platform_invitation = ::BetterTogether::PlatformInvitation.redeemable_on(Current.platform).pending.find_by(token: token)
 
       if params[:invitation_code].present? && @platform_invitation
         # On first visit with the invitation code, update the session with the token and a new expiry.
@@ -107,15 +113,17 @@ module BetterTogether
       end
 
       if @platform_invitation
+        # A guest link opens the platform's public content despite the privacy ceiling.
+        Current.guest_platform = Current.platform
         # Set the locale based on the invitation record
         I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
         session[:locale] = I18n.locale
       else
+        ::BetterTogether::Invitation.audit_refused_redemption(token, Current.platform, channel: :web)
         session.delete(:platform_invitation_token)
         session.delete(:platform_invitation_expires_at)
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
@@ -239,7 +247,7 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def user_not_authorized(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
@@ -268,18 +276,22 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
+    # Backtraces are opt-in (VERBOSE_TEST_EXCEPTIONS) to keep CI logs short; the
+    # exception is re-raised below, so a failing example still shows its own trace.
+    def warn_test_exception(exception)
+      warn log_exception_details(exception, prefix: '[TEST][Exception]')
+      return unless exception.backtrace && ENV['VERBOSE_TEST_EXCEPTIONS']
+
+      warn exception.backtrace.first(15).join("\n")
+    end
+
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       return render_not_found if exception.is_a?(ActiveRecord::RecordNotFound)
 
-      if Rails.env.test?
-        msg = log_exception_details(exception, prefix: '[TEST][Exception]')
-        warn msg
-        warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
-      end
+      warn_test_exception(exception) if Rails.env.test?
       raise exception unless Rails.env.production?
 
       log_exception_details(exception, prefix: '[PRODUCTION][Exception]')
@@ -291,13 +303,11 @@ module BetterTogether
 
       respond_to do |format|
         format.turbo_stream do
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
-          # rubocop:enable Layout/LineLength
           render turbo_stream: turbo_stream.replace('flash_messages',
-                                                    # rubocop:todo Layout/LineLength
+                                                    # rubocop:todo-next Layout/LineLength
                                                     partial: 'layouts/better_together/flash_messages', locals: { flash: })
-          # rubocop:enable Layout/LineLength
         end
         format.html do
           flash[:error] = exception.message
@@ -305,7 +315,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # A prior render earlier in this request (e.g. EventsController#show's .ics
     # branch calling render_event_ics, which sets response.content_type to
@@ -349,7 +358,8 @@ module BetterTogether
         path: request.fullpath,
         controller: controller_name,
         action: action_name,
-        user_id: current_user&.id || 'anonymous'
+        user_id: current_user&.id || 'anonymous',
+        private_page: private_page?
       }
     end
 
@@ -435,7 +445,7 @@ module BetterTogether
 
     def after_sign_in_path_for(resource)
       stored_location_for(resource) ||
-        if resource.permitted_to?('manage_platform')
+        if resource.platform_manager?
           host_dashboard_path
         else
           BetterTogether.base_path_with_locale

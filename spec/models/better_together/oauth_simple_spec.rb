@@ -9,7 +9,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
   let(:community) { platform.community }
   let!(:github_platform) do
     BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
-      github.external = true
+      github.locality = 'remote'
       github.host = false
       github.name = 'GitHub'
       github.url = 'https://github.com'
@@ -38,6 +38,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
                                  expires_at: 1.hour.from_now.to_i
                                },
                                extra: {
+                                 all_emails: [{ email: 'test@example.com', primary: true, verified: true }],
                                  raw_info: {
                                    html_url: 'https://github.com/testuser',
                                    login: 'testuser'
@@ -60,7 +61,7 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
 
         # Should find and assign the correct external platform
         integration = user.person_platform_integrations.first
-        expect(integration.platform).to be_external
+        expect(integration.platform).to be_remote
         expect(integration.platform.identifier).to eq('github')
         expect(integration.platform.name).to eq('GitHub')
 
@@ -81,9 +82,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
       end.to change(BetterTogether.user_class, :count).by(1)
                                                       .and change(BetterTogether::Person, :count).by(1)
                                                                                                  .and change(
-                                                                                                   # rubocop:todo Layout/LineLength
+                                                                                                   # rubocop:todo-next Layout/LineLength
                                                                                                    BetterTogether::PersonPlatformIntegration, :count
-                                                                                                   # rubocop:enable Layout/LineLength
                                                                                                  ).by(1)
     end
 
@@ -182,7 +182,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
       expect(attributes[:image_url]).to be_a(URI)
       expect(attributes[:profile_url]).to eq('https://github.com/oauthuser')
       expect(attributes[:expires_at]).to be_a(Time)
-      expect(attributes[:auth]).to eq(auth_hash.to_hash)
+      expect(attributes[:auth]).to eq(auth_hash.to_hash.except('credentials'))
+      expect(attributes[:auth]).not_to have_key('credentials')
     end
 
     it 'handles missing optional fields gracefully' do

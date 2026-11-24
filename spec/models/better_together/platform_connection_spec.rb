@@ -67,7 +67,7 @@ RSpec.describe BetterTogether::PlatformConnection do
 
   describe '#local_platform and #remote_platform' do
     it 'resolves local/remote correctly when source_platform is the local platform' do
-      local = create(:better_together_platform, external: false)
+      local = create(:better_together_platform, locality: 'local')
       remote = create(:better_together_platform, :community_engine_peer)
       connection = create(:better_together_platform_connection, source_platform: local, target_platform: remote)
 
@@ -76,7 +76,7 @@ RSpec.describe BetterTogether::PlatformConnection do
     end
 
     it 'resolves local/remote correctly when target_platform is the local platform' do
-      local = create(:better_together_platform, external: false)
+      local = create(:better_together_platform, locality: 'local')
       remote = create(:better_together_platform, :community_engine_peer)
       connection = create(:better_together_platform_connection, source_platform: remote, target_platform: local)
 

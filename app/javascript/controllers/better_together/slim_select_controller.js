@@ -63,7 +63,7 @@ export default class extends Controller {
     // every reinit.
     if (optionsData && optionsData.createOptions) {
       this.resetSelection = this.resetSelection.bind(this);
-      this.element.addEventListener('better_together--location-selector:reset-picker', this.resetSelection);
+      this.element.addEventListener('better_together--slim-select:reset-picker', this.resetSelection);
     }
 
     // Marks connect()'s own init as done so optionsValueChanged (below) can tell
@@ -72,7 +72,7 @@ export default class extends Controller {
   }
 
   // Clears the current selection in response to
-  // better_together--location-selector:reset-picker. Only wired for
+  // better_together--slim-select:reset-picker. Only wired for
   // createOptions selects (see connect()).
   resetSelection() {
     try {
@@ -179,6 +179,8 @@ export default class extends Controller {
 
               // Add cache-busting timestamp to prevent stale results
               url.searchParams.append('_', Date.now().toString());
+
+              this.applyDependsOn(url, options.ajax);
 
               // Add search parameter if search term is provided
               if (search && search.trim().length > 0) {
@@ -431,11 +433,21 @@ export default class extends Controller {
     return rows;
   }
 
+  // ajax.dependsOn maps a query parameter to the id of another field whose current
+  // value narrows this select (e.g. states by country). Blank values are omitted.
+  applyDependsOn(url, ajax) {
+    Object.entries((ajax && ajax.dependsOn) || {}).forEach(([param, elementId]) => {
+      const source = document.getElementById(elementId);
+      if (source && source.value) url.searchParams.set(param, source.value);
+    });
+  }
+
   loadInitialResults(url) {
     // Fetch initial results without search term to populate dropdown
     const fullUrl = new URL(url, window.location.origin);
     // Add timestamp to prevent caching
     fullUrl.searchParams.append('_', Date.now().toString());
+    this.applyDependsOn(fullUrl, (this.currentOptions && this.currentOptions.ajax) || {});
 
     return fetch(fullUrl.toString(), {
       method: 'GET',
@@ -490,7 +502,7 @@ export default class extends Controller {
     if (this.slimSelect) {
       this.slimSelect.destroy();
     }
-    this.element.removeEventListener('better_together--location-selector:reset-picker', this.resetSelection);
+    this.element.removeEventListener('better_together--slim-select:reset-picker', this.resetSelection);
   }
 
   // Helper method to check if element is inside a Bootstrap modal

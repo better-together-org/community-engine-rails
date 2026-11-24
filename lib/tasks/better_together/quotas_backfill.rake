@@ -10,6 +10,7 @@ namespace :better_together do
 
       puts "Quota backfill complete: #{summary.translation_usages} translation usage row(s), " \
            "#{summary.attachment_usages} attachment usage row(s) processed."
+      puts "Skipped #{summary.skipped_non_local} record(s) owned by non-local (external) owners."
       puts "Attachment discovery cross-check: reflection walk found #{summary.reflection_attachment_count}, " \
            "raw ActiveStorage::Attachment count is #{summary.raw_attachment_count}."
 

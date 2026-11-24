@@ -1,0 +1,18 @@
+<%%# locals: (<%= block_name %>:) -%%>
+<%%= cache <%= block_name %>.cache_key_with_version do %>
+  <%%= render layout: 'better_together/content/blocks/block', locals: { block: <%= block_name %> } do %>
+<% if required_attribute -%>
+    <%% if <%= block_name %>.<%= required_attribute %>.present? %>
+      <div class="<%= block_name.dasherize %>">
+<% (translatable_fields + stored_fields).each do |name, _| -%>
+        <p><%%= <%= block_name %>.<%= name %> %></p>
+<% end -%>
+      </div>
+    <%% else %>
+      <p class="text-muted"><%%= t('better_together.content.blocks.<%= block_name %>.empty') %></p>
+    <%% end %>
+<% else -%>
+    <div class="<%= block_name.dasherize %>"></div>
+<% end -%>
+  <%% end %>
+<%% end %>

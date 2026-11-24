@@ -21,7 +21,7 @@ RSpec.describe 'Agreement participant acceptance audit fields NOT NULL guard' do
     participant = create(:better_together_agreement_participant)
     participant.update_columns(audit_columns.index_with { nil })
 
-    expect { migration.send(:enforce_acceptance_audit_constraints) }.to output(/WARNING.*acceptance-audit/).to_stdout
+    expect { with_migration_output { migration.send(:enforce_acceptance_audit_constraints) } }.to output(/WARNING.*acceptance-audit/).to_stdout
 
     expect(
       connection.columns(:better_together_agreement_participants).find { |c| c.name == 'acceptance_method' }.null

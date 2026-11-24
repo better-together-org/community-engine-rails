@@ -153,6 +153,8 @@ class ConvertPlatformTimezonesToIana < ActiveRecord::Migration[7.2] # rubocop:di
   }.freeze
 
   def up # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    return unless table_has_rows?(:better_together_platforms)
+
     say 'Converting Platform timezones from Rails names to IANA identifiers...'
 
     # Track conversions for reporting

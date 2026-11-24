@@ -1,0 +1,11 @@
+{
+  "name": "page_hero_first_block",
+  "device": "mobile",
+  "url": "/en/harbour-hero",
+  "title": "Harbour hero | Test Host Community",
+  "locale": "en",
+  "role": "anonymous",
+  "feature_set": "page_feature_image_banner",
+  "flow": "page_hero_first_block",
+  "source_spec": "./spec/docs_screenshots/better_together/page_feature_image_banner_spec.rb"
+}

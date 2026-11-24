@@ -36,7 +36,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
 
       - name: Set up Node
         uses: actions/setup-node@v7
@@ -75,7 +75,7 @@ jobs:
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
         options: >-
-          --health-cmd "pg_isready -U rails"
+          --health-cmd "pg_isready -U rails -d rails_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -101,7 +101,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
           bundler-cache: true
 
       - name: Load the schema

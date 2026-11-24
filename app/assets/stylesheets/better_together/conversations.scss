@@ -5,11 +5,11 @@
   cursor: pointer;
 
   &:hover {
-    background-color: #f0f0f0;
+    background-color: var(--bs-tertiary-bg);
   }
 
   &.active {
-    background-color: #e9ecef;
+    background-color: var(--bs-secondary-bg);
   }
 }
 
@@ -21,13 +21,15 @@
   border-radius: 0.25rem;
 
   &-sent {
-    background-color: #d1e7dd;
+    background-color: var(--bs-success-bg-subtle);
+    color: var(--bs-body-color);
     align-self: flex-end;
     margin-left: auto;
   }
 
   &-received {
-    background-color: #f8d7da;
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-body-color);
     align-self: flex-start;
     margin-right: auto;
   }
@@ -48,7 +50,8 @@
   }
 
   .message-bubble {
-    background-color: #f1f1f1;
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
     border-radius: 15px;
   }
 
@@ -57,13 +60,13 @@
   }
 
   .me .message-bubble {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--bts-primary, var(--bs-primary));
+    color: var(--bts-primary-text, #fff);
     min-width: 40vw;
   }
 
   .card-body {
-    background-color: #e9ecef;
+    background-color: var(--bs-secondary-bg);
   }
 
   .input-group textarea.form-control {

@@ -25,7 +25,7 @@ module BetterTogether
       end
 
       def update?
-        user.present? && permitted_to?('manage_platform')
+        user.present? && host_platform_manager?
       end
 
       def edit?
@@ -33,7 +33,7 @@ module BetterTogether
       end
 
       def destroy?
-        user.present? && !record.protected? && permitted_to?('manage_platform')
+        user.present? && !record.protected? && host_platform_manager?
       end
 
       class Scope < Scope # rubocop:todo Style/Documentation

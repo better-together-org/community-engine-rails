@@ -1,0 +1,15 @@
+---
+title: 'Weather management: confirm off'
+audience:
+- platform_organizers
+journey_step: As a host steward, I can switch weather, its sources and locations on
+  or off.
+callouts:
+- :id: confirm_off
+  :title: Confirm with the effect stated
+  :description: Turning weather off stops every job and hides weather on every platform
+    on this host.
+accessibility_notes: Every switch goes through a confirm page that states its effect
+  in text.
+slug: weather_management_confirm_off_plain
+device: desktop

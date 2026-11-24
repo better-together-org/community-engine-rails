@@ -1,0 +1,16 @@
+---
+title: 'Address form: geography selects'
+audience:
+- platform_manager
+- community_organizer
+- developer
+journey_step: I fill in where the address is by searching, not typing.
+callouts:
+- :id: geography_selects
+  :title: Country, state or province, city
+  :description: Each one searches the geography records; pick one to link the address
+    to it.
+accessibility_notes: Each select has a visible label and the typed-text row is a normal
+  option, so the whole form works from the keyboard.
+slug: address_geography_fields
+device: desktop

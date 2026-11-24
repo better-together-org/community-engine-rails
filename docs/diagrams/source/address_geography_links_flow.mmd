@@ -1,0 +1,34 @@
+%% render.orientation: portrait
+flowchart TD
+  subgraph Form["Address form"]
+    A["Country select"] --> B["State select\n(narrowed by country)"]
+    B --> C["Settlement select\n(narrowed by state)"]
+    A --> T["Use typed text row"]
+    B --> T
+    C --> T
+  end
+
+  subgraph Lookup["LocationsController#geography"]
+    L["Geography::AddressLookup\n(name search, any locale, capped)"]
+  end
+
+  A -. search .-> L
+  B -. search .-> L
+  C -. search .-> L
+
+  subgraph Save["Address save"]
+    P["country_id / state_id / settlement_id\n(optional FKs)"]
+    S["Geography::AddressLinks\nderive parents, overwrite string columns,\nvalidate state in country, settlement in state"]
+    X["country_name / state_province_name / city_name\n(free-text fallback)"]
+  end
+
+  A -->|record chosen| P
+  B -->|record chosen| P
+  C -->|record chosen| P
+  T -->|no record| X
+  P --> S --> X
+
+  subgraph Existing["Existing addresses"]
+    R["better_together:geography:backfill_address_links\n(run by migration 20261109150100)"] --> M["Resolved locatable_locations placements"]
+    M --> P
+  end

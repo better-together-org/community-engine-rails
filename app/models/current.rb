@@ -3,7 +3,8 @@
 # Thread-local request context for runtime host/platform resolution and current person tracking.
 class Current < ActiveSupport::CurrentAttributes
   attribute :person, :robot, :agent, :platform, :platform_domain, :platform_domain_hostnames,
-            :host_platform, :credential_community, :token_actor
+            :host_platform, :credential_community, :token_actor,
+            :guest_platform
 
   # Lazy-loads and memoizes the host platform within a single request/job lifecycle.
   # Pre-warmed by ApplicationController#set_current_platform_context on web requests;
