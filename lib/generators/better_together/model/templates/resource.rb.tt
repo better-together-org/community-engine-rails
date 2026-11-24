@@ -4,8 +4,8 @@
 <%= '  ' * i %>module <%= name %>
 <% end -%>
 <% pad = '  ' * resource_namespaces.size -%>
-<%= pad %># Serializes <%= class_name %> for the JSON:API.
-<%= pad %>class <%= class_name %>Resource < ::BetterTogether::Api::ApplicationResource
+<%= pad %># Serializes <%= base_class_name %> for the JSON:API.
+<%= pad %>class <%= base_class_name %>Resource < ::BetterTogether::Api::ApplicationResource
 <%= pad %>  model_name '::<%= full_class_name %>'
 
 <%= pad %>  attributes <%= resource_attributes.presence || ':created_at' %>

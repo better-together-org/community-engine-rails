@@ -12,7 +12,9 @@ module BetterTogether
     #   rails generate better_together:model project title:string --translatable=name,description
     #   rails generate better_together:model event_series --privacy --friendly-id --no-platform-scoped
     #
-    # Namespace: BetterTogether inside the engine, none in a host app; override with --namespace.
+    # Namespace: BetterTogether inside the engine (including its dummy app), none in a host app; override with --namespace.
+    # A nested name such as Billing::PurchaseRequirement nests under the namespace: app/models/better_together/billing/,
+    # table better_together_billing_purchase_requirements, class BetterTogether::Billing::PurchaseRequirement.
     class ModelGenerator < Rails::Generators::NamedBase # rubocop:todo Metrics/ClassLength
       include Rails::Generators::Migration
 
@@ -59,13 +61,13 @@ module BetterTogether
       def create_resource
         return if options[:skip_resource]
 
-        template 'resource.rb.tt', "app/resources/#{ns_path}api/v1/#{file_name}_resource.rb"
+        template 'resource.rb.tt', "app/resources/#{resource_path}#{file_name}_resource.rb"
       end
 
       def create_locale_files
         %w[en es fr uk].each do |locale|
           @locale = locale
-          template 'locales/locale.yml.tt', "config/locales/#{file_name}.#{locale}.yml"
+          template 'locales/locale.yml.tt', "config/locales/#{locale_name}.#{locale}.yml"
         end
       end
 
@@ -78,23 +80,50 @@ module BetterTogether
       def module_name
         return options[:namespace].presence if options[:namespace]
 
-        Dir.exist?(File.join(destination_root, 'app', 'models', 'better_together')) ? 'BetterTogether' : nil
+        engine_context? ? 'BetterTogether' : nil
+      end
+
+      # True inside the engine checkout or its dummy app, where models belong to the engine's namespace.
+      def engine_context?
+        root = BetterTogether::Engine.root.to_s
+        destination = File.expand_path(destination_root)
+        destination == root || destination.start_with?("#{root}/") ||
+          Dir.exist?(File.join(destination_root, 'app', 'models', 'better_together'))
+      end
+
+      # Every module the class sits in: the namespace, then each part of a nested name (Billing::Thing).
+      def modules
+        [module_name, *class_path.map(&:camelize)].compact
+      end
+
+      def base_class_name
+        file_name.camelize
       end
 
       def ns_path
-        module_name ? "#{module_name.underscore}/" : ''
-      end
-
-      def namespace_prefix
-        module_name ? "#{module_name}::" : ''
+        modules.empty? ? '' : "#{modules.map(&:underscore).join('/')}/"
       end
 
       def full_class_name
-        "#{namespace_prefix}#{class_name}"
+        (modules + [base_class_name]).join('::')
       end
 
       def table_name
-        "#{"#{module_name.underscore}_" if module_name}#{plural_file_name}"
+        (modules.map(&:underscore) + [plural_file_name]).join('_')
+      end
+
+      # The table name without the BetterTogether prefix that create_bt_table adds itself.
+      def table_suffix
+        (class_path + [plural_file_name]).join('_')
+      end
+
+      def locale_name
+        (class_path + [file_name]).join('_')
+      end
+
+      def resource_path
+        parts = [module_name&.underscore, 'api', 'v1', *class_path].compact
+        "#{parts.join('/')}/"
       end
 
       def bt_table?
@@ -133,7 +162,7 @@ module BetterTogether
       end
 
       def resource_namespaces
-        [module_name, 'Api', 'V1'].compact
+        [module_name, 'Api', 'V1', *class_path.map(&:camelize)].compact
       end
 
       def policy_parent
