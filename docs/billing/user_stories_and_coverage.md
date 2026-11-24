@@ -1,14 +1,24 @@
 # Billing user stories and coverage
 
 What the billing feature has to do for the people who use it, which of those stories the code supports
-today, and what has to be added. Written against `feature/billing` at `2cd8545d4` (tax reports merged,
-#2127). Statuses are read from code and docs, not from running specs; items marked U are unverified.
+today, and what has to be added. Refreshed 2026-11-24 against `feature/billing` at `536cbd5db` (D0 to D3b merged). Originally written at
+`2cd8545d4`. Statuses are read from code and docs, not from running specs; items marked U are unverified.
 
 Related: [Hosted billing roadmap](hosted_billing_roadmap.md), [Plan catalog](plan_catalog.md),
 [Entitlements and allowances](entitlements_and_allowances.md), [Subscriptions and renewals](subscriptions_and_renewals.md),
 [Orders and payments](orders_and_payments.md), [Tax](tax.md).
 
-## The headline
+## The headline (refreshed 2026-11-24)
+
+D0 to D3b have landed, so most of the buyer-facing front half described below now exists: public catalog and
+plan detail, Subscribe buttons, add-ons, plan change, buyer billing page and account menu link, refund
+requests, hosted billing enablement with local methods, and a hosting plan page. The list that follows is the
+state before those steps, kept for history; the tables carry current status. What is still missing is
+provisioning from a paid order (D4), the task system (D4a), donations (D5), shares (D6), event fees (D7),
+per platform processors (D8), merchant of record (D9) and community sold plans (D10). See the
+[MVP definition](mvp_definition.md).
+
+### The headline as first written
 
 The billing backend is deep: plans, orders, split payments, offline methods, tax, entitlements, quotas,
 renewals. The buyer-facing front half is missing.
@@ -84,10 +94,10 @@ Coverage: **B** built and merged, **P** partial (backend only or with limits), *
 | 0.2 | As P1 I grant feature access (alpha and beta gates) and roles that carry no `manage_*`. | B | `feature_access`, `membership_role` handlers. |
 | 0.3 | As P1 I override quota for one person or platform without a plan. | B | `QuotaGrant`, platform quota grants UI. |
 | 0.4 | As P1 I choose enforcement per quota type and see usage. | B | `/billing/allowances`. |
-| 0.5 | As P1 I offer a free hosting tier. | U | $0 plan validates; $0 checkout, order and entitlement unconfirmed. |
+| 0.5 | As P1 I offer a free hosting tier. | B | Verified on the dev app: a $0 plan checks out to a paid $0 order with no payment method (D0). |
 | 0.6 | As P1 a paid order provisions a platform and its steward automatically. | M | `platform_provisioning` entitlement kind calling `TenantPlatformProvisioningService` from a job. |
 | 0.7 | As P1 a lapsed hosted platform goes read only, not deleted, and I see over limit platforms. | M | `hosted_platform` grant, suspension, over limit notices (documented, unbuilt). |
-| 0.8 | As P1 I see which hosted platforms are on which plan and their usage. | P | Subscribers list exists; no per platform hosting view. |
+| 0.8 | As P1 I see which hosted platforms are on which plan and their usage. | P | Hosted platforms list for the host and a hosting plan page for the platform owner (D3). No per platform usage roll up. |
 | 0.9 | As P1 I report tax and revenue per plan. | B | Tax reports on the metrics dashboard. |
 
 ## Scenario 1: hosted platform tiers
@@ -97,16 +107,16 @@ included, more storage and features. Tier C: a separate app and database, the pl
 
 | # | Story | Cov | Today / needs |
 |---|---|---|---|
-| 1.1 | As P2 I compare tiers A, B and C on a public page (price, domain, storage, AI, features). | M | Catalog and comparison page. Plan metadata (`pricing_tier`, `hosted_access_level`) exists but is not shown or enforced. |
-| 1.2 | As P2 I start checkout from a tier card without typing a URL. | M | Buy button and public plan detail. |
+| 1.1 | As P2 I compare tiers A, B and C on a public page (price, domain, storage, AI, features). | P | Public `/billing/catalog` with plan detail and a plan catalog content block (D1b, D1c). No side by side comparison. |
+| 1.2 | As P2 I start checkout from a tier card without typing a URL. | B | Subscribe and Get it free buttons on each card go to checkout (D1b). Verified on the dev app. |
 | 1.3 | As P2 I sign in or sign up in the middle of checkout and keep my selection. | P | Checkout needs sign in; no return to plan. |
 | 1.4 | As P4 I check out as a member of a community and the new platform's community is my community. | M | Checkout lacks `on_behalf_of`; provisioning must link the existing community as primary (the service currently creates one). |
 | 1.5 | As P2 I choose my subdomain at checkout and see that it is available. | M | Subdomain picker with validation, reserved names and uniqueness. |
 | 1.6 | As P3 I add a custom domain as a paid add-on to tier A. | M | Add-on line item, `PlatformDomain` creation, DNS verification, TLS. |
 | 1.7 | As P3 tier B includes the custom domain and raised quotas without extra steps. | P | Quotas work; domain entitlement kind missing. |
-| 1.8 | As P3 I see my hosting plan, renewal date, usage, invoices and payment method. | M | Platform "Plan and usage" page reusing subscriptions and entitlement meters. |
-| 1.9 | As P3 I upgrade or downgrade with proration and my features and quotas change with it. | M | Plan change service: move the term, prorate, resync entitlements, block a downgrade that is over limits. |
-| 1.10 | As P3 I buy extra storage or AI tokens as add-ons. | M | Add-on plans with `quota_allowance` grants and multi-line checkout. |
+| 1.8 | As P3 I see my hosting plan, renewal date, usage, invoices and payment method. | B | `/billing/hosting_plan` for a hosted platform owner: plan, renewal, usage (D3). Not reachable on the host platform, by design. |
+| 1.9 | As P3 I upgrade or downgrade with proration and my features and quotas change with it. | B | Change plan from the next period, with a guard (D3). Change plan link is on the subscription page. |
+| 1.10 | As P3 I buy extra storage or AI tokens as add-ons. | B | Add-ons at checkout and bought later (D2, D2b). Add-ons cannot hold grants; they are plain extras today. |
 | 1.11 | As P3 I cancel and my platform stays readable through the paid period, then read only. | P | Cancel works; suspension missing. |
 | 1.12 | As P3 on tier C I request and receive a separate instance that is its own host. | M | Operator task (1.13), manual fulfilment first. |
 | 1.13 | As P11 I receive a provisioning task when tier C is paid, with order, plan and requested domain on it, and I assign, comment, set due dates and mark it done. | M | Needs a project and task system for BTS operators (G23). Billing creates the task; the task system is a general feature. |
@@ -118,11 +128,11 @@ included, more storage and features. Tier C: a separate app and database, the pl
 
 | # | Story | Cov | Today / needs |
 |---|---|---|---|
-| 2.1 | As P9 on a hosted platform I can sell my own plans with my own payment accounts. | M | Per platform billing, gated by the agreements in "Hosted billing enablement". |
-| 2.1a | As P9 I accept the hosted platform billing agreement, then the hosted local billing agreement, and enable cash, cheque and e-Transfer with no processor account. | M | Agreement gate, `ProcessorSetting` for the hosted platform. |
+| 2.1 | As P9 on a hosted platform I can sell my own plans with my own payment accounts. | P | Hosted platforms can sell with local methods after the agreements (D3a). No own processor account yet (D8). |
+| 2.1a | As P9 I accept the hosted platform billing agreement, then the hosted local billing agreement, and enable cash, cheque and e-Transfer with no processor account. | B | Hosted platform billing agreement, then hosted local billing agreement (D3a). |
 | 2.1b | As P9 I connect my own processor account for remote methods after accepting the hosted platform billing agreement. | M | Per platform credentials, webhooks, test connection. |
 | 2.1c | As P9 I choose the host as merchant of record, after accepting the merchant onboarding agreement, so I need no processor account. | M | MoR mode: host collects, pays out, fee split, host as tax registrant for those sales. |
-| 2.1d | As P1 I see which hosted platforms accepted which agreements and which billing modes are on, and I can pause a platform's billing. | M | Enablement status page and audit trail. |
+| 2.1d | As P1 I see which hosted platforms accepted which agreements and which billing modes are on, and I can pause a platform's billing. | P | Hosted platforms page for stewards. Pause and audit trail not verified. |
 | 2.2 | As P5 I buy an annual membership that renews yearly. | P | Annual plans and CE renewals work for a platform's own plans; blocked on 2.1 only. |
 | 2.3 | As P5 I register for the conference and AGM and pay the fee. | M | Event fee, capacity, ticket types, registration tied to `Order`. |
 | 2.4 | As P5 I pay membership and registration in one order. | M | Multi-line checkout, plus a rule that one line carries the other's entitlement. |
@@ -161,12 +171,12 @@ included, more storage and features. Tier C: a separate app and database, the pl
 
 | # | Story | Cov | Today / needs |
 |---|---|---|---|
-| 4.1 | As a buyer I find Billing in my account menu and land on one page with active plans, renewals, recent orders, credit and access. | M | Pages exist separately; needs menu entries and a hub. |
+| 4.1 | As a buyer I find Billing in my account menu and land on one page with active plans, renewals, recent orders, credit and access. | B | Billing link in the account menu and the `/billing` page (D1a). Verified on the dev app. |
 | 4.2 | As a buyer I see my order history with status, date, amount, tax and receipt download, and filter by status or year. | P | `/billing/orders` and documents exist; no filters, no cross order receipts, no menu link. |
 | 4.3 | As a buyer I see my active plans, who each one covers (me, my community, my platform), the next renewal and the amount. | P | Subscriptions and entitlements pages exist; beneficiary and renewal detail need checking. |
 | 4.4 | As a buyer I cancel at period end and resume before it ends. | B | CE renewed subscriptions. Processor renewed ones have no payer screen in core. |
-| 4.5 | As a buyer I upgrade, downgrade or switch interval. | M | Same as 1.9. |
-| 4.6 | As a buyer I change the payment method on an existing subscription. | P | Checkout offers "renew with"; terms are immutable and there is no change screen. |
+| 4.5 | As a buyer I upgrade, downgrade or switch interval. | B | Same as 1.9. |
+| 4.6 | As a buyer I change the payment method on an existing subscription. | B | "Pay renewals by" on the subscription page changes the method for later invoices; an invoice already made keeps its method. |
 | 4.7 | As a buyer I request a refund on an order or payment, give a reason and track its status. | B | `RefundRequest`, buyer form on the order page, status. See [refund requests](refund_requests.md). |
 | 4.8 | As a steward I review, approve, partly approve or decline refund requests, see the refund policy and reply to the buyer. | B | Queue at `/billing/refund_requests`, notifications, reuses `Refunds::Record`. The refund policy text is not shown yet. |
 | 4.9 | As a buyer I see refund status, amount and tax on my order page. | B | Request state, approved amount and the reply show on the order page. |
@@ -212,6 +222,14 @@ included, more storage and features. Tier C: a separate app and database, the pl
 | G22 | Hosted billing enablement: three agreements, per mode gates, steward status page | 2, 3 | L |
 | G23 | Project and task system for BTS operators (design, then minimal implementation) | 1 | L |
 | G24 | Future spec only: charitable receipt donations | 3 | S (doc) |
+
+### Gap status at `536cbd5db`
+
+| Status | Gaps |
+|---|---|
+| Closed | G1 (comparison page still open), G4, G6, G14, G19, G20 (refund policy text not shown yet) |
+| Partly closed | G2 (plan catalog and plan button blocks only), G3 (add-ons done; guest checkout and return to checkout after sign in open), G21 (payment method change done; order filters, address editor, notification preferences open), G22 (local methods done; own processor and merchant of record open) |
+| Open | G5, G7, G8, G9, G10, G11, G12, G15, G16, G17, G18, G23 |
 
 ## Decisions (recorded 2026-11-10)
 
