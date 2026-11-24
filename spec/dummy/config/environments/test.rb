@@ -48,7 +48,10 @@ Rails.application.configure do
 
   # Cap the test log: one rotated file, 100 MB each (an uncapped log reached 2.5 GB).
   # TaggedLogging keeps the `tagged` API that app code and specs call on Rails.logger.
-  config.logger = ActiveSupport::TaggedLogging.logger(Rails.root.join('log/test.log'), 1, 100.megabytes)
+  # TaggedLogging.logger only exists in Rails 8.0+, so wrap the logger for the 7.2 lane.
+  config.logger = ActiveSupport::TaggedLogging.new(
+    ActiveSupport::Logger.new(Rails.root.join('log/test.log'), 1, 100.megabytes)
+  )
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
