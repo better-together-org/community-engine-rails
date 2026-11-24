@@ -12,6 +12,8 @@ RSpec.describe BetterTogether::Geography::SeedCoordinatesGenerator do
   before do
     stub_const('BetterTogether::Geography::SeedCoordinatesGenerator::PACKET_PATH', packet_path)
     allow_any_instance_of(described_class).to receive(:sleep) # rubocop:todo RSpec/AnyInstance
+    # Progress is reported with puts; keep it out of the CI log.
+    allow_any_instance_of(described_class).to receive(:puts) # rubocop:todo RSpec/AnyInstance
   end
 
   after { FileUtils.rm_f(packet_path) }

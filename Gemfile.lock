@@ -31,7 +31,7 @@ PATH
       devise-i18n
       devise-jwt
       devise_zxcvbn
-      doorkeeper (>= 5.7, < 6.0)
+      doorkeeper (>= 5.9.9, < 6.0)
       fast-mcp (>= 1.6.0)
       font-awesome-sass (~> 6.5)
       friendly_id (>= 5.2, < 5.6)
@@ -315,7 +315,7 @@ GEM
       declarative (>= 0.0.9, < 1.0.0)
       representable (>= 3.1.1, < 4)
     docile (1.4.1)
-    doorkeeper (5.9.3)
+    doorkeeper (5.9.10)
       railties (>= 5)
     drb (2.2.3)
     dry-auto_inject (1.1.0)
@@ -676,7 +676,7 @@ GEM
       i18n (>= 0.5.0)
       railties (>= 6.1)
     public_suffix (7.0.5)
-    puma (8.1.0)
+    puma (8.1.2)
       nio4r (~> 2.0)
     pundit (2.5.2)
       activesupport (>= 3.0.0)
@@ -697,7 +697,7 @@ GEM
       faraday-follow_redirects
       json-jwt (>= 1.11.0)
       rack (>= 2.1.0)
-    rack-protection (4.2.1)
+    rack-protection (4.2.2)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
