@@ -9,7 +9,8 @@ Items still marked open need an answer before the phase that depends on them.
 - A top-up lasts until used by default, and each top-up product can be configured instead to last for a fixed term.
 - A buyer can order several units of a product on one line. Grants multiply by quantity.
 - Ticket types are a subtype of `Product`, like other one-off purchasables, using single table inheritance. The subclass carries the behaviour, and a
-  detail record holds the subtype's own attributes (for tickets, `Billing::ProductTicketType`). Nothing ticket-specific lives on the product table.
+  detail record holds the subtype's own attributes. The ticket type is the product subclass. A ticket is an issued instance of a ticket type: a join
+  record between the ticket type and an optional holder. Nothing ticket-specific lives on the product table.
 - Add-ons are not a type. They are one case of a general **dependent purchases** mechanism: any purchasable can require that the buyer holds, or is
   ordering, some other purchasable. It applies to plans, products, ticket types and later purchasables alike. Both "must already hold" and "or is buying
   it now" are available and configurable per rule. Examples: a gala ticket only for people ordering or already holding a conference registration
@@ -89,12 +90,17 @@ Keep `Plan` as the recurring subscription offer. Everything else sold becomes a 
 - **Shared parts** pulled out of Plan into concerns used by both Plan and Product: catalog listing and restriction, processor mirror and lock rules,
   translated presentation, agreement targeting. This shrinks Plan without changing its schema first.
 - **Product subtypes (STI).** `Product` is the standard product (a top-up or one-time add-on), fulfilled through its grants. A non-standard kind is a
-  subclass, such as `Billing::Products::Ticket`, that overrides the hooks the purchasable contract asks of a product: for a ticket, `reserve!` and
-  `release!` against capacity, `fulfil` creating the registration, `revoke` cancelling it, and "does this person hold you" meaning a valid
-  registration. Attributes that only one subtype has live in a `has_one` detail record, so the shared table has no empty columns. For tickets they are
-  expected to include the event or occurrence, capacity, per-person limit and sales window, and are designed with D7, not in this stack. The `type`
-  column is only ever set from an allow-list of subclasses (never from a parameter), and line items and translations store the base class name, so
-  one allow-list entry for `Billing::Product` covers every subclass. This stack builds the base class and the subtype seam, with a test subclass in specs.
+  subclass that overrides the hooks the purchasable contract asks of a product. The first is `Billing::Products::TicketType`, which is what a buyer
+  chooses and pays for. Attributes that only one subtype has live in a `has_one` detail record, so the shared table has no empty columns. For ticket
+  types they are expected to include the event or occurrence, capacity, per-person limit and sales window.
+- **Tickets.** A ticket is an issued instance of a ticket type: a record joining the ticket type to an optional holder (a person), and to the order line
+  that paid for it. It is not a purchasable and carries no authored text. The ticket type's hooks work through tickets: `reserve!` and `release!` hold
+  capacity against issued and pending tickets, `fulfil` issues one ticket per unit of quantity (unassigned unless the buyer is the only holder, so a
+  buyer of five can assign them later), `revoke` voids the tickets of a refunded line, and "does this person hold you" means they hold a valid
+  ticket. Holder assignment, transfer and check-in are designed with D7, not in this stack.
+- **What this stack builds.** The base `Product`, the subtype seam, and a test subclass with a test issued-instance model in specs, so the hooks are
+  proven before D7. The `type` column is only ever set from an allow-list of subclasses (never from a parameter), and line items and translations
+  store the base class name, so one allow-list entry for `Billing::Product` covers every subclass.
 - **Purchasable contract** gains fulfilment hooks, so the order engine never tests a class: what happens when an order line is paid
   (`fulfil`), refunded or cancelled (`revoke`), and what purpose the line implies. Plan answers "start a subscription". Product answers "grant
   these allowances for the quantity bought". Ticket types and donations answer in their own way later.
@@ -128,7 +134,7 @@ How it is evaluated, always on the server:
 - `Orders::Place` checks every line against the buyer's holdings plus the other lines in the same order. The checkout add-on step becomes "things that go
   with what you are buying" and is built from the rules, so it works for any prerequisite and not only plans.
 - Each purchasable answers one question for the engine: "does this person hold you right now?" A plan says yes for a live subscription or entitlement, a
-  product for a live grant or a paid order that stands, a ticket type for a valid registration. That one hook replaces `Plans::Holdings`.
+  product for a live grant or a paid order that stands, a ticket type for a valid issued ticket. That one hook replaces `Plans::Holdings`.
 - Refund or cancellation of a prerequisite follows the rule's setting. Unpaid dependent lines in the same order are cancelled with it.
 
 Today's add-ons convert directly: an add-on plan becomes a product, its `plan_add_ons` links become rules ("holding or ordering this plan"), and an
