@@ -11,7 +11,7 @@ The agreement text itself is not decided here. The platform ships **draft placeh
 | Agreement | Covers | Added when |
 |---|---|---|
 | `subscription_agreement` | subscriptions and memberships | the purchase is for a plan that renews |
-| `one_time_purchase_agreement` | one-time purchases, event tickets, exchanges | any other purchase |
+| `one_time_purchase_agreement` | one-time purchases (event tickets and exchanges will use it when ticketing ships) | any other purchase |
 | `offline_payment_terms` | what cash, a cheque or an e-transfer cannot do | the buyer pays by cash, cheque or e-transfer |
 | `refund_policy` | when and how a refund can be asked for, and what comes back | a buyer sends a refund request (see [Refund requests](refund_requests.md)); not tied to a purchase |
 

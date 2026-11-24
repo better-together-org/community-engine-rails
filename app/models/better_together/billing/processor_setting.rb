@@ -22,6 +22,9 @@ module BetterTogether
       self.table_name = 'better_together_billing_processor_settings'
 
       PURPOSES = %w[subscription one_time ticket exchange].freeze
+      # What can be bought today: a plan is the only purchasable. Ticket and exchange stay valid stored values, but forms
+      # offer only these until a purchasable for them ships.
+      AVAILABLE_PURPOSES = %w[subscription one_time].freeze
       MIN_HOLD_HOURS = 1
       MAX_HOLD_HOURS = 24 * 30
       VALUE_LIMIT = 1_000

@@ -65,7 +65,7 @@ classDiagram
 
 1. Fills in what buyers are told. Stored **encrypted** in a text column (`encrypts_billing_attribute`), shown only to a steward and to a buyer on their own order, never in a plan listing, a log, an email or an event payload.
 2. Accepts the drawbacks (below). The acceptance is recorded once with the person and the time, and is required before a manual method can be switched on.
-3. Chooses how long an unpaid order is held (1 hour to 30 days, 72 hours by default), which purposes it covers (subscriptions and memberships, one-time purchases, event tickets, exchanges), and for a cheque when access starts.
+3. Chooses how long an unpaid order is held (1 hour to 30 days, 72 hours by default), which purposes it covers (subscriptions and memberships, one-time purchases; event tickets and exchanges will be offered when ticketing ships), and for a cheque when access starts.
 
 A method that does not exist where the platform is cannot be turned on: e-transfer is refused when the host has said its country is not Canada (`BT_BILLING_DEFAULT_COUNTRY`), and allowed when the country is unknown, since sellers have no country on record yet. Currency is enforced when an order is placed.
 

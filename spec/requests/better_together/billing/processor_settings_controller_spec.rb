@@ -21,7 +21,7 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
   def edit_path(name) = better_together.edit_billing_processor_setting_path(name, locale:)
 
   def enable_params(_name = 'cash', **overrides)
-    { billing_processor_setting: { enabled: '1', acknowledge: '1', hold_hours: '48', purposes: ['', 'one_time', 'ticket'],
+    { billing_processor_setting: { enabled: '1', acknowledge: '1', hold_hours: '48', purposes: ['', 'one_time', 'subscription'],
                                    settings: { instructions: 'At the hall, Saturdays' } }.merge(overrides) }
   end
 
@@ -203,7 +203,7 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
 
         setting = host_platform.billing_processor_settings.find_by(processor: 'cash')
         expect(response).to redirect_to(tab_page_path)
-        expect(setting).to have_attributes(enabled: true, hold_hours: 48, purposes: %w[one_time ticket])
+        expect(setting).to have_attributes(enabled: true, hold_hours: 48, purposes: %w[one_time subscription])
         expect(setting.settings).to eq({ 'instructions' => 'At the hall, Saturdays' })
         expect(setting).to be_acknowledged
         expect(setting.acknowledged_by).to eq(steward.person)
@@ -280,6 +280,16 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       patch setting_path('cash'), params: enable_params
 
       expect(host_platform.billing_processor_settings).to be_empty
+    end
+  end
+
+  describe 'purposes offered' do
+    it 'offers only what can be bought today', :aggregate_failures do
+      sign_in steward
+      get edit_path('cash')
+
+      expect(response.body).to include('value="one_time"')
+      expect(response.body).not_to include('value="ticket"')
     end
   end
 end
