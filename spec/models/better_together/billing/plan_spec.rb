@@ -134,6 +134,16 @@ RSpec.describe BetterTogether::Billing::Plan do
                                       manages_processor_product: false, sync_status: 'synced')
     end
 
+    it 'keeps the processor amount even when a typed amount is submitted with the link' do
+      adapter.prices['price_typed'] = BetterTogether::Billing::PriceInfo.new(
+        price_id: 'price_typed', product_id: 'prod_pro', amount_cents: 99_000, currency: 'cad', interval: 'year'
+      )
+      plan = link_plan('price_typed', amount: '1.00')
+
+      expect(plan).to be_valid
+      expect(plan.amount_cents).to eq(99_000)
+    end
+
     it 'copies how many intervals make a period, so a quarterly price is not shown as monthly' do
       adapter.prices['price_quarterly'] = BetterTogether::Billing::PriceInfo.new(
         price_id: 'price_quarterly', product_id: 'prod_pro', amount_cents: 12_000, currency: 'usd', interval: 'month', interval_count: 3
