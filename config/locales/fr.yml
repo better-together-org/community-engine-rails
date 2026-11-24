@@ -1298,6 +1298,23 @@ fr:
         title: Facturation et forfaits
         view_access: Voir mes accès
         view_credit: Voir le crédit
+      not_enabled:
+        back: Retour au tableau de bord de l’hôte
+        intro: Seules les personnes qui gèrent cette plateforme voient cette page.
+          Les autres voient une page introuvable. La facturation s’active quand chaque
+          étape ci-dessous est faite.
+        none: Tous les réglages sont en place. Si cette page s’affiche encore, rechargez-la.
+        note: Les réglages de déploiement sont des variables d’environnement, modifiées
+          par la personne qui déploie la plateforme. Après un changement, redémarrez
+          l’application.
+        open_settings: Ouvrir les réglages des modes de paiement
+        problem_flag: Activez la facturation dans les réglages de déploiement (BT_BILLING_ENABLED).
+        problem_hosted: Cette plateforme ne peut pas encore facturer. Ses ententes
+          d’hébergement doivent être en vigueur.
+        problem_identity: 'Définissez les coordonnées de votre organisation dans les
+          réglages de déploiement. Il manque encore :'
+        problem_method_enabled: Activez au moins un mode de paiement.
+        title: La facturation n’est pas activée
       notification_preferences:
         always_hint: 'Ces avis demandent votre attention : ils sont toujours affichés
           dans l''application et envoyés par courriel.'
@@ -2093,9 +2110,16 @@ fr:
         check_configured: La facturation est activée et les coordonnées de votre organisation
           sont définies.
         check_method_enabled: Au moins un mode de paiement est activé.
+        check_worker: Un processus en arrière-plan traite les tâches de facturation.
+        detail_backlog: Des tâches de facturation attendent et personne ne les prend.
+          Vérifiez que le processus fonctionne.
         detail_no_agreement: Aucune entente n’est encore exigée pour ce type d’achat.
+        detail_no_worker: Aucun processus en arrière-plan ne traite la file de facturation.
+          Une commande payée ne démarrera pas son abonnement tant qu’il n’y en a pas.
         detail_not_in_force: Une entente est encore un brouillon ou retirée. Relisez
           son texte et passez-la à active.
+        detail_unreachable: La file de tâches est inaccessible, le processus n’a donc
+          pas pu être vérifié.
         done: 'Fait :'
         not_ready: Pas prêt
         plant_agreements: Planter les accords d'achat en brouillon

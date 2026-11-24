@@ -1,0 +1,48 @@
+{
+  "name": "billing_readiness_worker",
+  "device": "desktop",
+  "url": "/en/billing/agreement_requirements",
+  "title": "Purchase terms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_readiness",
+  "flow": "billing_readiness_worker",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_not_enabled_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-readiness-worker",
+      "title": "Background worker",
+      "bullets": [
+        "Says whether something is taking billing jobs, so paid orders turn into subscriptions."
+      ],
+      "target": {
+        "x": 65.5,
+        "y": 356.0,
+        "width": 1294.0,
+        "height": 41.0,
+        "right": 1359.5,
+        "bottom": 397.0,
+        "center_x": 712.5,
+        "center_y": 376.5
+      },
+      "avoid": {
+        "x": 65.5,
+        "y": 356.0,
+        "width": 1294.0,
+        "height": 41.0,
+        "right": 1359.5,
+        "bottom": 397.0,
+        "center_x": 712.5,
+        "center_y": 376.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 417.0,
+        "width": 380,
+        "height": 184,
+        "score": 1060.0
+      }
+    }
+  ]
+}
