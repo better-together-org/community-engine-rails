@@ -64,6 +64,9 @@ states:
   unclaimed:
     label: Unclaimed
     description: A person with no confirmed linked user (see Person#claimed?), for example an elected official's profile. The probe fixture is a public profile, so staff who may update person records are its owners.
+  claimed:
+    label: Claimed
+    description: A person with a confirmed linked user (see Person#claimed?). The probe fixture is a public profile; only the person edits it, never a standing role.
   hidden:
     label: Hidden
     description: Soft-hidden or suspended by moderation. No pilot resource has this state yet.

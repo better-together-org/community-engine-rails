@@ -361,6 +361,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     let(:community) do
       create(:better_together_community,
              name: 'Edit Test',
+             privacy: 'public',
              creator: platform_manager.person)
     end
 
@@ -409,7 +410,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     let(:community) do
       create(:better_together_community,
              name: 'Original Name',
-             privacy: 'private',
+             privacy: 'public',
              creator: platform_manager.person)
     end
 

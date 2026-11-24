@@ -140,8 +140,8 @@ RSpec.describe BetterTogether::CommunityPolicy do
         end
       end
 
-      it 'allows viewing members' do
-        expect(policy.view_members?).to be true
+      it 'does not allow viewing members, even of a public community (CD-1)' do
+        expect(policy.view_members?).to be false
       end
     end
 
@@ -354,9 +354,9 @@ RSpec.describe BetterTogether::CommunityPolicy do
   end
 
   describe 'cross-tenant isolation' do
-    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_a) { create(:better_together_platform, :public) }
     let(:platform_b) { create(:better_together_platform) }
-    let(:platform_a_community) { create(:better_together_community, platform: platform_a) }
+    let(:platform_a_community) { create(:better_together_community, platform: platform_a, privacy: 'public') }
     let(:platform_b_community) { create(:better_together_community, platform: platform_b) }
 
     it "denies a steward of platform A from updating platform B's community" do

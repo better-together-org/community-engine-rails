@@ -57,13 +57,13 @@
           "public": "allow"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -151,13 +151,13 @@
           "public": "allow"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -169,6 +169,53 @@
           "community": "deny",
           "private": "deny",
           "public": "allow"
+        }
+      },
+      "hide": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "index": {
@@ -227,13 +274,13 @@
           "public": "allow"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -272,6 +319,53 @@
           "community": "allow",
           "private": "allow",
           "public": "allow"
+        },
+        "platform_manager": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        }
+      },
+      "quarantine": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         },
         "platform_manager": {
           "community": "allow",
@@ -322,12 +416,12 @@
         },
         "platform_manager": {
           "community": "deny",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "deny",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -368,13 +462,13 @@
           "public": "allow"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -386,6 +480,53 @@
           "community": "deny",
           "private": "deny",
           "public": "allow"
+        }
+      },
+      "suspend": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "update": {
@@ -415,13 +556,13 @@
           "public": "allow"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
+          "community": "deny",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -462,14 +603,14 @@
           "public": "allow"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
-          "public": "allow"
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
-          "public": "allow"
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         },
         "record_owner": {
           "community": "allow",
@@ -599,7 +740,7 @@
           "someone_elses": "deny"
         },
         "record_owner": {
-          "own": "deny",
+          "own": "allow",
           "someone_elses": "na"
         },
         "signed_in_non_member": {
@@ -666,7 +807,7 @@
           "someone_elses": "deny"
         },
         "record_owner": {
-          "own": "deny",
+          "own": "allow",
           "someone_elses": "na"
         },
         "signed_in_non_member": {
@@ -689,7 +830,7 @@
         },
         "community_member": {
           "own": "na",
-          "someone_elses": "allow"
+          "someone_elses": "deny"
         },
         "community_organizer": {
           "own": "na",
@@ -704,7 +845,7 @@
           "someone_elses": "deny"
         },
         "record_owner": {
-          "own": "deny",
+          "own": "allow",
           "someone_elses": "na"
         },
         "signed_in_non_member": {
@@ -1006,10 +1147,10 @@
           "new": "deny"
         },
         "platform_manager": {
-          "new": "allow"
+          "new": "deny"
         },
         "platform_steward": {
-          "new": "allow"
+          "new": "deny"
         },
         "record_owner": {
           "new": "na"
@@ -1159,6 +1300,44 @@
           "any": "allow"
         }
       },
+      "restore": {
+        "anonymous": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "blocked_user": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "community_contributor": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "community_member": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "community_organizer": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "platform_manager": {
+          "claimed": "allow",
+          "unclaimed": "allow"
+        },
+        "platform_steward": {
+          "claimed": "allow",
+          "unclaimed": "allow"
+        },
+        "record_owner": {
+          "claimed": "deny",
+          "unclaimed": "na"
+        },
+        "signed_in_non_member": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        }
+      },
       "scope": {
         "anonymous": {
           "community": "deny",
@@ -1271,56 +1450,103 @@
           "unclaimed": "allow"
         }
       },
+      "suspend": {
+        "anonymous": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "blocked_user": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "community_contributor": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "community_member": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "community_organizer": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "platform_manager": {
+          "claimed": "allow",
+          "unclaimed": "allow"
+        },
+        "platform_steward": {
+          "claimed": "allow",
+          "unclaimed": "allow"
+        },
+        "record_owner": {
+          "claimed": "deny",
+          "unclaimed": "na"
+        },
+        "signed_in_non_member": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        }
+      },
       "update": {
         "anonymous": {
+          "claimed": "deny",
           "community": "deny",
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
         },
         "blocked_user": {
+          "claimed": "deny",
           "community": "deny",
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
         },
         "community_contributor": {
+          "claimed": "deny",
           "community": "deny",
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
         },
         "community_member": {
+          "claimed": "deny",
           "community": "deny",
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
         },
         "community_organizer": {
+          "claimed": "deny",
           "community": "deny",
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
         },
         "platform_manager": {
-          "community": "allow",
-          "private": "allow",
-          "public": "allow",
+          "claimed": "deny",
+          "community": "deny",
+          "private": "deny",
+          "public": "deny",
           "unclaimed": "allow"
         },
         "platform_steward": {
-          "community": "allow",
-          "private": "allow",
-          "public": "allow",
+          "claimed": "deny",
+          "community": "deny",
+          "private": "deny",
+          "public": "deny",
           "unclaimed": "allow"
         },
         "record_owner": {
+          "claimed": "allow",
           "community": "allow",
           "private": "allow",
           "public": "allow",
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "claimed": "deny",
           "community": "deny",
           "private": "deny",
           "public": "deny",
@@ -1502,7 +1728,7 @@
           "someone_elses": "deny"
         },
         "record_owner": {
-          "own": "deny",
+          "own": "allow",
           "someone_elses": "na"
         },
         "signed_in_non_member": {
@@ -1580,7 +1806,7 @@
           "someone_elses": "deny"
         },
         "record_owner": {
-          "own": "deny",
+          "own": "allow",
           "someone_elses": "na"
         },
         "signed_in_non_member": {

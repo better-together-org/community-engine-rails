@@ -23,6 +23,7 @@ opt_in_permissions:
   update_person: Opt-in profile administration; no default role holds it.
   delete_person: Opt-in profile deletion; no default role holds it.
   list_person: Opt-in full directory listing; no default role holds it.
+  manage_unclaimed_profiles: Opt-in editing of unclaimed profiles for a community's organizers; no default role holds it.
 
 controllers:
   - better_together/people
@@ -32,25 +33,8 @@ controllers:
 controller_allowlist:
   better_together/people#index: The index action scopes through resource_collection, which calls policy_scope.
 
-decisions:
-  PD-1:
-    kind: known_deviation
-    title: Platform managers can edit any person profile
-    app_does: PersonPolicy#update? allows platform_manager?. The edit form shows the person's private contact details.
-    privacy_rule: Editing a profile discloses personal data. Managers operate member status (suspend, restore), not profile content.
-    source: "PR #2321 deferred decision, 'PersonPolicy#update?/create?'."
-  PD-2:
-    kind: undecided
-    title: Platform managers can create people
-    app_does: PersonPolicy#create? allows platform_manager?, bypassing the opt-in create_person permission.
-    privacy_rule: Creating a profile does not disclose existing data, but the seeded create_person permission suggests profile administration is an opt-in grant.
-    source: "PR #2321 deferred decision, 'PersonPolicy#update?/create?'."
-  PD-5:
-    kind: undecided
-    title: Blocker cannot show their own block record
-    app_does: PersonBlockPolicy has no show?, so it denies everyone, while the scope and destroy? work for the blocker.
-    privacy_rule: The blocker likely may read their own block.
-    source: Found by this contract.
+# PD-1, PD-2 and PD-5 were approved and enforced; no people decision is open.
+decisions: {}
 
 resources:
   person:
@@ -58,21 +42,17 @@ resources:
     policy: BetterTogether::PersonPolicy
     classification: personal
     title: Person profile
-    states: [public, community, private, unclaimed]
-    permissions: [create_person, read_person, update_person, delete_person, list_person]
+    states: [public, community, private, unclaimed, claimed]
+    permissions: [create_person, read_person, update_person, delete_person, list_person, manage_unclaimed_profiles]
     controllers: [better_together/people, better_together/api/v1/people]
     rules:
       - {id: self, question: "Is the actor the person themself?", on_yes: allow}
       - {id: block, question: "Has the person blocked the actor (or the actor the person)?", on_yes: deny}
       - {id: privacy_gate, question: "Is the profile effectively public?", on_yes: allow}
-      - {id: unclaimed_editor, question: "Is the person unclaimed (no confirmed linked user) and the actor allowed to update person records?", on_yes: allow}
+      - {id: unclaimed_editor, question: "Is the person unclaimed (no confirmed linked user) and the actor a platform manager or steward, or a community organizer holding manage_unclaimed_profiles?", on_yes: allow}
       - {id: shared_community, question: "Is the profile community-level and does the actor share an active community with the person?", on_yes: allow}
       - {id: directory_permission, question: "Does a custom role grant read_person or list_person?", on_yes: allow, unprobed: "No persona holds a custom role; opt-in permission."}
-      - id: platform_manager
-        question: "Is the actor a platform manager (update and create only)?"
-        on_yes: allow
-        intended: false
-        note: Opens profile editing, which shows private contact details; see PD-1.
+      - {id: member_status, question: "Is the actor a platform manager operating the member's status (not the profile)?", on_yes: allow}
       - {id: default_deny, question: "Nothing above matched", on_yes: deny}
     actions:
       index:
@@ -82,6 +62,7 @@ resources:
           - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "The directory needs a signed-in actor; the scope then filters."}
           - {outcome: allow, rule: privacy_gate, reason: "Signed-in people may open the directory; the scope filters the rows."}
       show:
+        states: [public, community, private, unclaimed]
         rows:
           - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "People always read their own profile."}
@@ -91,6 +72,7 @@ resources:
              rule: shared_community, reason: "Community-level profiles are visible to people who share a community."}
           - {outcome: deny, rule: default_deny, reason: "Private profiles and profiles outside one's communities are not readable; standing roles do not read them."}
       download:
+        states: [public, community, private, unclaimed]
         rows:
           - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "Download follows show."}
@@ -103,10 +85,6 @@ resources:
         states: [new]
         rows:
           - {personas: [record_owner, blocked_user], outcome: na}
-          - personas: [platform_manager, platform_steward]
-            outcome: undecided
-            rule: platform_manager
-            undecided: {actual: allow, suggests: deny, decision: PD-2}
           - {outcome: deny, rule: default_deny, reason: "Creating a profile needs the opt-in create_person grant; no default role holds it."}
       update:
         rows:
@@ -116,14 +94,31 @@ resources:
           - personas: [platform_manager, platform_steward]
             outcome: deny
             rule: default_deny
-            reason: "Profile editing shows private contact details; managers operate member status, not profile content."
-            deviation: {actual: allow, actual_rule: platform_manager, decision: PD-1}
-          - {outcome: deny, rule: default_deny, reason: "Only the person (or an opt-in update_person grant) edits a profile."}
+            reason: "Profile editing shows private contact details; managers operate member status, not claimed profile content."
+          - {personas: [community_organizer], states: [unclaimed], outcome: deny, rule: default_deny,
+             reason: "Organizers edit an unclaimed profile only with the opt-in manage_unclaimed_profiles grant; no default role holds it."}
+          - {outcome: deny, rule: default_deny, reason: "Only the person (or an opt-in update_person grant) edits a claimed profile."}
+      suspend:
+        states: [claimed, unclaimed]
+        rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
+          - {personas: [platform_manager, platform_steward], outcome: allow, rule: member_status,
+             reason: "Managers suspend members; this opens no profile content."}
+          - {outcome: deny, rule: default_deny, reason: "Only platform managers operate member status, and nobody suspends themself."}
+      restore:
+        states: [claimed, unclaimed]
+        rows:
+          - {personas: [record_owner], states: [unclaimed], outcome: na}
+          - {personas: [platform_manager, platform_steward], outcome: allow, rule: member_status,
+             reason: "Managers restore suspended members; this opens no profile content."}
+          - {outcome: deny, rule: default_deny, reason: "Only platform managers operate member status, and nobody restores themself."}
       destroy:
+        states: [public, community, private, unclaimed]
         rows:
           - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {outcome: deny, rule: default_deny, reason: "Deletion is a reviewed deletion request, not a policy action; the opt-in delete_person grant is held by no default role."}
       scope:
+        states: [public, community, private, unclaimed]
         rows:
           - {personas: [record_owner], states: [unclaimed], outcome: na}
           - {personas: [record_owner], outcome: allow, rule: self, reason: "People list themselves."}
@@ -154,10 +149,7 @@ resources:
       show:
         rows:
           - {personas: [record_owner], states: [someone_elses], outcome: na}
-          - personas: [record_owner]
-            outcome: undecided
-            rule: default_deny
-            undecided: {actual: deny, suggests: allow, decision: PD-5}
+          - {personas: [record_owner], outcome: allow, rule: blocker, reason: "The blocker reads their own block."}
           - {states: [own], outcome: na}
           - {outcome: deny, rule: default_deny, reason: "Blocks are private to the blocker; nobody else reads them, including the blocked person and standing roles."}
       create:

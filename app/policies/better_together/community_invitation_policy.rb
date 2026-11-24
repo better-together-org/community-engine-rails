@@ -4,6 +4,17 @@ module BetterTogether
   # Authorization policy for community invitations
   # Defines who can view, create, update, and manage community invitations
   class CommunityInvitationPolicy < InvitationPolicy
+    INVITE_PERMISSIONS = %w[invite_community_members manage_community_members manage_community_roles].freeze
+
+    # An inviter keeps their own pending invitation: they can see, resend and withdraw it.
+    def destroy?
+      super || own_pending_invitation?
+    end
+
+    def resend?
+      super || own_pending_invitation?
+    end
+
     # Scope class for filtering community invitations based on user permissions
     class Scope < InvitationPolicy::Scope
       private
@@ -11,21 +22,29 @@ module BetterTogether
       def filtered_invitations_scope
         return scope.none unless agent
 
-        invitable_type_condition(BetterTogether::Community)
-          .where(invitable_id: manageable_communities_relation)
+        communities = invitable_type_condition(BetterTogether::Community)
+        communities.where(invitable_id: manageable_community_ids).or(own_pending_invitations(communities))
       end
 
-      def manageable_communities_relation
-        agent.member_communities
-             .joins(person_community_memberships: { role: { role_resource_permissions: :resource_permission } })
-             .where(
-               better_together_person_community_memberships: { member_id: agent.id, status: 'active' },
-               better_together_resource_permissions: { identifier: %w[invite_community_members manage_community_members manage_community_roles] }
-             )
+      # Only the actor's own memberships count, so a plain member never inherits another member's grant.
+      def manageable_community_ids
+        BetterTogether::PersonCommunityMembership
+          .joins(role: { role_resource_permissions: :resource_permission })
+          .where(member_id: agent.id, status: 'active')
+          .where(better_together_resource_permissions: { identifier: INVITE_PERMISSIONS })
+          .select(:joinable_id)
+      end
+
+      def own_pending_invitations(communities)
+        communities.where(inviter_type: agent.class.name, inviter_id: agent.id, status: 'pending')
       end
     end
 
     private
+
+    def own_pending_invitation?
+      user.present? && record.status_pending? && record.inviter == agent
+    end
 
     def allowed_on_invitable?
       community = record.invitable

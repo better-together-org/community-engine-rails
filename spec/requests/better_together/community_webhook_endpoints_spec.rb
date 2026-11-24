@@ -9,7 +9,7 @@ RSpec.describe 'Community Webhook Endpoints', :as_platform_manager do
   let!(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
   let!(:person) { platform_manager.person }
   let(:regular_user) { create(:better_together_user, :confirmed) }
-  let!(:community) { create(:better_together_community) }
+  let!(:community) { create(:better_together_community, privacy: 'public') }
 
   def index_path
     better_together.community_community_webhook_endpoints_path(locale:, community_id: community)

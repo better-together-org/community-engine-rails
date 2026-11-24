@@ -4,13 +4,17 @@ title: Community invitation show decision tree (generated from the access contra
 flowchart TD
   start(["show community invitation"])
   start --> r0
-  r0{"invite_permission: Does the actor's role in that community grant invite_community_members, manage_community_members or manage_community_roles?"}
+  r0{"invite_permission: Does the actor's own role in that community grant invite_community_members, manage_community_members or manage_community_roles?"}
   r0 -- yes --> r0o(["allow"])
   class r0o out_allow
   r0 -- no --> r1
-  r1["default_deny: Nothing above matched"]
-  r1 --> r1o(["deny"])
-  class r1o out_deny
+  r1{"own_pending: Is this a pending invitation the actor sent?"}
+  r1 -- yes --> r1o(["allow"])
+  class r1o out_allow
+  r1 -- no --> r2
+  r2["default_deny: Nothing above matched"]
+  r2 --> r2o(["deny"])
+  class r2o out_deny
   classDef out_allow fill:#cfe8cf,stroke:#2e6b2e,color:#111
   classDef out_deny fill:#f3d0d0,stroke:#8a2a2a,color:#111
   classDef out_conditional fill:#f6e7b4,stroke:#8a6d1a,color:#111
