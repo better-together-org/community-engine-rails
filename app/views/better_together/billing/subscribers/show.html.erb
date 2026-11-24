@@ -69,7 +69,7 @@
               <td><%= billing_period_status_badge(period) %></td>
               <td class="text-end">
                 <% if period.order %>
-                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_sale_path(period.order, locale: I18n.locale),
+                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_sale_path(period.order, locale: I18n.locale, back_to: billing_subscriber_path(@term, locale: I18n.locale)),
                               class: 'btn btn-outline-secondary btn-sm' %>
                 <% end %>
               </td>

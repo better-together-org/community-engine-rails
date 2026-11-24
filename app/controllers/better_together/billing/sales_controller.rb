@@ -10,6 +10,7 @@ module BetterTogether
       PER_PAGE = 50
 
       before_action :set_order, only: %i[show return_payments cancel]
+      helper_method :back_to_path
       after_action :verify_authorized
 
       def index
@@ -41,6 +42,14 @@ module BetterTogether
       end
 
       private
+
+      # An invoice is reached from several screens (sales, a subscriber, the payments queue, a refund request). Its
+      # back button returns to the one the steward came from, if that named a billing screen of this site.
+      def back_to_path
+        asked = params[:back_to].to_s
+        local = asked.start_with?("/#{I18n.locale}/billing/") && !asked.include?('//') && !asked.include?('\\')
+        local ? asked : billing_sales_path(locale: I18n.locale)
+      end
 
       def platform_orders = billing_owner.billing_orders.sold_by_platform
 
