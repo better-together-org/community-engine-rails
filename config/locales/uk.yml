@@ -1836,6 +1836,7 @@ uk:
         field_solidarity_description: Opys solidarnosti
         field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
           shchob poyasnyty, dlya koho pryznachenyj tsej riven'.
+        field_subscribers: Активні підписники
         field_support_tier: Riven' pidtrymky
         hosted_access_placeholder: Стандартний
         identifier_placeholder: наприклад, hosted_stewardship_monthly

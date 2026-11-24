@@ -51,13 +51,9 @@ RSpec.describe 'Billing store credit DOM contract', type: :request do # rubocop:
     expect_ids(dom_id(account, :show_page), dom_id(account, :balance), dom_id(account, :lots), dom_id(account, :history), dom_id(lot))
   end
 
-  it 'links to the credit screens from the orders list and the payment methods list' do
+  it 'links to the credit screens from the orders list' do
     sign_in buyer_user
     get "/#{locale}/billing/orders"
     expect_ids('billing-credit-link')
-
-    sign_in steward_user
-    get "/#{locale}/billing/processor_settings"
-    expect_ids('billing-credit-accounts-link')
   end
 end

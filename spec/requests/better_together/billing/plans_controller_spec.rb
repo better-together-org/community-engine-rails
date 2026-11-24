@@ -27,6 +27,15 @@ RSpec.describe BetterTogether::Billing::PlansController do
   def plans_path(**) = better_together.billing_plans_path(locale:, **)
   def plan_path(plan) = better_together.billing_plan_path(plan, locale:)
 
+  describe 'the plan list' do
+    it 'has a column for active subscribers' do
+      sign_in platform_manager
+      get plans_path
+
+      expect(response.body).to include('billing-plan-subscriber-count', I18n.t('better_together.billing.plans.field_subscribers'))
+    end
+  end
+
   describe 'who may reach the plans' do
     it 'sends a visitor to sign in' do
       get plans_path

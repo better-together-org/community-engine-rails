@@ -1858,6 +1858,7 @@ es:
         field_solidarity_description: Descripcion de solidaridad
         field_solidarity_description_hint: Se muestra a los posibles suscriptores
           para explicar a quien va dirigido este nivel.
+        field_subscribers: Suscriptores activos
         field_support_tier: Nivel de soporte
         hosted_access_placeholder: Estándar
         identifier_placeholder: p. ej. hosted_stewardship_monthly

@@ -26,6 +26,7 @@
               <th scope="col"><%= t('better_together.billing.plans.field_name') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_billing_interval') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_amount') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.plans.field_subscribers') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_active') %></th>
               <th scope="col"><%= t('better_together.billing.plans.sync_status_heading') %></th>
               <th scope="col"><%= t('better_together.billing.plans.field_pricing_tier') %></th>
@@ -39,6 +40,7 @@
                 <td><%= plan.name %></td>
                 <td><%= t("better_together.billing.plans.interval_#{plan.billing_interval}") %></td>
                 <td><%= billing_amount(plan.amount_cents, plan.currency) %></td>
+                <td class="text-end billing-plan-subscriber-count"><%= number_with_delimiter(@subscriber_counts.fetch(plan.id, 0)) %></td>
                 <td>
                   <% if plan.active? %>
                     <span class="badge bg-success billing-plan-status-badge"><%= t('better_together.billing.plans.status_active') %></span>

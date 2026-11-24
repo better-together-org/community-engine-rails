@@ -8,6 +8,12 @@ module BetterTogether
     class PlanAudience
       PAID = %w[paid partially_refunded refunded].freeze
 
+      # Active subscribers per plan id for a whole list of plans, in one grouped query (the same "active" the
+      # subscribers screen filters by). Plans nobody pays for are absent: read it with `counts.fetch(id, 0)`.
+      def self.active_subscriber_counts(plans)
+        SubscriptionTerm.joins(:pay_subscription).where(plan_id: plans.map(&:id), pay_subscriptions: { status: 'active' }).group(:plan_id).count
+      end
+
       def initialize(plan)
         @plan = plan
       end

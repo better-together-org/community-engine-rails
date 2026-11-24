@@ -1863,6 +1863,7 @@ en:
         field_solidarity_description: Solidarity description
         field_solidarity_description_hint: Shown to potential subscribers to explain
           who this tier is for.
+        field_subscribers: Active subscribers
         field_support_tier: Support tier
         hosted_access_placeholder: Standard
         identifier_placeholder: e.g. hosted_stewardship_monthly

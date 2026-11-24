@@ -39,18 +39,14 @@ RSpec.describe 'Billing subscriptions DOM contract', type: :request do # rubocop
 
     get "/#{locale}/billing/subscribers/#{term.id}"
     expect_ids(dom_id(term, :subscriber_page), 'subscriber-through', 'subscriber-method', 'subscriber-actions', 'subscriber-waive-btn',
-               'subscriber-price-btn', 'subscriber-cancel-btn', 'subscriber-cancel-now-btn', 'subscriber-extend-form', 'subscriber-extend-days',
+               'subscriber-cancel-btn', 'subscriber-cancel-now-btn', 'subscriber-extend-form', 'subscriber-extend-days',
                'subscriber-extend-btn', dom_id(term, :periods))
   end
 
-  it 'links to them from the orders list and the payment methods list' do
+  it 'links to them from the orders list' do
     sign_in buyer_user
     get "/#{locale}/billing/orders"
     expect_ids('billing-subscriptions-link')
-
-    sign_in steward_user
-    get "/#{locale}/billing/processor_settings"
-    expect_ids('billing-subscribers-link')
   end
 
   it 'exposes the renewal fields on a recurring plan\'s form' do

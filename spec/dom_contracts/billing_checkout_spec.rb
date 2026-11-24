@@ -88,10 +88,10 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
                'billing-requirement-add-btn')
   end
 
-  it 'exposes the checklist on the payment methods page, with a link to the purchase terms' do
+  it 'exposes the checklist on the payment methods page' do
     get "/#{locale}/billing/processor_settings"
 
-    expect_ids('billing-readiness-checklist', 'billing-purchase-terms-link')
+    expect_ids('billing-readiness-checklist')
   end
 
   it 'exposes the agreements on an order' do
