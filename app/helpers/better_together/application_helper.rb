@@ -26,7 +26,7 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
-    # rubocop:disable Style/ArgumentsForwarding
+    # rubocop:disable-next Style/ArgumentsForwarding
     def storage_proxy_url_for(attachment, **options)
       return unless attachment.present?
 
@@ -44,7 +44,6 @@ module BetterTogether
         **url_builder_options
       )
     end
-    # rubocop:enable Style/ArgumentsForwarding
 
     # Returns the base path configured for BetterTogether.
     def base_path
@@ -178,9 +177,114 @@ module BetterTogether
     # Finds the platform marked as host or returns a new default host platform instance.
     # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
     # check_platform_privacy, SEO helpers, and layout partials on every request).
+    # Theme custom properties for the current platform, rendered before the platform Css block.
+    def platform_theme_style_tag(platform = host_platform)
+      return unless platform.respond_to?(:theme_config)
+
+      banner = storage_proxy_url_for(platform.header_banner) if platform.header_banner.attached?
+      css = platform.theme_config.to_css(banner_url: banner)
+      content_tag(:style, css.html_safe, type: 'text/css', id: 'platform-theme-style', data: { turbo_track: 'dynamic' }) if css.present? # rubocop:disable Rails/OutputSafety
+    end
+
+    COLOR_MODE_COOKIE = 'bts_color_mode'
+
+    # The signed-in person, when the helper is rendered where authentication exists.
+    def theme_person
+      safe_current_person
+    end
+
+    # The theme id the signed-in person chose, when the platform allows personal themes and the id is
+    # still in the registry. Blank means "use the platform's theme".
+    def user_theme_id(platform = host_platform)
+      id = theme_person&.theme.presence
+      return unless id && platform.respond_to?(:allow_user_themes?) && platform.allow_user_themes?
+
+      id if BetterTogether::PlatformThemeConfig.themes.key?(id)
+    end
+
+    # The colour mode the signed-in person chose (never gated by allow_user_themes), or nil.
+    def user_color_mode
+      mode = theme_person&.color_mode
+      mode if BetterTogether::PlatformThemeConfig::COLOR_MODES.include?(mode)
+    end
+
+    # Whether visitors can switch colour modes: the platform theme allows it, or the person chose a mode.
+    def color_mode_enabled?(platform = host_platform)
+      (platform.respond_to?(:theme_config) && platform.theme_config.dark_mode_enabled?) || user_color_mode.present?
+    end
+
+    # The saved mode: the signed-in person's stored choice, else the visitor's cookie, else the platform
+    # default (auto, light or dark).
+    def color_mode_preference(platform = host_platform)
+      return user_color_mode if user_color_mode
+
+      saved = cookies[COLOR_MODE_COOKIE]
+      return saved if BetterTogether::PlatformThemeConfig::COLOR_MODES.include?(saved)
+
+      platform.respond_to?(:theme_config) ? platform.theme_config.default_mode : 'auto'
+    end
+
+    # Attributes for the html element. An explicit light or dark mode is rendered server side so the
+    # first paint is right; auto is resolved by the inline head script from prefers-color-scheme.
+    def html_color_mode_attributes(platform = host_platform)
+      return {} unless color_mode_enabled?(platform)
+
+      mode = color_mode_preference(platform)
+      attrs = { 'data-bts-color-mode' => mode }
+      attrs['data-bs-theme'] = mode unless mode == 'auto'
+      attrs['data-bts-user-mode'] = user_color_mode if user_color_mode
+      attrs['data-bts-user-theme'] = user_theme_id(platform) if user_theme_id(platform)
+      attrs
+    end
+
+    # The signed-in person's own theme, rendered after the platform theme and before the platform Css block.
+    # Anonymous visitors, and people on platforms that disallow personal themes, get nothing.
+    def user_theme_style_tag(platform = host_platform)
+      css = user_theme_css(platform)
+      content_tag(:style, css.html_safe, type: 'text/css', id: 'user-theme-style', data: { turbo_track: 'dynamic' }) if css.present? # rubocop:disable Rails/OutputSafety
+    end
+
+    def user_theme_css(platform = host_platform)
+      return unless platform.respond_to?(:theme_config)
+
+      platform_dark = platform.theme_config.dark_mode_enabled?
+      if (id = user_theme_id(platform))
+        BetterTogether::PlatformThemeConfig.user_css(id, dark_mode_enabled: platform_dark || user_color_mode.present?)
+      elsif user_color_mode.present? && !platform_dark
+        # The platform turned dark mode off, but this person chose a mode: give them dark tokens too.
+        BetterTogether::PlatformThemeConfig.new(platform.theme_config.values.merge('dark_mode' => 'enabled')).to_css
+      end
+    end
+
+    def color_scheme_meta_tag(platform = host_platform)
+      tag.meta name: 'color-scheme', content: color_mode_enabled?(platform) ? 'light dark' : 'light'
+    end
+
+    # Runs before first paint: resolves the saved or default mode to data-bs-theme. For a signed-in person
+    # the stored choice (data-bts-user-mode) wins and is mirrored into localStorage and the cookie.
+    def color_mode_head_script_tag(platform = host_platform)
+      return unless color_mode_enabled?(platform)
+
+      javascript_tag(<<~JS.squish, nonce: true)
+        (function(){try{var d=document.documentElement,m=d.getAttribute('data-bts-color-mode')||'auto',u=d.getAttribute('data-bts-user-mode');
+        if(u==='auto'||u==='light'||u==='dark'){m=u;
+        try{localStorage.setItem('bts-color-mode',u);}catch(e){}
+        document.cookie='bts_color_mode='+u+'; path=/; max-age=31536000; SameSite=Lax'+(location.protocol==='https:'?'; Secure':'');}
+        else{try{var s=localStorage.getItem('bts-color-mode');if(s==='auto'||s==='light'||s==='dark'){m=s;}}catch(e){}}
+        var t=m==='auto'?(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):m;
+        d.setAttribute('data-bs-theme',t);d.setAttribute('data-bts-color-mode',m);}catch(e){}})();
+      JS
+    end
+
+    def platform_favicon_tag(platform = host_platform)
+      return unless platform.respond_to?(:favicon) && platform.favicon.attached?
+
+      tag.link(rel: 'icon', href: storage_proxy_url_for(platform.favicon), type: platform.favicon.content_type)
+    end
+
     def host_platform
       @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(
+                         ::BetterTogether::OperatorPlatform.new(
                            name: 'Better Together Community Engine',
                            url: ::BetterTogether.base_url,
                            privacy: 'private'
@@ -190,9 +294,8 @@ module BetterTogether
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
       @host_community ||= host_platform.community ||
-                          # rubocop:todo Layout/LineLength
+                          # rubocop:todo-next Layout/LineLength
                           ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
-                          # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
@@ -233,17 +336,17 @@ module BetterTogether
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
     # from translations and fall back to the Open Graph description when set.
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                      content_for(:meta_description)
+                      meta_content_for(:meta_description)
                     elsif content_for?(:og_description)
-                      content_for(:og_description)
+                      meta_content_for(:og_description)
                     else
                       t('meta.default_description', platform_name: host_platform.name)
                     end
 
-      keywords = content_for?(:meta_keywords) ? content_for(:meta_keywords) : nil
+      keywords = content_for?(:meta_keywords) ? meta_content_for(:meta_keywords) : nil
 
       tags = []
       tags << tag.meta(name: 'description', content: description)
@@ -251,7 +354,6 @@ module BetterTogether
 
       safe_join(tags, "\n")
     end
-    # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
       # Prevent indexing when debug mode is enabled
@@ -265,6 +367,19 @@ module BetterTogether
       tag.meta(name: 'robots', content: meta_content)
     end
 
+    # True when this page may be measured by third-party vendors. Vendor extensions must check it
+    # before emitting scripts. Controllers outside the engine's base class are treated as allowed.
+    def third_party_tracking_allowed?
+      return true unless controller.respond_to?(:third_party_tracking_allowed?, true)
+
+      controller.send(:third_party_tracking_allowed?)
+    end
+
+    # Lets vendor scripts that stay loaded across Turbo visits learn what the current page allows.
+    def third_party_tracking_meta_tag
+      tag.meta(name: 'bt-third-party-tracking', content: third_party_tracking_allowed? ? 'on' : 'off')
+    end
+
     def render_provider_head_tags
       fragments = ::BetterTogether.head_tag_providers.values.filter_map do |provider|
         fragment = provider.call(self)
@@ -274,40 +389,80 @@ module BetterTogether
       safe_join(fragments, "\n")
     end
 
+    OG_TYPES = %w[website article profile book].freeze
+
+    # Reads a content_for value as single-line text. Views capture ERB blocks,
+    # so the raw value carries the indentation and newlines around the content.
+    def meta_content_for(name)
+      content_for(name).to_s.squish
+    end
+
+    # Open Graph type for the page. Views may set `content_for :og_type` to one
+    # of OG_TYPES; anything else falls back to "website".
+    def og_type
+      requested = content_for?(:og_type) ? meta_content_for(:og_type) : nil
+      OG_TYPES.include?(requested) ? requested : 'website'
+    end
+
+    # Absolute share-image URL: a view-provided image, else the host community logo.
+    def og_image_url
+      url = content_for?(:og_image) ? meta_content_for(:og_image) : host_community_logo_url
+      return url if url.blank? || url.start_with?('http://', 'https://')
+
+      "#{request.base_url}/#{url.delete_prefix('/')}"
+    end
+
+    # og:image plus width, height and alt when views provide them
+    # (`content_for :og_image_width`, `:og_image_height`, `:og_image_alt`).
+    def og_image_meta_tags(image_url)
+      tags = [tag.meta(property: 'og:image', content: image_url)]
+      { width: :og_image_width, height: :og_image_height, alt: :og_image_alt }.each do |suffix, key|
+        value = content_for?(key) ? meta_content_for(key) : nil
+        tags << tag.meta(property: "og:image:#{suffix}", content: value) if value.present?
+      end
+      tags
+    end
+
+    # Width and height recorded in an attachment blob's metadata, as the
+    # content_for-ready strings used by og_image_meta_tags.
+    def og_image_dimensions(attachment)
+      metadata = attachment.blob&.metadata || {}
+      { width: metadata['width'], height: metadata['height'] }.compact_blank.transform_values(&:to_s)
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-                   content_for(:og_title)
+                   meta_content_for(:og_title)
                  elsif content_for?(:page_title)
-                   t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
+                   t('og.page.title', title: meta_content_for(:page_title), platform_name: host_platform.name)
                  else
                    t('og.default_title', platform_name: host_platform.name)
                  end
 
       og_description = if content_for?(:og_description)
-                         content_for(:og_description)
+                         meta_content_for(:og_description)
                        else
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? canonicalize_url(content_for(:og_url)) : canonical_current_url
+      og_url = content_for?(:og_url) ? canonicalize_url(meta_content_for(:og_url)) : canonical_current_url
 
-      og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
+      og_image = og_image_url
 
       tags = []
       tags << tag.meta(property: 'og:title', content: og_title)
       tags << tag.meta(property: 'og:description', content: og_description)
       tags << tag.meta(property: 'og:url', content: og_url)
-      tags << tag.meta(property: 'og:image', content: og_image) if og_image.present?
+      tags.concat(og_image_meta_tags(og_image)) if og_image.present?
       tags << tag.meta(property: 'og:site_name', content: host_platform.name)
-      tags << tag.meta(property: 'og:type', content: 'website')
+      tags << tag.meta(property: 'og:type', content: og_type)
 
       safe_join(tags, "\n")
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Generates a canonical link tag for the current request.
@@ -316,7 +471,7 @@ module BetterTogether
     # the host and locale are ensured by prefixing with `base_url_with_locale`.
     def canonical_link_tag
       canonical_url = if content_for?(:canonical_url)
-                        explicit_or_canonical_url(content_for(:canonical_url))
+                        explicit_or_canonical_url(meta_content_for(:canonical_url))
                       else
                         canonical_current_url
                       end
@@ -338,7 +493,7 @@ module BetterTogether
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
-      ::BetterTogether::Wizard.find_by(identifier: 'host_setup') ||
+      ::BetterTogether::Wizard.for_identifier('host_setup', platform: Current.platform || ::BetterTogether::Platform.find_by(host: true)) ||
         raise(StandardError, 'Host Setup Wizard not configured. Please run rails db:seed')
     end
 
@@ -403,11 +558,12 @@ module BetterTogether
     def canonicalize_url(url)
       return url if url.blank?
 
-      uri = URI.parse(url.to_s)
+      url = url.to_s.strip
+      uri = URI.parse(url)
       path = extract_canonical_path(uri, url)
       build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
     rescue URI::InvalidURIError
-      build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+      build_url_for_path(base_url_with_locale, normalize_relative_path(url))
     end
 
     def uri_query_string(uri)
@@ -468,7 +624,7 @@ module BetterTogether
     # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
     # Value is the IANA identifier: "America/New_York"
     # Returns array of [display_name, iana_identifier] pairs
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def iana_timezone_options_for_select
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -490,11 +646,10 @@ module BetterTogether
       zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
            .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Returns commonly used timezone options sorted by UTC offset
     # Used for the "Common Timezones" priority optgroup
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def priority_timezone_options
       # Build a hash of IANA ID => Rails TimeZone to deduplicate
       # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
@@ -518,7 +673,6 @@ module BetterTogether
       priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
                     .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
     end
-    # rubocop:enable Metrics/AbcSize
 
     # Returns timezone options grouped by continent/region, excluding priority zones
     # Each group is sorted by UTC offset (ascending), then alphabetically
@@ -584,7 +738,7 @@ module BetterTogether
     # @param options [Hash] Standard Rails select options (include_blank, prompt, etc.)
     # @param html_options [Hash] HTML options for the select tag
     # @return [String] HTML select element with SlimSelect integration
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength
     def iana_time_zone_select(form, attribute, selected_or_priority = nil, options = {}, html_options = {})
       # Determine selected timezone from various sources
       selected = if selected_or_priority.is_a?(String)
@@ -624,7 +778,6 @@ module BetterTogether
         merged_html_options
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def friendly_timezone_label(tz_id)
       rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }

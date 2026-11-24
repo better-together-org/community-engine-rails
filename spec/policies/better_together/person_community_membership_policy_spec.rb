@@ -113,9 +113,8 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
   end
 
   describe '#destroy?' do
-    it 'denies destroying own membership even with permissions' do
-      allow(person).to receive(:permitted_to?).with('manage_community_members', community).and_return(true)
-      expect(policy.destroy?).to be false
+    it 'allows a member to remove their own membership (CD-5)' do
+      expect(policy.destroy?).to be true
     end
 
     it 'allows destroying another membership as community member manager' do

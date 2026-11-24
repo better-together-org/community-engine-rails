@@ -26,7 +26,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def generate_report! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
@@ -56,7 +56,7 @@ module BetterTogether
           records = type.constantize.where(id: ids).index_by(&:id)
           sorted_total_views = total_views.sort_by { |_, count| -count }
 
-          # rubocop:todo Metrics/BlockLength
+          # rubocop:todo-next Metrics/BlockLength
           report_by_type[type] = sorted_total_views.each_with_object({}) do |(pageable_id, views_count), hash|
             breakdown = locale_breakdowns.each_with_object({}) do |((pid, locale), count), b|
               b[locale.to_s] = { count: count, page_url: page_url_map[[pid, locale]] } if pid == pageable_id
@@ -88,7 +88,6 @@ module BetterTogether
               friendly_names: friendly_names
             }
           end
-          # rubocop:enable Metrics/BlockLength
         end
 
         generated_report = if sort_by_total_views
@@ -105,7 +104,6 @@ module BetterTogether
 
         self.report_data = generated_report
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
@@ -143,7 +141,7 @@ module BetterTogether
       # Helper method to generate the CSV file.
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/MethodLength
-      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo-next Metrics/AbcSize
       def generate_csv_file # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         from_date = filters['from_date'].present? ? Date.parse(filters['from_date']) : nil
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
@@ -209,13 +207,12 @@ module BetterTogether
 
         file_path
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/PerceivedComplexity
 
       # This method builds a human-friendly filename based on the applied filters,
       # the sort toggle, and the current time.
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def build_filename # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         filters_summary = []
         if filters['from_date'].present?
@@ -229,7 +226,6 @@ module BetterTogether
         timestamp = Time.current.strftime('%Y-%m-%d_%H%M%S')
         "PageViewReport_#{timestamp}_#{filters_summary}_#{sorting_segment}.#{file_format}"
       end
-      # rubocop:enable Metrics/MethodLength
 
       #
       # Class Methods

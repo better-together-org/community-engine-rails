@@ -1,0 +1,31 @@
+version: '2.0'
+type: navigation_area
+records:
+- key: platform-header
+  attributes:
+    visible: true
+    protected: true
+  translations:
+    en:
+      name: Platform Header
+- key: platform-host
+  attributes:
+    visible: true
+    protected: true
+  translations:
+    en:
+      name: Platform Host
+- key: better-together
+  attributes:
+    visible: true
+    protected: true
+  translations:
+    en:
+      name: Better Together
+- key: platform-footer
+  attributes:
+    visible: true
+    protected: true
+  translations:
+    en:
+      name: Platform Footer

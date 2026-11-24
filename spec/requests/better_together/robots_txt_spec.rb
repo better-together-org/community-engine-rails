@@ -59,7 +59,7 @@ RSpec.describe 'robots.txt' do
 
   context 'when the request host resolves to a different platform domain' do
     let!(:tenant_platform) do
-      create(:better_together_platform, :public, host: false, external: false,
+      create(:better_together_platform, :public, host: false, locality: 'local',
                                                  host_url: 'https://tenant.example.test')
     end
 

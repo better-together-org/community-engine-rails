@@ -18,7 +18,7 @@ module BetterTogether
 
         # rubocop:todo Metrics/PerceivedComplexity
         # rubocop:todo Metrics/MethodLength
-        # rubocop:todo Metrics/AbcSize
+        # rubocop:todo-next Metrics/AbcSize
         def create(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
           # Check agreements acceptance (matches parent behavior)
           unless agreements_accepted?
@@ -44,7 +44,6 @@ module BetterTogether
           resource&.errors&.add(:base, 'Registration could not be completed. Please try again.')
           render json: { errors: resource&.errors&.full_messages || ['Registration failed'] }, status: :unprocessable_entity
         end
-        # rubocop:enable Metrics/AbcSize
         # rubocop:enable Metrics/MethodLength
         # rubocop:enable Metrics/PerceivedComplexity
 

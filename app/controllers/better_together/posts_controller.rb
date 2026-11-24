@@ -2,7 +2,7 @@
 
 module BetterTogether
   # CRUD for BetterTogether::Post
-  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable-next Metrics/ClassLength
   class PostsController < FriendlyResourceController
     include PostsIndexPreload
     include ChecksRequiredAgreements
@@ -133,7 +133,7 @@ module BetterTogether
       community_id = params[:community_id].presence
       return if community_id.blank?
 
-      BetterTogether::Community.friendly.find(community_id)
+      BetterTogether::Community.friendly_find_in_platform(community_id)
     rescue ActiveRecord::RecordNotFound
       nil
     end
@@ -151,5 +151,4 @@ module BetterTogether
       community_context ? [community_context.id] : []
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

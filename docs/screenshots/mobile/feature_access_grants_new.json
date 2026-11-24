@@ -1,8 +1,8 @@
 {
   "name": "feature_access_grants_new",
   "device": "mobile",
-  "url": "/en/host/platforms/community-engine-host/feature_access_grants/new",
-  "title": "Community Engine Host",
+  "url": "/en/host/platforms/test-host-community/feature_access_grants/new",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "feature_access_grants",

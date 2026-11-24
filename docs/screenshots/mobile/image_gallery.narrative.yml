@@ -1,0 +1,14 @@
+---
+title: Image gallery
+audience:
+- visitor
+- developer
+journey_step: As a visitor, I browse the photos on a page.
+callouts:
+- :id: gallery
+  :title: Gallery grid
+  :description: Each image is a figure with its own alt text and caption. Lazy loaded,
+    with reserved size.
+accessibility_notes: A labelled section holding a list of figures.
+slug: image_gallery
+device: mobile

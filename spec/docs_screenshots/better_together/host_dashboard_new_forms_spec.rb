@@ -18,7 +18,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 host dashboard forms',
   let(:peer_platform) do
     BetterTogether::Platform.find_by(identifier: 'docs-forms-peer') ||
       create(:better_together_platform, name: 'Valley Commons', identifier: 'docs-forms-peer',
-                                        external: true, privacy: 'public')
+                                        locality: 'remote', privacy: 'public')
   end
   let(:connection) do
     create(:better_together_platform_connection, :active, source_platform: host_platform, target_platform: peer_platform)

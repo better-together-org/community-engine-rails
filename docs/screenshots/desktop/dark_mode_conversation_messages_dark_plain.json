@@ -1,0 +1,11 @@
+{
+  "name": "dark_mode_conversation_messages_dark_plain",
+  "device": "desktop",
+  "url": "/en/conversations/c8ea38a3-9259-4945-b60c-b2acc2044b52",
+  "title": "Non vero eveniet optio. | Conversations | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_conversation_messages_dark_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb"
+}

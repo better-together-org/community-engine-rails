@@ -29,6 +29,7 @@ erDiagram
   EXT_PLATFORM o|--o{ JOATU_RESPONSE_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ JOATU_RESPONSE_LINKS : "creator / creator_id"
   EXT_PERSON o|--o{ SEEDS : "creator / creator_id"
+  EXT_PLATFORM o|--o{ SEEDS : "platform / platform_id"
   EXT_PERSON o|--o{ SEED_PLANTINGS : "creator / creator_id"
   SEEDS o|--o{ SEED_PLANTINGS : "seed / seed_id"
   EXT_PLATFORM o|--o{ SEED_PLANTINGS : "platform / platform_id"
@@ -162,6 +163,7 @@ erDiagram
 
   SEEDS {
     creator_id uuid
+    platform_id uuid
     seedable_id uuid
     created_by string
     identifier string
@@ -170,7 +172,6 @@ erDiagram
     type string
     version string
     description text
-    seeded_at datetime
   }
 
   SEED_PLANTINGS {

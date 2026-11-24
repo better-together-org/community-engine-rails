@@ -1,15 +1,15 @@
 {
   "name": "post_federation_content_grants_field",
   "device": "mobile",
-  "url": "/en/posts/sample-post-12/edit",
-  "title": "Edit Post | Community Engine Host",
+  "url": "/en/posts/sample-post-37/edit",
+  "title": "Edit Post | Test Host Community",
   "locale": "en",
   "feature_set": "federation_item_consent",
   "flow": "post_federation_content_grants_field",
   "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
   "callouts": [
     {
-      "selector": "#federation-content-grant-12d2950c-87bd-4841-99f5-e93837344af6",
+      "selector": "#federation-content-grant-1b220307-b4ad-464e-9069-35cea5163a3e",
       "title": "Per-connection override in effect",
       "bullets": [
         "This connection is explicitly set to \"Never federate,\" overriding the tri-state above for this one connection only."

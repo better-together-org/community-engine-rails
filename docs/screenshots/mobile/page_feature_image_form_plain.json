@@ -1,0 +1,11 @@
+{
+  "name": "page_feature_image_form_plain",
+  "device": "mobile",
+  "url": "/en/pages/harbour-history/edit",
+  "title": "Edit Harbour history | Pages | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "page_feature_image",
+  "flow": "page_feature_image_form_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/page_feature_image_spec.rb"
+}

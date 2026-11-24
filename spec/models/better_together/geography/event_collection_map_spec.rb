@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::Geography::EventCollectionMap do
     end
 
     it 'delegates to the class method' do
-      expect(instance.records).to eq(described_class.records)
+      expect(instance.records.to_a).to eq(described_class.records.to_a)
     end
   end
 
@@ -120,6 +120,36 @@ RSpec.describe BetterTogether::Geography::EventCollectionMap do
       create(:event, :with_address_location)
 
       expect(described_class.new.records.size).to eq(1)
+    end
+  end
+
+  describe 'list scope' do
+    subject(:instance) do
+      described_class.new(zoom: 10, center: RGeo::Geographic.spherical_factory(srid: 4326).point(-57.9, 48.9),
+                          privacy: 'public', protected: false, identifier: "events-map-#{SecureRandom.hex(4)}")
+    end
+
+    let!(:upcoming) { create(:event, :with_address_location, :upcoming) }
+    let!(:past) { create(:event, :with_address_location, :past) }
+
+    it 'maps every located event when no list scope is set' do
+      expect(instance.records).to contain_exactly(upcoming, past)
+    end
+
+    it 'maps the same events the list shows, ignoring its pagination' do
+      instance.list_scope = described_class.mappable_class.where(id: upcoming.id).page(2).per(1)
+
+      expect(instance.records).to contain_exactly(upcoming)
+    end
+
+    it 'is not truncated below the point cap' do
+      expect(instance.truncated?).to be(false)
+    end
+
+    it 'is truncated and capped above the point cap' do
+      stub_const("#{described_class}::MAX_POINTS", 1)
+
+      expect([instance.truncated?, instance.records.size]).to eq([true, 1])
     end
   end
 end

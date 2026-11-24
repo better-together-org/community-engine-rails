@@ -25,7 +25,7 @@ module BetterTogether
         end
 
         def renderable?(attachable)
-          allowed?(attachable) && attachable.privacy_public? && attachable.visible?
+          allowed?(attachable) && attachable.effective_privacy_public? && attachable.visible?
         end
 
         def reset!

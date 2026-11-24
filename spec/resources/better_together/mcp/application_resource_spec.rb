@@ -136,7 +136,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
         end
       end
 
-      it 'returns all communities' do
+      it 'returns public communities but not private ones the manager does not belong to' do
         public_community
         private_community
 
@@ -144,7 +144,8 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
         content = JSON.parse(resource.content)
 
         community_ids = content.map { |c| c['id'] }
-        expect(community_ids).to include(public_community.id, private_community.id)
+        expect(community_ids).to include(public_community.id)
+        expect(community_ids).not_to include(private_community.id)
       end
     end
 

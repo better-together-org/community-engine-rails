@@ -10,14 +10,14 @@
   /* Top-level checklist items look like soft cards */
   padding: 0.75rem 1rem;
   border-radius: 6px;
-  background-color: var(--bs-white, #fff);
+  background-color: var(--bs-body-bg);
   box-shadow: 0 1px 0 rgba(0,0,0,0.03);
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid rgba(var(--bs-emphasis-color-rgb), 0.04);
 }
 
 /* Add a subtle bottom divider between top-level items to improve scannability */
 .bt-checklist > .list-group > .list-group-item {
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+  border-bottom: 1px solid rgba(var(--bs-emphasis-color-rgb), 0.04);
 }
 
 /* Nested items should be visually lighter to avoid nested card-in-card effect */
@@ -39,7 +39,7 @@
   padding: 0.25rem 0 0.5rem 0.75rem;
   border-radius: 0 6px 6px 0;
   margin-top: 0.5rem;
-  border-left: 2px solid rgba(0,0,0,0.03);
+  border-left: 2px solid rgba(var(--bs-emphasis-color-rgb), 0.03);
 }
 
 /* Hover affordance: subtly lift the item when hovered. For browsers that
@@ -53,13 +53,13 @@
 /* Hover the LI itself: subtle background tint and gentle lift. Applied to the
    LI (not the inner .w-100) to ensure hover fires in all browsers. */
 .bt-checklist .list-group-item:hover {
-  background-color: rgba(0,0,0,0.02);
+  background-color: rgba(var(--bs-emphasis-color-rgb), 0.02);
   box-shadow: 0 6px 18px rgba(0,0,0,0.035);
 }
 
 /* Gentler hover for nested items */
 .bt-checklist .list-group .list-group .list-group-item:hover {
-  background-color: rgba(0,0,0,0.01);
+  background-color: rgba(var(--bs-emphasis-color-rgb), 0.01);
   box-shadow: 0 3px 8px rgba(0,0,0,0.02);
 }
 
@@ -86,3 +86,16 @@
 }
 
 @import 'better_together/_checklist_items_drop';
+
+/* Dark mode: shadows stay black but stronger so lifted rows still read against a dark page. */
+[data-bs-theme='dark'] {
+  .bt-checklist .list-group-item:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); }
+  .bt-checklist .list-group .list-group .list-group-item:hover { box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35); }
+  .bt-drag-image { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); }
+  .dragging { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); }
+  .checklist-checkbox[data-privacy-style="dark"],
+  [data-privacy-style="dark"] .bt-check-icon,
+  .checklist-checkbox[data-privacy-style="dark"] .bt-check-icon { color: rgba(var(--bs-emphasis-color-rgb), 0.95); }
+  [data-privacy-style="dark"] .bt-check-ring,
+  .checklist-checkbox[data-privacy-style="dark"] .bt-check-ring { border-color: rgba(var(--bs-emphasis-color-rgb), 0.55); }
+}

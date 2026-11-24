@@ -26,7 +26,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
       )
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def ensure_platform_manager!
     manager = BetterTogether::User.find_or_initialize_by(email: 'manager@example.test')
     manager.password = 'SecureTest123!@#' if manager.new_record?
@@ -44,7 +44,6 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
       user.update_columns(confirmed_at: Time.zone.now, confirmation_sent_at: Time.zone.now) unless user.confirmed?
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def reset_personal_export_artifacts!(person)
     person.person_data_exports.destroy_all

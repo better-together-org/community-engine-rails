@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     def update?
-      creator_or_platform_steward || event_host_member?
+      creator_or_platform_steward || event_host_member? || community_event_manager?
     end
 
     def create?
@@ -51,7 +51,7 @@ module BetterTogether
     end
 
     def destroy?
-      creator_or_platform_steward || event_host_member?
+      creator_or_platform_steward || event_host_member? || community_event_manager?
     end
 
     # RSVP policy methods
@@ -82,6 +82,8 @@ module BetterTogether
 
     # Filtering and sorting for calendars according to permissions and context
     class Scope < PlatformRecordPolicy::Scope
+      include PlatformEditorialContent
+
       def resolve
         platform_scoped.with_attached_cover_image
                        .includes(:string_translations, :location, :event_hosts, categorizations: {
@@ -100,52 +102,51 @@ module BetterTogether
       # { category: ... }) is a polymorphic association ActiveRecord cannot
       # eagerly load via includes(), which is why EventResource needs the
       # predicate alone, applied to its own relation.
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         events_table = ::BetterTogether::Event.arel_table
         event_hosts_table = ::BetterTogether::EventHost.arel_table
 
         query = visible_privacy_query(events_table)
 
-        if platform_event_manager?
-          query = query.or(events_table[:privacy].eq('private'))
-        else
-          # Draft events are only visible to people connected to them
-          # (creator, hosts, attendees, invitees) or platform event managers.
-          query = query.and(events_table[:status].not_eq('draft'))
+        # Draft events are only visible to people connected to them (creator, hosts,
+        # attendees, invitees). Platform managers also see the platform's own events
+        # (private and draft included), never events hosted by people or other communities.
+        query = query.and(events_table[:status].not_eq('draft'))
 
-          if agent
+        if agent
+          query = query.or(
+            events_table[:creator_id].eq(agent.id)
+          )
+
+          if agent.valid_event_host_ids.any?
+            event_ids = event_hosts_table
+                        .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
+                        .project(:event_id)
             query = query.or(
-              events_table[:creator_id].eq(agent.id)
+              events_table[:id].in(event_ids)
             )
-
-            if agent.valid_event_host_ids.any?
-              event_ids = event_hosts_table
-                          .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
-                          .project(:event_id)
-              query = query.or(
-                events_table[:id].in(event_ids)
-              )
-            end
-
-            if agent.event_attendances.any?
-              event_ids = agent.event_attendances.pluck(:event_id)
-              query = query.or(
-                events_table[:id].in(event_ids)
-              )
-            end
-
-            if agent.event_invitations.any?
-              event_ids = agent.event_invitations.pluck(:invitable_id)
-              query = query.or(
-                events_table[:id].in(event_ids)
-              )
-            end
-          else
-            # Events must have a start time to be shown to people who aren't connected to the event
-            query = query.and(events_table[:starts_at].not_eq(nil))
           end
+
+          if agent.event_attendances.any?
+            event_ids = agent.event_attendances.pluck(:event_id)
+            query = query.or(
+              events_table[:id].in(event_ids)
+            )
+          end
+
+          if agent.event_invitations.any?
+            event_ids = agent.event_invitations.pluck(:invitable_id)
+            query = query.or(
+              events_table[:id].in(event_ids)
+            )
+          end
+        else
+          # Events must have a start time to be shown to people who aren't connected to the event
+          query = query.and(events_table[:starts_at].not_eq(nil))
         end
+
+        query = query.or(platform_editorial_events(events_table)) if platform_event_manager?
 
         # Add logic for invitation token access
         if invitation_token.present?
@@ -160,7 +161,6 @@ module BetterTogether
 
         query.and(excluding_block_related_creators(events_table))
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -170,6 +170,15 @@ module BetterTogether
         return events_table[:id].eq(events_table[:id]) if blocked_ids.blank?
 
         events_table[:creator_id].eq(nil).or(events_table[:creator_id].not_in(blocked_ids))
+      end
+
+      def platform_editorial_events(events_table)
+        event_hosts_table = ::BetterTogether::EventHost.arel_table
+        community_hosted_ids = event_hosts_table.project(:event_id).where(
+          event_hosts_table[:host_type].eq('BetterTogether::Community')
+            .and(event_hosts_table[:host_id].in(platform_editorial_community_ids))
+        )
+        events_table[:id].in(community_hosted_ids).or(events_table[:privacy].not_eq('private'))
       end
 
       def platform_event_manager?

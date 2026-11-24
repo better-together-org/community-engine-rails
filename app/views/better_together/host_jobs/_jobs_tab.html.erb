@@ -1,0 +1,16 @@
+<section id="host-jobs-tab" aria-labelledby="host-jobs-heading">
+  <h1 id="host-jobs-heading" class="mb-2"><%= t('host_dashboard.jobs.heading') %></h1>
+  <p class="text-muted"><%= t('host_dashboard.jobs.description') %></p>
+
+  <%= render partial: 'better_together/host_jobs/summary_panel', locals: { context: 'tab' } %>
+
+  <section id="host-jobs-sidekiq-section" class="mt-4" aria-labelledby="host-jobs-sidekiq-heading">
+    <h2 id="host-jobs-sidekiq-heading" class="h4"><%= t('host_dashboard.jobs.sidekiq.heading') %></h2>
+    <%= turbo_frame_tag 'host-jobs-sidekiq',
+                        src: better_together.host_jobs_sidekiq_path(locale: I18n.locale),
+                        loading: :lazy,
+                        target: '_top' do %>
+      <p id="host-jobs-sidekiq-loading" class="text-muted"><%= t('host_dashboard.jobs.sidekiq.loading') %></p>
+    <% end %>
+  </section>
+</section>

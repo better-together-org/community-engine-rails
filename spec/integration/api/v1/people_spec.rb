@@ -180,6 +180,14 @@ RSpec.describe 'API V1 - People', :skip_host_setup do
                  accepted_at: Time.current)
         end
 
+        # Managers no longer create people by role alone; create_person is an opt-in grant (PD-2).
+        let!(:create_person_grant) do
+          host = BetterTogether::Platform.find_by!(host: true)
+          role = host.person_platform_memberships.find_by!(member: platform_manager_user.person).role
+          role.assign_resource_permissions(%w[create_person])
+          platform_manager_user.person.expire_permission_cache!
+        end
+
         run_test!
       end
 

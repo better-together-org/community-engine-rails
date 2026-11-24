@@ -16,6 +16,8 @@ class AddNextOccurrenceAtToBetterTogetherEvents < ActiveRecord::Migration[7.2]
     # Backfill existing rows so the column is never silently nil for
     # already-persisted events: non-recurring events use their own starts_at;
     # recurring events get their true next occurrence.
+    return unless table_has_rows?(:better_together_events)
+
     say_with_time 'Backfilling next_occurrence_at for existing events' do
       BetterTogether::Event.reset_column_information
       BetterTogether::Event.find_each do |event|

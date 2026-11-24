@@ -1,0 +1,88 @@
+<%# locals: (summary:, context: 'overview') -%>
+<div id="host-jobs-summary-content"
+     class="host-jobs-summary-content"
+     data-host-jobs-summary-available="<%= summary.available? %>"
+     data-host-jobs-summary-counts="<%= summary.watched_counts.to_json %>"
+     data-host-jobs-summary-announcement="<%= t('host_dashboard.jobs.summary.announcement',
+                                                failed: summary.failed, retrying: summary.retrying,
+                                                dead: summary.dead, stalled: summary.stalled,
+                                                enqueued: summary.enqueued, processes: summary.processes) %>">
+  <% if summary.available? %>
+    <% if summary.no_processes? %>
+      <div id="host-jobs-no-processes" class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+        <i class="fas fa-triangle-exclamation mt-1" aria-hidden="true"></i>
+        <div>
+          <strong><%= t('host_dashboard.jobs.summary.no_processes_title') %></strong>
+          <span class="d-block"><%= t('host_dashboard.jobs.summary.no_processes_body') %></span>
+        </div>
+      </div>
+    <% end %>
+
+    <dl id="host-jobs-summary-stats" class="row row-cols-2 row-cols-md-4 g-3 mb-3">
+      <% [
+           [:processes, summary.processes, nil],
+           [:busy, summary.busy, nil],
+           [:enqueued, summary.enqueued, nil],
+           [:stalled, summary.stalled, nil],
+           [:failed, summary.failed, :dashboard],
+           [:retrying, summary.retrying, :retries],
+           [:dead, summary.dead, :dead],
+           [:scheduled, summary.scheduled, :scheduled]
+         ].each do |key, value, page| %>
+        <div id="host-jobs-stat-<%= key %>" class="col host-jobs-summary-stat">
+          <dt class="small text-muted fw-normal"><%= t("host_dashboard.jobs.summary.stats.#{key}") %></dt>
+          <dd id="host-jobs-<%= key %>-count" class="host-jobs-summary-count mb-0">
+            <% if page %>
+              <%= host_jobs_sidekiq_link(key, value, page, context:) %>
+            <% else %>
+              <%= number_with_delimiter(value) %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <p id="host-jobs-summary-latency" class="mb-2">
+      <%= t('host_dashboard.jobs.summary.longest_latency', latency: host_jobs_latency(summary.longest_latency)) %>
+    </p>
+    <p id="host-jobs-summary-stalled-hint" class="small text-muted mb-3">
+      <%= t('host_dashboard.jobs.summary.stalled_hint',
+            threshold: distance_of_time_in_words(summary.stalled_after)) %>
+    </p>
+
+    <% if summary.queues.any? %>
+      <div class="table-responsive">
+        <table id="host-jobs-queues-table" class="table table-sm align-middle mb-2">
+          <caption class="visually-hidden"><%= t('host_dashboard.jobs.summary.queues_caption') %></caption>
+          <thead>
+            <tr>
+              <th scope="col"><%= t('host_dashboard.jobs.summary.queue') %></th>
+              <th scope="col" class="text-end"><%= t('host_dashboard.jobs.summary.queue_size') %></th>
+              <th scope="col" class="text-end"><%= t('host_dashboard.jobs.summary.queue_latency') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% summary.queues.each do |queue| %>
+              <tr id="host-jobs-queue-<%= queue.name.parameterize %>" class="host-jobs-queue-row">
+                <th scope="row"><%= queue.name %></th>
+                <td class="text-end"><%= number_with_delimiter(queue.size) %></td>
+                <td class="text-end"><%= host_jobs_latency(queue.latency) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p id="host-jobs-queues-empty" class="text-muted"><%= t('host_dashboard.jobs.summary.no_queues') %></p>
+    <% end %>
+
+    <p id="host-jobs-summary-updated" class="small text-muted mb-0">
+      <%= t('host_dashboard.jobs.summary.updated_at', time: l(summary.fetched_at, format: :long)) %>
+    </p>
+  <% else %>
+    <div id="host-jobs-summary-unavailable" class="alert alert-warning mb-0">
+      <strong><%= t('host_dashboard.jobs.summary.unavailable_title') %></strong>
+      <span class="d-block"><%= t('host_dashboard.jobs.summary.unavailable_body') %></span>
+    </div>
+  <% end %>
+</div>

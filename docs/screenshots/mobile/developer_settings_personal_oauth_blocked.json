@@ -2,7 +2,7 @@
   "name": "developer_settings_personal_oauth_blocked",
   "device": "mobile",
   "url": "/en/settings/applications",
-  "title": "404 - Page Not Found | Community Engine Host",
+  "title": "404 - Page Not Found | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "feature_access_grants_and_developer_settings",

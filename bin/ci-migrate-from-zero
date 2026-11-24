@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Proves every engine migration runs, in order, against an empty database with no
+# schema file (the path a host app takes when it migrates from the gem). Uses its
+# own throwaway database so the normal dev and test databases are untouched.
+set -euo pipefail
+
+export RAILS_ENV="${RAILS_ENV:-development}"
+export DISABLE_SPRING=1
+# Short on purpose: Postgres truncates database names at 63 characters.
+export CE_WORKTREE_DB_SUFFIX="_from_zero"
+export DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+export SCHEMA="${SCHEMA:-$PWD/tmp/from_zero_schema.rb}"
+
+mkdir -p tmp
+pushd spec/dummy >/dev/null
+bundle exec rails db:drop db:create || bundle exec rails db:create
+bundle exec rails db:migrate
+
+expected="$(find ../../db/migrate -name '*.rb' | wc -l)"
+applied="$(bundle exec rails runner 'puts ActiveRecord::Base.connection.select_value("SELECT COUNT(*) FROM schema_migrations")' | tail -1)"
+bundle exec rails db:drop
+popd >/dev/null
+
+if [[ "$applied" -lt "$expected" ]]; then
+  echo "from-zero migration FAILED: $applied of $expected migrations recorded" >&2
+  exit 1
+fi
+echo "from-zero migration OK: $applied migrations applied (expected at least $expected)"

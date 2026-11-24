@@ -43,6 +43,7 @@
       <div class="mb-3">
         <%= required_label form, :privacy, class: "form-label" %>
         <%= privacy_field(form:, klass: resource_class) %>
+        <%= privacy_ceiling_notice(form.object) %>
       </div>
 
       <fieldset class="mb-3">

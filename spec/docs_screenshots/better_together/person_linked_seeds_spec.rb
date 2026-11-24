@@ -13,7 +13,7 @@ RSpec.describe 'Documentation screenshots for linked seeds',
   let(:peer_platform) do
     BetterTogether::Platform.find_by(identifier: 'docs-linked-seeds-peer') ||
       create(:better_together_platform, name: 'Hilltop Commons', identifier: 'docs-linked-seeds-peer',
-                                        external: true, privacy: 'public')
+                                        locality: 'remote', privacy: 'public')
   end
   let(:connection) do
     create(:better_together_platform_connection, :active, source_platform: peer_platform, target_platform: host_platform)

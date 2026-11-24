@@ -3,12 +3,13 @@
 module BetterTogether
   module Content
     # Handles CRUD for content blocks independently of pages.
-    # rubocop:todo Metrics/ClassLength
+    # rubocop:todo-next Metrics/ClassLength
     class BlocksController < ResourceController
       ALLOWED_RESOURCE_SEARCH_CLASSES = [
         'BetterTogether::Event',
         'BetterTogether::Checklist',
         'BetterTogether::Community',
+        'BetterTogether::Content::Image',
         'BetterTogether::Person',
         'BetterTogether::Post'
       ].freeze
@@ -91,7 +92,7 @@ module BetterTogether
 
         scope = policy_scope(resource_klass)
         scope = search_scope(scope, search_term) if search_term.present?
-        options = scope.limit(50).map { |record| { value: record.id, text: record.to_s } }
+        options = scope.limit(50).map { |record| { value: record.id, text: record.try(:picker_label) || record.to_s } }
 
         render json: options
       end
@@ -183,6 +184,5 @@ module BetterTogether
         authorize(resource_class, :preview_markdown?)
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

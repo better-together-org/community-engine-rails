@@ -216,12 +216,15 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
     end
 
     context 'when user has permission' do
-      let(:community_role) { create(:role, :community_role) }
+      let(:community_role) do
+        create(:role, :community_role).tap { |role| role.assign_resource_permissions(%w[read_community]) }
+      end
 
       before do
         # Make user a member of the community
         community.person_community_memberships.find_or_create_by!(member: user.person) do |membership|
           membership.role = community_role
+          membership.status = 'active'
         end
 
         # Make user a platform manager

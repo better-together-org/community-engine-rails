@@ -14,6 +14,8 @@ additions="$(mktemp)"; deletions="$(mktemp)"
 echo '[]' > "$additions"
 git ls-files --deleted -- "$@" | jq -R . | jq -s . > "$deletions"
 while IFS= read -r f; do
+  # `--modified` also lists files deleted from the working tree; those are sent as deletions below.
+  [ -f "$f" ] || continue
   jq -c --arg p "$f" --rawfile c <(base64 -w0 "$f") '. + [{path: $p, contents: $c}]' "$additions" > "$additions.new"
   mv "$additions.new" "$additions"
 done < <(git ls-files --modified --others --exclude-standard -- "$@")

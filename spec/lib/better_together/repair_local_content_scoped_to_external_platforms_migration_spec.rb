@@ -9,7 +9,7 @@ RSpec.describe 'Repair local content scoped to external platforms migration' do 
   subject(:migration) { RepairLocalContentScopedToExternalPlatforms.new }
 
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host, :public) }
-  let(:external_platform) { create(:better_together_platform, :external) }
+  let(:external_platform) { create(:better_together_platform, :remote) }
 
   # Migration.verbose is process-global; restore it so later specs asserting on migration output still see it.
   around do |example|

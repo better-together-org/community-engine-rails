@@ -21,7 +21,7 @@ module BetterTogether
     has_secure_token :subscription_token
     encrypts :subscription_token
 
-    slugged :name
+    slugged :name, slug_uniqueness: false
 
     translates :name, type: :string
     translates :description, backend: :action_text

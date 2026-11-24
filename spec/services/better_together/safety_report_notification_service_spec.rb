@@ -48,12 +48,11 @@ RSpec.describe BetterTogether::SafetyReportNotificationService do
 
   describe '#notify_submission' do
     it 'delivers an in-app notification to safety reviewers' do
-      # +1 for the explicitly-granted safety_reviewer, +1 for the suite's autouse
-      # manager@example.test host platform_steward, who now also holds
-      # manage_platform_safety by default (see access_control_builder.rb).
+      # Other host stewards may hold manage_platform_safety too, depending on which specs ran
+      # before in this database, so assert on the explicitly-granted reviewer rather than a total.
       expect do
         service.notify_submission
-      end.to change(Noticed::Notification, :count).by(2)
+      end.to change { Noticed::Notification.where(recipient: safety_reviewer).count }.by(1)
 
       notifications = Noticed::Notification.includes(:event).where(recipient: safety_reviewer)
       expect(notifications).to be_present
@@ -72,12 +71,11 @@ RSpec.describe BetterTogether::SafetyReportNotificationService do
       create_list(:report, 2)
       Noticed::Notification.destroy_all
 
-      # +1 for the explicitly-granted safety_reviewer, +1 for the suite's autouse
-      # manager@example.test host platform_steward, who now also holds
-      # manage_platform_safety by default (see access_control_builder.rb).
+      # Other host stewards may hold manage_platform_safety too, depending on which specs ran
+      # before in this database, so assert on the explicitly-granted reviewer rather than a total.
       expect do
         service.notify_submission
-      end.to change(Noticed::Notification, :count).by(2)
+      end.to change { Noticed::Notification.where(recipient: safety_reviewer).count }.by(1)
 
       reviewer_notifications = Noticed::Notification.includes(:event).where(recipient: safety_reviewer)
       expect(reviewer_notifications.map { |item| item.event.type }).to eq(['BetterTogether::SafetyReportDigestNotifier'])

@@ -65,38 +65,33 @@ RSpec.describe BetterTogether::NavigationArea do
   end
 
   describe '#build_page_navigation_items' do
-    # build_page_navigation_items only ever builds nav items for the
-    # built-in seeded pages (header/footer static pages), so it always
-    # marks them seed_privacy_ceiling_exempt -- see
-    # NavigationItem#privacy_ceiling_exempt?.
     let(:navigation_area) { build(:better_together_navigation_area) }
     let(:public_page) { build(:better_together_page, privacy: 'public', title: 'About') }
 
-    it 'marks each built page nav item seed-exempt from the privacy ceiling' do
+    it 'builds nav items that keep the page privacy' do
       navigation_area.build_page_navigation_items([public_page])
 
       item = navigation_area.navigation_items.first
-      expect(item.seed_privacy_ceiling_exempt).to be true
       expect(item.privacy).to eq('public')
     end
   end
 
-  describe 'privacy ceiling enforcement (NavigationItem)' do
+  describe 'privacy ceiling (NavigationItem)' do
     # Platform factory defaults to privacy: 'private' -> ceiling 'community'.
     let(:private_platform) { create(:better_together_platform, host: false) }
 
-    it 'is exempt under a non-public platform when explicitly seed-exempt' do
-      item = build(:better_together_navigation_item, platform: private_platform, privacy: 'public',
-                                                     seed_privacy_ceiling_exempt: true)
+    it 'saves a public item under a non-public platform' do
+      item = build(:better_together_navigation_item, platform: private_platform, privacy: 'public')
 
       expect(item).to be_valid
     end
 
-    it 'is still bound by the ceiling when not seed-exempt, even if protected' do
-      item = build(:better_together_navigation_item, platform: private_platform, protected: true, privacy: 'public')
+    it 'shows the saved item to guests only once the platform is public' do
+      item = create(:better_together_navigation_item, platform: private_platform, privacy: 'public', visible: true)
+      expect(item.visible_to?(nil)).to be false
 
-      expect(item).not_to be_valid
-      expect(item.errors[:privacy]).to be_present
+      private_platform.update_columns(privacy: 'public') # rubocop:disable Rails/SkipsModelValidations
+      expect(item.reload.visible_to?(nil)).to be true
     end
   end
 

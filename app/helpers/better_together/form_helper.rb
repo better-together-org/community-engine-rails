@@ -12,7 +12,7 @@ module BetterTogether
     # location picker) can render the label select without a blank prompt option
     # that a browser `required` check would otherwise block on.
     def label_select_field(form, required: true, prompt: 'Select Label') # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      # rubocop:todo Metrics/BlockLength
+      # rubocop:todo-next Metrics/BlockLength
       content_tag(:div, class: 'label-select', data: { controller: 'better_together--dependent-fields' }) do
         label_select_id = dom_id(form.object, :label).split('-').first
 
@@ -52,7 +52,6 @@ module BetterTogether
 
         field_label + select_field + other_text_field
       end
-      # rubocop:enable Metrics/BlockLength
     end
     # rubocop:enable Metrics/MethodLength
 
@@ -116,57 +115,43 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
-    # Ordered from most restrictive to most open — used to compute the ceiling
-    # privacy a privacy-scoped record may have given its platform and
-    # community context.
     PRIVACY_ORDER = %w[private community public].freeze
 
-    def privacy_field(form:, klass:, html_options: {}, max_privacy: nil)
-      select_opts = build_privacy_select_options(klass, max_privacy, form.object.privacy)
+    # Every privacy level stays selectable: a platform or community ceiling
+    # only limits who can see the record today, never what may be saved.
+    def privacy_field(form:, klass:, html_options: {})
+      select_opts = build_privacy_select_options(klass, form.object.privacy)
       form.select :privacy, select_opts, {}, build_privacy_html_options(html_options)
     end
 
-    # Returns the most open privacy level a record may carry given its
-    # wrapping platform and community.  Rules:
-    #   - Platform non-public  → ceiling is platform privacy
-    #   - Platform public + community non-public → ceiling is 'community'
-    #     (members of a private/community community can still see community-level content)
-    #   - Platform public + community public → ceiling is 'public'
+    # Most open level the wrapping platform and community currently allow
+    # ('public' when neither restricts), matching PrivacyCeilingValidatable.
     def max_allowed_privacy(platform:, community:)
-      platform_level = PRIVACY_ORDER.index(platform&.privacy) || (PRIVACY_ORDER.length - 1)
-      community_level = community_privacy_max_level(community)
-      PRIVACY_ORDER[[platform_level, community_level].min]
+      BetterTogether::PrivacyCeilingValidatable.ceiling_for(platform:, community:) || PRIVACY_ORDER.last
     end
-    # Deprecated alias kept for compatibility with any host-app view overrides
-    # written against the Post-specific name before this helper was generalized.
+    # Deprecated alias kept for host-app view overrides written against the Post-specific name.
     alias max_allowed_post_privacy max_allowed_privacy
 
-    # Returns a translated hint string when privacy options are constrained,
-    # or nil when there is no restriction (all options open).
-    def privacy_constraint_hint(platform:, community:)
-      if platform.present? && !platform.privacy_public?
-        t('better_together.privacy.hints.privacy_limited_by_platform')
-      elsif community.present? && !community.privacy_public?
-        t('better_together.privacy.hints.privacy_limited_by_community')
+    # Non-blocking warning shown beside a privacy select when the platform or
+    # community would hide a public record from non-members.
+    def privacy_ceiling_notice(record, platform: record.try(:platform) || Current.platform, community: record.try(:community))
+      ceiling = max_allowed_privacy(platform:, community:)
+      return if ceiling == PRIVACY_ORDER.last
+
+      source = platform.present? && !platform.privacy_public? ? 'platform' : 'community'
+      level = t("attributes.privacy_list.#{ceiling}", default: ceiling.humanize)
+      content_tag(:div, id: dom_id(record, :privacy_ceiling_notice), role: 'note',
+                        class: 'alert alert-warning small mt-2 mb-0 py-2',
+                        data: { privacy_ceiling: ceiling, privacy_ceiling_source: source }) do
+        concat content_tag(:i, '', class: 'fa-solid fa-triangle-exclamation me-1', 'aria-hidden': true)
+        concat t("better_together.privacy.ceiling_notice.#{source}", level: level)
       end
     end
 
     private
 
-    def community_privacy_max_level(community)
-      return PRIVACY_ORDER.length - 1 unless community
-
-      # A public community allows public posts; any other community privacy
-      # (community or private) caps post visibility at 'community'.
-      community.privacy_public? ? PRIVACY_ORDER.length - 1 : PRIVACY_ORDER.index('community')
-    end
-
-    def build_privacy_select_options(klass, max_privacy, selected)
-      max_level = max_privacy ? PRIVACY_ORDER.index(max_privacy) : PRIVACY_ORDER.length - 1
-      options = klass.privacies.keys.map do |key|
-        level = PRIVACY_ORDER.index(key) || 0
-        [key.humanize, key, level > max_level ? { disabled: true } : {}]
-      end
+    def build_privacy_select_options(klass, selected)
+      options = klass.privacies.keys.map { |key| [key.humanize, key] }
       options_for_select(options, selected)
     end
 
@@ -359,7 +344,7 @@ module BetterTogether
     # instead of the model's human_attribute_name for the field. This is useful
     # when the visible label needs to be different from the translated attribute
     # name (for example: participant_ids -> "Add participants").
-    # rubocop:todo Metrics/PerceivedComplexity
+    # rubocop:todo-next Metrics/PerceivedComplexity
     def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
@@ -401,7 +386,6 @@ module BetterTogether
         label_tag(field, label_text.html_safe, options)
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
 
     # rubocop:todo Metrics/MethodLength
@@ -449,7 +433,8 @@ module BetterTogether
     # @param html_options [Hash] Additional HTML options for the select field
     # @return [String] HTML for the role selection field
     def role_select_field(form:, field_name:, resource_type:, html_options: {})
-      roles = BetterTogether::Role.where(resource_type: resource_type)
+      roles = BetterTogether::Role.for_platform(Current.platform || BetterTogether::Platform.find_by(host: true))
+                                  .where(resource_type: resource_type)
                                   .includes(:string_translations)
                                   .order(:position)
                                   .i18n

@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'rake'
 
-# rubocop:disable RSpec/DescribeClass, RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/DescribeClass, RSpec/SpecFilePathFormat
 RSpec.describe 'better_together:seed:platform_csp_img_src_defaults', type: :task do
   before do
     Rake.application = Rake::Application.new
@@ -54,7 +54,7 @@ RSpec.describe 'better_together:seed:platform_csp_img_src_defaults', type: :task
   end
 
   it 'does not seed origins onto external platforms' do
-    external_platform = create(:better_together_platform, :external)
+    external_platform = create(:better_together_platform, :remote)
 
     task.invoke
 
@@ -74,4 +74,3 @@ RSpec.describe 'better_together:seed:platform_csp_img_src_defaults', type: :task
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass, RSpec/SpecFilePathFormat

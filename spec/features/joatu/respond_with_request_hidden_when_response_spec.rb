@@ -13,9 +13,8 @@ RSpec.describe 'Respond with Request visibility', :as_platform_manager do
     # create an offer that is a response to the request (nested attributes or direct link)
     @offer = create(:better_together_joatu_offer, creator: other)
     # create explicit response link: offer is response to request
-    # rubocop:todo RSpec/InstanceVariable
+    # rubocop:todo-next RSpec/InstanceVariable
     BetterTogether::Joatu::ResponseLink.create!(source: @request, response: @offer, creator: other)
-    # rubocop:enable RSpec/InstanceVariable
 
     # sign in as the request creator to view the offer
     logout(:user)

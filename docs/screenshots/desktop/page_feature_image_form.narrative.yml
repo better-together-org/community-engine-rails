@@ -1,0 +1,15 @@
+---
+title: Page feature image
+audience:
+- content_editor
+- developer
+journey_step: As an editor, I choose one picture that represents the page.
+callouts:
+- :id: feature_image_field
+  :title: Feature image
+  :description: Replaces the hero block background as the share picture; Clear removes
+    it.
+accessibility_notes: The file input is labelled; the preview is announced with the
+  page title as alt text.
+slug: page_feature_image_form
+device: desktop

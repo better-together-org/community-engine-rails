@@ -40,9 +40,8 @@ RSpec.describe BetterTogether::Metrics::PageView do
         # Should not add validation errors for UTF-8 URLs
         page_view.valid?
         expect(page_view.errors[:page_url]).to be_empty,
-                                               # rubocop:todo Layout/LineLength
+                                               # rubocop:todo-next Layout/LineLength
                                                "URL #{url} should be valid but got errors: #{page_view.errors.full_messages}"
-        # rubocop:enable Layout/LineLength
       end
     end
 

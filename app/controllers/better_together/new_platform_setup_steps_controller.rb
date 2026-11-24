@@ -262,7 +262,7 @@ module BetterTogether
     end
 
     def default_community_role
-      ::BetterTogether::Role.find_by(identifier: 'community_member')
+      ::BetterTogether::Role.find_default('community_member', platform: target_platform)
     end
 
     # Reuses PlatformPolicy#create? rather than #update? deliberately: nobody

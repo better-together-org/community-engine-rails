@@ -168,12 +168,12 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
 
       platform_membership = draft.person_platform_memberships.find_by(member: steward_user.person)
       expect(platform_membership).to be_present
-      expect(platform_membership.role).to eq(platform_steward_role)
+      expect(platform_membership.role).to have_attributes(identifier: 'platform_steward', platform_id: draft.id)
 
       primary_community = draft.primary_community
       community_membership = primary_community.person_community_memberships.find_by(member: steward_user.person)
       expect(community_membership).to be_present
-      expect(community_membership.role).to eq(governance_role)
+      expect(community_membership.role).to have_attributes(identifier: 'community_governance_council', platform_id: draft.id)
       expect(primary_community.creator).to eq(steward_user.person)
 
       # steward_account isn't the last step, so the wizard isn't complete yet.
@@ -267,7 +267,7 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
       expect(invitation.invitable).to eq(draft)
       expect(invitation.inviter).to eq(steward_person)
       expect(invitation.status_pending?).to be true
-      expect(invitation.community_role).to eq(community_member_role)
+      expect(invitation.community_role).to have_attributes(identifier: 'community_member', platform_id: draft.id)
 
       # Redisplays the same step (rather than advancing) so more invitations
       # can be sent before the steward chooses to continue.

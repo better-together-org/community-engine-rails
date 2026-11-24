@@ -5,9 +5,11 @@ module BetterTogether
   # Defines steps for wizards
   class WizardStepDefinition < PlatformRecord
     include Identifier
+    include PlatformFromParent
     include Protected
 
     belongs_to :wizard
+    platform_from :wizard
 
     has_many :wizard_steps,
              class_name: '::BetterTogether::WizardStep'

@@ -35,6 +35,15 @@ RSpec.describe BetterTogether::Weather::Adapters::EnvironmentCanada::CitypageCli
     expect(http).to have_received(:get).with("#{base}/NL/17/#{newest}")
   end
 
+  it 'shares one directory listing per province and hour across sites in a scan' do
+    allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+
+    client.fetch(site_ref: 'NL/s0000221', now: now)
+    expect { client.fetch(site_ref: 'NL/s0000999', now: now) }.to raise_error(BetterTogether::Weather::Http::Error)
+
+    expect(http).to have_received(:get).with("#{base}/NL/17/").once
+  end
+
   it 'raises when no file exists for the site' do
     expect { client.fetch(site_ref: 'NL/s0000999', now: now) }
       .to raise_error(BetterTogether::Weather::Http::Error, /No citypage file/)

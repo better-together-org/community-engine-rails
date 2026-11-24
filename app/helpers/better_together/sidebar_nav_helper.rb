@@ -2,7 +2,7 @@
 
 module BetterTogether
   module SidebarNavHelper # rubocop:todo Style/Documentation
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def render_sidebar_nav(nav:, current_page:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Generate a unique cache key for the navigation
       cache_key = [
@@ -32,12 +32,11 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # rubocop:todo Metrics/CyclomaticComplexity
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/AbcSize
+    # rubocop:todo-next Metrics/AbcSize
     def render_nav_item(nav_item:, current_page:, level:, parent_id:, index:) # rubocop:todo Lint/UnusedMethodArgument, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       heading_tag = "h#{[3 + level, 6].min}"
       collapse_id = "collapse_#{nav_item.id}"
@@ -81,9 +80,8 @@ module BetterTogether
         # Render children if they exist
         if has_children
           item_content += content_tag(:div, id: collapse_id, class: "accordion-collapse collapse #{expanded_class}",
-                                            # rubocop:todo Layout/LineLength
+                                            # rubocop:todo-next Layout/LineLength
                                             'aria-labelledby': "heading_#{collapse_id}", 'data-bs-parent': "##{parent_id}") do
-            # rubocop:enable Layout/LineLength
             content_tag :div, class: 'accordion-body' do
               children.map.with_index do |child_item, child_index|
                 render_nav_item(nav_item: child_item, current_page:, level: level + 1,
@@ -96,7 +94,6 @@ module BetterTogether
         item_content
       end
     end
-    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/CyclomaticComplexity

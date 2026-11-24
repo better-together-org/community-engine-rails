@@ -1,0 +1,6 @@
+    # BetterTogether install: generators
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
+      g.test_framework :rspec, fixture: false if Gem.loaded_specs.key?('rspec-rails')
+      g.fixture_replacement :factory_bot, dir: 'spec/factories' if Gem.loaded_specs.key?('factory_bot_rails')
+    end
