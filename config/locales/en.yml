@@ -1751,14 +1751,16 @@ en:
         add_feature: Access to a feature
         add_quota: More of a quota
         add_role: A role
+        add_storage: Extra storage
         added: Added to the plan.
-        amount_hint: In the quota’s own unit (bytes for storage, tokens for AI).
+        amount_hint: In the quota’s own unit, such as tokens for AI.
         field_amount: Extra amount
         field_community: Community (if a community)
         field_feature: Feature
         field_level: Access level
         field_quota: Quota
         field_role: Role
+        field_storage: Storage
         field_where: Where
         intro: People who pay for this plan get these while it is paid. When it lapses,
           only what the plan itself gave is taken away; roles and access someone already

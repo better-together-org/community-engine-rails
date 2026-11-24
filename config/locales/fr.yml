@@ -1779,14 +1779,16 @@ fr:
         add_feature: Accès à une fonctionnalité
         add_quota: Plus d’un quota
         add_role: Un rôle
+        add_storage: Plus de stockage
         added: Ajouté au forfait.
-        amount_hint: Dans l’unité du quota (octets pour le stockage, jetons pour l’IA).
+        amount_hint: Dans l’unité propre au quota, par exemple des jetons d’IA.
         field_amount: Quantité supplémentaire
         field_community: Communauté (si une communauté)
         field_feature: Fonctionnalité
         field_level: Niveau d’accès
         field_quota: Quota
         field_role: Rôle
+        field_storage: Stockage
         field_where: Où
         intro: Les personnes qui paient ce forfait les obtiennent tant qu’il est payé.
           À l’expiration, seul ce que le forfait a donné est retiré ; les rôles et

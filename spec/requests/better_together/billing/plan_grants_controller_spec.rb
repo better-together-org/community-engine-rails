@@ -37,7 +37,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
 
       expect(response.body).to include(ActionView::RecordIdentifier.dom_id(sub_plan, :grants), 'billing-grant-role-form',
                                        'billing-grant-feature-form',
-                                       'billing-grant-quota-form', ActionView::RecordIdentifier.dom_id(sub_plan.plan_grants.first))
+                                       'billing-grant-storage-form', ActionView::RecordIdentifier.dom_id(sub_plan.plan_grants.first))
     end
 
     it 'adds a role, then queues the plan\'s people to be brought up to date' do
@@ -50,6 +50,13 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
                                                            parameters: {
                                                              'joinable' => 'platform', 'role' => supporter_role.identifier
                                                            })
+    end
+
+    it 'offers storage as the same sizes the platform quota form does, in bytes', :aggregate_failures do
+      get plan_path
+
+      expect(response.body).to include('id="billing-grant-storage-amount"', '>5 GB</option>', 'value="5000000000"')
+      expect(response.body).not_to include('billing-grant-storage-unit')
     end
 
     it 'adds feature access and a quota allowance' do

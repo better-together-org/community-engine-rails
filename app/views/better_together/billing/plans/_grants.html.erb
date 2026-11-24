@@ -49,16 +49,35 @@
         <% end %>
       </div>
       <div class="col-lg-4">
-        <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-quota-form' do %>
-          <%= hidden_field_tag :kind, 'quota_allowance' %>
-          <h3 class="h6"><%= t('better_together.billing.plan_grants.add_quota') %></h3>
-          <%= label_tag 'billing-grant-quota-type', t('better_together.billing.plan_grants.field_quota'), class: 'form-label' %>
-          <%= select_tag :quota_type, options_for_select(BetterTogether::Quotas::Type.all.map { |type| [type.unit == :bytes ? quota_type_label(type.key) : "#{quota_type_label(type.key)} (#{type.unit})", type.key] }),
-                         id: 'billing-grant-quota-type', class: 'form-select mb-2' %>
-          <%= label_tag 'billing-grant-quota-amount', t('better_together.billing.plan_grants.field_amount'), class: 'form-label' %>
-          <%= number_field_tag :amount, nil, id: 'billing-grant-quota-amount', class: 'form-control mb-2', min: 1, required: true %>
-          <div class="form-text mb-2"><%= t('better_together.billing.plan_grants.amount_hint') %></div>
-          <%= submit_tag t('better_together.billing.plan_grants.add'), class: 'btn btn-outline-primary btn-sm', id: 'billing-grant-quota-btn', name: nil %>
+        <% quota_types = BetterTogether::Quotas::Type.all.partition { |type| type.unit == :bytes } %>
+        <% size_types, count_types = quota_types %>
+        <% if size_types.any? %>
+          <%# Storage is chosen from the same sizes as the platform quota defaults, and kept in bytes. %>
+          <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-storage-form', class: 'mb-4' do %>
+            <%= hidden_field_tag :kind, 'quota_allowance' %>
+            <h3 class="h6"><%= t('better_together.billing.plan_grants.add_storage') %></h3>
+            <%= label_tag 'billing-grant-storage-type', t('better_together.billing.plan_grants.field_storage'), class: 'form-label' %>
+            <%= select_tag :quota_type, options_for_select(size_types.map { |type| [quota_type_label(type.key), type.key] }),
+                           id: 'billing-grant-storage-type', class: 'form-select mb-2' %>
+            <%= label_tag 'billing-grant-storage-amount', t('better_together.billing.plan_grants.field_amount'), class: 'form-label' %>
+            <%= select_tag :amount, options_for_select(BetterTogether::Quotas::Defaults::STORAGE_STEPS.map { |bytes| [quota_size_label(bytes), bytes] }),
+                           id: 'billing-grant-storage-amount', class: 'form-select mb-2', required: true,
+                           data: { controller: 'better_together--slim-select' } %>
+            <%= submit_tag t('better_together.billing.plan_grants.add'), class: 'btn btn-outline-primary btn-sm', id: 'billing-grant-storage-btn', name: nil %>
+          <% end %>
+        <% end %>
+        <% if count_types.any? %>
+          <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-quota-form' do %>
+            <%= hidden_field_tag :kind, 'quota_allowance' %>
+            <h3 class="h6"><%= t('better_together.billing.plan_grants.add_quota') %></h3>
+            <%= label_tag 'billing-grant-quota-type', t('better_together.billing.plan_grants.field_quota'), class: 'form-label' %>
+            <%= select_tag :quota_type, options_for_select(count_types.map { |type| ["#{quota_type_label(type.key)} (#{type.unit})", type.key] }),
+                           id: 'billing-grant-quota-type', class: 'form-select mb-2' %>
+            <%= label_tag 'billing-grant-quota-amount', t('better_together.billing.plan_grants.field_amount'), class: 'form-label' %>
+            <%= number_field_tag :amount, nil, id: 'billing-grant-quota-amount', class: 'form-control mb-2', min: 1, required: true %>
+            <div class="form-text mb-2"><%= t('better_together.billing.plan_grants.amount_hint') %></div>
+            <%= submit_tag t('better_together.billing.plan_grants.add'), class: 'btn btn-outline-primary btn-sm', id: 'billing-grant-quota-btn', name: nil %>
+          <% end %>
         <% end %>
       </div>
     </div>

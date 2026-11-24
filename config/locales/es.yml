@@ -1744,15 +1744,16 @@ es:
         add_feature: Acceso a una función
         add_quota: Más de una cuota
         add_role: Un rol
+        add_storage: Más almacenamiento
         added: Añadido al plan.
-        amount_hint: En la unidad de la cuota (bytes para almacenamiento, tokens para
-          IA).
+        amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
         field_amount: Cantidad adicional
         field_community: Comunidad (si es una comunidad)
         field_feature: Función
         field_level: Nivel de acceso
         field_quota: Cuota
         field_role: Rol
+        field_storage: Almacenamiento
         field_where: Dónde
         intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
           solo se retira lo que dio el plan; los roles y accesos que ya tenían se
