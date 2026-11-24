@@ -1805,6 +1805,7 @@ fr:
         role_hint: Seuls les rôles qui ne peuvent pas gérer sont proposés.
         summary_feature: Accès à %{feature} (%{level})
         summary_quota: "%{amount} %{unit} de plus pour %{quota}"
+        summary_quota_size: "%{amount} de plus pour %{quota}"
         summary_role: Le rôle %{role} dans %{where}
         title: Ce que comprend ce forfait
       plans:

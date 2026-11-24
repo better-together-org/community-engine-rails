@@ -3,6 +3,9 @@
 module BetterTogether
   # View helpers for what a plan includes and what people have because of it.
   module BillingEntitlementHelper
+    include BetterTogether::PlatformsHelper # quota_size_label, the same sizes the usage meters show
+    include BetterTogether::QuotasHelper
+
     ENTITLEMENT_BADGES = { 'active' => 'bg-success', 'grace' => 'bg-warning text-dark', 'lapsed' => 'bg-secondary',
                            'revoked' => 'bg-dark' }.freeze
 
@@ -38,8 +41,13 @@ module BetterTogether
 
     def billing_quota_summary(parameters)
       type = BetterTogether::Quotas::Type.find(parameters['quota_type'])
-      t('better_together.billing.plan_grants.summary_quota', amount: number_with_delimiter(parameters['amount']), unit: type.unit,
-                                                             quota: type.key.humanize)
+      if type.unit == :bytes
+        t('better_together.billing.plan_grants.summary_quota_size', amount: quota_size_label(parameters['amount']),
+                                                                    quota: quota_type_label(type.key))
+      else
+        t('better_together.billing.plan_grants.summary_quota', amount: number_with_delimiter(parameters['amount']), unit: type.unit,
+                                                               quota: quota_type_label(type.key))
+      end
     rescue KeyError
       parameters['quota_type'].to_s
     end
@@ -57,9 +65,15 @@ module BetterTogether
     end
 
     # A meter's bar as a percentage with a label for people who cannot see the bar.
-    def billing_meter_label(reading)
+    # Sizes read as sizes (4.2 GB), the way the usage meters on the person and community pages show them.
+    def billing_meter_label(reading, quota_type = nil)
       return t('better_together.billing.entitlements.meter_unlimited') if reading.unlimited?
 
+      bytes = BetterTogether::Quotas::Type.find(quota_type).unit == :bytes if quota_type
+      format = ->(amount) { bytes ? quota_size_label(amount) : number_with_delimiter(amount) }
+      t('better_together.billing.entitlements.meter', used: format.call(reading.used), limit: format.call(reading.limit),
+                                                      percent: reading.percent)
+    rescue KeyError
       t('better_together.billing.entitlements.meter', used: number_with_delimiter(reading.used), limit: number_with_delimiter(reading.limit),
                                                       percent: reading.percent)
     end

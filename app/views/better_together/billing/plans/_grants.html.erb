@@ -53,7 +53,7 @@
           <%= hidden_field_tag :kind, 'quota_allowance' %>
           <h3 class="h6"><%= t('better_together.billing.plan_grants.add_quota') %></h3>
           <%= label_tag 'billing-grant-quota-type', t('better_together.billing.plan_grants.field_quota'), class: 'form-label' %>
-          <%= select_tag :quota_type, options_for_select(BetterTogether::Quotas::Type.all.map { |type| ["#{type.key.humanize} (#{type.unit})", type.key] }),
+          <%= select_tag :quota_type, options_for_select(BetterTogether::Quotas::Type.all.map { |type| [type.unit == :bytes ? quota_type_label(type.key) : "#{quota_type_label(type.key)} (#{type.unit})", type.key] }),
                          id: 'billing-grant-quota-type', class: 'form-select mb-2' %>
           <%= label_tag 'billing-grant-quota-amount', t('better_together.billing.plan_grants.field_amount'), class: 'form-label' %>
           <%= number_field_tag :amount, nil, id: 'billing-grant-quota-amount', class: 'form-control mb-2', min: 1, required: true %>

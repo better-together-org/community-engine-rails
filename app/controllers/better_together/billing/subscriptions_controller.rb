@@ -27,15 +27,15 @@ module BetterTogether
       def cancel
         authorize @term
         Subscriptions::Cancel.call(term: @term, by: current_user.person)
-        redirect_to billing_subscription_path(@term, locale: I18n.locale), notice: t('better_together.billing.subscriptions.cancelled')
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.cancelled')
       end
 
       def resume
         authorize @term
         Subscriptions::Resume.call(term: @term)
-        redirect_to billing_subscription_path(@term, locale: I18n.locale), notice: t('better_together.billing.subscriptions.resumed')
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.resumed')
       rescue Subscriptions::Resume::Refused
-        redirect_to billing_subscription_path(@term, locale: I18n.locale), alert: t('better_together.billing.subscriptions.cannot_resume')
+        redirect_to show_path, alert: t('better_together.billing.subscriptions.cannot_resume')
       end
 
       # Choose another plan from the next period.
@@ -70,14 +70,15 @@ module BetterTogether
 
         gate.accept!(method: 'agreement_review', context: { request: })
         Subscriptions::GenerateRenewal.call(term: @term)
-        redirect_to billing_subscription_path(@term, locale: I18n.locale), notice: t('better_together.billing.subscriptions.terms_accepted')
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.terms_accepted')
       rescue Checkout::AgreementGate::NotReady
         refuse_agreements
       end
 
       private
 
-      def show_path = billing_subscription_path(@term, locale: I18n.locale)
+      # The screen this one was opened from rides along, so the back button still goes there after an action.
+      def show_path = billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil))
 
       # Moves now: a cheaper plan at once (with credit back), a dearer one once the invoice for the difference is paid.
       def change_next(plan)
@@ -89,7 +90,7 @@ module BetterTogether
         outcome = Subscriptions::ChangePlan.now(term: @term, plan:)
         amount = helpers.billing_amount(outcome.amount_cents, @term.currency)
         key = { invoiced: 'plan_change_invoiced', credited: 'plan_change_credited' }.fetch(outcome.mode, 'plan_change_done')
-        target = outcome.mode == :invoiced ? billing_order_path(outcome.order, locale: I18n.locale) : show_path
+        target = outcome.mode == :invoiced ? billing_order_path(outcome.order, locale: I18n.locale, back_to: show_path) : show_path
         redirect_to target, notice: t("better_together.billing.subscriptions.#{key}", amount:)
       end
 
@@ -114,7 +115,7 @@ module BetterTogether
       end
 
       def refuse_agreements
-        redirect_to billing_subscription_path(@term, locale: I18n.locale), alert: t('better_together.billing.subscriptions.accept_all')
+        redirect_to show_path, alert: t('better_together.billing.subscriptions.accept_all')
       end
     end
   end

@@ -1771,6 +1771,7 @@ es:
         role_hint: Solo se ofrecen roles que no pueden administrar.
         summary_feature: Acceso a %{feature} (%{level})
         summary_quota: "%{amount} %{unit} más de %{quota}"
+        summary_quota_size: "%{amount} más de %{quota}"
         summary_role: El rol %{role} en %{where}
         title: Qué incluye este plan
       plans:

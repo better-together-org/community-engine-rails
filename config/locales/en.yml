@@ -1777,6 +1777,7 @@ en:
         role_hint: Only roles that cannot manage things are offered.
         summary_feature: Access to %{feature} (%{level})
         summary_quota: "%{amount} %{unit} more of %{quota}"
+        summary_quota_size: "%{amount} more %{quota}"
         summary_role: The role %{role} in %{where}
         title: What this plan includes
       plans:

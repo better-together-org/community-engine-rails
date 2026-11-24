@@ -1752,6 +1752,7 @@ uk:
         role_hint: Пропонуються лише ролі без прав керування.
         summary_feature: Доступ до %{feature} (%{level})
         summary_quota: На %{amount} %{unit} більше для %{quota}
+        summary_quota_size: На %{amount} більше для %{quota}
         summary_role: Роль %{role} у %{where}
         title: Що входить до цього плану
       plans:

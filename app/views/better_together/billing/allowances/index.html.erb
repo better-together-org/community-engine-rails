@@ -12,7 +12,7 @@
       <% @types.each do |type| %>
         <li id="billing-allowance-type-<%= type.key %>" class="list-group-item">
           <%= form_with url: billing_allowance_path(type.key, locale: I18n.locale), method: :patch, id: "billing-allowance-form-#{type.key}", class: 'row g-2 align-items-end' do %>
-            <div class="col-md-5"><strong><%= type.key.humanize %></strong> <span class="text-body-secondary">(<%= type.unit %>)</span></div>
+            <div class="col-md-5"><strong><%= quota_type_label(type.key) %></strong><% unless type.unit == :bytes %> <span class="text-body-secondary">(<%= type.unit %>)</span><% end %></div>
             <div class="col-md-4">
               <%= label_tag "billing-allowance-mode-#{type.key}", t('better_together.billing.allowances.mode'), class: 'form-label visually-hidden' %>
               <%= select_tag :mode, options_for_select(BetterTogether::Quotas::PlatformEnforcement::MODES.map { |mode| [t("better_together.billing.allowances.mode_#{mode}"), mode] }, @modes[type.key]),
@@ -43,8 +43,8 @@
             <% @rows.each do |row| %>
               <tr id="<%= dom_id(row[:quota]) %>">
                 <th scope="row"><%= row[:quota].owner.try(:name) %></th>
-                <td><%= row[:quota].quota_type.humanize %></td>
-                <td><%= billing_meter_label(row[:reading]) %></td>
+                <td><%= quota_type_label(row[:quota].quota_type) %></td>
+                <td><%= billing_meter_label(row[:reading], row[:quota].quota_type) %></td>
                 <td><%= row[:reading].over? ? t('better_together.billing.allowances.over') : t('better_together.billing.allowances.within') %></td>
               </tr>
             <% end %>
