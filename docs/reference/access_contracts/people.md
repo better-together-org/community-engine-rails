@@ -82,10 +82,10 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | 1 | `self` | Is the actor the person themself? | allow |  |
 | 2 | `block` | Has the person blocked the actor (or the actor the person)? | deny |  |
 | 3 | `privacy_gate` | Is the profile effectively public? | allow |  |
-| 4 | `unclaimed_editor` | Is the person unclaimed (no confirmed linked user) and the actor allowed to update person records? | allow |  |
+| 4 | `unclaimed_editor` | Is the person unclaimed (no confirmed linked user) and the actor a platform manager or steward, or a community organizer holding manage_unclaimed_profiles? | allow |  |
 | 5 | `shared_community` | Is the profile community-level and does the actor share an active community with the person? | allow |  |
 | 6 | `directory_permission` | Does a custom role grant read_person or list_person? | allow |  |
-| 7 | `platform_manager` | Is the actor a platform manager (update and create only)? | not intended | Opens profile editing, which shows private contact details; see PD-1. |
+| 7 | `member_status` | Is the actor a platform manager operating the member's status (not the profile)? | allow |  |
 | 8 | `default_deny` | Nothing above matched | deny |  |
 
 ### index
@@ -175,47 +175,92 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> |
 | `community_organizer` | deny <sub>default_deny</sub> |
-| `platform_manager` | undecided (app: allow) [^1] |
-| `platform_steward` | undecided (app: allow) [^1] |
+| `platform_manager` | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
 | `support_grantee` (pending) | pending |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
-[^1]: PD-2, undecided: Platform managers can create people.
-
 <details><summary>Reasons</summary>
 
-- deny via `default_deny`: Creating a profile needs the opt-in create_person grant; no default role holds it. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Creating a profile needs the opt-in create_person grant; no default role holds it. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
 </details>
 
 ### update
 
-| Persona | public | community | private | unclaimed |
-| --- | --- | --- | --- | --- |
-| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] | allow <sub>unclaimed_editor</sub> |
-| `platform_steward` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] | allow <sub>unclaimed_editor</sub> |
-| `safety_reviewer` (pending) | pending | pending | pending | pending |
-| `remote_operator` (pending) | pending | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending | pending |
-| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
-| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: PD-1, known deviation: Platform managers can edit any person profile.
+| Persona | public | community | private | unclaimed | claimed |
+| --- | --- | --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>unclaimed_editor</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>unclaimed_editor</sub> | deny <sub>default_deny</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending | pending | pending |
+| `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a | allow <sub>self</sub> |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `self`: People edit their own profile. (record_owner)
 - allow via `unclaimed_editor`: An unclaimed profile has no owner; staff who may update person records maintain it. (platform_manager, platform_steward)
-- deny via `default_deny`: Only the person (or an opt-in update_person grant) edits a profile. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
-- deny via `default_deny`: Profile editing shows private contact details; managers operate member status, not profile content. (platform_manager, platform_steward)
+- deny via `default_deny`: Only the person (or an opt-in update_person grant) edits a claimed profile. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Organizers edit an unclaimed profile only with the opt-in manage_unclaimed_profiles grant; no default role holds it. (community_organizer)
+- deny via `default_deny`: Profile editing shows private contact details; managers operate member status, not claimed profile content. (platform_manager, platform_steward)
+
+</details>
+
+### suspend
+
+| Persona | claimed | unclaimed |
+| --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>member_status</sub> | allow <sub>member_status</sub> |
+| `platform_steward` | allow <sub>member_status</sub> | allow <sub>member_status</sub> |
+| `safety_reviewer` (pending) | pending | pending |
+| `remote_operator` (pending) | pending | pending |
+| `support_grantee` (pending) | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+
+<details><summary>Reasons</summary>
+
+- allow via `member_status`: Managers suspend members; this opens no profile content. (platform_manager, platform_steward)
+- deny via `default_deny`: Only platform managers operate member status, and nobody suspends themself. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
+
+</details>
+
+### restore
+
+| Persona | claimed | unclaimed |
+| --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>member_status</sub> | allow <sub>member_status</sub> |
+| `platform_steward` | allow <sub>member_status</sub> | allow <sub>member_status</sub> |
+| `safety_reviewer` (pending) | pending | pending |
+| `remote_operator` (pending) | pending | pending |
+| `support_grantee` (pending) | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | n/a |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+
+<details><summary>Reasons</summary>
+
+- allow via `member_status`: Managers restore suspended members; this opens no profile content. (platform_manager, platform_steward)
+- deny via `default_deny`: Only platform managers operate member status, and nobody restores themself. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
 
 </details>
 
@@ -326,13 +371,12 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
-| `record_owner` | undecided (app: deny) [^1] | n/a |
+| `record_owner` | allow <sub>blocker</sub> | n/a |
 | `blocked_user` | n/a | deny <sub>default_deny</sub> |
-
-[^1]: PD-5, undecided: Blocker cannot show their own block record.
 
 <details><summary>Reasons</summary>
 
+- allow via `blocker`: The blocker reads their own block. (record_owner)
 - deny via `default_deny`: Blocks are private to the blocker; nobody else reads them, including the blocked person and standing roles. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
 </details>
