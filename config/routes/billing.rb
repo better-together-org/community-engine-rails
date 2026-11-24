@@ -180,7 +180,7 @@ concern :billing_entitlements do
     resources :entitlements, only: :index
     resources :allowances, only: %i[index update]
     resources :plans, only: [] do
-      resources :plan_grants, only: %i[create destroy]
+      resources :plan_grants, only: %i[create update destroy]
     end
   end
 end

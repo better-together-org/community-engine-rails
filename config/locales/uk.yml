@@ -1723,12 +1723,16 @@ uk:
         recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
       plan_grants:
         add: Додати
+        add_confirm: Додати це до плану?
         add_feature: Доступ до функції
         add_quota: Більше квоти
         add_role: Роль
         add_storage: Більше сховища
         added: Додано до плану.
         amount_hint: У власній одиниці квоти, наприклад токени ШІ.
+        audience: Ті, хто вже має цей план (%{count}), буде оновлено за кілька хвилин.
+        audience_none: Цього плану ще ніхто не має, тож нікого це не стосується.
+        edit_confirm: Змінити цю кількість?
         field_amount: Додаткова кількість
         field_community: Спільнота (якщо спільнота)
         field_feature: Функція
@@ -1757,6 +1761,7 @@ uk:
         summary_quota_size: На %{amount} більше для %{quota}
         summary_role: Роль %{role} у %{where}
         title: Що входить до цього плану
+        updated: Кількість змінено.
       plans:
         actions_heading: Дії
         add_on_targets_hint: Лише для додатка. Позначте плани, з якими він пропонується
@@ -7415,6 +7420,7 @@ uk:
       add_on_locked_by_orders: не можна змінити, коли замовлення вже містять цей план
       after_start: має бути пізніше за початок
       already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
+      already_on_the_plan: уже є в плані; змініть його замість цього
       already_pending: Для цього замовлення вже очікує запит на повернення коштів.
       blank: не може бути пустим
       cannot_be_the_host: не може бути платформою-хостом

@@ -20,6 +20,7 @@ module BetterTogether
       validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :parameters_valid
       validate :plan_is_not_an_add_on
+      validate :not_already_on_the_plan
 
       # The handler for this grant, ready to apply.
       def handler = Entitlements::Registry.handler_for(self)
@@ -30,6 +31,19 @@ module BetterTogether
 
       def normalize
         self.parameters = parameters.to_h.stringify_keys.transform_values { |value| value.is_a?(String) ? value.strip : value }
+      end
+
+      # One grant per thing (the same role, feature or quota once): to change an amount, edit it.
+      def not_already_on_the_plan # rubocop:disable Metrics/AbcSize
+        return unless plan && Entitlements::Registry.kinds.include?(kind) && parameters_errors.empty?
+
+        key = handler.key
+        taken = plan.plan_grants.where.not(id: id).any? { |other| other.kind == kind && other.handler.key == key }
+        errors.add(:parameters, :already_on_the_plan) if taken
+      end
+
+      def parameters_errors
+        Entitlements::Registry.handler_class(kind).parameter_errors(parameters, platform:)
       end
 
       def plan_is_not_an_add_on

@@ -1748,12 +1748,17 @@ en:
         recurring_participant_summary: Ongoing hosted access and stewardship support
       plan_grants:
         add: Add
+        add_confirm: Add this to the plan?
         add_feature: Access to a feature
         add_quota: More of a quota
         add_role: A role
         add_storage: Extra storage
         added: Added to the plan.
         amount_hint: In the quota’s own unit, such as tokens for AI.
+        audience: People who already have this plan (%{count}) are updated within
+          a few minutes.
+        audience_none: Nobody has this plan yet, so nobody is affected.
+        edit_confirm: Change this amount?
         field_amount: Extra amount
         field_community: Community (if a community)
         field_feature: Feature
@@ -1782,6 +1787,7 @@ en:
         summary_quota_size: "%{amount} more %{quota}"
         summary_role: The role %{role} in %{where}
         title: What this plan includes
+        updated: The amount was changed.
       plans:
         actions_heading: Actions
         add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
@@ -7319,6 +7325,7 @@ en:
       add_on_locked_by_orders: cannot be changed once orders include this plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
+      already_on_the_plan: is already on the plan; edit it instead
       already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
       cannot_be_the_host: cannot be the host platform

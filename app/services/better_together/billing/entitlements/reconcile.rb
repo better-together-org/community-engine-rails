@@ -33,10 +33,21 @@ module BetterTogether
 
         def apply(handler)
           grant = entitlement.grants.find_by(grant_key: handler.key)
-          return if grant&.applied?
+          return refresh(handler, grant) if grant&.applied?
 
           applied = handler.apply(entitlement)
           record(handler, grant, applied)
+          sync_quota(handler)
+        end
+
+        # A quota allowance whose amount was edited on the plan keeps its key, so the amount is carried over here.
+        def refresh(handler, grant)
+          return unless handler.is_a?(Handlers::QuotaAllowance)
+
+          amount = handler.parameters['amount'].to_i
+          return if grant.amount == amount
+
+          grant.update!(amount:, parameters: handler.parameters)
           sync_quota(handler)
         end
 

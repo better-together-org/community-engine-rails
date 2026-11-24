@@ -144,6 +144,16 @@ RSpec.describe BetterTogether::Billing::Entitlements::Sync do
       expect(entitlement.grants.applied.pluck(:grant_key)).to include(gained.handler.key)
     end
 
+    it 'carries an edited storage amount to people who already pay', :aggregate_failures do
+      term
+      sub_plan.plan_grants.find_by(kind: 'quota_allowance').update!(parameters: { 'quota_type' => 'media_storage', 'amount' => 9_000 })
+
+      BetterTogether::Billing::SyncPlanEntitlementsJob.perform_now(sub_plan)
+
+      quota = BetterTogether::Quota.find_by!(owner: buyer, quota_type: 'media_storage')
+      expect(quota.limit).to eq(BetterTogether::Quotas::Type.find('media_storage').default_limit(buyer) + 9_000)
+    end
+
     it 'takes away a grant the plan lost, but only what the entitlement made' do
       term
       sub_plan.plan_grants.find_by(kind: 'membership_role').destroy!

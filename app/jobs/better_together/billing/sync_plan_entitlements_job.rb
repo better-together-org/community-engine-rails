@@ -6,17 +6,12 @@ module BetterTogether
     # grant to the subscribers and buyers who already pay. One at a time, so one failure does not stop the rest.
     class SyncPlanEntitlementsJob < ApplicationJob
       def perform(plan)
-        platform = plan.platform
-        platform.billing_subscription_terms.where(plan_id: plan.id).find_each { |term| sync { Entitlements::Sync.subscription(term) } }
-        paid_orders(platform, plan).find_each { |order| sync { Entitlements::Sync.order(order) } }
+        audience = PlanAudience.new(plan)
+        audience.terms.find_each { |term| sync { Entitlements::Sync.subscription(term) } }
+        audience.paid_orders.find_each { |order| sync { Entitlements::Sync.order(order) } }
       end
 
       private
-
-      def paid_orders(platform, plan)
-        platform.billing_orders.where(status: %w[paid partially_refunded refunded])
-                .where(id: LineItem.where(purchasable_type: Plan.name, purchasable_id: plan.id).select(:order_id))
-      end
 
       def sync
         yield

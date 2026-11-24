@@ -1776,12 +1776,17 @@ fr:
         recurring_participant_summary: Acces heberge continu et soutien de stewardship
       plan_grants:
         add: Ajouter
+        add_confirm: Ajouter ceci au forfait ?
         add_feature: Accès à une fonctionnalité
         add_quota: Plus d’un quota
         add_role: Un rôle
         add_storage: Plus de stockage
         added: Ajouté au forfait.
         amount_hint: Dans l’unité propre au quota, par exemple des jetons d’IA.
+        audience: Les personnes qui ont déjà ce forfait (%{count}) sont mises à jour
+          en quelques minutes.
+        audience_none: Personne n’a encore ce forfait, donc personne n’est concerné.
+        edit_confirm: Modifier cette quantité ?
         field_amount: Quantité supplémentaire
         field_community: Communauté (si une communauté)
         field_feature: Fonctionnalité
@@ -1810,6 +1815,7 @@ fr:
         summary_quota_size: "%{amount} de plus pour %{quota}"
         summary_role: Le rôle %{role} dans %{where}
         title: Ce que comprend ce forfait
+        updated: La quantité a été modifiée.
       plans:
         actions_heading: Actions
         add_on_targets_hint: Utilisé seulement pour une option. Cochez les forfaits
@@ -7550,6 +7556,7 @@ fr:
         ce forfait
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
+      already_on_the_plan: figure déjà dans le forfait ; modifiez-le plutôt
       already_pending: Une demande de remboursement est déjà en attente sur cette
         commande.
       blank: doit être rempli(e)

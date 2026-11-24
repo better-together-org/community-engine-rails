@@ -26,6 +26,15 @@ module BetterTogether
         back(saved ? { notice: t('better_together.billing.plan_grants.added') } : { alert: t('better_together.billing.plan_grants.refused') })
       end
 
+      # Only a quota allowance has something to change in place (its amount); the others are removed and added.
+      def update # rubocop:disable Metrics/AbcSize
+        grant = @plan.plan_grants.find(params[:id])
+        authorize grant
+        saved = grant.kind == 'quota_allowance' && grant.update(parameters: grant.parameters.merge('amount' => params[:amount].to_s.strip))
+        SyncPlanEntitlementsJob.perform_later(@plan) if saved
+        back(saved ? { notice: t('better_together.billing.plan_grants.updated') } : { alert: t('better_together.billing.plan_grants.refused') })
+      end
+
       def destroy
         grant = @plan.plan_grants.find(params[:id])
         authorize grant

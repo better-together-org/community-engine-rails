@@ -1741,12 +1741,17 @@ es:
         recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
       plan_grants:
         add: Añadir
+        add_confirm: "¿Añadir esto al plan?"
         add_feature: Acceso a una función
         add_quota: Más de una cuota
         add_role: Un rol
         add_storage: Más almacenamiento
         added: Añadido al plan.
         amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
+        audience: Las personas que ya tienen este plan (%{count}) se actualizan en
+          unos minutos.
+        audience_none: Nadie tiene este plan todavía, así que nadie se ve afectado.
+        edit_confirm: "¿Cambiar esta cantidad?"
         field_amount: Cantidad adicional
         field_community: Comunidad (si es una comunidad)
         field_feature: Función
@@ -1775,6 +1780,7 @@ es:
         summary_quota_size: "%{amount} más de %{quota}"
         summary_role: El rol %{role} en %{where}
         title: Qué incluye este plan
+        updated: Se cambió la cantidad.
       plans:
         actions_heading: Acciones
         add_on_targets_hint: Solo para un complemento. Marque los planes con los que
@@ -7441,6 +7447,7 @@ es:
         plan
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
+      already_on_the_plan: ya está en el plan; edítelo en su lugar
       already_pending: Ya hay una solicitud de reembolso en espera para este pedido.
       blank: no puede estar en blanco
       cannot_be_the_host: no puede ser la plataforma anfitriona

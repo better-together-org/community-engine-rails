@@ -52,6 +52,21 @@ module BetterTogether
       parameters['quota_type'].to_s
     end
 
+    # What a steward is asked before changing what a plan includes: the change, and how many people it reaches.
+    def billing_plan_grant_confirm(plan, key)
+      count = BetterTogether::Billing::PlanAudience.new(plan).count
+      reach = count.zero? ? t('better_together.billing.plan_grants.audience_none') : t('better_together.billing.plan_grants.audience', count:)
+      "#{t("better_together.billing.plan_grants.#{key}")} #{reach}"
+    end
+
+    # The sizes a storage grant can take, the same ones the platform quota defaults offer, plus the current
+    # amount when it is not one of them (so editing never silently changes it).
+    def billing_storage_step_options(current = nil)
+      steps = BetterTogether::Quotas::Defaults::STORAGE_STEPS
+      steps = (steps + [current.to_i]).uniq.sort if current.to_i.positive?
+      steps.map { |bytes| [quota_size_label(bytes), bytes] }
+    end
+
     def billing_grant_place(parameters)
       return t('better_together.billing.plan_grants.place_platform') unless parameters['joinable'] == 'community'
 
@@ -66,7 +81,7 @@ module BetterTogether
 
     # A meter's bar as a percentage with a label for people who cannot see the bar.
     # Sizes read as sizes (4.2 GB), the way the usage meters on the person and community pages show them.
-    def billing_meter_label(reading, quota_type = nil)
+    def billing_meter_label(reading, quota_type = nil) # rubocop:disable Metrics/AbcSize
       return t('better_together.billing.entitlements.meter_unlimited') if reading.unlimited?
 
       bytes = BetterTogether::Quotas::Type.find(quota_type).unit == :bytes if quota_type
