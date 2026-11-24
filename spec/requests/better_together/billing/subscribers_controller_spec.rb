@@ -73,7 +73,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
     it 'shows one with its actions and what price it was sold at' do
       get show_path
 
-      expect(response.body).to include('subscriber-actions', 'subscriber-waive-btn', 'subscriber-price-btn', 'subscriber-cancel-btn',
+      expect(response.body).to include('subscriber-actions', 'subscriber-waive-btn', 'subscriber-cancel-btn',
                                        'subscriber-cancel-now-btn', 'subscriber-extend-form',
                                        ActionView::RecordIdentifier.dom_id(term, :periods))
     end
@@ -99,7 +99,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
     it 'asks before every change to an ongoing subscription', :aggregate_failures do
       get show_path
 
-      %w[subscriber-waive-btn subscriber-price-btn subscriber-cancel-btn subscriber-cancel-now-btn].each do |id|
+      %w[subscriber-waive-btn subscriber-cancel-btn subscriber-cancel-now-btn].each do |id|
         expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="#{id}"}m)
       end
       expect(response.body).to match(/id="subscriber-extend-form"[^>]*data-turbo-confirm|data-turbo-confirm[^>]*id="subscriber-extend-form"/)
@@ -129,6 +129,15 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
 
       patch action_path(:cancel, now: '1')
       expect(term.reload.pay_subscription.status).to eq('canceled')
+    end
+
+    it 'offers to move to the current price only when the price differs', :aggregate_failures do
+      get show_path
+      expect(response.body).not_to include('subscriber-price-btn')
+
+      sub_plan.update_columns(amount_cents: 4000) # rubocop:disable Rails/SkipsModelValidations
+      get show_path
+      expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscriber-price-btn"}m)
     end
 
     it 'moves one to the current price' do

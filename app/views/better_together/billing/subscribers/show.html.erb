@@ -27,9 +27,11 @@
     <%= button_to t('better_together.billing.subscribers.waive'), waive_billing_subscriber_path(@term, locale: I18n.locale), method: :patch,
                   class: 'btn btn-outline-primary', id: 'subscriber-waive-btn',
                   form: { data: { turbo_confirm: t('better_together.billing.subscribers.waive_confirm') } } %>
-    <%= button_to t('better_together.billing.subscribers.move_to_current_price'), move_to_current_price_billing_subscriber_path(@term, locale: I18n.locale),
-                  method: :patch, class: 'btn btn-outline-secondary', id: 'subscriber-price-btn',
-                  form: { data: { turbo_confirm: t('better_together.billing.subscribers.move_to_current_price_confirm') } } %>
+    <% if @term.unit_amount_cents != @term.plan.amount_cents || @term.currency != @term.plan.currency %>
+      <%= button_to t('better_together.billing.subscribers.move_to_current_price'), move_to_current_price_billing_subscriber_path(@term, locale: I18n.locale),
+                    method: :patch, class: 'btn btn-outline-secondary', id: 'subscriber-price-btn',
+                    form: { data: { turbo_confirm: t('better_together.billing.subscribers.move_to_current_price_confirm') } } %>
+    <% end %>
     <% if billing_subscription_resumable?(@term.pay_subscription) %>
       <%= button_to t('better_together.billing.subscribers.resume'), resume_billing_subscriber_path(@term, locale: I18n.locale), method: :patch,
                     class: 'btn btn-outline-primary', id: 'subscriber-resume-btn',
