@@ -1,0 +1,17 @@
+%% render.orientation: landscape
+erDiagram
+  OPERATOR_PLATFORM ||--o{ PLATFORM_ASSOCIATION : "operates (operator_platform_id)"
+  PLATFORM ||--o{ PLATFORM_ASSOCIATION : "is managed by (managed_platform_id)"
+  PLATFORM_ASSOCIATION |o--o{ PLATFORM_ASSOCIATION : "derives (delegated_from_id)"
+  PERSON |o--o{ PLATFORM_ASSOCIATION : "requested, accepted, changed"
+  PLATFORM_ASSOCIATION {
+    uuid operator_platform_id
+    uuid managed_platform_id
+    uuid delegated_from_id
+    string relation
+    string status
+    string transport
+    jsonb granted_scopes
+    datetime expires_at
+    datetime accepted_at
+  }

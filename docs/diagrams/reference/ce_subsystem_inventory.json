@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T22:54:20Z",
+  "generated_at": "2026-11-23T19:18:05Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -4014,6 +4014,24 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Person",
+          "label": "requested_by (requested_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Person",
+          "label": "accepted_by (accepted_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Person",
+          "label": "status_changed_by (status_changed_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Person",
           "label": "operator (operator_id)",
@@ -7933,6 +7951,18 @@
           "from": "BetterTogether::PlatformDeletionRequest",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Platform",
+          "label": "operator_platform (operator_platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Platform",
+          "label": "managed_platform (managed_platform_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -31675,6 +31705,152 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformAssociation",
+          "label": "PlatformAssociation",
+          "source_path": "app/models/better_together/platform_association.rb",
+          "table_name": "better_together_platform_associations",
+          "columns": [
+            [
+              "accepted_by_id",
+              "uuid FK"
+            ],
+            [
+              "delegated_from_id",
+              "uuid FK"
+            ],
+            [
+              "managed_platform_id",
+              "uuid FK"
+            ],
+            [
+              "operator_platform_id",
+              "uuid FK"
+            ],
+            [
+              "requested_by_id",
+              "uuid FK"
+            ],
+            [
+              "status_changed_by_id",
+              "uuid FK"
+            ],
+            [
+              "relation",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "transport",
+              "string"
+            ],
+            [
+              "accepted_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: status (in=[\"requested\", \"active\", \"suspended\", \"revoked\"])",
+            "InclusionValidator: relation (in=[\"manages\"])",
+            "InclusionValidator: transport (in=[\"direct\", \"http\"])",
+            "UniquenessValidator: operator_platform_id (scope=[:managed_platform_id, :relation])",
+            "PresenceValidator: granted_scopes"
+          ],
+          "belongs_to": [
+            {
+              "name": "operator_platform",
+              "foreign_key": "operator_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "managed_platform",
+              "foreign_key": "managed_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "delegated_from",
+              "foreign_key": "delegated_from_id",
+              "target": "BetterTogether::PlatformAssociation",
+              "optional": true
+            },
+            {
+              "name": "requested_by",
+              "foreign_key": "requested_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "accepted_by",
+              "foreign_key": "accepted_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "status_changed_by",
+              "foreign_key": "status_changed_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformAssociationLifecycle",
+            "BetterTogether::PlatformAssociationRules",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "operator_platform",
+              "foreign_key": "operator_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "managed_platform",
+              "foreign_key": "managed_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "requested_by",
+              "foreign_key": "requested_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "accepted_by",
+              "foreign_key": "accepted_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "status_changed_by",
+              "foreign_key": "status_changed_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::PlatformConnectionDigestNotifier",
           "label": "PlatformConnectionDigestNotifier",
           "source_path": "app/notifiers/better_together/platform_connection_digest_notifier.rb",
@@ -36000,6 +36176,7 @@
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "PlatformDeletionRequest",
+            "PlatformAssociation",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -36684,6 +36861,24 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformAssociationLifecycle",
+          "label": "PlatformAssociationLifecycle",
+          "capability": "Platformassociationlifecycle",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PlatformAssociation"
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformAssociationRules",
+          "label": "PlatformAssociationRules",
+          "capability": "Platformassociationrules",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PlatformAssociation"
+          ]
+        },
+        {
           "name": "BetterTogether::PlatformContentSlots",
           "label": "PlatformContentSlots",
           "capability": "Platformcontentslots",
@@ -36968,6 +37163,7 @@
             "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "PlatformDeletionRequest",
+            "PlatformAssociation",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -37547,6 +37743,36 @@
           "from": "BetterTogether::PhoneNumber",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Person",
+          "label": "accepted_by (accepted_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Person",
+          "label": "requested_by (requested_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Person",
+          "label": "status_changed_by (status_changed_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Platform",
+          "label": "managed_platform (managed_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformAssociation",
+          "to": "BetterTogether::Platform",
+          "label": "operator_platform (operator_platform_id)",
           "target_subsystem": "platform_network"
         },
         {

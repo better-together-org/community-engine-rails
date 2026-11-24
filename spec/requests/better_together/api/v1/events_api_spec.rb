@@ -121,11 +121,21 @@ RSpec.describe 'BetterTogether::Api::V1::Events', :no_auth do
         expect(event_ids).not_to include(private_event.id)
       end
 
-      it 'includes it for a platform event manager (matches the HTML index policy scope)' do
+      it 'includes the platform own private event for a platform event manager (matches the HTML index policy scope)' do
+        platform_community = BetterTogether::Platform.find_by(host: true).community
+        create(:better_together_event_host, event: private_event, host: platform_community)
+
         get url, headers: platform_manager_headers
         event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
 
         expect(event_ids).to include(private_event.id)
+      end
+
+      it 'excludes a private event hosted by a person for a platform event manager' do
+        get url, headers: platform_manager_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).not_to include(private_event.id)
       end
 
       it 'includes it for a connected event host even though it is private (matches the HTML index policy scope)' do

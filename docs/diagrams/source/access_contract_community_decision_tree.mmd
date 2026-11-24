@@ -1,0 +1,25 @@
+---
+title: Community show decision tree (generated from the access contract)
+---
+flowchart TD
+  start(["show community"])
+  start --> r0
+  r0{"privacy_gate: Is the community effectively public its platform and community are public too?"}
+  r0 -- yes --> r0o(["allow"])
+  class r0o out_allow
+  r0 -- no --> r1
+  r1{"membership: Is the actor an active member, the creator, or holder of an invitation or valid token?"}
+  r1 -- yes --> r1o(["allow"])
+  class r1o out_allow
+  r1 -- no --> r2
+  r2{"role_permission: Does the actor's community role grant manage_community_settings or manage_community_members?"}
+  r2 -- yes --> r2o(["allow"])
+  class r2o out_allow
+  r2 -- no --> r3
+  r3["default_deny: Nothing above matched"]
+  r3 --> r3o(["deny"])
+  class r3o out_deny
+  classDef out_allow fill:#cfe8cf,stroke:#2e6b2e,color:#111
+  classDef out_deny fill:#f3d0d0,stroke:#8a2a2a,color:#111
+  classDef out_conditional fill:#f6e7b4,stroke:#8a6d1a,color:#111
+  classDef unintended stroke:#b00020,stroke-width:3px,stroke-dasharray:6 3,fill:#fde8ea,color:#111

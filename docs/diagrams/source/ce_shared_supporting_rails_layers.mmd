@@ -603,6 +603,12 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformAssociation["PlatformAssociation"] {
+      <<Model>>
+      table: better_together_platform_associations
+      concerns: BetterTogetherId, PlatformAssociationLifecycle, PlatformAssociationRules, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__PlatformDeletionRequest["PlatformDeletionRequest"] {
       <<Model>>
       table: better_together_platform_deletion_requests
@@ -913,6 +919,12 @@ classDiagram
   BetterTogether__PersonMessagingGrant --> BetterTogether__Person : grantee
   BetterTogether__PhoneNumber --> BetterTogether__Platform : platform
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__PlatformAssociation --> BetterTogether__Platform : operator_platform
+  BetterTogether__PlatformAssociation --> BetterTogether__Platform : managed_platform
+  BetterTogether__PlatformAssociation --> BetterTogether__PlatformAssociation : delegated_from
+  BetterTogether__PlatformAssociation --> BetterTogether__Person : requested_by
+  BetterTogether__PlatformAssociation --> BetterTogether__Person : accepted_by
+  BetterTogether__PlatformAssociation --> BetterTogether__Person : status_changed_by
   BetterTogether__PlatformDeletionRequest --> BetterTogether__Platform : platform
   BetterTogether__PlatformDeletionRequest --> BetterTogether__Person : requested_by
   BetterTogether__PlatformDeletionRequest --> BetterTogether__Person : reviewed_by

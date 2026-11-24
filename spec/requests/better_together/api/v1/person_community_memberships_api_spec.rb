@@ -135,7 +135,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
     let(:url) { "/api/v1/people/#{target_person.id}/relationships/communities" }
 
     context 'when authenticated' do
-      before { get url, headers: manager_headers }
+      before { get url, headers: regular_headers }
 
       it 'returns success status' do
         expect(response).to have_http_status(:ok)

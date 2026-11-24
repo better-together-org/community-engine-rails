@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && (permitted_to?('create_person', current_platform) || platform_manager?)
+      user.present? && permitted_to?('create_person', current_platform)
     end
 
     def new?
@@ -27,7 +27,17 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (me? || permitted_to?('update_person', record.platform) || platform_manager?)
+      user.present? && (me? || permitted_to?('update_person', record.platform) || edits_unclaimed_profile?)
+    end
+
+    # Member status is operated separately from profile content: managers suspend and restore
+    # accounts without opening the profile.
+    def suspend?
+      user.present? && platform_manager? && !me?
+    end
+
+    def restore?
+      suspend?
     end
 
     def edit?
@@ -145,6 +155,19 @@ module BetterTogether
     end
 
     private
+
+    # Claiming ends the exemption at once. Managers and stewards edit unclaimed profiles; community
+    # organizers do so only with the opt-in manage_unclaimed_profiles grant in one of the person's communities.
+    def edits_unclaimed_profile?
+      return false if record.claimed?
+
+      platform_manager? || unclaimed_profile_manager?
+    end
+
+    def unclaimed_profile_manager?
+      communities = [record.community, *record.member_communities].compact.uniq
+      communities.any? { |community| permitted_to?('manage_unclaimed_profiles', community) }
+    end
 
     def visible_in_scope?
       self.class::Scope.new(user, BetterTogether::Person).resolve.where(id: record.id).exists?
