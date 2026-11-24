@@ -153,6 +153,56 @@ Each phase is a separate PR, stacked on `feature/billing`, and each leaves the b
 8. **Cleanup.** Remove dead add-on code, update nav route names, DOM contracts, screenshots, docs (`plan_catalog.md`, stories doc, MVP definition)
    and the assessment.
 
+## Translatable attributes (decided before any model is written)
+
+Rule from the localization standard: text a person or steward writes and a buyer reads is a Mobility translated attribute with an explicit type, and
+nothing else is. `string` is a short value, `text` is long copy. Static labels and messages are I18n keys in en, es, fr and uk.
+
+### Existing Plan attributes
+
+No type changes. Plan keeps what it has today, so no data moves between the string and text translation tables:
+
+| Attribute | Type | Stays on Plan or shared |
+|---|---|---|
+| `name` | string | shared with Product (concern) |
+| `description` | text | shared with Product (concern) |
+| `beneficiary_label` | string | Plan only (who a tier is for) |
+| `solidarity_description` | string | Plan only (solidarity pricing tiers) |
+| `participant_summary` | text | Plan only. Product gets its own `summary`, below |
+| `participant_benefits` | text | Plan only. A product's contents come from its grants, written by `billing_plan_grant_summary`, so there is nothing to type |
+
+When phase 2 moves `name` and `description` into a shared concern, the `translates` calls keep the same explicit types. The check is that
+`bin/export_localized_attributes --check` shows no change for Plan.
+
+### New models
+
+| Model | Attribute | Type | Why |
+|---|---|---|---|
+| Product | `name` | string | A short title buyers read in the catalog, checkout, invoice and receipt. Required. Same as `Plan.name`. |
+| Product | `description` | text | Long copy on the catalog and detail page. Same as `Plan.description`. |
+| Product | `summary` | text | The one or two lines shown beside the name in a checkout list and catalog card (what add-ons show today through `participant_summary`). Text, matching `Plan.participant_summary`, so a steward is never cut short. |
+| Price | `label` | string | Optional short name for a price when a product has several (for example "Early bird", "Member"). Shown beside the amount. Stripe's price nickname is internal, so this is separate from anything sent to the processor. |
+| Purchase requirement | `unmet_message` | string | Optional one line shown to a buyer who does not qualify ("Open to people registered for the conference"). Capped at 200 characters in validation so it stays one line. When blank, the screen uses a default I18n sentence built from the prerequisite's name. |
+| Line item | `description` | string | Already translated. A product line snapshots the product name (and price label if set) in every language through `LocalizedSnapshot`. No change to the model. |
+
+Not translatable, on purpose: `identifier`, the Stripe `lookup_key`, processor product and price ids, amounts, currencies, lifetime setting and term
+length, quantity limits, the requirement mode and scope, and the grant parameters (they are structured data, and the readable sentence is built from
+I18n). Order and entitlement records hold no authored text.
+
+Ticket types (D7) will follow the same pattern, `name` as a string and `description` as text, and are outside this stack.
+
+### Static I18n keys needed in all four locales
+
+Product screens and forms, lifetime options (until used, fixed term, term units), requirement modes (holding, in order, either), the default unmet
+sentence, the "things that go with what you are buying" checkout heading and hint, locked-listing reasons, validation errors for the new models, and
+the nav and route-name labels. es, fr and uk text is written by us and still needs a native review.
+
+### Gates when the models land
+
+Phases 4 and 5 add the models, so each of those PRs regenerates and commits the localized attribute diagram with `bin/export_localized_attributes`,
+passes `bin/dc-run bin/i18n`, seeds a default `name` for any seeded product (required translated fields are seeded, not left to fall back), and
+permits the translated attributes through `permitted_attributes`. This base PR is documentation only, so it changes no diagram.
+
 ## Compatibility checks for the Stripe work
 
 - Every item sold through Stripe resolves to a product id and a price id, or to inline `price_data`. No Stripe object is stored beyond ids.
