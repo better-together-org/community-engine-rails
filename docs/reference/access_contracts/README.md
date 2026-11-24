@@ -8,11 +8,11 @@ An access contract records what access we decided each persona should have to ea
 
 | Measure | Count |
 | --- | --- |
-| subsystems | 2 |
-| resources | 6 |
+| subsystems | 3 |
+| resources | 8 |
 | personas | 12 |
-| cells | 1026 |
-| known deviations | 0 |
+| cells | 1332 |
+| known deviations | 30 |
 | undecided | 0 |
 
 ## Persona by classification heatmaps
@@ -25,20 +25,20 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 
 [Open the SVG](../../diagrams/exports/svg/access_contract_heatmap_intended.svg) · [Mermaid source](../../diagrams/source/access_contract_heatmap_intended.mmd)
 
-| Persona | member_private public rows | member_private non-public rows | personal public rows | personal non-public rows |
-| --- | --- | --- | --- | --- |
-| `anonymous` | allow | deny | mixed | mixed |
-| `signed_in_non_member` | allow | deny | mixed | mixed |
-| `community_member` | allow | mixed | mixed | mixed |
-| `community_contributor` | allow | mixed | mixed | mixed |
-| `community_organizer` | allow | mixed | mixed | mixed |
-| `platform_manager` | allow | deny | mixed | mixed |
-| `platform_steward` | allow | deny | mixed | mixed |
-| `safety_reviewer` | pending | pending | pending | pending |
-| `remote_operator` | pending | pending | pending | pending |
-| `support_grantee` | pending | pending | pending | pending |
-| `record_owner` | allow | mixed | mixed | mixed |
-| `blocked_user` | allow | deny | mixed | mixed |
+| Persona | member_private public rows | member_private non-public rows | personal public rows | personal non-public rows | platform_shared public rows | platform_shared non-public rows |
+| --- | --- | --- | --- | --- | --- | --- |
+| `anonymous` | allow | deny | mixed | mixed | allow | deny |
+| `signed_in_non_member` | allow | deny | mixed | mixed | allow | mixed |
+| `community_member` | allow | mixed | mixed | mixed | allow | mixed |
+| `community_contributor` | allow | mixed | mixed | mixed | allow | mixed |
+| `community_organizer` | allow | mixed | mixed | mixed | allow | mixed |
+| `platform_manager` | allow | deny | mixed | mixed | allow | mixed |
+| `platform_steward` | allow | deny | mixed | mixed | allow | mixed |
+| `safety_reviewer` | pending | pending | pending | pending | pending | pending |
+| `remote_operator` | pending | pending | pending | pending | pending | pending |
+| `support_grantee` | pending | pending | pending | pending | pending | pending |
+| `record_owner` | allow | mixed | mixed | mixed | allow | allow |
+| `blocked_user` | allow | deny | mixed | mixed | deny | deny |
 
 ### Actual (the probe snapshot)
 
@@ -46,20 +46,20 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 
 [Open the SVG](../../diagrams/exports/svg/access_contract_heatmap_actual.svg) · [Mermaid source](../../diagrams/source/access_contract_heatmap_actual.mmd)
 
-| Persona | member_private public rows | member_private non-public rows | personal public rows | personal non-public rows |
-| --- | --- | --- | --- | --- |
-| `anonymous` | allow | deny | mixed | mixed |
-| `signed_in_non_member` | allow | deny | mixed | mixed |
-| `community_member` | allow | mixed | mixed | mixed |
-| `community_contributor` | allow | mixed | mixed | mixed |
-| `community_organizer` | allow | mixed | mixed | mixed |
-| `platform_manager` | allow | deny | mixed | mixed |
-| `platform_steward` | allow | deny | mixed | mixed |
-| `safety_reviewer` | pending | pending | pending | pending |
-| `remote_operator` | pending | pending | pending | pending |
-| `support_grantee` | pending | pending | pending | pending |
-| `record_owner` | allow | mixed | mixed | mixed |
-| `blocked_user` | allow | deny | mixed | mixed |
+| Persona | member_private public rows | member_private non-public rows | personal public rows | personal non-public rows | platform_shared public rows | platform_shared non-public rows |
+| --- | --- | --- | --- | --- | --- | --- |
+| `anonymous` | allow | deny | mixed | mixed | allow | deny |
+| `signed_in_non_member` | allow | deny | mixed | mixed | allow | mixed |
+| `community_member` | allow | mixed | mixed | mixed | allow | mixed |
+| `community_contributor` | allow | mixed | mixed | mixed | allow | mixed |
+| `community_organizer` | allow | mixed | mixed | mixed | allow | mixed |
+| `platform_manager` | allow | deny | mixed | mixed | allow | allow |
+| `platform_steward` | allow | deny | mixed | mixed | allow | allow |
+| `safety_reviewer` | pending | pending | pending | pending | pending | pending |
+| `remote_operator` | pending | pending | pending | pending | pending | pending |
+| `support_grantee` | pending | pending | pending | pending | pending | pending |
+| `record_owner` | allow | mixed | mixed | mixed | allow | allow |
+| `blocked_user` | allow | deny | mixed | mixed | deny | deny |
 
 ## Pages
 
@@ -99,6 +99,7 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 | --- | --- | --- |
 | `public` | yes | Content published for anyone, including signed-out visitors. |
 | `member_private` | no | Content shared inside a community or kept private to it (community records, memberships, invitations). |
+| `platform_shared` | yes | Posts shared with every signed-in member of the platform at public or community level. A private post is visible to its creator only; that state is tracked as a deviation until managers stop reading it. |
 | `personal` | no | Data about one person (profile, contact details, blocks). |
 | `safety_sensitive` | no | Reports, disclosures and safety case data. Reviewed only through a logged safety review path. |
 | `system` | yes | Platform configuration and structure. |

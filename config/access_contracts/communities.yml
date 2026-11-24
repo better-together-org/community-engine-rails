@@ -8,6 +8,8 @@ summary: Community records, the memberships that join people to them, and the in
 # Policies matched by this pattern that are not contracted yet. Listed so the gap is visible and checked.
 policy_pattern: community
 deferred_policies:
+  Geography::CommunityCollectionMap: Map of communities; contract with the geography subsystem.
+  Geography::CommunityMap: Map of one community; contract with the geography subsystem.
 
 # Controllers whose routed actions must authorize, scope or be allowlisted with a reason.
 controllers:

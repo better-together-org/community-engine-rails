@@ -109,12 +109,13 @@ module BetterTogether
       end
 
       def underscore_policy(class_name)
-        class_name.demodulize.delete_suffix('Policy').underscore
+        class_name.delete_prefix('BetterTogether::').delete_suffix('Policy').underscore
       end
 
       def policy_files
-        @policy_files ||= Dir[AccessContract.root.join('app/policies/better_together/*_policy.rb')]
-                          .map { |f| File.basename(f, '_policy.rb') }.sort
+        root = AccessContract.root.join('app/policies/better_together')
+        @policy_files ||= Dir[root.join('**/*_policy.rb')]
+                          .map { |f| Pathname(f).relative_path_from(root).to_s.delete_suffix('_policy.rb') }.sort
       end
 
       def seed_permissions
