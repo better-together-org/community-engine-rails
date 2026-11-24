@@ -1,0 +1,27 @@
+version: '2.0'
+type: billing_plan
+records:
+- key: demo-free
+  attributes: { billing_interval: month, interval_count: 1, amount_cents: 0, currency: CAD, active: true, listed: true }
+  translations:
+    en: { name: "[Demo] Free", description: "A free plan, to try joining without paying." }
+- key: demo-supporter-monthly
+  attributes: { billing_interval: month, interval_count: 1, amount_cents: 1000, currency: CAD, active: true, listed: true,
+                accepted_payment_methods: [cash, cheque, etransfer] }
+  translations:
+    en: { name: "[Demo] Supporter, monthly", description: "Supports the platform each month and includes extra storage." }
+- key: demo-supporter-annual
+  attributes: { billing_interval: year, interval_count: 1, amount_cents: 10000, currency: CAD, active: true, listed: true,
+                accepted_payment_methods: [cash, cheque, etransfer] }
+  translations:
+    en: { name: "[Demo] Supporter, annual", description: "The supporter plan paid once a year, two months free." }
+- key: demo-cheque-only
+  attributes: { billing_interval: month, interval_count: 1, amount_cents: 2500, currency: CAD, active: true, listed: true,
+                accepted_payment_methods: [cheque] }
+  translations:
+    en: { name: "[Demo] Cheque only", description: "A plan that can only be paid by cheque, for trying offline payments." }
+- key: demo-extra-storage
+  attributes: { billing_interval: one_time, interval_count: 1, amount_cents: 300, currency: CAD, active: true, listed: true,
+                add_on: true, accepted_payment_methods: [cash, cheque, etransfer] }
+  translations:
+    en: { name: "[Demo] Extra storage", description: "A one-time extra that can be added to a supporter plan." }

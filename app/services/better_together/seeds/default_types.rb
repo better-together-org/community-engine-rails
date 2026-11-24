@@ -13,6 +13,7 @@ module BetterTogether
         register_contacts
         register_redirects
         register_rbac
+        register_billing
       end
 
       def self.register_content
@@ -149,8 +150,33 @@ module BetterTogether
         end
       end
 
+      # The catalog: plans, what each includes, and which plans extend which. Money and processor state (prices at a
+      # vendor, payment methods and their acknowledgement, taxes, agreements) are not seeded here: each has its own
+      # gate and planter.
+      def self.register_billing
+        Registry.register(:billing_plan) do
+          model 'BetterTogether::Billing::Plan'
+          attributes :billing_interval, :interval_count, :amount_cents, :currency, :active, :listed, :add_on,
+                     :restricted_to_members, :grace_days, :renewal_lead_days, :accepted_payment_methods
+          translated :name, :description
+        end
+        Registry.register(:billing_plan_grant) do
+          model 'BetterTogether::Billing::PlanGrant'
+          natural_key :kind, within: :plan
+          attributes :kind, :parameters
+          reference :plan, to: :billing_plan
+          position :position
+        end
+        Registry.register(:billing_plan_add_on) do
+          model 'BetterTogether::Billing::PlanAddOn'
+          natural_key by_refs: %i[plan add_on]
+          reference :plan, to: :billing_plan
+          reference :add_on, to: :billing_plan
+        end
+      end
+
       private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
-                           :register_redirects, :register_rbac
+                           :register_redirects, :register_rbac, :register_billing
     end
   end
 end
