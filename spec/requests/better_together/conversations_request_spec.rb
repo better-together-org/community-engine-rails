@@ -48,7 +48,7 @@ RSpec.describe 'BetterTogether::Conversations' do
   describe 'GET /conversations/new' do
     before { login(current_user.email, 'SecureTest123!@#') }
 
-    context 'as a regular member' do
+    context 'as a regular member', :no_auth do
       let(:current_user) { regular_user }
 
       it 'lists current-platform stewards and opted-in members only' do
@@ -62,6 +62,23 @@ RSpec.describe 'BetterTogether::Conversations' do
         )
         expect(participant_option_labels).not_to include(non_opted_person.select_option_title)
         expect(participant_option_labels).not_to include(other_platform_opted_in_person.select_option_title)
+      end
+    end
+
+    context 'as a person with no current membership', :no_auth do
+      let(:current_user) { regular_user }
+
+      before do
+        regular_user.person.person_platform_memberships.update_all(status: 'ended')
+        login(current_user.email, 'SecureTest123!@#')
+      end
+
+      it 'lists stewards only, never opted-in members', :aggregate_failures do
+        get better_together.new_conversation_path(locale: I18n.default_locale)
+
+        expect(participant_option_labels).to include(manager_user.person.select_option_title)
+        expect(participant_option_labels).not_to include(opted_in_person.select_option_title,
+                                                         host_only_opted_in_person.select_option_title)
       end
     end
 

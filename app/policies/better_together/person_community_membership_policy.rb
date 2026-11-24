@@ -109,8 +109,9 @@ module BetterTogether
       return false unless record.role&.identifier == 'community_organizer'
 
       !BetterTogether::PersonCommunityMembership
+        .current
         .joins(:role)
-        .where(joinable_id: record.joinable_id, status: 'active', better_together_roles: { identifier: 'community_organizer' })
+        .where(joinable_id: record.joinable_id, better_together_roles: { identifier: 'community_organizer' })
         .where.not(id: record.id).exists?
     end
 

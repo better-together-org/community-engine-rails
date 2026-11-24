@@ -116,7 +116,7 @@ module BetterTogether
       private
 
       # Applies a community join/filter appropriate for the given resource_class.
-      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength # rubocop:todo Metrics/AbcSize
+      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         case resource_class.name
         when 'BetterTogether::Event'
           scope.joins(:event_hosts).where(better_together_event_hosts: { host_id: community.id,
