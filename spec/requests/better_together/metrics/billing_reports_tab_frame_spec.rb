@@ -14,7 +14,7 @@ RSpec.describe 'Billing reports inside the billing tab frame', :as_platform_mana
     get path, headers: { 'Turbo-Frame' => 'billing-tab-billing-reports' }
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('<turbo-frame id="billing-tab-billing-reports">', 'id="billing_reports"')
+    expect(response.body).to include('id="billing-tab-billing-reports"', 'id="billing_reports"')
     expect(response.body).not_to include('<html')
   end
 

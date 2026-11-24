@@ -1,5 +1,7 @@
 <%# Billing screens loaded into a tab of the host billing page: the page content in the frame that asked for it. %>
-<%= turbo_frame_tag turbo_frame_request_id do %>
+<%# Turbo's prefetch cache is keyed by address alone, so a link prefetched without the frame header would be
+    answered with the full page and the tab would say "Content missing". Links inside a billing tab are not prefetched. %>
+<%= turbo_frame_tag turbo_frame_request_id, data: { turbo_prefetch: false } do %>
   <%= render 'layouts/better_together/flash_messages', flash: flash if flash.any? %>
   <%= yield %>
 <% end %>

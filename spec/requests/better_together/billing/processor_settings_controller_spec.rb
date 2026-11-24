@@ -175,7 +175,7 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       it 'loads inside a billing tab frame', :aggregate_failures do
         get edit_path('cash'), headers: { 'Turbo-Frame' => 'billing-tab-billing-processor-settings' }
 
-        expect(response.body).to include('<turbo-frame id="billing-tab-billing-processor-settings">', 'billing-processor-setting-form')
+        expect(response.body).to include('id="billing-tab-billing-processor-settings"', 'billing-processor-setting-form')
         expect(response.body).not_to include('<html')
       end
 

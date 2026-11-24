@@ -16,7 +16,7 @@ RSpec.describe 'Billing screens loaded into host billing tabs', :as_platform_man
     get better_together.billing_plans_path(locale:), headers: { 'Turbo-Frame' => 'billing-tab-billing-plans' }
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('<turbo-frame id="billing-tab-billing-plans"')
+    expect(response.body).to include('id="billing-tab-billing-plans"')
     expect(response.body).not_to include('<html')
   end
 
@@ -36,5 +36,12 @@ RSpec.describe 'Billing screens loaded into host billing tabs', :as_platform_man
     get better_together.billing_agreement_requirements_path(locale: I18n.default_locale)
 
     expect(response.headers['Vary']).to include('Turbo-Frame')
+  end
+
+  it 'switches off link prefetching inside a tab frame (the prefetch cache ignores the frame header)', :aggregate_failures do
+    get better_together.billing_agreement_requirements_path(locale: I18n.default_locale),
+        headers: { 'Turbo-Frame' => 'billing-tab-billing-agreement-requirements' }
+
+    expect(response.body).to include('data-turbo-prefetch="false"')
   end
 end

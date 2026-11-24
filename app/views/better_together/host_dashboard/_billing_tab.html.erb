@@ -43,7 +43,7 @@
         <% path = asked if asked.start_with?("#{path}/", "#{path}?") && !asked.include?('//') %>
         <div class="tab-pane fade" id="billing-pane-<%= item.identifier %>" role="tabpanel"
              aria-labelledby="billing-tab-<%= item.identifier %>-tab" tabindex="0">
-          <%= turbo_frame_tag "billing-tab-#{item.identifier}", src: path, loading: :lazy, target: '_self' do %>
+          <%= turbo_frame_tag "billing-tab-#{item.identifier}", src: path, loading: :lazy, target: '_self', data: { turbo_prefetch: false } do %>
             <p class="text-muted" role="status"><%= t('host_dashboard.billing.loading') %></p>
           <% end %>
         </div>
