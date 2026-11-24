@@ -2627,12 +2627,20 @@ es:
           suspend: Suspender
         confirm_end: "¿Finalizar esta membresía? Queda en el historial y se puede
           restablecer."
+        confirm_end_last: "¿Finalizar esta membresía? Queda en el historial y se puede
+          restablecer. Esta es la única membresía vigente de esta persona aquí. Conservará
+          su cuenta, pero perderá todo acceso que dependa de un rol y solo verá contenido
+          público."
         confirm_leave: "¿Salir? Podrás solicitar unirte de nuevo."
         confirm_reinstate: "¿Restablecer esta membresía? El miembro recupera el acceso."
         confirm_remove: "¿Quitar a este miembro? Esto elimina la membresía y su historial.
           Usa «Finalizar membresía» para conservar el historial."
         confirm_suspend: "¿Suspender esta membresía? El miembro pierde el acceso hasta
           que la restablezcas."
+        confirm_suspend_last: "¿Suspender esta membresía? El miembro pierde el acceso
+          hasta que la restablezcas. Esta es la única membresía vigente de esta persona
+          aquí. Conservará su cuenta, pero perderá todo acceso que dependa de un rol
+          y solo verá contenido público."
         edit: Editar membresía
         flash:
           ended: Membresía finalizada.

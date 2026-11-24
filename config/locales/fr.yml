@@ -2645,12 +2645,20 @@ fr:
           suspend: Suspendre
         confirm_end: Mettre fin à cette adhésion ? Elle reste dans l'historique et
           peut être rétablie.
+        confirm_end_last: Mettre fin à cette adhésion ? Elle reste dans l'historique
+          et peut être rétablie. C'est la seule adhésion en cours de ce membre ici.
+          Le compte est conservé, mais tout accès lié à un rôle sera perdu et seul
+          le contenu public restera visible.
         confirm_leave: Quitter ? Vous pourrez demander à rejoindre de nouveau.
         confirm_reinstate: Rétablir cette adhésion ? Le membre retrouve l'accès.
         confirm_remove: Retirer ce membre ? Cela supprime l'adhésion et son historique.
           Utilisez « Mettre fin à l'adhésion » pour conserver l'historique.
         confirm_suspend: Suspendre cette adhésion ? Le membre perd l'accès jusqu'à
           son rétablissement.
+        confirm_suspend_last: Suspendre cette adhésion ? Le membre perd l'accès jusqu'à
+          son rétablissement. C'est la seule adhésion en cours de ce membre ici. Le
+          compte est conservé, mais tout accès lié à un rôle sera perdu et seul le
+          contenu public restera visible.
         edit: Modifier l'adhésion
         flash:
           ended: Adhésion terminée.

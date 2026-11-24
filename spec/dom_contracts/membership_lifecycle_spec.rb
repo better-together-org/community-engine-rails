@@ -55,4 +55,23 @@ RSpec.describe 'Membership lifecycle DOM contract', :as_platform_manager, type: 
       expect(confirms.uniq.size).to eq(confirms.size)
     end
   end
+
+  it 'warns in the confirm when it is the only current membership', :aggregate_failures do
+    get better_together.platform_person_platform_memberships_path(platform, locale: I18n.default_locale)
+
+    %i[end_form suspend_form].each do |form|
+      node = page_html.at_css("##{ActionView::RecordIdentifier.dom_id(membership, form)}")
+      expect(node['data-turbo-confirm']).to include('only current membership'), form.to_s
+    end
+  end
+
+  it 'does not warn when the member holds another current membership here', :aggregate_failures do
+    other_role = BetterTogether::Role.find_by!(identifier: 'platform_member')
+    BetterTogether::PersonPlatformMembership.create!(member: person, joinable: platform, role: other_role,
+                                                     status: 'active')
+    get better_together.platform_person_platform_memberships_path(platform, locale: I18n.default_locale)
+
+    node = page_html.at_css("##{ActionView::RecordIdentifier.dom_id(membership, :end_form)}")
+    expect(node['data-turbo-confirm']).not_to include('only current membership')
+  end
 end
