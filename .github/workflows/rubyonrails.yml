@@ -142,7 +142,7 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_INITDB_ARGS: "-c max_connections=200"
         options: >-
-          --health-cmd "pg_isready -U rails"
+          --health-cmd "pg_isready -U rails -d rails_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -157,6 +157,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          show-progress: false
 
       # ruby-vips loads libvips through FFI, so only the runtime library is needed
       # (libvips-dev pulled in hundreds of MB of headers and took 4-5 minutes).
@@ -165,9 +167,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          APT="sudo apt-get -qq -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
           $APT update
-          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+          $APT install -y --no-install-recommends libvips42t64 >/dev/null || $APT install -y --no-install-recommends libvips42 >/dev/null
 
       # Test data is disposable: trade durability for speed (all three settings reload on SIGHUP).
       - name: Tune Postgres for tests
@@ -187,8 +189,8 @@ jobs:
         shell: bash
         run: |
           bundle config set deployment false
-          bundle update rails --conservative
-          bundle install --jobs 4 --retry 3
+          bundle update rails --conservative --quiet
+          bundle install --jobs 4 --retry 3 --quiet
 
       - name: Prepare parallel test databases
         run: |
@@ -407,8 +409,8 @@ jobs:
         shell: bash
         run: |
           bundle config set deployment false
-          bundle update rails --conservative
-          bundle install --jobs 4 --retry 3
+          bundle update rails --conservative --quiet
+          bundle install --jobs 4 --retry 3 --quiet
       - run: bundle exec rubocop --parallel
 
   security:
@@ -426,8 +428,8 @@ jobs:
         shell: bash
         run: |
           bundle config set deployment false
-          bundle update rails --conservative
-          bundle install --jobs 4 --retry 3
+          bundle update rails --conservative --quiet
+          bundle install --jobs 4 --retry 3 --quiet
       - name: Audit dependencies
         run: bundle binstubs bundler-audit --force
       - name: Check for dependency vulnerabilities

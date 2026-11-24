@@ -278,15 +278,20 @@ module BetterTogether
     end
 
     # rubocop:todo-next Metrics/MethodLength
+    # Backtraces are opt-in (VERBOSE_TEST_EXCEPTIONS) to keep CI logs short; the
+    # exception is re-raised below, so a failing example still shows its own trace.
+    def warn_test_exception(exception)
+      warn log_exception_details(exception, prefix: '[TEST][Exception]')
+      return unless exception.backtrace && ENV['VERBOSE_TEST_EXCEPTIONS']
+
+      warn exception.backtrace.first(15).join("\n")
+    end
+
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
       return render_not_found if exception.is_a?(ActiveRecord::RecordNotFound)
 
-      if Rails.env.test?
-        msg = log_exception_details(exception, prefix: '[TEST][Exception]')
-        warn msg
-        warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
-      end
+      warn_test_exception(exception) if Rails.env.test?
       raise exception unless Rails.env.production?
 
       log_exception_details(exception, prefix: '[PRODUCTION][Exception]')

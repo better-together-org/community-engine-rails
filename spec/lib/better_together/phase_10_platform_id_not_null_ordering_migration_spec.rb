@@ -19,7 +19,7 @@ RSpec.describe 'Phase 10 platform_id NOT NULL ordering' do # rubocop:disable RSp
     message = create(:better_together_inbound_email_message)
     message.update_column(:platform_id, nil)
 
-    expect { not_null_migration.change }.to output(/WARNING.*NULL platform_id/).to_stdout
+    expect { with_migration_output { not_null_migration.change } }.to output(/WARNING.*NULL platform_id/).to_stdout
 
     expect(message.reload.platform_id).to be_nil
   end
