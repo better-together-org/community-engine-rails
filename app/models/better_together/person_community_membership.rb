@@ -10,10 +10,14 @@ module BetterTogether
 
     STATUS_LEVELS = {
       pending: 'pending',
-      active: 'active'
+      active: 'active',
+      suspended: 'suspended',
+      ended: 'ended'
     }.freeze
 
     enum :status, STATUS_LEVELS, default: 'pending'
+
+    include MembershipLifecycle
 
     after_create_commit :notify_member_of_creation_if_active
     after_commit :expire_member_permission_cache
@@ -26,7 +30,7 @@ module BetterTogether
     after_destroy_commit :schedule_notification_cleanup
 
     scope :pending, -> { where(status: 'pending') }
-    scope :active, -> { where(status: 'active') }
+    scope :active, -> { current }
 
     def activate!
       update!(status: 'active')

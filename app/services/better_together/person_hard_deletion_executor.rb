@@ -140,6 +140,8 @@ module BetterTogether
     end
 
     def destroy_record(record)
+      # A purge erases the person's history too, so membership records skip the steward guard and event trail.
+      record.skip_lifecycle_audit = true if record.respond_to?(:skip_lifecycle_audit=)
       record.destroy!
       'destroy'
     end
