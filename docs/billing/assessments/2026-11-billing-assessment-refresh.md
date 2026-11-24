@@ -80,6 +80,16 @@ Two observations from writing it:
   buyer's subscription appears only once the billing queue is working. On a configured instance the worker must
   run, or buyers see nothing after payment. The readiness checklist should check for the queue.
 
+### Second browser spec: buyer account (`billing_buyer_account_spec.rb`)
+
+Covers the five remaining buyer items: anonymous visitor reads the catalog (axe clean) and is sent to sign in, then
+returns to checkout for the chosen plan; a buyer with no saved address picks country and province from the lists;
+cancel at period end then resume; request a plan change for the next period, see it pending, withdraw it; ask for a
+partial refund after reading the refund policy. All 60 billing browser and refund request specs pass.
+
+Defect found and fixed by it: the refund request form's reason, amount and details fields had labels that pointed at
+the wrong ids, so screen readers announced no name (axe critical: label, select-name). Labels now target the real ids.
+
 ## Findings from this pass
 
 1. **No explanation when billing is off or half configured.** Gated pages answer 404. A steward cannot tell

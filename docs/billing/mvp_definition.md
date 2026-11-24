@@ -49,5 +49,6 @@ order filters, address editor and notification preferences. Each is listed in th
 4. **Translations** for es, fr and uk are unreviewed.
 5. **Stale trackers**: tick #1581 and keep this file and the stories doc current.
 6. **Anonymous storefront** was not exercised (the dev platform is private). Verify on a public platform.
-7. **Paid checkout in a browser** now passes (buyer journey spec). Still to do: a new-address entry, plan change,
-   cancel, anonymous visitor, mobile width, renewal.
+7. **Buyer flows in a browser** now pass: paid checkout, anonymous visitor to sign-in and back to checkout, new
+   address with country and province pickers, cancel and resume, plan change and withdraw, refund request. Still
+   to do: mobile width, renewal, a public-platform catalog check by a person.

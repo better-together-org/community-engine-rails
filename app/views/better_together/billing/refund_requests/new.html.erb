@@ -18,19 +18,19 @@
       <%= t('better_together.billing.refund_requests.refundable', amount: billing_amount(refundable, @order.currency)) %>
     </p>
     <div class="mb-3">
-      <%= label_tag :reason, t('better_together.billing.refund_requests.reason_label'), class: 'form-label' %>
+      <%= label_tag 'billing-refund-request-reason', t('better_together.billing.refund_requests.reason_label'), class: 'form-label' %>
       <%= select_tag :reason,
                      options_for_select(BetterTogether::Billing::RefundRequest::BUYER_REASONS.map { |r| [t("better_together.billing.refund_requests.reasons.#{r}"), r] }, params[:reason]),
                      id: 'billing-refund-request-reason', class: 'form-select' %>
     </div>
     <div class="mb-3">
-      <%= label_tag :amount, t('better_together.billing.refund_requests.amount_label'), class: 'form-label' %>
+      <%= label_tag 'billing-refund-request-amount', t('better_together.billing.refund_requests.amount_label'), class: 'form-label' %>
       <%= text_field_tag :amount, params[:amount], id: 'billing-refund-request-amount', class: 'form-control', inputmode: 'decimal',
                                                    autocomplete: 'off', 'aria-describedby': 'billing-refund-request-amount-hint' %>
       <div id="billing-refund-request-amount-hint" class="form-text"><%= t('better_together.billing.refund_requests.amount_hint') %></div>
     </div>
     <div class="mb-3">
-      <%= label_tag :details, t('better_together.billing.refund_requests.details_label'), class: 'form-label' %>
+      <%= label_tag 'billing-refund-request-details', t('better_together.billing.refund_requests.details_label'), class: 'form-label' %>
       <%= text_area_tag :details, params[:details], id: 'billing-refund-request-details', class: 'form-control', rows: 4,
                                                     maxlength: BetterTogether::Billing::RefundRequest::DETAILS_LIMIT %>
     </div>
