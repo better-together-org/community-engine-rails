@@ -3328,6 +3328,10 @@ fr:
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
         unblocked: La personne a été débloquée avec succès.
+    person_community_memberships:
+      errors:
+        last_organizer: Vous êtes la seule personne organisatrice de cette communauté.
+          Désignez une autre personne organisatrice avant de partir.
     person_linked_seeds:
       index:
         description: Contenu privé partagé avec vous via des autorisations d'accès

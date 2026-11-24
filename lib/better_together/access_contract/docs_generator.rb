@@ -283,6 +283,8 @@ module BetterTogether
       end
 
       def decisions_table
+        return 'No decisions are open.' if contract.decisions.empty?
+
         header = ['| Decision | Kind | Title | The app does | The privacy rule suggests | Source | Cells |',
                   '| --- | --- | --- | --- | --- | --- | --- |']
         rows = contract.decisions.map do |id, d|

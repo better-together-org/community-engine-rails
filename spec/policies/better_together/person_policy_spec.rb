@@ -56,8 +56,8 @@ RSpec.describe BetterTogether::PersonPolicy do
   end
 
   describe '#create?' do
-    it 'allows platform managers' do
-      expect(described_class.new(platform_manager, BetterTogether::Person).create?).to be true
+    it 'denies platform managers without the opt-in create_person grant (PD-2)' do
+      expect(described_class.new(platform_manager, BetterTogether::Person).create?).to be false
     end
 
     it 'allows an explicit create_person permission holder' do

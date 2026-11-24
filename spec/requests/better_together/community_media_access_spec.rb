@@ -45,9 +45,9 @@ RSpec.describe 'Community media access', :no_auth do
         expect(status_for(path)).to eq(403)
       end
 
-      it 'serves a platform manager' do
+      it 'refuses a platform manager who is not a member (CD-1)' do
         login_as(create(:better_together_user, :confirmed, :platform_manager), scope: :user)
-        expect(status_for(path)).to eq(200)
+        expect(status_for(path)).to eq(403)
       end
     end
   end

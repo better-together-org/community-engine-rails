@@ -186,7 +186,7 @@ RSpec.describe 'Settings Preferences Management', :as_user do
             params: {
               person: {
                 locale: 'uk',
-                time_zone: 'Kyiv',
+                time_zone: 'Newfoundland',
                 notify_by_email: '0',
                 show_conversation_details: '1',
                 receive_messages_from_members: '1',
@@ -203,7 +203,7 @@ RSpec.describe 'Settings Preferences Management', :as_user do
       expect(response).to have_http_status(:success)
       # Verify the form renders with updated values
       expect(response.body).to include('value="uk"')
-      expect(response.body).to include('Kyiv')
+      expect(response.body).to include('Newfoundland')
       expect(response.body).to include('checked') # notify_by_email: false should show unchecked, but our form renders as checked='checked'
     end
 

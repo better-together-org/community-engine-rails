@@ -28,7 +28,7 @@ GitHub Actions is split into two layers:
 
 2. Targeted and advisory workflows
 - `Dependency Compatibility Validation` runs only on PRs that change `sidekiq` or `connection_pool`
-- `Compat Branch Sync PRs` opens maintenance PRs from `main` into each compatibility branch
+- `Compat Branch Sync PRs` opens maintenance PRs from `main` into each compatibility branch every Monday at 09:00 UTC (or on demand with `workflow_dispatch`), not on every push to `main`
 
 The branch-native workflow intentionally does not run special `sidekiq` or `connection_pool` checks on every PR. Those checks are reserved for the dependency PRs that need them.
 

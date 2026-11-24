@@ -81,7 +81,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | 2 | `membership` | Is the actor an active member, the creator, or holder of an invitation or valid token? | allow |  |
 | 3 | `role_permission` | Does the actor's community role grant manage_community_settings or manage_community_members? | allow |  |
 | 4 | `platform_operate` | Is the actor a platform manager acting on a public community or creating one? | allow |  |
-| 5 | `platform_manager` | Is the actor a platform manager on the current platform? | not intended | Opens private communities to a standing role; see CD-1 and CD-2. |
+| 5 | `platform_moderate` | Is the actor a platform manager moderating, deleting or reading aggregate usage of a community, whatever its privacy? | allow |  |
 | 6 | `default_deny` | Nothing above matched | deny |  |
 
 ### index
@@ -116,15 +116,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `blocked_user` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: CD-1, known deviation: Platform managers can read private and community-only community records.
 
 <details><summary>Reasons</summary>
 
@@ -145,15 +143,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `blocked_user` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: CD-1, known deviation: Platform managers can read private and community-only community records.
 
 <details><summary>Reasons</summary>
 
@@ -200,15 +196,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: CD-2, undecided: Platform manager operate power over private communities.
 
 <details><summary>Reasons</summary>
 
@@ -216,6 +210,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 - allow via `role_permission`: Organizers hold update_community and manage_community_settings. (community_organizer)
 - deny via `default_deny`: Creating a community grants no role permission; the creator normally also holds an organizer membership. (record_owner)
 - deny via `default_deny`: Members and contributors read and contribute; they do not edit community settings. (anonymous, blocked_user, community_contributor, community_member, signed_in_non_member)
+- deny via `default_deny`: Operating a non-public community needs the organizer's grant. (break-glass pending) (platform_manager, platform_steward)
 
 </details>
 
@@ -228,21 +223,20 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
-[^1]: CD-2, undecided: Platform manager operate power over private communities.
-
 <details><summary>Reasons</summary>
 
 - allow via `platform_operate`: Managers operate public communities. (platform_manager, platform_steward)
 - allow via `role_permission`: Same gate as update. (community_organizer)
 - deny via `default_deny`: Integrations are configured by organizers only. (anonymous, blocked_user, community_contributor, community_member, record_owner, signed_in_non_member)
+- deny via `default_deny`: Operating a non-public community needs the organizer's grant. (break-glass pending) (platform_manager, platform_steward)
 
 </details>
 
@@ -255,21 +249,20 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_contributor` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_organizer` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
-[^1]: CD-2, undecided: Platform manager operate power over private communities.
-
 <details><summary>Reasons</summary>
 
 - allow via `membership`: Any active member may host events on the community's behalf. (community_contributor, community_member, community_organizer)
 - allow via `platform_operate`: Managers operate public communities. (platform_manager, platform_steward)
 - deny via `default_deny`: Hosting needs membership or manage_community_events. (anonymous, blocked_user, record_owner, signed_in_non_member)
+- deny via `default_deny`: Operating a non-public community needs the organizer's grant. (break-glass pending) (platform_manager, platform_steward)
 
 </details>
 
@@ -282,15 +275,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_contributor` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_organizer` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
-| `platform_manager` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `platform_steward` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>membership</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: CD-1, known deviation: Platform managers can read private and community-only community records.
 
 <details><summary>Reasons</summary>
 
@@ -309,21 +300,20 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
-[^1]: CD-2, undecided: Platform manager operate power over private communities.
-
 <details><summary>Reasons</summary>
 
 - allow via `platform_operate`: Managers operate public communities. (platform_manager, platform_steward)
 - allow via `role_permission`: Organizers hold manage_community_roles. (community_organizer)
 - deny via `default_deny`: Only organizers assign roles. (anonymous, blocked_user, community_contributor, community_member, record_owner, signed_in_non_member)
+- deny via `default_deny`: Operating a non-public community needs the organizer's grant. (break-glass pending) (platform_manager, platform_steward)
 
 </details>
 
@@ -336,19 +326,17 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `platform_steward` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
-[^1]: CD-2, undecided: Platform manager operate power over private communities.
-
 <details><summary>Reasons</summary>
 
-- allow via `platform_operate`: Managers operate public communities. (platform_manager, platform_steward)
+- allow via `platform_moderate`: Managers see aggregate usage of any community. (platform_manager, platform_steward)
 - allow via `role_permission`: Anyone who can manage the community sees its usage. (community_organizer)
 - deny via `default_deny`: Usage is shown to managers of the community only. (anonymous, blocked_user, community_contributor, community_member, record_owner, signed_in_non_member)
 
@@ -363,21 +351,91 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> | allow <sub>role_permission</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | undecided (app: allow) [^1] | undecided (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `platform_steward` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
-[^1]: CD-2, undecided: Platform manager operate power over private communities.
+<details><summary>Reasons</summary>
+
+- allow via `platform_moderate`: Managers delete communities of any privacy; deleting discloses nothing. (platform_manager, platform_steward)
+- allow via `role_permission`: Organizers hold delete_community. (community_organizer)
+- deny via `default_deny`: Only organizers or platform managers delete a community. (anonymous, blocked_user, community_contributor, community_member, record_owner, signed_in_non_member)
+
+</details>
+
+### suspend
+
+| Persona | public | community | private |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `platform_steward` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `platform_operate`: Managers operate public communities. (platform_manager, platform_steward)
-- allow via `role_permission`: Organizers hold delete_community. (community_organizer)
-- deny via `default_deny`: Only organizers or platform managers delete a community. (anonymous, blocked_user, community_contributor, community_member, record_owner, signed_in_non_member)
+- allow via `platform_moderate`: Managers moderate communities of any privacy; this opens no content or member list. (platform_manager, platform_steward)
+- deny via `default_deny`: Only platform managers moderate a community. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
+
+</details>
+
+### quarantine
+
+| Persona | public | community | private |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `platform_steward` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+
+<details><summary>Reasons</summary>
+
+- allow via `platform_moderate`: Managers moderate communities of any privacy; this opens no content or member list. (platform_manager, platform_steward)
+- deny via `default_deny`: Only platform managers moderate a community. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
+
+</details>
+
+### hide
+
+| Persona | public | community | private |
+| --- | --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `platform_steward` | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> | allow <sub>platform_moderate</sub> |
+| `safety_reviewer` (pending) | pending | pending | pending |
+| `remote_operator` (pending) | pending | pending | pending |
+| `support_grantee` (pending) | pending | pending | pending |
+| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+
+<details><summary>Reasons</summary>
+
+- allow via `platform_moderate`: Managers moderate communities of any privacy; this opens no content or member list. (platform_manager, platform_steward)
+- deny via `default_deny`: Only platform managers moderate a community. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
 
 </details>
 
@@ -390,15 +448,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>membership</sub> | allow <sub>membership</sub> |
 | `blocked_user` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: CD-1, known deviation: Platform managers can read private and community-only community records.
 
 <details><summary>Reasons</summary>
 
@@ -546,13 +602,12 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
-| `record_owner` | undecided (app: deny) [^1] | n/a |
+| `record_owner` | allow <sub>own_record</sub> | n/a |
 | `blocked_user` | n/a | n/a |
-
-[^1]: CD-5, undecided: A member removing their own membership.
 
 <details><summary>Reasons</summary>
 
+- allow via `own_record`: Members may leave. The only organizer may not (policy deny reason last_organizer). (record_owner)
 - allow via `role_permission`: Organizers remove members who do not hold role management themselves. (community_organizer)
 - deny via `default_deny`: Removing a member needs a manage permission. (anonymous, community_contributor, community_member, platform_manager, platform_steward, signed_in_non_member)
 
@@ -599,8 +654,9 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 | # | Rule | Question | Decides | Note |
 | --- | --- | --- | --- | --- |
-| 1 | `invite_permission` | Does the actor's role in that community grant invite_community_members, manage_community_members or manage_community_roles? | allow |  |
-| 2 | `default_deny` | Nothing above matched | deny |  |
+| 1 | `invite_permission` | Does the actor's own role in that community grant invite_community_members, manage_community_members or manage_community_roles? | allow |  |
+| 2 | `own_pending` | Is this a pending invitation the actor sent? | allow |  |
+| 3 | `default_deny` | Nothing above matched | deny |  |
 
 ### index
 
@@ -687,14 +743,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
-| `record_owner` | undecided (app: deny) [^1] | n/a |
+| `record_owner` | allow <sub>own_pending</sub> | n/a |
 | `blocked_user` | n/a | n/a |
-
-[^1]: CD-4, undecided: What an inviter keeps over an invitation they sent.
 
 <details><summary>Reasons</summary>
 
 - allow via `invite_permission`: Withdrawing a pending invitation needs the same permission as sending it. (community_contributor, community_organizer)
+- allow via `own_pending`: An inviter keeps their own pending invitation. (record_owner)
 - deny via `default_deny`: Withdrawing needs an invite or manage permission in that community. (anonymous, community_member, platform_manager, platform_steward, signed_in_non_member)
 
 </details>
@@ -713,14 +768,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
-| `record_owner` | undecided (app: deny) [^1] | n/a |
+| `record_owner` | allow <sub>own_pending</sub> | n/a |
 | `blocked_user` | n/a | n/a |
-
-[^1]: CD-4, undecided: What an inviter keeps over an invitation they sent.
 
 <details><summary>Reasons</summary>
 
 - allow via `invite_permission`: Resending needs the same permission as sending. (community_contributor, community_organizer)
+- allow via `own_pending`: An inviter keeps their own pending invitation. (record_owner)
 - deny via `default_deny`: Resending needs an invite or manage permission in that community. (anonymous, community_member, platform_manager, platform_steward, signed_in_non_member)
 
 </details>
@@ -731,7 +785,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | --- | --- | --- |
 | `anonymous` | n/a | deny <sub>default_deny</sub> |
 | `signed_in_non_member` | n/a | deny <sub>default_deny</sub> |
-| `community_member` | n/a | deny (app: allow) [^1] |
+| `community_member` | n/a | deny <sub>default_deny</sub> |
 | `community_contributor` | n/a | allow <sub>invite_permission</sub> |
 | `community_organizer` | n/a | allow <sub>invite_permission</sub> |
 | `platform_manager` | n/a | deny <sub>default_deny</sub> |
@@ -739,15 +793,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
-| `record_owner` | undecided (app: deny) [^2] | n/a |
+| `record_owner` | allow <sub>own_pending</sub> | n/a |
 | `blocked_user` | n/a | n/a |
-
-[^1]: CD-3, known deviation: Every community member can list the community's invitations.
-[^2]: CD-4, undecided: What an inviter keeps over an invitation they sent.
 
 <details><summary>Reasons</summary>
 
 - allow via `invite_permission`: People who can invite see the community's invitations. (community_contributor, community_organizer)
+- allow via `own_pending`: An inviter keeps their own pending invitation. (record_owner)
 - deny via `default_deny`: Invitations are visible to people who can invite or manage members only. (anonymous, platform_manager, platform_steward, signed_in_non_member)
 - deny via `default_deny`: Plain members may not see invitations, which carry invitee emails. (community_member)
 

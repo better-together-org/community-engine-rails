@@ -24,7 +24,8 @@ RSpec.describe 'RBAC seed packet wiring' do # rubocop:disable RSpec/DescribeClas
     'read_person' => 'Opt-in read of private profiles; no default role holds it.',
     'update_person' => 'Opt-in profile administration; no default role holds it.',
     'delete_person' => 'Opt-in profile deletion; no default role holds it.',
-    'list_person' => 'Opt-in full directory listing; no default role holds it.'
+    'list_person' => 'Opt-in full directory listing; no default role holds it.',
+    'manage_unclaimed_profiles' => 'Opt-in editing of unclaimed profiles for community organizers; no default role holds it.'
   }.freeze
 
   # Seeded and granted, but not literally checked: access is decided by privacy, membership or
