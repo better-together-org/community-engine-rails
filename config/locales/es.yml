@@ -2628,6 +2628,9 @@ es:
         confirm_end: "¿Finalizar esta membresía? Queda en el historial y se puede
           restablecer."
         confirm_leave: "¿Salir? Podrás solicitar unirte de nuevo."
+        confirm_reinstate: "¿Restablecer esta membresía? El miembro recupera el acceso."
+        confirm_suspend: "¿Suspender esta membresía? El miembro pierde el acceso hasta
+          que la restablezcas."
         flash:
           ended: Membresía finalizada.
           left: Saliste.

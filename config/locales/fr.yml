@@ -2646,6 +2646,9 @@ fr:
         confirm_end: Mettre fin à cette adhésion ? Elle reste dans l'historique et
           peut être rétablie.
         confirm_leave: Quitter ? Vous pourrez demander à rejoindre de nouveau.
+        confirm_reinstate: Rétablir cette adhésion ? Le membre retrouve l'accès.
+        confirm_suspend: Suspendre cette adhésion ? Le membre perd l'accès jusqu'à
+          son rétablissement.
         flash:
           ended: Adhésion terminée.
           left: Vous êtes parti.

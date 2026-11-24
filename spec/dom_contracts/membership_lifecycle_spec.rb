@@ -24,11 +24,22 @@ RSpec.describe 'Membership lifecycle DOM contract', :as_platform_manager, type: 
     expect(page_html.css("##{ActionView::RecordIdentifier.dom_id(membership, :suspend_form)}").size).to eq(1)
   end
 
+  it 'asks for confirmation before ending or suspending', :aggregate_failures do
+    get better_together.platform_person_platform_memberships_path(platform, locale: I18n.default_locale)
+
+    %i[end_form suspend_form].each do |form|
+      node = page_html.at_css("##{ActionView::RecordIdentifier.dom_id(membership, form)}")
+      expect(node['data-turbo-confirm']).to be_present, form.to_s
+    end
+  end
+
   it 'offers reinstate instead of suspend once suspended', :aggregate_failures do
     membership.suspend!(actor: nil)
     get better_together.platform_person_platform_memberships_path(platform, locale: I18n.default_locale)
 
     expect(page_html.css("##{ActionView::RecordIdentifier.dom_id(membership, :reinstate_form)}").size).to eq(1)
     expect(page_html.css("##{ActionView::RecordIdentifier.dom_id(membership, :suspend_form)}").size).to eq(0)
+    reinstate = page_html.at_css("##{ActionView::RecordIdentifier.dom_id(membership, :reinstate_form)}")
+    expect(reinstate['data-turbo-confirm']).to be_present
   end
 end

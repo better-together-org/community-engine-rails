@@ -2598,6 +2598,9 @@ en:
           suspend: Suspend
         confirm_end: End this membership? It stays in the history and can be reinstated.
         confirm_leave: Leave? You can ask to join again later.
+        confirm_reinstate: Reinstate this membership? The member regains access.
+        confirm_suspend: Suspend this membership? The member loses access until you
+          reinstate it.
         flash:
           ended: Membership ended.
           left: You left.
