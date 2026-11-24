@@ -1,0 +1,362 @@
+# Access contract: communities subsystem (pilot).
+# Rows are matched top to bottom; the first row covering a persona and state wins.
+# `personas`/`states` omitted or `all` match everything. Pending personas are never probed.
+subsystem: communities
+title: Communities
+summary: Community records, the memberships that join people to them, and the invitations that bring people in.
+
+# Policies matched by this pattern that are not contracted yet. Listed so the gap is visible and checked.
+policy_pattern: community
+deferred_policies:
+
+# Controllers whose routed actions must authorize, scope or be allowlisted with a reason.
+controllers:
+  - better_together/communities
+  - better_together/person_community_memberships
+  - better_together/invitations
+  - better_together/api/v1/communities
+  - better_together/api/v1/person_community_memberships
+controller_allowlist:
+  better_together/invitations#show: Token-bearing invitee flow; access is the unguessable invitation token, checked in find_invitation_by_token.
+  better_together/invitations#accept: Token-bearing invitee flow; the action checks the invitee against the signed-in person.
+  better_together/invitations#decline: Token-bearing invitee flow; the action checks the invitee against the signed-in person.
+  better_together/invitations#available_people: Scoped through policy_scope or a platform-people permission, enforced by verify_policy_scoped.
+  better_together/person_community_memberships#index: Routed under /host but the controller defines no such action; flagged by the scan, nothing to authorize.
+
+decisions:
+  CD-1:
+    kind: known_deviation
+    title: Platform managers can read private and community-only community records
+    app_does: CommunityPolicy#show?, download?, view_members? and the index scope open private communities to any platform manager through can_manage_community?.
+    privacy_rule: No standing role discloses private content. Stewards see public communities and structure.
+    source: "PR #2321 deferred decision, 'Community records themselves'."
+  CD-2:
+    kind: undecided
+    title: Platform manager operate power over private communities
+    app_does: Managers can update, delete, configure integrations and roles, and host events for any community, including private ones.
+    privacy_rule: Operate is allowed for the platform; the edit form shows private settings, so operating a private space may need the organizer's grant or a break-glass grant.
+    source: "PR #2321 deferred decision, 'Community records themselves'."
+  CD-3:
+    kind: known_deviation
+    title: Every community member can list the community's invitations
+    app_does: CommunityInvitationPolicy::Scope returns a community's invitations to plain members, because the permission join is not tied to the actor's own membership. Invitations carry invitee emails.
+    privacy_rule: Only people who can invite or manage members may see invitations.
+    source: Found by this contract; not in PR #2321.
+  CD-4:
+    kind: undecided
+    title: What an inviter keeps over an invitation they sent
+    app_does: An inviter without an invite or manage permission cannot see, resend or withdraw their own invitation.
+    privacy_rule: Likely allow withdraw and resend of one's own pending invitation, but it is not decided.
+    source: Found by this contract.
+  CD-5:
+    kind: undecided
+    title: A member removing their own membership
+    app_does: PersonCommunityMembershipPolicy#destroy? denies removing yourself. No other policy path exists.
+    privacy_rule: Leaving a community is a basic self-service right and likely needs an explicit allow.
+    source: Found by this contract.
+
+resources:
+  community:
+    model: BetterTogether::Community
+    policy: BetterTogether::CommunityPolicy
+    classification: member_private
+    title: Community
+    states: [public, community, private]
+    permissions: [manage_community_settings, manage_community_members, manage_community_roles, update_community,
+                  delete_community, manage_community_events]
+    controllers: [better_together/communities, better_together/api/v1/communities]
+    rules:
+      - {id: privacy_gate, question: "Is the community effectively public (its platform and community are public too)?", on_yes: allow}
+      - {id: membership, question: "Is the actor an active member, the creator, or holder of an invitation or valid token?", on_yes: allow}
+      - {id: role_permission, question: "Does the actor's community role grant manage_community_settings or manage_community_members?", on_yes: allow}
+      - id: platform_operate
+        question: "Is the actor a platform manager acting on a public community or creating one?"
+        on_yes: allow
+        applies_to: [create, update, destroy, manage_integrations, create_events, manage_roles, view_quota_usage]
+      - id: platform_manager
+        question: "Is the actor a platform manager on the current platform?"
+        on_yes: allow
+        intended: false
+        note: Opens private communities to a standing role; see CD-1 and CD-2.
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {outcome: allow, rule: privacy_gate, reason: "Everyone may open the index; the scope filters the rows."}
+      show:
+        rows:
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public communities are readable by anyone."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user], outcome: deny, rule: default_deny,
+             reason: "Community-only and private communities are for members."}
+          - {personas: [community_member, community_contributor, community_organizer], outcome: allow, rule: membership,
+             reason: "Active members read their own community."}
+          - {personas: [record_owner], outcome: allow, rule: membership, reason: "The creator can always read the community."}
+          - personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "No standing role discloses a non-public community record."
+            deviation: {actual: allow, actual_rule: platform_manager, decision: CD-1}
+      download:
+        rows:
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Media of a public community is public."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user], outcome: deny, rule: default_deny,
+             reason: "Media follows the record: members only."}
+          - {personas: [community_member, community_contributor, community_organizer, record_owner], outcome: allow, rule: membership,
+             reason: "Download follows show."}
+          - personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "Download follows show; no standing role discloses a non-public community."
+            deviation: {actual: allow, actual_rule: platform_manager, decision: CD-1}
+      create:
+        states: [new]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "Signing in is required to create a community."}
+          - {personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Platform managers always create communities."}
+          - personas: [signed_in_non_member, community_member, community_contributor, community_organizer]
+            outcome: conditional
+            rule: role_permission
+            condition: The actor has accepted the community creation agreement.
+            fixture: deny
+            reason: "Everyone else must accept the creation agreement first; fixtures have not."
+      update:
+        rows:
+          - {personas: [community_organizer], outcome: allow, rule: role_permission,
+             reason: "Organizers hold update_community and manage_community_settings."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user, community_member, community_contributor], outcome: deny,
+             rule: default_deny, reason: "Members and contributors read and contribute; they do not edit community settings."}
+          - {personas: [record_owner], outcome: deny, rule: default_deny,
+             reason: "Creating a community grants no role permission; the creator normally also holds an organizer membership."}
+          - {states: [public], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers operate the platform's public communities."}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: CD-2}
+      manage_integrations:
+        rows:
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Same gate as update."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user, community_member, community_contributor, record_owner],
+             outcome: deny, rule: default_deny, reason: "Integrations are configured by organizers only."}
+          - {states: [public], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers operate public communities."}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: CD-2}
+      create_events:
+        rows:
+          - {personas: [community_member, community_contributor, community_organizer], outcome: allow, rule: membership,
+             reason: "Any active member may host events on the community's behalf."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user, record_owner], outcome: deny, rule: default_deny,
+             reason: "Hosting needs membership or manage_community_events."}
+          - {states: [public], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers operate public communities."}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: CD-2}
+      view_members:
+        rows:
+          - {personas: [community_member, community_contributor, community_organizer, record_owner], outcome: allow, rule: membership,
+             reason: "Members and the creator see who else is in the community."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user], outcome: deny, rule: default_deny,
+             reason: "The member list is member private, even for a public community."}
+          - personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "Member lists are member private; standing roles do not disclose them."
+            deviation: {actual: allow, actual_rule: platform_manager, decision: CD-1}
+      manage_roles:
+        rows:
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers hold manage_community_roles."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user, community_member, community_contributor, record_owner],
+             outcome: deny, rule: default_deny, reason: "Only organizers assign roles."}
+          - {states: [public], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers operate public communities."}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: CD-2}
+      view_quota_usage:
+        rows:
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Anyone who can manage the community sees its usage."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user, community_member, community_contributor, record_owner],
+             outcome: deny, rule: default_deny, reason: "Usage is shown to managers of the community only."}
+          - {states: [public], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers operate public communities."}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: CD-2}
+      destroy:
+        rows:
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers hold delete_community."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user, community_member, community_contributor, record_owner],
+             outcome: deny, rule: default_deny, reason: "Only organizers or platform managers delete a community."}
+          - {states: [public], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers operate public communities."}
+          - personas: [platform_manager, platform_steward]
+            outcome: undecided
+            rule: platform_manager
+            undecided: {actual: allow, suggests: deny, decision: CD-2}
+      scope:
+        rows:
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public communities are listed for everyone."}
+          - {personas: [anonymous, signed_in_non_member, blocked_user], outcome: deny, rule: default_deny,
+             reason: "Non-public communities are not listed for non-members."}
+          - {personas: [community_member, community_contributor, community_organizer, record_owner], outcome: allow, rule: membership,
+             reason: "Members and the creator list their communities."}
+          - {states: [community], personas: [platform_manager, platform_steward], outcome: deny, rule: default_deny,
+             reason: "A community-only community is not listed for a non-member manager."}
+          - personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "No standing role lists private communities."
+            deviation: {actual: allow, actual_rule: platform_manager, decision: CD-1}
+
+  person_community_membership:
+    model: BetterTogether::PersonCommunityMembership
+    policy: BetterTogether::PersonCommunityMembershipPolicy
+    classification: member_private
+    title: Community membership
+    states: [own, someone_elses]
+    permissions: [manage_community_members, manage_community_roles]
+    controllers: [better_together/person_community_memberships, better_together/api/v1/person_community_memberships]
+    rules:
+      - {id: own_record, question: "Is this the actor's own membership?", on_yes: allow}
+      - {id: role_permission, question: "Does the actor's role in that community grant manage_community_members or manage_community_roles (or is the actor the creator)?", on_yes: allow}
+      - {id: self_service, question: "Does the community allow direct join or membership requests, and is this the actor's own record?", on_yes: conditional}
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers list memberships they can manage."}
+          - {outcome: deny, rule: default_deny, reason: "Listing needs a manage permission in at least one community."}
+      show:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: allow, rule: own_record, reason: "People read their own membership."}
+          - {states: [own], outcome: na}
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers read their members' memberships."}
+          - {outcome: deny, rule: default_deny, reason: "A membership is member private; standing roles do not read it."}
+      create:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - personas: [record_owner]
+            outcome: conditional
+            rule: self_service
+            condition: The community allows direct join or membership requests.
+            fixture: deny
+            reason: "Joining oneself needs a self-service community; the fixture community requires an invitation."
+          - {states: [own], outcome: na}
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers add members."}
+          - {outcome: deny, rule: default_deny, reason: "Adding someone else needs a manage permission in that community."}
+      edit:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: deny, rule: default_deny, reason: "People do not change their own role."}
+          - {states: [own], outcome: na}
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers change roles."}
+          - {outcome: deny, rule: default_deny, reason: "Changing a membership needs a manage permission."}
+      destroy:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - personas: [record_owner]
+            outcome: undecided
+            rule: default_deny
+            undecided: {actual: deny, suggests: allow, decision: CD-5}
+          - {states: [own], outcome: na}
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers remove members who do not hold role management themselves."}
+          - {outcome: deny, rule: default_deny, reason: "Removing a member needs a manage permission."}
+      scope:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: allow, rule: own_record, reason: "People list their own memberships."}
+          - {states: [own], outcome: na}
+          - {personas: [community_organizer], outcome: allow, rule: role_permission, reason: "Organizers list the memberships of communities they manage."}
+          - {outcome: deny, rule: default_deny, reason: "Other memberships are member private."}
+
+  community_invitation:
+    model: BetterTogether::CommunityInvitation
+    policy: BetterTogether::CommunityInvitationPolicy
+    classification: member_private
+    title: Community invitation
+    states: [own, someone_elses]
+    permissions: [invite_community_members, manage_community_members, manage_community_roles]
+    controllers: [better_together/invitations]
+    rules:
+      - {id: invite_permission, question: "Does the actor's role in that community grant invite_community_members, manage_community_members or manage_community_roles?", on_yes: allow}
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {outcome: deny, rule: default_deny, reason: "There is no index action for invitations; listing goes through the scope."}
+      show:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {states: [own], outcome: na, personas: [anonymous, signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward]}
+          - {outcome: deny, rule: default_deny, reason: "Invitations are read through the community's invitation list, not individually."}
+      create:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - {personas: [record_owner], outcome: deny, rule: default_deny,
+             reason: "Sending an invitation needs the permission now, whoever sent an earlier one."}
+          - {states: [own], outcome: na}
+          - {personas: [community_contributor, community_organizer], outcome: allow, rule: invite_permission,
+             reason: "Contributors hold invite_community_members; organizers hold the manage permissions."}
+          - {outcome: deny, rule: default_deny, reason: "Inviting needs an invite or manage permission in that community. Platform roles hold none."}
+      destroy:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - personas: [record_owner]
+            outcome: undecided
+            rule: default_deny
+            undecided: {actual: deny, suggests: allow, decision: CD-4}
+          - {states: [own], outcome: na}
+          - {personas: [community_contributor, community_organizer], outcome: allow, rule: invite_permission, reason: "Withdrawing a pending invitation needs the same permission as sending it."}
+          - {outcome: deny, rule: default_deny, reason: "Withdrawing needs an invite or manage permission in that community."}
+      resend:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - personas: [record_owner]
+            outcome: undecided
+            rule: default_deny
+            undecided: {actual: deny, suggests: allow, decision: CD-4}
+          - {states: [own], outcome: na}
+          - {personas: [community_contributor, community_organizer], outcome: allow, rule: invite_permission, reason: "Resending needs the same permission as sending."}
+          - {outcome: deny, rule: default_deny, reason: "Resending needs an invite or manage permission in that community."}
+      scope:
+        rows:
+          - {personas: [blocked_user], outcome: na}
+          - {personas: [record_owner], states: [someone_elses], outcome: na}
+          - personas: [record_owner]
+            outcome: undecided
+            rule: default_deny
+            undecided: {actual: deny, suggests: allow, decision: CD-4}
+          - {states: [own], outcome: na}
+          - {personas: [community_contributor, community_organizer], outcome: allow, rule: invite_permission,
+             reason: "People who can invite see the community's invitations."}
+          - personas: [community_member]
+            outcome: deny
+            rule: default_deny
+            reason: "Plain members may not see invitations, which carry invitee emails."
+            deviation: {actual: allow, actual_rule: invite_permission, decision: CD-3}
+          - {outcome: deny, rule: default_deny, reason: "Invitations are visible to people who can invite or manage members only."}

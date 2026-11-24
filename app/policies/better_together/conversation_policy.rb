@@ -56,12 +56,18 @@ module BetterTogether
 
     # Authorization scope for conversations — scoped to current platform.
     class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
+      # Only conversations the agent takes part in; being a platform manager does not
+      # open anyone else's conversations.
       def resolve
-        platform_scoped.includes(participants: [
-                                   :string_translations,
-                                   :contact_detail,
-                                   { profile_image_attachment: :blob }
-                                 ])
+        return scope.none unless agent
+
+        own_conversation_ids = BetterTogether::ConversationParticipant.where(person_id: agent.id)
+                                                                      .select(:conversation_id)
+        platform_scoped.where(id: own_conversation_ids).includes(participants: [
+                                                                   :string_translations,
+                                                                   :contact_detail,
+                                                                   { profile_image_attachment: :blob }
+                                                                 ])
       end
     end
 

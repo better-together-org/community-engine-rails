@@ -8,9 +8,12 @@ RSpec.describe 'MCP tools under a community-limited credential', type: :model do
   let(:operator_user) { create(:user, :confirmed, :platform_manager) }
   let!(:community_a) { create(:community, name: 'Community A', privacy: 'public') }
   let!(:community_b) { create(:community, name: 'Community B', privacy: 'private', creator: operator_user.person) }
-  let!(:post_a) { create(:post, community: community_a, privacy: 'public', title: 'Post in A') }
+  let!(:post_a) do
+    create(:post, community: community_a, privacy: 'public', title: 'Post in A', published_at: 1.day.ago)
+  end
   let!(:post_b) do
-    create(:post, community: community_b, privacy: 'private', creator: operator_user.person, title: 'Post in B')
+    create(:post, community: community_b, privacy: 'private', creator: operator_user.person, title: 'Post in B',
+                  published_at: 1.day.ago)
   end
 
   before do
