@@ -52,7 +52,7 @@ RSpec.describe 'Navigation seed packet' do # rubocop:disable RSpec/DescribeClass
     expect(BetterTogether::NavigationArea.where(platform:).pluck(:identifier))
       .to match_array(%w[platform-header platform-host better-together platform-footer])
     expect(BetterTogether::Page.where(platform:).count).to eq(14)
-    expect(BetterTogether::NavigationItem.where(platform:).count).to eq(32)
+    expect(BetterTogether::NavigationItem.where(platform:).count).to eq(55)
   end
 
   it 'changes nothing on a rerun' do
@@ -71,7 +71,7 @@ RSpec.describe 'Navigation seed packet' do # rubocop:disable RSpec/DescribeClass
 
     expect(BetterTogether::Page.i18n.where(platform: other_platform, slug: 'faq').count).to eq(1)
     expect(BetterTogether::Page.i18n.where(platform:, slug: 'faq').count).to eq(1)
-    expect(BetterTogether::NavigationItem.where(platform: other_platform).count).to eq(32)
+    expect(BetterTogether::NavigationItem.where(platform: other_platform).count).to eq(55)
   end
 
   it 'never rewrites a page a steward edited' do
