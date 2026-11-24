@@ -4,7 +4,7 @@ require 'rails_helper'
 require BetterTogether::Engine.root.join('db/migrate/20260616003001_add_platform_id_to_phase_10_extended_isolation')
 require BetterTogether::Engine.root.join('db/migrate/20260616004001_backfill_platform_id_for_phase_10_extended')
 
-RSpec.describe 'Phase 10 platform_id NOT NULL ordering' do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Phase 10 platform_id NOT NULL ordering', :migration_output do # rubocop:disable RSpec/DescribeClass
   let(:not_null_migration) { AddPlatformIdToPhase10ExtendedIsolation.new }
   let(:backfill_migration) { BackfillPlatformIdForPhase10Extended.new }
   let(:connection) { ActiveRecord::Base.connection }

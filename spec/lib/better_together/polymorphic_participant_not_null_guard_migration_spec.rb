@@ -3,7 +3,7 @@
 require 'rails_helper'
 require BetterTogether::Engine.root.join('db/migrate/20260404203000_add_polymorphic_participant_to_agreement_participants')
 
-RSpec.describe 'Agreement participant polymorphic participant NOT NULL guard' do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Agreement participant polymorphic participant NOT NULL guard', :migration_output do # rubocop:disable RSpec/DescribeClass
   let(:migration) { AddPolymorphicParticipantToAgreementParticipants.new }
   let(:connection) { ActiveRecord::Base.connection }
 

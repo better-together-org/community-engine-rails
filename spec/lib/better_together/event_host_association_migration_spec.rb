@@ -3,7 +3,7 @@
 require 'rails_helper'
 require BetterTogether::Engine.root.join('db/migrate/20260530193000_require_event_host_associations')
 
-RSpec.describe 'Event host association migration' do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Event host association migration', :migration_output do # rubocop:disable RSpec/DescribeClass
   let(:migration) { RequireEventHostAssociations.new }
 
   after do
