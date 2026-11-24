@@ -31,4 +31,10 @@ RSpec.describe 'Billing screens loaded into host billing tabs', :as_platform_man
 
     expect(response.body).not_to include('<turbo-frame id="billing-tab-')
   end
+
+  it 'tells browsers the answer depends on whether a frame asked, so a prefetched page is not reused in a tab' do
+    get better_together.billing_agreement_requirements_path(locale: I18n.default_locale)
+
+    expect(response.headers['Vary']).to include('Turbo-Frame')
+  end
 end

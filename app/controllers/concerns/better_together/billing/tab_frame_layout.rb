@@ -16,11 +16,22 @@ module BetterTogether
       TAB_FRAME_PREFIX = 'billing-tab-'
       TAB_PANE_PREFIX = 'billing-pane-'
 
+      included do
+        # The same address answers a frame request with the framed page and any other with the full page, so a
+        # browser must not hand one to the other: a link prefetched as a full page would make the tab say
+        # "Content missing".
+        after_action :vary_on_turbo_frame
+      end
+
       def redirect_to(options = {}, response_options = {})
         super(billing_page_location(options), response_options)
       end
 
       private
+
+      def vary_on_turbo_frame
+        response.headers['Vary'] = [response.headers['Vary'], 'Turbo-Frame'].compact_blank.join(', ')
+      end
 
       def determine_layout
         return 'better_together/billing_tab_frame' if billing_tab_frame_request?
