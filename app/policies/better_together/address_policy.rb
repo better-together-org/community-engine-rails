@@ -3,6 +3,14 @@
 module BetterTogether
   # Access control for address records.
   class AddressPolicy < ContactDetailPolicy
+    # A standalone address (a picked location, no contact detail yet) may be created by any signed-in user;
+    # an address attached to a contact detail follows the contactable owner rule.
+    def create?
+      return user.present? if contactable.nil?
+
+      super
+    end
+
     # Pundit scope for filtering visible Address records.
     class Scope < ContactDetailPolicy::Scope
       COMPONENT_CONDITION = <<~SQL

@@ -4,27 +4,17 @@ title: Contact detail show decision tree (generated from the access contract)
 flowchart TD
   start(["show contact detail"])
   start --> r0
-  r0{"owner: Is the actor the owner of the contactable?"}
+  r0{"owner: Is the actor the owner of the contactable the person themself, or whoever may update the contactable record?"}
   r0 -- yes --> r0o(["allow"])
   class r0o out_allow
   r0 -- no --> r1
-  r1{"public_owner: Does the contactable belong to a public profile?"}
+  r1{"public_owner: Is the contactable effectively public and visible to the actor?"}
   r1 -- yes --> r1o(["allow"])
   class r1o out_allow
   r1 -- no --> r2
-  r2{"open_policy: Is the policy method an unconditional true? (app only)"}
-  r2 -- yes --> r2o(["allow"])
-  class r2o out_allow
-  class r2 unintended
-  r2 -- no --> r3
-  r3{"unscoped_listing: Does the scope fall back to the whole platform? (app only)"}
-  r3 -- yes --> r3o(["allow"])
-  class r3o out_allow
-  class r3 unintended
-  r3 -- no --> r4
-  r4["default_deny: Nothing above matched"]
-  r4 --> r4o(["deny"])
-  class r4o out_deny
+  r2["default_deny: Nothing above matched"]
+  r2 --> r2o(["deny"])
+  class r2o out_deny
   classDef out_allow fill:#cfe8cf,stroke:#2e6b2e,color:#111
   classDef out_deny fill:#f3d0d0,stroke:#8a2a2a,color:#111
   classDef out_conditional fill:#f6e7b4,stroke:#8a6d1a,color:#111

@@ -256,7 +256,7 @@ module AccessContractProbe
       }.freeze
 
       def record_for(target, state)
-        return BetterTogether::ContactDetail.new if target == :new
+        return BetterTogether::ContactDetail.new(contactable: @owners.fetch(state).person) if target == :new
 
         @details.fetch(state)
       end

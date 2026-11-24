@@ -423,11 +423,9 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 | # | Rule | Question | Decides | Note |
 | --- | --- | --- | --- | --- |
-| 1 | `owner` | Is the actor the owner of the contactable? | allow |  |
-| 2 | `public_owner` | Does the contactable belong to a public profile? | allow |  |
-| 3 | `open_policy` | Is the policy method an unconditional true? | not intended | ContactDetailPolicy#create? and #destroy? are placeholders that return true; see PD-4. |
-| 4 | `unscoped_listing` | Does the scope fall back to the whole platform? | not intended | The model has no privacy column, so the scope returns every contact detail; see PD-3. |
-| 5 | `default_deny` | Nothing above matched | deny |  |
+| 1 | `owner` | Is the actor the owner of the contactable (the person themself, or whoever may update the contactable record)? | allow |  |
+| 2 | `public_owner` | Is the contactable effectively public and visible to the actor? | allow |  |
+| 3 | `default_deny` | Nothing above matched | deny |  |
 
 ### show
 
@@ -454,27 +452,25 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 ### create
 
-| Persona | new |
-| --- | --- |
-| `anonymous` | deny (app: allow) [^1] |
-| `signed_in_non_member` | deny (app: allow) [^1] |
-| `community_member` | deny (app: allow) [^1] |
-| `community_contributor` | deny (app: allow) [^1] |
-| `community_organizer` | deny (app: allow) [^1] |
-| `platform_manager` | deny (app: allow) [^1] |
-| `platform_steward` | deny (app: allow) [^1] |
-| `safety_reviewer` (pending) | pending |
-| `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
-| `record_owner` | n/a |
-| `blocked_user` | n/a |
-
-[^1]: PD-4, known deviation: Anyone can create or destroy any contact detail at policy level.
+| Persona | public | private |
+| --- | --- | --- |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `safety_reviewer` (pending) | pending | pending |
+| `remote_operator` (pending) | pending | pending |
+| `support_grantee` (pending) | pending | pending |
+| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
-- deny via `default_deny`: Creating a contact detail needs a signed-in owner of the contactable. (anonymous)
-- deny via `default_deny`: Only the contactable's owner creates its contact detail; the new record has no owner context here. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `owner`: The owner adds contact details to their own record. (record_owner)
+- deny via `default_deny`: Only the contactable's owner creates its contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
 </details>
 
@@ -492,12 +488,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
-| `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
-- deny via `default_deny`: Contact details are edited through the owner's profile form (no update? method). (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `owner`: The owner edits their own contact details. (record_owner)
+- deny via `default_deny`: Only the owner edits contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
 </details>
 
@@ -505,20 +502,18 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 | Persona | public | private |
 | --- | --- | --- |
-| `anonymous` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `signed_in_non_member` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `community_member` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `community_contributor` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `community_organizer` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `platform_manager` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-| `platform_steward` | deny (app: allow) [^1] | deny (app: allow) [^1] |
+| `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
 | `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
-| `blocked_user` | deny (app: allow) [^1] | deny (app: allow) [^1] |
-
-[^1]: PD-4, known deviation: Anyone can create or destroy any contact detail at policy level.
+| `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
@@ -531,25 +526,23 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 | Persona | public | private |
 | --- | --- | --- |
-| `anonymous` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-| `signed_in_non_member` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-| `community_member` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-| `community_contributor` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-| `community_organizer` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-| `platform_manager` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
+| `anonymous` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| `signed_in_non_member` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| `community_member` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
 | `support_grantee` (pending) | pending | pending |
 | `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> |
-| `blocked_user` | allow <sub>public_owner</sub> | deny (app: allow) [^1] |
-
-[^1]: PD-3, known deviation: Contact detail scope lists every contact detail to everyone.
+| `blocked_user` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `owner`: Owners list their own contact details. (record_owner)
 - allow via `public_owner`: A public profile's contact detail container is listed to everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
-- deny via `default_deny`: A private person's contact detail is personal data visible to the person only. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: A private person's contact detail is personal data visible to the person only, never to standing roles. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
 
 </details>

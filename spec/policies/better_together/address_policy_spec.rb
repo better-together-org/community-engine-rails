@@ -8,15 +8,19 @@ RSpec.describe BetterTogether::AddressPolicy, type: :policy do
   end
 
   describe '#create?' do
-    it 'returns true (inherited ContactDetailPolicy override)' do
+    it 'lets a signed-in user create a standalone address (picked location)' do
       user = create(:better_together_user)
       expect(described_class.new(user, BetterTogether::Address).create?).to be true
+    end
+
+    it 'denies anonymous' do
+      expect(described_class.new(nil, BetterTogether::Address).create?).to be false
     end
   end
 
   describe '#destroy?' do
-    it 'returns true (inherited ContactDetailPolicy override)' do
-      expect(described_class.new(nil, BetterTogether::Address).destroy?).to be true
+    it 'denies anonymous and class-level checks' do
+      expect(described_class.new(nil, BetterTogether::Address).destroy?).to be false
     end
   end
 

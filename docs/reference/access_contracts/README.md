@@ -11,8 +11,8 @@ An access contract records what access we decided each persona should have to ea
 | subsystems | 2 |
 | resources | 6 |
 | personas | 12 |
-| cells | 801 |
-| known deviations | 54 |
+| cells | 810 |
+| known deviations | 23 |
 | undecided | 31 |
 
 ## Persona by classification heatmaps
@@ -48,18 +48,18 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 
 | Persona | member_private public rows | member_private non-public rows | personal public rows | personal non-public rows |
 | --- | --- | --- | --- | --- |
-| `anonymous` | allow | deny | mixed | mixed |
-| `signed_in_non_member` | allow | deny | mixed | mixed |
+| `anonymous` | allow | deny | mixed | deny |
+| `signed_in_non_member` | allow | deny | mixed | deny |
 | `community_member` | allow | mixed | mixed | mixed |
 | `community_contributor` | allow | mixed | mixed | mixed |
 | `community_organizer` | allow | mixed | mixed | mixed |
-| `platform_manager` | allow | mixed | mixed | mixed |
-| `platform_steward` | allow | mixed | mixed | mixed |
+| `platform_manager` | allow | mixed | mixed | deny |
+| `platform_steward` | allow | mixed | mixed | deny |
 | `safety_reviewer` | pending | pending | pending | pending |
 | `remote_operator` | pending | pending | pending | pending |
 | `support_grantee` | pending | pending | pending | pending |
 | `record_owner` | allow | mixed | mixed | mixed |
-| `blocked_user` | allow | deny | mixed | mixed |
+| `blocked_user` | allow | deny | mixed | deny |
 
 ## Pages
 

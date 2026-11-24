@@ -45,18 +45,6 @@ decisions:
     app_does: PersonPolicy#create? allows platform_manager?, bypassing the opt-in create_person permission.
     privacy_rule: Creating a profile does not disclose existing data, but the seeded create_person permission suggests profile administration is an opt-in grant.
     source: "PR #2321 deferred decision, 'PersonPolicy#update?/create?'."
-  PD-3:
-    kind: known_deviation
-    title: Contact detail scope lists every contact detail to everyone
-    app_does: ContactDetailPolicy::Scope returns all contact details of the platform, including private people's, even to anonymous visitors, because the model has no privacy column.
-    privacy_rule: Personal data of private people is visible only to the person themself.
-    source: Found by this contract; not in PR #2321.
-  PD-4:
-    kind: known_deviation
-    title: Anyone can create or destroy any contact detail at policy level
-    app_does: "ContactDetailPolicy#create? and #destroy? return true for every actor, including anonymous."
-    privacy_rule: Only the owner of the contactable may change its contact details.
-    source: Found by this contract; the policy carries a comment that the logic was never written.
   PD-5:
     kind: undecided
     title: Blocker cannot show their own block record
@@ -193,54 +181,29 @@ resources:
     permissions: []
     controllers: []
     rules:
-      - {id: owner, question: "Is the actor the owner of the contactable?", on_yes: allow}
-      - {id: public_owner, question: "Does the contactable belong to a public profile?", on_yes: allow}
-      - id: open_policy
-        question: "Is the policy method an unconditional true?"
-        on_yes: allow
-        intended: false
-        note: "ContactDetailPolicy#create? and #destroy? are placeholders that return true; see PD-4."
-      - id: unscoped_listing
-        question: "Does the scope fall back to the whole platform?"
-        on_yes: allow
-        intended: false
-        note: The model has no privacy column, so the scope returns every contact detail; see PD-3.
+      - {id: owner, question: "Is the actor the owner of the contactable (the person themself, or whoever may update the contactable record)?", on_yes: allow}
+      - {id: public_owner, question: "Is the contactable effectively public and visible to the actor?", on_yes: allow}
       - {id: default_deny, question: "Nothing above matched", on_yes: deny}
     actions:
       show:
         rows:
           - {outcome: deny, rule: default_deny, reason: "Contact details render through their owner's profile and are never fetched directly (no show? method)."}
       create:
-        states: [new]
+        states: [public, private]
         rows:
-          - {personas: [record_owner, blocked_user], outcome: na}
-          - personas: [anonymous]
-            outcome: deny
-            rule: default_deny
-            reason: "Creating a contact detail needs a signed-in owner of the contactable."
-            deviation: {actual: allow, actual_rule: open_policy, decision: PD-4}
-          - personas: [signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward]
-            outcome: deny
-            rule: default_deny
-            reason: "Only the contactable's owner creates its contact detail; the new record has no owner context here."
-            deviation: {actual: allow, actual_rule: open_policy, decision: PD-4}
+          - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner adds contact details to their own record."}
+          - {outcome: deny, rule: default_deny, reason: "Only the contactable's owner creates its contact details; standing roles do not."}
       update:
+        states: [public, private]
         rows:
-          - {outcome: deny, rule: default_deny, reason: "Contact details are edited through the owner's profile form (no update? method)."}
+          - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner edits their own contact details."}
+          - {outcome: deny, rule: default_deny, reason: "Only the owner edits contact details; standing roles do not."}
       destroy:
         rows:
           - {personas: [record_owner], outcome: allow, rule: owner, reason: "The owner removes their own contact detail."}
-          - personas: [anonymous, signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward, blocked_user]
-            outcome: deny
-            rule: default_deny
-            reason: "Only the owner removes a contact detail; standing roles do not."
-            deviation: {actual: allow, actual_rule: open_policy, decision: PD-4}
+          - {outcome: deny, rule: default_deny, reason: "Only the owner removes a contact detail; standing roles do not."}
       scope:
         rows:
           - {personas: [record_owner], outcome: allow, rule: owner, reason: "Owners list their own contact details."}
           - {states: [public], outcome: allow, rule: public_owner, reason: "A public profile's contact detail container is listed to everyone."}
-          - personas: [anonymous, signed_in_non_member, community_member, community_contributor, community_organizer, platform_manager, platform_steward, blocked_user]
-            outcome: deny
-            rule: default_deny
-            reason: "A private person's contact detail is personal data visible to the person only."
-            deviation: {actual: allow, actual_rule: unscoped_listing, decision: PD-3}
+          - {outcome: deny, rule: default_deny, reason: "A private person's contact detail is personal data visible to the person only, never to standing roles."}

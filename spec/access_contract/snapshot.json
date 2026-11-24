@@ -754,98 +754,107 @@
     "contact_detail": {
       "create": {
         "anonymous": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "blocked_user": {
-          "new": "na"
+          "private": "deny",
+          "public": "deny"
         },
         "community_contributor": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "community_member": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "community_organizer": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "platform_manager": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "platform_steward": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "record_owner": {
-          "new": "na"
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
-          "new": "allow"
+          "private": "deny",
+          "public": "deny"
         }
       },
       "destroy": {
         "anonymous": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "blocked_user": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "community_contributor": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "community_member": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "community_organizer": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "platform_manager": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "platform_steward": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         },
         "record_owner": {
           "private": "allow",
           "public": "allow"
         },
         "signed_in_non_member": {
-          "private": "allow",
-          "public": "allow"
+          "private": "deny",
+          "public": "deny"
         }
       },
       "scope": {
         "anonymous": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "blocked_user": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_contributor": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_member": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_organizer": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_manager": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -853,7 +862,7 @@
           "public": "allow"
         },
         "signed_in_non_member": {
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         }
       },
@@ -925,8 +934,8 @@
           "public": "deny"
         },
         "record_owner": {
-          "private": "deny",
-          "public": "deny"
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "private": "deny",
