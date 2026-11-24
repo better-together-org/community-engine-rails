@@ -52,11 +52,11 @@ RSpec.describe 'People API private attribute visibility', :no_auth do
     expect(data['attributes']).to have_key('federate_content')
   end
 
-  it 'shows private attributes to a platform manager', :aggregate_failures do
+  it 'hides private attributes of a claimed person from a platform manager', :aggregate_failures do
     data = attributes_for(manager_headers, "/api/v1/people/#{owner.id}")
 
-    expect(data['attributes']).to have_key('email')
-    expect(data['attributes']).to have_key('time_zone')
+    expect(data['attributes']).not_to have_key('email')
+    expect(data['attributes']).not_to have_key('time_zone')
   end
 
   it 'ignores filter[locale] so locale cannot be probed' do

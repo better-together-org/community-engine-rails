@@ -181,6 +181,12 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
 
     context 'when authenticated with permission' do
       before do
+        # Managers no longer create people by role alone; create_person is an opt-in grant (PD-2).
+        host = BetterTogether::Platform.find_by!(host: true)
+        role = host.person_platform_memberships.find_by!(member: platform_manager_user.person).role
+        role.assign_resource_permissions(%w[create_person])
+        platform_manager_user.person.expire_permission_cache!
+
         create(:better_together_agreement_participant,
                agreement: content_publishing_agreement,
                participant: platform_manager_user.person,

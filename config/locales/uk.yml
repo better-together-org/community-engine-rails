@@ -3314,6 +3314,10 @@ uk:
         platform_manager_error: Менеджерів платформи не можна блокувати.
         self_block_error: Ви не можете заблокувати себе.
         unblocked: Людину успішно розблоковано.
+    person_community_memberships:
+      errors:
+        last_organizer: Ви єдиний організатор цієї спільноти. Призначте іншого організатора,
+          перш ніж піти.
     person_linked_seeds:
       index:
         description: Приватний вміст, яким поділилися з вами через дозволи федерації.

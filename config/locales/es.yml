@@ -3305,6 +3305,10 @@ es:
         platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
         self_block_error: No puedes bloquearte a ti mismo.
         unblocked: La persona fue desbloqueada correctamente.
+    person_community_memberships:
+      errors:
+        last_organizer: Eres la única persona organizadora de esta comunidad. Designa
+          a otra persona como organizadora antes de salir.
     person_linked_seeds:
       index:
         description: Contenido privado compartido contigo a través de permisos de

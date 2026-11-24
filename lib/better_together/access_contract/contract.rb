@@ -7,13 +7,13 @@ module BetterTogether
     # Loads the YAML contract files and expands each action's ordered rows into cells.
     class Contract
       Cell = Struct.new(:resource, :action, :persona, :state, :outcome, :rule, :reason, :condition,
-                        :fixture, :deviation, :undecided, keyword_init: true) do
+                        :fixture, :deviation, :undecided, :note, keyword_init: true) do
         def key
           [resource, action, persona, state].join('.')
         end
       end
 
-      ROW_KEYS = %w[personas states outcome rule reason condition fixture deviation undecided].freeze
+      ROW_KEYS = %w[personas states outcome rule reason condition fixture deviation undecided note].freeze
       OUTCOMES = %w[allow deny conditional undecided na].freeze
 
       attr_reader :personas, :states, :classifications, :principles, :subsystems
@@ -127,7 +127,7 @@ module BetterTogether
 
       def build_cell(key, action, persona, state, row)
         Cell.new(resource: key, action:, persona:, state:, outcome: row['outcome'], rule: row['rule'],
-                 reason: row['reason'], condition: row['condition'], fixture: row['fixture'],
+                 reason: [row['reason'], row['note'] && "(#{row['note']})"].compact.join(' ').presence, note: row['note'], condition: row['condition'], fixture: row['fixture'],
                  deviation: row['deviation'], undecided: row['undecided'])
       end
 

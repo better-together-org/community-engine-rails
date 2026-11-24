@@ -31,7 +31,8 @@ module BetterTogether
         contract.cells.values.flat_map do |cell|
           next [] unless guarded.include?(contract.resources[cell.resource]['classification'])
           next [] unless READ_ACTIONS.include?(cell.action) && STANDING_ROLES.include?(cell.persona)
-          next [] if cell.state == 'public'
+          # The unclaimed fixture is a public profile; its private rows follow each row's own privacy.
+          next [] if %w[public unclaimed].include?(cell.state)
 
           standing_role_problems(cell)
         end

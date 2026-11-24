@@ -214,6 +214,14 @@ module BetterTogether
             source: :agent,
             source_type: 'BetterTogether::User'
 
+    # True only when a user account with a confirmed email is linked. An unclaimed person (for example an
+    # elected official's profile) has no one who can edit it as themself; staff with update rights do.
+    def claimed?
+      user.present? && user.confirmed_at.present?
+    end
+
+    def unclaimed? = !claimed?
+
     member member_type: 'person',
            joinable_type: 'community'
 

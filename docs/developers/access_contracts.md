@@ -21,6 +21,7 @@ The access contract records what access each persona should have to each record,
 ## Cell kinds
 
 - `allow` and `deny`: the intended behaviour. If the app disagrees, add `deviation: {actual: allow, actual_rule: <rule id>, decision: CD-n}` and define the decision in the subsystem `decisions:` block with kind `known_deviation`. Do not change the policy in the same change unless that is the point of the PR.
+- Any row may carry a short `note` (for example `break-glass pending`); it is appended to the cell's reason in the generated pages.
 - `conditional`: depends on a named `condition` and a probe `fixture` value (`allow` or `deny`) the probe produces.
 - `undecided`: the intent is not settled. Give `undecided: {actual:, suggests:, decision:}` and a decision of kind `undecided`.
 - `na`: the combination cannot occur.
