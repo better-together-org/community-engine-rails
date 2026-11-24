@@ -373,7 +373,7 @@ module BetterTogether
     end
 
     def valid_event_host_ids
-      [id] + member_communities.pluck(:id)
+      [id] + person_community_memberships.current.pluck(:joinable_id)
     end
 
     def github_integrations

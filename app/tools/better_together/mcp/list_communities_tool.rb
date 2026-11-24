@@ -59,7 +59,7 @@ module BetterTogether
           description: community.description,
           privacy: community.privacy,
           slug: community.slug,
-          member_count: community.person_community_memberships.size,
+          member_count: community.person_community_memberships.count(&:current?),
           created_at: community.created_at.in_time_zone.iso8601
         }
       end
