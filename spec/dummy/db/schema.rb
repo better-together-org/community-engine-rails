@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_17_205154) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_23_191602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1873,6 +1873,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_205154) do
     t.index ["space_id"], name: "index_better_together_places_on_space_id"
   end
 
+  create_table "better_together_platform_associations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "operator_platform_id", null: false
+    t.uuid "managed_platform_id", null: false
+    t.uuid "delegated_from_id"
+    t.uuid "requested_by_id"
+    t.uuid "accepted_by_id"
+    t.uuid "status_changed_by_id"
+    t.string "status", default: "requested", null: false
+    t.string "relation", default: "manages", null: false
+    t.string "transport", default: "direct", null: false
+    t.jsonb "granted_scopes", default: [], null: false
+    t.datetime "expires_at"
+    t.datetime "accepted_at"
+    t.datetime "status_changed_at"
+    t.index ["accepted_by_id"], name: "idx_bt_plat_assoc_accepted_by"
+    t.index ["delegated_from_id"], name: "idx_bt_plat_assoc_parent"
+    t.index ["managed_platform_id"], name: "idx_bt_plat_assoc_managed"
+    t.index ["operator_platform_id", "managed_platform_id", "relation"], name: "idx_bt_plat_assoc_edge", unique: true
+    t.index ["operator_platform_id"], name: "idx_bt_plat_assoc_operator"
+    t.index ["requested_by_id"], name: "idx_bt_plat_assoc_requested_by"
+    t.index ["status"], name: "idx_bt_plat_assoc_status"
+    t.index ["status_changed_by_id"], name: "idx_bt_plat_assoc_changed_by"
+  end
+
   create_table "better_together_platform_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -3129,6 +3156,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_205154) do
   add_foreign_key "better_together_places", "better_together_geography_spaces", column: "space_id"
   add_foreign_key "better_together_places", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_places", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_associations", "better_together_people", column: "accepted_by_id"
+  add_foreign_key "better_together_platform_associations", "better_together_people", column: "requested_by_id"
+  add_foreign_key "better_together_platform_associations", "better_together_people", column: "status_changed_by_id"
+  add_foreign_key "better_together_platform_associations", "better_together_platform_associations", column: "delegated_from_id"
+  add_foreign_key "better_together_platform_associations", "better_together_platforms", column: "managed_platform_id"
+  add_foreign_key "better_together_platform_associations", "better_together_platforms", column: "operator_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "source_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "target_platform_id"
   add_foreign_key "better_together_platform_deletion_requests", "better_together_people", column: "requested_by_id"

@@ -90,6 +90,8 @@ This assessment is generated from the current live class set and the concern cap
 | `Permissible` | Adds role/resource-permission linkage for policy checks and platform governance. | `Platform`, `Community` | Permission bundling can create god-mode reads unless capabilities are split carefully. |
 | `PinnableTimestamps` | Pinnabletimestamps | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlaceScopedIndex` | Placescopedindex | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformAssociationLifecycle` | Platformassociationlifecycle | `PlatformAssociation` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformAssociationRules` | Platformassociationrules | `PlatformAssociation` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionFederationPolicy` | Platformconnectionfederationpolicy | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionOauthCredentials` | Platformconnectionoauthcredentials | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionSyncTracking` | Platformconnectionsynctracking | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
