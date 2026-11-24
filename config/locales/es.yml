@@ -1971,9 +1971,10 @@ es:
         how_to_pay: Lo que ven los compradores
         how_to_pay_hint: Se muestra al comprador solo en su propio pedido, después
           de aceptar las condiciones. Se guarda cifrado y nunca se incluye en un correo.
-        index_intro: Formas de cobrar fuera de un procesador de pagos. Cada una está
-          instalada para todas las plataformas, pero solo funciona una vez que la
-          activa.
+        index_intro: 'Cobre directamente: efectivo, cheques, transferencias electrónicas
+          y crédito de la tienda. Cada método está instalado para todas las plataformas,
+          pero solo funciona una vez que lo activa. Los pagos con tarjeta mediante
+          un servicio como Stripe se configuran por separado.'
         index_title: Métodos de pago
         purpose_exchange: Intercambios
         purpose_one_time: Compras únicas

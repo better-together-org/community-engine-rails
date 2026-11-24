@@ -2013,9 +2013,10 @@ fr:
         how_to_pay: Ce que les acheteurs voient
         how_to_pay_hint: Montré à un acheteur seulement sur sa propre commande, après
           qu'il a accepté les conditions. Stocké chiffré et jamais mis dans un courriel.
-        index_intro: Façons d'être payé en dehors d'un processeur de paiement. Chacune
-          est installée pour toutes les plateformes, mais ne fonctionne qu'une fois
-          activée.
+        index_intro: 'Encaissez directement : espèces, chèques, virements Interac
+          et crédit en magasin. Chaque mode est installé pour toutes les plateformes,
+          mais ne fonctionne qu''une fois activé. Les paiements par carte via un service
+          comme Stripe se configurent séparément.'
         index_title: Modes de paiement
         purpose_exchange: Échanges
         purpose_one_time: Achats uniques

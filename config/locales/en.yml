@@ -1971,8 +1971,9 @@ en:
         how_to_pay: What buyers are told
         how_to_pay_hint: Shown to a buyer only on their own order, after they accept
           the terms. It is stored encrypted and never put in an email.
-        index_intro: Ways to be paid outside a payment processor. Each is installed
-          for every platform but works only after you turn it on.
+        index_intro: 'Take payment directly: cash, cheques, e-transfers and store
+          credit. Each is installed for every platform but works only after you turn
+          it on. Card payments through a service such as Stripe are set up separately.'
         index_title: Payment methods
         purpose_exchange: Exchanges
         purpose_one_time: One-time purchases
