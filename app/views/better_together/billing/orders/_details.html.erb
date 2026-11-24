@@ -48,7 +48,7 @@
         <%= t('better_together.billing.orders.refunded_total', amount: billing_amount(refunds.sum(&:amount_cents), order.currency)) %>
       </span>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive position-relative">
       <table id="billing-order-refunds-table" class="table mb-0">
         <caption class="visually-hidden position-absolute"><%= t('better_together.billing.orders.refunds_caption', number: order.number) %></caption>
         <thead class="table-light">
@@ -96,7 +96,7 @@
 <div class="card mb-4">
   <div class="card-header"><strong><%= t('better_together.billing.orders.payments_heading') %></strong></div>
   <% if order.payments.any? %>
-    <div class="table-responsive">
+    <div class="table-responsive position-relative">
       <table id="billing-order-payments" class="table mb-0">
         <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.order_payments') %></caption>
         <thead class="table-light">
