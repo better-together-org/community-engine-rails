@@ -17,11 +17,11 @@ RSpec.describe 'Agreement participant acceptance audit fields NOT NULL guard' do
     audit_columns.each { |c| connection.change_column_null(:better_together_agreement_participants, c, false) }
   end
 
-  it 'warns and skips the NOT NULL constraints rather than hard-failing on an orphaned participant', :migration_output do
+  it 'warns and skips the NOT NULL constraints rather than hard-failing on an orphaned participant' do
     participant = create(:better_together_agreement_participant)
     participant.update_columns(audit_columns.index_with { nil })
 
-    expect { migration.send(:enforce_acceptance_audit_constraints) }.to output(/WARNING.*acceptance-audit/).to_stdout
+    expect { with_migration_output { migration.send(:enforce_acceptance_audit_constraints) } }.to output(/WARNING.*acceptance-audit/).to_stdout
 
     expect(
       connection.columns(:better_together_agreement_participants).find { |c| c.name == 'acceptance_method' }.null

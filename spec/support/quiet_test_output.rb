@@ -21,13 +21,18 @@ RSpec.configure do |config|
     # The builder reports progress with puts on every seed/reset (about 100 lines per shard).
     BetterTogether::NavigationBuilder.singleton_class.prepend(Module.new { def puts(*) = nil })
   end
+end
 
-  # Specs that assert on migration output (`output(...).to_stdout`) opt back in.
-  config.around(:each, :migration_output) do |example|
+# Specs that assert on migration output wrap just that block, so setup and
+# teardown stay quiet.
+module MigrationOutputHelper
+  def with_migration_output
     previous = ActiveRecord::Migration.verbose
     ActiveRecord::Migration.verbose = true
-    example.run
+    yield
   ensure
     ActiveRecord::Migration.verbose = previous
   end
 end
+
+RSpec.configure { |config| config.include MigrationOutputHelper }

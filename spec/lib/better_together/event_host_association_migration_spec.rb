@@ -29,11 +29,11 @@ RSpec.describe 'Event host association migration' do # rubocop:disable RSpec/Des
     expect { migration.up }.not_to change(BetterTogether::EventHost, :count)
   end
 
-  it 'logs how many rows it removes rather than deleting silently', :migration_output do
+  it 'logs how many rows it removes rather than deleting silently' do
     migration.down
     insert_invalid_event_host(SecureRandom.uuid)
 
-    expect { migration.up }.to output(/Removing 1 better_together_event_hosts row/).to_stdout
+    expect { with_migration_output { migration.up } }.to output(/Removing 1 better_together_event_hosts row/).to_stdout
   end
 
   private

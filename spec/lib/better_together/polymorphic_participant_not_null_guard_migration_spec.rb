@@ -15,11 +15,11 @@ RSpec.describe 'Agreement participant polymorphic participant NOT NULL guard' do
     connection.change_column_null(:better_together_agreement_participants, :participant_id, false)
   end
 
-  it 'warns and skips the NOT NULL constraint rather than hard-failing when a row has no person_id to derive from', :migration_output do
+  it 'warns and skips the NOT NULL constraint rather than hard-failing when a row has no person_id to derive from' do
     participant = create(:better_together_agreement_participant)
     participant.update_columns(participant_type: nil, participant_id: nil, person_id: nil)
 
-    expect { migration.send(:enforce_participant_not_null!) }.to output(/WARNING.*NULL participant_type/).to_stdout
+    expect { with_migration_output { migration.send(:enforce_participant_not_null!) } }.to output(/WARNING.*NULL participant_type/).to_stdout
 
     expect(
       connection.columns(:better_together_agreement_participants).find { |c| c.name == 'participant_type' }.null
