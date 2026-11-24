@@ -60,7 +60,7 @@ RSpec.describe BetterTogether::Billing::Orders::Settle do
 
   it 'holds an expired order\'s line items again when a late payment revives it' do
     order.update!(status: 'expired')
-    held = instance_double(BetterTogether::Billing::Plan, reserve!: nil)
+    held = instance_double(BetterTogether::Billing::Plan, reserve!: nil, fulfilled_by_order?: false)
     line = instance_double(BetterTogether::Billing::LineItem, purchasable: held, quantity: 2,
                                                               marked_for_destruction?: false, total_cents: 4500)
     allow(order).to receive(:line_items).and_return([line])

@@ -122,6 +122,20 @@ module BetterTogether
       def purchasable_tax_category = tax_category
       def purchasable? = active?
 
+      # What the order engine asks of a purchasable (see Purchasable): a plan that renews is a subscription, an add-on is an
+      # extra, and a one-time plan with something to give is fulfilled through its own order.
+      def renews? = recurring?
+      def extra? = add_on?
+      def plan_line? = true
+      def fulfilled_by_order? = !recurring? && !add_on?
+
+      # A primary plan is held when it gives a live entitlement, is subscribed to, or was bought once and the order stands.
+      def held_by?(person)
+        return false if add_on? || person.blank? || platform.blank?
+
+        Plans::Holdings.call(platform:, person:).include?(id)
+      end
+
       # ---- catalog presentation ----------------------------------------------------
 
       def eligible_for?(billable_owner)

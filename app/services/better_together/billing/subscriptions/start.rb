@@ -24,7 +24,7 @@ module BetterTogether
         # Whether this order is the start of a subscription Community Engine will renew.
         def self.startable?(order)
           plan = single_plan(order)
-          plan.present? && plan.recurring? && order.seller_id.blank? && order.pay_subscription_id.blank? &&
+          plan.present? && plan.renews? && order.seller_id.blank? && order.pay_subscription_id.blank? &&
             order.purpose == 'subscription' && paid_locally?(order)
         end
 
@@ -33,9 +33,9 @@ module BetterTogether
         # is not exactly one primary plan.
         def self.single_plan(order)
           purchasables = order.line_items.to_a.map(&:purchasable)
-          return unless purchasables.all?(Plan)
+          return unless purchasables.all?(&:plan_line?)
 
-          primary = purchasables.reject(&:add_on?)
+          primary = purchasables.reject(&:extra?)
           primary.first if primary.one?
         end
 
