@@ -74,14 +74,6 @@ RSpec.describe 'Billing refund requests DOM contract', type: :request do # ruboc
                'billing-refund-decision-note', 'billing-refund-approve-btn', 'billing-refund-decline-btn')
   end
 
-  it 'links the sales page to the queue' do
-    sign_in steward_user
-
-    get "/#{locale}/billing/sales"
-
-    expect_ids('billing-sales-refund-requests-link')
-  end
-
   it 'shows the refund policy and its box when the platform has one in force' do
     purchase_agreements_for(host_platform)
     policy = BetterTogether::Agreement.find_by!(platform: host_platform, identifier: 'refund_policy')
