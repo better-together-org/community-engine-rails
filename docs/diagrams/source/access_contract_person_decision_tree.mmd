@@ -16,7 +16,7 @@ flowchart TD
   r2 -- yes --> r2o(["allow"])
   class r2o out_allow
   r2 -- no --> r3
-  r3{"unclaimed_editor: Is the person unclaimed no confirmed linked user and the actor allowed to update person records?"}
+  r3{"unclaimed_editor: Is the person unclaimed no confirmed linked user and the actor a platform manager or steward, or a community organizer holding manage_unclaimed_profiles?"}
   r3 -- yes --> r3o(["allow"])
   class r3o out_allow
   r3 -- no --> r4
@@ -28,10 +28,9 @@ flowchart TD
   r5 -- yes --> r5o(["allow"])
   class r5o out_allow
   r5 -- no --> r6
-  r6{"platform_manager: Is the actor a platform manager update and create only? (app only)"}
+  r6{"member_status: Is the actor a platform manager operating the member's status not the profile?"}
   r6 -- yes --> r6o(["allow"])
   class r6o out_allow
-  class r6 unintended
   r6 -- no --> r7
   r7["default_deny: Nothing above matched"]
   r7 --> r7o(["deny"])

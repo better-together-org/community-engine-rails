@@ -3270,6 +3270,10 @@ en:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_community_memberships:
+      errors:
+        last_organizer: You are the only organizer of this community. Make someone
+          else an organizer before you leave.
     person_linked_seeds:
       index:
         description: Private content shared with you through federation access grants.
