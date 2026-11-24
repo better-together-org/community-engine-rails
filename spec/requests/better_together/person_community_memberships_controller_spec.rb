@@ -163,3 +163,33 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-servic
 end
 # rubocop:enable RSpec/MultipleDescribes
 # rubocop:enable Metrics/BlockLength
+
+RSpec.describe 'Leaving a community', :as_user do
+  let(:locale) { I18n.default_locale }
+  let(:person) { BetterTogether::User.find_by(email: 'user@example.test').person }
+  let(:community) { create(:better_together_community, privacy: 'private') }
+
+  def join_as(role_identifier)
+    BetterTogether::PersonCommunityMembership.create!(
+      joinable: community, member: person, status: 'active',
+      role: BetterTogether::Role.find_by!(identifier: role_identifier)
+    )
+  end
+
+  def leave(membership)
+    delete better_together.community_person_community_membership_path(locale:, community_id: community.id, id: membership.id)
+  end
+
+  it 'lets a member remove their own membership (CD-5)' do
+    membership = join_as('community_member')
+
+    expect { leave(membership) }.to change(BetterTogether::PersonCommunityMembership, :count).by(-1)
+  end
+
+  it 'refuses the only organizer and tells them why', :aggregate_failures do
+    membership = join_as('community_organizer')
+
+    expect { leave(membership) }.not_to change(BetterTogether::PersonCommunityMembership, :count)
+    expect(flash[:alert]).to eq(I18n.t('better_together.person_community_memberships.errors.last_organizer'))
+  end
+end

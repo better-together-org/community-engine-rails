@@ -1,6 +1,9 @@
 name: Compat Branch Sync PRs
 
-# Keeps compat/rails-* aligned with main. For each compat branch this builds
+# Keeps compat/rails-* aligned with main, once a week (Monday 09:00 UTC, 6:30 am
+# Newfoundland daylight time) or on demand via workflow_dispatch. It does not run
+# on pushes to main: every force-push re-runs the full CI matrix on three lanes.
+# For each compat branch this builds
 # `sync/main-to-<compat branch>` (the compat tip with main merged in), opens a
 # PR from it, and enables auto-merge. The compat ruleset requires `ci-gate`.
 #
@@ -9,11 +12,8 @@ name: Compat Branch Sync PRs
 # Pull requests and Workflows read/write on this repo). Rotate before expiry.
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: "15 9 * * 1"
+    - cron: "0 9 * * 1"
   workflow_dispatch:
 
 permissions:

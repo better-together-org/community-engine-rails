@@ -324,3 +324,10 @@ records:
     resource_type: BetterTogether::Person
     protected: true
   position: 4
+- key: manage_unclaimed_profiles
+  attributes:
+    action: manage
+    target: unclaimed_profiles
+    resource_type: BetterTogether::Community
+    protected: true
+  position: 14

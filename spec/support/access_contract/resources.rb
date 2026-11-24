@@ -82,6 +82,7 @@ module AccessContractProbe
         'manage_integrations' => %i[manage_integrations? subject], 'create_events' => %i[create_events? subject],
         'view_members' => %i[view_members? subject], 'manage_roles' => %i[manage_roles? subject],
         'view_quota_usage' => %i[view_quota_usage? subject], 'download' => %i[download? subject],
+        'suspend' => %i[suspend? subject], 'quarantine' => %i[quarantine? subject], 'hide' => %i[hide? subject],
         'scope' => :scope
       }.freeze
 
@@ -182,13 +183,14 @@ module AccessContractProbe
       ACTIONS = {
         'index' => %i[index? class], 'show' => %i[show? subject], 'create' => %i[create? new],
         'update' => %i[update? subject], 'destroy' => %i[destroy? subject], 'download' => %i[download? subject],
-        'scope' => :scope
+        'suspend' => %i[suspend? subject], 'restore' => %i[restore? subject], 'scope' => :scope
       }.freeze
 
       attr_reader :subjects
 
       def record_for(target, state)
         return BetterTogether::Person.new if target == :new
+        return @unclaimed if state == 'unclaimed'
 
         @subjects.fetch(state).person
       end
@@ -200,14 +202,23 @@ module AccessContractProbe
       def build_fixtures
         @shared = create(:better_together_community, creator: world.new_user.person, privacy: 'private')
         world.join_personas(@shared)
-        @subjects = %w[public community private].to_h do |privacy|
+        # A claimed profile has a confirmed user; its fixture is a public profile.
+        @subjects = %w[public community private claimed].to_h do |state|
+          privacy = state == 'claimed' ? 'public' : state
           user = world.new_user
           make_privacy(user.person, privacy)
           world.join(@shared, user.person, 'community_member')
           BetterTogether::PersonBlock.create!(blocker: user.person, blocked: world.user_for('blocked_user').person,
                                               platform: world.host)
-          [privacy, user]
+          [state, user]
         end
+        @unclaimed = make_privacy(create(:better_together_person), 'public')
+      end
+
+      def applicable?(persona, state)
+        return false if state == 'unclaimed' && persona == 'record_owner'
+
+        super
       end
     end
 
@@ -256,12 +267,18 @@ module AccessContractProbe
       }.freeze
 
       def record_for(target, state)
-        return BetterTogether::ContactDetail.new if target == :new
+        return BetterTogether::ContactDetail.new(contactable: @details.fetch(state).contactable) if target == :new
 
         @details.fetch(state)
       end
 
       def owner_for(state) = @owners.fetch(state)
+
+      def applicable?(persona, state)
+        return false if state == 'unclaimed' && persona == 'record_owner'
+
+        super
+      end
 
       private
 
@@ -272,6 +289,8 @@ module AccessContractProbe
           [privacy, user]
         end
         @details = @owners.transform_values { |user| user.person.contact_detail }
+        unclaimed = make_privacy(create(:better_together_person), 'public')
+        @details['unclaimed'] = unclaimed.contact_detail.reload
       end
     end
   end
