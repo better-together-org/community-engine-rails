@@ -4,21 +4,15 @@ require 'rails_helper'
 
 RSpec.describe 'Host dashboard on a hosted platform', :skip_host_setup do
   let(:locale) { I18n.default_locale }
-  let(:hosted_platform) { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
-  let(:other_platform) { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
-  let(:steward) { create(:user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
+  let(:setup) { managed_platform_setup }
+  let(:hosted_platform) { setup.managed_platform }
 
   before do
-    configure_host_platform
-    BetterTogether::AccessControlBuilder.seed_data
-    BetterTogether::PersonPlatformMembership.create!(
-      joinable: hosted_platform, member: steward.person,
-      role: BetterTogether::Role.find_by!(identifier: 'platform_steward'), status: 'active'
-    )
+    other_platform = create(:better_together_platform, type: 'BetterTogether::HostedPlatform')
     create(:better_together_page, platform: hosted_platform, identifier: 'hosted-only-page')
     create(:better_together_page, platform: other_platform, identifier: 'other-platform-page')
-    host! hosted_platform.platform_domains.find_by(primary: true).hostname
-    login_as(steward, scope: :user)
+    host_on(hosted_platform)
+    sign_in_steward(setup.managed_steward)
   end
 
   it 'lets a hosted steward reach the dashboard on their own domain' do

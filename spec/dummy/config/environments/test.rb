@@ -24,6 +24,16 @@ Rails.application.configure do
     'Cache-Control' => "public, max-age=#{1.hour.to_i}"
   }
 
+  # Host authorization is on, as in production (config/initializers/hosts.rb reads APP_HOSTS there), so a
+  # multi-domain feature cannot silently depend on every Host header being accepted. The allow-list covers
+  # loopback and the name suffixes the specs and browser use; keep it in step with CAPYBARA_HOST_SUFFIXES in
+  # spec/support/capybara.rb. Rails' '.suffix' shorthand matches only one label ('a.test', not 'a.b.test'),
+  # so the suffixes are regexes that accept any depth, with an optional port.
+  config.hosts = [
+    IPAddr.new('0.0.0.0/0'), IPAddr.new('::/0'),
+    /\A([a-z0-9-]+\.)*(localhost|test|example|example\.com)(:\d+)?\z/i
+  ]
+
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false

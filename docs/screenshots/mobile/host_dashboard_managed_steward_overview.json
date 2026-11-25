@@ -1,0 +1,48 @@
+{
+  "name": "host_dashboard_managed_steward_overview",
+  "device": "mobile",
+  "url": "/en/host",
+  "title": "Host Dashboard | Lakin, Mueller and Sanford 6a915b",
+  "locale": "en",
+  "role": "managed_platform_steward",
+  "feature_set": "host_dashboard",
+  "flow": "managed_steward_dashboard",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_managed_steward_spec.rb",
+  "callouts": [
+    {
+      "selector": "#host-dashboard-page-card",
+      "title": "Only this platform",
+      "bullets": [
+        "Pages and platforms count only this platform: 3 pages, 1 platform, not the operator or others."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 742.609375,
+        "width": 461.0,
+        "height": 232.1875,
+        "right": 473.0,
+        "bottom": 974.796875,
+        "center_x": 242.5,
+        "center_y": 858.703125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 742.609375,
+        "width": 461.0,
+        "height": 232.1875,
+        "right": 473.0,
+        "bottom": 974.796875,
+        "center_x": 242.5,
+        "center_y": 858.703125
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 486.61,
+        "width": 270.0,
+        "height": 236,
+        "score": 742.609375
+      }
+    }
+  ]
+}
