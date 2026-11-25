@@ -1,0 +1,57 @@
+# Hosted platform steward parity (stack HPS)
+
+This note is the base of a stacked chain of pull requests. It carries no code. Its job is to keep one accurate, squash-ready description of the whole stack, so the single commit that lands on `main` explains every change in the chain.
+
+Stack id: **HPS**. Every pull request title in the chain starts with `(HPS-n)`, where n is its position. HPS-0 is this note. Each later pull request is based on the previous branch and says "Stacked on #N".
+
+## Why
+
+A steward of a hosted platform should be able to manage their own platform the way the host platform's steward manages the host. Today most admin surfaces already work for them, but a few do not, and a few leak or over-grant:
+
+- The host dashboard checks the real host platform, so a hosted steward is denied on their own landing page.
+- The dashboard counts and recent records are global, so opening it up without scoping would show other platforms' data.
+- Nobody holds the user and people management permissions in the seeded roles.
+- Feature and quota grants can be given to themselves by a steward.
+- A steward can claim any unique hostname for their platform.
+- A hosted platform has no navigation of its own, so it inherits the host's menu.
+
+Closing these lets an operator configure hosted platforms by hand today, while the automated provisioning, Cloudflare and remote operator work is built.
+
+## Stack
+
+| Id | Change | Status |
+| --- | --- | --- |
+| HPS-0 | This note and the squash-ready description | this PR |
+| HPS-1 | Host dashboard scoped to the platform being viewed and authorized against it; `Platform has_many :pages` | planned next |
+| HPS-2 | User and people management permissions for steward and manager roles, re-plant for existing platforms, roles index count scoped | planned |
+| HPS-3 | Feature access grants and quota grants limited to host authority | planned |
+| HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | planned |
+| HPS-5 | Platform-owned navigation area seeded at provisioning | planned |
+| HPS-6 | Manual hosted-platform provisioning runbook and the steward smoke-test checklist | planned |
+
+Follow-up inside this stack when its subsystem is touched: an access contract for platform administration (no contract covers the host dashboard or platform records yet).
+
+## Out of scope for this stack
+
+Self-serve provisioning form, steward invitation by email, the Cloudflare extension gem, association enforcement and the remote operator handshake. They follow this stack and are tracked in the larger plan.
+
+## Squash commit message
+
+```
+feat(platform): hosted platform steward parity (HPS-0 to HPS-6)
+
+- Host dashboard authorizes against the current platform and scopes its counts and records to it (HPS-1)
+- Platform has_many pages (HPS-1)
+- Steward and manager roles gain user and people management permissions, re-planted on existing platforms (HPS-2)
+- Feature access and quota grants are limited to host authority (HPS-3)
+- Hostnames must sit in an allowed zone or be operator-created, reserved names are blocked, steward-created hostnames start inactive (HPS-4)
+- Hosted platforms get their own navigation area at provisioning (HPS-5)
+- Runbook for manual hosted-platform provisioning and the steward smoke test (HPS-6)
+```
+
+## Acceptance for the whole stack
+
+- A steward of a hosted platform can sign in on the platform's own domain, reach the dashboard, and manage members, roles, navigation, pages, theme and domain requests.
+- No page of the stack shows or edits another platform's data, and host-only surfaces stay denied.
+- A steward cannot grant themselves features or quota, and cannot activate a hostname the operator has not approved.
+- A runtime smoke test with a real hosted steward passes on staging.
