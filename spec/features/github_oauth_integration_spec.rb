@@ -11,6 +11,10 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
   before do
     # Set up test platform for host application
     platform.update!(requires_invitation: false, privacy: 'public')
+
+    # Sign-in is refused on domains with no provider configuration
+    ensure_host_platform_domain(platform)
+    stub_provider_env('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET')
   end
 
   describe 'OAuth authentication flow' do
@@ -127,6 +131,24 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
         expect(existing_integration.access_token).to start_with('github_token_')
         expect(existing_integration.name).to eq('Test User')
         expect(existing_integration.handle).to eq(oauth_nickname)
+      end
+    end
+
+    context 'when the same GitHub account is already linked on another platform' do
+      let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
+
+      before do
+        create(:person_platform_integration, user: existing_user, provider: 'github', uid: oauth_uid,
+                                             local_platform: create(:better_together_platform))
+      end
+
+      it 'does not sign in as the other platform identity', :aggregate_failures do
+        visit '/users/auth/github/callback'
+
+        local = BetterTogether::PersonPlatformIntegration.where(provider: 'github', uid: oauth_uid,
+                                                                local_platform: platform)
+        expect(local.count).to eq(1)
+        expect(local.first.id).not_to eq(existing_user.person_platform_integrations.first.id)
       end
     end
 
@@ -261,6 +283,9 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
                                },
                                credentials: {
                                  token: 'github_access_token_123'
+                               },
+                               extra: {
+                                 all_emails: [{ email: post_auth_oauth_email, primary: true, verified: true }]
                                }
                              })
     end

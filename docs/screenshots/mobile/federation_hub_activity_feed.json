@@ -2,7 +2,7 @@
   "name": "federation_hub_activity_feed",
   "device": "mobile",
   "url": "/en/federation-hub/activity",
-  "title": "Federation Activity | Community Engine Host",
+  "title": "Federation Activity | Test Host Community",
   "locale": "en",
   "feature_set": "federation_item_consent",
   "flow": "federation_hub_activity_feed",

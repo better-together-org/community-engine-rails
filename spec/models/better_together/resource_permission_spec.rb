@@ -80,9 +80,9 @@ RSpec.describe BetterTogether::ResourcePermission do
   end
 
   describe '#position_scope' do
-    it 'returns resource_type as position scope' do
+    it 'returns resource_type and platform_id as position scope' do
       permission = build(:resource_permission, resource_type: 'BetterTogether::Community', position: 500)
-      expect(permission.position_scope).to eq(:resource_type)
+      expect(permission.position_scope).to eq(%i[resource_type platform_id])
     end
   end
 

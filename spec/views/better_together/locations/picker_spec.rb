@@ -9,7 +9,10 @@ RSpec.describe 'better_together/locations/_picker' do
   let(:address_policy) { instance_double(BetterTogether::AddressPolicy, create?: can_create) }
   let(:can_create) { true }
 
-  before { view.extend(BetterTogether::LocationPickerHelper) }
+  before do
+    view.extend(BetterTogether::LocationPickerHelper)
+    view.extend(BetterTogether::AddressGeographyHelper)
+  end
 
   def render_picker(**locals)
     allow(view).to receive(:policy).and_return(address_policy)

@@ -55,8 +55,32 @@ module BetterTogether
         current.nil? || current.stale?(now: now)
       end
 
+      # When the source last reported conditions (observation time, not our fetch time).
       def last_updated
-        current&.fetched_at
+        current&.observed_at || current&.fetched_at
+      end
+
+      # When the source was last reached, whether or not it reported new conditions.
+      def last_checked
+        location.last_refreshed_at
+      end
+
+      # The source answered after the stored conditions were observed, so the gap is the
+      # station's, not a failing refresh.
+      def source_silent?
+        stale? && last_checked.present? && last_updated.present? && last_checked > last_updated
+      end
+
+      # Fragment cache key that follows the data: any new or changed reading, a refresh,
+      # the clock hour (hourly cut-off and today), staleness, locale and zone.
+      def cache_key
+        ['better_together/weather/panel', *record_stamps, rows_stamp(location.forecasts),
+         rows_stamp(location.observations), now.utc.beginning_of_hour.to_i, stale?, I18n.locale,
+         location.time_zone].join('/')
+      end
+
+      def summary_cache_key
+        ['better_together/weather/summary', *record_stamps, stale?, I18n.locale, location.time_zone].join('/')
       end
 
       def source_error?
@@ -74,7 +98,21 @@ module BetterTogether
       private
 
       def forecast_periods(kind)
-        location.forecasts.where(kind: kind).latest_first.first&.periods || []
+        location.forecasts.where(kind: kind).most_recently_fetched.first&.periods || []
+      end
+
+      def record_stamps
+        [location.id, stamp(location.updated_at), stamp(current&.updated_at)]
+      end
+
+      def stamp(time)
+        time&.utc&.to_fs(:usec)
+      end
+
+      def rows_stamp(relation)
+        table = relation.arel_table
+        latest, count = relation.unscope(:order).pick(table[:updated_at].maximum, table[:id].count)
+        "#{count}-#{stamp(latest)}"
       end
 
       # Hourly forecast periods whose hour has not finished yet.

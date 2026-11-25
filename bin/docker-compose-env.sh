@@ -17,10 +17,22 @@ sanitize_slug() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+//; s/_+$//'
 }
 
+# Postgres truncates identifiers at 63 chars. The longest name is
+# community_engine_development (28) + suffix; test DBs add up to 2 worker digits.
+# Cap the suffix at 32 chars; longer slugs keep a prefix plus an 8 char hash.
+bounded_db_suffix() {
+  local slug="_$(sanitize_slug "$1")" max=32
+  if (( ${#slug} <= max )); then
+    printf '%s' "$slug"
+  else
+    printf '%s_%s' "${slug:0:$((max - 9))}" "$(printf '%s' "$slug" | sha1sum | cut -c1-8)"
+  fi
+}
+
 if [[ "$git_dir" == "$git_common_dir" ]]; then
   worktree_db_suffix=""
 else
-  worktree_db_suffix="_$(sanitize_slug "$repo_basename")"
+  worktree_db_suffix="$(bounded_db_suffix "$repo_basename")"
 fi
 
 export DC_UID="${DC_UID:-$(id -u)}"
@@ -36,14 +48,16 @@ export RACK_ATTACK_REDIS_URL="${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack
 export RACK_ATTACK_REDIS_POOL_SIZE="${RACK_ATTACK_REDIS_POOL_SIZE:-5}"
 export RACK_ATTACK_REDIS_POOL_TIMEOUT="${RACK_ATTACK_REDIS_POOL_TIMEOUT:-5}"
 
-# prspec worker count. Default: two thirds of the host cores, between 4 and 8 (a 12-core machine
-# gets 8, which measured fastest; more workers than that oversubscribes CPU and Chrome). Override
-# with WORKERS=N. Databases for N workers are created on demand by bin/dc-prepare-worktree-test-dbs.
+# prspec worker count. Default: a quarter of the host cores, between 2 and 4 (a 12-core machine gets 3).
+# Eight workers on bts-0 measured fastest but peaked near 16 GiB and 600% CPU, which starved the host's other
+# services and ended in out-of-memory kills. Override with WORKERS=N when the host is otherwise idle. The
+# container is also capped (CE_TEST_CPUS, CE_TEST_MEM_LIMIT in docker-compose.yml). Databases for N workers
+# are created on demand by bin/dc-prepare-worktree-test-dbs.
 if [[ -z "${WORKERS:-}" ]]; then
   detected_cores="$(nproc 2>/dev/null || getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)"
-  default_workers=$(( detected_cores * 2 / 3 ))
-  (( default_workers < 4 )) && default_workers=4
-  (( default_workers > 8 )) && default_workers=8
+  default_workers=$(( detected_cores / 4 ))
+  (( default_workers < 2 )) && default_workers=2
+  (( default_workers > 4 )) && default_workers=4
   export WORKERS="$default_workers"
 else
   export WORKERS

@@ -28,6 +28,9 @@ erDiagram
   EXT_PLATFORM o|--o{ FEATURE_ACCESS_GRANTS : "platform / platform_id"
   EXT_PERSON ||--o{ FEATURE_ACCESS_GRANTS : "person / person_id"
   EXT_PERSON o|--o{ FEATURE_ACCESS_GRANTS : "granted_by_person / granted_by_person_id"
+  EXT_PERSON o|--o{ PLATFORMS : "creator / creator_id"
+  EXT_COMMUNITY ||--o{ PLATFORMS : "community / community_id"
+  EXT_STORAGE_CONFIGURATION o|--o{ PLATFORMS : "active_storage_configuration / storage_configuration_id"
   EXT_PLATFORM_CONNECTION ||--o{ FEDERATION_CONTENT_GRANTS : "platform_connection / platform_connection_id"
   EXT_ACTION_MAILBOX_INBOUND_EMAIL o|--o{ INBOUND_EMAIL_MESSAGES : "inbound_email / inbound_email_id"
   EXT_PLATFORM o|--o{ INBOUND_EMAIL_MESSAGES : "platform / platform_id"
@@ -55,6 +58,25 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ PLATFORM_ASSOCIATIONS : "operator_platform / operator_platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_ASSOCIATIONS : "managed_platform / managed_platform_id"
+  PLATFORM_ASSOCIATIONS o|--o{ PLATFORM_ASSOCIATIONS : "delegated_from / delegated_from_id"
+  EXT_PERSON o|--o{ PLATFORM_ASSOCIATIONS : "requested_by / requested_by_id"
+  EXT_PERSON o|--o{ PLATFORM_ASSOCIATIONS : "accepted_by / accepted_by_id"
+  EXT_PERSON o|--o{ PLATFORM_ASSOCIATIONS : "status_changed_by / status_changed_by_id"
+  EXT_PLATFORM ||--o{ PLATFORM_DELETION_REQUESTS : "platform / platform_id"
+  EXT_PERSON ||--o{ PLATFORM_DELETION_REQUESTS : "requested_by / requested_by_id"
+  EXT_PERSON o|--o{ PLATFORM_DELETION_REQUESTS : "reviewed_by / reviewed_by_id"
+  EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "provider_platform / provider_platform_id"
+  PLATFORM_IDENTITY_PROVIDERS ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_identity_provider / platform_identity_provider_id"
+  EXT_PLATFORM_DOMAIN ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_domain / platform_domain_id"
+  EXT_PLATFORM ||--o{ PLATFORM_SNIPPETS : "platform / platform_id"
+  EXT_PERSON o|--o{ PLATFORM_SNIPPETS : "updated_by / updated_by_id"
+  EXT_PLATFORM ||--o{ PLATFORM_SNIPPET_AUDITS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_TRUSTED_DOMAINS : "platform / platform_id"
+  EXT_ROLE ||--o{ PLATFORM_TRUSTED_DOMAINS : "role / role_id"
+  EXT_PERSON o|--o{ PLATFORM_TRUSTED_DOMAINS : "created_by / created_by_id"
   EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
@@ -63,10 +85,18 @@ erDiagram
   QUOTAS ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
   EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_USAGES : "quota / quota_id"
+  EXT_PLATFORM ||--o{ REDIRECTS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ SEED_PROVENANCES : "platform / platform_id"
+  EXT_SEED o|--o{ SEED_PROVENANCES : "seed / seed_id"
+  EXT_SEED_PLANTING o|--o{ SEED_PROVENANCES : "seed_planting / seed_planting_id"
   EXT_PLATFORM o|--o{ SHORT_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ SOCIAL_MEDIA_ACCOUNTS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ TRUSTED_DOMAIN_EVENTS : "platform / platform_id"
+  PLATFORM_TRUSTED_DOMAINS o|--o{ TRUSTED_DOMAIN_EVENTS : "platform_trusted_domain / platform_trusted_domain_id"
+  EXT_PERSON o|--o{ TRUSTED_DOMAIN_EVENTS : "actor / actor_id"
+  EXT_PERSON o|--o{ TRUSTED_DOMAIN_EVENTS : "subject / subject_id"
   WEATHER_LOCATIONS ||--o{ WEATHER_CURRENT_CONDITIONS : "location / location_id"
   WEATHER_LOCATIONS ||--o{ WEATHER_FORECASTS : "location / location_id"
   EXT_GEOGRAPHY_SETTLEMENT ||--o{ WEATHER_LOCATIONS : "settlement / settlement_id"
@@ -219,6 +249,19 @@ erDiagram
     revoked_at datetime
   }
 
+  PLATFORMS {
+    community_id uuid
+    creator_id uuid
+    storage_configuration_id uuid
+    identifier string
+    locality string
+    privacy string
+    time_zone string
+    type string
+    url string
+    host boolean
+  }
+
   FEDERATION_CONTENT_GRANTS {
     federatable_id uuid
     platform_connection_id uuid
@@ -321,6 +364,81 @@ erDiagram
     primary_flag boolean
   }
 
+  PLATFORM_ASSOCIATIONS {
+    accepted_by_id uuid
+    delegated_from_id uuid
+    managed_platform_id uuid
+    operator_platform_id uuid
+    requested_by_id uuid
+    status_changed_by_id uuid
+    relation string
+    status string
+    transport string
+    accepted_at datetime
+  }
+
+  PLATFORM_DELETION_REQUESTS {
+    platform_id uuid
+    requested_by_id uuid
+    reviewed_by_id uuid
+    status string
+    requested_reason text
+    reviewer_notes text
+    requested_at datetime
+    resolved_at datetime
+  }
+
+  PLATFORM_IDENTITY_PROVIDERS {
+    client_id string
+    platform_id uuid
+    provider_platform_id uuid
+    scopes string
+    strategy string
+    client_secret text
+    enabled boolean
+    position integer
+    options jsonb
+  }
+
+  PLATFORM_IDENTITY_PROVIDER_DOMAINS {
+    platform_domain_id uuid
+    platform_identity_provider_id uuid
+  }
+
+  PLATFORM_SNIPPETS {
+    platform_id uuid
+    updated_by_id uuid
+    applies_to string
+    consent_category string
+    kind string
+    location string
+    name string
+    src string
+    content text
+    notes text
+  }
+
+  PLATFORM_SNIPPET_AUDITS {
+    actor_id uuid
+    platform_id uuid
+    snippet_id uuid
+    action string
+    snippet_name string
+    change_set jsonb
+  }
+
+  PLATFORM_TRUSTED_DOMAINS {
+    created_by_id uuid
+    platform_id uuid
+    role_id uuid
+    domain string
+    note text
+    enabled boolean
+    include_subdomains boolean
+    public_domain_confirmed boolean
+    role_ceiling_confirmed boolean
+  }
+
   QUOTAS {
     owner_id uuid
     platform_id uuid
@@ -381,6 +499,32 @@ erDiagram
     period_key string
   }
 
+  REDIRECTS {
+    platform_id uuid
+    from_path string
+    source string
+    note text
+    to_path text
+    active boolean
+    preserve_query boolean
+    hit_count integer
+    status integer
+    last_hit_at datetime
+  }
+
+  SEED_PROVENANCES {
+    packet_id string
+    platform_id uuid
+    record_id uuid
+    seed_id uuid
+    seed_planting_id uuid
+    fingerprint string
+    packet_version string
+    record_class string
+    record_key string
+    record_type string
+  }
+
   SHORT_LINKS {
     creator_id uuid
     linkable_id uuid
@@ -400,6 +544,18 @@ erDiagram
     platform_name string
     privacy string
     url string
+  }
+
+  TRUSTED_DOMAIN_EVENTS {
+    actor_id uuid
+    platform_id uuid
+    platform_trusted_domain_id uuid
+    subject_id uuid
+    domain string
+    event_type string
+    role_identifier string
+    via string
+    details jsonb
   }
 
   WEATHER_CURRENT_CONDITIONS {
@@ -482,11 +638,31 @@ erDiagram
     string export_ref
   }
 
+  EXT_STORAGE_CONFIGURATION {
+    string export_ref
+  }
+
   EXT_PLATFORM_CONNECTION {
     string export_ref
   }
 
   EXT_ADDRESS {
+    string export_ref
+  }
+
+  EXT_PLATFORM_DOMAIN {
+    string export_ref
+  }
+
+  EXT_ROLE {
+    string export_ref
+  }
+
+  EXT_SEED {
+    string export_ref
+  }
+
+  EXT_SEED_PLANTING {
     string export_ref
   }
 

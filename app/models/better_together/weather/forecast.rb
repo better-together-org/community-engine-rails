@@ -15,6 +15,9 @@ module BetterTogether
       scope :hourly, -> { where(kind: 'hourly') }
       scope :daily, -> { where(kind: 'daily') }
       scope :latest_first, -> { order(issued_at: :desc) }
+      # The issue in the most recent source document. Sources sometimes stamp an issue time
+      # ahead of the real one, so the newest issued_at can belong to an old document.
+      scope :most_recently_fetched, -> { order(fetched_at: :desc, issued_at: :desc) }
 
       def periods
         payload.fetch('periods', [])

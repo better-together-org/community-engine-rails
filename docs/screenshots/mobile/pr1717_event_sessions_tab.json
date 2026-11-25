@@ -1,8 +1,8 @@
 {
   "name": "pr1717_event_sessions_tab",
   "device": "mobile",
-  "url": "/en/events/3b02df38-c276-4f87-bdd6-1bba04326da5",
-  "title": "Weekly Harbourside Trivia Night | Events | Community Engine",
+  "url": "/en/events/9ded3920-eacc-42b2-8a46-13f8e9591f1a",
+  "title": "Weekly Harbourside Trivia Night | Events | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "event_occurrences_ux",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 245.4375,
-        "y": 704.78125,
+        "y": 744.78125,
         "width": 103.390625,
         "height": 42.0,
         "right": 348.828125,
-        "bottom": 746.78125,
+        "bottom": 786.78125,
         "center_x": 297.1328125,
-        "center_y": 725.78125
+        "center_y": 765.78125
       },
       "avoid": {
         "x": 245.4375,
-        "y": 704.78125,
+        "y": 744.78125,
         "width": 103.390625,
         "height": 42.0,
         "right": 348.828125,
-        "bottom": 746.78125,
+        "bottom": 786.78125,
         "center_x": 297.1328125,
-        "center_y": 725.78125
+        "center_y": 765.78125
       },
       "placement": {
         "side": "above",
         "x": 162.13,
-        "y": 474.78,
+        "y": 514.78,
         "width": 270.0,
         "height": 210,
-        "score": 704.78125
+        "score": 744.78125
       }
     },
     {
@@ -52,23 +52,23 @@
       ],
       "target": {
         "x": 29.0,
-        "y": 785.96875,
+        "y": 825.96875,
         "width": 427.0,
         "height": 120.0,
         "right": 456.0,
-        "bottom": 905.96875,
+        "bottom": 945.96875,
         "center_x": 242.5,
-        "center_y": 845.96875
+        "center_y": 885.96875
       },
       "avoid": {
         "x": 29.0,
-        "y": 785.96875,
+        "y": 825.96875,
         "width": 427.0,
         "height": 120.0,
         "right": 456.0,
-        "bottom": 905.96875,
+        "bottom": 945.96875,
         "center_x": 242.5,
-        "center_y": 845.96875
+        "center_y": 885.96875
       },
       "placement": {
         "side": "right",

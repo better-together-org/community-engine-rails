@@ -128,9 +128,17 @@ module BetterTogether
     end
 
     def resource_collection
-      @resources ||= policy_scope(resource_class)
+      @resources ||= preload_privacy_ceiling(policy_scope(resource_class))
 
       instance_variable_set("@#{resource_name(plural: true)}", @resources)
+    end
+
+    # Lists show the effective visibility badge, which reads each row's platform
+    # and community; load them once instead of once per row.
+    def preload_privacy_ceiling(relation)
+      return relation unless relation.respond_to?(:with_privacy_ceiling_preloaded)
+
+      relation.with_privacy_ceiling_preloaded
     end
 
     def resource_instance(attrs = {})

@@ -88,7 +88,7 @@ if defined?(Rails)
         server.filter_tools do |request, tools|
           context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
 
-          if context.permitted_to?('manage_platform')
+          if context.platform_manager?
             # Platform managers see all tools
             tools
           elsif context.authenticated?
@@ -105,7 +105,7 @@ if defined?(Rails)
         server.filter_resources do |request, resources|
           context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
 
-          if context.permitted_to?('manage_platform')
+          if context.platform_manager?
             resources
           else
             # Exclude resource classes that define an :admin tag when the API is available

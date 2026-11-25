@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # rubocop:todo Metrics/ClassLength
+  # rubocop:todo-next Metrics/ClassLength
   class PlatformInvitationsController < ApplicationController # rubocop:todo Style/Documentation
     include PerUserThrottling
 
@@ -25,16 +25,7 @@ module BetterTogether
       @platform_invitations = apply_sorting(@platform_invitations)
       @platform_invitations = @platform_invitations.page(params[:page]).per(25)
 
-      # Preload roles for the form to prevent N+1 queries during rendering
-      @community_roles = BetterTogether::Role.where(resource_type: 'BetterTogether::Community')
-                                             .includes(:string_translations)
-                                             .order(:position)
-      @platform_roles = BetterTogether::Role.where(resource_type: 'BetterTogether::Platform')
-                                            .includes(:string_translations)
-                                            .order(:position)
-
-      # Find the default community member role for the hidden field
-      @default_community_role = @community_roles.find_by(identifier: 'community_member')
+      load_invitation_form_roles
     end
 
     # POST /platforms/:platform_id/platform_invitations
@@ -139,6 +130,14 @@ module BetterTogether
     end
 
     private
+
+    # Preload the platform's own roles for the form to prevent N+1 queries during rendering
+    def load_invitation_form_roles
+      roles = BetterTogether::Role.for_platform(@platform).includes(:string_translations).order(:position)
+      @community_roles = roles.where(resource_type: 'BetterTogether::Community')
+      @platform_roles = roles.where(resource_type: 'BetterTogether::Platform')
+      @default_community_role = @community_roles.find_by(identifier: 'community_member')
+    end
 
     def set_platform
       @platform = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
@@ -290,5 +289,4 @@ module BetterTogether
       found_class || BetterTogether::PlatformInvitation
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end

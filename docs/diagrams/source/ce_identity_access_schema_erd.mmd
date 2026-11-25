@@ -48,6 +48,7 @@ erDiagram
   EXT_PLATFORM ||--o{ PERSON_LINKED_SEEDS : "source_platform / source_platform_id"
   PEOPLE ||--o{ PERSON_PLATFORM_INTEGRATIONS : "person / person_id"
   EXT_PLATFORM ||--o{ PERSON_PLATFORM_INTEGRATIONS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ PERSON_PLATFORM_INTEGRATIONS : "local_platform / local_platform_id"
   USERS ||--o{ PERSON_PLATFORM_INTEGRATIONS : "user / user_id"
   EXT_PLATFORM ||--o{ PERSON_PLATFORM_MEMBERSHIPS : "joinable / joinable_id"
   PEOPLE ||--o{ PERSON_PLATFORM_MEMBERSHIPS : "member / member_id"
@@ -241,6 +242,7 @@ erDiagram
   }
 
   PERSON_PLATFORM_INTEGRATIONS {
+    local_platform_id uuid
     person_id uuid
     platform_id uuid
     user_id uuid
@@ -250,7 +252,6 @@ erDiagram
     image_url string
     name string
     profile_url string
-    provider string
   }
 
   PERSON_PLATFORM_MEMBERSHIPS {

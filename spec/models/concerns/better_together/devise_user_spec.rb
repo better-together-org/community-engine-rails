@@ -68,6 +68,7 @@ RSpec.describe BetterTogether::DeviseUser do
                                  expires_at: 1.hour.from_now.to_i
                                },
                                extra: {
+                                 all_emails: [{ email: 'test@example.com', primary: true, verified: true }],
                                  raw_info: {
                                    login: 'testuser',
                                    html_url: 'https://github.com/testuser'
@@ -87,7 +88,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
       it 'updates the integration and returns existing user' do
         expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize) # rubocop:todo RSpec/StubbedMock
-          .with(existing_integration, github_auth_hash)
+          .with(existing_integration, github_auth_hash, local_platform: nil, platform: nil)
           .and_return(existing_integration)
 
         result = user_class.from_omniauth(
@@ -145,7 +146,8 @@ RSpec.describe BetterTogether::DeviseUser do
       end
 
       context 'and user exists with same email' do # rubocop:todo RSpec/NestedGroups
-        let!(:existing_user) { create(:user, email: 'test@example.com') }
+        let!(:existing_user) { join_platform_community(create(:user, email: 'test@example.com'), local_platform) }
+        let(:local_platform) { configure_host_platform }
 
         it 'assigns integration to existing user' do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
@@ -154,7 +156,8 @@ RSpec.describe BetterTogether::DeviseUser do
           result = user_class.from_omniauth(
             person_platform_integration: nil,
             auth: github_auth_hash,
-            current_user: nil
+            current_user: nil,
+            local_platform:
           )
 
           expect(result).to eq(existing_user)
@@ -335,7 +338,7 @@ RSpec.describe BetterTogether::DeviseUser do
     context 'when PersonPlatformIntegration is nil' do
       it 'calls update_or_initialize with nil and auth' do
         expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize) # rubocop:todo RSpec/StubbedMock
-          .with(nil, github_auth_hash)
+          .with(nil, github_auth_hash, local_platform: nil, platform: nil)
           .and_return(build(:person_platform_integration))
 
         user_class.from_omniauth(
@@ -385,7 +388,7 @@ RSpec.describe BetterTogether::DeviseUser do
             auth: auth_without_email,
             current_user: nil
           )
-        end.to raise_error(ArgumentError, /Email not provided by OAuth provider/)
+        end.to raise_error(ArgumentError, /Email not provided by Github/)
       end
     end
   end
@@ -683,7 +686,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
       expect do
         user.attributes_from_auth(auth_without_email)
-      end.to raise_error(ArgumentError, /Email not provided by OAuth provider/)
+      end.to raise_error(ArgumentError, /Email not provided by the OAuth provider/)
     end
   end
 
@@ -923,7 +926,8 @@ RSpec.describe BetterTogether::DeviseUser do
     context 'when no current_user (OAuth sign-in)' do
       it 'allows OAuth sign-in for existing user by email match' do
         # Ensure user_b exists in database (might already exist from other tests)
-        user_b
+        local_platform = configure_host_platform
+        join_platform_community(user_b, local_platform)
 
         oauth_auth = OmniAuth::AuthHash.new({
                                               provider: 'github',
@@ -935,6 +939,10 @@ RSpec.describe BetterTogether::DeviseUser do
                                               },
                                               credentials: {
                                                 token: 'github_token_oauth'
+                                              },
+                                              extra: {
+                                                all_emails: [{ email: 'user_b@example.com', primary: true,
+                                                               verified: true }]
                                               }
                                             })
 
@@ -957,7 +965,8 @@ RSpec.describe BetterTogether::DeviseUser do
         result = user_class.from_omniauth(
           person_platform_integration: new_integration,
           auth: oauth_auth,
-          current_user: nil
+          current_user: nil,
+          local_platform:
         )
 
         expect(result).to eq(user_b)

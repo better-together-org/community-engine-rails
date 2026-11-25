@@ -19,7 +19,7 @@
             <% if permissions.any? %>
               <div class="d-flex flex-wrap gap-1">
                 <% permissions.each do |permission| %>
-                  <span class="badge bg-light text-dark">
+                  <span class="badge bg-body-secondary text-body border">
                     <%= "#{permission.action} #{permission.target}" %>
                   </span>
                 <% end %>

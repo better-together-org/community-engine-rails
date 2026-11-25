@@ -2,7 +2,7 @@
   "name": "post_community_chip_index",
   "device": "desktop",
   "url": "/en/posts",
-  "title": "Posts | Simonis-Upton",
+  "title": "Posts | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "post_community_chip",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
   "callouts": [
     {
-      "selector": "#post_f9a714a0-1a50-4ad3-9bf7-344d487040f5 .community-chip",
+      "selector": "#post_1d3db174-2ccf-4542-9d46-20ccafb0fbd0 .community-chip",
       "title": "Community chip",
       "bullets": [
         "Links to the post's community."

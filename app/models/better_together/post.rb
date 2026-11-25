@@ -59,7 +59,9 @@ module BetterTogether
     alias name title
     translates :content, backend: :action_text
 
-    slugged :title
+    # Identifier already enforces slug uniqueness per platform; a global check blocks two platforms
+    # from using the same identifier.
+    slugged :title, slug_uniqueness: false
 
     searchable pg_search: {
       against: [:identifier],
@@ -122,11 +124,11 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || last_synced_at.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.remote?
     end
 
     def preserved_remote_uuid?
-      source_id.blank? && platform&.external?
+      source_id.blank? && platform&.remote?
     end
 
     def source_identifier

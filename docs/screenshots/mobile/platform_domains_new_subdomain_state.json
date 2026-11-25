@@ -1,13 +1,13 @@
 {
   "name": "platform_domains_new_subdomain_state",
   "device": "mobile",
-  "url": "/en/host/platforms/terrence_ankunding/platform_domains/new",
-  "title": "New Domain | Halvorson-Bosco",
+  "url": "/en/host/platforms/test-host-community/platform_domains/new",
+  "title": "New Domain | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_domains",
   "flow": "platform_domains_new",
-  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
   "callouts": [
     {
       "selector": "#platform_domain_kind_subdomain",
@@ -41,7 +41,7 @@
         "y": 205.39,
         "width": 270.0,
         "height": 242,
-        "score": 1075.609375
+        "score": 1071.609375
       }
     },
     {
@@ -108,11 +108,10 @@
       },
       "placement": {
         "side": "floating",
-        "x": 24,
-        "y": 992,
+        "x": 24.0,
+        "y": 909,
         "width": 270.0,
-        "height": 242,
-        "score": 0
+        "height": 242
       }
     },
     {
@@ -144,7 +143,7 @@
       "placement": {
         "side": "floating",
         "x": 24.0,
-        "y": 1027,
+        "y": 1023,
         "width": 270.0,
         "height": 210
       }

@@ -302,6 +302,63 @@ export default class extends Controller {
 }
 ```
 
+## Address geography links
+
+An address can be linked to the geography records it was entered against through three optional foreign keys on `better_together_addresses`: `country_id`, `state_id` and `settlement_id` (`on_delete: :nullify`). The string columns `country_name`, `state_province_name` and `city_name` stay as the free-text fallback for places that are not geography records yet.
+
+```mermaid
+flowchart TD
+  subgraph Form["Address form"]
+    A["Country select"] --> B["State select\n(narrowed by country)"]
+    B --> C["Settlement select\n(narrowed by state)"]
+    A --> T["Use typed text row"]
+    B --> T
+    C --> T
+  end
+
+  subgraph Lookup["LocationsController#geography"]
+    L["Geography::AddressLookup\n(name search, any locale, capped)"]
+  end
+
+  A -. search .-> L
+  B -. search .-> L
+  C -. search .-> L
+
+  subgraph Save["Address save"]
+    P["country_id / state_id / settlement_id\n(optional FKs)"]
+    S["Geography::AddressLinks\nderive parents, overwrite string columns,\nvalidate state in country, settlement in state"]
+    X["country_name / state_province_name / city_name\n(free-text fallback)"]
+  end
+
+  A -->|record chosen| P
+  B -->|record chosen| P
+  C -->|record chosen| P
+  T -->|no record| X
+  P --> S --> X
+
+  subgraph Existing["Existing addresses"]
+    R["better_together:geography:backfill_address_links\n(run by migration 20261109150100)"] --> M["Resolved locatable_locations placements"]
+    M --> P
+  end
+
+```
+
+**Diagram Files:**
+- [Mermaid Source](../../diagrams/source/address_geography_links_flow.mmd)
+- [PNG Export](../../diagrams/exports/png/address_geography_links_flow.png)
+- [SVG Export](../../diagrams/exports/svg/address_geography_links_flow.svg)
+
+Rules (`Geography::AddressLinks`):
+
+- A chosen record is authoritative: on save it overwrites the matching string column. When no record is chosen, typed text is kept.
+- A chosen settlement fills in its state and country, and a chosen state its country, when the typed parent text is blank or matches that record (case-insensitive). Typed parent text that disagrees with the chosen child is rejected with a validation error on `state_province_name` or `country_name` naming the expected value; nothing is silently replaced.
+- A state must belong to the chosen country, and a settlement to the chosen state and country.
+- `address.country`, `address.state` and `address.settlement` return the explicit link first, then the placement resolved by `HierarchyResolutionJob` (the `Locatable::Many` readers), so existing callers keep working.
+
+The address form's selects search `GET /locations/geography?level=country|state|settlement` (`LocationsController#geography`, backed by `Geography::AddressLookup`). States are narrowed by `country_id` and settlements by `state_id`; results are capped at 25 and match the name in any locale. The `better_together--address-geography` Stimulus controller sets the hidden id field when a record is picked, or clears it and fills the string column when the typed-text row is chosen, and clears the levels below when a parent changes. `slim_select_controller` gained `ajax.dependsOn` (query parameter to the id of the field that narrows this select).
+
+Existing addresses are linked from their resolved placements by `rake better_together:geography:backfill_address_links` (`Geography::AddressLinkBackfill`), which migration `20261109150100` runs. It only fills empty links and never overwrites one, so it is safe to re-run.
+
 ## Configuration Options
 
 ### Environment Variables

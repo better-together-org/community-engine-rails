@@ -59,8 +59,21 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
       expect(described_class.new(creator_user, request_rec).update?).to be true
     end
 
-    it 'allows a steward' do
+    it 'allows a steward on a public request' do
+      request_rec.update_column(:privacy, 'public')
       expect(described_class.new(steward_user, request_rec).update?).to be true
+    end
+
+    it 'denies a steward on a private request' do
+      expect(described_class.new(steward_user, request_rec).update?).to be false
+    end
+
+    it 'hides a private request from a steward' do
+      expect(described_class.new(steward_user, request_rec).show?).to be false
+    end
+
+    it 'denies responding to a request the user cannot see' do
+      expect(described_class.new(normal_user, request_rec).respond_with_offer?).to be false
     end
 
     it 'denies other users' do
@@ -104,7 +117,7 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
     end
     let!(:other_private_request) { create(:better_together_joatu_request, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'authenticated user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
@@ -125,9 +138,8 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
         expect(resolved).to include(public_request)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    # rubocop:todo RSpec/MultipleMemoizedHelpers
+    # rubocop:todo-next RSpec/MultipleMemoizedHelpers
     context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
@@ -142,6 +154,5 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
         expect(resolved).not_to include(membership_request)
       end
     end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end

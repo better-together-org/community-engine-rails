@@ -6,7 +6,7 @@ module BetterTogether
     # content_safety_scanner_engine.py prototype so mail screening has no external process
     # dependency. Covers the technical, safety, and ai_integrity planes; real malware detection
     # is layered on top by DeterministicScanRunner via ClamAvClient.
-    # rubocop:disable Metrics/ModuleLength
+    # rubocop:disable-next Metrics/ModuleLength
     module RuleEngine
       EICAR_SIGNATURE = 'x5o!p%@ap[4\\pzx54(p^)7cc)7}$eicar-standard-antivirus-test-file!$h+h*'
 
@@ -59,7 +59,7 @@ module BetterTogether
         findings.max_by { |finding| VERDICT_PRECEDENCE.fetch(finding[:verdict], 0) }[:verdict]
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
+      # rubocop:disable-next Metrics/MethodLength, Metrics/ParameterLists
       def build_finding(plane:, finding_type:, rule_id:, severity:, confidence:, verdict:, routing:, summary:, url_count: nil)
         {
           v: 'content_security.record.v1',
@@ -80,9 +80,8 @@ module BetterTogether
           detected_at: Time.current.utc.iso8601
         }
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def run_technical_scan(content_text, filename, blocked_domains: {})
         findings = []
         text = content_text || ''
@@ -134,9 +133,8 @@ module BetterTogether
 
         findings
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def run_safety_scan(content_text)
         text = content_text || ''
         urls = detect_urls(text)
@@ -153,7 +151,6 @@ module BetterTogether
           []
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
       def dense_disclosure_finding(url_count)
         build_finding(
@@ -208,6 +205,5 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/ModuleLength
   end
 end

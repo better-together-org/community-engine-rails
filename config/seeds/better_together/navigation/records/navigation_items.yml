@@ -1,0 +1,479 @@
+version: '2.0'
+type: navigation_item
+records:
+- key: about
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: About
+  refs:
+    navigation_area: navigation_area:platform-header
+    linkable: page:about
+  position: 0
+- key: posts
+  attributes:
+    item_type: link
+    visible: true
+    route_name: posts_url
+  translations:
+    en:
+      title: Posts
+  refs:
+    navigation_area: navigation_area:platform-header
+  position: 1
+- key: events
+  attributes:
+    item_type: link
+    visible: true
+    route_name: events_url
+  translations:
+    en:
+      title: Events
+  refs:
+    navigation_area: navigation_area:platform-header
+  position: 2
+- key: community-hub
+  attributes:
+    item_type: link
+    visible: true
+    route_name: hub_url
+    privacy: private
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Community Hub
+  refs:
+    navigation_area: navigation_area:platform-header
+  position: 2
+- key: exchange-hub
+  attributes:
+    item_type: link
+    visible: true
+    route_name: joatu_hub_url
+    privacy: private
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Exchange Hub
+  refs:
+    navigation_area: navigation_area:platform-header
+  position: 3
+- key: federation-hub
+  attributes:
+    item_type: link
+    visible: true
+    route_name: federation_hub_url
+    privacy: private
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Federation Hub
+  refs:
+    navigation_area: navigation_area:platform-header
+  position: 4
+- key: host-nav
+  attributes:
+    item_type: dropdown
+    visible: true
+    url: '#'
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: view_metrics_dashboard
+  translations:
+    en:
+      title: Host
+  refs:
+    navigation_area: navigation_area:platform-host
+  position: 0
+- key: host-dashboard
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Dashboard
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 0
+- key: analytics
+  attributes:
+    item_type: link
+    visible: true
+    route_name: metrics_reports_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: view_metrics_dashboard
+    icon: chart-line
+  translations:
+    en:
+      title: Analytics
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 1
+- key: communities
+  attributes:
+    item_type: link
+    visible: true
+    route_name: communities_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Communities
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 2
+- key: navigation-areas
+  attributes:
+    item_type: link
+    visible: true
+    route_name: navigation_areas_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Navigation Areas
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 3
+- key: pages
+  attributes:
+    item_type: link
+    visible: true
+    route_name: pages_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Pages
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 4
+- key: host-posts
+  attributes:
+    item_type: link
+    visible: true
+    route_name: posts_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Posts
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 5
+- key: people
+  attributes:
+    item_type: link
+    visible: true
+    route_name: people_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: People
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 6
+- key: platforms
+  attributes:
+    item_type: link
+    visible: true
+    route_name: platforms_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Platforms
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 7
+- key: roles
+  attributes:
+    item_type: link
+    visible: true
+    route_name: roles_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Roles
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 8
+- key: resource_permissions
+  attributes:
+    item_type: link
+    visible: true
+    route_name: resource_permissions_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Resource Permissions
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 9
+- key: webhook_endpoints
+  attributes:
+    item_type: link
+    visible: true
+    route_name: webhook_endpoints_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: Webhooks
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 10
+- key: oauth_applications
+  attributes:
+    item_type: link
+    visible: true
+    route_name: oauth_applications_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+  translations:
+    en:
+      title: OAuth Apps
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 11
+- key: better-together-nav
+  attributes:
+    item_type: dropdown
+    visible: true
+    url: '#'
+    protected: true
+  translations:
+    en:
+      title: Powered with <3 by Better Together
+  refs:
+    navigation_area: navigation_area:better-together
+  position: 0
+- key: better-together-what-is
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: What is Better Together?
+  refs:
+    navigation_area: navigation_area:better-together
+    parent: navigation_item:better-together-nav
+    linkable: page:better-together
+  position: 0
+- key: better-together-community-engine
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: About the Community Engine
+  refs:
+    navigation_area: navigation_area:better-together
+    parent: navigation_item:better-together-nav
+    linkable: page:better-together/community-engine
+  position: 1
+- key: faq
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: FAQ
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:faq
+  position: 0
+- key: privacy-policy
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Privacy Policy
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:privacy-policy
+  position: 1
+- key: terms-of-service
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Terms of Service
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:terms-of-service
+  position: 2
+- key: code-of-conduct
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Code of Conduct
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:code-of-conduct
+  position: 3
+- key: accessibility
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Accessibility
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:accessibility
+  position: 4
+- key: cookie-policy
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Cookie Policy
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:cookie-policy
+  position: 5
+- key: contact
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: public
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Contact Us
+  refs:
+    navigation_area: navigation_area:platform-footer
+    linkable: page:contact
+  position: 6
+- key: contributor-agreements
+  attributes:
+    item_type: dropdown
+    visible: true
+    protected: true
+  translations:
+    en:
+      title: Contributor Agreements
+  refs:
+    navigation_area: navigation_area:platform-footer
+  position: 7
+- key: code-contributor-agreement
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: private
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Code Contributor Agreement
+  refs:
+    navigation_area: navigation_area:platform-footer
+    parent: navigation_item:contributor-agreements
+    linkable: page:code_contributor_agreement
+  position: 0
+- key: content-contributor-agreement
+  attributes:
+    item_type: link
+    visible: true
+    protected: true
+    url: ''
+    privacy: private
+    visibility_strategy: authenticated
+  translations:
+    en:
+      title: Content Contributor Agreement
+  refs:
+    navigation_area: navigation_area:platform-footer
+    parent: navigation_item:contributor-agreements
+    linkable: page:content_contributor_agreement
+  position: 1

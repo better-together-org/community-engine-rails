@@ -1,0 +1,15 @@
+erDiagram
+  PLATFORM ||--o{ REDIRECT : "owns"
+  REDIRECT {
+    uuid id PK
+    uuid platform_id FK
+    string from_path "normalized, unique per platform ignoring case"
+    text to_path "site path or http(s) URL, blank for 410"
+    integer status "301 302 307 308 410"
+    boolean active
+    boolean preserve_query
+    string source "manual import seed slug_history"
+    text note
+    integer hit_count
+    datetime last_hit_at
+  }

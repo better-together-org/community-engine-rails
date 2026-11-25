@@ -141,7 +141,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
     expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable-next Metrics/AbcSize
   def capture_add_block_list
     capture_docs_screenshot('release_0_11_0_content_block_add_list', flow: 'page_block_add_list') do
       login_for_docs_capture
@@ -158,9 +158,8 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def block_definitions
     @block_definitions ||= [
       {
@@ -269,9 +268,8 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       }
     ].freeze
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
   def capture_editor_form(definition)
     editor_page = BetterTogether::Page.find_or_initialize_by(identifier: "release-0-11-0-#{definition[:key]}-editor-page")
     editor_page.assign_attributes(
@@ -300,9 +298,8 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def focus_page_blocks_editor
     expect(page).to have_selector('#blocks-list .page-block-fields', wait: 10)
     expect(page).to have_selector('h2', text: 'Page Blocks', wait: 10)
@@ -327,9 +324,8 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       })();
     JS
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
   def capture_render_example(definition)
     render_page = BetterTogether::Page.find_or_initialize_by(identifier: "release-0-11-0-#{definition[:key]}-page")
     render_page.assign_attributes(
@@ -357,9 +353,8 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def build_render_block(definition)
     case definition[:key]
     when 'accordion_block'
@@ -462,5 +457,4 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       create(definition[:factory])
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 end

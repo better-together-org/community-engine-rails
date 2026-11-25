@@ -41,7 +41,11 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
   # ---------------------------------------------------------------------------
   # Public submission (no auth)
   # ---------------------------------------------------------------------------
-  before { logout }
+  # The community is looked up inside the requesting (host) platform only.
+  before do
+    community.update_column(:platform_id, host_platform.id) # rubocop:disable Rails/SkipsModelValidations
+    logout
+  end
 
   describe 'GET /c/:community_id/membership_requests/new' do
     it 'renders without authentication' do

@@ -22,6 +22,15 @@ RSpec.describe BetterTogether::Weather::Retention do
     expect(location.forecasts.pluck(:kind)).to contain_exactly('daily', 'hourly')
   end
 
+  it 'keeps the most recently fetched issue even when an older one claims a later issue time' do
+    stuck = create(:weather_forecast, location: location, kind: 'daily', issued_at: 1.day.from_now, fetched_at: 12.days.ago)
+
+    described_class.new.call
+
+    expect(BetterTogether::Weather::Forecast.exists?(stuck.id)).to be(false)
+    expect(location.forecasts.daily.pluck(:fetched_at)).to all(be > 10.days.ago)
+  end
+
   it 'reports without deleting on a dry run' do
     result = described_class.new(dry_run: true).call
 

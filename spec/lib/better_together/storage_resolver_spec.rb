@@ -214,6 +214,12 @@ RSpec.describe BetterTogether::StorageResolver do # rubocop:todo RSpec/MultipleM
         expect(resolver.to_active_storage_config[:force_path_style]).to be(true)
       end
 
+      it 'only requires checksums when the S3 API demands them' do
+        config = resolver.to_active_storage_config
+        expect(config).to include(request_checksum_calculation: 'when_required',
+                                  response_checksum_validation: 'when_required')
+      end
+
       it 'includes the bucket' do
         expect(resolver.to_active_storage_config[:bucket]).to eq('test-bucket')
       end
@@ -230,6 +236,10 @@ RSpec.describe BetterTogether::StorageResolver do # rubocop:todo RSpec/MultipleM
       it 'does not set force_path_style' do
         expect(resolver.to_active_storage_config).not_to have_key(:force_path_style)
       end
+
+      it 'keeps the SDK checksum defaults' do
+        expect(resolver.to_active_storage_config).not_to have_key(:response_checksum_validation)
+      end
     end
 
     context 'when platform config is active' do
@@ -239,6 +249,33 @@ RSpec.describe BetterTogether::StorageResolver do # rubocop:todo RSpec/MultipleM
       it 'delegates to the config model' do
         expect(resolver.to_active_storage_config).to eq(config.to_active_storage_config)
       end
+    end
+  end
+
+  describe '#rebind_default!' do
+    let(:config) { create(:better_together_storage_configuration) }
+    let(:platform) { config.platform.tap { |p| p.update!(storage_configuration_id: config.id) } }
+
+    around do |example|
+      original = ActiveStorage::Blob.service
+      example.run
+    ensure
+      ActiveStorage::Blob.service = original
+    end
+
+    it "makes the platform's service the process default" do
+      described_class.new(platform).rebind_default!
+
+      expect(ActiveStorage::Blob.service.name.to_s).to eq(config.storage_key)
+    end
+  end
+
+  describe '#register!' do
+    it 'returns the configured service for a platform config' do
+      config = create(:better_together_storage_configuration)
+      platform = config.platform.tap { |p| p.update!(storage_configuration_id: config.id) }
+
+      expect(described_class.new(platform).register!.name.to_s).to eq(config.storage_key)
     end
   end
 end

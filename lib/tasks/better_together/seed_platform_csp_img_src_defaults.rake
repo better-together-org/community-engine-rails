@@ -9,7 +9,7 @@ namespace :better_together do
       updated_count = 0
       checked_count = 0
 
-      BetterTogether::Platform.where(external: false).find_each do |platform|
+      BetterTogether::Platform.local.find_each do |platform|
         checked_count += 1
         settings = platform.settings.deep_dup
         existing_sources = Array(settings['csp_img_src']).map(&:to_s)

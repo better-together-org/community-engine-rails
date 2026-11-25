@@ -32,6 +32,8 @@ module BetterTogether
       host_dashboard_membership_review: 'host_dashboard_membership_review_url',
       host_dashboard_platform_connection_review: 'host_dashboard_platform_connection_review_url',
       host_dashboard_safety_review: 'host_dashboard_safety_review_url',
+      host_dashboard_weather: 'host_dashboard_weather_url',
+      host_jobs: 'host_jobs_url',
       hub: 'hub_url',
       joatu_hub: 'joatu_hub_url',
       joatu_offers: 'joatu_offers_url',
@@ -151,8 +153,6 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
-          # Built-in seeded pages only -- see Page#seed_privacy_ceiling_exempt.
-          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end
@@ -171,8 +171,6 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
-          # Built-in seeded pages only -- see Page#seed_privacy_ceiling_exempt.
-          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end
@@ -246,7 +244,7 @@ module BetterTogether
       return false unless visible? # Check base visibility flag first
 
       # Public items are visible to everyone
-      return true if privacy_public?
+      return true if effective_privacy_public?
 
       # Non-public items require a user
       return false unless user.present?
@@ -314,18 +312,6 @@ module BetterTogether
 
     def visible?
       visible
-    end
-
-    # Transient (non-persisted) flag, same pattern and rationale as
-    # Page#seed_privacy_ceiling_exempt: builder/seed code sets this on a
-    # nav item linking to a built-in public page (About, FAQ, legal/policy
-    # pages, contributor agreements) so it isn't rejected by the platform's
-    # privacy ceiling. Deliberately not tied to `protected?`, which is
-    # reused for unrelated purposes elsewhere.
-    attr_accessor :seed_privacy_ceiling_exempt
-
-    def privacy_ceiling_exempt?
-      super || seed_privacy_ceiling_exempt
     end
 
     private

@@ -22,6 +22,8 @@ module BetterTogether
       validates :time_zone, inclusion: { in: ->(_) { TZInfo::Timezone.all_identifiers } }
 
       scope :enabled, -> { where(enabled: true) }
+      # Enabled locations of enabled sources: the only ones weather jobs work on.
+      scope :active, -> { enabled.where(source_id: Source.enabled.select(:id)) }
 
       after_create_commit :schedule_initial_load
 
@@ -48,7 +50,7 @@ module BetterTogether
       private
 
       def schedule_initial_load
-        return unless enabled?
+        return unless enabled? && source&.enabled?
 
         RefreshLocationJob.perform_later(id)
         BackfillLocationJob.perform_later(id)

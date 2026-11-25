@@ -1,0 +1,49 @@
+{
+  "name": "settings_usage_tab_annotated",
+  "device": "desktop",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "quotas",
+  "flow": "settings_usage_tab",
+  "source_spec": "./spec/docs_screenshots/better_together/settings_usage_tab_spec.rb",
+  "callouts": [
+    {
+      "selector": "#usage-settings",
+      "title": "Usage content",
+      "bullets": [
+        "Loads into the tab through its turbo frame.",
+        "No longer shows \"Content missing\"."
+      ],
+      "target": {
+        "x": 388.0,
+        "y": 286.390625,
+        "width": 1024.0,
+        "height": 24.0,
+        "right": 1412.0,
+        "bottom": 310.390625,
+        "center_x": 900.0,
+        "center_y": 298.390625
+      },
+      "avoid": {
+        "x": 388.0,
+        "y": 286.390625,
+        "width": 1024.0,
+        "height": 24.0,
+        "right": 1412.0,
+        "bottom": 310.390625,
+        "center_x": 900.0,
+        "center_y": 298.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 710.0,
+        "y": 330.39,
+        "width": 380,
+        "height": 184,
+        "score": 1146.609375
+      }
+    }
+  ]
+}

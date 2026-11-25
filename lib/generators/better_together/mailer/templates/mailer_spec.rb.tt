@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe <%= qualified(mailer_class) %> do
+  it 'inherits the engine mailer defaults' do
+    expect(described_class.ancestors).to include(BetterTogether::ApplicationMailer)
+  end
+end

@@ -1,0 +1,49 @@
+{
+  "name": "header_menu_theme_account_light_mobile",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "header_menu_theme",
+  "flow": "account_light_mobile",
+  "source_spec": "./spec/docs_screenshots/better_together/header_menu_theme_spec.rb",
+  "callouts": [
+    {
+      "selector": "#host-nav-item",
+      "title": "Host",
+      "bullets": [
+        "Aligned with the other items.",
+        "Readable on the page surface."
+      ],
+      "target": {
+        "x": 37.0,
+        "y": 344.0,
+        "width": 396.0,
+        "height": 41.0,
+        "right": 433.0,
+        "bottom": 385.0,
+        "center_x": 235.0,
+        "center_y": 364.5
+      },
+      "avoid": {
+        "x": 37.0,
+        "y": 344.0,
+        "width": 396.0,
+        "height": 41.0,
+        "right": 433.0,
+        "bottom": 385.0,
+        "center_x": 235.0,
+        "center_y": 364.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 100.0,
+        "y": 405.0,
+        "width": 270.0,
+        "height": 184,
+        "score": 872.0
+      }
+    }
+  ]
+}

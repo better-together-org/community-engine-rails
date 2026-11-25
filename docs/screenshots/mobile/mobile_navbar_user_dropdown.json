@@ -1,0 +1,48 @@
+{
+  "name": "mobile_navbar_user_dropdown",
+  "device": "mobile",
+  "url": "/en",
+  "title": "Home | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "mobile_navbar_dropdowns",
+  "flow": "mobile_navbar_user_dropdown",
+  "source_spec": "./spec/docs_screenshots/better_together/mobile_navbar_dropdowns_spec.rb",
+  "callouts": [
+    {
+      "selector": "#userNavbarDropdownMenuLink + .dropdown-menu",
+      "title": "User menu",
+      "bullets": [
+        "Opens within the screen edges."
+      ],
+      "target": {
+        "x": 20.0,
+        "y": 100.0,
+        "width": 445.0,
+        "height": 360.0,
+        "right": 465.0,
+        "bottom": 460.0,
+        "center_x": 242.5,
+        "center_y": 280.0
+      },
+      "avoid": {
+        "x": 20.0,
+        "y": 100.0,
+        "width": 445.0,
+        "height": 360.0,
+        "right": 465.0,
+        "bottom": 460.0,
+        "center_x": 242.5,
+        "center_y": 280.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 480.0,
+        "width": 270.0,
+        "height": 132,
+        "score": 797.0
+      }
+    }
+  ]
+}

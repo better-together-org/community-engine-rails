@@ -6,8 +6,8 @@ RSpec.describe BetterTogether::SitemapRefreshScanJob do
   let!(:host_platform) do
     BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host, :public)
   end
-  let!(:tenant_platform) { create(:better_together_platform, host: false, external: false) }
-  let!(:external_platform) { create(:better_together_platform, :external) }
+  let!(:tenant_platform) { create(:better_together_platform, host: false, locality: 'local') }
+  let!(:external_platform) { create(:better_together_platform, :remote) }
 
   it 'uses the maintenance queue' do
     expect(described_class.new.queue_name).to eq('maintenance')

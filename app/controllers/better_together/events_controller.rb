@@ -19,9 +19,8 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
-    # rubocop:todo Lint/CopDirectiveSyntax
+    # rubocop:todo-next Lint/CopDirectiveSyntax
     prepend_before_action :set_resource_instance, only: %i[show edit update destroy ics]
-    # rubocop:enable Lint/CopDirectiveSyntax
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
@@ -180,7 +179,7 @@ module BetterTogether
       @invitations = BetterTogether::EventInvitation.where(invitable: @event).order(:status, :created_at)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def build_event_hosts
       # Build from params if host_id and host_type are provided (e.g., from community/partner/venue)
       if params[:host_id].present? && params[:host_type].present? && event_host_class
@@ -201,7 +200,6 @@ module BetterTogether
       person.reload if person&.persisted?
       resource_instance.event_hosts.build(host: person)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def event_host_class
       param_type = params[:host_type]
@@ -339,7 +337,7 @@ module BetterTogether
     end
 
     def handle_valid_invitation_token(token)
-      invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+      invitation = ::BetterTogether::EventInvitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       return render_not_found_for_mismatched_invitation unless invitation&.invitable.present?
 
       event = load_event_safely
@@ -354,7 +352,7 @@ module BetterTogether
     end
 
     def load_event_safely
-      @event || resource_class.friendly.find(params[:id])
+      @event || resource_class.friendly_find_in_platform(params[:id])
     rescue ActiveRecord::RecordNotFound
       nil
     end
@@ -382,11 +380,21 @@ module BetterTogether
     # events / events on another platform).
     def handle_resource_not_found
       return super if current_user.present? || current_robot.present?
+      return super if unknown_invitation_token_present?
 
       event = platform_scoped_event_ignoring_privacy
       return super unless event
 
       redirect_to new_user_session_path(locale: I18n.locale)
+    end
+
+    # On a private platform a token that matches no invitation gets the plain 404, not a sign-in prompt.
+    def unknown_invitation_token_present?
+      platform = Current.platform || Current.host_platform
+      return false if platform.nil? || platform.privacy_public?
+
+      token = extract_invitation_token_for_privacy
+      token.present? && find_any_invitation_by_token(token).blank?
     end
 
     def platform_scoped_event_ignoring_privacy
@@ -398,7 +406,7 @@ module BetterTogether
       nil
     end
 
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       set_resource_instance
       return if performed? # Exit early if 404 was already rendered
@@ -434,7 +442,6 @@ module BetterTogether
         redirect_to @event, alert: attendance.errors.full_messages.to_sentence
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # Override base controller method to add performance optimizations
     def set_resource_instance
@@ -449,7 +456,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/AbcSize
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def preload_event_associations! # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize
       return unless @event
 
@@ -481,7 +488,6 @@ module BetterTogether
 
       self
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
 
     # Process recurrence_attributes from form and convert to IceCube rule

@@ -1,0 +1,44 @@
+<%= form_with(model: [@platform, redirect], url: (redirect.persisted? ? platform_redirect_path(@platform, redirect) : platform_redirects_path(@platform)),
+              class: 'form', id: dom_id(redirect, 'form')) do |form| %>
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: redirect %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :from_path, t('.from_path_label'), for: 'redirect_from_path', class: 'form-label' %>
+    <%= form.text_field :from_path, id: 'redirect_from_path', class: 'form-control', required: true, placeholder: '/old/page.html' %>
+    <div class="form-text"><%= t('.from_path_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :to_path, t('.to_path_label'), for: 'redirect_to_path', class: 'form-label' %>
+    <%= form.text_field :to_path, id: 'redirect_to_path', class: 'form-control', placeholder: '/en/new-page' %>
+    <div class="form-text"><%= t('.to_path_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, t('.status_label'), for: 'redirect_status', class: 'form-label' %>
+    <%= form.select :status, ::BetterTogether::Redirect::STATUSES.map { |code| [t(".statuses.s#{code}"), code] },
+                    {}, id: 'redirect_status', class: 'form-select' %>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= form.check_box :preserve_query, id: 'redirect_preserve_query', class: 'form-check-input' %>
+    <%= form.label :preserve_query, t('.preserve_query_label'), for: 'redirect_preserve_query', class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= form.check_box :active, id: 'redirect_active', class: 'form-check-input' %>
+    <%= form.label :active, t('.active_label'), for: 'redirect_active', class: 'form-check-label' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :note, t('.note_label'), for: 'redirect_note', class: 'form-label' %>
+    <%= form.text_area :note, id: 'redirect_note', rows: 2, class: 'form-control' %>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <%= form.submit t(redirect.persisted? ? '.update_btn' : '.create_btn'), id: 'redirect-submit-btn', class: 'btn btn-primary' %>
+    <%= link_to t('.cancel'), platform_redirects_path(@platform), id: 'redirect-cancel-btn', class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

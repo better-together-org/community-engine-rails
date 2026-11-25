@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::Github do
   let(:person) { user.person }
   let(:github_platform) do
     BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |platform|
-      platform.external = true
+      platform.locality = 'remote'
       platform.host = false
       platform.name = 'GitHub'
       platform.url = 'https://github.com'
@@ -31,7 +31,7 @@ RSpec.describe BetterTogether::Github do
 
     it 'raises ArgumentError for non-GitHub integration' do
       facebook_platform = BetterTogether::Platform.find_or_create_by!(identifier: 'facebook') do |platform|
-        platform.external = true
+        platform.locality = 'remote'
         platform.host = false
         platform.name = 'Facebook'
         platform.url = 'https://facebook.com'

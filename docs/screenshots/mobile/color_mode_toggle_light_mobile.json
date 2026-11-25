@@ -1,0 +1,48 @@
+{
+  "name": "color_mode_toggle_light_mobile",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "color_mode_toggle",
+  "flow": "color_mode_toggle_light_mobile",
+  "source_spec": "./spec/docs_screenshots/better_together/color_mode_toggle_spec.rb",
+  "callouts": [
+    {
+      "selector": "#color-mode-toggle",
+      "title": "Colour mode",
+      "bullets": [
+        "One button, current appearance shown."
+      ],
+      "target": {
+        "x": 369.828125,
+        "y": 11.0,
+        "width": 44.0,
+        "height": 44.0,
+        "right": 413.828125,
+        "bottom": 55.0,
+        "center_x": 391.828125,
+        "center_y": 33.0
+      },
+      "avoid": {
+        "x": 369.828125,
+        "y": 11.0,
+        "width": 44.0,
+        "height": 44.0,
+        "right": 413.828125,
+        "bottom": 55.0,
+        "center_x": 391.828125,
+        "center_y": 33.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 206.0,
+        "y": 75.0,
+        "width": 270.0,
+        "height": 158,
+        "score": 1202.0
+      }
+    }
+  ]
+}

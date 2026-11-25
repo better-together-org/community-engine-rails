@@ -1,0 +1,48 @@
+{
+  "name": "weather_management_env_kill_switch",
+  "device": "desktop",
+  "url": "/en/host/weather",
+  "title": "Weather | Test Host Community",
+  "locale": "en",
+  "role": "host_steward",
+  "feature_set": "weather_management",
+  "flow": "env_kill_switch",
+  "source_spec": "./spec/docs_screenshots/better_together/weather_management_spec.rb",
+  "callouts": [
+    {
+      "selector": "#weather-env-kill-switch-notice",
+      "title": "Server setting wins",
+      "bullets": [
+        "The server environment setting turns weather off and locks the switch."
+      ],
+      "target": {
+        "x": 431.0,
+        "y": 413.796875,
+        "width": 908.0,
+        "height": 82.0,
+        "right": 1339.0,
+        "bottom": 495.796875,
+        "center_x": 885.0,
+        "center_y": 454.796875
+      },
+      "avoid": {
+        "x": 431.0,
+        "y": 413.796875,
+        "width": 908.0,
+        "height": 82.0,
+        "right": 1339.0,
+        "bottom": 495.796875,
+        "center_x": 885.0,
+        "center_y": 454.796875
+      },
+      "placement": {
+        "side": "below",
+        "x": 695.0,
+        "y": 515.8,
+        "width": 380,
+        "height": 158,
+        "score": 961.203125
+      }
+    }
+  ]
+}

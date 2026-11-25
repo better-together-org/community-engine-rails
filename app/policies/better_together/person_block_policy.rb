@@ -25,6 +25,11 @@ module BetterTogether
       !blocked_user_is_platform_manager?
     end
 
+    # Blocks are private to the blocker; nobody else reads them.
+    def show?
+      user.present? && record.blocker == agent
+    end
+
     def destroy?
       user.present? && record.blocker == agent
     end

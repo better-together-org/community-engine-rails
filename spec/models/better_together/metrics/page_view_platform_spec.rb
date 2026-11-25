@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/SpecFilePathFormat, RSpec/DescribeMethod
+# rubocop:disable-next RSpec/SpecFilePathFormat, RSpec/DescribeMethod
 RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking', :skip_host_setup do
   let(:platform) do
     BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
@@ -49,4 +49,3 @@ RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking', :skip
     end
   end
 end
-# rubocop:enable RSpec/SpecFilePathFormat, RSpec/DescribeMethod

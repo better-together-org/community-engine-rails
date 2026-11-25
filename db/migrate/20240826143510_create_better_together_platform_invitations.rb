@@ -51,13 +51,13 @@ class CreateBetterTogetherPlatformInvitations < ActiveRecord::Migration[7.1]
 
       t.bt_locale('better_together_platform_invitations')
 
-      t.string  :token,
-                limit: 24,
-                null: false,
-                index: {
-                  name: 'platform_invitations_by_token',
-                  unique: true
-                }
+      t.string :token,
+               limit: 24,
+               null: false,
+               index: {
+                 name: 'platform_invitations_by_token',
+                 unique: true
+               }
 
       t.datetime :valid_from,
                  null: false,

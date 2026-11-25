@@ -25,6 +25,18 @@ RSpec.describe 'Content Blocks Resource Search' do
         expect(json.map { |r| r['value'] }).to include(community.id.to_s)
       end
 
+      it 'lists image blocks by caption for the gallery picker' do
+        image = create(:better_together_content_image, privacy: 'public', caption: 'Picker caption')
+        image.media.attach(io: File.open(BetterTogether::Engine.root.join('app/assets/images/better_together/unsplash-community-1.jpeg')),
+                           filename: 'a.jpg', content_type: 'image/jpeg')
+        get better_together.resource_search_content_blocks_path(
+          resource_class: 'BetterTogether::Content::Image', locale: I18n.default_locale
+        )
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to include('value' => image.id.to_s, 'text' => 'Picker caption')
+      end
+
       it 'filters by search term' do
         create(:better_together_community, name: 'Matching Community', privacy: :public)
         create(:better_together_community, name: 'Other Community', privacy: :public)

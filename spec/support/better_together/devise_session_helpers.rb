@@ -10,7 +10,7 @@ module BetterTogether # :nodoc:
     include BetterTogether::Engine.routes.url_helpers
 
     # Setup or update a single host platform and return a platform-steward user
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def configure_host_platform
       # Reuse existing host platform if present, don't try to create a new one
       # Use find_or_create_by with rescue to handle race conditions in parallel tests
@@ -58,11 +58,11 @@ module BetterTogether # :nodoc:
       platform_steward.build_person(name: 'Platform Steward', identifier: 'manager-example-test') unless platform_steward.person
       platform_steward.save! if platform_steward.new_record? || platform_steward.changed? || platform_steward.person&.changed?
 
-      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+      platform_steward_role = HostRoles.find('platform_steward')
       unless platform_steward_role
         BetterTogether::AccessControlBuilder.seed_data
-        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                                BetterTogether::Role.find_by(identifier: 'platform_manager')
+        platform_steward_role = HostRoles.find('platform_steward') ||
+                                HostRoles.find('platform_manager')
       end
 
       if platform_steward_role
@@ -74,7 +74,6 @@ module BetterTogether # :nodoc:
 
       host_platform
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def capybara_login_as_platform_steward
       capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')

@@ -30,7 +30,7 @@ x-app-shared: &app-shared
     DB_PASSWORD: ${DB_PASSWORD:-postgres}
     CE_WORKTREE_DB_SUFFIX: ${CE_WORKTREE_DB_SUFFIX:-}
     # prspec worker count; databases for N workers come from `WORKERS=N bin/parallel-setup`
-    WORKERS: ${WORKERS:-4}
+    WORKERS: ${WORKERS:-3}
     HOME: /tmp
     SEARCH_BACKEND: ${SEARCH_BACKEND:-pg_search}
     REDIS_URL: ${REDIS_URL:-redis://redis:6379}
@@ -43,6 +43,9 @@ x-app-shared: &app-shared
     - redis-rack-attack
   # Run as the host user so files written to the bind mount (log, tmp, coverage) are not root-owned.
   user: "${DC_UID:-1000}:${DC_GID:-1000}"
+  # Keep a test run from taking the whole host: override with CE_TEST_CPUS / CE_TEST_MEM_LIMIT.
+  cpus: ${CE_TEST_CPUS:-4}
+  mem_limit: ${CE_TEST_MEM_LIMIT:-8g}
 
 services:
   app: &app

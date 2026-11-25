@@ -109,7 +109,7 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
-    # rubocop:todo Metrics/CyclomaticComplexity
+    # rubocop:todo-next Metrics/CyclomaticComplexity
     def notify_added_to_page # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       return unless authorable.is_a?(BetterTogether::Page)
       return unless author_role?
@@ -129,12 +129,11 @@ module BetterTogether
               actor_name: actor&.name)
         .deliver_later(author)
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     # rubocop:enable Metrics/AbcSize
-    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo-next Metrics/MethodLength
     def notify_removed_from_page # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return unless authorable.is_a?(BetterTogether::Page)
       return unless author_role?
@@ -155,6 +154,5 @@ module BetterTogether
               actor_name: actor&.name)
         .deliver_later(author)
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

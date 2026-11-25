@@ -11,7 +11,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 > **Note**: This file complements `.github/copilot-instructions.md`. While that file focuses on *what* to build and *how* to structure code, this file focuses on *how* to run, test, and validate your changes.
 
 ## Project
-- Ruby: 3.4.12 (installed via rbenv in setup)
+- Ruby: 3.4.13 (installed via rbenv in setup)
 - Rails: 8.1 (gemspec supports `>= 7.2, < 8.2`)
 - Node: 20
 - DB: PostgreSQL + PostGIS
@@ -19,7 +19,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Test app: `spec/dummy`
 
 ## Setup
-- Environment runs a setup script that installs Ruby 3.4.12, Node 20, and Postgres + PostGIS, then prepares databases.
+- Environment runs a setup script that installs Ruby 3.4.13, Node 20, and Postgres + PostGIS, then prepares databases.
 - **Host Ruby**: `bin/install-ruby-version` bootstraps the host toolchain — rbenv, the `ruby-build` and `rbenv-gemset` plugins, and the Ruby pinned in `.ruby-version` (refreshing the `ruby-build` definition list if needed). Idempotent; run it if `ruby`/`bundle` on the host error with `rbenv: version '...' is not installed`.
 - **Docker Environment**: All commands requiring database access must use `bin/dc-run` to execute within the containerized environment.
 - **Cloud agent sessions** (Claude Code on the web / GitHub-triggered runs): the `bin/dc-*` workflow can't build its image there. Use `bin/cloud-session-env` (`setup`, then `run <cmd>` in place of `bin/dc-run`, `db-setup` in place of `bin/parallel-setup`, `diagrams` in place of `bin/export_schema_diagrams`). See [`docs/development/cloud_session_environment.md`](docs/development/cloud_session_environment.md) for the reasons and the spec groups that fail there for environmental reasons.
@@ -51,7 +51,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ### Test Execution Guidelines (CRITICAL)
 - **All CI failures are the agent's responsibility.** There is no such thing as a "pre-existing" or "unrelated" failure. If a test fails on your branch, fix it before declaring the task complete — regardless of when or how the failure was introduced.
 - **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
-- **Full suite takes about 9 minutes on a 12-core host (the worker count defaults to 8 there; override with `WORKERS=N`), about 15 minutes with 4 workers** - running it prematurely wastes time and resources; see `docs/development/test_profiling.md`
+- **Full suite takes about 9 minutes on a 12-core host (the worker count defaults to 3 there to protect the host; override with `WORKERS=N`), about 15 minutes with 4 workers** - running it prematurely wastes time and resources; see `docs/development/test_profiling.md`
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
 - **After any DB schema change, run `bin/parallel-setup`**: This recreates all parallel test databases (`community_engine_test`, `test2`, `test3`, `test4`). Without this, `prspec` workers will hit `PG::UndefinedTable` errors. Schema changes include: new migrations, `db:drop`/`db:create`, `db:schema:load`, or updates to `spec/dummy/db/schema.rb`.
 - **Test execution workflow**:
@@ -169,6 +169,14 @@ Required elements and their patterns:
 or other structural pseudo-selectors. Always target a stable `id` or semantic `class`. If the target
 element lacks one, add it to the view first.
 
+## Access Contract Updates Are Required (CRITICAL)
+
+- **Every change that alters an access-control assumption or its implementation for a subsystem surface updates that subsystem's access contract in the same PR.** Triggers: a Pundit policy or `Scope#resolve`, a role, resource permission or seed packet, a controller `authorize`/`policy_scope`/`skip_authorization`, an API resource, MCP tool, job or notifier that reads or writes the subsystem's records, a new private, community-scoped, personal or user-created model or record state.
+- Procedure: edit `config/access_contracts/<subsystem>.yml` first, update the probe in `spec/support/access_contract/resources.rb`, regenerate the snapshot, docs and decision-tree diagrams (`docs/developers/access_contracts.md`), and keep `spec/access_contract` green. Never hand-edit the snapshot or generated pages.
+- A subsystem with no contract yet gets one in the same change that touches its access. Red drift means the contract or the policy is wrong; ask the maintainer which, do not silence it.
+- The privacy rule governs every cell: operate, safety review and disclose are separate; no standing role reads private content or personal data; break-glass is a separate audited grant.
+- Fill the `Access contract` section of the PR template, or write `access contract: unchanged because <reason>`. See `skills/ce-access-contract` in management-tool for the full workflow.
+
 ## Screenshots And Diagrams Are Required (CRITICAL)
 
 - **Every new or modified view** (ERB/HAML, partial, CSS, or JS that changes rendering) ships screenshots in the same PR: a `spec/docs_screenshots/better_together/<feature>_spec.rb` capturing desktop and mobile, annotated and plain, plus stable DOM ids and a `spec/dom_contracts` spec. Capture with `bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec <spec>'`.
@@ -280,7 +288,8 @@ element lacks one, add it to the view first.
 
 ## Session Audit And Worktree Bootstrap
 - Start each agent session with `./scripts/session_command_log.sh init`.
-- Before mutating work, run `./scripts/session_worktree.sh ensure --repo . --agent <codex|claude|copilot|local> --session-id "${CODEX_THREAD_ID:-$(date -u +%Y%m%dT%H%M%SZ)}" --storage-mode local`.
+- Before mutating work, run `/home/rob/bts-cloud/n8n/management-tool/scripts/session_worktree.sh ensure --repo . --agent <codex|claude|copilot|local> --session-id "${CODEX_THREAD_ID:-$(date -u +%Y%m%dT%H%M%SZ)}" --storage-mode local`.
+- Worktrees for every BTS repo live only in `/home/rob/bts-cloud/n8n/management-tool/tmp/worktrees/` (created by the management-tool script above, with `--repo .` pointing at this repo). Never create worktrees under `<repo>/tmp/worktrees`, `<repo>/worktrees`, `.claude/worktrees` or as sibling directories.
 - Run consequential commands through `./scripts/session_command_log.sh run --intent "<intent>" -- <command>`.
 - Session command logs and worktree metadata must remain anchored in the repository's main `logs/sessions/` directory, even when the current shell is inside a linked worktree.
 

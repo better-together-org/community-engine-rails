@@ -179,6 +179,17 @@ timeline
 - Sidebar nav: `belongs_to :sidebar_nav, class_name: BetterTogether::NavigationArea, optional: true`.
 - Slug: derived from title; slashes allowed (parameterize disabled).
 
+### Feature image and title rule
+- `Page#feature_image` is one attached image (JPEG, PNG, WebP, GIF). It is the page banner and the link-preview picture.
+- Share image order: feature image, then the first hero block background (deprecated fallback, removed after one release), then the platform logo.
+- Title rule, in `Page#title_placement(first_block)` and `pages/show`:
+  - First visible block is a hero: the hero heading is the page heading and no plain `h1` is rendered.
+  - Otherwise, with a feature image: the banner shows the image and, when `show_title` is on, the title as its heading.
+  - Otherwise: a plain `h1`, when `show_title` is on.
+  - `show_title` never affects a hero.
+  - The banner is skipped when a visible hero already shows the same image (same blob), so the picture is drawn once. This is the normal state after `CopyHeroBackgroundsToPageFeatureImage`; the hero keeps its own background and the title then follows the plain rule.
+- Host app impact: the page view no longer sets `@hero_block`, `Page#hero_block` is gone and the page cache key moved to `v6`. Host apps that override `pages/show`, call `page.hero_block`, or rely on a hero rendering above the other blocks regardless of position must render all of `@content_blocks` in order and use `page.title_placement`. Run `CopyHeroBackgroundsToPageFeatureImage` (dry run with `DRY_RUN=1`) to give existing hero pages a feature image.
+
 ## Visibility Criteria
 - Privacy: `privacy` enum (public/private). Policy scopes enforce access (e.g., private requires permission/auth).
 - Publishing:
@@ -191,7 +202,7 @@ timeline
 
 ## Blocks
 - Types under `BetterTogether::Content`:
-  - Hero: optional page hero with background image.
+  - Hero: prominent header block with optional background image. It renders in position order like any other block.
   - RichText: ActionText content (localized) with `indexed_localized_content` for search.
   - Image / Html / Css / Template: ancillary content types for sections and decoration.
   - Iframe / Video: CSP-aware embed blocks for approved external content.

@@ -28,7 +28,7 @@ module BetterTogether
     private
 
     def set_community
-      @community = BetterTogether::Community.friendly.find(params[:community_id])
+      @community = BetterTogether::Community.friendly_find_in_platform(params[:community_id])
     end
 
     def authorize_community_admin!

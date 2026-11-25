@@ -153,7 +153,7 @@ module BetterTogether
       end
 
       it 'does not seed Leaflet tile origins for external platforms' do
-        external_platform = create(:better_together_platform, :external)
+        external_platform = create(:better_together_platform, :remote)
         expect(external_platform.csp_img_src).not_to include('https://*.tile.openstreetmap.org',
                                                              'https://tile.openstreetmap.org',
                                                              'https://server.arcgisonline.com')

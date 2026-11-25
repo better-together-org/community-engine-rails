@@ -1,0 +1,29 @@
+<% if color_mode_enabled? %>
+  <% person = theme_person %>
+  <% scope = 'better_together.color_mode' %>
+  <li id="color-mode-toggle" class="nav-item" data-controller="better_together--color-mode"
+      <% if person %>data-better_together--color-mode-save-url-value="<%= better_together.person_path(person, locale: I18n.locale) %>"<% end %>
+      data-better_together--color-mode-announce-light-value="<%= t("#{scope}.announce.light") %>"
+      data-better_together--color-mode-announce-dark-value="<%= t("#{scope}.announce.dark") %>"
+      data-better_together--color-mode-label-to-light-value="<%= t("#{scope}.switch_to_light") %>"
+      data-better_together--color-mode-label-to-dark-value="<%= t("#{scope}.switch_to_dark") %>">
+    <style>
+      #color-mode-toggle .color-mode-option { min-width: 44px; min-height: 44px; color: inherit; border: 1px solid transparent; background: transparent; }
+      #color-mode-toggle .color-mode-option:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+      #color-mode-toggle .color-mode-option:hover { border-color: currentColor; }
+      #color-mode-toggle .color-mode-icon-dark { display: none; }
+      [data-bs-theme="dark"] #color-mode-toggle .color-mode-icon-light { display: none; }
+      [data-bs-theme="dark"] #color-mode-toggle .color-mode-icon-dark { display: inline-block; }
+    </style>
+    <%# One button showing the appearance in use (sun for light, moon for dark). Auto follows the device until the
+        first click; Preferences can set auto again. %>
+    <button type="button" class="btn color-mode-option" id="color-mode-button"
+            data-better_together--color-mode-target="button" data-action="better_together--color-mode#toggle"
+            aria-label="<%= t("#{scope}.switch_to_dark") %>" title="<%= t("#{scope}.switch_to_dark") %>">
+      <i class="fas fa-sun color-mode-icon-light" aria-hidden="true"></i>
+      <i class="fas fa-moon color-mode-icon-dark" aria-hidden="true"></i>
+    </button>
+    <span id="color-mode-status" class="visually-hidden" role="status" aria-live="polite"
+          data-better_together--color-mode-target="status"></span>
+  </li>
+<% end %>
