@@ -1,0 +1,48 @@
+{
+  "name": "billing_catalog_product",
+  "device": "mobile",
+  "url": "/en/billing/catalog",
+  "title": "Plans | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "billing_products",
+  "flow": "billing_catalog_product",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_products_spec.rb",
+  "callouts": [
+    {
+      "selector": "#catalog_billing_product_8f144d25-5b8c-423e-8387-5737a2b9a202",
+      "title": "Price and a button that starts checkout",
+      "bullets": [
+        "Price and a button that starts checkout"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 281.671875,
+        "width": 476.0,
+        "height": 186.28125,
+        "right": 488.0,
+        "bottom": 467.953125,
+        "center_x": 250.0,
+        "center_y": 374.8125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 281.671875,
+        "width": 476.0,
+        "height": 186.28125,
+        "right": 488.0,
+        "bottom": 467.953125,
+        "center_x": 250.0,
+        "center_y": 374.8125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 487.95,
+        "width": 270.0,
+        "height": 196,
+        "score": 789.046875
+      }
+    }
+  ]
+}

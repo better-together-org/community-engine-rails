@@ -19,6 +19,10 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PLAN_ADD_ONS : "platform / platform_id"
   EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "plan / plan_id"
   EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "add_on / add_on_id"
+  EXT_PLATFORM ||--o{ BILLING_PRICES : "platform / platform_id"
+  BILLING_PRODUCTS ||--o{ BILLING_PRICES : "product / product_id"
+  EXT_PLATFORM ||--o{ BILLING_PRODUCTS : "platform / platform_id"
+  BILLING_TAX_CATEGORIES o|--o{ BILLING_PRODUCTS : "tax_category / tax_category_id"
   EXT_PLATFORM ||--o{ BILLING_PURCHASE_REQUIREMENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_REFUND_REQUESTS : "platform / platform_id"
   EXT_BILLING_ORDER ||--o{ BILLING_REFUND_REQUESTS : "order / order_id"
@@ -203,6 +207,29 @@ erDiagram
     add_on_id uuid
     plan_id uuid
     platform_id uuid
+  }
+
+  BILLING_PRICES {
+    processor_price_id string
+    platform_id uuid
+    product_id uuid
+    currency string
+    active boolean
+    amount_cents integer
+    archived_at datetime
+  }
+
+  BILLING_PRODUCTS {
+    processor_product_id string
+    platform_id uuid
+    seller_id uuid
+    tax_category_id uuid
+    identifier string
+    lifetime string
+    processor string
+    seller_type string
+    term_unit string
+    type string
   }
 
   BILLING_PURCHASE_REQUIREMENTS {

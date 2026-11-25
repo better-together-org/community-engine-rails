@@ -1,0 +1,12 @@
+---
+title: Products in the catalog
+audience:
+- end_user
+journey_step: As a visitor I see a product and its price.
+callouts:
+- :id: product
+  :title: Price and a button that starts checkout
+  :description: Price and a button that starts checkout
+accessibility_notes: Every field has a label; each section is labelled by its heading.
+slug: billing_catalog_product
+device: mobile

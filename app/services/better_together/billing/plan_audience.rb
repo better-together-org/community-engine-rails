@@ -18,11 +18,11 @@ module BetterTogether
         @plan = plan
       end
 
-      def terms = plan.platform.billing_subscription_terms.where(plan_id: plan.id)
+      # A product is only bought, never subscribed to; its buyers are those whose order has a line for one of its prices.
+      def terms = plan.is_a?(Plan) ? plan.platform.billing_subscription_terms.where(plan_id: plan.id) : SubscriptionTerm.none
 
       def paid_orders
-        plan.platform.billing_orders.where(status: PAID)
-            .where(id: LineItem.where(purchasable_type: Plan.name, purchasable_id: plan.id).select(:order_id))
+        plan.platform.billing_orders.where(status: PAID).where(id: LineItem.where(purchasable_type:, purchasable_id:).select(:order_id))
       end
 
       def count = terms.count + paid_orders.count
@@ -30,6 +30,9 @@ module BetterTogether
       private
 
       attr_reader :plan
+
+      def purchasable_type = plan.is_a?(Plan) ? Plan.name : Price.name
+      def purchasable_id = plan.is_a?(Plan) ? plan.id : plan.prices.select(:id)
     end
   end
 end

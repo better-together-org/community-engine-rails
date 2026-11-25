@@ -990,6 +990,7 @@ fr:
           month: "%{price} par mois"
           once: "%{price}, une fois"
           year: "%{price} par an"
+        products_heading: Aussi disponible
         subscribe: S’abonner
         title: Forfaits
       checkout:
@@ -1044,6 +1045,10 @@ fr:
           pour payer cette somme maintenant. Le mode choisi ci-dessus paie le reste.
         place_order: Passer la commande
         placed: Votre commande a été passée.
+        quantity: Combien
+        quantity_line:
+          one: "%{count} article"
+          other: "%{count} articles"
         renew_with: Renouveler avec
         renew_with_default: Le mode qui paie la plus grande part
         renew_with_hint: Chaque facture de renouvellement sera payée ainsi. Vous pouvez
@@ -1820,6 +1825,11 @@ fr:
         place_community: la communauté %{name}
         place_platform: La plateforme
         place_unknown: une communauté qui n’existe plus
+        product_intro: Les personnes qui achètent ce produit obtiennent ceci lorsque
+          la commande est payée. En cas de remboursement, ou à la fin d’une durée
+          fixe, ce que le produit a donné est retiré ; rien de ce qu’elles ont créé
+          n’est supprimé.
+        product_title: Ce que comprend ce produit
         refused: Cela n’a pas pu être ajouté. Vérifiez les choix ; un rôle qui peut
           gérer des éléments ne peut pas être donné par un forfait.
         remove: Retirer
@@ -1988,6 +1998,27 @@ fr:
         toggle_deactivate: Desactiver
         update_submit: Mettre a jour le plan
         updated: Plan de facturation mis a jour avec succes.
+      prices:
+        archive: Retirer de la vente
+        archive_confirm: Retirer ce prix de la vente ? Les commandes déjà passées
+          le conservent.
+        archived: Le prix a été retiré de la vente.
+        create_submit: Ajouter le prix
+        created: Le prix a été ajouté.
+        field_amount: Montant
+        field_currency: Devise
+        field_label: Libellé
+        field_label_hint: Facultatif. Affiché à côté du montant quand un produit a
+          plusieurs prix.
+        immutable_note: Un prix ne change jamais une fois ajouté. Pour facturer un
+          autre montant, ajoutez un nouveau prix et retirez l'ancien de la vente.
+        intro: Le prix payé par l'acheteur est le plus récent en vente.
+        new_price: Ajouter un prix
+        new_title: Ajouter un prix
+        none: Aucun prix pour l'instant. Ajoutez-en un pour mettre ce produit en vente.
+        status_archived: Hors vente
+        status_on_sale: En vente
+        title: Prix
       processor_settings:
         acknowledge_label: Je comprends et j'accepte ces limites.
         acknowledged_on: Vous avez accepté ces limites le %{date}.
@@ -2061,6 +2092,60 @@ fr:
         status_managed_off: Non disponible
         status_managed_on: Activé
         status_not_set_up: Non configuré
+      products:
+        create_submit: Créer le produit
+        created: Le produit a été créé.
+        edit_title: Modifier le produit
+        'false': Non
+        field_active: En vente
+        field_description: Description
+        field_identifier: Identifiant
+        field_identifier_hint: Un nom court qui ne change jamais, en minuscules, chiffres
+          et tirets bas.
+        field_lifetime: Durée
+        field_listed: Affiché dans le catalogue
+        field_name: Nom
+        field_price: Prix
+        field_restricted_to_members: Réservé aux membres
+        field_restricted_to_subscribers: Réservé aux abonnés
+        field_summary: Résumé
+        field_tax_category: Catégorie de taxe
+        field_tax_category_hint: Laissez la catégorie standard sauf si ce type de
+          produit est taxé autrement.
+        field_term_length: Pendant combien de temps
+        field_term_unit: Unité
+        identifier_placeholder: ajout_stockage
+        index_title: Produits
+        intro: Ce que vous vendez une seule fois, comme un ajout de stockage. Chaque
+          produit a des prix et indique ce que reçoit l'acheteur.
+        lifetime_fixed_term: Pour une durée fixe après le paiement
+        lifetime_fixed_term_summary: Pendant %{count} %{unit}
+        lifetime_hint: Jusqu'à utilisation dure tant que l'acheteur le garde. Pour
+          une durée fixe, cela se termine seul, et un remboursement y met fin aussitôt.
+        lifetime_legend: Durée de ce qu'il donne
+        lifetime_until_used: Jusqu'à utilisation
+        listing_legend: Où il est proposé
+        new_product: Nouveau produit
+        new_title: Nouveau produit
+        no_price: Pas encore de prix
+        none: Aucun produit pour l'instant.
+        table_caption: Produits vendus par cette plateforme
+        tax_standard: Standard
+        'true': Oui
+        unit_day:
+          one: jour
+          other: jours
+        unit_month:
+          one: mois
+          other: mois
+        unit_week:
+          one: semaine
+          other: semaines
+        unit_year:
+          one: an
+          other: ans
+        update_submit: Enregistrer le produit
+        updated: Le produit a été enregistré.
       promotions:
         activate: Activer
         always_open: Toujours
@@ -7636,6 +7721,7 @@ fr:
       not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
         dehors d'un processeur"
       not_configured: n'est pas configuré pour cette plateforme
+      not_for_until_used: ne s'applique qu'à une durée fixe
       not_found: n’a pas été trouvé(e)
       not_found_at_processor: est introuvable chez le processeur de paiement
       not_installed: n'est pas un processeur de paiement installé
@@ -7647,10 +7733,14 @@ fr:
       not_the_buyer: ne peut être faite que par l'acheteur de la commande
       nothing_to_give_back: Rien sur cette commande ne peut être remboursé ici.
       odd: doit être impair
+      one_item: doit concerner un forfait ou un produit, pas les deux
+      one_owner: doit appartenir à un forfait ou à un produit, pas aux deux
       one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
       present: doit être vide
       price_inactive: est archivé chez le processeur de paiement
+      price_is_immutable: un prix ne change jamais ; créez-en un nouveau et archivez
+        celui-ci
       public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
         confiance à toutes ses adresses
       recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
@@ -7658,6 +7748,7 @@ fr:
       required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
         de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
+      tax_category_other_platform: appartient à une autre plateforme
       too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)

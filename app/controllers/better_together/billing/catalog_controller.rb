@@ -17,6 +17,16 @@ module BetterTogether
       def index
         authorize BetterTogether::Billing::Plan, :catalog?
         @plans = catalog_plans.order(:amount_cents, :identifier)
+        @products = catalog_products.includes(:prices).order(:identifier).select(&:current_price)
+      end
+
+      # One listed product, with the price it is sold at now.
+      def product
+        @product = catalog_products.find_by(id: params[:id])
+        return skip_authorization_and_not_found unless @product
+
+        authorize @product, :catalog_show?
+        @price = @product.current_price
       end
 
       def show
@@ -31,6 +41,10 @@ module BetterTogether
       # Only what this person may see: a plan that is unlisted, or limited to an audience they are not in, is simply not there.
       def catalog_plans
         policy_scope(BetterTogether::Billing::Plan, policy_scope_class: BetterTogether::Billing::PlanPolicy::CatalogScope)
+      end
+
+      def catalog_products
+        policy_scope(BetterTogether::Billing::Product, policy_scope_class: BetterTogether::Billing::ProductPolicy::CatalogScope)
       end
 
       def skip_authorization_and_not_found

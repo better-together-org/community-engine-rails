@@ -219,6 +219,20 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::PersonLookup, Billing::TabFrameLayout, ConsentCookieSync +5
     }
+    class BetterTogether__Billing__PricesController["Billing::PricesController"] {
+      <<Controller>>
+      models: Billing::Price
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__ProductGrantsController["Billing::ProductGrantsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__ProductsController["Billing::ProductsController"] {
+      <<Controller>>
+      models: Billing::Product
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
     class BetterTogether__Billing__RefundRequestsController["Billing::RefundRequestsController"] {
       <<Controller>>
       models: Billing::RefundRequest
@@ -536,6 +550,20 @@ classDiagram
       <<Model>>
       table: better_together_billing_plan_add_ons
       concerns: Billing::ParentBound, Billing::PlatformBound
+    }
+    class BetterTogether__Billing__Price["Billing::Price"] {
+      <<Model>>
+      table: better_together_billing_prices
+      translates: label
+      concerns: Billing::MajorAmount, Billing::PlatformBound, Billing::Pricing, Billing::Purchasable +1
+      weak refs: owner: string_translations
+    }
+    class BetterTogether__Billing__Product["Billing::Product"] {
+      <<Model>>
+      table: better_together_billing_products
+      translates: description, name, summary
+      concerns: Billing::Listing, Billing::PlatformBound, Billing::SellerScoped, Translatable
+      weak refs: target: seller, owner: string_translations, owner: text_translations
     }
     class BetterTogether__Billing__PurchaseRequirement["Billing::PurchaseRequirement"] {
       <<Model>>
@@ -930,6 +958,11 @@ classDiagram
   BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderPaymentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__PricesController ..> BetterTogether__Billing__Price : manages
+  BetterTogether__Billing__PricesController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__ProductGrantsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__ProductsController ..> BetterTogether__Billing__Product : manages
+  BetterTogether__Billing__ProductsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__RefundRequestsController ..> BetterTogether__Billing__RefundRequest : manages
   BetterTogether__Billing__RefundRequestsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__SaleRefundRequestsController --|> BetterTogether__ApplicationController
@@ -1018,6 +1051,10 @@ classDiagram
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Platform : platform
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : add_on
+  BetterTogether__Billing__Price --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Price --> BetterTogether__Billing__Product : product
+  BetterTogether__Billing__Product --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Product --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__PurchaseRequirement --> BetterTogether__Platform : platform
   BetterTogether__Billing__RefundRequest --> BetterTogether__Platform : platform
   BetterTogether__Billing__RefundRequest --> BetterTogether__Billing__Order : order

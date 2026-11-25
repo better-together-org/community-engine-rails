@@ -13,7 +13,10 @@ module BetterTogether
 
       private
 
-      def platform_plan? = record.respond_to?(:plan) && record.plan.present? && record.plan.seller_id.blank?
+      # Only what the platform itself sells: a seller's plan or product cannot give roles or quotas on the platform.
+      def platform_plan?
+        record.owner.present? && record.owner.seller_id.blank?
+      end
     end
   end
 end

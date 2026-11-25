@@ -631,4 +631,12 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect(described_class.assignable_seller_types).to include('BetterTogether::Community', 'BetterTogether::Person')
     end
   end
+
+  it 'refuses a tax category that belongs to another platform' do
+    other = create(:better_together_platform, host: false, locality: 'local')
+    plan = build(:better_together_billing_plan, tax_category: create(:better_together_billing_tax_category, platform: other))
+
+    expect(plan).not_to be_valid
+    expect(plan.errors.added?(:tax_category, :tax_category_other_platform)).to be(true)
+  end
 end

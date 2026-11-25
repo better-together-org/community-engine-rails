@@ -26,6 +26,23 @@ module BetterTogether
       BetterTogether::Community.where(platform_id: billing_owner.id).order(:identifier).limit(200)
     end
 
+    # How long what a product gives lasts, in words.
+    def billing_product_lifetime(product)
+      return t('better_together.billing.products.lifetime_until_used') unless product.fixed_term?
+
+      unit = t("better_together.billing.products.unit_#{product.term_unit}", count: product.term_length)
+      t('better_together.billing.products.lifetime_fixed_term_summary', count: product.term_length, unit:)
+    end
+
+    # Where a plan's or a product's grants are added and changed.
+    def billing_grants_path(owner, **)
+      owner.is_a?(BetterTogether::Billing::Plan) ? billing_plan_plan_grants_path(owner, **) : billing_product_grants_path(owner, **)
+    end
+
+    def billing_grant_path(owner, grant, **)
+      owner.is_a?(BetterTogether::Billing::Plan) ? billing_plan_plan_grant_path(owner, grant, **) : billing_product_grant_path(owner, grant, **)
+    end
+
     # One line saying what a plan grant gives, in words.
     def billing_plan_grant_summary(grant)
       parameters = grant.parameters

@@ -1,0 +1,15 @@
+---
+title: A product
+audience:
+- platform_organizer
+journey_step: As a steward I read a product, its prices and what a buyer gets.
+callouts:
+- :id: prices
+  :title: 'Prices: add one, or take one off sale'
+  :description: 'Prices: add one, or take one off sale'
+- :id: grants
+  :title: What a buyer gets
+  :description: What a buyer gets
+accessibility_notes: Every field has a label; each section is labelled by its heading.
+slug: billing_product_show
+device: mobile

@@ -1,0 +1,12 @@
+---
+title: Add a price
+audience:
+- platform_organizer
+journey_step: As a steward I add a price; the old one is taken off sale.
+callouts:
+- :id: note
+  :title: A price never changes once it is added
+  :description: A price never changes once it is added
+accessibility_notes: Every field has a label; each section is labelled by its heading.
+slug: billing_price_form
+device: desktop

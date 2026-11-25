@@ -11,7 +11,7 @@
       <% term = @terms.find { |candidate| candidate.pay_subscription_id == entitlement.pay_subscription_id } %>
       <section id="<%= dom_id(entitlement, :hosting) %>" class="card mb-4" aria-labelledby="<%= dom_id(entitlement, :hosting_heading) %>">
         <div class="card-header d-flex justify-content-between align-items-baseline">
-          <h2 id="<%= dom_id(entitlement, :hosting_heading) %>" class="h5 mb-0"><%= entitlement.plan.name %></h2>
+          <h2 id="<%= dom_id(entitlement, :hosting_heading) %>" class="h5 mb-0"><%= entitlement.item_name %></h2>
           <span><%= billing_entitlement_status_badge(entitlement) %></span>
         </div>
         <div class="card-body">
