@@ -15,7 +15,7 @@ module BetterTogether
       @roles_by_resource_type = @roles.group_by(&:resource_type)
       @rbac_nav_counts = {
         roles: @roles.size,
-        resource_permissions: ::BetterTogether::ResourcePermission.count
+        resource_permissions: policy_scope(::BetterTogether::ResourcePermission).count
       }
       @available_view_types = %w[card table]
       @view_type = view_preference('index_view', default: 'card', allowed: @available_view_types)
