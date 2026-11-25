@@ -5,6 +5,14 @@ require 'rswag/ui'
 require 'rswag/api'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  concern :membership_lifecycle do
+    member do
+      patch :end_membership
+      patch :suspend
+      patch :reinstate
+    end
+  end
+
   # Short link public redirect — no locale prefix keeps URLs short
   get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
 
@@ -167,7 +175,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
 
-          resources :person_community_memberships, only: %i[create destroy]
+          resources :person_community_memberships, only: %i[create destroy], concerns: :membership_lifecycle do
+            delete :leave, on: :member
+          end
 
           # Community-scoped integrations (accessible to community admins)
           resources :webhook_endpoints,
@@ -556,7 +566,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :feature_access_grants, except: :show
               resources :quota_grants, except: :show
               resources :robots, only: %i[index new create edit update destroy]
-              resources :person_platform_memberships
+              resources :person_platform_memberships, concerns: :membership_lifecycle
               resources :platform_invitations, only: %i[create destroy] do
                 put :resend, on: :member
               end

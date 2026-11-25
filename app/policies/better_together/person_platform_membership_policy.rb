@@ -31,6 +31,20 @@ module BetterTogether
         !record.member.permitted_to?('manage_platform_roles', record.joinable)
     end
 
+    # Ending and suspending keep the row as history; the same people who may remove a member may do both.
+    # Stewards can be ended or suspended by another steward; the last steward is protected by the model.
+    def end?
+      user.present? && !me? && can_manage_platform_members?
+    end
+
+    def suspend?
+      end?
+    end
+
+    def reinstate?
+      user.present? && !me? && can_manage_platform_members? && !record.current?
+    end
+
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless agent

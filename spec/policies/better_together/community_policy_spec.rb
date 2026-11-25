@@ -201,6 +201,25 @@ RSpec.describe BetterTogether::CommunityPolicy do
       end
     end
 
+    context 'when community is private and the membership ended by date while still marked active' do
+      let(:community) { create(:better_together_community, privacy: 'private') }
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community, member: user.person, role: member_role,
+          status: 'active', starts_at: 2.days.ago, ends_at: 1.day.ago
+        )
+      end
+
+      it 'does not allow viewing and leaves the community out of the scope', :aggregate_failures do
+        expect(policy.show?).to be false
+        resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+        expect(resolved).not_to include(community)
+      end
+    end
+
     context 'when community is private and user only has a pending membership' do
       let(:community) { create(:better_together_community, privacy: 'private') }
       let(:user) { create(:better_together_user) }

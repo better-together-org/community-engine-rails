@@ -335,8 +335,8 @@ module BetterTogether
 
     # People holding an active steward role on this platform.
     def steward_person_ids
-      person_platform_memberships.joins(:role)
-                                 .where(status: 'active', better_together_roles: { identifier: 'platform_steward' })
+      person_platform_memberships.current.joins(:role)
+                                 .where(better_together_roles: { identifier: 'platform_steward' })
                                  .distinct.pluck(:member_id)
     end
 

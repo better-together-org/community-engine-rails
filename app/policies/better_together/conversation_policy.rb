@@ -85,7 +85,11 @@ module BetterTogether
         .pluck(:member_id)
     end
 
+    # Opted-in members only hear from people who are themselves current members here. A person
+    # with no current membership can still reach stewards. A support request channel for them is planned.
     def opted_in_participants
+      return platform_people.none unless current_platform_person_ids.include?(agent.id)
+
       platform_people.where(
         'preferences @> ?', { receive_messages_from_members: true }.to_json
       )

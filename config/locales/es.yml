@@ -2618,6 +2618,53 @@ es:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: Finalizar membresía
+          leave: Salir
+          reinstate: Restablecer
+          suspend: Suspender
+        confirm_end: "¿Finalizar esta membresía? Queda en el historial y se puede
+          restablecer."
+        confirm_end_last: "¿Finalizar esta membresía? Queda en el historial y se puede
+          restablecer. Esta es la única membresía vigente de esta persona aquí. Conservará
+          su cuenta, pero perderá todo acceso que dependa de un rol y solo verá contenido
+          público."
+        confirm_leave: "¿Salir? Podrás solicitar unirte de nuevo."
+        confirm_reinstate: "¿Restablecer esta membresía? El miembro recupera el acceso."
+        confirm_remove: "¿Quitar a este miembro? Esto elimina la membresía y su historial.
+          Usa «Finalizar membresía» para conservar el historial."
+        confirm_suspend: "¿Suspender esta membresía? El miembro pierde el acceso hasta
+          que la restablezcas."
+        confirm_suspend_last: "¿Suspender esta membresía? El miembro pierde el acceso
+          hasta que la restablezcas. Esta es la única membresía vigente de esta persona
+          aquí. Conservará su cuenta, pero perderá todo acceso que dependa de un rol
+          y solo verá contenido público."
+        edit: Editar membresía
+        flash:
+          ended: Membresía finalizada.
+          left: Saliste.
+          reinstated: Membresía restablecida.
+          suspended: Membresía suspendida.
+        remove: Quitar membresía
+        remove_member: Quitar a %{name}
+        since: Desde
+        source:
+          backfill: Miembro existente
+          direct: Añadido directamente
+          entitlement: Plan o derecho
+          invitation: Invitación
+          registration: Se unió al registrarse
+          request: Solicitud de membresía
+          trusted_domain: Dominio de correo de confianza
+          wizard: Asistente de configuración
+        status:
+          current: Vigente
+          ended: Finalizada
+          pending: Pendiente
+          suspended: Suspendida
+        until: Hasta
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.
@@ -6500,7 +6547,8 @@ es:
   people:
     confirm_delete: Confirmar eliminación
   person_platform_memberships:
-    confirm_delete: "¿Estás seguro de que quieres eliminar este miembro de la plataforma?"
+    confirm_delete: "¿Quitar a este miembro de la plataforma? Esto elimina la membresía
+      y su historial. Usa «Finalizar membresía» para conservar el historial."
     edit:
       title: Editar membresía de plataforma
     form:

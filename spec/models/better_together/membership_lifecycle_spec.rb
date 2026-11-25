@@ -104,4 +104,35 @@ RSpec.describe 'Membership lifecycle' do # rubocop:disable RSpec/DescribeClass
                                                         ends_at: Time.current)
     expect(record).not_to be_valid
   end
+
+  describe 'access that follows current memberships' do
+    let(:person) { create(:better_together_person) }
+    let(:community) { create(:better_together_community) }
+    let!(:membership) do
+      BetterTogether::PersonCommunityMembership.create!(
+        member: person, joinable: community, role: BetterTogether::Role.find_by!(identifier: 'community_member'),
+        status: 'active'
+      )
+    end
+
+    it 'lets a current member host events for the community' do
+      expect(person.valid_event_host_ids).to include(community.id)
+    end
+
+    it 'stops an ended or suspended member hosting events for the community', :aggregate_failures do
+      membership.suspend!(actor: nil)
+      expect(person.valid_event_host_ids).not_to include(community.id)
+
+      membership.reinstate!(actor: nil)
+      membership.end!(actor: nil)
+      expect(person.valid_event_host_ids).not_to include(community.id)
+    end
+
+    it 'reports sole_current_membership? only while no other current row exists', :aggregate_failures do
+      expect(membership).to be_sole_current_membership
+      expect(membership.dup.tap { |row| row.role = BetterTogether::Role.find_by!(identifier: 'community_contributor') }
+                           .tap(&:save!)).not_to be_sole_current_membership
+      expect(membership.reload).not_to be_sole_current_membership
+    end
+  end
 end

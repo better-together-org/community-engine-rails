@@ -23,13 +23,24 @@ module BetterTogether
       after_update :record_lifecycle_events
       before_destroy :record_removed_event, prepend: true
 
-      scope :current, lambda {
-        now = Time.current
-        where(status: 'active')
-          .where(arel_table[:starts_at].eq(nil).or(arel_table[:starts_at].lteq(now)))
-          .where(arel_table[:ends_at].eq(nil).or(arel_table[:ends_at].gt(now)))
-      }
+      scope :current, -> { where(current_condition) }
       scope :history, -> { where(status: 'ended').or(where.not(ends_at: nil).where(arel_table[:ends_at].lteq(Time.current))) }
+    end
+
+    class_methods do
+      # The current rule as an Arel node, for subqueries and joins that cannot use the scope.
+      def current_condition
+        now = Time.current
+        arel_table[:status].eq('active').and(started_before(now)).and(not_ended_by(now))
+      end
+
+      def started_before(time)
+        arel_table[:starts_at].eq(nil).or(arel_table[:starts_at].lteq(time))
+      end
+
+      def not_ended_by(time)
+        arel_table[:ends_at].eq(nil).or(arel_table[:ends_at].gt(time))
+      end
     end
 
     # True while the membership grants anything: active, started and not past its end date.
@@ -49,6 +60,12 @@ module BetterTogether
 
     def reinstate!(actor: Current.person)
       update!(status: 'active', ends_at: nil, ended_reason: nil, lifecycle_actor: actor)
+    end
+
+    # True when ending or suspending this row would leave the member with no current membership
+    # on the same platform or community, so they keep only the public view.
+    def sole_current_membership?
+      current? && !self.class.current.where(member_id:, joinable_id:).where.not(id:).exists?
     end
 
     def last_steward?

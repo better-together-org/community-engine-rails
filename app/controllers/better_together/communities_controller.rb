@@ -335,13 +335,21 @@ module BetterTogether
       @community_quotas = @community.quotas.includes(:quota_balances)
     end
 
+    # Ended and suspended memberships are history, shown only to people who manage members.
+    def visible_community_memberships
+      memberships = @community.person_community_memberships
+      return memberships if policy(BetterTogether::PersonCommunityMembership.new(joinable: @community)).edit?
+
+      memberships.current
+    end
+
     def load_community_memberships
-      @community_memberships = @community.person_community_memberships
-                                         .includes(
-                                           :joinable,
-                                           { role: [:string_translations] },
-                                           community_role_member_includes
-                                         )
+      @community_memberships = visible_community_memberships
+                               .includes(
+                                 :joinable,
+                                 { role: [:string_translations] },
+                                 community_role_member_includes
+                               )
     end
 
     def community_role_member_includes
