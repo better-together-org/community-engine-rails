@@ -1,0 +1,48 @@
+{
+  "name": "platform_quota_defaults_no_ai_provider",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "quota_llm_availability",
+  "flow": "platform_edit_no_ai_provider",
+  "source_spec": "./spec/docs_screenshots/better_together/quota_llm_availability_spec.rb",
+  "callouts": [
+    {
+      "selector": "#quota_defaults_platform_91ef742c-8086-45dc-9890-c2fd18e24c8f",
+      "title": "No AI provider",
+      "bullets": [
+        "LLM token quotas stay hidden."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 723.59375,
+        "width": 1296.0,
+        "height": 257.1875,
+        "right": 1360.5,
+        "bottom": 980.78125,
+        "center_x": 712.5,
+        "center_y": 852.1875
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 723.59375,
+        "width": 1296.0,
+        "height": 257.1875,
+        "right": 1360.5,
+        "bottom": 980.78125,
+        "center_x": 712.5,
+        "center_y": 852.1875
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 571.59,
+        "width": 380,
+        "height": 132,
+        "score": 723.59375
+      }
+    }
+  ]
+}

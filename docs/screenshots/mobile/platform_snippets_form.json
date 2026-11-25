@@ -1,0 +1,11 @@
+{
+  "name": "platform_snippets_form",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/platform_snippets/new",
+  "title": "New snippet | Test Host Community",
+  "locale": "en",
+  "role": "platform_code_manager",
+  "feature_set": "platform_snippets",
+  "flow": "platform_snippets_form",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_snippets_spec.rb"
+}

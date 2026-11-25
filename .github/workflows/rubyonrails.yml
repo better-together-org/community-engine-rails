@@ -93,8 +93,25 @@ jobs:
           chmod +x scripts/validate_pr_evidence.sh
           scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
 
+  access_contract_guard:
+    # Blocking: a change to an access-control surface must update the access contract
+    # (config/access_contracts, spec/access_contract) or state why it is unchanged in the PR body.
+    if: github.event_name == 'pull_request'
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Write pull request body
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: printf '%s\n' "${PR_BODY}" > tmp_pr_body.md
+      - name: Check access contract was updated
+        run: bin/ci-access-contract-guard --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
+
   rspec_shard:
-    name: rspec ${{ matrix.suite }} shard ${{ matrix.shard }}/${{ matrix.total }} (3.4.12, ${{ needs.prepare.outputs.rails_version }})
+    name: rspec ${{ matrix.suite }} shard ${{ matrix.shard }}/${{ matrix.total }} (3.4.13, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
     strategy:
       # Let every shard finish so one failure still reports the rest of the suite.
@@ -142,7 +159,7 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_INITDB_ARGS: "-c max_connections=200"
         options: >-
-          --health-cmd "pg_isready -U rails"
+          --health-cmd "pg_isready -U rails -d rails_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -157,6 +174,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          show-progress: false
 
       # ruby-vips loads libvips through FFI, so only the runtime library is needed
       # (libvips-dev pulled in hundreds of MB of headers and took 4-5 minutes).
@@ -165,9 +184,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          APT="sudo apt-get -qq -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
           $APT update
-          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+          $APT install -y --no-install-recommends libvips42t64 >/dev/null || $APT install -y --no-install-recommends libvips42 >/dev/null
 
       # Test data is disposable: trade durability for speed (all three settings reload on SIGHUP).
       - name: Tune Postgres for tests
@@ -181,14 +200,14 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
 
       - name: Resolve branch-native bundle
         shell: bash
         run: |
           bundle config set deployment false
-          bundle update rails --conservative
-          bundle install --jobs 4 --retry 3
+          bundle update rails --conservative --quiet
+          bundle install --jobs 4 --retry 3 --quiet
 
       - name: Prepare parallel test databases
         run: |
@@ -240,6 +259,9 @@ jobs:
                 jq -r '.examples[] | select(.status == "failed") | "- \(.file_path):\(.line_number) \(.full_description | .[0:100]) :: \(.exception.message | split("\n")[0] | .[0:140])"' "$f" 2>/dev/null
                 jq -r '.messages[]? | select(test("error occurred")) | "- load error: \(split("\n")[1:4] | join(" "))"' "$f" 2>/dev/null
               } >> "$GITHUB_STEP_SUMMARY"
+              # Also name each failed example in the log (and as a PR annotation); the
+              # step summary alone is not exposed by the API or visible in the raw log.
+              jq -r '.examples[] | select(.status == "failed") | "::error file=\(.file_path | ltrimstr("./")),line=\(.line_number)::\(((.full_description | .[0:150] | gsub("[\r\n]"; " ")) + " :: " + ((.exception.message // "") | split("\n")[0] | .[0:200])) | gsub("%"; "%25"))"' "$f" 2>/dev/null || true
             done
             # A run that executed no examples, or hit load errors, is a hard failure even
             # when failure_count is 0 (e.g. a missing system library aborts spec loading).
@@ -273,7 +295,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-report-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.12-rails-${{ needs.prepare.outputs.rails_version }}
+          name: coverage-report-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.13-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
           include-hidden-files: true
@@ -282,7 +304,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: rspec-results-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.12-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rspec-results-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.13-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             tmp/rspec_results*.json
             tmp/flaky/
@@ -292,7 +314,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: browser-failure-artifacts-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.12-rails-${{ needs.prepare.outputs.rails_version }}
+          name: browser-failure-artifacts-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.13-rails-${{ needs.prepare.outputs.rails_version }}
           path: tmp/capybara-artifacts/
           if-no-files-found: ignore
           retention-days: 14
@@ -301,14 +323,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: rails-test-log-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.12-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rails-test-log-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.13-rails-${{ needs.prepare.outputs.rails_version }}
           path: spec/dummy/log/test.log
           if-no-files-found: warn
 
   rspec:
     # Aggregate check: keeps the historical job name so tooling and humans still see one
-    # "rspec (3.4.12, <rails>)" result for the whole suite.
-    name: rspec (3.4.12, ${{ needs.prepare.outputs.rails_version }})
+    # "rspec (3.4.13, <rails>)" result for the whole suite.
+    name: rspec (3.4.13, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, rspec_shard]
     if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-latest
@@ -351,7 +373,7 @@ jobs:
         if: always()
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
 
       - name: Merge coverage
         if: always()
@@ -367,7 +389,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: rspec-results-ruby-3.4.12-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rspec-results-ruby-3.4.13-rails-${{ needs.prepare.outputs.rails_version }}
           path: tmp/rspec_results*.json
           if-no-files-found: warn
 
@@ -402,13 +424,13 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
       - name: Resolve branch-native bundle
         shell: bash
         run: |
           bundle config set deployment false
-          bundle update rails --conservative
-          bundle install --jobs 4 --retry 3
+          bundle update rails --conservative --quiet
+          bundle install --jobs 4 --retry 3 --quiet
       - run: bundle exec rubocop --parallel
 
   security:
@@ -421,17 +443,27 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.12"
+          ruby-version: "3.4.13"
       - name: Resolve branch-native bundle
         shell: bash
         run: |
           bundle config set deployment false
-          bundle update rails --conservative
-          bundle install --jobs 4 --retry 3
+          bundle update rails --conservative --quiet
+          bundle install --jobs 4 --retry 3 --quiet
       - name: Audit dependencies
         run: bundle binstubs bundler-audit --force
       - name: Check for dependency vulnerabilities
-        run: bundle exec bundler-audit --update
+        run: |
+          # Rails 7.2 is end-of-life: its open Rails advisories are fixed only in
+          # 8.0.5.2 and 8.1.4.1, so the 7.2 lane cannot pass a strict audit. Ignore
+          # exactly those Rails advisories on 7.2.x; main and the 8.x lanes stay strict.
+          # --ignore replaces the .bundler-audit.yml list, so the Devise id from it is repeated.
+          # Remove this when the compat/rails-7.2 lane is dropped.
+          ignore_args=()
+          if [[ "${RAILS_VERSION}" == 7.2.* ]]; then
+            ignore_args=(--ignore GHSA-57hq-95w6-v4fc GHSA-2586-8ghr-69fj GHSA-2p2f-4rq4-gjwc GHSA-3f4q-8x5m-76v8 GHSA-3w93-6hmw-whh4 GHSA-5957-c7qm-m469 GHSA-68p9-83h6-5wpj GHSA-8474-xrp6-wh69 GHSA-f3w6-w445-fwh9 GHSA-gmj8-hvj3-49mw GHSA-hfr4-8rjc-97m2 GHSA-p2pm-g2h6-7j5j GHSA-r9jg-fmfx-2gv6 GHSA-rq8q-p985-fjq7 GHSA-rwvh-fw6r-pwvp GHSA-v6rj-xm57-3p59 GHSA-v924-7rp8-4mxh GHSA-wm3x-v3qw-4jh3 GHSA-x6mj-8jx9-qhqv)
+          fi
+          bundle exec bundler-audit --update "${ignore_args[@]}"
       - name: Run Brakeman security scan (fail on HIGH-confidence issues)
         run: |
           bundle exec brakeman -q -z -w2 --no-summary
@@ -444,11 +476,13 @@ jobs:
     # Stable-named required check for the compat/rails-* rulesets. The rspec
     # check name embeds the Rails version, so rulesets require this instead.
     name: ci-gate
-    needs: [prepare, rspec, rubocop, security]
+    needs: [prepare, rspec, rubocop, security, access_contract_guard]
     if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Require rspec, rubocop and security to pass
+      - name: Require rspec, rubocop, security and the access contract guard to pass
         run: |
-          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }}"
+          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }} access_contract_guard=${{ needs.access_contract_guard.result }}"
           [[ "${{ needs.rspec.result }}" == "success" && "${{ needs.rubocop.result }}" == "success" && "${{ needs.security.result }}" == "success" ]]
+          # The guard only runs on pull requests, so a skipped result is fine.
+          [[ "${{ needs.access_contract_guard.result }}" == "success" || "${{ needs.access_contract_guard.result }}" == "skipped" ]]

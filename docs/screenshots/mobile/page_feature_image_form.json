@@ -1,0 +1,49 @@
+{
+  "name": "page_feature_image_form",
+  "device": "mobile",
+  "url": "/en/pages/harbour-history/edit",
+  "title": "Edit Harbour history | Pages | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "page_feature_image",
+  "flow": "page_feature_image_form",
+  "source_spec": "./spec/docs_screenshots/better_together/page_feature_image_spec.rb",
+  "callouts": [
+    {
+      "selector": "#feature-image-fields",
+      "title": "Feature image",
+      "bullets": [
+        "Shown at the top of the page.",
+        "Also the picture used when the page is shared."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 350.390625,
+        "width": 461.0,
+        "height": 556.0,
+        "right": 473.0,
+        "bottom": 906.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 350.390625,
+        "width": 461.0,
+        "height": 556.0,
+        "right": 473.0,
+        "bottom": 906.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 926.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 350.609375
+      }
+    }
+  ]
+}

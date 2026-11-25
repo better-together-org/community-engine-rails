@@ -10,7 +10,9 @@ module BetterTogether
     include PlatformFederationStatus
     include PlatformCspConfiguration
     include PlatformCssBlockManagement
+    include PlatformContentSlots
     include PlatformMembershipDisplay
+    include PlatformWeatherSetting
     include Creatable
     include Identifier
     include Joinable
@@ -55,6 +57,8 @@ module BetterTogether
       # requests+ is additionally gated by allow_membership_requests via
       # Community#membership_requests_enabled?.
       allow_inbound_mail Boolean, default: true
+      # Whether signed-in people may pick their own theme (the colour mode choice is always theirs).
+      allow_user_themes Boolean, default: true
       contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
@@ -63,6 +67,10 @@ module BetterTogether
       oauth_issuer_url String
       search_query_analytics_enabled Boolean, default: true
       search_query_analytics_mode String, default: 'full'
+      # Platform-wide kill switch for custom code snippets.
+      snippets_enabled Boolean, default: true
+      # Host-wide settlement weather switch, read on the host platform only (see Weather.feature_enabled?).
+      weather_enabled Boolean, default: true
     end
 
     # Alias the database url column to host_url for clarity
@@ -77,7 +85,9 @@ module BetterTogether
                 in: -> { TZInfo::Timezone.all_identifiers },
                 message: '%<value>s is not a valid timezone'
               }
-    validates :external, inclusion: { in: [true, false] }
+    # Declared explicitly so the class loads while migrations that predate the column run on an empty database.
+    attribute :locality, :string, default: 'local'
+    enum :locality, { local: 'local', remote: 'remote' }, default: :local, validate: true
     validates :software_variant, inclusion: { in: SOFTWARE_VARIANTS }, allow_blank: true
     validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
     validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
@@ -89,7 +99,10 @@ module BetterTogether
     validate :oauth_issuer_url_ssrf_safe
     validate :require_publishing_agreement_for_public_network_visibility
 
+    validate :integration_settings_valid
+
     after_initialize :set_default_requires_invitation, if: :new_record?
+    after_commit :apply_quota_default_limits, on: :update, if: :saved_change_to_quota_default_limits?
     after_update :sync_host_community_privacy, if: -> { host? && saved_change_to_privacy? }
     before_validation :apply_platform_registry_defaults
 
@@ -97,31 +110,48 @@ module BetterTogether
     # @return [Array] List of permitted attributes and nested hashes
     def self.permitted_attributes
       [
-        :name, :slug, :host_url, :time_zone, :external, :protected,
+        :name, :slug, :host_url, :time_zone, :locality, :protected,
         :storage_configuration_id,
         :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
         :csp_script_src_text, :csp_connect_src_text,
-        { settings: %i[requires_invitation allow_membership_requests
+        :logo, :remove_logo, :header_banner, :remove_header_banner, :favicon, :remove_favicon, :dark_logo, :remove_dark_logo,
+        { theme: BetterTogether::PlatformThemeConfig::KEYS,
+          settings: %i[requires_invitation allow_membership_requests allow_user_themes
                        software_variant network_visibility connection_bootstrap_state
                        federation_protocol oauth_issuer_url search_query_analytics_enabled
                        search_query_analytics_mode contributors_display_visibility
-                       feature_gate_rollouts] }
+                       feature_gate_rollouts],
+          quota_default_limits: {} }
       ] + super
     end
 
-    scope :external, -> { where(external: true) }
-    scope :internal, -> { where(external: false) }
-    scope :oauth_providers, -> { external }
+    scope :oauth_providers, -> { where(type: 'BetterTogether::OauthPlatform') }
+
+    before_validation :infer_type, on: :create
 
     has_one_attached :profile_image
     has_one_attached :cover_image
+    include PlatformThemeSettings
 
     # One Sitemap row per locale plus one 'index' row (see BetterTogether::Sitemap).
     has_many :sitemaps, class_name: '::BetterTogether::Sitemap', dependent: :destroy
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
+    has_many :platform_snippets, -> { order(:location, :position) },
+             class_name: '::BetterTogether::PlatformSnippet', dependent: :destroy
+    has_many :platform_snippet_audits, class_name: '::BetterTogether::PlatformSnippetAudit', dependent: :delete_all
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
+    has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
+                                           dependent: :destroy
+    has_many :platform_trusted_domains, class_name: '::BetterTogether::PlatformTrustedDomain',
+                                        dependent: :destroy, inverse_of: :platform
+    has_many :trusted_domain_events, class_name: '::BetterTogether::TrustedDomainEvent', dependent: :delete_all
+    has_many :operating_platform_associations, class_name: '::BetterTogether::PlatformAssociation',
+                                               foreign_key: :operator_platform_id, dependent: :destroy, inverse_of: :operator_platform
+    has_many :managed_platform_associations, class_name: '::BetterTogether::PlatformAssociation',
+                                             foreign_key: :managed_platform_id, dependent: :destroy, inverse_of: :managed_platform
     has_many :outgoing_platform_connections,
              class_name: '::BetterTogether::PlatformConnection',
              foreign_key: :source_platform_id,
@@ -134,7 +164,7 @@ module BetterTogether
              inverse_of: :target_platform
 
     after_commit :sync_primary_platform_domain!, on: %i[create update]
-    after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_external? }
+    after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_locality? }
 
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
@@ -208,7 +238,17 @@ module BetterTogether
     # used for federation/display purposes) isn't blocked by their
     # intentionally-private placeholder community.
     def privacy_ceiling_exempt?
-      external?
+      remote?
+    end
+
+    # A platform is the top of the visibility hierarchy; nothing caps it.
+    def self.privacy_ceiling_wrapper_columns
+      []
+    end
+
+    # The trusted domain that lets this verified email register without an invitation, or nil.
+    def trusted_domain_for(email, verified:)
+      BetterTogether::PlatformTrustedDomain.match(platform: self, email:, verified:)
     end
 
     def membership_requests_enabled_for?(community = primary_community)
@@ -226,6 +266,59 @@ module BetterTogether
       self.settings = settings.merge('feature_gate_rollouts' => sanitized)
     end
 
+    # Per-platform override of the initial quota limits, { 'media_storage' =>
+    # { 'person' => bytes, ... } }. Blank/absent means "inherit" (see Quotas::Defaults).
+    def quota_default_limits
+      raw = settings&.fetch('quota_default_limits', {})
+      raw.is_a?(Hash) ? raw.deep_stringify_keys : {}
+    end
+
+    def quota_default_limits=(value)
+      normalized = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value
+      self.settings = settings.merge('quota_default_limits' => BetterTogether::Quotas::Defaults.sanitize_overrides(normalized))
+    end
+
+    # Values for settings declared through BetterTogether.register_platform_setting, as
+    # { 'group' => { 'field' => value } }. Unregistered keys are never stored.
+    def integration_settings
+      raw = settings&.fetch('integrations', {})
+      raw.is_a?(Hash) ? raw.deep_stringify_keys : {}
+    end
+
+    def integration_settings=(value)
+      incoming = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value.to_h
+      merged = integration_settings
+      incoming.each do |group, fields|
+        next unless fields.respond_to?(:each_pair)
+
+        fields.each_pair { |field, raw| assign_integration_value(merged, "#{group}.#{field}", raw) }
+      end
+      self.settings = settings.merge('integrations' => merged)
+    end
+
+    # The effective value: the stored one, else the host-only environment fallback, else the default.
+    def integration_setting(key)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return unless definition
+
+      stored = integration_settings.dig(definition.group, definition.field)
+      return stored unless stored.nil? || stored == ''
+
+      env_value = integration_setting_env_value(definition)
+      env_value.nil? ? definition.default : env_value
+    end
+
+    # :platform, :env or :default, so the form can say where the value comes from.
+    def integration_setting_source(key)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return :default unless definition
+
+      stored = integration_settings.dig(definition.group, definition.field)
+      return :platform unless stored.nil? || stored == ''
+
+      integration_setting_env_value(definition).nil? ? :default : :env
+    end
+
     def feature_rollout_for(feature_key)
       registry_entry = BetterTogether::FeatureRegistry.find(feature_key)
       return 'off' unless registry_entry
@@ -239,6 +332,29 @@ module BetterTogether
     def to_s
       name
     end
+
+    # People holding an active steward role on this platform.
+    def steward_person_ids
+      person_platform_memberships.joins(:role)
+                                 .where(status: 'active', better_together_roles: { identifier: 'platform_steward' })
+                                 .distinct.pluck(:member_id)
+    end
+
+    def steward?(person)
+      person.present? && steward_person_ids.include?(person.id)
+    end
+
+    # True when deleting this person would leave the platform without a steward.
+    def last_steward?(person)
+      ids = steward_person_ids
+      ids.size == 1 && ids.first == person&.id
+    end
+
+    # One row is one platform whichever subtype it was loaded or built as; AR's own check requires the same class.
+    def ==(other)
+      super || (other.is_a?(BetterTogether::Platform) && !id.nil? && other.id == id)
+    end
+    alias eql? ==
 
     private
 
@@ -272,6 +388,31 @@ module BetterTogether
         .validate_each(self, :host_url, host_url)
     end
 
+    def assign_integration_value(target, key, raw)
+      definition = BetterTogether::PlatformSettingsRegistry.find(key)
+      return unless definition
+      # A blank secret field means "keep the stored secret".
+      return if definition.secret && raw.blank?
+
+      target[definition.group] = (target[definition.group] || {}).merge(definition.field => definition.cast(raw))
+    end
+
+    def integration_setting_env_value(definition)
+      return unless host? && definition.env_fallback.present?
+
+      ENV[definition.env_fallback].presence
+    end
+
+    def integration_settings_valid
+      integration_settings.each do |group, fields|
+        fields.each do |field, value|
+          definition = BetterTogether::PlatformSettingsRegistry.find("#{group}.#{field}")
+          message = definition&.error_for(value)
+          errors.add(:integration_settings, "#{definition.label || definition.key}: #{message}") if message
+        end
+      end
+    end
+
     def oauth_issuer_url_ssrf_safe
       return if oauth_issuer_url.blank?
 
@@ -291,6 +432,17 @@ module BetterTogether
       )
     end
 
+    def saved_change_to_quota_default_limits?
+      before, after = saved_change_to_settings
+      (before || {})['quota_default_limits'] != (after || {})['quota_default_limits']
+    end
+
+    def apply_quota_default_limits
+      return unless local_hosted?
+
+      BetterTogether::Quotas::ApplyPlatformDefaultsJob.perform_later(id)
+    end
+
     def sanitize_feature_gate_rollouts(value)
       return {} unless value.is_a?(Hash)
 
@@ -303,6 +455,18 @@ module BetterTogether
 
         sanitized[key.to_s] = rollout.to_s
       end
+    end
+
+    # Safety net for code that builds a plain Platform: the subtype follows the host and locality.
+    # Creation sites that know their type build the subclass directly.
+    def infer_type
+      return if type.present?
+
+      self.type = (if host? then 'BetterTogether::OperatorPlatform'
+                   elsif remote?
+                     OauthPlatform.provider_identifier?(identifier) ? 'BetterTogether::OauthPlatform' : 'BetterTogether::FederatedPlatform'
+                   else 'BetterTogether::HostedPlatform'
+                   end)
     end
   end
 end

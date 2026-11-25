@@ -3,6 +3,14 @@
 module BetterTogether
   # Access control for address records.
   class AddressPolicy < ContactDetailPolicy
+    # A standalone address (a picked location, no contact detail yet) may be created by any signed-in user;
+    # an address attached to a contact detail follows the contactable owner rule.
+    def create?
+      return user.present? if contactable.nil?
+
+      super
+    end
+
     # Pundit scope for filtering visible Address records.
     class Scope < ContactDetailPolicy::Scope
       COMPONENT_CONDITION = <<~SQL
@@ -15,8 +23,8 @@ module BetterTogether
         base_scope = platform_scoped(scope.includes(:contact_detail))
         component_scope = base_scope.where(COMPONENT_CONDITION)
 
-        return component_scope if platform_manager?
-        return component_scope.where(privacy: 'public') unless agent
+        return effective_public(component_scope) unless agent
+        return component_scope.where.not(id: private_person_address_ids(component_scope)) if platform_manager?
 
         base_scope.where(id: visible_address_ids(component_scope).uniq)
       end
@@ -25,6 +33,16 @@ module BetterTogether
 
       def platform_manager?
         permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
+      end
+
+      # A platform manager operates venues, communities and the platform's own contact
+      # details, but does not read the private addresses of other people.
+      def private_person_address_ids(component_scope)
+        person_contact_detail_ids = BetterTogether::ContactDetail
+                                    .where(contactable_type: 'BetterTogether::Person')
+                                    .where.not(contactable_id: agent.id).select(:id)
+        component_scope.where(contact_detail_id: person_contact_detail_ids)
+                       .where.not(privacy: 'public').select(:id)
       end
 
       def visible_address_ids(component_scope)

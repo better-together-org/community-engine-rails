@@ -33,7 +33,7 @@ RSpec.describe 'Event host association migration' do # rubocop:disable RSpec/Des
     migration.down
     insert_invalid_event_host(SecureRandom.uuid)
 
-    expect { migration.up }.to output(/Removing 1 better_together_event_hosts row/).to_stdout
+    expect { with_migration_output { migration.up } }.to output(/Removing 1 better_together_event_hosts row/).to_stdout
   end
 
   private

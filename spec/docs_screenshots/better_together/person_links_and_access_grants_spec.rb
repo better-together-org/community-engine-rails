@@ -13,7 +13,7 @@ RSpec.describe 'Documentation screenshots for person links and access grants',
   let(:peer_platform) do
     BetterTogether::Platform.find_by(identifier: 'docs-person-links-peer') ||
       create(:better_together_platform, name: 'Harbour Commons', identifier: 'docs-person-links-peer',
-                                        external: true, privacy: 'public')
+                                        locality: 'remote', privacy: 'public')
   end
   let(:connection) do
     create(:better_together_platform_connection, :active, source_platform: host_platform, target_platform: peer_platform)

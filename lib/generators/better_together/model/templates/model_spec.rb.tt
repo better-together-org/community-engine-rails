@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe <%= full_class_name %> do
+  subject(:record) { build(:<%= factory_name %>) }
+
+  it 'has a valid factory' do
+    expect(record).to be_valid
+  end
+<% translatable_names.first(1).each do |name| -%>
+
+  it 'requires <%= name %>' do
+    record.<%= name %> = nil
+
+    expect(record).not_to be_valid
+  end
+<% end -%>
+end

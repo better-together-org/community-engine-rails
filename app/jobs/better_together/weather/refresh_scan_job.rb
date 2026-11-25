@@ -2,13 +2,14 @@
 
 module BetterTogether
   module Weather
-    # Hourly scan that enqueues a refresh for every enabled location of an enabled source.
-    class RefreshScanJob < ApplicationJob
-      queue_as :weather
+    # Scan that enqueues a refresh for every active location. Enqueues are spread a few
+    # seconds apart so many locations do not hit the source at the same moment.
+    class RefreshScanJob < BaseJob
+      STAGGER = 2.seconds
 
       def perform
-        Location.enabled.where(source_id: Source.enabled.select(:id)).find_each do |location|
-          RefreshLocationJob.perform_later(location.id)
+        Location.active.select(:id).find_each.with_index do |location, index|
+          RefreshLocationJob.set(wait: STAGGER * (index % 60)).perform_later(location.id)
         end
       end
     end

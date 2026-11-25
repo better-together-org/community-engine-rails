@@ -26,14 +26,14 @@ module BetterTogether
       alias new? create?
 
       # Permission helper for the "respond with offer" flow (creating an Offer from a Request)
-      def respond_with_offer? = create?
+      def respond_with_offer? = create? && show?
 
       def update?
         return false unless user.present?
 
         return can_manage_network_connections? if connection_request?
 
-        can_manage_joatu? || record.creator_id == agent&.id
+        record.creator_id == agent&.id || manager_may_act?
       end
       alias edit? update?
       alias matches? update?
@@ -46,7 +46,8 @@ module BetterTogether
 
         return can_manage_network_connections? if connection_request?
 
-        can_manage_joatu? || record.creator_id == agent&.id
+        # Removing a post discloses nothing, so managers may remove private ones too.
+        record.creator_id == agent&.id || can_manage_joatu?
       end
 
       class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
@@ -54,7 +55,7 @@ module BetterTogether
         CONNECTION_REQUEST_TYPE   = 'BetterTogether::Joatu::ConnectionRequest'
         PRIVATE_REQUEST_TYPES     = [MEMBERSHIP_REQUEST_TYPE, CONNECTION_REQUEST_TYPE].freeze
 
-        # rubocop:todo Metrics/MethodLength
+        # rubocop:todo-next Metrics/MethodLength
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
           return scope.none unless current_platform
 
@@ -64,19 +65,18 @@ module BetterTogether
 
           # Platform managers / joatu managers see everything
           if user.present?
-            return base                   if permitted_to?('manage_platform', current_platform)
-            return platform_scoped        if can_manage_joatu?
-            return platform_scoped        if can_manage_network_connections? && connection_request_scope?
+            return manager_visible(base) if permitted_to?('manage_platform', current_platform)
+            return manager_visible(platform_scoped) if can_manage_joatu?
+            return platform_scoped if can_manage_network_connections? && connection_request_scope?
           end
 
           # Standalone requests: not a response to another resource
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           standalone = base.left_joins(:response_links_as_response)
                            .where(better_together_joatu_response_links: { id: nil })
-          # rubocop:enable Layout/LineLength
 
           # Unauthenticated: public standalone requests only, no blocking to apply
-          return standalone.where(privacy: 'public') unless user.present?
+          return standalone.where(privacy: 'public').within_privacy_ceiling unless user.present?
 
           agent_id = agent.id
 
@@ -103,17 +103,20 @@ module BetterTogether
 
           response_to_my_offer = base.joins(join_sources).where(offers[:creator_id].eq(agent_id))
 
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           result = base.where(id: community_visible.select(:id))
                        .or(base.where(id: owned.select(:id)))
                        .or(base.where(id: response_to_my_offer.select(:id)))
-          # rubocop:enable Layout/LineLength
 
           exclude_blocked_creators(result)
         end
-        # rubocop:enable Metrics/MethodLength
 
         private
+
+        # Managers see everything except other people's private requests.
+        def manager_visible(relation)
+          relation.where.not(privacy: 'private').or(relation.where(creator_id: agent.id))
+        end
 
         # Filter out requests created by people the agent has blocked or been blocked by.
         def exclude_blocked_creators(relation)
@@ -137,6 +140,11 @@ module BetterTogether
       end
 
       private
+
+      # Managers act on public and community requests, never on someone else's private one.
+      def manager_may_act?
+        !record.privacy_private? && can_manage_joatu?
+      end
 
       def connection_request?
         record.is_a?(BetterTogether::Joatu::ConnectionRequest)

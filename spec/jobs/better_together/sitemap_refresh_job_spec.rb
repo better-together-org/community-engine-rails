@@ -71,7 +71,7 @@ RSpec.describe BetterTogether::SitemapRefreshJob do
     end
 
     it 'sweeps every locally-hosted platform when given no id' do
-      create(:better_together_platform, host: false, external: false)
+      create(:better_together_platform, host: false, locality: 'local')
       allow(BetterTogether::Sitemaps::Generator).to receive(:new).and_return(
         instance_double(BetterTogether::Sitemaps::Generator, call: [])
       )
@@ -79,7 +79,7 @@ RSpec.describe BetterTogether::SitemapRefreshJob do
       described_class.new.perform
 
       expect(BetterTogether::Sitemaps::Generator)
-        .to have_received(:new).exactly(BetterTogether::Platform.internal.count).times
+        .to have_received(:new).exactly(BetterTogether::Platform.local.count).times
     end
   end
 end

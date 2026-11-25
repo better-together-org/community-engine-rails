@@ -1,0 +1,193 @@
+# Access contract: Joatu subsystem (offers and requests; agreements, response links, categories and membership requests next).
+# Rows are matched top to bottom; the first row covering a persona and state wins.
+subsystem: joatu
+title: Joatu
+summary: Offers and requests members post to match what the community can give with what it needs.
+
+policy_pattern: ^joatu/
+deferred_policies:
+  Joatu::Agreement: Agreements between an offer and a request; next stage.
+  Joatu::Category: Platform structure; next stage.
+  Joatu::ConnectionRequest: Network connection requests; contract with the platform subsystem.
+  Joatu::MembershipRequest: Membership requests; contract with the membership stack (MBR PRs).
+  Joatu::ResponseLink: Links between an offer and a request; next stage.
+
+controllers:
+  - better_together/joatu/offers
+  - better_together/joatu/requests
+controller_allowlist: {}
+
+decisions: {}
+
+resources:
+  joatu_offer:
+    model: BetterTogether::Joatu::Offer
+    policy: BetterTogether::Joatu::OfferPolicy
+    classification: platform_shared
+    title: Joatu offer
+    states: [public, community, private]
+    permissions: [manage_platform_settings, manage_platform, manage_joatu]
+    controllers: [better_together/joatu/offers]
+    rules:
+      - {id: privacy_gate, question: "Is the record public, or community-level and the actor signed in?", on_yes: allow}
+      - {id: own_record, question: "Is the actor the creator?", on_yes: allow}
+      - {id: signed_in, question: "Is the actor signed in?", on_yes: allow}
+      - {id: block, question: "Has the creator blocked the actor, or the actor the creator?", on_yes: deny}
+      - {id: platform_operate, question: "Is the actor a platform manager or steward operating the platform's Joatu?", on_yes: allow}
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {outcome: allow, rule: privacy_gate, reason: "Everyone may open the index; the scope filters the rows."}
+      show:
+        rows:
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "The creator blocked this person."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public offers are readable by anyone."}
+          - {states: [community], personas: [anonymous], outcome: deny, rule: default_deny,
+             reason: "Community-level offers are for signed-in members of the platform."}
+          - {states: [community], outcome: allow, rule: privacy_gate, reason: "Any signed-in member reads community-level offers."}
+          - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators read their own offers."}
+          - states: [private]
+            personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "No standing role reads private offers."
+          - {outcome: deny, rule: default_deny, reason: "Private offers are for their creator."}
+      create:
+        states: [new]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "Posting needs an account."}
+          - {outcome: allow, rule: signed_in, reason: "Any signed-in member may post."}
+      update:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators edit their own offers."}
+          - {states: [public, community], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers moderate public and community-level offers."}
+          - states: [private]
+            personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "The edit form shows private content; operating a private post needs the creator."
+          - {outcome: deny, rule: default_deny, reason: "Only the creator edits a post."}
+      destroy:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators delete their own offers while no agreement exists."}
+          - {personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers remove offers of any privacy; deleting discloses nothing."}
+          - {outcome: deny, rule: default_deny, reason: "Only the creator or a platform manager deletes a post."}
+      respond_with_request:
+        rows:
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "Responding needs an account."}
+          - personas: [blocked_user]
+            outcome: deny
+            rule: block
+            reason: "A blocked person does not respond to the blocker's post."
+          - {states: [public, community], outcome: allow, rule: signed_in, reason: "Any signed-in member may respond to a post they can read."}
+          - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators respond from their own posts."}
+          - states: [private]
+            outcome: deny
+            rule: default_deny
+            reason: "Nobody else can read a private post, so nobody else responds to it."
+      scope:
+        rows:
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "The creator blocked this person."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public offers are readable by anyone."}
+          - {states: [community], personas: [anonymous], outcome: deny, rule: default_deny,
+             reason: "Community-level offers are for signed-in members of the platform."}
+          - {states: [community], outcome: allow, rule: privacy_gate, reason: "Any signed-in member reads community-level offers."}
+          - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators read their own offers."}
+          - states: [private]
+            personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "No standing role reads private offers."
+          - {outcome: deny, rule: default_deny, reason: "Private offers are for their creator."}
+
+  joatu_request:
+    model: BetterTogether::Joatu::Request
+    policy: BetterTogether::Joatu::RequestPolicy
+    classification: platform_shared
+    title: Joatu request
+    states: [public, community, private]
+    permissions: [manage_platform_settings, manage_platform, manage_joatu]
+    controllers: [better_together/joatu/requests]
+    rules:
+      - {id: privacy_gate, question: "Is the record public, or community-level and the actor signed in?", on_yes: allow}
+      - {id: own_record, question: "Is the actor the creator?", on_yes: allow}
+      - {id: signed_in, question: "Is the actor signed in?", on_yes: allow}
+      - {id: block, question: "Has the creator blocked the actor, or the actor the creator?", on_yes: deny}
+      - {id: platform_operate, question: "Is the actor a platform manager or steward operating the platform's Joatu?", on_yes: allow}
+      - {id: default_deny, question: "Nothing above matched", on_yes: deny}
+    actions:
+      index:
+        states: [any]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {outcome: allow, rule: privacy_gate, reason: "Everyone may open the index; the scope filters the rows."}
+      show:
+        rows:
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "The creator blocked this person."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public requests are readable by anyone."}
+          - {states: [community], personas: [anonymous], outcome: deny, rule: default_deny,
+             reason: "Community-level requests are for signed-in members of the platform."}
+          - {states: [community], outcome: allow, rule: privacy_gate, reason: "Any signed-in member reads community-level requests."}
+          - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators read their own requests."}
+          - states: [private]
+            personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "No standing role reads private requests."
+          - {outcome: deny, rule: default_deny, reason: "Private requests are for their creator."}
+      create:
+        states: [new]
+        rows:
+          - {personas: [record_owner, blocked_user], outcome: na}
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "Posting needs an account."}
+          - {outcome: allow, rule: signed_in, reason: "Any signed-in member may post."}
+      update:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators edit their own requests."}
+          - {states: [public, community], personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers moderate public and community-level requests."}
+          - states: [private]
+            personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "The edit form shows private content; operating a private post needs the creator."
+          - {outcome: deny, rule: default_deny, reason: "Only the creator edits a post."}
+      destroy:
+        rows:
+          - {personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators delete their own requests while no agreement exists."}
+          - {personas: [platform_manager, platform_steward], outcome: allow, rule: platform_operate,
+             reason: "Managers remove requests of any privacy; deleting discloses nothing."}
+          - {outcome: deny, rule: default_deny, reason: "Only the creator or a platform manager deletes a post."}
+      respond_with_offer:
+        rows:
+          - {personas: [anonymous], outcome: deny, rule: default_deny, reason: "Responding needs an account."}
+          - personas: [blocked_user]
+            outcome: deny
+            rule: block
+            reason: "A blocked person does not respond to the blocker's post."
+          - {states: [public, community], outcome: allow, rule: signed_in, reason: "Any signed-in member may respond to a post they can read."}
+          - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators respond from their own posts."}
+          - states: [private]
+            outcome: deny
+            rule: default_deny
+            reason: "Nobody else can read a private post, so nobody else responds to it."
+      scope:
+        rows:
+          - {personas: [blocked_user], outcome: deny, rule: block, reason: "The creator blocked this person."}
+          - {states: [public], outcome: allow, rule: privacy_gate, reason: "Public requests are readable by anyone."}
+          - {states: [community], personas: [anonymous], outcome: deny, rule: default_deny,
+             reason: "Community-level requests are for signed-in members of the platform."}
+          - {states: [community], outcome: allow, rule: privacy_gate, reason: "Any signed-in member reads community-level requests."}
+          - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators read their own requests."}
+          - states: [private]
+            personas: [platform_manager, platform_steward]
+            outcome: deny
+            rule: default_deny
+            reason: "No standing role reads private requests."
+          - {outcome: deny, rule: default_deny, reason: "Private requests are for their creator."}

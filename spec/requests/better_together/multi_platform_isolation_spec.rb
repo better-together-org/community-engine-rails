@@ -89,6 +89,7 @@ RSpec.describe 'Multi-platform request isolation', :skip_host_setup do
       # short_links is nested inside `authenticated :user do ... end` — the
       # route doesn't match at all for an anonymous session.
       user = find_or_create_test_user('short-link-user@example.test', 'SecureTest123!@#', :user)
+      user.update!(platform: other_platform)
       login(user.email, 'SecureTest123!@#')
 
       # Create a short link via the controller context (simulating a POST).

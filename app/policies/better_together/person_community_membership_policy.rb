@@ -19,8 +19,15 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !me? && can_manage_community_members? &&
-        !record.member.permitted_to?('manage_community_roles', record.joinable)
+      return false unless user.present?
+      return leave_allowed? if me?
+
+      can_manage_community_members? && !record.member.permitted_to?('manage_community_roles', record.joinable)
+    end
+
+    # Why removing one's own membership is refused, or nil. Controllers show it to the member.
+    def destroy_denial_reason
+      :last_organizer if user.present? && me? && sole_organizer?
     end
 
     class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
@@ -59,13 +66,8 @@ module BetterTogether
       community = record.try(:joinable)
       return false unless community
 
-      creator_of_community?(community) ||
-        permitted_to?('manage_community_members', community) ||
+      permitted_to?('manage_community_members', community) ||
         permitted_to?('manage_community_roles', community)
-    end
-
-    def creator_of_community?(community)
-      community.respond_to?(:creator_id) && agent.present? && community.creator_id == agent.id
     end
 
     def self_service_membership_create?
@@ -74,6 +76,20 @@ module BetterTogether
 
       joinable = record.joinable
       joinable.supports_self_service_membership? && (joinable.allows_direct_join? || joinable.membership_requests_enabled?)
+    end
+
+    # A member may leave, except the only organizer, who would leave the community unmanaged.
+    def leave_allowed?
+      !sole_organizer?
+    end
+
+    def sole_organizer?
+      return false unless record.role&.identifier == 'community_organizer'
+
+      !BetterTogether::PersonCommunityMembership
+        .joins(:role)
+        .where(joinable_id: record.joinable_id, status: 'active', better_together_roles: { identifier: 'community_organizer' })
+        .where.not(id: record.id).exists?
     end
 
     def can_manage_any_community_members?

@@ -1,7 +1,7 @@
 {
   "name": "pr1692_calendar_grid_with_events",
   "device": "desktop",
-  "url": "/en/calendars/94c482b6-b01f-4f50-a9dd-b9f8a11e90f3",
+  "url": "/en/calendars/6641003a-b6d1-4c72-adab-38fda8676748",
   "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -17,32 +17,32 @@
         "Each day cell now links directly to the event on the date it actually occurs."
       ],
       "target": {
-        "x": 79.0,
-        "y": 806.09375,
+        "x": 819.0,
+        "y": 726.09375,
         "width": 132.890625,
         "height": 16.0,
-        "right": 211.890625,
-        "bottom": 822.09375,
-        "center_x": 145.4453125,
-        "center_y": 814.09375
+        "right": 951.890625,
+        "bottom": 742.09375,
+        "center_x": 885.4453125,
+        "center_y": 734.09375
       },
       "avoid": {
-        "x": 79.0,
-        "y": 806.09375,
+        "x": 819.0,
+        "y": 726.09375,
         "width": 132.890625,
         "height": 16.0,
-        "right": 211.890625,
-        "bottom": 822.09375,
-        "center_x": 145.4453125,
-        "center_y": 814.09375
+        "right": 951.890625,
+        "bottom": 742.09375,
+        "center_x": 885.4453125,
+        "center_y": 734.09375
       },
       "placement": {
-        "side": "right",
-        "x": 231.89,
-        "y": 680.09,
+        "side": "left",
+        "x": 419.0,
+        "y": 600.09,
         "width": 380,
         "height": 268,
-        "score": 1228.109375
+        "score": 819.0
       }
     },
     {
@@ -54,31 +54,31 @@
       ],
       "target": {
         "x": 72.0,
-        "y": 1070.09375,
+        "y": 1150.09375,
         "width": 636.0,
         "height": 24.0,
         "right": 708.0,
-        "bottom": 1094.09375,
+        "bottom": 1174.09375,
         "center_x": 390.0,
-        "center_y": 1082.09375
+        "center_y": 1162.09375
       },
       "avoid": {
         "x": 72.0,
-        "y": 1070.09375,
+        "y": 1150.09375,
         "width": 636.0,
         "height": 24.0,
         "right": 708.0,
-        "bottom": 1094.09375,
+        "bottom": 1174.09375,
         "center_x": 390.0,
-        "center_y": 1082.09375
+        "center_y": 1162.09375
       },
       "placement": {
-        "side": "right",
-        "x": 728.0,
-        "y": 977.09,
+        "side": "above",
+        "x": 200.0,
+        "y": 920.09,
         "width": 380,
         "height": 210,
-        "score": 732.0
+        "score": 1150.09375
       }
     }
   ]

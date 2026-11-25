@@ -5,13 +5,7 @@
 
 Rails.application.config.after_initialize do
   # Define required environment variables for each OAuth provider
-  oauth_providers = {
-    github: %w[GITHUB_CLIENT_ID GITHUB_CLIENT_SECRET]
-    # Add other providers as they are enabled:
-    # facebook: %w[FACEBOOK_CLIENT_ID FACEBOOK_CLIENT_SECRET],
-    # google_oauth2: %w[GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET],
-    # linkedin: %w[LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET]
-  }
+  oauth_providers = BetterTogether::IdentityProviders.registry.transform_values(&:env_vars)
 
   missing_vars = []
 

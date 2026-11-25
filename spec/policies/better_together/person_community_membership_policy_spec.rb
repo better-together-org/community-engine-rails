@@ -78,9 +78,9 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
       expect(policy.create?).to be false
     end
 
-    it 'allows the community creator even without any membership role' do
+    it 'denies the community creator who holds no membership role' do
       community.creator = person
-      expect(policy.create?).to be true
+      expect(policy.create?).to be false
     end
 
     it 'denies a non-creator without any membership role or permission' do
@@ -104,18 +104,17 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
       expect(policy.edit?).to be false
     end
 
-    it 'allows the community creator even without any membership role' do
+    it 'denies the community creator who holds no membership role' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       other_membership.joinable.creator = person
       policy = described_class.new(user, other_membership)
-      expect(policy.edit?).to be true
+      expect(policy.edit?).to be false
     end
   end
 
   describe '#destroy?' do
-    it 'denies destroying own membership even with permissions' do
-      allow(person).to receive(:permitted_to?).with('manage_community_members', community).and_return(true)
-      expect(policy.destroy?).to be false
+    it 'allows a member to remove their own membership (CD-5)' do
+      expect(policy.destroy?).to be true
     end
 
     it 'allows destroying another membership as community member manager' do
@@ -142,11 +141,11 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
       expect(policy.destroy?).to be false
     end
 
-    it 'allows the community creator to remove another member even without any membership role' do
+    it 'denies the community creator who holds no membership role' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       other_membership.joinable.creator = person
       policy = described_class.new(user, other_membership)
-      expect(policy.destroy?).to be true
+      expect(policy.destroy?).to be false
     end
   end
 

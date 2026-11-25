@@ -7,15 +7,10 @@ RSpec.describe BetterTogether::EmailAddressPolicy, type: :policy do
     expect(described_class.superclass).to eq(BetterTogether::ContactDetailPolicy)
   end
 
-  describe '#create?' do
-    it 'returns true unconditionally (inherited from ContactDetailPolicy)' do
-      expect(described_class.new(nil, nil).create?).to be true
-    end
-  end
-
-  describe '#destroy?' do
-    it 'returns true unconditionally (inherited from ContactDetailPolicy)' do
-      expect(described_class.new(nil, nil).destroy?).to be true
+  describe 'write actions' do
+    it 'deny a class-level or anonymous check, as there is no contactable owner', :aggregate_failures do
+      expect(described_class.new(nil, nil).create?).to be false
+      expect(described_class.new(nil, BetterTogether::EmailAddress).destroy?).to be false
     end
   end
 

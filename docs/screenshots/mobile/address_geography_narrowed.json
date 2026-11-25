@@ -1,0 +1,48 @@
+{
+  "name": "address_geography_narrowed",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "address_geography",
+  "flow": "address_geography_narrowed",
+  "source_spec": "./spec/docs_screenshots/better_together/address_geography_fields_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event_location_new_address .address-geography-fields",
+      "title": "States of the chosen country",
+      "bullets": [
+        "Changing the country clears the state and city below it."
+      ],
+      "target": {
+        "x": 17.0,
+        "y": 542.390625,
+        "width": 451.0,
+        "height": 172.0,
+        "right": 468.0,
+        "bottom": 714.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "avoid": {
+        "x": 17.0,
+        "y": 542.390625,
+        "width": 451.0,
+        "height": 172.0,
+        "right": 468.0,
+        "bottom": 714.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 734.39,
+        "width": 270.0,
+        "height": 216,
+        "score": 542.609375
+      }
+    }
+  ]
+}

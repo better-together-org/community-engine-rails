@@ -5,7 +5,17 @@
       
       <p class="lead">This Cookie Policy explains how <%= host_platform.name %> uses cookies and similar technologies to recognize you when you visit our platform.</p>
       
-      <p><strong>Last Updated:</strong> November 20, 2025</p>
+      <% cookie_policy_groups = BetterTogether::CookiePolicy.grouped(host_platform) %>
+      <% optional_groups = cookie_policy_groups.except('essential') %>
+      <% third_party_listed = cookie_policy_groups.values.flatten.any? { |segment| segment.cookies.any?(&:third_party?) } %>
+      <p id="cookie-policy-updated">
+        <strong><%= t('better_together.cookie_policy.last_updated') %></strong>
+        <%= l(BetterTogether::CookiePolicy.last_updated(host_platform), format: :long) %>
+        <span class="text-muted small">(<%= t('better_together.cookie_policy.version', version: BetterTogether::CookiePolicy.version(host_platform)) %>)</span>
+      </p>
+      <% if user_signed_in? %>
+        <p id="cookie-policy-manage"><%= link_to t('better_together.cookie_policy.manage_choices'), better_together.settings_path(locale: I18n.locale, anchor: 'cookie-consent') %></p>
+      <% end %>
 
       <nav class="my-4">
         <h2>Table of Contents</h2>
@@ -37,45 +47,18 @@
       <h3>First-Party Cookies (Always Active)</h3>
       <p>These are cookies that we set ourselves. We use these cookies to provide our core services and functionality.</p>
 
-      <h3>Third-Party Cookies (Host-Specific)</h3>
-      <p>Some hosts may add third-party services to their own platform deployment. If that happens, those services may set cookies or similar browser storage. Those integrations are host-specific and should be described in the host's own privacy and cookie disclosures.</p>
+      <h3>Third-Party Cookies</h3>
+      <% if third_party_listed %>
+        <p><%= t('better_together.cookie_policy.third_party_listed') %></p>
+      <% else %>
+        <p>Some hosts may add third-party services to their own platform deployment. If that happens, those services may set cookies or similar browser storage. Those integrations are host-specific and should be described in the host's own privacy and cookie disclosures.</p>
+      <% end %>
 
       <h2 id="essential-cookies">4. Essential Cookies</h2>
       
       <p>These cookies are strictly necessary to provide you with services available through our platform and to use some of its features. Because these cookies are strictly necessary to deliver the platform, you cannot refuse them without impacting how our platform functions. You can block or delete them by changing your browser settings as described below under "Your Choices Regarding Cookies."</p>
 
-      <div class="table-responsive my-4">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Cookie Name</th>
-              <th>Purpose</th>
-              <th>Type</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>_better_together_session</code></td>
-              <td>Maintains your login session and stores temporary data like invitation tokens, locale preferences, and debug settings</td>
-              <td>First-party</td>
-              <td>Session (6 hours of inactivity)</td>
-            </tr>
-            <tr>
-              <td><code>remember_user_token</code></td>
-              <td>Keeps you logged in when you select "Remember me" during sign-in</td>
-              <td>First-party</td>
-              <td>2 weeks</td>
-            </tr>
-            <tr>
-              <td><code>_csrf_token</code></td>
-              <td>Security token that protects against Cross-Site Request Forgery (CSRF) attacks</td>
-              <td>First-party</td>
-              <td>Session</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <%= render 'better_together/cookie_policy/segments', segments: cookie_policy_groups.fetch('essential', []), heading_level: 3, prefix: 'cookie-policy' %>
 
       <h3>Session Storage</h3>
       <p>In addition to cookies, we store the following information in your browser's session storage:</p>
@@ -88,21 +71,43 @@
 
       <h2 id="optional-cookies">5. Optional Cookies</h2>
 
-      <p>Community Engine does not include optional analytics or advertising cookies by default. If a host adds third-party services that use cookies, that host is responsible for providing the appropriate notices, choices, and consent mechanisms required by law.</p>
+      <% if optional_groups.any? %>
+        <p><%= t('better_together.cookie_policy.optional_intro') %></p>
+        <% optional_groups.each do |category, segments| %>
+          <section id="cookie-policy-category-<%= category %>">
+            <h3 id="cookie-policy-category-<%= category %>-title"><%= t("better_together.cookie_policy.categories.#{category}.title") %></h3>
+            <p><%= t("better_together.cookie_policy.categories.#{category}.description") %></p>
+            <%= render 'better_together/cookie_policy/segments', segments:, heading_level: 4, prefix: 'cookie-policy' %>
+          </section>
+        <% end %>
+      <% else %>
+        <p>Community Engine does not include optional analytics or advertising cookies by default. If a host adds third-party services that use cookies, that host is responsible for providing the appropriate notices, choices, and consent mechanisms required by law.</p>
+      <% end %>
 
       <h3>Built-In Metrics</h3>
       <p>The platform includes built-in metrics functionality that tracks usage patterns <strong>without identifying individual users</strong>. This system is privacy-focused and does not use cookies to perform its default event tracking.</p>
 
-      <h3>Host-Added Services</h3>
-      <p>A host may add services such as error monitoring, analytics, or other external integrations. Those services are not enabled by default in Community Engine, and any cookies or browser storage they use should be disclosed by the host operating the specific platform you are using.</p>
+      <% if lookup_context.exists?('host_additions', ['better_together/cookie_policy'], true) %>
+        <div id="cookie-policy-host-additions">
+          <%= render 'better_together/cookie_policy/host_additions' %>
+        </div>
+      <% elsif optional_groups.empty? %>
+        <h3>Host-Added Services</h3>
+        <p>A host may add services such as error monitoring, analytics, or other external integrations. Those services are not enabled by default in Community Engine, and any cookies or browser storage they use should be disclosed by the host operating the specific platform you are using.</p>
+      <% end %>
 
       <h2 id="your-choices">6. Your Choices Regarding Cookies</h2>
 
       <h3>Essential Cookies</h3>
       <p>Essential cookies are necessary for the platform to function properly. While you can configure your browser to block these cookies, doing so will prevent you from using many features of the platform, including signing in and maintaining your session.</p>
 
-      <h3>Host-Added Optional Services</h3>
-      <p>If a host has added optional third-party services, your choices will depend on how that host has implemented them. Any additional controls for those services should be explained by the host operating the specific platform you are using.</p>
+      <% if optional_groups.any? %>
+        <h3>Optional Cookies</h3>
+        <p><%= t('better_together.cookie_policy.choices_optional') %></p>
+      <% else %>
+        <h3>Host-Added Optional Services</h3>
+        <p>If a host has added optional third-party services, your choices will depend on how that host has implemented them. Any additional controls for those services should be explained by the host operating the specific platform you are using.</p>
+      <% end %>
 
       <p>You can always use your browser settings to block or delete cookies, subject to the warning above that blocking essential cookies may prevent the platform from working correctly.</p>
 
@@ -193,7 +198,11 @@
         <p>Here's what you need to know about cookies on our platform:</p>
         <ul class="mb-2">
           <li><strong>Essential cookies:</strong> Required for login and basic platform functions (we must use these)</li>
-          <li><strong>Optional third-party cookies:</strong> Community Engine does not use them by default</li>
+          <% if optional_groups.any? %>
+            <li><strong>Optional cookies:</strong> Listed above by category. They are only used if you agree, and you can change your mind at any time</li>
+          <% else %>
+            <li><strong>Optional third-party cookies:</strong> Community Engine does not use them by default</li>
+          <% end %>
           <li><strong>Your choice:</strong> You can manage cookies in your browser, and hosts that add optional third-party services should explain any additional controls they provide</li>
           <li><strong>Third parties:</strong> Third-party cookie use depends on the host operating the specific platform you are using</li>
           <li><strong>Your rights:</strong> You can see, export, or delete data collected via cookies at any time</li>

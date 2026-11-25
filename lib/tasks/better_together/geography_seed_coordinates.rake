@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 namespace :better_together do
   namespace :geography do
     desc 'Maintainer-only, local/offline tool: geocodes GeographyBuilder\'s static seed-source ' \
@@ -15,4 +15,3 @@ namespace :better_together do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

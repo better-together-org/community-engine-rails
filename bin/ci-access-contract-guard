@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Fails when a change touches an access-control surface without updating the access contract.
+#
+# Surfaces: app/policies, the access control builder, API resources, MCP tools, and added or removed
+# authorize / policy_scope / skip_authorization lines in controllers. Satisfied when the same diff
+# touches config/access_contracts or spec/access_contract, or the PR body carries a line
+#   access contract: unchanged because <reason>
+# See docs/developers/access_contracts.md.
+#
+# Usage: bin/ci-access-contract-guard [--base-ref REF] [--head-ref REF] [--pr-body-file PATH]
+set -euo pipefail
+
+BASE_REF="${BASE_REF:-origin/main}"
+HEAD_REF="${HEAD_REF:-HEAD}"
+PR_BODY_FILE="${PR_BODY_FILE:-}"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --base-ref) BASE_REF="$2"; shift 2 ;;
+    --head-ref) HEAD_REF="$2"; shift 2 ;;
+    --pr-body-file) PR_BODY_FILE="$2"; shift 2 ;;
+    -h|--help) sed -n 2,10p "$0"; exit 0 ;;
+    *) echo "error: unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
+
+RANGE="${BASE_REF}...${HEAD_REF}"
+SURFACE_PATHS=(app/policies app/builders/better_together/access_control_builder.rb app/resources app/tools)
+CONTRACT_PATHS=(config/access_contracts spec/access_contract)
+
+surface_files="$(git diff --name-only "${RANGE}" -- "${SURFACE_PATHS[@]}")"
+controller_lines="$(git diff -U0 "${RANGE}" -- app/controllers \
+  | grep -E '^[+-][^+-]' \
+  | grep -E '\b(authorize|policy_scope|skip_authorization|skip_policy_scope|verify_authorized|verify_policy_scoped)\b' || true)"
+
+if [[ -z "${surface_files}" && -z "${controller_lines}" ]]; then
+  echo "access contract guard: no access-control surface changed."
+  exit 0
+fi
+
+if [[ -n "$(git diff --name-only "${RANGE}" -- "${CONTRACT_PATHS[@]}")" ]]; then
+  echo "access contract guard: surface changed and the access contract was updated."
+  exit 0
+fi
+
+if [[ -n "${PR_BODY_FILE}" && -f "${PR_BODY_FILE}" ]] \
+  && grep -Eiq '^[[:space:]]*access contract:[[:space:]]*unchanged because[[:space:]]+[^[:space:]].{9,}' "${PR_BODY_FILE}"; then
+  echo "access contract guard: surface changed, exemption stated in the PR body."
+  exit 0
+fi
+
+{
+  echo "access contract guard: FAILED"
+  echo "This change touches access-control surfaces but not config/access_contracts or spec/access_contract:"
+  [[ -n "${surface_files}" ]] && echo "${surface_files}" | sed 's/^/  - /'
+  [[ -n "${controller_lines}" ]] && echo "  - controller authorization lines changed in app/controllers"
+  echo
+  echo "Update the subsystem contract, probe and snapshot (docs/developers/access_contracts.md), or add this"
+  echo "line to the PR body if nothing about who may do what has changed:"
+  echo "  access contract: unchanged because <reason of at least 10 characters>"
+} >&2
+exit 1

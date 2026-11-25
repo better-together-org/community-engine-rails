@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'swagger_helper'
 
-# rubocop:disable RSpec/DescribeClass
+# rubocop:disable-next RSpec/DescribeClass
 RSpec.describe 'swagger_helper configuration' do
   describe 'build_swagger_servers' do
     it 'returns an array of server configurations' do
@@ -26,7 +26,7 @@ RSpec.describe 'swagger_helper configuration' do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
       end
 
-      # rubocop:disable RSpec/NestedGroups
+      # rubocop:disable-next RSpec/NestedGroups
       context 'when base URL is not localhost' do
         before do
           allow(BetterTogether).to receive(:base_url).and_return('https://dev.example.com')
@@ -47,9 +47,8 @@ RSpec.describe 'swagger_helper configuration' do
           expect(localhost_server[:description]).to eq('Local development server')
         end
       end
-      # rubocop:enable RSpec/NestedGroups
 
-      # rubocop:disable RSpec/NestedGroups
+      # rubocop:disable-next RSpec/NestedGroups
       context 'when base URL is localhost' do
         before do
           allow(BetterTogether).to receive(:base_url).and_return('http://localhost:3000')
@@ -62,7 +61,6 @@ RSpec.describe 'swagger_helper configuration' do
           expect(servers[0][:url]).to eq('http://localhost:3000')
         end
       end
-      # rubocop:enable RSpec/NestedGroups
     end
 
     context 'in production environment' do
@@ -166,4 +164,3 @@ RSpec.describe 'swagger_helper configuration' do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass

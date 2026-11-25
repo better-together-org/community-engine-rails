@@ -8,6 +8,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Short link public redirect — no locale prefix keeps URLs short
   get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
 
+  # Stable locale-free file paths: /f/:id views the file, /f/:id/download forces a download
+  get '/f/:id', to: 'uploads#inline', as: :short_file
+  get '/f/:id/download', to: 'uploads#download', as: :short_file_download
+
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
 
@@ -135,7 +139,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get :weather, on: :member
         end
 
-        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do
+        authenticated :user, ->(u) { u.host_platform_manager? } do
           resources :settlements, except: %i[index show]
         end
       end
@@ -190,6 +194,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'locations/available', to: 'locations#available', as: :available_locations
+        get 'locations/geography', to: 'locations#geography', as: :geography_locations
 
         resources :events, except: %i[index show] do
           collection do
@@ -353,7 +358,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :platforms, only: %i[index show new create edit update] do
+        # `new` is disabled until platform provisioning is settled (see PlatformsController#new).
+        resources :platforms, only: %i[index show create edit update] do
+          member { get :theme_dark }
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
@@ -370,7 +377,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         get 'settings', to: 'settings#index'
         resources :person_data_exports, only: %i[create show]
         resources :person_deletion_requests, only: %i[create destroy]
+        resources :platform_deletion_requests, only: %i[new create destroy]
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
+        patch 'settings/cookie_consent', to: 'cookie_consents#update', as: :settings_cookie_consent
         get 'settings/my_data', to: 'settings#my_data', as: :settings_my_data
         get 'settings/usage', to: 'settings#usage', as: :settings_usage
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
@@ -390,9 +399,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # Routes accessible to Platform Managers OR Analytics Viewers
-        # rubocop:disable Metrics/BlockLength
+        # rubocop:disable-next Metrics/BlockLength
         authenticated :user, lambda { |u|
-          u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
+          u.permitted_to?('view_metrics_dashboard') || u.platform_manager?
         } do
           scope path: 'host' do
             # Reporting for collected metrics
@@ -446,10 +455,45 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
-        # rubocop:enable Metrics/BlockLength
+
+        # Background jobs: summary panel and the framed Sidekiq UI (manage_platform_jobs on the host platform).
+        constraints BetterTogether::HostJobsConstraint.new do
+          scope path: 'host/jobs' do
+            get '/', to: 'host_jobs#show', as: 'host_jobs'
+            get 'sidekiq', to: 'host_jobs#sidekiq', as: 'host_jobs_sidekiq'
+            get 'summary', to: 'host_jobs#summary', as: 'host_jobs_summary'
+          end
+        end
 
         # Only logged-in Platform Managers have access to these routes
-        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
+        # Custom code is gated by its own permission, which the platform stewards do not hold.
+        code_manager = ->(u) { Current.platform.present? && u.permitted_to?('manage_platform_code', Current.platform) }
+        authenticated :user, code_manager do
+          scope path: 'host' do
+            resources :platforms, only: [] do
+              resources :platform_snippets, except: %i[show] do
+                member { patch :move }
+                collection { patch :toggle_all }
+              end
+            end
+          end
+        end
+
+        # Host dashboard Weather tab. WeatherPolicy (manage_platform_settings on the host platform) is the gate.
+        authenticated :user do
+          scope path: 'host/weather', controller: 'weather_management' do
+            get '/', action: :show, as: 'host_dashboard_weather'
+            get 'switch/confirm', action: :confirm_feature, as: 'confirm_host_dashboard_weather_feature'
+            patch 'switch', action: :update_feature, as: 'host_dashboard_weather_feature'
+            get 'sources/:id', action: :source, as: 'host_dashboard_weather_source'
+            get 'sources/:id/confirm', action: :confirm_source, as: 'confirm_host_dashboard_weather_source'
+            patch 'sources/:id', action: :update_source
+            get 'locations/:id/confirm', action: :confirm_location, as: 'confirm_host_dashboard_weather_location'
+            patch 'locations/:id', action: :update_location, as: 'host_dashboard_weather_location'
+          end
+        end
+
+        authenticated :user, ->(u) { u.platform_manager? } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
             get 'membership-review', to: 'host_dashboard#membership_review', as: 'host_dashboard_membership_review'
@@ -507,7 +551,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
 
             # Platform list
-            resources :platforms, only: %i[index show new create edit update] do
+            resources :platforms, only: %i[index show create edit update] do
               member do
                 get :available_people
               end
@@ -516,16 +560,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
-                member do
-                  put :resend
-                end
+                put :resend, on: :member
               end
               resources :storage_configurations, except: %i[show] do
                 member do
                   put :activate
+                  post :test_connection
                 end
               end
               resources :platform_domains, except: %i[show]
+              resources :redirects, except: %i[show] do
+                collection do
+                  get :import, action: :new_import
+                  post :import, action: :create_import
+                end
+              end
+              resources :platform_identity_providers, except: %i[show], path: 'identity_providers'
+              resources :platform_trusted_domains, except: %i[show], path: 'trusted_domains'
             end
 
             resources :users
@@ -607,6 +658,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
+          get :inline
         end
       end
 
@@ -703,8 +755,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
 
     # Catch-all route
+    # A bare `Accept: */*` (curl, many crawlers) negotiates to Mime::ALL, not HTML.
     get '*path', to: 'pages#show', as: 'render_page', constraints: lambda { |req|
-      !req.xhr? && req.format.html?
+      !req.xhr? && (req.format.html? || req.format == Mime::ALL)
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine
@@ -715,12 +768,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Placed after localized routes to ensure proper controller resolution
   draw :api
 
-  # Only allow authenticated users to get access
-  # to the Sidekiq web interface
-  devise_scope :user do
-    authenticated :user, ->(u) { u&.person&.permitted_to?('manage_platform') } do
-      mount Sidekiq::Web => '/sidekiq'
-    end
+  # Sidekiq web UI, for holders of manage_platform_jobs on the host platform (same check as the
+  # background jobs screen). The wrapper maps a ?locale= param onto Sidekiq's session locale.
+  constraints BetterTogether::HostJobsConstraint.new do
+    mount BetterTogether::SidekiqWebLocale.new(Sidekiq::Web) => '/sidekiq', as: :sidekiq_web
   end
 
   # Catch all requests without a locale and redirect to the default locale.

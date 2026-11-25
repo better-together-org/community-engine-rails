@@ -1,0 +1,11 @@
+{
+  "name": "platform_content_slots_404",
+  "device": "mobile",
+  "url": "/en/no-such-page-for-docs",
+  "title": "404 - Page Not Found | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "platform_content_slots",
+  "flow": "platform_content_slots_404",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_content_slots_spec.rb"
+}

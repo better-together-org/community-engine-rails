@@ -1,0 +1,10 @@
+flowchart LR
+  Form["Appearance tab<br/>content slot fields"] -->|"platform[content_slot_blocks_attributes]"| Policy["PlatformsController#update<br/>same permission as editing the platform"]
+  Policy -->|"allowed type, within limit"| Model["PlatformContentSlots<br/>reserved identifier per platform"]
+  Policy -->|"not allowed"| Denied["403 or 404, nothing saved"]
+  Model -->|"invalid type or too long"| Errors["422 with errors"]
+  Model --> Blocks[("Content blocks<br/>platform_id + slot identifier")]
+  Blocks --> Helper["render_platform_content_slot<br/>fragment cache: platform, locale, block version"]
+  Helper --> Layout["Layout<br/>above header, above footer"]
+  Helper --> NotFound["errors/404<br/>message and random headline"]
+  Layout -.->|"no block"| Hooks["Host hook partials<br/>unchanged fallback"]

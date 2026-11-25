@@ -91,10 +91,7 @@ module BetterTogether
       def exportable_posts
         apply_cursor(
           federation_consent_scoped(
-            ::BetterTogether::Post
-              .with_translations
-              .where(platform: connection.local_platform, privacy: 'public')
-              .where(source_id: nil)
+            local_public_records(::BetterTogether::Post)
               .where.not(published_at: nil)
               .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
           )
@@ -104,10 +101,7 @@ module BetterTogether
       def exportable_pages
         apply_cursor(
           federation_consent_scoped(
-            ::BetterTogether::Page
-              .with_translations
-              .where(platform: connection.local_platform, privacy: 'public')
-              .where(source_id: nil)
+            local_public_records(::BetterTogether::Page)
               .where.not(published_at: nil)
               .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
           )
@@ -117,13 +111,18 @@ module BetterTogether
       def exportable_events
         apply_cursor(
           federation_consent_scoped(
-            ::BetterTogether::Event
-              .with_translations
-              .where(platform: connection.local_platform, privacy: 'public')
-              .where(source_id: nil)
+            local_public_records(::BetterTogether::Event)
               .where.not(starts_at: nil)
           )
         ).order(updated_at: :asc, id: :asc).limit(limit)
+      end
+
+      # Local-origin public records, held back while their platform or community is not public.
+      def local_public_records(klass)
+        klass.with_translations
+             .where(platform: connection.local_platform, privacy: 'public')
+             .within_privacy_ceiling
+             .where(source_id: nil)
       end
 
       # Layers the per-item federation_visibility tri-state, and then any
@@ -138,7 +137,7 @@ module BetterTogether
       #   3. No grant for this connection -- falls through to:
       #      federate (bypasses creator preference) / platform_default
       #      (creator's global federate_content preference, current behavior).
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:disable-next Metrics/AbcSize, Metrics/MethodLength
       def federation_consent_scoped(query)
         model_table = query.klass.quoted_table_name
         scoped = query.where.not(federation_visibility: 'no_federate')
@@ -150,7 +149,7 @@ module BetterTogether
 
         creator_table = ::BetterTogether::Person.quoted_table_name
         scoped_with_creator = scoped.left_joins(:creator)
-        # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator, OR'd with an explicit per-item opt-in override, requires a raw predicate
+        # rubocop:disable-next BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator, OR'd with an explicit per-item opt-in override, requires a raw predicate
         preference_scoped = scoped_with_creator.where(
           Arel.sql(
             "#{model_table}.federation_visibility = 'federate' OR " \
@@ -158,14 +157,12 @@ module BetterTogether
             "(#{creator_table}.preferences @> '{\"federate_content\": true}')"
           )
         )
-        # rubocop:enable BetterTogether/NoRawSqlInQueries
 
         allowed_ids = connection_grant_ids(query.klass, 'allowed')
         return preference_scoped if allowed_ids.empty?
 
         preference_scoped.or(scoped_with_creator.where(id: allowed_ids))
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def connection_grant_ids(klass, status)
         ::BetterTogether::FederationContentGrant
@@ -177,12 +174,11 @@ module BetterTogether
         return query unless cursor
 
         table = query.klass.quoted_table_name
-        # rubocop:disable BetterTogether/NoRawSqlInQueries -- keyset pagination requires a compound OR across (updated_at, id); no Arel equivalent without N+1 risk
+        # rubocop:disable-next BetterTogether/NoRawSqlInQueries -- keyset pagination requires a compound OR across (updated_at, id); no Arel equivalent without N+1 risk
         query.where(
           Arel.sql("#{table}.updated_at > ? OR (#{table}.updated_at = ? AND #{table}.id > ?)"),
           cursor[:updated_at], cursor[:updated_at], cursor[:id]
         )
-        # rubocop:enable BetterTogether/NoRawSqlInQueries
       end
 
       def next_cursor

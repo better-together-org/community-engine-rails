@@ -4,7 +4,7 @@
 <div id="cover-image-fields" class="mb-3" data-controller="better_together--image-preview"
   data-image-preview-clear-value="<%= t('globals.clear') %>"
   data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
-  <%= label_tag do %>
+  <%= label_tag 'cover-image-input' do %>
     <%= form.object.class.human_attribute_name(:cover_image) %>
     <% if form.object.cover_image.attached? %>
       : <%= form.object.cover_image.filename %>
@@ -12,7 +12,7 @@
   <% end %>
 
   <div class="input-group">
-    <%= form.file_field :cover_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%= form.file_field :cover_image, id: 'cover-image-input', accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
     <%= form.hidden_field :remove_cover_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
     <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
   </div>

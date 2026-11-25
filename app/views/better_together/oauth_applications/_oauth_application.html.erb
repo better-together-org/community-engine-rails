@@ -8,10 +8,10 @@
   <td>
     <% if oauth_application.scopes.present? %>
       <% oauth_application.scopes.to_a.first(3).each do |scope| %>
-        <span class="badge bg-light text-dark border"><%= scope %></span>
+        <span class="badge bg-body-secondary text-body border"><%= scope %></span>
       <% end %>
       <% if oauth_application.scopes.to_a.size > 3 %>
-        <span class="badge bg-light text-dark border">+<%= oauth_application.scopes.to_a.size - 3 %></span>
+        <span class="badge bg-body-secondary text-body border">+<%= oauth_application.scopes.to_a.size - 3 %></span>
       <% end %>
     <% else %>
       <span class="text-muted small"><%= t('better_together.oauth_applications.no_scopes', default: 'Default') %></span>

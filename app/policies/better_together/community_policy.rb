@@ -11,8 +11,7 @@ module BetterTogether
     def show?
       public_or_member_scoped_community?(record) ||
         member_of_community? ||
-        creator_of_community? ||
-        can_manage_community? ||
+        manages_community? ||
         invitation? ||
         valid_invitation_token?
     end
@@ -40,7 +39,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (can_manage_community? || permitted_to?('update_community', record))
+      user.present? && (manages_community? || permitted_to?('update_community', record) || platform_operates_public?)
     end
 
     def manage_integrations?
@@ -50,8 +49,8 @@ module BetterTogether
     def create_events?
       return false unless user.present? && agent.present?
 
-      # Platform managers always have event management authority
-      return true if platform_manager?
+      # Platform managers host events for public communities; private ones need the organizer's grant
+      return true if platform_operates_public?
 
       # Explicit event management permission for this community
       return true if permitted_to?('manage_community_events', record)
@@ -65,24 +64,28 @@ module BetterTogether
       return false unless user.present?
 
       member_of_community? ||
-        creator_of_community? ||
         permitted_to?('manage_community_members', record) ||
-        can_manage_community?
+        manages_community?
     end
 
     def manage_roles?
       return false unless user.present?
 
-      permitted_to?('manage_community_roles', record) || can_manage_community?
+      permitted_to?('manage_community_roles', record) || manages_community? || platform_operates_public?
     end
 
-    # Reuses can_manage_community? directly - no separate quota-usage permission exists
-    # (or is needed) yet; anyone who can already manage this community's settings or
-    # members can see its usage too.
+    # Platform managers moderate any community regardless of privacy; none of these opens the
+    # community's content or member list.
+    def suspend? = platform_moderates?
+    def quarantine? = platform_moderates?
+    def hide? = platform_moderates?
+
+    # No separate quota-usage permission exists yet; anyone who manages this community's
+    # settings or members sees its usage, and platform managers see the aggregate.
     def view_quota_usage?
       return false unless user.present?
 
-      can_manage_community?
+      manages_community? || platform_manager?
     end
 
     def edit?
@@ -91,7 +94,7 @@ module BetterTogether
 
     def destroy?
       user.present? && !record.protected? && !record.host? &&
-        (can_manage_community? || permitted_to?('destroy_community', record))
+        (platform_manager? || permitted_to?('delete_community', record))
     end
 
     def invitation?
@@ -127,11 +130,6 @@ module BetterTogether
       )
     end
 
-    # Check if the user is the creator of this specific community
-    def creator_of_community?
-      creator_of?(record)
-    end
-
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         platform_scoped.order(updated_at: :desc).where(permitted_query)
@@ -139,16 +137,14 @@ module BetterTogether
 
       protected
 
-      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo-next Metrics/MethodLength
       def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         communities_table = ::BetterTogether::Community.arel_table
         person_community_memberships_table = ::BetterTogether::PersonCommunityMembership.arel_table
 
         query = visible_privacy_query(communities_table)
 
-        if permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
-          query = query.or(communities_table[:privacy].eq('private'))
-        elsif agent
+        if agent
           query = query.or(
             communities_table[:id].in(
               person_community_memberships_table
@@ -157,8 +153,6 @@ module BetterTogether
                 .where(person_community_memberships_table[:status].eq('active'))
                 .project(:joinable_id)
             )
-          ).or(
-            communities_table[:creator_id].eq(agent.id)
           )
         end
 
@@ -175,15 +169,23 @@ module BetterTogether
 
         query
       end
-      # rubocop:enable Metrics/MethodLength
     end
 
     private
 
-    def can_manage_community?
+    # The actor's own community role grants settings or member management here.
+    def manages_community?
       permitted_to?('manage_community_settings', record) ||
-        permitted_to?('manage_community_members', record) ||
-        platform_manager?
+        permitted_to?('manage_community_members', record)
+    end
+
+    # Platform managers operate public communities only; private ones need the organizer's grant.
+    def platform_operates_public?
+      platform_manager? && privacy_public?(record)
+    end
+
+    def platform_moderates?
+      user.present? && platform_manager?
     end
   end
 end

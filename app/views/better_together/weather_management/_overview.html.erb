@@ -1,0 +1,8 @@
+<div id="weather-management">
+  <h1 id="weather-management-heading" class="mb-2"><%= t('host_dashboard.weather.heading') %></h1>
+  <p class="text-muted"><%= t('host_dashboard.weather.description') %></p>
+
+  <%= render 'better_together/weather_management/feature_switch', overview: @overview %>
+  <%= render 'better_together/weather_management/sources_table', overview: @overview %>
+  <%= render 'better_together/weather_management/audit_trail', overview: @overview %>
+</div>

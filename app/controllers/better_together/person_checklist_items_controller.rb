@@ -31,7 +31,7 @@ module BetterTogether
       end
     end
 
-    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:todo-next Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Handle case where checklist or item might not be visible yet due to transaction timing
       unless @checklist
@@ -47,9 +47,8 @@ module BetterTogether
       end
 
       # Diagnostic log to confirm authentication state for incoming requests
-      # rubocop:todo Layout/LineLength
+      # rubocop:todo-next Layout/LineLength
       Rails.logger.info("DBG PersonChecklistItemsController#create: current_user_id=#{current_user&.id}, warden_user_id=#{request.env['warden']&.user&.id}")
-      # rubocop:enable Layout/LineLength
       Rails.logger.info("DBG PersonChecklistItemsController#create: params=#{params.to_unsafe_h}")
       person = current_user.person
       pci = BetterTogether::PersonChecklistItem.find_or_initialize_by(person:, checklist: @checklist,
@@ -58,9 +57,8 @@ module BetterTogether
 
       respond_to do |format| # rubocop:todo Metrics/BlockLength
         if pci.save
-          # rubocop:todo Layout/LineLength
+          # rubocop:todo-next Layout/LineLength
           Rails.logger.info("DBG PersonChecklistItemsController#create: saved pci id=#{pci.id} completed_at=#{pci.completed_at}")
-          # rubocop:enable Layout/LineLength
           # If checklist completed, trigger a hook (implement as ActiveSupport::Notifications for now)
           notify_if_checklist_complete(person)
           format.json do
@@ -76,9 +74,8 @@ module BetterTogether
           format.turbo_stream do
             flash.now[:notice] = t('flash.checklist_item.updated')
             render turbo_stream: turbo_stream.replace('flash_messages',
-                                                      # rubocop:todo Layout/LineLength
+                                                      # rubocop:todo-next Layout/LineLength
                                                       partial: 'layouts/better_together/flash_messages', locals: { flash: })
-            # rubocop:enable Layout/LineLength
           end
         else
           format.json do
@@ -94,20 +91,17 @@ module BetterTogether
           format.turbo_stream do
             flash.now[:alert] = t('flash.checklist_item.update_failed')
             render turbo_stream: turbo_stream.replace('flash_messages',
-                                                      # rubocop:todo Layout/LineLength
+                                                      # rubocop:todo-next Layout/LineLength
                                                       partial: 'layouts/better_together/flash_messages', locals: { flash: })
-            # rubocop:enable Layout/LineLength
           end
         end
       end
     rescue StandardError => e
-      # rubocop:todo Layout/LineLength
+      # rubocop:todo-next Layout/LineLength
       Rails.logger.error("PersonChecklistItemsController#create unexpected error: #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
-      # rubocop:enable Layout/LineLength
       render json: { errors: [e.message], flash: { type: 'alert', message: e.message } },
              status: :internal_server_error
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     private
 

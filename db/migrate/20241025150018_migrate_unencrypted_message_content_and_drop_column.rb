@@ -5,8 +5,8 @@ class MigrateUnencryptedMessageContentAndDropColumn < ActiveRecord::Migration[7.
   def change
     reversible do |dir|
       dir.up do
-        load 'tasks/data_migration.rake'
-        Rake::Task['better_together:migrate_data:unencrypted_messages'].invoke
+        run_engine_rake_task('better_together:migrate_data:unencrypted_messages', file: 'tasks/data_migration.rake',
+                                                                                  skip_when_empty: %i[better_together_messages])
       end
     end
   end

@@ -1,0 +1,46 @@
+name: Regenerate diagrams
+description: >-
+  Installs the toolchain, loads the checked-out schema and regenerates every generated diagram
+  (whole-schema DBML and ERD, subsystem ERDs, localized attributes, Mermaid exports). Needs the Postgres
+  and Redis services and the DATABASE_URL, REDIS_URL, SEARCH_BACKEND and RAILS_ENV=test variables of
+  schema-diagrams.yml. Runs the checked-out code, so the caller must not expose a write token to it.
+runs:
+  using: composite
+  steps:
+    - name: Install libvips
+      shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends libvips42t64 || sudo apt-get install -y --no-install-recommends libvips42
+
+    - name: Install Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.4.13"
+        bundler-cache: true
+
+    - name: Set up Node
+      uses: actions/setup-node@v7
+      with:
+        node-version: "20"
+
+    - name: Load the schema
+      shell: bash
+      run: |
+        cd spec/dummy
+        bundle exec rake db:create db:schema:load
+
+    - name: Regenerate
+      shell: bash
+      env:
+        CHROME_PATH: /usr/bin/google-chrome
+      run: |
+        bin/export_schema_diagrams --skip-subsystems
+        cd spec/dummy
+        bundle exec rails runner export_subsystem_diagrams.rb
+        bundle exec rails runner export_localized_attributes.rb
+        cd ../..
+        chmod +x bin/render_diagrams
+        ./bin/render_diagrams

@@ -88,14 +88,15 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         end
       end
 
-      it 'returns all communities' do
+      it 'returns public communities but not private ones the manager does not belong to (CD-1)' do
         tool = described_class.new
         result = tool.call
 
         communities = JSON.parse(result)
 
         names = communities.map { |c| c['name'] }
-        expect(names).to include('Public Community', 'Private Community')
+        expect(names).to include('Public Community')
+        expect(names).not_to include('Private Community')
       end
 
       it 'filters by public privacy when privacy_filter is set' do
@@ -108,14 +109,12 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         expect(names).not_to include('Private Community')
       end
 
-      it 'filters by private privacy when privacy_filter is set' do
+      it 'lists no private communities for the manager when privacy_filter is private (CD-1)' do
         tool = described_class.new
         result = tool.call(privacy_filter: 'private')
 
-        communities = JSON.parse(result)
-        names = communities.map { |c| c['name'] }
-        expect(names).to include('Private Community')
-        expect(names).not_to include('Public Community')
+        names = JSON.parse(result).map { |c| c['name'] }
+        expect(names).not_to include('Private Community', 'Public Community')
       end
     end
 

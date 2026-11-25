@@ -85,9 +85,10 @@ module BetterTogether
              dependent: :destroy
 
     joinable joinable_type: 'community',
-             member_type: 'person'
+             member_type: 'person',
+             dependent: :destroy
 
-    slugged :name
+    slugged :name, slug_uniqueness: false
 
     translates :name, type: :string
     translates :description, backend: :action_text
@@ -165,6 +166,7 @@ module BetterTogether
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
     after_create :create_default_calendar
+    after_create :grant_creator_organizer_membership
     after_commit :clear_host_community_cache, if: -> { saved_change_to_attribute?(:host) }
 
     validates :name, presence: true
@@ -178,7 +180,7 @@ module BetterTogether
 
     # Communities the sitemap indexes for a platform. Host apps narrow this to keep communities out of it.
     def self.sitemap_listable(platform)
-      for_platform(platform).privacy_public
+      for_platform(platform).privacy_public.within_privacy_ceiling
     end
 
     def self.host_community
@@ -274,6 +276,20 @@ module BetterTogether
                  message: "must match the host platform privacy ('#{platform.privacy}')")
     end
 
+    # The creator holds an explicit, visible Organizer membership, so access follows the role and can be
+    # handed off or revoked like anyone else's. Idempotent; skipped when the role set is not seeded yet.
+    def grant_creator_organizer_membership
+      return if creator.blank?
+
+      role = Role.find_default('community_organizer', platform: platform)
+      return if role.blank?
+
+      person_community_memberships.find_or_create_by!(member: creator, role:) do |membership|
+        membership.status = 'active'
+        membership.skip_notifications = true
+      end
+    end
+
     def create_default_calendar
       calendar_identifier = "default-#{identifier}"
       calendar = build_default_calendar(calendar_identifier)
@@ -285,8 +301,9 @@ module BetterTogether
 
     def build_default_calendar(calendar_identifier)
       calendars.find_or_initialize_by(identifier: calendar_identifier).tap do |calendar|
-        # Calendar slugs are globally unique, so the default calendar also needs
-        # a deterministic unique slug rather than the shared "default" slug.
+        # Same platform as the community, so its identifier is unique per platform; the slug
+        # is deterministic rather than the shared "default" slug.
+        calendar.platform_id ||= platform_id
         calendar.slug = calendar_identifier if calendar.slug.blank?
         calendar.name = 'Default' if calendar.name.blank?
         calendar.description = I18n.t(

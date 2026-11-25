@@ -40,6 +40,8 @@ RSpec.describe 'Weather jobs' do # rubocop:disable RSpec/DescribeClass
   end
 
   it 'purge job runs retention and supports dry runs' do
+    create(:weather_observation, location: location)
+
     expect(BetterTogether::Weather::PurgeJob.perform_now(dry_run: true)).to include(dry_run: true)
   end
 

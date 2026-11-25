@@ -2,7 +2,7 @@
   "name": "platform_manager_user_surface_fallback",
   "device": "mobile",
   "url": "/en/host/users",
-  "title": "404 - Page Not Found | Community Engine Host",
+  "title": "404 - Page Not Found | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_manager_least_privilege_review",

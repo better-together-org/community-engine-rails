@@ -1,0 +1,48 @@
+{
+  "name": "dark_mode_iframe_blocked_notice_light",
+  "device": "desktop",
+  "url": "/en/ut-aut-quia",
+  "title": "Ut aut quia. | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "dark_mode_surfaces",
+  "flow": "dark_mode_iframe_blocked_notice_light",
+  "source_spec": "./spec/docs_screenshots/better_together/dark_mode_surfaces_spec.rb",
+  "callouts": [
+    {
+      "selector": ".iframe-block__notice",
+      "title": "Blocked embed notice (light)",
+      "bullets": [
+        "The notice surface and text follow the mode."
+      ],
+      "target": {
+        "x": 84.0,
+        "y": 240.0,
+        "width": 1272.0,
+        "height": 715.5,
+        "right": 1356.0,
+        "bottom": 955.5,
+        "center_x": 720.0,
+        "center_y": 597.75
+      },
+      "avoid": {
+        "x": 84.0,
+        "y": 240.0,
+        "width": 1272.0,
+        "height": 715.5,
+        "right": 1356.0,
+        "bottom": 955.5,
+        "center_x": 720.0,
+        "center_y": 597.75
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 975.5,
+        "width": 380,
+        "height": 164,
+        "score": 501.5
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "user_theme_preferences_themes_off",
+  "device": "mobile",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "person",
+  "feature_set": "user_theme_preferences",
+  "flow": "user_theme_preferences_themes_off",
+  "source_spec": "./spec/docs_screenshots/better_together/user_theme_preferences_spec.rb",
+  "callouts": [
+    {
+      "selector": "#person-appearance-preferences",
+      "title": "Colour mode only",
+      "bullets": [
+        "This platform uses one theme for everyone."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 282.84375,
+        "width": 429.0,
+        "height": 692.0,
+        "right": 457.0,
+        "bottom": 974.84375,
+        "center_x": 242.5,
+        "center_y": 628.84375
+      },
+      "avoid": {
+        "x": 28.0,
+        "y": 282.84375,
+        "width": 429.0,
+        "height": 692.0,
+        "right": 457.0,
+        "bottom": 974.84375,
+        "center_x": 242.5,
+        "center_y": 628.84375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 104.84,
+        "width": 270.0,
+        "height": 158,
+        "score": 282.84375
+      }
+    }
+  ]
+}

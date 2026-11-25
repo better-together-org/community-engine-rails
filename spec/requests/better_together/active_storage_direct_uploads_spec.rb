@@ -29,7 +29,8 @@ RSpec.describe 'ActiveStorage direct uploads', :no_auth do
   end
 
   def reservation_for_last_blob
-    BetterTogether::QuotaReservation.find_by(subject: ActiveStorage::Blob.last)
+    # Newest by creation time: the suite also holds a seed packet blob, and blob ids are random UUIDs.
+    BetterTogether::QuotaReservation.find_by(subject: ActiveStorage::Blob.order(:created_at).last)
   end
 
   context 'without a direct-upload token' do

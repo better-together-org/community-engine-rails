@@ -1,0 +1,25 @@
+<%# locals: (platform:) -%>
+<%# Platform-owned content blocks for layout slots. Same block editor as the Css block above. %>
+<section id="platform-content-slots" class="mb-3 mt-4" aria-labelledby="platform-content-slots-title">
+  <h2 class="h5" id="platform-content-slots-title"><%= t('better_together.platforms.content_slots.title') %></h2>
+  <p class="form-text text-muted"><%= t('better_together.platforms.content_slots.hint') %></p>
+
+  <% BetterTogether::PlatformContentSlots::SLOTS.each do |slot, config| %>
+    <% block = platform.content_slot_block(slot) || BetterTogether::PlatformContentSlots.default_type(slot).constantize.new %>
+    <% dashed = slot.to_s.dasherize %>
+    <fieldset id="platform-content-slot-field-<%= dashed %>" class="border rounded p-3 mb-3">
+      <legend class="h6 w-auto px-2"><%= t("better_together.platforms.content_slots.#{slot}.label") %></legend>
+      <p class="form-text text-muted"><%= t("better_together.platforms.content_slots.#{slot}.hint") %></p>
+      <%= render partial: 'better_together/content/blocks/fields/block',
+                 locals: { block:, scope: "platform[content_slot_blocks_attributes][#{slot}]", minimal: true } %>
+      <% if block.persisted? %>
+        <div class="form-check mt-2">
+          <%= check_box_tag "platform[content_slot_blocks_attributes][#{slot}][remove]", '1', false,
+                            class: 'form-check-input', id: "platform-content-slot-remove-#{dashed}" %>
+          <%= label_tag "platform-content-slot-remove-#{dashed}", t('better_together.platforms.content_slots.remove'),
+                        class: 'form-check-label' %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+</section>

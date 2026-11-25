@@ -1,13 +1,13 @@
 {
   "name": "platform_domains_index_default",
   "device": "desktop",
-  "url": "/en/host/platforms/fredricka_keebler/platform_domains",
-  "title": "Domains | Becker, Wisozk and Padberg",
+  "url": "/en/host/platforms/test-host-community/platform_domains",
+  "title": "Domains | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_domains",
   "flow": "platform_domains_index",
-  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
   "callouts": [
     {
       "selector": "#new-platform-domain-btn",
@@ -41,7 +41,7 @@
         "y": 199.0,
         "width": 380,
         "height": 158,
-        "score": 1282.0
+        "score": 1278.0
       }
     },
     {
@@ -77,7 +77,7 @@
         "y": 308.19,
         "width": 380,
         "height": 210,
-        "score": 1172.8125
+        "score": 1168.8125
       }
     },
     {

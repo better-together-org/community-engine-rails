@@ -11,9 +11,6 @@ module BetterTogether
       class AiTranslationTokens < BetterTogether::Quotas::Type
         KEY = 'ai_translation_tokens'
 
-        # Provisional (product decision pending, not an engineering one).
-        PERSON_DEFAULT_TOKENS = 50_000
-
         class << self
           def key
             KEY
@@ -27,6 +24,20 @@ module BetterTogether
             'monthly'
           end
 
+          # Offered only when translation genuinely works for the platform: the same
+          # gate TranslationsController uses (translation robot resolved for the
+          # platform, and its provider has credentials, is ollama or has an adapter).
+          # The key stays 'ai_translation_tokens'; the wording is generic LLM usage.
+          def available_for?(platform)
+            BetterTogether.translation_available?(platform:)
+          end
+
+          # An owner sees the quota only when it is granted: an effective limit above 0
+          # (an active QuotaGrant, else the stored limit copied from the defaults).
+          def visible_for?(quota)
+            quota.effective_limit.to_i.positive?
+          end
+
           def measure(subject)
             subject.tokens_used
           end
@@ -35,10 +46,6 @@ module BetterTogether
           # are invisible to this ledger, a known, accepted gap, not fixed in this phase.
           def counts_toward_quota?(subject)
             subject.respond_to?(:status) ? subject.status == 'success' : true
-          end
-
-          def default_limit(_owner)
-            PERSON_DEFAULT_TOKENS
           end
         end
       end

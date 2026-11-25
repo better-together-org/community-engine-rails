@@ -1,0 +1,11 @@
+{
+  "name": "trix_link_dialog_dark_mode_plain",
+  "device": "mobile",
+  "url": "/en/posts/new",
+  "title": "New Post | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "trix_editor_dark_mode",
+  "flow": "trix_link_dialog_dark_mode",
+  "source_spec": "./spec/docs_screenshots/better_together/trix_editor_dark_mode_spec.rb"
+}
