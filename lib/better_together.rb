@@ -45,6 +45,17 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # Single-platform installs (one local platform) are never affected.
   mattr_accessor :fail_closed_unknown_hosts
   self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
+  # Extra zones (besides the host platform's primary domain) in which a platform steward may request a
+  # subdomain, for example ['communityengine.app']. Operators are not limited by it.
+  mattr_accessor :platform_domain_zones
+  self.platform_domain_zones = []
+  # First labels a steward may never request under an allowed zone. Hosts append their own live names.
+  mattr_accessor :reserved_domain_labels
+  self.reserved_domain_labels = %w[
+    www admin api app apps auth login sso oauth mail email smtp imap pop mx ns ns1 ns2 dns ftp sftp ssh git
+    static assets cdn media files status help support docs blog shop store billing pay payments dashboard
+    staging stage test dev demo internal localhost root host hosts platform platforms operator mgmt manage
+  ].freeze
   mattr_accessor :head_tag_providers
   mattr_accessor :third_party_tracking_exclusions
   # Settlement weather. Hosts may turn it off; when on, it still needs an enabled source with

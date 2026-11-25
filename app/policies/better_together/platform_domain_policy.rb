@@ -5,6 +5,8 @@ module BetterTogether
   # Follows the existing /host management contract, scoped per-platform so a
   # steward of one platform cannot manage another platform's domains.
   class PlatformDomainPolicy < ApplicationPolicy
+    include PlatformGrantAuthority
+
     def index?
       platform_manager_for_target_platform?
     end
@@ -27,6 +29,11 @@ module BetterTogether
 
     def destroy?
       platform_manager_for_target_platform?
+    end
+
+    # The governing operator may activate domains and use any hostname; a steward may only request.
+    def operator?
+      grant_authority_for?(target_platform)
     end
 
     private

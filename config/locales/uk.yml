@@ -619,6 +619,12 @@ uk:
             active:
               must_be_true_for_primary: повинно бути правдою для основного домену
               must_be_true_for_share_domain: повинно бути правдою для домену поширення
+              operator_only: може увімкнути лише оператор платформи
+            hostname:
+              operator_only: може змінити лише оператор платформи після активації
+              outside_allowed_zone: 'має бути однією назвою в одному з цих доменів:
+                %{zones}'
+              reserved: є зарезервованою назвою
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
         better_together/redirect:
@@ -3612,6 +3618,8 @@ uk:
         subtitle: Домен для %{platform_name}
         title: Редагувати %{hostname}
       form:
+        activation_note: Оператор активує нові домени після перевірки. До того цей
+          домен залишається неактивним.
         active_field_label: Активний
         custom_domain_hint_html: Власний домен потребує DNS-запису (CNAME або A),
           який вказує на граничний сервер цієї платформи, а також власного TLS-сертифіката.
