@@ -78,13 +78,13 @@ module BetterTogether
         raise LookupError, 'processor unavailable' if item.name.to_s.include?('boom')
 
         product_id = item.processor_product_id.presence || "prod_#{item.ref}"
-        prices = item.prices.map do |price|
-          price_id = price.processor_price_id.presence || "price_#{price.ref}"
-          info = PriceInfo.new(price_id:, product_id:, amount_cents: price.amount_cents, currency: price.currency, interval: price.interval,
-                               interval_count: price.interval_count, active: price.active, ref: price.ref)
-          @prices[price_id] = info
-        end
-        CatalogSyncResult.new(product_id:, prices:)
+        CatalogSyncResult.new(product_id:, prices: item.prices.map { |price| hold_price(product_id, price) })
+      end
+
+      def hold_price(product_id, price)
+        price_id = price.processor_price_id.presence || "price_#{price.ref}"
+        @prices[price_id] = PriceInfo.new(price_id:, product_id:, amount_cents: price.amount_cents, currency: price.currency,
+                                          interval: price.interval, interval_count: price.interval_count, active: price.active, ref: price.ref)
       end
 
       def fetch_price(context:, processor_price_id:)

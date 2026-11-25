@@ -9,11 +9,14 @@ RSpec.describe BetterTogether::Billing::CatalogSync do
   let!(:host_platform) { configure_host_platform }
   let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
   let(:product) { create(:better_together_billing_product, platform: host_platform, name: 'Top-up', processor: 'fake') }
-  let!(:small) { create(:better_together_billing_price, product:, amount_cents: 500, currency: 'USD') }
-  let!(:large) { create(:better_together_billing_price, product:, amount_cents: 1500, currency: 'USD') }
+  let(:small) { create(:better_together_billing_price, product:, amount_cents: 500, currency: 'USD') }
+  let(:large) { create(:better_together_billing_price, product:, amount_cents: 1500, currency: 'USD') }
   let(:plan) { create(:better_together_billing_plan, :unlinked, name: 'Hosted') }
 
-  before { BetterTogether::Billing.register_processor(:fake, -> { adapter }) }
+  before do
+    BetterTogether::Billing.register_processor(:fake, -> { adapter })
+    [small, large]
+  end
 
   describe 'an adapter at contract version 2' do
     it 'is given the product with every price, and returns a price for each' do

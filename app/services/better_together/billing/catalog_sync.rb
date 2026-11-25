@@ -41,12 +41,17 @@ module BetterTogether
 
       # Contract version 1: `sync_plan` for a plan.
       def push_plan
-        raise Unsupported, "#{adapter.class} implements contract #{adapter.contract_version} and cannot hold a product" unless record.is_a?(Plan)
-
+        guard_plan!
         result = adapter.sync_plan(context:, plan: record, idempotency_key: key)
         raise TypeError, "#{adapter.class}#sync_plan must return PlanSyncResult" unless result.is_a?(PlanSyncResult)
 
         CatalogSyncResult.new(product_id: result.product_id, prices: [result.price.with(ref: record.id)])
+      end
+
+      def guard_plan!
+        return if record.is_a?(Plan)
+
+        raise Unsupported, "#{adapter.class} implements contract #{adapter.contract_version} and cannot hold a product"
       end
     end
   end
