@@ -191,3 +191,12 @@ records:
       name: Platform Member
       description: Basic platform role for signed-in members who can access platform information without platform management authority.
   position: 11
+- key: platform_disclosure_officer
+  attributes:
+    resource_type: BetterTogether::Platform
+    protected: true
+  translations:
+    en:
+      name: Platform Disclosure Officer
+      description: Sealed role. May request a time-limited, audited break-glass grant to read one private record. Assigned to no one by default; stewards and managers do not hold it.
+  position: 12

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_25_005637) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_015340) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -247,6 +247,45 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_25_005637) do
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
     t.index ["platform_id"], name: "index_better_together_authorships_on_platform_id"
     t.index ["role"], name: "by_better_together_authorships_role"
+  end
+
+  create_table "better_together_break_glass_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "event_type", null: false
+    t.jsonb "detail", default: {}, null: false
+    t.uuid "break_glass_grant_id", null: false
+    t.uuid "actor_id"
+    t.uuid "platform_id", null: false
+    t.index ["actor_id"], name: "index_better_together_break_glass_events_on_actor_id"
+    t.index ["break_glass_grant_id"], name: "index_break_glass_events_on_grant"
+    t.index ["platform_id"], name: "index_better_together_break_glass_events_on_platform_id"
+  end
+
+  create_table "better_together_break_glass_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "status", default: "requested", null: false
+    t.text "reason", null: false
+    t.string "reason_code"
+    t.boolean "emergency", default: false, null: false
+    t.datetime "available_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.string "subject_type", null: false
+    t.uuid "subject_id", null: false
+    t.uuid "grantee_id", null: false
+    t.uuid "requested_by_id", null: false
+    t.uuid "approved_by_id"
+    t.uuid "platform_id", null: false
+    t.index ["approved_by_id"], name: "index_better_together_break_glass_grants_on_approved_by_id"
+    t.index ["grantee_id", "subject_type", "subject_id"], name: "index_break_glass_grants_on_grantee_and_subject"
+    t.index ["grantee_id"], name: "index_better_together_break_glass_grants_on_grantee_id"
+    t.index ["platform_id"], name: "index_better_together_break_glass_grants_on_platform_id"
+    t.index ["requested_by_id"], name: "index_better_together_break_glass_grants_on_requested_by_id"
+    t.index ["subject_type", "subject_id"], name: "index_break_glass_grants_on_subject"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2954,6 +2993,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_25_005637) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_break_glass_events", "better_together_break_glass_grants", column: "break_glass_grant_id"
+  add_foreign_key "better_together_break_glass_events", "better_together_people", column: "actor_id"
+  add_foreign_key "better_together_break_glass_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_break_glass_grants", "better_together_people", column: "approved_by_id"
+  add_foreign_key "better_together_break_glass_grants", "better_together_people", column: "grantee_id"
+  add_foreign_key "better_together_break_glass_grants", "better_together_people", column: "requested_by_id"
+  add_foreign_key "better_together_break_glass_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"

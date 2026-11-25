@@ -834,3 +834,11 @@ records:
   refs:
     role: role:platform_member
     resource_permission: resource_permission:read_platform
+- key: platform_disclosure_officer-read_platform
+  refs:
+    role: role:platform_disclosure_officer
+    resource_permission: resource_permission:read_platform
+- key: platform_disclosure_officer-manage_break_glass_disclosure
+  refs:
+    role: role:platform_disclosure_officer
+    resource_permission: resource_permission:manage_break_glass_disclosure

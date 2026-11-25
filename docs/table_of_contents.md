@@ -53,6 +53,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
 - [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
+- [Break-glass disclosure](developers/systems/break_glass_disclosure.md) - Time-limited, audited grants to read one private record; sealed role, append-only audit trail
 - [Cookie Consent And Cookie Policy Extensions](developers/systems/cookie_consent_extensions.md) - Per-person cookie consent, policy version, registering cookie policy segments from gems and host apps
 - [Quota Default Limits](developers/systems/quotas_defaults.md) - YAML-driven starting quotas, per-platform overrides, local-owner gate
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization

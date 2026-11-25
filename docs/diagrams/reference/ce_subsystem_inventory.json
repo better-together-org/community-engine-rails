@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T19:18:05Z",
+  "generated_at": "2026-11-25T02:07:13Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -4122,6 +4122,30 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Person",
+          "label": "grantee (grantee_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Person",
+          "label": "requested_by (requested_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Person",
+          "label": "approved_by (approved_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::BreakGlassEvent",
+          "to": "BetterTogether::Person",
+          "label": "actor (actor_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::FeatureAccessGrant",
           "to": "BetterTogether::Person",
           "label": "person (person_id)",
@@ -8159,6 +8183,18 @@
         },
         {
           "from": "BetterTogether::InboundEmailMessage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::BreakGlassEvent",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -26621,6 +26657,222 @@
           ]
         },
         {
+          "name": "BetterTogether::BreakGlassEvent",
+          "label": "BreakGlassEvent",
+          "source_path": "app/models/better_together/break_glass_event.rb",
+          "table_name": "better_together_break_glass_events",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "break_glass_grant_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "event_type",
+              "string"
+            ],
+            [
+              "detail",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "InclusionValidator: event_type (in=[\"requested\", \"revoked\", \"accessed\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "break_glass_grant",
+              "foreign_key": "break_glass_grant_id",
+              "target": "BetterTogether::BreakGlassGrant",
+              "optional": false
+            },
+            {
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::BreakGlassGrant",
+          "label": "BreakGlassGrant",
+          "source_path": "app/models/better_together/break_glass_grant.rb",
+          "table_name": "better_together_break_glass_grants",
+          "columns": [
+            [
+              "approved_by_id",
+              "uuid FK"
+            ],
+            [
+              "grantee_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "requested_by_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "reason_code",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "subject_type",
+              "string"
+            ],
+            [
+              "reason",
+              "text"
+            ],
+            [
+              "emergency",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "InclusionValidator: status (in=[\"requested\", \"revoked\"])",
+            "InclusionValidator: subject_type (in=[\"BetterTogether::Community\"])",
+            "PresenceValidator: reason",
+            "PresenceValidator: reason_code (if=:emergency?)",
+            "PresenceValidator: available_at, expires_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "grantee",
+              "foreign_key": "grantee_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "requested_by",
+              "foreign_key": "requested_by_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "approved_by",
+              "foreign_key": "approved_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "grantee",
+              "foreign_key": "grantee_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "requested_by",
+              "foreign_key": "requested_by_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "approved_by",
+              "foreign_key": "approved_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::CommentAddedNotifier",
           "label": "CommentAddedNotifier",
           "source_path": "app/notifiers/better_together/comment_added_notifier.rb",
@@ -36204,6 +36456,8 @@
             "MessageRequest",
             "InboundEmailReplyToken",
             "InboundEmailMessage",
+            "BreakGlassGrant",
+            "BreakGlassEvent",
             "JwtDenylist",
             "QuotaUsage",
             "QuotaGrant",
@@ -36986,6 +37240,8 @@
             "MessageRequest",
             "InboundEmailReplyToken",
             "InboundEmailMessage",
+            "BreakGlassGrant",
+            "BreakGlassEvent",
             "JwtDenylist",
             "QuotaUsage",
             "QuotaGrant",
@@ -37191,6 +37447,8 @@
             "MessageRequest",
             "InboundEmailReplyToken",
             "InboundEmailMessage",
+            "BreakGlassGrant",
+            "BreakGlassEvent",
             "JwtDenylist",
             "QuotaUsage",
             "QuotaGrant",
@@ -37359,6 +37617,42 @@
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Robot",
           "label": "robot (robot_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::BreakGlassEvent",
+          "to": "BetterTogether::Person",
+          "label": "actor (actor_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::BreakGlassEvent",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Person",
+          "label": "approved_by (approved_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Person",
+          "label": "grantee (grantee_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Person",
+          "label": "requested_by (requested_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::BreakGlassGrant",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {

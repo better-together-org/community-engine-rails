@@ -638,6 +638,8 @@ fr:
       active_storage/variant_record: Enregistrement de stockage/variante actif
       application_notifier: Notificateur de candidature
       application_notifier/notification: notification de candidature
+      better_together/break_glass_event: Événement d'accès exceptionnel
+      better_together/break_glass_grant: Autorisation d'accès exceptionnel
       better_together/category: Catégorie
       better_together/checklist: Liste de Contrôle
       better_together/community: Communauté

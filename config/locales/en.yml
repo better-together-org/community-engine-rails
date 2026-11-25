@@ -649,6 +649,8 @@ en:
       active_storage/variant_record: Variant Record
       application_notifier: Application Notifier
       application_notifier/notification: Notification
+      better_together/break_glass_event: Break glass event
+      better_together/break_glass_grant: Break glass grant
       better_together/category: Category
       better_together/checklist: Checklist
       better_together/community: Community

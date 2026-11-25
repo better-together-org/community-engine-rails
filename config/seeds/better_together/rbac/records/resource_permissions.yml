@@ -331,3 +331,10 @@ records:
     resource_type: BetterTogether::Community
     protected: true
   position: 14
+- key: manage_break_glass_disclosure
+  attributes:
+    action: manage
+    target: break_glass_disclosure
+    resource_type: BetterTogether::Platform
+    protected: true
+  position: 30
