@@ -76,6 +76,18 @@ For a **trialing or active** Pay subscription an order that began it needs no pa
 
 A model opts in with `Billing::Purchasable` and describes itself: `purchasable_description`, `purchasable_amount_cents`, `purchasable_currency`, and `purchasable?` (can it be bought now). It may also hold something back while an order waits: `reserve!(quantity:)` when the order is placed and `release!(quantity:)` when it is cancelled or expires. A plan holds nothing. A ticket type will hold a place. The registry means a line item never resolves a type from a string.
 
+It also answers five questions the order engine asks instead of testing for a class. Each default is the plain one-off answer, so a new kind of purchasable overrides only what differs; an implementation that inherits the defaults is never started as a subscription and never fulfilled through its own order, so a kind that needs either must override the matching hook.
+
+| Hook | Default | Meaning | Used by |
+|---|---|---|---|
+| `renews?` | false | Buying it starts a recurring subscription | `Checkout::Methods` (the order's purpose), `Subscriptions::Start` |
+| `extra?` | false | It is an extra sold with something else, never on its own as the main purchase | `Checkout::Methods`, `Subscriptions::Start` |
+| `plan_line?` | false | It counts as a plan line when an order is checked for a single plan | `Subscriptions::Start` |
+| `fulfilled_by_order?` | false | Paying the order is what gives the buyer what it includes, through `SyncOrderEntitlementJob` | `Orders::Settle` follow-up |
+| `held_by?(person)` | false | The person holds it now (a live entitlement, a subscription, or a paid order that stands) | dependent purchases (PS-4) |
+
+A plan answers: `renews?` when recurring, `extra?` when an add-on, `plan_line?` always, `fulfilled_by_order?` when one-time and not an add-on.
+
 ## Who sees what
 
 | Page | Who | Reached through |
