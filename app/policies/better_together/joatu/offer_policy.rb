@@ -15,13 +15,12 @@ module BetterTogether
       alias new? create?
 
       # Permission helper for the "respond with request" flow (creating an Offer from a Request)
-      def respond_with_request? = create?
+      def respond_with_request? = create? && show?
 
       def update?
         return false unless user.present?
 
-        permitted_to?('manage_platform_settings', record.platform) || permitted_to?('manage_platform', record.platform) ||
-          record.creator_id == agent&.id
+        record.creator_id == agent&.id || manager_may_act?
       end
       alias edit? update?
 
@@ -32,8 +31,8 @@ module BetterTogether
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
         # Platform stewards or the creator may destroy when there are no agreements
-        permitted_to?('manage_platform_settings', record.platform) || permitted_to?('manage_platform', record.platform) ||
-          record.creator_id == agent&.id
+        # Removing a post discloses nothing, so managers may remove private ones too.
+        record.creator_id == agent&.id || manager_permitted?
       end
 
       class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
@@ -41,10 +40,10 @@ module BetterTogether
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           return scope.none unless current_platform
 
-          # Platform stewards see everything on the platform
+          # Platform stewards see everything except other people's private offers
           if user.present? && (permitted_to?('manage_platform_settings', current_platform) ||
                                 permitted_to?('manage_platform', current_platform))
-            return platform_scoped
+            return platform_scoped.where.not(privacy: 'private').or(platform_scoped.where(creator_id: agent.id))
           end
 
           # Standalone offers: not a response to another resource (no inbound ResponseLink)
@@ -101,6 +100,15 @@ module BetterTogether
       end
 
       private
+
+      # Managers act on public and community offers, never on someone else's private one.
+      def manager_may_act?
+        !record.privacy_private? && manager_permitted?
+      end
+
+      def manager_permitted?
+        permitted_to?('manage_platform_settings', record.platform) || permitted_to?('manage_platform', record.platform)
+      end
 
       def scope_allows_record?
         self.class::Scope.new(user, record.class).resolve.where(id: record.id).exists?
