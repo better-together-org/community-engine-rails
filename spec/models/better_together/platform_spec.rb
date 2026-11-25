@@ -8,6 +8,17 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     expect(platform).to be_valid
   end
 
+  describe 'pages association' do
+    let(:platform) { create(:better_together_platform) }
+
+    it 'lists only the pages that belong to the platform' do
+      own = create(:better_together_page, platform:)
+      create(:better_together_page, platform: create(:better_together_platform))
+
+      expect(platform.pages).to contain_exactly(own)
+    end
+  end
+
   describe 'Factory traits' do
     describe ':host' do
       subject(:host_platform) do
