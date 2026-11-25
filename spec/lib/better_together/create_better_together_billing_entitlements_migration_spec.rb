@@ -38,7 +38,8 @@ RSpec.describe 'Create Better Together billing entitlements migration' do # rubo
   end
 
   it 'requires exactly one source for an entitlement, in the database' do
-    expect(connection.check_constraints(tables[1]).map(&:name)).to contain_exactly('chk_bt_billing_entitlements_one_source', 'chk_bt_billing_entitlements_one_item')
+    expect(connection.check_constraints(tables[1]).map(&:name)).to contain_exactly('chk_bt_billing_entitlements_one_source',
+                                                                                   'chk_bt_billing_entitlements_one_item')
   end
 
   it 'allows one live entitlement per beneficiary and plan, and one entitlement per source' do
@@ -48,7 +49,7 @@ RSpec.describe 'Create Better Together billing entitlements migration' do # rubo
     expect(live).to have_attributes(unique: true, columns: %w[platform_id beneficiary_type beneficiary_id plan_id])
     expect(live.where).to match(/active.*grace/)
     expect(names).to include('idx_bt_billing_entitlements_subscription', 'idx_bt_billing_entitlements_order_plan',
-                           'idx_bt_billing_entitlements_order_product')
+                             'idx_bt_billing_entitlements_order_product')
   end
 
   it 'names an applied grant once per entitlement, and keeps the kind and parameters it was made with' do
