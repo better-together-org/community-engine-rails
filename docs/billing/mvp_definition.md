@@ -10,7 +10,7 @@ story ids from [user stories and coverage](user_stories_and_coverage.md) and the
 
 | Target | Meaning | Steps needed | Status at `536cbd5db` |
 |---|---|---|---|
-| **MVP 1: host sells to its own people** | The host platform sells free and paid plans and add-ons, takes offline payments, taxes them, and buyers manage their own account. | A-chunks, D0, D1a to D1c, D2, D2b, D3, D3b | Built. Needs acceptance (below). |
+| **MVP 1: host sells to its own people** | The host platform sells free and paid plans, products (one-off, top-ups, extras) with their prices, takes offline payments, taxes them, and buyers manage their own account. | A-chunks, D0, D1a to D1c, D2, D2b, D3, D3b | Built. Needs acceptance (below). |
 | **MVP 2: hosted platforms self-serve** | A prospect buys a hosting tier and gets a working platform without an operator. Hosted platforms can sell with local methods. | MVP 1 plus D3a, D4, D4a, D8 | Partial. D3a is built; D4 provisioning, D4a tasks and D8 processors are not. |
 | **MVP 3: co-op and association** | Shares, donations, event fees, sub-community plans. | MVP 2 plus D5, D6, D7, D10 | Not started. |
 
@@ -26,7 +26,7 @@ A story counts only when it works in a browser on a clean install, not just in s
 | Plans | 0.1, 0.2, 0.3, 0.4 | A steward defines free and paid plans with storage and feature grants, and sees usage. |
 | Free plan | 0.5, 3.1 | A $0 plan checks out without a payment method and grants its entitlement. |
 | Storefront | 1.1 (list), 1.2, P12 | A visitor sees listed plans and prices and reaches checkout from a button. |
-| Checkout | 1.10, 2.9, 2.11, 2.12 | Add-ons, agreements, tax lines, offline methods, receipts and the steward confirmation queue work. |
+| Checkout | 1.10, 2.9, 2.11, 2.12 | Extras, products with several prices, agreements, tax lines, offline methods, receipts and the steward confirmation queue work. |
 | Buyer account | 4.1 to 4.7, 4.9, 4.11, 4.12 | A buyer finds Billing in the menu, sees orders, subscriptions, credit and access, cancels, resumes, changes plan, changes renewal method, and requests a refund. |
 | Steward back office | 4.8, 0.9, 1.15 | Stewards review refunds, record walk-up sales, and report tax and revenue. |
 | Safety | | The remediation findings from the first assessment are fixed and covered by specs (done, PRs #2145 to #2166). Billing off is inert. Non-host platforms cannot sell. |

@@ -14,6 +14,20 @@ See [MVP definition](../mvp_definition.md) for the target.
 | First production enablement (host only) | NO-GO | **GO WITH FIXES.** The production package items are merged. Needs a configured browser acceptance pass and the operability page. |
 | Hosted platform enablement | NO-GO | **Still NO-GO for remote methods and merchant of record** (D8, D9 not built). **Local methods only** are gated by D3a agreements and could be enabled after legal review of the agreement texts, which are draft placeholders. |
 
+## Purchasable split (PS-0 to PS-8), added 25 November 2026
+
+What was a plan (one-time and add-on plans) is now a product with prices. Plan is always renewing.
+
+| Area | State |
+|---|---|
+| Product, Price, grants with quantity, per-product lifetime, entitlement source | Built and merged (PS-1 to PS-5). |
+| Existing data | PS-6 converts one-time plans and add-on plans to products, links to purchase requirements, repoints line items and entitlements, then drops `plan_add_ons` and `plans.add_on`. Counts are verified and a mismatch rolls the conversion back. |
+| Processor contract | PS-7: contract version 2 holds a catalog item with all its prices, takes checkout `mode:` and `lines:`, and sends inline price data for items the processor does not hold. Version 1 adapters keep working through a shim. No processor gem is checked against it yet. |
+| Cleanup | PS-8: unused add-on locale keys removed, docs and MVP wording updated. The `billing-checkout-add-ons` ids and the `add_on_ids[]` parameter keep their old names on purpose. |
+
+Open: a steward screen for a product's processor and sync status; Stripe extension work against contract version 2;
+a browser acceptance pass of product checkout (top-ups, extras) on a configured instance.
+
 ## Earlier findings: status at the tip
 
 All fifteen remediation PRs listed in the earlier report are in the tip: #2145, #2148, #2149, #2150, #2152,
