@@ -88,7 +88,7 @@ module BetterTogether
                   membership_table
                     .where(membership_table[:member_id]
                     .eq(agent.id))
-                    .where(membership_table[:status].eq('active'))
+                    .where(membership_current_condition(scope.membership_class))
                     .project(:joinable_id)
                 )
               )
@@ -125,6 +125,13 @@ module BetterTogether
       end
 
       private
+
+      # Dated lifecycle when the membership class has it, plain active status otherwise.
+      def membership_current_condition(klass)
+        return klass.current_condition if klass.respond_to?(:current_condition)
+
+        klass.arel_table[:status].eq('active')
+      end
 
       def managed_private_rows(table)
         rows = table[:privacy].eq('private')

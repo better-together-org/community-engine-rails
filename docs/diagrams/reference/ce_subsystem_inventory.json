@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T19:18:05Z",
+  "generated_at": "2026-11-24T21:04:47Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -1360,14 +1360,31 @@
               "uuid FK"
             ],
             [
+              "ended_reason",
+              "string"
+            ],
+            [
+              "source",
+              "string"
+            ],
+            [
               "status",
               "string"
+            ],
+            [
+              "ends_at",
+              "datetime"
+            ],
+            [
+              "starts_at",
+              "datetime"
             ]
           ],
           "validations": [
             "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "PresenceValidator: member, role, joinable",
-            "UniquenessValidator: role_id (scope=[:joinable_id, :member_id])"
+            "UniquenessValidator: role_id (scope=[:joinable_id, :member_id], conditions=dynamic)",
+            "InclusionValidator: source (in=[\"direct\", \"registration\", \"invitation\", \"request\", \"trusted_domain\", \"entitlement\", \"wizard\", \"backfill\"])"
           ],
           "belongs_to": [
             {
@@ -1401,12 +1418,19 @@
               "name": "seeds",
               "as": "seedable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "membership_events",
+              "as": "membership",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Membership",
+            "BetterTogether::MembershipLifecycle",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Seedable"
           ],
@@ -1933,13 +1957,30 @@
               "uuid FK"
             ],
             [
+              "ended_reason",
+              "string"
+            ],
+            [
+              "source",
+              "string"
+            ],
+            [
               "status",
               "string"
+            ],
+            [
+              "ends_at",
+              "datetime"
+            ],
+            [
+              "starts_at",
+              "datetime"
             ]
           ],
           "validations": [
             "PresenceValidator: member, role, joinable",
-            "UniquenessValidator: role_id (scope=[:joinable_id, :member_id])"
+            "UniquenessValidator: role_id (scope=[:joinable_id, :member_id], conditions=dynamic)",
+            "InclusionValidator: source (in=[\"direct\", \"registration\", \"invitation\", \"request\", \"trusted_domain\", \"entitlement\", \"wizard\", \"backfill\"])"
           ],
           "belongs_to": [
             {
@@ -1967,12 +2008,19 @@
               "name": "seeds",
               "as": "seedable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "membership_events",
+              "as": "membership",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Membership",
+            "BetterTogether::MembershipLifecycle",
             "BetterTogether::Seedable"
           ],
           "concern_notes": [],
@@ -3069,6 +3117,16 @@
           ]
         },
         {
+          "name": "BetterTogether::MembershipLifecycle",
+          "label": "MembershipLifecycle",
+          "capability": "Membershiplifecycle",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PersonPlatformMembership",
+            "PersonCommunityMembership"
+          ]
+        },
+        {
           "name": "BetterTogether::MentionPrefetch",
           "label": "MentionPrefetch",
           "capability": "Mentionprefetch",
@@ -4029,6 +4087,18 @@
           "from": "BetterTogether::PlatformAssociation",
           "to": "BetterTogether::Person",
           "label": "status_changed_by (status_changed_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::MembershipEvent",
+          "to": "BetterTogether::Person",
+          "label": "member (member_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::MembershipEvent",
+          "to": "BetterTogether::Person",
+          "label": "actor (actor_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -7963,6 +8033,12 @@
           "from": "BetterTogether::PlatformAssociation",
           "to": "BetterTogether::Platform",
           "label": "managed_platform (managed_platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::MembershipEvent",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -30005,6 +30081,121 @@
           "shared_table_group_size": 22
         },
         {
+          "name": "BetterTogether::MembershipEvent",
+          "label": "MembershipEvent",
+          "source_path": "app/models/better_together/membership_event.rb",
+          "table_name": "better_together_membership_events",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "from_role_id",
+              "uuid FK"
+            ],
+            [
+              "joinable_id",
+              "uuid FK"
+            ],
+            [
+              "member_id",
+              "uuid FK"
+            ],
+            [
+              "membership_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "to_role_id",
+              "uuid FK"
+            ],
+            [
+              "event_type",
+              "string"
+            ],
+            [
+              "from_status",
+              "string"
+            ],
+            [
+              "joinable_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: event_type (in=[\"created\", \"activated\", \"pending\", \"suspended\", \"reinstated\", \"ended\", \"role_changed\", \"removed\"])",
+            "PresenceValidator: joinable_type, joinable_id"
+          ],
+          "belongs_to": [
+            {
+              "name": "member",
+              "foreign_key": "member_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "membership",
+              "foreign_key": "membership_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "member",
+              "foreign_key": "member_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::MembershipRemovedNotifier",
           "label": "MembershipRemovedNotifier",
           "source_path": "app/notifiers/better_together/membership_removed_notifier.rb",
@@ -36177,6 +36368,7 @@
             "PlatformIdentityProvider",
             "PlatformDeletionRequest",
             "PlatformAssociation",
+            "MembershipEvent",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -37164,6 +37356,7 @@
             "PlatformIdentityProvider",
             "PlatformDeletionRequest",
             "PlatformAssociation",
+            "MembershipEvent",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -37615,6 +37808,24 @@
         },
         {
           "from": "BetterTogether::MembershipCreatedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MembershipEvent",
+          "to": "BetterTogether::Person",
+          "label": "actor (actor_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::MembershipEvent",
+          "to": "BetterTogether::Person",
+          "label": "member (member_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::MembershipEvent",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

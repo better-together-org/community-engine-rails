@@ -585,6 +585,12 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__MembershipEvent["MembershipEvent"] {
+      <<Model>>
+      table: better_together_membership_events
+      concerns: BetterTogetherId, Seedable
+      weak refs: target: membership, owner: seeds
+    }
     class BetterTogether__MessageRequest["MessageRequest"] {
       <<Model>>
       table: better_together_message_requests
@@ -911,6 +917,9 @@ classDiagram
   BetterTogether__Infrastructure__Room --> BetterTogether__Community : community
   BetterTogether__Infrastructure__Room --> BetterTogether__Infrastructure__Floor : floor
   BetterTogether__JwtDenylist --> BetterTogether__Platform : platform
+  BetterTogether__MembershipEvent --> BetterTogether__Person : member
+  BetterTogether__MembershipEvent --> BetterTogether__Person : actor
+  BetterTogether__MembershipEvent --> BetterTogether__Platform : platform
   BetterTogether__MessageRequest --> BetterTogether__Person : sender
   BetterTogether__MessageRequest --> BetterTogether__Person : recipient
   BetterTogether__MessageRequest --> BetterTogether__Platform : platform

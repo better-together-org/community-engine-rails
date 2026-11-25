@@ -105,7 +105,7 @@ module BetterTogether
       end
 
       def operator_platform_ids_of(person)
-        BetterTogether::PersonPlatformMembership.where(member_id: person.id, status: 'active').select(:joinable_id)
+        BetterTogether::PersonPlatformMembership.current.where(member_id: person.id).select(:joinable_id)
       end
     end
 

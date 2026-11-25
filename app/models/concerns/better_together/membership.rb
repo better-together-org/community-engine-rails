@@ -17,7 +17,8 @@ module BetterTogether
 
         validates :member, :role, :joinable, presence: true
         validates :role_id, uniqueness: {
-          scope: %i[joinable_id member_id]
+          scope: %i[joinable_id member_id],
+          conditions: -> { where.not(status: 'ended') }
         }
         validate :role_belongs_to_joinable_platform
       end

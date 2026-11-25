@@ -1,0 +1,40 @@
+<%# locals: (membership:) -%>
+<%# Status, source and dates for a membership, plus the lifecycle actions the viewer may take. %>
+<% status = membership.current? ? 'current' : membership.status %>
+<% last_suffix = membership.sole_current_membership? ? '_last' : '' %>
+<div id="<%= dom_id(membership, :lifecycle) %>" class="membership-lifecycle mt-2">
+  <span id="<%= dom_id(membership, :status) %>" class="membership-status-badge badge <%= { 'current' => 'bg-success', 'pending' => 'bg-warning text-dark', 'suspended' => 'bg-secondary', 'ended' => 'bg-dark' }.fetch(status, 'bg-secondary') %>">
+    <%= t("better_together.memberships.lifecycle.status.#{status}") %>
+  </span>
+  <span id="<%= dom_id(membership, :source) %>" class="membership-source text-muted small">
+    <%= t("better_together.memberships.lifecycle.source.#{membership.source}") %>
+  </span>
+  <dl id="<%= dom_id(membership, :dates) %>" class="membership-dates small text-muted mb-0 mt-1">
+    <% if membership.starts_at.present? %>
+      <dt class="d-inline"><%= t('better_together.memberships.lifecycle.since') %></dt>
+      <dd class="d-inline me-2"><%= l(membership.starts_at.to_date, format: :long) %></dd>
+    <% end %>
+    <% if membership.ends_at.present? %>
+      <dt class="d-inline"><%= t('better_together.memberships.lifecycle.until') %></dt>
+      <dd class="d-inline"><%= l(membership.ends_at.to_date, format: :long) %></dd>
+    <% end %>
+  </dl>
+  <% if membership.ended_reason.present? %>
+    <p id="<%= dom_id(membership, :reason) %>" class="membership-reason small text-muted mb-0"><%= membership.ended_reason %></p>
+  <% end %>
+  <div id="<%= dom_id(membership, :actions) %>" class="membership-actions d-flex flex-wrap gap-2 mt-2">
+    <% path = ->(action) { membership.joinable.is_a?(BetterTogether::Platform) ? public_send("#{action}_platform_person_platform_membership_path", membership.joinable, membership) : public_send("#{action}_community_person_community_membership_path", membership.joinable, membership) } %>
+    <% if policy(membership).suspend? && membership.current? %>
+      <%= button_to t('better_together.memberships.lifecycle.actions.suspend'), path.call(:suspend), method: :patch, class: 'btn btn-sm btn-outline-secondary', form: { id: dom_id(membership, :suspend_form), data: { turbo_confirm: t("better_together.memberships.lifecycle.confirm_suspend#{last_suffix}") } } %>
+    <% end %>
+    <% if policy(membership).reinstate? && %w[suspended ended].include?(membership.status) %>
+      <%= button_to t('better_together.memberships.lifecycle.actions.reinstate'), path.call(:reinstate), method: :patch, class: 'btn btn-sm btn-outline-success', form: { id: dom_id(membership, :reinstate_form), data: { turbo_confirm: t('better_together.memberships.lifecycle.confirm_reinstate') } } %>
+    <% end %>
+    <% if policy(membership).end? && membership.status != 'ended' %>
+      <%= button_to t('better_together.memberships.lifecycle.actions.end'), path.call(:end_membership), method: :patch, class: 'btn btn-sm btn-outline-danger', form: { id: dom_id(membership, :end_form), data: { turbo_confirm: t("better_together.memberships.lifecycle.confirm_end#{last_suffix}") } } %>
+    <% end %>
+    <% if membership.is_a?(BetterTogether::PersonCommunityMembership) && policy(membership).leave? %>
+      <%= button_to t('better_together.memberships.lifecycle.actions.leave'), path.call(:leave), method: :delete, class: 'btn btn-sm btn-outline-danger', form: { id: dom_id(membership, :leave_form), data: { turbo_confirm: t('better_together.memberships.lifecycle.confirm_leave') } } %>
+    <% end %>
+  </div>
+</div>

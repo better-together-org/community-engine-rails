@@ -30,7 +30,8 @@ module BetterTogether
       def manageable_community_ids
         BetterTogether::PersonCommunityMembership
           .joins(role: { role_resource_permissions: :resource_permission })
-          .where(member_id: agent.id, status: 'active')
+          .where(member_id: agent.id)
+          .where(BetterTogether::PersonCommunityMembership.current_condition)
           .where(better_together_resource_permissions: { identifier: INVITE_PERMISSIONS })
           .select(:joinable_id)
       end

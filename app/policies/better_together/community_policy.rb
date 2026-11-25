@@ -123,11 +123,7 @@ module BetterTogether
     def member_of_community?
       return false unless agent.present?
 
-      BetterTogether::PersonCommunityMembership.exists?(
-        member: agent,
-        joinable: record,
-        status: 'active'
-      )
+      BetterTogether::PersonCommunityMembership.current.exists?(member: agent, joinable: record)
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
@@ -150,7 +146,7 @@ module BetterTogether
               person_community_memberships_table
                 .where(person_community_memberships_table[:member_id]
                 .eq(agent.id))
-                .where(person_community_memberships_table[:status].eq('active'))
+                .where(BetterTogether::PersonCommunityMembership.current_condition)
                 .project(:joinable_id)
             )
           )

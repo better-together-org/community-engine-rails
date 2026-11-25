@@ -2589,6 +2589,52 @@ en:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: End membership
+          leave: Leave
+          reinstate: Reinstate
+          suspend: Suspend
+        confirm_end: End this membership? It stays in the history and can be reinstated.
+        confirm_end_last: End this membership? It stays in the history and can be
+          reinstated. This is the member's only current membership here. They will
+          keep their account but lose all access that depends on a role, and see only
+          public content.
+        confirm_leave: Leave? You can ask to join again later.
+        confirm_reinstate: Reinstate this membership? The member regains access.
+        confirm_remove: Remove this member? This deletes the membership and its history.
+          Use End membership to keep the history.
+        confirm_suspend: Suspend this membership? The member loses access until you
+          reinstate it.
+        confirm_suspend_last: Suspend this membership? The member loses access until
+          you reinstate it. This is the member's only current membership here. They
+          will keep their account but lose all access that depends on a role, and
+          see only public content.
+        edit: Edit membership
+        flash:
+          ended: Membership ended.
+          left: You left.
+          reinstated: Membership reinstated.
+          suspended: Membership suspended.
+        remove: Remove membership
+        remove_member: Remove %{name}
+        since: Since
+        source:
+          backfill: Existing member
+          direct: Added directly
+          entitlement: Plan or entitlement
+          invitation: Invitation
+          registration: Joined at registration
+          request: Membership request
+          trusted_domain: Trusted email domain
+          wizard: Setup wizard
+        status:
+          current: Current
+          ended: Ended
+          pending: Pending
+          suspended: Suspended
+        until: Until
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.
@@ -6371,7 +6417,8 @@ en:
   people:
     confirm_delete: Confirm delete
   person_platform_memberships:
-    confirm_delete: Are you sure you want to remove this member from the platform?
+    confirm_delete: Remove this member from the platform? This deletes the membership
+      and its history. Use End membership to keep the history.
     edit:
       title: Edit Platform Membership
     form:

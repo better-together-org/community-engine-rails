@@ -4,7 +4,7 @@ module BetterTogether
   module TrustedDomains
     # Delivers an in-app notification about a trusted domain audit event to the platform's active stewards.
     class NotifyStewards
-      STEWARD_ROLES = %w[platform_steward platform_manager platform_administrator].freeze
+      STEWARD_ROLES = %w[platform_steward platform_manager].freeze
 
       def self.call(...)
         new(...).call

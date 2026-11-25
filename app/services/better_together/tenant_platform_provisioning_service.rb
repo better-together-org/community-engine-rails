@@ -67,10 +67,9 @@ module BetterTogether
       role = platform_steward_role(platform)
       return unless role
 
-      platform.person_platform_memberships.find_or_create_by!(
-        member: person,
-        role:
-      )
+      membership = platform.person_platform_memberships.find_or_create_by!(member: person, role:) { |record| record.status = 'active' }
+      membership.activate! if membership.pending?
+      membership
     end
 
     def self.assign_community_role!(platform, person)
@@ -78,10 +77,9 @@ module BetterTogether
       role = community_governance_role(platform)
       return unless community && role
 
-      community.person_community_memberships.find_or_create_by!(
-        member: person,
-        role:
-      )
+      membership = community.person_community_memberships.find_or_create_by!(member: person, role:) { |record| record.status = 'active' }
+      membership.activate! if membership.pending?
+      membership
     end
 
     def self.platform_steward_role(platform)

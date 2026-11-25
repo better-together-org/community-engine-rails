@@ -3,7 +3,7 @@
 module BetterTogether
   module Content
     # Helpers for Content Blocks
-    module BlocksHelper
+    module BlocksHelper # rubocop:todo Metrics/ModuleLength
       include BetterTogether::Content::RecordBlocksHelper
 
       TEMPLATE_TRANSLATION_KEYS = {
@@ -116,7 +116,7 @@ module BetterTogether
       private
 
       # Applies a community join/filter appropriate for the given resource_class.
-      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength
+      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         case resource_class.name
         when 'BetterTogether::Event'
           scope.joins(:event_hosts).where(better_together_event_hosts: { host_id: community.id,
@@ -128,6 +128,7 @@ module BetterTogether
         when 'BetterTogether::Person'
           scope.joins(:person_community_memberships)
                .where(better_together_person_community_memberships: { community_id: community.id })
+               .merge(BetterTogether::PersonCommunityMembership.current)
         when 'BetterTogether::Community'
           scope.where(id: community.id)
         else

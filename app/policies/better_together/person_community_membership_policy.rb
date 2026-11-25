@@ -30,6 +30,22 @@ module BetterTogether
       :last_organizer if user.present? && me? && sole_organizer?
     end
 
+    def end?
+      user.present? && !me? && can_manage_community_members?
+    end
+
+    def suspend?
+      end?
+    end
+
+    def reinstate?
+      user.present? && !me? && can_manage_community_members? && !record.current?
+    end
+
+    def leave?
+      user.present? && me? && record.current?
+    end
+
     class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless user.present?
@@ -51,6 +67,7 @@ module BetterTogether
         BetterTogether::PersonCommunityMembership
           .joins(role: { role_resource_permissions: :resource_permission })
           .where(member_id: agent.id)
+          .active
           .where(better_together_resource_permissions: { identifier: %w[manage_community_members manage_community_roles] })
           .select(:joinable_id)
       end
@@ -87,8 +104,9 @@ module BetterTogether
       return false unless record.role&.identifier == 'community_organizer'
 
       !BetterTogether::PersonCommunityMembership
+        .current
         .joins(:role)
-        .where(joinable_id: record.joinable_id, status: 'active', better_together_roles: { identifier: 'community_organizer' })
+        .where(joinable_id: record.joinable_id, better_together_roles: { identifier: 'community_organizer' })
         .where.not(id: record.id).exists?
     end
 
