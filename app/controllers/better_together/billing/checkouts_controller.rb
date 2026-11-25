@@ -88,7 +88,12 @@ module BetterTogether
         return [] if @plan.add_on?
 
         platform_plans.active.add_ons_for(@plan).where(currency: @plan.currency).order(:amount_cents, :identifier)
-                      .select { |add_on| policy(add_on).purchase? }
+                      .select { |add_on| policy(add_on).purchase? && requirements_met?(add_on) }
+      end
+
+      # Whether the plan being bought (or held) satisfies what the add-on needs.
+      def requirements_met?(add_on)
+        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: add_on, person: current_user.person, in_order: [@plan]).met?
       end
 
       def set_choices

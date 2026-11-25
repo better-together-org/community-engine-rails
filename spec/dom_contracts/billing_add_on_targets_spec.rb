@@ -27,6 +27,17 @@ RSpec.describe 'Billing add-on targets DOM contract', type: :request do # ruboco
     expect_ids('billing-hub-add-ons', 'billing-hub-add-ons-hint', dom_id(add_on, :hub_add_on), dom_id(add_on, :hub_add_on_buy))
   end
 
+  it 'exposes a locked add-on with its reason to a buyer who holds no plan yet' do
+    add_on
+    sign_in buyer_user
+
+    get "/#{locale}/billing"
+
+    expect_ids('billing-hub-locked-add-ons', 'billing-hub-locked-add-ons-hint', dom_id(add_on, :hub_locked_add_on),
+               dom_id(add_on, :hub_locked_reason))
+    expect(response.body).not_to include(%(id="#{dom_id(add_on, :hub_add_on_buy)}"))
+  end
+
   it 'exposes the steward form target plans and a checkbox per plan' do
     sub_plan
     sign_in steward_user

@@ -57,6 +57,10 @@ module BetterTogether
       # Whether `person` holds it now: a live purchase of it that still stands. Nothing is held by default.
       def held_by?(_person) = false
 
+      # Takes back what one paid line gave, when a prerequisite it depended on ended and the rule says revoke.
+      # Nothing by default: a purchasable that gives something (a ticket, a grant) overrides it.
+      def revoke_line(_line_item); end
+
       # Hold `quantity` for an order; raise to refuse. Nothing by default.
       def reserve!(quantity: 1); end
 

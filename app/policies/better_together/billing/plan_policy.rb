@@ -31,14 +31,19 @@ module BetterTogether
         record.open_to?(audience_for(user))
       end
 
-      # An add-on bought on its own, later: the buyer qualifies for its audience and holds a plan it extends (any primary plan of the
-      # platform when it names none). Buying one with a plan at checkout is #purchase?.
+      # An add-on bought on its own, later: the buyer qualifies for its audience and holds a prerequisite of it (a plan it extends,
+      # or any primary plan when it names none). Buying one with a plan at checkout is #purchase?.
       def buy_alone?
         return false unless record.add_on? && purchase?
 
-        held = BetterTogether::Billing::Plans::Holdings.call(platform: Current.platform, person: user&.person)
-        targets = record.target_links.pluck(:plan_id)
-        targets.empty? ? held.any? : held.intersect?(targets)
+        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: record, person: user&.person).met?
+      end
+
+      # An add-on this buyer could unlock: it is for sale to them but a prerequisite is missing. The reason is what to show.
+      def locked_reason
+        return unless record.add_on? && purchase?
+
+        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: record, person: user&.person).reason
       end
 
       class Scope < OwnerPolicy::Scope; end

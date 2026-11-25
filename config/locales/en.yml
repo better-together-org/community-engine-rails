@@ -2058,6 +2058,13 @@ en:
         status_used_up: Used up
         switched: Promotion updated.
         usage_of: "%{used} of %{max}"
+      purchase_requirements:
+        kinds:
+          plan: a plan
+        locked_heading: Extras you can unlock
+        locked_hint: These need something else first.
+        needs: Needs %{names} first
+        or: or
       readiness:
         check_agreements: Purchase agreements are in force for %{purpose}.
         check_configured: Billing is switched on and your organisation details are

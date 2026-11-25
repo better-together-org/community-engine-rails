@@ -2105,6 +2105,13 @@ fr:
         status_used_up: Épuisé
         switched: Promotion mise à jour.
         usage_of: "%{used} sur %{max}"
+      purchase_requirements:
+        kinds:
+          plan: un forfait
+        locked_heading: Extras à débloquer
+        locked_hint: Ceux-ci nécessitent d'abord autre chose.
+        needs: Nécessite d'abord %{names}
+        or: ou
       readiness:
         check_agreements: Les ententes d’achat sont en vigueur pour %{purpose}.
         check_configured: La facturation est activée et les coordonnées de votre organisation

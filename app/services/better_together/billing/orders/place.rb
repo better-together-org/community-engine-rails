@@ -126,6 +126,7 @@ module BetterTogether
           raise Refused, 'an order needs at least one line' if line_items.empty?
 
           check_purchasables!
+          check_requirements!
           check_payment_methods!
           check_authority!
         end
@@ -159,6 +160,18 @@ module BetterTogether
 
           Billing.local_method?(@renewal_payment_method) && PaymentChoice.new(platform:, seller:, name: @renewal_payment_method, purpose:,
                                                                               currency: order_currency).problem.nil?
+        end
+
+        # A purchasable with purchase requirements is sold only to someone who holds a prerequisite or has one in this order.
+        # A renewal and a steward's walk-up sale are exempt: the first continues what was already bought, the second is the
+        # steward's own call.
+        def check_requirements!
+          return if renewal || seller_assisted
+
+          purchasables.each do |purchasable|
+            result = PurchaseRequirements::Evaluate.call(dependent: purchasable, person: buyer, in_order: purchasables - [purchasable])
+            raise Refused, result.reason unless result.met?
+          end
         end
 
         def check_purchasables!

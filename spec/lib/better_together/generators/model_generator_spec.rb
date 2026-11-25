@@ -75,4 +75,37 @@ RSpec.describe BetterTogether::Generators::ModelGenerator, type: :generator do
       assert_no_file 'app/resources/api/v1/note_resource.rb'
     end
   end
+
+  describe 'a nested name under the engine namespace' do
+    before do
+      run_generator(%w[Billing::PurchaseRequirement kind:string --namespace=BetterTogether])
+    end
+
+    it 'nests the model, factory, specs and policy under the namespace and the nested module' do
+      assert_file 'app/models/better_together/billing/purchase_requirement.rb' do |content|
+        expect(content).to include("module BetterTogether\n  module Billing\n    class PurchaseRequirement < BetterTogether::PlatformRecord")
+      end
+      %w[spec/factories/better_together/billing/purchase_requirements.rb
+         spec/models/better_together/billing/purchase_requirement_spec.rb
+         app/policies/better_together/billing/purchase_requirement_policy.rb
+         app/resources/better_together/api/v1/billing/purchase_requirement_resource.rb].each { |path| assert_file path }
+    end
+
+    it 'names the table, factory and class with the full path' do
+      expect(migration_source).to include('class CreateBetterTogetherBillingPurchaseRequirements',
+                                          'create_bt_table :billing_purchase_requirements do |t|')
+      assert_file 'spec/factories/better_together/billing/purchase_requirements.rb',
+                  /factory :better_together_billing_purchase_requirement, class: 'BetterTogether::Billing::PurchaseRequirement'/
+    end
+
+    it 'keys the locale by the namespaced model name and files it by the nested name' do
+      assert_file 'config/locales/billing_purchase_requirement.en.yml', %r{better_together/billing/purchase_requirement:}
+    end
+
+    it 'generates syntactically valid Ruby' do
+      Dir[File.join(destination_root, '**/*.rb')].each do |path|
+        expect { RubyVM::InstructionSequence.compile(File.read(path)) }.not_to raise_error, path
+      end
+    end
+  end
 end

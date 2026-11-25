@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_23_200000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -766,6 +766,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_23_200000) do
     t.check_constraint "credit_expires_after_days IS NULL OR credit_expires_after_days > 0", name: "chk_bt_billing_promotions_days"
     t.check_constraint "max_redemptions IS NULL OR max_redemptions > 0 AND redemptions_count <= max_redemptions", name: "chk_bt_billing_promotions_cap"
     t.check_constraint "redemptions_count >= 0", name: "chk_bt_billing_promotions_count"
+  end
+
+  create_table "better_together_billing_purchase_requirements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "dependent_type", null: false
+    t.uuid "dependent_id", null: false
+    t.string "prerequisite_type"
+    t.uuid "prerequisite_id"
+    t.string "prerequisite_kind"
+    t.string "met_by", default: "either", null: false
+    t.boolean "required", default: false, null: false
+    t.string "on_prerequisite_end", default: "keep", null: false
+    t.index ["dependent_type", "dependent_id", "prerequisite_kind"], name: "idx_bt_billing_purchase_requirements_one_kind", unique: true, where: "(prerequisite_kind IS NOT NULL)"
+    t.index ["dependent_type", "dependent_id", "prerequisite_type", "prerequisite_id"], name: "idx_bt_billing_purchase_requirements_one_specific", unique: true, where: "(prerequisite_id IS NOT NULL)"
+    t.index ["dependent_type", "dependent_id"], name: "idx_bt_billing_purchase_requirements_dependent"
+    t.index ["platform_id"], name: "idx_bt_billing_purchase_requirements_platform"
+    t.index ["prerequisite_type", "prerequisite_id"], name: "idx_bt_billing_purchase_requirements_prerequisite"
+    t.check_constraint "(prerequisite_id IS NULL) <> (prerequisite_kind IS NULL)", name: "chk_bt_billing_purchase_requirements_one_target"
   end
 
   create_table "better_together_billing_refund_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3812,6 +3833,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_23_200000) do
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_promotions", "better_together_people", column: "created_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_promotions", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_purchase_requirements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_refund_requests", "better_together_billing_orders", column: "order_id"
   add_foreign_key "better_together_billing_refund_requests", "better_together_people", column: "decided_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_refund_requests", "better_together_people", column: "requester_id"

@@ -90,6 +90,7 @@ module BetterTogether
           notify(target)
           follow_up_subscription if target == 'paid'
           follow_up_entitlement if %w[paid refunded cancelled].include?(target)
+          follow_up_requirements if %w[refunded cancelled].include?(target)
         end
 
         # What a one-time purchase includes is given when the order is paid and taken away if it is refunded. Queued
@@ -98,6 +99,16 @@ module BetterTogether
           return unless order.line_items.any? { |line_item| line_item.purchasable.fulfilled_by_order? }
 
           ActiveRecord.after_all_transactions_commit { SyncOrderEntitlementJob.perform_later(order) }
+        end
+
+        # What depended on this order's lines is taken back when its rule says so. Queued after the change commits, so a
+        # failure there is retried and can never undo the refund.
+        def follow_up_requirements
+          revoking = PurchaseRequirement.where(on_prerequisite_end: 'revoke', platform_id: order.platform_id)
+          return unless revoking.exists?(prerequisite_kind: PurchaseRequirement::KINDS.keys) ||
+                        order.line_items.any? { |line_item| revoking.exists?(prerequisite: line_item.purchasable) }
+
+          ActiveRecord.after_all_transactions_commit { RevokeDependentsJob.perform_later(order) }
         end
 
         # A paid subscription order starts a subscription, or renews one. It runs after the payment is
