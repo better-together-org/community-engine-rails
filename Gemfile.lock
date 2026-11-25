@@ -57,7 +57,7 @@ PATH
       omniauth-google-oauth2 (~> 1.2)
       omniauth-rails_csrf_protection
       omniauth_openid_connect (~> 0.8)
-      pay (~> 12.4)
+      pay (~> 13.4)
       pg_search
       premailer-rails
       public_activity
@@ -67,7 +67,7 @@ PATH
       rack-cors (>= 1.1.1, < 3.1.0)
       rack-mini-profiler
       rails (>= 7.2, < 8.2)
-      receipts (~> 3.0)
+      receipts (~> 3.0, >= 3.0.1)
       redcarpet (~> 3.6)
       reform-rails (>= 0.2, < 0.4)
       rgeo-geojson
@@ -645,8 +645,8 @@ GEM
     parser (3.3.13.0)
       ast (~> 2.4.1)
       racc
-    pay (12.4.0)
-      rails (>= 7.0.0)
+    pay (13.4.1)
+      rails (>= 7.1.0)
     pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
@@ -766,7 +766,7 @@ GEM
       tsort
     readline (0.0.4)
       reline
-    receipts (3.0.0)
+    receipts (3.0.1)
     redcarpet (3.6.1)
     redis (6.0.0)
       redis-client (= 0.30.1)
