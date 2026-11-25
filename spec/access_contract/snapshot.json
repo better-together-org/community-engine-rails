@@ -1242,33 +1242,33 @@
           "public": "deny"
         },
         "blocked_user": {
-          "community": "allow",
-          "private": "allow",
-          "public": "allow"
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         },
         "community_contributor": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_member": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_organizer": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1278,7 +1278,7 @@
         },
         "signed_in_non_member": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         }
       },
@@ -1310,12 +1310,12 @@
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1357,12 +1357,12 @@
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1404,12 +1404,12 @@
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1537,33 +1537,33 @@
           "public": "deny"
         },
         "blocked_user": {
-          "community": "allow",
-          "private": "allow",
-          "public": "allow"
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         },
         "community_contributor": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_member": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "community_organizer": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1573,7 +1573,7 @@
         },
         "signed_in_non_member": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         }
       },
@@ -1605,12 +1605,12 @@
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1652,12 +1652,12 @@
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {
@@ -1699,12 +1699,12 @@
         },
         "platform_manager": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "platform_steward": {
           "community": "allow",
-          "private": "allow",
+          "private": "deny",
           "public": "allow"
         },
         "record_owner": {

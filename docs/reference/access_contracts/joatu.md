@@ -98,15 +98,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
-
-[^1]: JD-1, known deviation: Platform managers can read private offers and requests.
 
 <details><summary>Reasons</summary>
 
@@ -153,15 +151,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>own_record</sub> | allow <sub>own_record</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: JD-2, known deviation: Platform managers can edit private offers and requests.
 
 <details><summary>Reasons</summary>
 
@@ -202,19 +198,17 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | Persona | public | community | private |
 | --- | --- | --- | --- |
 | `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `community_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `community_contributor` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `community_organizer` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `platform_manager` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
+| `signed_in_non_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `community_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | allow <sub>own_record</sub> |
-| `blocked_user` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] |
-
-[^1]: JD-3, known deviation: Responding to an offer or request ignores visibility and blocks.
+| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
@@ -235,15 +229,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
-
-[^1]: JD-1, known deviation: Platform managers can read private offers and requests.
 
 <details><summary>Reasons</summary>
 
@@ -312,15 +304,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
-
-[^1]: JD-1, known deviation: Platform managers can read private offers and requests.
 
 <details><summary>Reasons</summary>
 
@@ -367,15 +357,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>own_record</sub> | allow <sub>own_record</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-
-[^1]: JD-2, known deviation: Platform managers can edit private offers and requests.
 
 <details><summary>Reasons</summary>
 
@@ -416,19 +404,17 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | Persona | public | community | private |
 | --- | --- | --- | --- |
 | `anonymous` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
-| `signed_in_non_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `community_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `community_contributor` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `community_organizer` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `platform_manager` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny (app: allow) [^1] |
+| `signed_in_non_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `community_member` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `community_contributor` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `community_organizer` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `platform_manager` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | allow <sub>own_record</sub> |
-| `blocked_user` | deny (app: allow) [^1] | deny (app: allow) [^1] | deny (app: allow) [^1] |
-
-[^1]: JD-3, known deviation: Responding to an offer or request ignores visibility and blocks.
+| `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
@@ -449,15 +435,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `community_member` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_contributor` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `community_organizer` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
-| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
-| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny (app: allow) [^1] |
+| `platform_manager` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
+| `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
 | `support_grantee` (pending) | pending | pending | pending |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
-
-[^1]: JD-1, known deviation: Platform managers can read private offers and requests.
 
 <details><summary>Reasons</summary>
 

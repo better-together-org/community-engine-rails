@@ -17,25 +17,7 @@ controllers:
   - better_together/joatu/requests
 controller_allowlist: {}
 
-decisions:
-  JD-1:
-    kind: known_deviation
-    title: Platform managers can read private offers and requests
-    app_does: OfferPolicy and RequestPolicy scopes return every record on the platform to anyone holding manage_platform, manage_platform_settings or manage_joatu, so show and the index list private posts.
-    privacy_rule: No standing role discloses private content. Stewards see public content and structure.
-    source: Joatu onboarding survey, 2026-11-24.
-  JD-2:
-    kind: known_deviation
-    title: Platform managers can edit private offers and requests
-    app_does: update? allows manage_platform and manage_platform_settings (and manage_joatu for requests) on any record, including private ones whose edit form shows the content.
-    privacy_rule: Operate is allowed; reading private content is not. Editing private content discloses it.
-    source: Joatu onboarding survey, 2026-11-24.
-  JD-3:
-    kind: known_deviation
-    title: Responding to an offer or request ignores visibility and blocks
-    app_does: respond_with_request? and respond_with_offer? only check that the actor is signed in. A blocked person, or someone who cannot read a private post, can still start a response to it.
-    privacy_rule: A person who cannot read a post must not be able to act on it; blocks apply to every interaction.
-    source: Joatu onboarding survey, 2026-11-24.
+decisions: {}
 
 resources:
   joatu_offer:
@@ -72,7 +54,6 @@ resources:
             outcome: deny
             rule: default_deny
             reason: "No standing role reads private offers."
-            deviation: {actual: allow, actual_rule: platform_operate, decision: JD-1}
           - {outcome: deny, rule: default_deny, reason: "Private offers are for their creator."}
       create:
         states: [new]
@@ -90,7 +71,6 @@ resources:
             outcome: deny
             rule: default_deny
             reason: "The edit form shows private content; operating a private post needs the creator."
-            deviation: {actual: allow, actual_rule: platform_operate, decision: JD-2}
           - {outcome: deny, rule: default_deny, reason: "Only the creator edits a post."}
       destroy:
         rows:
@@ -105,14 +85,12 @@ resources:
             outcome: deny
             rule: block
             reason: "A blocked person does not respond to the blocker's post."
-            deviation: {actual: allow, actual_rule: signed_in, decision: JD-3}
           - {states: [public, community], outcome: allow, rule: signed_in, reason: "Any signed-in member may respond to a post they can read."}
           - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators respond from their own posts."}
           - states: [private]
             outcome: deny
             rule: default_deny
             reason: "Nobody else can read a private post, so nobody else responds to it."
-            deviation: {actual: allow, actual_rule: signed_in, decision: JD-3}
       scope:
         rows:
           - {personas: [blocked_user], outcome: deny, rule: block, reason: "The creator blocked this person."}
@@ -126,7 +104,6 @@ resources:
             outcome: deny
             rule: default_deny
             reason: "No standing role reads private offers."
-            deviation: {actual: allow, actual_rule: platform_operate, decision: JD-1}
           - {outcome: deny, rule: default_deny, reason: "Private offers are for their creator."}
 
   joatu_request:
@@ -163,7 +140,6 @@ resources:
             outcome: deny
             rule: default_deny
             reason: "No standing role reads private requests."
-            deviation: {actual: allow, actual_rule: platform_operate, decision: JD-1}
           - {outcome: deny, rule: default_deny, reason: "Private requests are for their creator."}
       create:
         states: [new]
@@ -181,7 +157,6 @@ resources:
             outcome: deny
             rule: default_deny
             reason: "The edit form shows private content; operating a private post needs the creator."
-            deviation: {actual: allow, actual_rule: platform_operate, decision: JD-2}
           - {outcome: deny, rule: default_deny, reason: "Only the creator edits a post."}
       destroy:
         rows:
@@ -196,14 +171,12 @@ resources:
             outcome: deny
             rule: block
             reason: "A blocked person does not respond to the blocker's post."
-            deviation: {actual: allow, actual_rule: signed_in, decision: JD-3}
           - {states: [public, community], outcome: allow, rule: signed_in, reason: "Any signed-in member may respond to a post they can read."}
           - {states: [private], personas: [record_owner], outcome: allow, rule: own_record, reason: "Creators respond from their own posts."}
           - states: [private]
             outcome: deny
             rule: default_deny
             reason: "Nobody else can read a private post, so nobody else responds to it."
-            deviation: {actual: allow, actual_rule: signed_in, decision: JD-3}
       scope:
         rows:
           - {personas: [blocked_user], outcome: deny, rule: block, reason: "The creator blocked this person."}
@@ -217,5 +190,4 @@ resources:
             outcome: deny
             rule: default_deny
             reason: "No standing role reads private requests."
-            deviation: {actual: allow, actual_rule: platform_operate, decision: JD-1}
           - {outcome: deny, rule: default_deny, reason: "Private requests are for their creator."}
