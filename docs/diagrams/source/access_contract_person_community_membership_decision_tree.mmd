@@ -8,7 +8,7 @@ flowchart TD
   r0 -- yes --> r0o(["allow"])
   class r0o out_allow
   r0 -- no --> r1
-  r1{"role_permission: Does the actor's role in that community grant manage_community_members or manage_community_roles or is the actor the creator?"}
+  r1{"role_permission: Does the actor's role in that community grant manage_community_members or manage_community_roles?"}
   r1 -- yes --> r1o(["allow"])
   class r1o out_allow
   r1 -- no --> r2

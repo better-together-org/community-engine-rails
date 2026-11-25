@@ -40,7 +40,7 @@ resources:
     controllers: [better_together/communities, better_together/api/v1/communities]
     rules:
       - {id: privacy_gate, question: "Is the community effectively public (its platform and community are public too)?", on_yes: allow}
-      - {id: membership, question: "Is the actor an active member, the creator, or holder of an invitation or valid token?", on_yes: allow}
+      - {id: membership, question: "Is the actor an active member, or holder of an invitation or valid token?", on_yes: allow}
       - {id: role_permission, question: "Does the actor's community role grant manage_community_settings or manage_community_members?", on_yes: allow}
       - id: platform_operate
         question: "Is the actor a platform manager acting on a public community or creating one?"
@@ -64,7 +64,7 @@ resources:
              reason: "Community-only and private communities are for members."}
           - {personas: [community_member, community_contributor, community_organizer], outcome: allow, rule: membership,
              reason: "Active members read their own community."}
-          - {personas: [record_owner], outcome: allow, rule: membership, reason: "The creator can always read the community."}
+          - {personas: [record_owner], outcome: allow, rule: membership, reason: "Creators read through their Organizer membership."}
           - personas: [platform_manager, platform_steward]
             outcome: deny
             rule: default_deny
@@ -134,7 +134,7 @@ resources:
       view_members:
         rows:
           - {personas: [community_member, community_contributor, community_organizer, record_owner], outcome: allow, rule: membership,
-             reason: "Members and the creator see who else is in the community."}
+             reason: "Members see who else is in the community."}
           - {personas: [anonymous, signed_in_non_member, blocked_user], outcome: deny, rule: default_deny,
              reason: "The member list is member private, even for a public community."}
           - personas: [platform_manager, platform_steward]
@@ -188,7 +188,7 @@ resources:
           - {personas: [anonymous, signed_in_non_member, blocked_user], outcome: deny, rule: default_deny,
              reason: "Non-public communities are not listed for non-members."}
           - {personas: [community_member, community_contributor, community_organizer, record_owner], outcome: allow, rule: membership,
-             reason: "Members and the creator list their communities."}
+             reason: "Members list their communities."}
           - {states: [community], personas: [platform_manager, platform_steward], outcome: deny, rule: default_deny,
              reason: "A community-only community is not listed for a non-member manager."}
           - personas: [platform_manager, platform_steward]
@@ -206,7 +206,7 @@ resources:
     controllers: [better_together/person_community_memberships, better_together/api/v1/person_community_memberships]
     rules:
       - {id: own_record, question: "Is this the actor's own membership?", on_yes: allow}
-      - {id: role_permission, question: "Does the actor's role in that community grant manage_community_members or manage_community_roles (or is the actor the creator)?", on_yes: allow}
+      - {id: role_permission, question: "Does the actor's role in that community grant manage_community_members or manage_community_roles?", on_yes: allow}
       - {id: self_service, question: "Does the community allow direct join or membership requests, and is this the actor's own record?", on_yes: conditional}
       - {id: default_deny, question: "Nothing above matched", on_yes: deny}
     actions:

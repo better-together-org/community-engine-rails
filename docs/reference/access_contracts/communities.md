@@ -81,7 +81,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | # | Rule | Question | Decides | Note |
 | --- | --- | --- | --- | --- |
 | 1 | `privacy_gate` | Is the community effectively public (its platform and community are public too)? | allow |  |
-| 2 | `membership` | Is the actor an active member, the creator, or holder of an invitation or valid token? | allow |  |
+| 2 | `membership` | Is the actor an active member, or holder of an invitation or valid token? | allow |  |
 | 3 | `role_permission` | Does the actor's community role grant manage_community_settings or manage_community_members? | allow |  |
 | 4 | `platform_operate` | Is the actor a platform manager acting on a public community or creating one? | allow |  |
 | 5 | `platform_moderate` | Is the actor a platform manager moderating, deleting or reading aggregate usage of a community, whatever its privacy? | allow |  |
@@ -130,7 +130,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 <details><summary>Reasons</summary>
 
 - allow via `membership`: Active members read their own community. (community_contributor, community_member, community_organizer)
-- allow via `membership`: The creator can always read the community. (record_owner)
+- allow via `membership`: Creators read through their Organizer membership. (record_owner)
 - allow via `privacy_gate`: Public communities are readable by anyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
 - deny via `default_deny`: Community-only and private communities are for members. (anonymous, blocked_user, signed_in_non_member)
 - deny via `default_deny`: No standing role discloses a non-public community record. (platform_manager, platform_steward)
@@ -287,7 +287,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 <details><summary>Reasons</summary>
 
-- allow via `membership`: Members and the creator see who else is in the community. (community_contributor, community_member, community_organizer, record_owner)
+- allow via `membership`: Members see who else is in the community. (community_contributor, community_member, community_organizer, record_owner)
 - deny via `default_deny`: Member lists are member private; standing roles do not disclose them. (platform_manager, platform_steward)
 - deny via `default_deny`: The member list is member private, even for a public community. (anonymous, blocked_user, signed_in_non_member)
 
@@ -460,7 +460,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 <details><summary>Reasons</summary>
 
-- allow via `membership`: Members and the creator list their communities. (community_contributor, community_member, community_organizer, record_owner)
+- allow via `membership`: Members list their communities. (community_contributor, community_member, community_organizer, record_owner)
 - allow via `privacy_gate`: Public communities are listed for everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
 - deny via `default_deny`: A community-only community is not listed for a non-member manager. (platform_manager, platform_steward)
 - deny via `default_deny`: No standing role lists private communities. (platform_manager, platform_steward)
@@ -485,7 +485,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | # | Rule | Question | Decides | Note |
 | --- | --- | --- | --- | --- |
 | 1 | `own_record` | Is this the actor's own membership? | allow |  |
-| 2 | `role_permission` | Does the actor's role in that community grant manage_community_members or manage_community_roles (or is the actor the creator)? | allow |  |
+| 2 | `role_permission` | Does the actor's role in that community grant manage_community_members or manage_community_roles? | allow |  |
 | 3 | `self_service` | Does the community allow direct join or membership requests, and is this the actor's own record? | conditional |  |
 | 4 | `default_deny` | Nothing above matched | deny |  |
 
