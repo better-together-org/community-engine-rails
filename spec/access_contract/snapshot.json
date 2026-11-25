@@ -1,6 +1,58 @@
 {
   "resources": {
     "community": {
+      "break_glass_show": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "support_grantee": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        }
+      },
       "create": {
         "anonymous": {
           "new": "deny"
@@ -27,6 +79,9 @@
           "new": "na"
         },
         "signed_in_non_member": {
+          "new": "deny"
+        },
+        "support_grantee": {
           "new": "deny"
         }
       },
@@ -75,6 +130,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "destroy": {
@@ -119,6 +179,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "deny"
@@ -169,6 +234,11 @@
           "community": "deny",
           "private": "deny",
           "public": "allow"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
         }
       },
       "hide": {
@@ -216,6 +286,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "index": {
@@ -244,6 +319,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "allow"
+        },
+        "support_grantee": {
           "any": "allow"
         }
       },
@@ -289,6 +367,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "deny"
@@ -339,6 +422,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "quarantine": {
@@ -383,6 +471,11 @@
           "public": "deny"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "deny"
@@ -433,6 +526,11 @@
           "community": "deny",
           "private": "deny",
           "public": "allow"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
         }
       },
       "show": {
@@ -477,6 +575,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "allow"
@@ -527,6 +630,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "update": {
@@ -571,6 +679,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "deny"
@@ -621,6 +734,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "view_quota_usage": {
@@ -668,6 +786,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       }
     },
@@ -708,6 +831,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "destroy": {
@@ -746,6 +873,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "index": {
@@ -774,6 +905,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "deny"
+        },
+        "support_grantee": {
           "any": "deny"
         }
       },
@@ -811,6 +945,10 @@
           "someone_elses": "na"
         },
         "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "support_grantee": {
           "own": "na",
           "someone_elses": "deny"
         }
@@ -851,6 +989,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "show": {
@@ -887,6 +1029,10 @@
           "someone_elses": "na"
         },
         "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "support_grantee": {
           "own": "na",
           "someone_elses": "deny"
         }
@@ -938,6 +1084,11 @@
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
+        },
+        "support_grantee": {
+          "private": "deny",
+          "public": "deny",
+          "unclaimed": "deny"
         }
       },
       "destroy": {
@@ -982,6 +1133,11 @@
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "private": "deny",
+          "public": "deny",
+          "unclaimed": "deny"
+        },
+        "support_grantee": {
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
@@ -1032,6 +1188,11 @@
           "private": "deny",
           "public": "allow",
           "unclaimed": "allow"
+        },
+        "support_grantee": {
+          "private": "deny",
+          "public": "allow",
+          "unclaimed": "allow"
         }
       },
       "show": {
@@ -1076,6 +1237,11 @@
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "private": "deny",
+          "public": "deny",
+          "unclaimed": "deny"
+        },
+        "support_grantee": {
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
@@ -1126,6 +1292,11 @@
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
+        },
+        "support_grantee": {
+          "private": "deny",
+          "public": "deny",
+          "unclaimed": "deny"
         }
       }
     },
@@ -1156,6 +1327,9 @@
           "new": "na"
         },
         "signed_in_non_member": {
+          "new": "allow"
+        },
+        "support_grantee": {
           "new": "allow"
         }
       },
@@ -1204,6 +1378,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "index": {
@@ -1232,6 +1411,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "allow"
+        },
+        "support_grantee": {
           "any": "allow"
         }
       },
@@ -1280,6 +1462,11 @@
           "community": "allow",
           "private": "deny",
           "public": "allow"
+        },
+        "support_grantee": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
         }
       },
       "scope": {
@@ -1324,6 +1511,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "support_grantee": {
           "community": "allow",
           "private": "deny",
           "public": "allow"
@@ -1374,6 +1566,11 @@
           "community": "allow",
           "private": "deny",
           "public": "allow"
+        },
+        "support_grantee": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
         }
       },
       "update": {
@@ -1421,6 +1618,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       }
     },
@@ -1451,6 +1653,9 @@
           "new": "na"
         },
         "signed_in_non_member": {
+          "new": "allow"
+        },
+        "support_grantee": {
           "new": "allow"
         }
       },
@@ -1499,6 +1704,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       },
       "index": {
@@ -1527,6 +1737,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "allow"
+        },
+        "support_grantee": {
           "any": "allow"
         }
       },
@@ -1572,6 +1785,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "support_grantee": {
           "community": "allow",
           "private": "deny",
           "public": "allow"
@@ -1622,6 +1840,11 @@
           "community": "allow",
           "private": "deny",
           "public": "allow"
+        },
+        "support_grantee": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
         }
       },
       "show": {
@@ -1666,6 +1889,11 @@
           "public": "allow"
         },
         "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "support_grantee": {
           "community": "allow",
           "private": "deny",
           "public": "allow"
@@ -1716,6 +1944,11 @@
           "community": "deny",
           "private": "deny",
           "public": "deny"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       }
     },
@@ -1746,6 +1979,9 @@
           "new": "na"
         },
         "signed_in_non_member": {
+          "new": "deny"
+        },
+        "support_grantee": {
           "new": "deny"
         }
       },
@@ -1799,6 +2035,12 @@
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny",
+          "unclaimed": "deny"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "deny",
@@ -1859,6 +2101,12 @@
           "private": "deny",
           "public": "allow",
           "unclaimed": "allow"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow",
+          "unclaimed": "allow"
         }
       },
       "index": {
@@ -1887,6 +2135,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "allow"
+        },
+        "support_grantee": {
           "any": "allow"
         }
       },
@@ -1924,6 +2175,10 @@
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "support_grantee": {
           "claimed": "deny",
           "unclaimed": "deny"
         }
@@ -1978,6 +2233,12 @@
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow",
+          "unclaimed": "allow"
+        },
+        "support_grantee": {
           "community": "deny",
           "private": "deny",
           "public": "allow",
@@ -2038,6 +2299,12 @@
           "private": "deny",
           "public": "allow",
           "unclaimed": "allow"
+        },
+        "support_grantee": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow",
+          "unclaimed": "allow"
         }
       },
       "suspend": {
@@ -2074,6 +2341,10 @@
           "unclaimed": "na"
         },
         "signed_in_non_member": {
+          "claimed": "deny",
+          "unclaimed": "deny"
+        },
+        "support_grantee": {
           "claimed": "deny",
           "unclaimed": "deny"
         }
@@ -2141,6 +2412,13 @@
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
+        },
+        "support_grantee": {
+          "claimed": "deny",
+          "community": "deny",
+          "private": "deny",
+          "public": "deny",
+          "unclaimed": "deny"
         }
       }
     },
@@ -2181,6 +2459,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "destroy": {
@@ -2219,6 +2501,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "index": {
@@ -2247,6 +2533,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "allow"
+        },
+        "support_grantee": {
           "any": "allow"
         }
       },
@@ -2286,6 +2575,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "show": {
@@ -2322,6 +2615,10 @@
           "someone_elses": "na"
         },
         "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "support_grantee": {
           "own": "na",
           "someone_elses": "deny"
         }
@@ -2364,6 +2661,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "destroy": {
@@ -2400,6 +2701,10 @@
           "someone_elses": "na"
         },
         "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "support_grantee": {
           "own": "na",
           "someone_elses": "deny"
         }
@@ -2440,6 +2745,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "index": {
@@ -2468,6 +2777,9 @@
           "any": "na"
         },
         "signed_in_non_member": {
+          "any": "deny"
+        },
+        "support_grantee": {
           "any": "deny"
         }
       },
@@ -2507,6 +2819,10 @@
         "signed_in_non_member": {
           "own": "na",
           "someone_elses": "deny"
+        },
+        "support_grantee": {
+          "own": "na",
+          "someone_elses": "deny"
         }
       },
       "show": {
@@ -2543,6 +2859,10 @@
           "someone_elses": "na"
         },
         "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "support_grantee": {
           "own": "na",
           "someone_elses": "deny"
         }

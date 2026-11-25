@@ -18,6 +18,7 @@ module BetterTogether
 
     before_action :set_model_instance, only: %i[show edit update destroy]
     before_action :authorize_community, only: %i[show edit update destroy]
+    before_action :record_break_glass_access, only: :show
     after_action :verify_authorized, except: :index
 
     # GET /communities
@@ -128,7 +129,39 @@ module BetterTogether
 
     # Adds a policy check for the community
     def authorize_community
+      return authorize(@community, :break_glass_show?) if action_name == 'show'
+
       authorize @community
+    end
+
+    # The page lookup runs through the policy scope, which never lists a granted community. Find it
+    # first when this person holds a current grant for it; break_glass_show? and the audit row still apply.
+    def set_resource_instance
+      @resource ||= break_glass_community if action_name == 'show'
+      super
+    end
+
+    def break_glass_community
+      person = helpers.current_person
+      return if person.blank?
+
+      ids = BetterTogether::BreakGlassGrant.current.where(grantee: person, subject_type: resource_class.name)
+                                           .select(:subject_id)
+      resource_class.where(id: ids).find { |community| break_glass_param?(community) }
+    end
+
+    def break_glass_param?(community)
+      community.id == id_param ||
+        I18n.available_locales.any? { |locale| Mobility.with_locale(locale) { community.slug } == id_param }
+    end
+
+    # One audit row per page read that only a break-glass grant allowed.
+    def record_break_glass_access
+      policy = policy(@community)
+      return unless policy.break_glass_only?
+
+      BetterTogether::BreakGlass::RecordAccess.call(grant: policy.break_glass_grant, actor: helpers.current_person,
+                                                    action: :show)
     end
 
     def permitted_attributes
@@ -184,6 +217,9 @@ module BetterTogether
       # Set invitation token for authorization
       invitation_token = params[:invitation_token] || session[:community_invitation_token]
       self.current_invitation_token = invitation_token
+
+      # The community page also honors a break-glass grant; every other action uses its own query.
+      return authorize(resource_instance, :break_glass_show?) if action_name == 'show'
 
       authorize resource_instance
     end

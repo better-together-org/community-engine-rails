@@ -79,13 +79,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Everyone may open the index; the scope filters the rows. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Everyone may open the index; the scope filters the rows. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -102,19 +102,19 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `own_record`: Creators read their own offers. (record_owner)
-- allow via `privacy_gate`: Any signed-in member reads community-level offers. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
-- allow via `privacy_gate`: Public offers are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `privacy_gate`: Any signed-in member reads community-level offers. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
+- allow via `privacy_gate`: Public offers are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 - deny via `block`: The creator blocked this person. (blocked_user)
 - deny via `default_deny`: Community-level offers are for signed-in members of the platform. (anonymous)
 - deny via `default_deny`: No standing role reads private offers. (platform_manager, platform_steward)
-- deny via `default_deny`: Private offers are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Private offers are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -131,13 +131,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>signed_in</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | allow <sub>signed_in</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
 <details><summary>Reasons</summary>
 
-- allow via `signed_in`: Any signed-in member may post. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `signed_in`: Any signed-in member may post. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - deny via `default_deny`: Posting needs an account. (anonymous)
 
 </details>
@@ -155,7 +155,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>own_record</sub> | allow <sub>own_record</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -163,7 +163,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `own_record`: Creators edit their own offers. (record_owner)
 - allow via `platform_operate`: Managers moderate public and community-level offers. (platform_manager, platform_steward)
-- deny via `default_deny`: Only the creator edits a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Only the creator edits a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 - deny via `default_deny`: The edit form shows private content; operating a private post needs the creator. (platform_manager, platform_steward)
 
 </details>
@@ -181,7 +181,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>own_record</sub> | allow <sub>own_record</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -189,7 +189,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `own_record`: Creators delete their own offers while no agreement exists. (record_owner)
 - allow via `platform_operate`: Managers remove offers of any privacy; deleting discloses nothing. (platform_manager, platform_steward)
-- deny via `default_deny`: Only the creator or a platform manager deletes a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Only the creator or a platform manager deletes a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -206,16 +206,16 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `own_record`: Creators respond from their own posts. (record_owner)
-- allow via `signed_in`: Any signed-in member may respond to a post they can read. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `signed_in`: Any signed-in member may respond to a post they can read. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 - deny via `block`: A blocked person does not respond to the blocker's post. (blocked_user)
-- deny via `default_deny`: Nobody else can read a private post, so nobody else responds to it. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Nobody else can read a private post, so nobody else responds to it. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - deny via `default_deny`: Responding needs an account. (anonymous)
 
 </details>
@@ -233,19 +233,19 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `own_record`: Creators read their own offers. (record_owner)
-- allow via `privacy_gate`: Any signed-in member reads community-level offers. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
-- allow via `privacy_gate`: Public offers are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `privacy_gate`: Any signed-in member reads community-level offers. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
+- allow via `privacy_gate`: Public offers are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 - deny via `block`: The creator blocked this person. (blocked_user)
 - deny via `default_deny`: Community-level offers are for signed-in members of the platform. (anonymous)
 - deny via `default_deny`: No standing role reads private offers. (platform_manager, platform_steward)
-- deny via `default_deny`: Private offers are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Private offers are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -285,13 +285,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Everyone may open the index; the scope filters the rows. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Everyone may open the index; the scope filters the rows. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -308,19 +308,19 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `own_record`: Creators read their own requests. (record_owner)
-- allow via `privacy_gate`: Any signed-in member reads community-level requests. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
-- allow via `privacy_gate`: Public requests are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `privacy_gate`: Any signed-in member reads community-level requests. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
+- allow via `privacy_gate`: Public requests are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 - deny via `block`: The creator blocked this person. (blocked_user)
 - deny via `default_deny`: Community-level requests are for signed-in members of the platform. (anonymous)
 - deny via `default_deny`: No standing role reads private requests. (platform_manager, platform_steward)
-- deny via `default_deny`: Private requests are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Private requests are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -337,13 +337,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>signed_in</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | allow <sub>signed_in</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
 <details><summary>Reasons</summary>
 
-- allow via `signed_in`: Any signed-in member may post. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `signed_in`: Any signed-in member may post. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - deny via `default_deny`: Posting needs an account. (anonymous)
 
 </details>
@@ -361,7 +361,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>own_record</sub> | allow <sub>own_record</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -369,7 +369,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `own_record`: Creators edit their own requests. (record_owner)
 - allow via `platform_operate`: Managers moderate public and community-level requests. (platform_manager, platform_steward)
-- deny via `default_deny`: Only the creator edits a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Only the creator edits a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 - deny via `default_deny`: The edit form shows private content; operating a private post needs the creator. (platform_manager, platform_steward)
 
 </details>
@@ -387,7 +387,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> | allow <sub>platform_operate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>own_record</sub> | allow <sub>own_record</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -395,7 +395,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `own_record`: Creators delete their own requests while no agreement exists. (record_owner)
 - allow via `platform_operate`: Managers remove requests of any privacy; deleting discloses nothing. (platform_manager, platform_steward)
-- deny via `default_deny`: Only the creator or a platform manager deletes a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Only the creator or a platform manager deletes a post. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -412,16 +412,16 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>signed_in</sub> | allow <sub>signed_in</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `own_record`: Creators respond from their own posts. (record_owner)
-- allow via `signed_in`: Any signed-in member may respond to a post they can read. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `signed_in`: Any signed-in member may respond to a post they can read. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 - deny via `block`: A blocked person does not respond to the blocker's post. (blocked_user)
-- deny via `default_deny`: Nobody else can read a private post, so nobody else responds to it. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Nobody else can read a private post, so nobody else responds to it. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - deny via `default_deny`: Responding needs an account. (anonymous)
 
 </details>
@@ -439,18 +439,18 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>privacy_gate</sub> | allow <sub>privacy_gate</sub> | allow <sub>own_record</sub> |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `own_record`: Creators read their own requests. (record_owner)
-- allow via `privacy_gate`: Any signed-in member reads community-level requests. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
-- allow via `privacy_gate`: Public requests are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- allow via `privacy_gate`: Any signed-in member reads community-level requests. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
+- allow via `privacy_gate`: Public requests are readable by anyone. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 - deny via `block`: The creator blocked this person. (blocked_user)
 - deny via `default_deny`: Community-level requests are for signed-in members of the platform. (anonymous)
 - deny via `default_deny`: No standing role reads private requests. (platform_manager, platform_steward)
-- deny via `default_deny`: Private requests are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Private requests are for their creator. (anonymous, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 
 </details>

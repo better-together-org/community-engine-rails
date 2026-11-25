@@ -3,6 +3,7 @@
 module BetterTogether
   class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     include SelfServicePublishablePolicy
+    include BreakGlassReadablePolicy
 
     def index?
       true # Allow all users to view community index (scope filters appropriately)
