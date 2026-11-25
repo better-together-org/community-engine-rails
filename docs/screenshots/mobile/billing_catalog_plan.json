@@ -1,7 +1,7 @@
 {
   "name": "billing_catalog_plan",
   "device": "mobile",
-  "url": "/en/billing/catalog/7fcd95be-5d02-4506-934e-7171c0576ef7",
+  "url": "/en/billing/catalog/a8e06561-afd7-4349-994a-4824a47897cc",
   "title": "Supporting member | Test Host Community",
   "locale": "en",
   "role": "visitor",
@@ -10,38 +10,38 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_catalog_spec.rb",
   "callouts": [
     {
-      "selector": "#buy_billing_plan_7fcd95be-5d02-4506-934e-7171c0576ef7",
+      "selector": "#buy_billing_plan_a8e06561-afd7-4349-994a-4824a47897cc",
       "title": "Start checkout",
       "bullets": [
         "Sign-in is asked for at checkout, not before."
       ],
       "target": {
         "x": 12.0,
-        "y": 383.9375,
+        "y": 427.9375,
         "width": 104.609375,
         "height": 38.0,
         "right": 116.609375,
-        "bottom": 421.9375,
+        "bottom": 465.9375,
         "center_x": 64.3046875,
-        "center_y": 402.9375
+        "center_y": 446.9375
       },
       "avoid": {
         "x": 12.0,
-        "y": 383.9375,
+        "y": 427.9375,
         "width": 104.609375,
         "height": 38.0,
         "right": 116.609375,
-        "bottom": 421.9375,
+        "bottom": 465.9375,
         "center_x": 64.3046875,
-        "center_y": 402.9375
+        "center_y": 446.9375
       },
       "placement": {
         "side": "below",
         "x": 24,
-        "y": 441.94,
+        "y": 485.94,
         "width": 270.0,
         "height": 158,
-        "score": 835.0625
+        "score": 791.0625
       }
     }
   ]

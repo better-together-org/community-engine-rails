@@ -10,10 +10,11 @@ RSpec.describe BetterTogether::Billing::Orders::Settle, '.call follow-ups by pur
 
   include_context 'with entitlement fixtures'
   include_context 'with billing switched on'
+  include_context 'with billing extras'
 
   let(:cash) { { processor: nil, processor_price_id: nil, processor_product_id: nil, accepted_payment_methods: %w[cash] } }
-  let(:once_plan) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 2000) }
-  let(:add_on) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 700, add_on: true) }
+  let(:once_plan) { create_extra(amount_cents: 2000, name: 'Pass', needs: nil) }
+  let(:add_on) { create_extra(amount_cents: 700, needs: :any_plan) }
   let(:recurring) { create(:better_together_billing_plan, **cash, amount_cents: 1500) }
 
   def enqueued_kinds
@@ -21,13 +22,13 @@ RSpec.describe BetterTogether::Billing::Orders::Settle, '.call follow-ups by pur
   end
 
   def pay(purpose, plan)
-    order = place_order(purpose:, payment_method: 'cash', line_items: [{ purchasable: plan }], seller_assisted: plan.add_on?)
+    order = place_order(purpose:, payment_method: 'cash', line_items: [{ purchasable: plan }], seller_assisted: plan.extra?)
     clear_enqueued_jobs
     pay_manually(order)
     order
   end
 
-  it 'queues the entitlement sync when a one-time plan order is paid' do
+  it 'queues the entitlement sync when a one-time product order is paid' do
     pay('one_time', once_plan)
 
     expect(enqueued_kinds).to include('SyncOrderEntitlementJob')
@@ -41,7 +42,7 @@ RSpec.describe BetterTogether::Billing::Orders::Settle, '.call follow-ups by pur
     expect(enqueued_kinds).not_to include('SyncOrderEntitlementJob')
   end
 
-  # Today the sync job is queued here too, because an add-on is a one-time plan, and it finds nothing to give.
+  # Today the sync job is queued here too, because an extra is fulfilled through its own order, and it finds nothing to give.
   # The split removes that needless job; what must hold is that no subscription starts and nothing is granted.
   it 'starts no subscription for an add-on bought on its own' do
     pay('one_time', add_on)
@@ -56,7 +57,7 @@ RSpec.describe BetterTogether::Billing::Orders::Settle, '.call follow-ups by pur
     expect(host_platform.billing_entitlements.where(order_id: order.id)).to be_empty
   end
 
-  it 'queues the entitlement sync again when a one-time plan order is refunded' do
+  it 'queues the entitlement sync again when a one-time product order is refunded' do
     order = pay('one_time', once_plan)
     follow_up
     clear_enqueued_jobs

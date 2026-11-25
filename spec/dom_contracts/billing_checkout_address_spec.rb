@@ -13,8 +13,8 @@ RSpec.describe 'Billing checkout address DOM', type: :request do # rubocop:disab
   let(:locale) { :en }
   let(:member) { find_or_create_test_user("addr-dom-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#') }
   let(:plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                           currency: 'USD', amount_cents: 2500)
   end
   let(:page) { Nokogiri::HTML(response.body) }
 
@@ -27,7 +27,7 @@ RSpec.describe 'Billing checkout address DOM', type: :request do # rubocop:disab
 
   it 'shows the address section and its fields once a way to pay is chosen', :aggregate_failures do
     create_billing_address_for(member.person)
-    get better_together.new_billing_checkout_path(locale:, plan_id: plan.id, payment_method: 'cash')
+    get better_together.new_billing_checkout_path(locale:, price_id: plan.id, payment_method: 'cash')
 
     %w[billing-checkout-address billing-checkout-address-select billing-checkout-new-address billing-checkout-address-line1
        billing-checkout-address-postal-code billing-checkout-make-default].each do |id|
@@ -38,7 +38,7 @@ RSpec.describe 'Billing checkout address DOM', type: :request do # rubocop:disab
   it 'lists the buyer\'s own addresses, and only theirs' do
     mine = create_billing_address_for(member.person)
     theirs = create_billing_address_for(create(:better_together_person), settlement_name: 'Elsewhere')
-    get better_together.new_billing_checkout_path(locale:, plan_id: plan.id, payment_method: 'cash')
+    get better_together.new_billing_checkout_path(locale:, price_id: plan.id, payment_method: 'cash')
 
     values = page.css('#billing-checkout-address-select option').pluck('value')
     expect(values).to include(mine.id, 'new')
@@ -49,14 +49,14 @@ RSpec.describe 'Billing checkout address DOM', type: :request do # rubocop:disab
     create_billing_address_for(member.person)
     chosen = create_billing_address_for(member.person, settlement_name: 'Gander')
     BetterTogether::Billing::DefaultAddress.set!(platform: host_platform, person: member.person, address: chosen, kind: 'billing')
-    get better_together.new_billing_checkout_path(locale:, plan_id: plan.id, payment_method: 'cash')
+    get better_together.new_billing_checkout_path(locale:, price_id: plan.id, payment_method: 'cash')
 
     expect(page.at_css('#billing-checkout-address-select option[selected]')['value']).to eq(chosen.id)
   end
 
   it 'connects every label to its field and names every control' do
     create_billing_address_for(member.person)
-    get better_together.new_billing_checkout_path(locale:, plan_id: plan.id, payment_method: 'cash')
+    get better_together.new_billing_checkout_path(locale:, price_id: plan.id, payment_method: 'cash')
 
     expect_labels_resolved(page, within: '#billing-checkout-address')
   end

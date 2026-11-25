@@ -170,6 +170,8 @@ Each phase is a separate PR, stacked on `feature/billing`, and each leaves the b
    entitlements. Then remove `one_time` and `add_on` from Plan, the `plan_add_ons` table and their validations. The branch is not in a release yet
    and prod apps have billing off, so only test instances hold such rows. Use new migrations (not edits to unreleased ones) so
    test.communityengine.app migrates cleanly, and decide at merge time whether to squash.
+   **Built (PS-6):** `Products::ConvertPlans` plus two migrations (convert, then drop `plan_add_ons` and `plans.add_on`); `one_time` is gone
+   from `BILLING_INTERVALS`. See [products and prices](products_and_prices.md).
 7. **Processor contract.** Generalize `sync_plan` to sync a catalog item (product plus its prices, returning a result with a list of prices).
    Derive Checkout Session mode from the lines. Allow inline `price_data` for items with no processor mirror. Bump the contract version and keep a
    shim for adapters on the old version. Update `PriceInfo` and `processor-adapters.md`, and write the Stripe mapping table for the extension team.

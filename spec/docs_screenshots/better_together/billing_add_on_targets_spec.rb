@@ -15,18 +15,17 @@ RSpec.describe 'Documentation screenshots for add-on targets', # rubocop:disable
 
   include_context 'with subscription fixtures'
   include_context 'with billing switched on'
+  include_context 'with billing extras'
 
   let(:attrs) { { platform: host_platform, processor: nil, accepted_payment_methods: %w[cash], currency: 'USD' } }
-  let(:add_on) do
-    create(:better_together_billing_plan, :unlinked, :one_time, **attrs, add_on: true, amount_cents: 700, name: 'Conference lunch')
-  end
+  let(:add_on) { create_extra(amount_cents: 700, name: 'Conference lunch', needs: :any_plan) }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
     sub_plan.update!(name: 'Supporting member')
-    BetterTogether::Billing::PlanAddOn.create!(plan: sub_plan, add_on:)
+    require_for(add_on.product, sub_plan)
   end
 
   after { Current.platform = nil }
@@ -56,26 +55,26 @@ RSpec.describe 'Documentation screenshots for add-on targets', # rubocop:disable
     end
   end
 
-  it 'captures the steward choosing which plans an add-on extends' do
+  it 'captures the steward choosing which plans a product needs' do
     BetterTogether::CapybaraScreenshotEngine.capture(
-      'billing_add_on_targets_form',
+      'billing_product_requirements_form',
       device: :both,
       metadata: { locale: I18n.default_locale, role: 'platform_manager', feature_set: 'billing_add_on_targets',
-                  flow: 'billing_add_on_targets_form', source_spec: self.class.metadata[:file_path] },
-      callouts: [{ id: 'targets', selector: '#billing-plan-add-on-targets', title: 'Plans this add-on extends',
-                   bullets: ['Ticked plans offer the add-on, and their holders may buy it alone later.'] }],
+                  flow: 'billing_product_requirements_form', source_spec: self.class.metadata[:file_path] },
+      callouts: [{ id: 'targets', selector: '#billing-product-requirements', title: 'Plans this extra needs',
+                   bullets: ['Ticked plans offer the extra, and their holders may buy it alone later.'] }],
       narrative: {
-        title: 'Add-on target plans',
+        title: 'Plans a product needs',
         audience: %w[platform_organizer],
-        journey_step: 'As a steward I choose which plans an add-on extends.',
-        callouts: [{ id: 'targets', title: 'Target plans', description: 'None ticked means every plan.' }],
+        journey_step: 'As a steward I choose which plans a product needs.',
+        callouts: [{ id: 'targets', title: 'Target plans', description: 'None ticked means it sells on its own.' }],
         accessibility_notes: 'A labelled fieldset of checkboxes with a hint.'
       }
     ) do
       capybara_login_as_platform_manager
-      visit "/#{I18n.default_locale}/billing/plans/#{add_on.id}/edit"
-      expect(page).to have_css('#billing-plan-add-on-targets')
-      page.execute_script("document.querySelector('#billing-plan-add-on-targets').scrollIntoView({block: 'center'})")
+      visit "/#{I18n.default_locale}/billing/products/#{add_on.product_id}/edit"
+      expect(page).to have_css('#billing-product-requirements')
+      page.execute_script("document.querySelector('#billing-product-requirements').scrollIntoView({block: 'center'})")
     end
   end
 end

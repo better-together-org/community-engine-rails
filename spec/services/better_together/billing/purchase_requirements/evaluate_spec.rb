@@ -2,24 +2,22 @@
 
 require 'rails_helper'
 
-# Whether a person may buy a dependent purchasable: stored rules, and the rules an add-on's links imply until PS-6 converts them.
+# Whether a person may buy a dependent purchasable: the rules stored for it, or for its product when it is a price.
 RSpec.describe BetterTogether::Billing::PurchaseRequirements::Evaluate do
   include_context 'with entitlement fixtures'
   include_context 'with billing switched on'
+  include_context 'with billing extras'
 
   let(:cash) { { processor: nil, processor_price_id: nil, processor_product_id: nil, accepted_payment_methods: %w[cash] } }
-  let(:plan) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 2000) }
-  let(:other_plan) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 1500) }
-  let(:dependent) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 700) }
+  let(:plan) { create(:better_together_billing_plan, :unlinked, **cash, amount_cents: 2000) }
+  let(:other_plan) { create(:better_together_billing_plan, :unlinked, **cash, amount_cents: 1500) }
+  let(:dependent) { create_extra(amount_cents: 700, needs: nil) }
 
   def evaluate(person: buyer, in_order: [], target: dependent) = described_class.call(dependent: target, person:, in_order:)
 
-  def hold(held)
-    order = place_order(purpose: 'one_time', payment_method: 'cash', line_items: [{ purchasable: held }])
-    pay_manually(order)
-  end
+  def hold(held) = hold_plan!(held)
 
-  def rule(**attrs) = create(:better_together_billing_purchase_requirement, dependent:, **attrs)
+  def rule(**attrs) = create(:better_together_billing_purchase_requirement, dependent: dependent.product, **attrs)
 
   it 'is open to everyone when nothing is required' do
     expect(evaluate).to be_met
@@ -99,38 +97,18 @@ RSpec.describe BetterTogether::Billing::PurchaseRequirements::Evaluate do
       expect(evaluate).to be_met
     end
 
-    it 'is not met by another add-on in the order' do
-      extra = create(:better_together_billing_plan, :one_time, **cash, add_on: true)
-
-      expect(evaluate(in_order: [extra])).not_to be_met
+    it 'is not met by another extra in the order' do
+      expect(evaluate(in_order: [create_extra(needs: nil)])).not_to be_met
     end
   end
 
-  describe 'an add-on with no stored rules (what its links imply)' do
-    let(:add_on) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 700, add_on: true) }
+  describe 'a rule stored on the product' do
+    it 'applies to every price of it' do
+      rule(prerequisite: plan)
+      newer = create(:better_together_billing_price, product: dependent.product, amount_cents: 900, currency: 'USD')
 
-    it 'with no links, needs any primary plan held or in the order' do
-      expect(evaluate(target: add_on)).not_to be_met
-      expect(evaluate(target: add_on, in_order: [plan])).to be_met
-      hold(plan)
-      expect(evaluate(target: add_on)).to be_met
-    end
-
-    it 'with links, needs one of the plans it extends and not another' do
-      BetterTogether::Billing::PlanAddOn.create!(plan:, add_on:)
-      hold(other_plan)
-
-      expect(evaluate(target: add_on)).not_to be_met
-      expect(evaluate(target: add_on, in_order: [plan])).to be_met
-      hold(plan)
-      expect(evaluate(target: add_on)).to be_met
-    end
-
-    it 'is replaced by a stored rule when there is one' do
-      create(:better_together_billing_purchase_requirement, dependent: add_on, prerequisite: other_plan)
-
-      expect(evaluate(target: add_on, in_order: [plan])).not_to be_met
-      expect(evaluate(target: add_on, in_order: [other_plan])).to be_met
+      expect(evaluate(target: newer)).not_to be_met
+      expect(evaluate(target: newer, in_order: [plan])).to be_met
     end
   end
 

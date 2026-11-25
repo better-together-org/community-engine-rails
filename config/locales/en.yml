@@ -2059,6 +2059,7 @@ en:
         field_lifetime: How long it lasts
         field_listed: Shown in the catalog
         field_name: Name
+        field_needs_any_plan: Any plan
         field_price: Price
         field_restricted_to_members: Only for members
         field_restricted_to_subscribers: Only for subscribers
@@ -2083,6 +2084,9 @@ en:
         new_title: New product
         no_price: No price yet
         none: No products yet.
+        requirements_hint: Leave all unticked to sell it on its own. A buyer needs
+          one of the ticked plans, either held already or in the same order.
+        requirements_legend: Sold with a plan
         table_caption: Products this platform sells
         tax_standard: Standard
         'true': 'Yes'
@@ -2928,6 +2932,8 @@ en:
             card: Card with price
           empty: Choose a plan for this block to offer.
           plan_hint: Pick one of this platform's active plans.
+          price_hint: Or pick the price of a product instead; it takes the place of
+            the plan.
         plan_catalog_block:
           create_label: Create a new %{type} block for the page
           empty: No plans are on offer right now.

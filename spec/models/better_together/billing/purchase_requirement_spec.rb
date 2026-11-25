@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::Billing::PurchaseRequirement do
   let!(:host_platform) { configure_host_platform }
   let(:cash) { { processor: nil, processor_price_id: nil, processor_product_id: nil, accepted_payment_methods: %w[cash] } }
   let(:plan) { create(:better_together_billing_plan, **cash) }
-  let(:extra) { create(:better_together_billing_plan, :one_time, **cash, add_on: true) }
+  let(:extra) { create(:better_together_billing_product, platform: host_platform) }
 
   def error_keys(record)
     record.valid?

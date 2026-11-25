@@ -6,7 +6,7 @@ better_together:
     created_by: Community Engine
     created_at: '2026-11-24T00:00:00Z'
     description: A small demo catalog for trying billing end to end - a free plan, monthly and annual paid plans
-      with included storage, a cheque-only plan, a storage add-on and a storage top-up product. Every name starts with [Demo].
+      with included storage, a cheque-only plan, a storage top-up product and an extra-storage product that goes with the supporter plans. Every name starts with [Demo].
     origin:
       platforms: []
       contributors: []
@@ -29,7 +29,7 @@ better_together:
     records:
     - records/billing_plans.yml
     - records/billing_plan_grants.yml
-    - records/billing_plan_add_ons.yml
     - records/billing_products.yml
     - records/billing_prices.yml
     - records/billing_product_grants.yml
+    - records/billing_product_requirements.yml

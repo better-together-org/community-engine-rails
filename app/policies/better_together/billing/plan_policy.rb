@@ -19,31 +19,16 @@ module BetterTogether
       def catalog? = billing_available?(Current.platform)
 
       # One listed plan in the catalog: it is listed and active, and the person qualifies for its audience.
-      def catalog_show? = catalog? && record.listed? && record.active? && !record.add_on? && purchase?
+      def catalog_show? = catalog? && record.listed? && record.active? && purchase?
 
       # A plan offered from a page (a plan block): active, and the person qualifies, listed in the catalog or not.
-      def offer? = catalog? && record.active? && !record.add_on? && purchase?
+      def offer? = catalog? && record.active? && purchase?
 
       # Buying a plan, listed or not: a plan limited to members or subscribers is for them alone, so a link to it gets no one else in.
       def purchase?
         return false unless record.platform_id == Current.platform&.id && record.seller_id.blank?
 
         record.open_to?(audience_for(user))
-      end
-
-      # An add-on bought on its own, later: the buyer qualifies for its audience and holds a prerequisite of it (a plan it extends,
-      # or any primary plan when it names none). Buying one with a plan at checkout is #purchase?.
-      def buy_alone?
-        return false unless record.add_on? && purchase?
-
-        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: record, person: user&.person).met?
-      end
-
-      # An add-on this buyer could unlock: it is for sale to them but a prerequisite is missing. The reason is what to show.
-      def locked_reason
-        return unless record.add_on? && purchase?
-
-        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: record, person: user&.person).reason
       end
 
       class Scope < OwnerPolicy::Scope; end

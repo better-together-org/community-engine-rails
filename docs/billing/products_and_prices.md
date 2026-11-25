@@ -48,4 +48,10 @@ Seeds: the billing demo packet plants a "[Demo] Storage top-up" product with a p
 
 ## Not yet built
 
-The processor mirror (`sync_plan` for products, PS-7). Converting existing one-time plans and add-ons is PS-6.
+The processor mirror (`sync_plan` for products, PS-7).
+
+## Extras and the move from plans (PS-6)
+
+A product may need a plan: tick "needs any plan" or the plans it goes with on the product form (`billing-product-requirements`), which stores [purchase requirements](purchase_requirements.md). Plans no longer have one-time or add-on forms. A migration ran `Products::ConvertPlans`, which made each old one-time or add-on plan a product with one price, moved its grants, entitlements, agreement requirements, plan-button blocks and past order lines to it, turned add-on links into rules, and removed the plan. A plan still pointed at by a subscription term is skipped and reported, and the cleanup migration refuses to run while any is left. Counts are checked in the same transaction.
+
+One behaviour changed: buying a one-time plan no longer counts as holding "any plan" for a rule.

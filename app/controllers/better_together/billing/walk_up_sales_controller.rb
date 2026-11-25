@@ -37,12 +37,15 @@ module BetterTogether
         render :new, status: :unprocessable_content
       end
 
+      # What was sold: a plan, or the price of a product. Ids are unique across both, so one field carries either.
       def chosen_plan
         @plans.find { |plan| plan.id == params[:plan_id] } || raise(ActiveRecord::RecordNotFound)
       end
 
       def set_choices
-        @plans = billing_owner.billing_plans.sold_by_platform.active.sort_by { |plan| plan.name.to_s.downcase }
+        sellable = billing_owner.billing_plans.sold_by_platform.active.to_a +
+                   billing_owner.billing_prices.sold_by_platform.active.includes(:product).select(&:purchasable?)
+        @plans = sellable.sort_by { |plan| plan.name.to_s.downcase }
         @methods = offline_methods
       end
 

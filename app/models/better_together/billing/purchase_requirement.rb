@@ -20,6 +20,11 @@ module BetterTogether
       # Kinds of prerequisite a rule can name instead of one purchasable. Each is a class name the registry holds.
       KINDS = { 'plan' => 'BetterTogether::Billing::Plan' }.freeze
 
+      # What a rule may name besides a purchasable: a product, which stands for every price it will ever have.
+      PRODUCT = 'BetterTogether::Billing::Product'
+
+      def self.requirable_names = [*Purchasable.model_names, PRODUCT]
+
       belongs_to :dependent, polymorphic: true
       belongs_to :prerequisite, polymorphic: true, optional: true
 
@@ -47,17 +52,17 @@ module BetterTogether
       def label
         return I18n.t("better_together.billing.purchase_requirements.kinds.#{prerequisite_kind}") if kind?
 
-        prerequisite.purchasable_description
+        prerequisite.respond_to?(:purchasable_description) ? prerequisite.purchasable_description : prerequisite.name
       end
 
       private
 
       def dependent_is_purchasable
-        errors.add(:dependent_type, :not_purchasable) unless Purchasable.model_names.include?(dependent_type)
+        errors.add(:dependent_type, :not_purchasable) unless self.class.requirable_names.include?(dependent_type)
       end
 
       def prerequisite_is_purchasable
-        return if prerequisite_type.blank? || Purchasable.model_names.include?(prerequisite_type)
+        return if prerequisite_type.blank? || self.class.requirable_names.include?(prerequisite_type)
 
         errors.add(:prerequisite_type, :not_purchasable)
       end

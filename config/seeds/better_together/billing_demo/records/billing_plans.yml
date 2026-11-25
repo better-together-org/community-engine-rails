@@ -20,8 +20,3 @@ records:
                 accepted_payment_methods: [cheque] }
   translations:
     en: { name: "[Demo] Cheque only", description: "A plan that can only be paid by cheque, for trying offline payments." }
-- key: demo-extra-storage
-  attributes: { billing_interval: one_time, interval_count: 1, amount_cents: 300, currency: CAD, active: true, listed: true,
-                add_on: true, accepted_payment_methods: [cash, cheque, etransfer] }
-  translations:
-    en: { name: "[Demo] Extra storage", description: "A one-time extra that can be added to a supporter plan." }

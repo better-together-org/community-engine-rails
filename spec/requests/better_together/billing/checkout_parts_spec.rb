@@ -17,8 +17,8 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
   let(:buyer_address) { create_billing_address_for(buyer) }
   let(:steward) { create(:better_together_person) }
   let(:plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash store_credit],
-                                                     billing_interval: 'one_time', currency: 'USD', amount_cents: 4000)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                           currency: 'USD', amount_cents: 4000)
   end
   let(:monthly) do
     create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash store_credit], billing_interval: 'month',
@@ -26,7 +26,11 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
   end
   let(:agreements) { BetterTogether::Billing::PurchaseAgreementSeeds.call(host_platform) }
 
-  def new_path(chosen = plan, **params) = better_together.new_billing_checkout_path(locale:, plan_id: chosen.id, **params)
+  def new_path(chosen = plan, **params)
+    better_together.new_billing_checkout_path(locale:, (chosen.is_a?(BetterTogether::Billing::Price) ? :price_id : :plan_id) => chosen.id,
+                                              **params)
+  end
+
   def checkout_path = better_together.billing_checkout_path(locale:)
 
   # The boxes are the shared agreement mechanism's: one `<identifier>_agreement=1` parameter per ticked agreement.
@@ -37,7 +41,8 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
   end
 
   def post_checkout(chosen: plan, method: 'cash', parts: {}, purpose: 'one_time', **extra)
-    post checkout_path, params: { plan_id: chosen.id, payment_method: method, part_amounts: parts, **extra,
+    key = chosen.is_a?(BetterTogether::Billing::Price) ? :price_id : :plan_id
+    post checkout_path, params: { key => chosen.id, payment_method: method, part_amounts: parts, **extra,
                                   **billing_address_params(buyer_address),
                                   **ticks(chosen, [method, *parts.keys], purpose) }
   end
@@ -106,7 +111,7 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
       address = { line1: '7 Pine', postal_code: 'A1B 2C3', country_id: buyer_address.country_id,
                   state_id: buyer_address.state_id }
 
-      post checkout_path, params: { plan_id: plan.id, payment_method: 'cash', part_amounts: { 'store_credit' => '40.00' },
+      post checkout_path, params: { price_id: plan.id, payment_method: 'cash', part_amounts: { 'store_credit' => '40.00' },
                                     billing_address_id: 'new', billing_address: address,
                                     **ticks(plan, %w[cash store_credit], 'one_time') }
 

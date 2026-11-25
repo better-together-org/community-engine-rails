@@ -4,9 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::Plans::Holdings do
   include_context 'with subscription fixtures'
-
-  let(:attrs) { { platform: host_platform, processor: nil, accepted_payment_methods: %w[cash], currency: 'USD' } }
-  let(:one_time) { create(:better_together_billing_plan, :unlinked, :one_time, **attrs) }
+  include_context 'with billing extras'
 
   def held = described_class.call(platform: host_platform, person: buyer)
 
@@ -21,20 +19,11 @@ RSpec.describe BetterTogether::Billing::Plans::Holdings do
     expect(held).to include(sub_plan.id)
   end
 
-  it 'holds a plan bought once while the order stands, and stops when it is refunded' do
-    order = place_order(buyer:, purpose: 'one_time', line_items: [{ purchasable: one_time }], payment_method: 'cash')
-    order.update!(status: 'paid', paid_at: Time.current)
-    expect(held).to eq([one_time.id])
+  it 'holds a plan with a live entitlement and stops when it is revoked' do
+    entitlement = hold_plan!(sub_plan)
+    expect(held).to eq([sub_plan.id])
 
-    order.update!(status: 'refunded')
-    expect(held).to eq([])
-  end
-
-  it 'never holds an add-on' do
-    add_on = create(:better_together_billing_plan, :unlinked, :one_time, **attrs, add_on: true)
-    order = place_order(buyer:, purpose: 'one_time', line_items: [{ purchasable: add_on }], payment_method: 'cash', seller_assisted: true)
-    order.update!(status: 'paid', paid_at: Time.current)
-
+    entitlement.update!(status: 'revoked')
     expect(held).to eq([])
   end
 end

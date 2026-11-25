@@ -2061,6 +2061,7 @@ es:
         field_lifetime: Cuánto dura
         field_listed: Se muestra en el catálogo
         field_name: Nombre
+        field_needs_any_plan: Cualquier plan
         field_price: Precio
         field_restricted_to_members: Solo para miembros
         field_restricted_to_subscribers: Solo para suscriptores
@@ -2085,6 +2086,10 @@ es:
         new_title: Nuevo producto
         no_price: Aún sin precio
         none: Aún no hay productos.
+        requirements_hint: Deje todo sin marcar para venderlo por separado. El comprador
+          necesita uno de los planes marcados, ya sea que lo tenga o que esté en el
+          mismo pedido.
+        requirements_legend: Se vende con un plan
         table_caption: Productos que vende esta plataforma
         tax_standard: Estándar
         'true': Sí
@@ -2940,6 +2945,7 @@ es:
             card: Tarjeta con precio
           empty: Elija un plan para ofrecer en este bloque.
           plan_hint: Elija uno de los planes activos de esta plataforma.
+          price_hint: O elija el precio de un producto; sustituye al plan.
         plan_catalog_block:
           create_label: Crear un nuevo bloque %{type} para la página
           empty: No hay planes disponibles por ahora.

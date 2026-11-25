@@ -12,9 +12,9 @@ Packet: `config/seeds/better_together/billing_demo`, mode `add_only` (a rerun cr
 | `demo-supporter-monthly` | 10.00 CAD / month | cash, cheque, e-transfer | 5 GiB media storage |
 | `demo-supporter-annual` | 100.00 CAD / year | cash, cheque, e-transfer | 5 GiB media storage |
 | `demo-cheque-only` | 25.00 CAD / month | cheque only | nothing |
-| `demo-extra-storage` | 3.00 CAD once | cash, cheque, e-transfer | add-on, offered with both supporter plans |
+| `demo-extra-storage` (product) | 3.00 CAD once | cash, cheque, e-transfer | an extra: needs one of the supporter plans |
 
-Plans have no vendor processor, so they settle through the offline methods. Add-ons cannot hold grants (the model refuses), so the extra-storage add-on is a plain extra.
+Plans have no vendor processor, so they settle through the offline methods. The extra-storage product has two requirement records, one for each supporter plan (type `billing_product_plan_requirement`).
 
 ## Planting
 

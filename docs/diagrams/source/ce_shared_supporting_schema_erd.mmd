@@ -16,9 +16,6 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_ORDER_DOCUMENTS : "platform / platform_id"
   EXT_BILLING_ORDER ||--o{ BILLING_ORDER_DOCUMENTS : "order / order_id"
   EXT_UPLOAD ||--o{ BILLING_ORDER_DOCUMENTS : "upload / upload_id"
-  EXT_PLATFORM ||--o{ BILLING_PLAN_ADD_ONS : "platform / platform_id"
-  EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "plan / plan_id"
-  EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "add_on / add_on_id"
   EXT_PLATFORM ||--o{ BILLING_PRICES : "platform / platform_id"
   BILLING_PRODUCTS ||--o{ BILLING_PRICES : "product / product_id"
   EXT_PLATFORM ||--o{ BILLING_PRODUCTS : "platform / platform_id"
@@ -201,12 +198,6 @@ erDiagram
     time_zone string
     generated_at datetime
     superseded_at datetime
-  }
-
-  BILLING_PLAN_ADD_ONS {
-    add_on_id uuid
-    plan_id uuid
-    platform_id uuid
   }
 
   BILLING_PRICES {
@@ -787,10 +778,6 @@ erDiagram
   }
 
   EXT_UPLOAD {
-    string export_ref
-  }
-
-  EXT_BILLING_PLAN {
     string export_ref
   }
 

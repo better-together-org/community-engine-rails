@@ -81,13 +81,12 @@ module BetterTogether
         params[:price_id].present? ? platform_prices.active.find(params[:price_id]) : platform_plans.active.find(params[:plan_id])
       end
 
+      # A price must be on sale; an extra (a top-up that needs a plan) is bought alone only by someone who holds what it needs.
       def purchasable_by_buyer?
-        return plan_purchasable? unless @plan.is_a?(Price)
+        return policy(@plan).purchase? unless @plan.is_a?(Price)
 
-        @plan.purchasable? && policy(@plan).purchase?
+        @plan.purchasable? && (@plan.extra? ? policy(@plan).buy_alone? : policy(@plan).purchase?)
       end
-
-      def plan_purchasable? = @plan.add_on? ? policy(@plan).buy_alone? : policy(@plan).purchase?
 
       def platform_prices = billing_owner.billing_prices.sold_by_platform
 
@@ -109,15 +108,16 @@ module BetterTogether
 
       def order_cents = (@plan.amount_cents * @quantity) + @add_ons.sum(&:amount_cents)
 
-      # Only add-ons this buyer may buy, in the plan's currency.
+      # Only extras this buyer may buy with the item being bought, at the newest price of each product, in its currency.
       def offered_add_ons
-        return [] if @plan.add_on?
+        return [] if @plan.extra?
 
-        platform_plans.active.add_ons_for(@plan).where(currency: @plan.currency).order(:amount_cents, :identifier)
-                      .select { |add_on| policy(add_on).purchase? && requirements_met?(add_on) }
+        prices = platform_prices.active.extras.where(currency: @plan.currency).includes(:product).order(:created_at)
+        prices.select(&:purchasable?).group_by(&:product_id).values.map(&:last)
+              .select { |price| policy(price).purchase? && requirements_met?(price) }.sort_by { |price| [price.amount_cents, price.id] }
       end
 
-      # Whether the plan being bought (or held) satisfies what the add-on needs.
+      # Whether what is being bought (or already held) satisfies what the extra needs.
       def requirements_met?(add_on)
         BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: add_on, person: current_user.person, in_order: [@plan]).met?
       end

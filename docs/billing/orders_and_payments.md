@@ -86,7 +86,7 @@ It also answers five questions the order engine asks instead of testing for a cl
 | `fulfilled_by_order?` | false | Paying the order is what gives the buyer what it includes, through `SyncOrderEntitlementJob` | `Orders::Settle` follow-up |
 | `held_by?(person)` | false | The person holds it now (a live entitlement, a subscription, or a paid order that stands) | dependent purchases (PS-4) |
 
-A plan answers: `renews?` when recurring, `extra?` when an add-on, `plan_line?` always, `fulfilled_by_order?` when one-time and not an add-on.
+A plan answers: `renews?` and `plan_line?` always, and is never an extra or fulfilled through its own order. A price answers `fulfilled_by_order?` through its product, and `extra?` when its product has purchase requirements.
 
 ## Who sees what
 

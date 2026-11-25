@@ -17,6 +17,22 @@ module BetterTogether
       def purchase?
         record.purchasable? && ProductPolicy.new(user, record.product).purchase?
       end
+
+      # An extra bought on its own, later: for sale to this person and a prerequisite of it is held. With a plan at checkout it is #purchase?.
+      def buy_alone?
+        record.extra? && purchase? && requirements(user&.person).met?
+      end
+
+      # An extra this buyer could unlock: for sale to them but a prerequisite is missing. The reason is what to show.
+      def locked_reason
+        record.extra? && purchase? ? requirements(user&.person).reason : nil
+      end
+
+      private
+
+      def requirements(person)
+        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: record, person:)
+      end
     end
   end
 end

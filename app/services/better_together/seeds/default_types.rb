@@ -150,13 +150,13 @@ module BetterTogether
         end
       end
 
-      # The catalog: plans, what each includes, and which plans extend which. Money and processor state (prices at a
+      # The catalog: plans, what each includes, and the products sold once. Money and processor state (prices at a
       # vendor, payment methods and their acknowledgement, taxes, agreements) are not seeded here: each has its own
       # gate and planter.
       def self.register_billing
         Registry.register(:billing_plan) do
           model 'BetterTogether::Billing::Plan'
-          attributes :billing_interval, :interval_count, :amount_cents, :currency, :active, :listed, :add_on,
+          attributes :billing_interval, :interval_count, :amount_cents, :currency, :active, :listed,
                      :restricted_to_members, :grace_days, :renewal_lead_days, :accepted_payment_methods
           translated :name, :description
         end
@@ -168,12 +168,6 @@ module BetterTogether
           position :position
         end
         register_billing_products
-        Registry.register(:billing_plan_add_on) do
-          model 'BetterTogether::Billing::PlanAddOn'
-          natural_key by_refs: %i[plan add_on]
-          reference :plan, to: :billing_plan
-          reference :add_on, to: :billing_plan
-        end
       end
 
       # What a platform sells once: a product, the prices it is sold at (never changed once made, so keyed by amount) and what
@@ -198,10 +192,28 @@ module BetterTogether
           reference :product, to: :billing_product
           position :position
         end
+        register_billing_requirements
+      end
+
+      # What a product needs of a buyer: one rule for any plan, or one for each plan it goes with.
+      def self.register_billing_requirements
+        Registry.register(:billing_product_requirement) do
+          model 'BetterTogether::Billing::PurchaseRequirement'
+          natural_key :prerequisite_kind, within: :dependent
+          attributes :prerequisite_kind, :met_by, :on_prerequisite_end
+          reference :dependent, to: :billing_product
+        end
+        Registry.register(:billing_product_plan_requirement) do
+          model 'BetterTogether::Billing::PurchaseRequirement'
+          natural_key by_refs: %i[dependent prerequisite]
+          attributes :met_by, :on_prerequisite_end
+          reference :dependent, to: :billing_product
+          reference :prerequisite, to: :billing_plan
+        end
       end
 
       private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
-                           :register_redirects, :register_rbac, :register_billing, :register_billing_products
+                           :register_redirects, :register_rbac, :register_billing, :register_billing_products, :register_billing_requirements
     end
   end
 end

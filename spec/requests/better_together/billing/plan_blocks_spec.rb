@@ -68,8 +68,8 @@ RSpec.describe 'Plan blocks on a page', :no_auth do # rubocop:disable RSpec/Desc
 
     it 'shows no more plans than the limit' do
       sub_plan.update!(listed: true)
-      create(:better_together_billing_plan, :one_time, listed: true, platform: host_platform, processor: nil, processor_price_id: nil,
-                                                       processor_product_id: nil, amount_cents: 0, accepted_payment_methods: [])
+      create(:better_together_billing_plan, listed: true, platform: host_platform, processor: nil, processor_price_id: nil,
+                                            processor_product_id: nil, amount_cents: 0, accepted_payment_methods: [])
       block.update!(item_limit: 1)
 
       expect(show_page.call.scan('billing-catalog-plan').size).to be <= 2

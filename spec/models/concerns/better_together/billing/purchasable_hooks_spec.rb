@@ -19,40 +19,32 @@ RSpec.describe BetterTogether::Billing::Purchasable, '#renews?, #extra?, #plan_l
   end
 
   describe 'a plan' do
-    it 'renews when it is recurring and is fulfilled through its order only when one-time' do
-      monthly = create(:better_together_billing_plan, **cash)
-      once = create(:better_together_billing_plan, :one_time, **cash)
-
-      expect(monthly).to have_attributes(renews?: true, extra?: false, plan_line?: true, fulfilled_by_order?: false)
-      expect(once).to have_attributes(renews?: false, extra?: false, plan_line?: true, fulfilled_by_order?: true)
-    end
-
-    it 'treats an add-on as an extra that is not fulfilled by its own order' do
-      add_on = create(:better_together_billing_plan, :one_time, **cash, add_on: true)
-
-      expect(add_on).to have_attributes(renews?: false, extra?: true, plan_line?: true, fulfilled_by_order?: false)
+    it 'always renews, is a plan line, and is never fulfilled through its own order' do
+      expect(create(:better_together_billing_plan,
+                    **cash)).to have_attributes(renews?: true, extra?: false, plan_line?: true, fulfilled_by_order?: false)
     end
   end
 
-  describe 'a plan held by a person' do
-    let(:once) { create(:better_together_billing_plan, :one_time, **cash, amount_cents: 2000) }
+  describe 'a price' do
+    let(:price) { create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform)) }
 
-    it 'is held while a bought order stands, and not by someone else or once refunded' do
-      order = place_order(purpose: 'one_time', payment_method: 'cash', line_items: [{ purchasable: once }])
-      pay_manually(order)
+    it 'is fulfilled through its own order and is an extra only when its product needs something' do
+      expect(price).to have_attributes(renews?: false, extra?: false, plan_line?: false, fulfilled_by_order?: true)
+      create(:better_together_billing_purchase_requirement, :for_any_plan, dependent: price.product)
 
-      expect(once.held_by?(buyer)).to be(true)
-      expect(once.held_by?(create(:better_together_person))).to be(false)
-      expect(once.held_by?(nil)).to be(false)
-
-      order.update!(status: 'refunded')
-      expect(once.held_by?(buyer)).to be(false)
+      expect(price.reload).to have_attributes(extra?: true)
     end
 
-    it 'is never held when it is an add-on' do
-      add_on = create(:better_together_billing_plan, :one_time, **cash, add_on: true)
+    it 'is held while a paid order of it stands, and not by someone else or once refunded' do
+      order = place_order(purpose: 'one_time', payment_method: 'cash', line_items: [{ purchasable: price }])
+      pay_manually(order)
 
-      expect(add_on.held_by?(buyer)).to be(false)
+      expect(price.held_by?(buyer)).to be(true)
+      expect(price.held_by?(create(:better_together_person))).to be(false)
+      expect(price.held_by?(nil)).to be(false)
+
+      order.update!(status: 'refunded')
+      expect(price.held_by?(buyer)).to be(false)
     end
   end
 end
