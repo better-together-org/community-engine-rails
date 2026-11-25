@@ -637,6 +637,8 @@ es:
       active_storage/variant_record: Registro de Variante
       application_notifier: Notificador de aplicaciones
       application_notifier/notification: Notificador/notificación de la aplicación
+      better_together/break_glass_event: Evento de acceso excepcional
+      better_together/break_glass_grant: Autorización de acceso excepcional
       better_together/category: Categoría
       better_together/checklist: Lista de verificación
       better_together/community: Comunidad

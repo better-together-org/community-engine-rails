@@ -627,6 +627,8 @@ uk:
       active_storage/variant_record: запис варіанта
       application_notifier: Сповіщувач програми
       application_notifier/notification: Сповіщення
+      better_together/break_glass_event: Подія виняткового доступу
+      better_together/break_glass_grant: Дозвіл на винятковий доступ
       better_together/category: Категорія
       better_together/checklist: Контрольний список
       better_together/community: Спільнота
