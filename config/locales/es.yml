@@ -610,6 +610,19 @@ es:
           attributes:
             theme:
               invalid_value: "%{key} tiene un valor no permitido"
+        better_together/platform_association:
+          attributes:
+            delegated_from:
+              no_upstream_edge: requiere una relación de gestión existente de este
+                operador sobre la plataforma que delega
+              too_deep: supera la profundidad máxima de la cadena de gestión
+            granted_scopes:
+              exceeds_parent: no puede otorgar más de lo que posee la relación principal
+            managed_platform_id:
+              cycle: crearía un ciclo de gestión
+          immutable_endpoints: no puede cambiar el operador, la plataforma gestionada
+            ni la relación principal
+          too_deep: supera la profundidad máxima de la cadena de gestión
         better_together/platform_domain:
           attributes:
             active:
@@ -701,6 +714,9 @@ es:
       better_together/person_platform_integration: Integración OAuth
       better_together/person_platform_membership: Membresía de plataforma
       better_together/platform: Plataforma
+      better_together/platform_association:
+        one: Asociación de plataforma
+        other: Asociaciones de plataforma
       better_together/platform_connection: Conexión de plataforma
       better_together/platform_domain: Dominio de plataforma
       better_together/platform_invitation: Invitación a plataforma

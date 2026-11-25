@@ -601,6 +601,19 @@ uk:
           attributes:
             theme:
               invalid_value: "%{key} має недопустиме значення"
+        better_together/platform_association:
+          attributes:
+            delegated_from:
+              no_upstream_edge: потребує наявного зв’язку керування цього оператора
+                над платформою, що делегує
+              too_deep: перевищує максимальну глибину ланцюга керування
+            granted_scopes:
+              exceeds_parent: не може надати більше, ніж має батьківський зв’язок
+            managed_platform_id:
+              cycle: створило б цикл керування
+          immutable_endpoints: не можна змінити оператора, керовану платформу чи батьківський
+            зв’язок
+          too_deep: перевищує максимальну глибину ланцюга керування
         better_together/platform_domain:
           attributes:
             active:
@@ -691,6 +704,11 @@ uk:
       better_together/person_platform_integration: Інтеграція OAuth
       better_together/person_platform_membership: Членство особи в платформі
       better_together/platform: Платформа
+      better_together/platform_association:
+        few: Асоціації платформ
+        many: Асоціацій платформ
+        one: Асоціація платформ
+        other: Асоціації платформ
       better_together/platform_connection: З'єднання платформ
       better_together/platform_domain: Домен платформи
       better_together/platform_invitation: Запрошення платформи
