@@ -8,7 +8,7 @@ RSpec.describe BetterTogether::Billing::SyncPlanJob do
   include_context 'with clean billing processors'
 
   let!(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups], contract: 1) }
   let(:plan) { create(:better_together_billing_plan, :unlinked, name: 'Hosted') }
 
   before { BetterTogether::Billing.register_processor(:fake, -> { adapter }) }
@@ -41,6 +41,15 @@ RSpec.describe BetterTogether::Billing::SyncPlanJob do
 
     keys = adapter.calls.select { |name, *| name == :sync_plan }.map(&:last)
     expect(keys.uniq.size).to eq(1)
+  end
+
+  it 'syncs through sync_catalog_item for an adapter at contract version 2' do
+    v2 = BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups])
+    BetterTogether::Billing.register_processor(:fake, -> { v2 })
+    described_class.perform_now(plan.id)
+
+    expect(v2.calls.map(&:first)).to include(:sync_catalog_item)
+    expect(plan.reload).to have_attributes(sync_status: 'synced', processor_price_id: start_with('price_'))
   end
 
   it 'does not enqueue another sync from storing the result' do

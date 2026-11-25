@@ -63,7 +63,8 @@ module BetterTogether
         end
 
         def session_arguments
-          { context:, order:, payment:, success_url:, cancel_url:, idempotency_key: "checkout:#{payment.id}", metadata:, **tax_input }
+          { context:, order:, payment:, success_url:, cancel_url:, idempotency_key: "checkout:#{payment.id}", metadata:, **tax_input,
+            **line_input }
         end
 
         # The tax core worked out for the order, so the processor shows and charges that amount instead of its own.
@@ -76,9 +77,20 @@ module BetterTogether
             prices_include_tax: order.prices_include_tax }
         end
 
-        def adapter_takes_tax?
+        def adapter_takes_tax? = adapter_takes?(:tax_cents)
+
+        # Contract version 2: core says what the lines are and whether the session is a payment or a subscription. An adapter at
+        # version 1 builds its own from the order.
+        def line_input
+          return {} unless adapter.catalog_aware? && adapter_takes?(:lines)
+
+          lines = Lines.call(order:, processor: payment.processor)
+          { mode: lines.mode, lines: lines.lines }
+        end
+
+        def adapter_takes?(keyword)
           params = adapter.method(:create_checkout_session).parameters
-          params.any? { |kind, name| kind == :keyrest || (%i[key keyreq].include?(kind) && name == :tax_cents) }
+          params.any? { |kind, name| kind == :keyrest || (%i[key keyreq].include?(kind) && name == keyword) }
         end
 
         # A processor that says how much tax it will charge, and says something other than what core worked out.

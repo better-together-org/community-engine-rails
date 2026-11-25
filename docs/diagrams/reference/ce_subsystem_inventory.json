@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T00:55:41Z",
+  "generated_at": "2026-11-25T17:52:33Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -31209,18 +31209,6 @@
               "string"
             ],
             [
-              "interval",
-              "string"
-            ],
-            [
-              "kind",
-              "string"
-            ],
-            [
-              "lookup_key",
-              "string"
-            ],
-            [
               "active",
               "boolean"
             ],
@@ -31229,19 +31217,15 @@
               "integer"
             ],
             [
-              "interval_count",
-              "integer"
+              "archived_at",
+              "datetime"
             ]
           ],
           "validations": [
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: currency",
             "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
-            "NumericalityValidator: amount_cents (greater_than_or_equal_to=0, only_integer=true)",
-            "InclusionValidator: kind (in=[\"one_time\", \"recurring\"])",
-            "InclusionValidator: interval (if=:recurring?, in=[\"month\", \"year\"])",
-            "AbsenceValidator: interval (unless=:recurring?)",
-            "NumericalityValidator: interval_count (only_integer=true, greater_than=0, less_than_or_equal_to=12)"
+            "NumericalityValidator: amount_cents (greater_than_or_equal_to=0, only_integer=true)"
           ],
           "belongs_to": [
             {
@@ -31325,23 +31309,23 @@
               "string"
             ],
             [
-              "term_unit",
+              "sync_error",
               "string"
             ],
             [
-              "type",
+              "sync_status",
               "string"
             ]
           ],
           "validations": [
             "PresenceValidator: platform (message=:required)",
             "InclusionValidator: active (in=[true, false])",
+            "FormatValidator: processor (allow_blank=true, with=/\\A[a-z][a-z0-9_]*\\z/)",
+            "InclusionValidator: sync_status (in=[\"pending\", \"synced\", \"failed\"])",
             "PresenceValidator: identifier, name",
             "UniquenessValidator: identifier (scope=[:platform_id, :seller_type, :seller_id])",
             "InclusionValidator: type (in=[\"BetterTogether::Billing::Product\"])",
-            "InclusionValidator: lifetime (in=[\"until_used\", \"fixed_term\"])",
-            "NumericalityValidator: term_length (if=:fixed_term?, only_integer=true, greater_than=0, less_than_or_equal_to=120)",
-            "InclusionValidator: term_unit (if=:fixed_term?, in=[\"day\", \"week\", \"month\", \"year\"])"
+            "InclusionValidator: lifetime (in=[\"until_used\", \"fixed_term\"])"
           ],
           "belongs_to": [
             {
@@ -31392,6 +31376,7 @@
             "BetterTogether::Billing::AgreementTarget",
             "BetterTogether::Billing::Listing",
             "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::ProductMirror",
             "BetterTogether::Billing::ProductRequirements",
             "BetterTogether::Billing::SellerScoped",
             "BetterTogether::Translatable"
@@ -42013,6 +41998,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::Price"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProductMirror",
+          "label": "Billing::ProductMirror",
+          "capability": "Productmirror",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Product"
           ]
         },
         {

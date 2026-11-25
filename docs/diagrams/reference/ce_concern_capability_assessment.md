@@ -36,6 +36,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Billing::PlatformBound` | Platformbound | `Billing::SubscriptionTerm`, `Billing::SubscriptionPeriod`, `Billing::Refund`, `Billing::PromotionRedemption`, `Billing::Promotion`, `Billing::PlanGrant` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::Pricing` | Pricing | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::ProcessorMirror` | Processormirror | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ProductMirror` | Productmirror | `Billing::Product` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::ProductRequirements` | Productrequirements | `Billing::Product` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::Purchasable` | Purchasable | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::SellerScoped` | Sellerscoped | `Billing::Order`, `Billing::Plan`, `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |

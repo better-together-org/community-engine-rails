@@ -11,18 +11,21 @@ module BetterTogether
       attr_reader :calls, :capabilities, :products, :prices
 
       # `settlement:` and `countries:` let specs stand in for a manual (offline) method.
-      def initialize(capabilities: %i[checkout], processor: :fake, rules: nil, settlement: :remote, countries: nil) # rubocop:disable Metrics/ParameterLists
+      # `contract:` 1 stands in for an adapter written before catalog items and checkout lines.
+      def initialize(capabilities: %i[checkout], processor: :fake, rules: nil, settlement: :remote, countries: nil, contract: CONTRACT_VERSION) # rubocop:disable Metrics/ParameterLists
         super()
         @capabilities = capabilities
         @processor = processor
         @rules = rules || default_rules
         @settlement = settlement
         @countries = countries
+        @contract = contract
         @calls = []
         @products = {}
         @prices = {}
       end
 
+      def contract_version = @contract
       def settlement_kind = @settlement
       def supported_countries = @countries
       def recurring_mode = @settlement == :manual ? :manual : super
@@ -67,6 +70,21 @@ module BetterTogether
                               interval: plan.billing_interval, interval_count: plan.interval_count, active: plan.active)
         @prices[price_id] = price
         PlanSyncResult.new(product_id:, price:)
+      end
+
+      # Contract version 2: the product, and a price for each CatalogPrice that has none. A price already there is reported as it is.
+      def sync_catalog_item(context:, item:, idempotency_key:)
+        @calls << [:sync_catalog_item, context, item, idempotency_key]
+        raise LookupError, 'processor unavailable' if item.name.to_s.include?('boom')
+
+        product_id = item.processor_product_id.presence || "prod_#{item.ref}"
+        prices = item.prices.map do |price|
+          price_id = price.processor_price_id.presence || "price_#{price.ref}"
+          info = PriceInfo.new(price_id:, product_id:, amount_cents: price.amount_cents, currency: price.currency, interval: price.interval,
+                               interval_count: price.interval_count, active: price.active, ref: price.ref)
+          @prices[price_id] = info
+        end
+        CatalogSyncResult.new(product_id:, prices:)
       end
 
       def fetch_price(context:, processor_price_id:)
