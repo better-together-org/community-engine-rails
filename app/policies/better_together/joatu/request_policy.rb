@@ -26,14 +26,14 @@ module BetterTogether
       alias new? create?
 
       # Permission helper for the "respond with offer" flow (creating an Offer from a Request)
-      def respond_with_offer? = create?
+      def respond_with_offer? = create? && show?
 
       def update?
         return false unless user.present?
 
         return can_manage_network_connections? if connection_request?
 
-        can_manage_joatu? || record.creator_id == agent&.id
+        record.creator_id == agent&.id || manager_may_act?
       end
       alias edit? update?
       alias matches? update?
@@ -46,7 +46,8 @@ module BetterTogether
 
         return can_manage_network_connections? if connection_request?
 
-        can_manage_joatu? || record.creator_id == agent&.id
+        # Removing a post discloses nothing, so managers may remove private ones too.
+        record.creator_id == agent&.id || can_manage_joatu?
       end
 
       class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
@@ -64,9 +65,9 @@ module BetterTogether
 
           # Platform managers / joatu managers see everything
           if user.present?
-            return base                   if permitted_to?('manage_platform', current_platform)
-            return platform_scoped        if can_manage_joatu?
-            return platform_scoped        if can_manage_network_connections? && connection_request_scope?
+            return manager_visible(base) if permitted_to?('manage_platform', current_platform)
+            return manager_visible(platform_scoped) if can_manage_joatu?
+            return platform_scoped if can_manage_network_connections? && connection_request_scope?
           end
 
           # Standalone requests: not a response to another resource
@@ -112,6 +113,11 @@ module BetterTogether
 
         private
 
+        # Managers see everything except other people's private requests.
+        def manager_visible(relation)
+          relation.where.not(privacy: 'private').or(relation.where(creator_id: agent.id))
+        end
+
         # Filter out requests created by people the agent has blocked or been blocked by.
         def exclude_blocked_creators(relation)
           blocked_ids = agent.person_blocks.pluck(:blocked_id)
@@ -134,6 +140,11 @@ module BetterTogether
       end
 
       private
+
+      # Managers act on public and community requests, never on someone else's private one.
+      def manager_may_act?
+        !record.privacy_private? && can_manage_joatu?
+      end
 
       def connection_request?
         record.is_a?(BetterTogether::Joatu::ConnectionRequest)

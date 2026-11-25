@@ -85,7 +85,8 @@ module BetterTogether
              dependent: :destroy
 
     joinable joinable_type: 'community',
-             member_type: 'person'
+             member_type: 'person',
+             dependent: :destroy
 
     slugged :name, slug_uniqueness: false
 
@@ -165,6 +166,7 @@ module BetterTogether
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
     after_create :create_default_calendar
+    after_create :grant_creator_organizer_membership
     after_commit :clear_host_community_cache, if: -> { saved_change_to_attribute?(:host) }
 
     validates :name, presence: true
@@ -272,6 +274,20 @@ module BetterTogether
 
       errors.add(:privacy, :host_community_follows_platform,
                  message: "must match the host platform privacy ('#{platform.privacy}')")
+    end
+
+    # The creator holds an explicit, visible Organizer membership, so access follows the role and can be
+    # handed off or revoked like anyone else's. Idempotent; skipped when the role set is not seeded yet.
+    def grant_creator_organizer_membership
+      return if creator.blank?
+
+      role = Role.find_default('community_organizer', platform: platform)
+      return if role.blank?
+
+      person_community_memberships.find_or_create_by!(member: creator, role:) do |membership|
+        membership.status = 'active'
+        membership.skip_notifications = true
+      end
     end
 
     def create_default_calendar

@@ -58,6 +58,12 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ PLATFORM_ASSOCIATIONS : "operator_platform / operator_platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_ASSOCIATIONS : "managed_platform / managed_platform_id"
+  PLATFORM_ASSOCIATIONS o|--o{ PLATFORM_ASSOCIATIONS : "delegated_from / delegated_from_id"
+  EXT_PERSON o|--o{ PLATFORM_ASSOCIATIONS : "requested_by / requested_by_id"
+  EXT_PERSON o|--o{ PLATFORM_ASSOCIATIONS : "accepted_by / accepted_by_id"
+  EXT_PERSON o|--o{ PLATFORM_ASSOCIATIONS : "status_changed_by / status_changed_by_id"
   EXT_PLATFORM ||--o{ PLATFORM_DELETION_REQUESTS : "platform / platform_id"
   EXT_PERSON ||--o{ PLATFORM_DELETION_REQUESTS : "requested_by / requested_by_id"
   EXT_PERSON o|--o{ PLATFORM_DELETION_REQUESTS : "reviewed_by / reviewed_by_id"
@@ -356,6 +362,19 @@ erDiagram
     number string
     privacy string
     primary_flag boolean
+  }
+
+  PLATFORM_ASSOCIATIONS {
+    accepted_by_id uuid
+    delegated_from_id uuid
+    managed_platform_id uuid
+    operator_platform_id uuid
+    requested_by_id uuid
+    status_changed_by_id uuid
+    relation string
+    status string
+    transport string
+    accepted_at datetime
   }
 
   PLATFORM_DELETION_REQUESTS {

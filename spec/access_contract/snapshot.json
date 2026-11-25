@@ -67,9 +67,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -114,9 +114,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -284,9 +284,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -331,9 +331,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -566,9 +566,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -660,9 +660,9 @@
           "public": "allow"
         },
         "record_owner": {
-          "community": "deny",
-          "private": "deny",
-          "public": "deny"
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
         },
         "signed_in_non_member": {
           "community": "deny",
@@ -1126,6 +1126,596 @@
           "private": "deny",
           "public": "deny",
           "unclaimed": "deny"
+        }
+      }
+    },
+    "joatu_offer": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "allow"
+        },
+        "community_member": {
+          "new": "allow"
+        },
+        "community_organizer": {
+          "new": "allow"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "allow"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "allow"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "respond_with_request": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        }
+      }
+    },
+    "joatu_request": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "allow"
+        },
+        "community_member": {
+          "new": "allow"
+        },
+        "community_organizer": {
+          "new": "allow"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "allow"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "allow"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "respond_with_offer": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_contributor": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "community": "allow",
+          "private": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "community": "allow",
+          "private": "allow",
+          "public": "allow"
+        },
+        "signed_in_non_member": {
+          "community": "deny",
+          "private": "deny",
+          "public": "deny"
         }
       }
     },
