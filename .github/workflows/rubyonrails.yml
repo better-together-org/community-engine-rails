@@ -93,6 +93,23 @@ jobs:
           chmod +x scripts/validate_pr_evidence.sh
           scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
 
+  access_contract_guard:
+    # Blocking: a change to an access-control surface must update the access contract
+    # (config/access_contracts, spec/access_contract) or state why it is unchanged in the PR body.
+    if: github.event_name == 'pull_request'
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Write pull request body
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: printf '%s\n' "${PR_BODY}" > tmp_pr_body.md
+      - name: Check access contract was updated
+        run: bin/ci-access-contract-guard --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
+
   rspec_shard:
     name: rspec ${{ matrix.suite }} shard ${{ matrix.shard }}/${{ matrix.total }} (3.4.13, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
@@ -242,6 +259,9 @@ jobs:
                 jq -r '.examples[] | select(.status == "failed") | "- \(.file_path):\(.line_number) \(.full_description | .[0:100]) :: \(.exception.message | split("\n")[0] | .[0:140])"' "$f" 2>/dev/null
                 jq -r '.messages[]? | select(test("error occurred")) | "- load error: \(split("\n")[1:4] | join(" "))"' "$f" 2>/dev/null
               } >> "$GITHUB_STEP_SUMMARY"
+              # Also name each failed example in the log (and as a PR annotation); the
+              # step summary alone is not exposed by the API or visible in the raw log.
+              jq -r '.examples[] | select(.status == "failed") | "::error file=\(.file_path | ltrimstr("./")),line=\(.line_number)::\(((.full_description | .[0:150] | gsub("[\r\n]"; " ")) + " :: " + ((.exception.message // "") | split("\n")[0] | .[0:200])) | gsub("%"; "%25"))"' "$f" 2>/dev/null || true
             done
             # A run that executed no examples, or hit load errors, is a hard failure even
             # when failure_count is 0 (e.g. a missing system library aborts spec loading).
@@ -456,11 +476,13 @@ jobs:
     # Stable-named required check for the compat/rails-* rulesets. The rspec
     # check name embeds the Rails version, so rulesets require this instead.
     name: ci-gate
-    needs: [prepare, rspec, rubocop, security]
+    needs: [prepare, rspec, rubocop, security, access_contract_guard]
     if: always() && needs.prepare.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Require rspec, rubocop and security to pass
+      - name: Require rspec, rubocop, security and the access contract guard to pass
         run: |
-          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }}"
+          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }} access_contract_guard=${{ needs.access_contract_guard.result }}"
           [[ "${{ needs.rspec.result }}" == "success" && "${{ needs.rubocop.result }}" == "success" && "${{ needs.security.result }}" == "success" ]]
+          # The guard only runs on pull requests, so a skipped result is fine.
+          [[ "${{ needs.access_contract_guard.result }}" == "success" || "${{ needs.access_contract_guard.result }}" == "skipped" ]]

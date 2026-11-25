@@ -10,6 +10,10 @@ classifications:
     label: Member private
     description: Content shared inside a community or kept private to it (community records, memberships, invitations).
     standing_role_may_read: false
+  platform_shared:
+    label: Platform shared
+    description: Posts shared with every signed-in member of the platform at public or community level. A private post is visible to its creator only; that state is tracked as a deviation until managers stop reading it.
+    standing_role_may_read: true
   personal:
     label: Personal
     description: Data about one person (profile, contact details, blocks).

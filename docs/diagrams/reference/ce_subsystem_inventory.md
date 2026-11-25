@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-17T22:54:20Z`.
+Generated from live Rails reflections at `2026-11-23T19:18:05Z`.
 
 ## Identity, access, and memberships
 
@@ -684,6 +684,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PersonPlatformIntegrationCreatedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | PersonPlatformIntegrationCreatedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | PhoneNumber | `better_together_phone_numbers` | `contact_detail_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`label` (string)<br>`number` (string)<br>`privacy` (string)<br>`primary_flag` (boolean) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>InclusionValidator: primary_flag (in=[true, false])<br>PresenceValidator: privacy<br>InclusionValidator: privacy (in=["public", "community", "private"])<br>PresenceValidator: label<br>PresenceValidator: number | `BetterTogetherId`<br>`Labelable`<br>`PlatformScoped`<br>`PrimaryFlag`<br>`Privacy`<br>`PrivacyCeilingValidatable` | `platform` -> `Platform` (platform_network) |
+| PlatformAssociation | `better_together_platform_associations` | `accepted_by_id` (uuid FK)<br>`delegated_from_id` (uuid FK)<br>`managed_platform_id` (uuid FK)<br>`operator_platform_id` (uuid FK)<br>`requested_by_id` (uuid FK)<br>`status_changed_by_id` (uuid FK) | InclusionValidator: status (in=["requested", "active", "suspended", "revoked"])<br>InclusionValidator: relation (in=["manages"])<br>InclusionValidator: transport (in=["direct", "http"])<br>UniquenessValidator: operator_platform_id (scope=[:managed_platform_id, :relation])<br>PresenceValidator: granted_scopes | `BetterTogetherId`<br>`PlatformAssociationLifecycle`<br>`PlatformAssociationRules`<br>`Seedable` | `operator_platform` -> `Platform` (platform_network)<br>`managed_platform` -> `Platform` (platform_network)<br>`requested_by` -> `Person` (identity_access)<br>`accepted_by` -> `Person` (identity_access)<br>`status_changed_by` -> `Person` (identity_access) |
 | PlatformConnectionDigestNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | PlatformConnectionDigestNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | PlatformConnectionStatusNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
@@ -910,6 +911,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `PersonPlatformIntegrationCreatedNotifier`: `record` (belongs_to)
 - `PersonPlatformIntegrationCreatedNotifier::Notification`: `recipient` (belongs_to)
 - `PhoneNumber`: `seeds` (has_many)
+- `PlatformAssociation`: `seeds` (has_many)
 - `PlatformConnectionDigestNotifier`: `record` (belongs_to)
 - `PlatformConnectionDigestNotifier::Notification`: `recipient` (belongs_to)
 - `PlatformConnectionStatusNotifier`: `record` (belongs_to)

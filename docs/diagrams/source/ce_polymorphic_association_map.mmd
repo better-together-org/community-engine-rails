@@ -287,6 +287,7 @@ flowchart TB
     BetterTogether__MessageRequest_polymorphic_summary["MessageRequest\nowner: seeds"]
     BetterTogether__PersonMessagingGrant_polymorphic_summary["PersonMessagingGrant\nowner: seeds"]
     BetterTogether__PhoneNumber_polymorphic_summary["PhoneNumber\nowner: seeds"]
+    BetterTogether__PlatformAssociation_polymorphic_summary["PlatformAssociation\nowner: seeds"]
     BetterTogether__PlatformDeletionRequest_polymorphic_summary["PlatformDeletionRequest\nowner: seeds"]
     BetterTogether__PlatformIdentityProvider_polymorphic_summary["PlatformIdentityProvider\nowner: seeds"]
     BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary["PlatformIdentityProviderDomain\nowner: seeds"]
@@ -335,7 +336,8 @@ flowchart TB
     BetterTogether__JwtDenylist_polymorphic_summary ~~~ BetterTogether__MessageRequest_polymorphic_summary
     BetterTogether__MessageRequest_polymorphic_summary ~~~ BetterTogether__PersonMessagingGrant_polymorphic_summary
     BetterTogether__PersonMessagingGrant_polymorphic_summary ~~~ BetterTogether__PhoneNumber_polymorphic_summary
-    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__PlatformDeletionRequest_polymorphic_summary
+    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__PlatformAssociation_polymorphic_summary
+    BetterTogether__PlatformAssociation_polymorphic_summary ~~~ BetterTogether__PlatformDeletionRequest_polymorphic_summary
     BetterTogether__PlatformDeletionRequest_polymorphic_summary ~~~ BetterTogether__PlatformIdentityProvider_polymorphic_summary
     BetterTogether__PlatformIdentityProvider_polymorphic_summary ~~~ BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary
     BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary ~~~ BetterTogether__PlatformSnippet_polymorphic_summary

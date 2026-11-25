@@ -8,12 +8,12 @@ RSpec.describe 'Joatu matchmaking', :as_platform_manager do
   let(:offeror) { create(:better_together_person) }
   let(:category) { create(:better_together_joatu_category) }
   let!(:offer) do
-    create(:better_together_joatu_offer, creator: offeror).tap do |o|
+    create(:better_together_joatu_offer, creator: offeror, privacy: 'public').tap do |o|
       o.categories << category
     end
   end
   let!(:request_model) do
-    create(:better_together_joatu_request, creator: requestor).tap do |r|
+    create(:better_together_joatu_request, creator: requestor, privacy: 'public').tap do |r|
       r.categories << category
     end
   end
