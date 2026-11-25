@@ -623,6 +623,19 @@ en:
           attributes:
             theme:
               invalid_value: "%{key} has a value that is not allowed"
+        better_together/platform_association:
+          attributes:
+            delegated_from:
+              no_upstream_edge: requires an existing association edge from this operator
+                over the delegating platform
+              too_deep: exceeds the maximum association chain depth
+            granted_scopes:
+              exceeds_parent: cannot grant more than the parent edge holds
+            managed_platform_id:
+              cycle: would create a association cycle
+          immutable_endpoints: cannot change the operator, managed platform or parent
+            edge
+          too_deep: exceeds the maximum association chain depth
         better_together/platform_domain:
           attributes:
             active:
@@ -713,6 +726,9 @@ en:
       better_together/person_platform_integration: OAuth Integration
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
+      better_together/platform_association:
+        one: Platform association
+        other: Platform associations
       better_together/platform_connection: Platform Connection
       better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
