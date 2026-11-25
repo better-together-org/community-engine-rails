@@ -83,6 +83,25 @@
       </section>
     <% end %>
 
+    <% if @locked_add_ons.any? %>
+      <section id="billing-hub-locked-add-ons" class="col-lg-6" aria-labelledby="billing-hub-locked-add-ons-heading">
+        <div class="card h-100">
+          <div class="card-header">
+            <h2 id="billing-hub-locked-add-ons-heading" class="h5 mb-0"><%= t('better_together.billing.purchase_requirements.locked_heading') %></h2>
+          </div>
+          <ul class="list-group list-group-flush">
+            <% @locked_add_ons.each do |add_on, reason| %>
+              <li id="<%= dom_id(add_on, :hub_locked_add_on) %>" class="list-group-item">
+                <span><%= add_on.name %> <span class="small text-body-secondary"><%= billing_amount(add_on.amount_cents, add_on.currency) %></span></span>
+                <span class="d-block small text-body-secondary billing-locked-reason" id="<%= dom_id(add_on, :hub_locked_reason) %>"><%= reason %></span>
+              </li>
+            <% end %>
+          </ul>
+          <div class="card-footer small text-body-secondary" id="billing-hub-locked-add-ons-hint"><%= t('better_together.billing.purchase_requirements.locked_hint') %></div>
+        </div>
+      </section>
+    <% end %>
+
     <section id="billing-hub-credit" class="col-lg-6" aria-labelledby="billing-hub-credit-heading">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-baseline">

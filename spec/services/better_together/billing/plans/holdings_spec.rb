@@ -32,7 +32,7 @@ RSpec.describe BetterTogether::Billing::Plans::Holdings do
 
   it 'never holds an add-on' do
     add_on = create(:better_together_billing_plan, :unlinked, :one_time, **attrs, add_on: true)
-    order = place_order(buyer:, purpose: 'one_time', line_items: [{ purchasable: add_on }], payment_method: 'cash')
+    order = place_order(buyer:, purpose: 'one_time', line_items: [{ purchasable: add_on }], payment_method: 'cash', seller_assisted: true)
     order.update!(status: 'paid', paid_at: Time.current)
 
     expect(held).to eq([])

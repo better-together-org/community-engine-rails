@@ -9,6 +9,15 @@ module BetterTogether
       class Evaluate
         Result = Data.define(:met, :unmet) do
           alias_method :met?, :met
+
+          # Why the buyer cannot buy yet, in their language; nil when they can.
+          def reason
+            return if met
+
+            joiner = " #{I18n.t('better_together.billing.purchase_requirements.or')} "
+            names = unmet.map(&:label).uniq.to_sentence(two_words_connector: joiner, last_word_connector: ",#{joiner}")
+            I18n.t('better_together.billing.purchase_requirements.needs', names:)
+          end
         end
 
         def self.call(...) = new(...).call

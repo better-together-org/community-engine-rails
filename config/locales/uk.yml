@@ -2037,6 +2037,13 @@ uk:
         status_used_up: Вичерпано
         switched: Акцію оновлено.
         usage_of: "%{used} з %{max}"
+      purchase_requirements:
+        kinds:
+          plan: тариф
+        locked_heading: Додатки, які можна розблокувати
+        locked_hint: Для цих додатків спершу потрібно щось інше.
+        needs: 'Спершу потрібно: %{names}'
+        or: або
       readiness:
         check_agreements: 'Угоди про покупку чинні для: %{purpose}.'
         check_configured: Виставлення рахунків увімкнено, дані вашої організації задано.

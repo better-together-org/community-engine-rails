@@ -2060,6 +2060,13 @@ es:
         status_used_up: Agotada
         switched: Promoción actualizada.
         usage_of: "%{used} de %{max}"
+      purchase_requirements:
+        kinds:
+          plan: un plan
+        locked_heading: Extras que puedes desbloquear
+        locked_hint: Estos necesitan otra cosa primero.
+        needs: Primero necesita %{names}
+        or: o
       readiness:
         check_agreements: Los acuerdos de compra están en vigor para %{purpose}.
         check_configured: La facturación está activada y los datos de su organización

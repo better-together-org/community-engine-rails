@@ -43,6 +43,13 @@ module BetterTogether
       def revokes? = on_prerequisite_end == 'revoke'
       def kind? = prerequisite_kind.present?
 
+      # What the buyer is told to get: the named purchasable, or the kind in words.
+      def label
+        return I18n.t("better_together.billing.purchase_requirements.kinds.#{prerequisite_kind}") if kind?
+
+        prerequisite.purchasable_description
+      end
+
       private
 
       def dependent_is_purchasable

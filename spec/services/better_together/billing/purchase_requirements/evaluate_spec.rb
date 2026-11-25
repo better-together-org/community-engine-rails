@@ -133,4 +133,21 @@ RSpec.describe BetterTogether::Billing::PurchaseRequirements::Evaluate do
       expect(evaluate(target: add_on, in_order: [other_plan])).to be_met
     end
   end
+
+  describe '#reason' do
+    it 'is nil when the rules are met and names what is missing when not' do
+      rule(prerequisite: plan)
+      rule(prerequisite: other_plan)
+      unmet = evaluate
+
+      expect(unmet.reason).to include(plan.name, other_plan.name)
+      expect(evaluate(in_order: [plan]).reason).to be_nil
+    end
+
+    it 'names the kind in words' do
+      rule(prerequisite: nil, prerequisite_kind: 'plan')
+
+      expect(evaluate.reason).to include(I18n.t('better_together.billing.purchase_requirements.kinds.plan'))
+    end
+  end
 end

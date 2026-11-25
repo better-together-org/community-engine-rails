@@ -21,7 +21,7 @@ RSpec.describe BetterTogether::Billing::Orders::Settle, '.call follow-ups by pur
   end
 
   def pay(purpose, plan)
-    order = place_order(purpose:, payment_method: 'cash', line_items: [{ purchasable: plan }])
+    order = place_order(purpose:, payment_method: 'cash', line_items: [{ purchasable: plan }], seller_assisted: plan.add_on?)
     clear_enqueued_jobs
     pay_manually(order)
     order
