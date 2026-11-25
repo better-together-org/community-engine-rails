@@ -18,6 +18,7 @@ module BetterTogether
     enum :status, STATUS_LEVELS, default: 'pending'
 
     include MembershipLifecycle
+
     # Set for system-created memberships (creator grants, backfills) where a notice would be noise.
     attr_accessor :skip_notifications
 
