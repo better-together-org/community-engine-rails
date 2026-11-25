@@ -105,7 +105,8 @@ module BetterTogether
         # failure there is retried and can never undo the refund.
         def follow_up_requirements
           revoking = PurchaseRequirement.where(on_prerequisite_end: 'revoke', platform_id: order.platform_id)
-          return unless order.line_items.any? { |line_item| revoking.exists?(prerequisite: line_item.purchasable) }
+          return unless revoking.exists?(prerequisite_kind: PurchaseRequirement::KINDS.keys) ||
+                        order.line_items.any? { |line_item| revoking.exists?(prerequisite: line_item.purchasable) }
 
           ActiveRecord.after_all_transactions_commit { RevokeDependentsJob.perform_later(order) }
         end

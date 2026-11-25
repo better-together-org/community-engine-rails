@@ -19,15 +19,17 @@ module BetterTogether
         def call
           return [] if order.buyer.blank?
 
-          lines = ended_prerequisites.flat_map do |prerequisite|
-            rules_ending_with(prerequisite).flat_map { |rule| dependent_lines(rule).to_a }
-          end
+          lines = ending_rules.uniq.flat_map { |rule| dependent_lines(rule).to_a }
           lines.each { |line_item| line_item.purchasable.revoke_line(line_item) }
         end
 
         private
 
         attr_reader :order
+
+        def ending_rules
+          ended_prerequisites.flat_map { |prerequisite| rules_ending_with(prerequisite).to_a } + kind_rules_ending
+        end
 
         # Prerequisites this order gave that the buyer no longer holds some other way.
         def ended_prerequisites
@@ -36,6 +38,25 @@ module BetterTogether
 
         def rules_ending_with(prerequisite)
           PurchaseRequirement.where(prerequisite:, on_prerequisite_end: 'revoke', platform_id: order.platform_id)
+        end
+
+        # A rule on a kind of prerequisite ("any plan") ends when this order gave one of that kind and the buyer holds none now.
+        def kind_rules_ending
+          kinds = PurchaseRequirement::KINDS.select { |_kind, class_name| gave_kind?(class_name) && !holds_kind?(class_name) }.keys
+          return [] if kinds.empty?
+
+          PurchaseRequirement.where(prerequisite_kind: kinds, on_prerequisite_end: 'revoke', platform_id: order.platform_id).to_a
+        end
+
+        def gave_kind?(class_name)
+          order.line_items.any? do |line_item|
+            line_item.purchasable.instance_of?(class_name.constantize) && !line_item.purchasable.extra?
+          end
+        end
+
+        # Only plans are a kind today, so holding the kind is holding any plan.
+        def holds_kind?(_class_name)
+          Plans::Holdings.call(platform: order.platform, person: order.buyer).any?
         end
 
         def dependent_lines(rule)
