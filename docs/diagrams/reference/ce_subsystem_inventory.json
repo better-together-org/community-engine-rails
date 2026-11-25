@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T04:47:07Z",
+  "generated_at": "2026-11-25T23:52:00Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -31301,6 +31301,18 @@
               "string"
             ],
             [
+              "interval",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "lookup_key",
+              "string"
+            ],
+            [
               "active",
               "boolean"
             ],
@@ -31309,15 +31321,19 @@
               "integer"
             ],
             [
-              "archived_at",
-              "datetime"
+              "interval_count",
+              "integer"
             ]
           ],
           "validations": [
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: currency",
             "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
-            "NumericalityValidator: amount_cents (greater_than_or_equal_to=0, only_integer=true)"
+            "NumericalityValidator: amount_cents (greater_than_or_equal_to=0, only_integer=true)",
+            "InclusionValidator: kind (in=[\"one_time\", \"recurring\"])",
+            "InclusionValidator: interval (if=:recurring?, in=[\"month\", \"year\"])",
+            "AbsenceValidator: interval (unless=:recurring?)",
+            "NumericalityValidator: interval_count (only_integer=true, greater_than=0, less_than_or_equal_to=12)"
           ],
           "belongs_to": [
             {
