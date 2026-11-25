@@ -39,8 +39,8 @@ personas:
     description: An operator of a remote or federated platform acting through a credential. Not modelled yet; cells are not probed.
   support_grantee:
     label: Support grantee
-    status: pending
-    description: A person who holds an explicit, expiring break-glass grant for one record. Not modelled yet; cells are not probed.
+    status: active
+    description: A signed-in platform member who holds an active break-glass grant for the community under test and nothing else. The grant is read only, expires on its own and is audited.
   record_owner:
     label: Record owner
     status: active

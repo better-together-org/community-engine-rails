@@ -11,7 +11,7 @@ An access contract records what access we decided each persona should have to ea
 | subsystems | 3 |
 | resources | 8 |
 | personas | 12 |
-| cells | 1332 |
+| cells | 1510 |
 | known deviations | 0 |
 | undecided | 0 |
 
@@ -36,7 +36,7 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 | `platform_steward` | allow | deny | mixed | mixed | allow | mixed |
 | `safety_reviewer` | pending | pending | pending | pending | pending | pending |
 | `remote_operator` | pending | pending | pending | pending | pending | pending |
-| `support_grantee` | pending | pending | pending | pending | pending | pending |
+| `support_grantee` | allow | deny | mixed | mixed | allow | mixed |
 | `record_owner` | allow | mixed | mixed | mixed | allow | allow |
 | `blocked_user` | allow | deny | mixed | mixed | deny | deny |
 
@@ -57,7 +57,7 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 | `platform_steward` | allow | deny | mixed | mixed | allow | mixed |
 | `safety_reviewer` | pending | pending | pending | pending | pending | pending |
 | `remote_operator` | pending | pending | pending | pending | pending | pending |
-| `support_grantee` | pending | pending | pending | pending | pending | pending |
+| `support_grantee` | allow | deny | mixed | mixed | allow | mixed |
 | `record_owner` | allow | mixed | mixed | mixed | allow | allow |
 | `blocked_user` | allow | deny | mixed | mixed | deny | deny |
 
@@ -89,7 +89,7 @@ Each cell summarizes the show and scope checks of every pilot resource with that
 | `platform_steward` | active | A standing holder of the platform_steward role on the host platform (same seeded permissions as platform_manager today). |
 | `safety_reviewer` | pending | A time-limited, logged reviewer of safety disclosures. No such role exists yet; cells are not probed. |
 | `remote_operator` | pending | An operator of a remote or federated platform acting through a credential. Not modelled yet; cells are not probed. |
-| `support_grantee` | pending | A person who holds an explicit, expiring break-glass grant for one record. Not modelled yet; cells are not probed. |
+| `support_grantee` | active | A signed-in platform member who holds an active break-glass grant for the community under test and nothing else. The grant is read only, expires on its own and is audited. |
 | `record_owner` | active | The creator or subject of the record itself (the community creator, the person themself, the blocker). |
 | `blocked_user` | active | A person who has been blocked by the record's owner. |
 

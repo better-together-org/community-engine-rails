@@ -78,7 +78,7 @@ module AccessContractProbe
       POLICY = 'BetterTogether::CommunityPolicy'
       MODEL = 'BetterTogether::Community'
       ACTIONS = {
-        'index' => %i[index? class], 'show' => %i[show? subject], 'create' => %i[create? new],
+        'index' => %i[index? class], 'show' => %i[show? subject], 'break_glass_show' => %i[break_glass_show? subject], 'create' => %i[create? new],
         'update' => %i[update? subject], 'destroy' => %i[destroy? subject],
         'manage_integrations' => %i[manage_integrations? subject], 'create_events' => %i[create_events? subject],
         'view_members' => %i[view_members? subject], 'manage_roles' => %i[manage_roles? subject],
@@ -103,6 +103,7 @@ module AccessContractProbe
           community = create(:better_together_community, creator: @owner.person, privacy: 'private')
           make_privacy(community, privacy)
           world.join_personas(community)
+          world.grant_break_glass(community)
           [privacy, community]
         end
       end

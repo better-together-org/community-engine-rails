@@ -101,13 +101,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Signed-in people may open the directory; the scope filters the rows. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Signed-in people may open the directory; the scope filters the rows. (community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - deny via `default_deny`: The directory needs a signed-in actor; the scope then filters. (anonymous)
 
 </details>
@@ -125,17 +125,17 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
 | `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> | allow <sub>privacy_gate</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Public profiles are readable by anyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Public profiles are readable by anyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - allow via `self`: People always read their own profile. (record_owner)
 - allow via `shared_community`: Community-level profiles are visible to people who share a community. (community_contributor, community_member, community_organizer)
 - deny via `block`: A block hides the blocker's profile from the blocked person. (blocked_user)
-- deny via `default_deny`: Private profiles and profiles outside one's communities are not readable; standing roles do not read them. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Private profiles and profiles outside one's communities are not readable; standing roles do not read them. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -152,17 +152,17 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
 | `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> | allow <sub>privacy_gate</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Download follows show. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Download follows show. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - allow via `self`: Download follows show. (record_owner)
 - allow via `shared_community`: Download follows show. (community_contributor, community_member, community_organizer)
 - deny via `block`: Download follows show. (blocked_user)
-- deny via `default_deny`: Download follows show. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Download follows show. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -179,13 +179,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | deny <sub>default_deny</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | n/a |
 
 <details><summary>Reasons</summary>
 
-- deny via `default_deny`: Creating a profile needs the opt-in create_person grant; no default role holds it. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Creating a profile needs the opt-in create_person grant; no default role holds it. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -202,7 +202,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>unclaimed_editor</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a | allow <sub>self</sub> |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -210,7 +210,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `self`: People edit their own profile. (record_owner)
 - allow via `unclaimed_editor`: An unclaimed profile has no owner; staff who may update person records maintain it. (platform_manager, platform_steward)
-- deny via `default_deny`: Only the person (or an opt-in update_person grant) edits a claimed profile. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member)
+- deny via `default_deny`: Only the person (or an opt-in update_person grant) edits a claimed profile. (anonymous, blocked_user, community_contributor, community_member, community_organizer, signed_in_non_member, support_grantee)
 - deny via `default_deny`: Organizers edit an unclaimed profile only with the opt-in manage_unclaimed_profiles grant; no default role holds it. (community_organizer)
 - deny via `default_deny`: Profile editing shows private contact details; managers operate member status, not claimed profile content. (platform_manager, platform_steward)
 
@@ -229,14 +229,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>member_status</sub> | allow <sub>member_status</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | deny <sub>default_deny</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `member_status`: Managers suspend members; this opens no profile content. (platform_manager, platform_steward)
-- deny via `default_deny`: Only platform managers operate member status, and nobody suspends themself. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
+- deny via `default_deny`: Only platform managers operate member status, and nobody suspends themself. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -253,14 +253,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>member_status</sub> | allow <sub>member_status</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | deny <sub>default_deny</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `member_status`: Managers restore suspended members; this opens no profile content. (platform_manager, platform_steward)
-- deny via `default_deny`: Only platform managers operate member status, and nobody restores themself. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member)
+- deny via `default_deny`: Only platform managers operate member status, and nobody restores themself. (anonymous, blocked_user, community_contributor, community_member, community_organizer, record_owner, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -277,13 +277,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
-- deny via `default_deny`: Deletion is a reviewed deletion request, not a policy action; the opt-in delete_person grant is held by no default role. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- deny via `default_deny`: Deletion is a reviewed deletion request, not a policy action; the opt-in delete_person grant is held by no default role. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -300,17 +300,17 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending | pending |
+| `support_grantee` | allow <sub>privacy_gate</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>privacy_gate</sub> |
 | `record_owner` | allow <sub>self</sub> | allow <sub>self</sub> | allow <sub>self</sub> | n/a |
 | `blocked_user` | deny <sub>block</sub> | deny <sub>block</sub> | deny <sub>block</sub> | allow <sub>privacy_gate</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `privacy_gate`: Public profiles are listed for everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `privacy_gate`: Public profiles are listed for everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - allow via `self`: People list themselves. (record_owner)
 - allow via `shared_community`: Shared-community people are listed. (community_contributor, community_member, community_organizer)
 - deny via `block`: Blocks remove the blocker from the blocked person's results. (blocked_user)
-- deny via `default_deny`: Other profiles are not listed; standing roles do not list private people. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Other profiles are not listed; standing roles do not list private people. (anonymous, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -346,13 +346,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>blocker</sub> |
 | `safety_reviewer` (pending) | pending |
 | `remote_operator` (pending) | pending |
-| `support_grantee` (pending) | pending |
+| `support_grantee` | allow <sub>blocker</sub> |
 | `record_owner` | n/a |
 | `blocked_user` | allow <sub>blocker</sub> |
 
 <details><summary>Reasons</summary>
 
-- allow via `blocker`: Signed-in people open their own block list; the scope filters it. (blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `blocker`: Signed-in people open their own block list; the scope filters it. (blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 - deny via `default_deny`: Blocking needs a signed-in actor. (anonymous)
 
 </details>
@@ -370,14 +370,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | n/a | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
+| `support_grantee` | n/a | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>blocker</sub> | n/a |
 | `blocked_user` | n/a | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `blocker`: The blocker reads their own block. (record_owner)
-- deny via `default_deny`: Blocks are private to the blocker; nobody else reads them, including the blocked person and standing roles. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Blocks are private to the blocker; nobody else reads them, including the blocked person and standing roles. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -394,14 +394,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | n/a | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
+| `support_grantee` | n/a | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>blocker</sub> | n/a |
 | `blocked_user` | n/a | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `blocker`: People place their own blocks (except on platform managers). (record_owner)
-- deny via `default_deny`: Nobody places a block on someone else's behalf. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Nobody places a block on someone else's behalf. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -418,14 +418,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | n/a | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
+| `support_grantee` | n/a | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>blocker</sub> | n/a |
 | `blocked_user` | n/a | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `blocker`: The blocker lifts their own block. (record_owner)
-- deny via `default_deny`: Only the blocker lifts a block. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Only the blocker lifts a block. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -442,14 +442,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | n/a | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending |
 | `remote_operator` (pending) | pending | pending |
-| `support_grantee` (pending) | pending | pending |
+| `support_grantee` | n/a | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>blocker</sub> | n/a |
 | `blocked_user` | n/a | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `blocker`: The blocker lists their own blocks. (record_owner)
-- deny via `default_deny`: Blocks are visible to the blocker only. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Blocks are visible to the blocker only. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -486,13 +486,13 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
 <details><summary>Reasons</summary>
 
-- deny via `default_deny`: Contact details render through their owner's profile and are never fetched directly (no show? method). (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member)
+- deny via `default_deny`: Contact details render through their owner's profile and are never fetched directly (no show? method). (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, record_owner, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -509,7 +509,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -517,7 +517,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `owner`: An unclaimed person has no owner; staff who may update the person maintain its details. (platform_manager, platform_steward)
 - allow via `owner`: The owner adds contact details to their own record. (record_owner)
-- deny via `default_deny`: Only the contactable's owner creates its contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Only the contactable's owner creates its contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -534,7 +534,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -542,7 +542,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `owner`: An unclaimed person has no owner; staff who may update the person maintain its details. (platform_manager, platform_steward)
 - allow via `owner`: The owner edits their own contact details. (record_owner)
-- deny via `default_deny`: Only the owner edits contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Only the owner edits contact details; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -559,7 +559,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | allow <sub>owner</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 | `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
 | `blocked_user` | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> | deny <sub>default_deny</sub> |
 
@@ -567,7 +567,7 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 
 - allow via `owner`: An unclaimed person has no owner; staff who may update the person maintain its details. (platform_manager, platform_steward)
 - allow via `owner`: The owner removes their own contact detail. (record_owner)
-- deny via `default_deny`: Only the owner removes a contact detail; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- deny via `default_deny`: Only the owner removes a contact detail; standing roles do not. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>
 
@@ -584,14 +584,14 @@ Decision tree for show. Dashed red nodes are rules the app applies that the priv
 | `platform_steward` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
 | `safety_reviewer` (pending) | pending | pending | pending |
 | `remote_operator` (pending) | pending | pending | pending |
-| `support_grantee` (pending) | pending | pending | pending |
+| `support_grantee` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
 | `record_owner` | allow <sub>owner</sub> | allow <sub>owner</sub> | n/a |
 | `blocked_user` | allow <sub>public_owner</sub> | deny <sub>default_deny</sub> | allow <sub>public_owner</sub> |
 
 <details><summary>Reasons</summary>
 
 - allow via `owner`: Owners list their own contact details. (record_owner)
-- allow via `public_owner`: A public profile's contact detail container is listed to everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
-- deny via `default_deny`: A private person's contact detail is personal data visible to the person only, never to standing roles. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member)
+- allow via `public_owner`: A public profile's contact detail container is listed to everyone. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
+- deny via `default_deny`: A private person's contact detail is personal data visible to the person only, never to standing roles. (anonymous, blocked_user, community_contributor, community_member, community_organizer, platform_manager, platform_steward, signed_in_non_member, support_grantee)
 
 </details>

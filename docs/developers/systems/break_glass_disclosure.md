@@ -2,7 +2,7 @@
 
 Break-glass is the only way a person reads a private record they could not otherwise read. It exists because the access contract says no standing role discloses private content or personal data: operating a platform, reviewing safety reports and disclosing private content are three separate kinds of authority, and the third has no standing holder.
 
-This page covers stack 1 (model, audit trail, request and revoke). Nothing consults a grant yet, so this change widens no one's access. Later stacks add the policy hook (communities first), member notice and objection with a "who accessed my data" view, then the other subsystems.
+This page covers stack 1 (model, audit trail, request and revoke) and stack 2 (the community policy hook). Later stacks add member notice and objection with a "who accessed my data" view, then the other subsystems.
 
 ## The grant
 
@@ -38,6 +38,16 @@ erDiagram
 - [PNG export](../../diagrams/exports/png/break_glass_disclosure_erd.png)
 - [SVG export](../../diagrams/exports/svg/break_glass_disclosure_erd.svg)
 
+## What a grant opens (communities)
+
+`CommunityPolicy#break_glass_show?` is `show?` or a current grant for the actor and the community. Only the HTML community page asks it, and it opens that page read only.
+
+- A grant does **not** open `show?`, `download?` (media), `view_members?`, any edit, the index scope or the API, so those stay closed to the grantee.
+- Every page read that only a grant allowed writes one `accessed` event (`BreakGlass::RecordAccess`). A member reading their own community uses no grant and writes no row.
+- Pending, expired and revoked grants open nothing; the lookup is the `BreakGlassGrant.current` scope.
+- The page lookup finds a granted community before the policy-scoped lookup, because the scope never lists it.
+- The grantee persona is `support_grantee` in the access contract (`break_glass_show` action on communities).
+
 ## Revoking
 
 The requester, the grantee and any holder of the sealed permission may revoke at any time (`BreakGlass::Revoke`). Revoking is idempotent and audited.
@@ -48,4 +58,4 @@ The `SeedBreakGlassDisclosureRole` migration adds the permission and the sealed 
 
 ## Not built yet
 
-Policy hook, member notice, objection window, the "who accessed my data" view, a request UI, deputy approval, and any subject type beyond communities.
+Member notice, objection window, the "who accessed my data" view, a request UI, deputy approval, media and member-list disclosure, and any subject type beyond communities.

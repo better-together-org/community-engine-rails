@@ -35,6 +35,12 @@ module AccessContractProbe
       BetterTogether::PersonCommunityMembership.create!(joinable: community, member: person, role:, status:)
     end
 
+    # The support_grantee persona holds an active break-glass grant for this one community and nothing else.
+    def grant_break_glass(community)
+      person = users.fetch('support_grantee').person
+      create(:better_together_break_glass_grant, subject: community, grantee: person, requested_by: person)
+    end
+
     def join_personas(community)
       COMMUNITY_ROLES.each { |persona, role| join(community, users.fetch(persona).person, role) }
     end
@@ -42,7 +48,8 @@ module AccessContractProbe
     private
 
     def build_users
-      users = { 'anonymous' => nil, 'signed_in_non_member' => new_user, 'blocked_user' => new_user }
+      users = { 'anonymous' => nil, 'signed_in_non_member' => new_user, 'blocked_user' => new_user,
+                'support_grantee' => new_user }
       COMMUNITY_ROLES.each_key { |persona| users[persona] = new_user }
       %w[platform_manager platform_steward].each { |role| users[role] = platform_role_user(role) }
       users
