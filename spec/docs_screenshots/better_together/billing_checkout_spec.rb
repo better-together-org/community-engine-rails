@@ -18,8 +18,8 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
   include_context 'with billing switched on'
 
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     name: 'Garden plot', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot'),
+                                           currency: 'USD', amount_cents: 2500)
   end
 
   before do
@@ -59,7 +59,7 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
         accessibility_notes: 'Options are radio buttons with labels; unavailable ones are disabled and explained in text.'
       }
     ) do
-      visit_billing("checkout/new?plan_id=#{cash_plan.id}")
+      visit_billing("checkout/new?price_id=#{cash_plan.id}")
       expect(page).to have_css('#billing-checkout-methods')
     end
   end
@@ -74,15 +74,16 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
                  { id: 'place', selector: '#billing-checkout-place-btn', title: 'Place order',
                    bullets: ['Nothing is placed until every agreement is accepted.'] }]
     ) do
-      visit_billing("checkout/new?plan_id=#{cash_plan.id}&payment_method=cash")
+      visit_billing("checkout/new?price_id=#{cash_plan.id}&payment_method=cash")
       scroll_to(find('#billing-checkout-summary'), align: :top)
       expect(page).to have_css('#billing-checkout-place-btn')
     end
   end
 
   it 'captures checking out a free plan, with no way of paying to choose' do
-    free_plan = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: [], billing_interval: 'one_time',
-                                                                 name: 'Community membership', currency: 'USD', amount_cents: 0)
+    free_plan = create(:better_together_billing_price,
+                       product: create(:better_together_billing_product, platform: host_platform, name: 'Community membership'),
+                       currency: 'USD', amount_cents: 0)
 
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_checkout_free_plan',
@@ -98,7 +99,7 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
         accessibility_notes: 'The agreements are labelled checkboxes; there is no payment method step.'
       }
     ) do
-      visit_billing("checkout/new?plan_id=#{free_plan.id}")
+      visit_billing("checkout/new?price_id=#{free_plan.id}")
       scroll_to(find('#billing-checkout-summary'), align: :top)
       expect(page).to have_css('#billing-checkout-place-btn')
       expect(page).to have_no_css('#billing-checkout-methods')

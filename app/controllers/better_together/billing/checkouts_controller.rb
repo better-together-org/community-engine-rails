@@ -112,9 +112,14 @@ module BetterTogether
       def offered_add_ons
         return [] if @plan.extra?
 
+        newest_extra_prices.select { |price| policy(price).purchase? && requirements_met?(price) }
+                           .sort_by { |price| [price.amount_cents, price.id] }
+      end
+
+      # The newest price on sale of each extra product, in the currency of what is being bought.
+      def newest_extra_prices
         prices = platform_prices.active.extras.where(currency: @plan.currency).includes(:product).order(:created_at)
         prices.select(&:purchasable?).group_by(&:product_id).values.map(&:last)
-              .select { |price| policy(price).purchase? && requirements_met?(price) }.sort_by { |price| [price.amount_cents, price.id] }
       end
 
       # Whether what is being bought (or already held) satisfies what the extra needs.

@@ -39,12 +39,16 @@ module BetterTogether
         return unless @requirements_edited
 
         wanted_ids = Plan.where(platform_id:, id: needed_plan_ids).sold_by_platform.pluck(:id)
-        purchase_requirements.reload.each do |rule|
-          rule.destroy! unless (rule.kind? && needs_any_plan) || wanted_ids.include?(rule.prerequisite_id)
-        end
+        remove_unwanted_requirements(wanted_ids)
         add_missing_requirements(wanted_ids)
         @requirements_edited = @needs_any_plan = @needed_plan_ids = nil
         purchase_requirements.reset
+      end
+
+      def remove_unwanted_requirements(wanted_ids)
+        purchase_requirements.reload.each do |rule|
+          rule.destroy! unless (rule.kind? && needs_any_plan) || wanted_ids.include?(rule.prerequisite_id)
+        end
       end
 
       def add_missing_requirements(wanted_ids)

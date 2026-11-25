@@ -43,10 +43,13 @@ module BetterTogether
       end
 
       def set_choices
-        sellable = billing_owner.billing_plans.sold_by_platform.active.to_a +
-                   billing_owner.billing_prices.sold_by_platform.active.includes(:product).select(&:purchasable?)
         @plans = sellable.sort_by { |plan| plan.name.to_s.downcase }
         @methods = offline_methods
+      end
+
+      def sellable
+        billing_owner.billing_plans.sold_by_platform.active.to_a +
+          billing_owner.billing_prices.sold_by_platform.active.includes(:product).select(&:purchasable?)
       end
 
       def offline_methods

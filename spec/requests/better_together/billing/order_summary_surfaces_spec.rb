@@ -47,8 +47,8 @@ RSpec.describe 'Billing order summary across surfaces' do # rubocop:disable RSpe
 
   it 'says Taxed only on a taxed line: the Tax cell of a line without tax is empty, on every surface', :aggregate_failures do
     zero = create(:better_together_billing_tax_category, platform: host_platform, identifier: 'zero_rated', name: 'Zero rated', taxable: false)
-    book = create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: plan.currency,
-                                                            amount_cents: 1500, name: 'Printed guide', tax_category: zero)
+    guide = create(:better_together_billing_product, platform: host_platform, name: 'Printed guide', tax_category: zero)
+    book = create(:better_together_billing_price, product: guide, currency: plan.currency, amount_cents: 1500)
     enable_offline('cash')
     mixed = place_order(payment_method: 'cash', tax_address: quebec_address, line_items: [{ purchasable: plan }, { purchasable: book }])
     sign_in buyer_user

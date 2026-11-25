@@ -13,8 +13,8 @@ RSpec.describe 'Checkout keeps the agreement ticks after an error', :js, :no_aut
   include_context 'with billing switched on'
 
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     name: 'Garden plot', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot'),
+                                           currency: 'USD', amount_cents: 2500)
   end
   let!(:billing_address) { create_billing_address_for(find_or_create_test_user('user@example.test').person) }
   let(:identifiers) { %w[one_time_purchase_agreement offline_payment_terms] }
@@ -25,7 +25,7 @@ RSpec.describe 'Checkout keeps the agreement ticks after an error', :js, :no_aut
                                                      settings: { 'instructions' => 'At the hall' })
     purchase_agreements_for(host_platform)
     capybara_login_as_user
-    visit "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{cash_plan.id}&payment_method=cash"
+    visit "/#{I18n.default_locale}/billing/checkout/new?price_id=#{cash_plan.id}&payment_method=cash"
   end
 
   after { Current.platform = nil }

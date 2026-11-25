@@ -13,8 +13,8 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
   before do
     configure_host_platform
     enable_offline('cash')
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     amount_cents: 4500, currency: 'USD')
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform), currency: 'USD',
+                                           amount_cents: 4500)
     create(:better_together_person_platform_membership, joinable: host_platform, member:)
     capybara_login_as_platform_manager
     visit "/#{I18n.default_locale}/billing/walk_up_sale/new"
@@ -32,6 +32,7 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
 
   it 'records a sale for someone who is not on the platform yet, from their name and email' do
     purchase_agreements_for(host_platform)
+    select 'Storage top-up (US$45.00)', from: 'billing-walk-up-plan'
     fill_in 'billing-walk-up-buyer-name', with: 'Odalys Fortier'
     fill_in 'billing-walk-up-buyer-email', with: 'odalys@example.test'
     fill_in 'billing-walk-up-address-line1', with: '1 Water St'
