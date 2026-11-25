@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::PlatformDomain do
   end
 
   describe 'steward-requested domains' do
-    let(:zone) { BetterTogether::Platform.find_by(host: true).primary_platform_domain.hostname }
+    let(:zone) { managed_platform_setup(associate: false).operator_platform.primary_platform_domain.hostname }
     let(:platform) { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
 
     let(:stewarded_domain) do
