@@ -3,7 +3,7 @@
 module BetterTogether
   module Billing
     module Entitlements
-      # Brings an entitlement in line with its source, then its grants in line with the plan.
+      # Brings an entitlement in line with its source, then its grants in line with the plan or product it is for.
       #
       # The source decides the status (see State for a subscription; a paid order is active until it is
       # refunded). Becoming active makes the plan's grants; staying active or in grace keeps them, adding any
@@ -17,11 +17,37 @@ module BetterTogether
 
         def self.subscription(term) = new(source: term.pay_subscription, term:).call
 
-        def self.order(order) = new(source: order).call
+        # Every line the order fulfils gives its own entitlement: a one-time plan, and a product (once per price, with the
+        # quantity bought). One that fails does not stop the others; the job is retried for all of them.
+        def self.order(order)
+          entitlements = []
+          failures = []
+          items_of(order).each do |item, quantity|
+            entitlements << new(source: order, item:, quantity:).call
+          rescue Incomplete => e
+            failures << e.message
+          end
+          raise Incomplete, failures.join('; ') if failures.any?
 
-        def initialize(source:, term: nil)
+          entitlements.compact.first
+        end
+
+        # What the order gives, and how many of each: a plan or a product from each line that its order fulfils.
+        def self.items_of(order)
+          order.line_items.each_with_object(Hash.new(0)) do |line, items|
+            purchasable = line.purchasable
+            next unless purchasable&.fulfilled_by_order?
+
+            item = purchasable.is_a?(Price) ? purchasable.product : purchasable
+            items[item] += line.quantity
+          end
+        end
+
+        def initialize(source:, term: nil, item: nil, quantity: 1)
           @source = source
           @term = term
+          @item = item
+          @quantity = quantity
         end
 
         def call
@@ -42,7 +68,7 @@ module BetterTogether
 
         private
 
-        attr_reader :source, :term
+        attr_reader :source, :term, :quantity
 
         def subscription? = source.is_a?(Pay::Subscription)
 
@@ -52,32 +78,45 @@ module BetterTogether
           order_state
         end
 
-        # A paid one-time order is active; refunded or cancelled, revoked. A part-refund changes nothing.
+        # A paid one-time order is active; refunded or cancelled, revoked. A part-refund changes nothing. A product with a
+        # fixed term ends that long after payment, and is lapsed once the end has passed.
         def order_state
           case source.status
-          when 'paid', 'partially_refunded' then State::Result.new(status: 'active', ends_at: nil, grace_ends_at: nil)
+          when 'paid', 'partially_refunded' then paid_state
           when 'refunded', 'cancelled' then State::Result.new(status: 'revoked', ends_at: nil, grace_ends_at: nil)
           else State::Result.new(status: 'pending', ends_at: nil, grace_ends_at: nil)
           end
         end
 
-        def plan = subscription? ? term.plan : Subscriptions::Start.single_plan(source)
+        def paid_state
+          ends = item.try(:ends_at_for, source.paid_at || Time.current)
+          status = ends && ends <= Time.current ? 'lapsed' : 'active'
+          State::Result.new(status:, ends_at: ends, grace_ends_at: nil)
+        end
+
+        def item = @item ||= (term.plan if subscription?)
         def platform = source.platform
         def beneficiary = subscription? ? term.beneficiary_or_payer : (source.on_behalf_of || source.buyer)
 
         def existing
-          platform.billing_entitlements.find_by(subscription? ? { pay_subscription_id: source.id } : { order_id: source.id })
+          scope = platform.billing_entitlements
+          return scope.find_by(pay_subscription_id: source.id) if subscription?
+
+          scope.find_by(order_id: source.id, **item_key)
         end
 
         # An entitlement exists once there is something to give; before that (pending, or never paid) there is none.
         def find_or_start(state)
           found = existing
           return found if found
-          return unless state.live? && plan&.plan_grants&.exists?
+          return unless state.live? && item&.included_grants&.exists?
 
           @created = true
-          platform.billing_entitlements.create!(source_attributes.merge(plan:, beneficiary:, starts_at: Time.current))
+          platform.billing_entitlements.create!(source_attributes.merge(item_key).merge(beneficiary:, quantity:, starts_at: Time.current))
         end
+
+        # The column that says what the entitlement is for.
+        def item_key = item.is_a?(Product) ? { product_id: item.id } : { plan_id: item.id }
 
         def source_attributes = subscription? ? { pay_subscription: source } : { order: source }
 

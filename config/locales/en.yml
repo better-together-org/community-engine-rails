@@ -7400,6 +7400,9 @@ en:
       not_an_offline_method: "%{method} is not an installed payment method outside
         a processor"
       not_configured: is not set up for this platform
+      not_for_until_used: only applies to a fixed term
+      one_item: must be for a plan or a product, not both
+      one_owner: must belong to a plan or a product, not both
       not_found: not found
       not_found_at_processor: was not found at the payment processor
       not_installed: is not an installed payment processor
@@ -7415,6 +7418,7 @@ en:
       other_than: must be other than %{count}
       present: must be blank
       price_inactive: is archived at the payment processor
+      price_is_immutable: a price never changes; make a new one and archive this one
       public_mail_domain: is a public mail provider; confirm to trust every address
         on it
       recipient_missing: needs an email address or a phone number

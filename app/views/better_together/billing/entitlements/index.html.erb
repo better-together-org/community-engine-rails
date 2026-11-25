@@ -10,7 +10,7 @@
     <% @entitlements.each do |entitlement| %>
       <section id="<%= dom_id(entitlement) %>" class="card mb-4" aria-labelledby="<%= dom_id(entitlement, :heading) %>">
         <div class="card-header d-flex justify-content-between align-items-baseline">
-          <h2 id="<%= dom_id(entitlement, :heading) %>" class="h5 mb-0"><%= entitlement.plan.name %></h2>
+          <h2 id="<%= dom_id(entitlement, :heading) %>" class="h5 mb-0"><%= entitlement.item_name %></h2>
           <span><%= billing_entitlement_status_badge(entitlement) %></span>
         </div>
         <div class="card-body">

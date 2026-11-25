@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_25_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -371,7 +371,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
-    t.uuid "plan_id", null: false
+    t.uuid "plan_id"
     t.string "beneficiary_type", null: false
     t.uuid "beneficiary_id", null: false
     t.uuid "pay_subscription_id"
@@ -380,14 +380,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
     t.datetime "starts_at", null: false
     t.datetime "ends_at"
     t.datetime "grace_ends_at"
+    t.uuid "product_id"
+    t.integer "quantity", default: 1, null: false
     t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_entitlements_beneficiary"
     t.index ["id", "platform_id"], name: "idx_bt_billing_entitlements_id_platform", unique: true
-    t.index ["order_id"], name: "idx_bt_billing_entitlements_order", unique: true, where: "(order_id IS NOT NULL)"
+    t.index ["order_id", "plan_id"], name: "idx_bt_billing_entitlements_order_plan", unique: true, where: "((order_id IS NOT NULL) AND (plan_id IS NOT NULL))"
+    t.index ["order_id", "product_id"], name: "idx_bt_billing_entitlements_order_product", unique: true, where: "((order_id IS NOT NULL) AND (product_id IS NOT NULL))"
     t.index ["pay_subscription_id"], name: "idx_bt_billing_entitlements_subscription", unique: true, where: "(pay_subscription_id IS NOT NULL)"
     t.index ["plan_id"], name: "idx_bt_billing_entitlements_plan"
     t.index ["platform_id", "beneficiary_type", "beneficiary_id", "plan_id"], name: "idx_bt_billing_entitlements_one_live", unique: true, where: "((status)::text = ANY (ARRAY[('active'::character varying)::text, ('grace'::character varying)::text]))"
     t.index ["platform_id"], name: "idx_bt_billing_entitlements_platform"
+    t.index ["product_id"], name: "idx_bt_billing_entitlements_product"
     t.check_constraint "(pay_subscription_id IS NOT NULL) <> (order_id IS NOT NULL)", name: "chk_bt_billing_entitlements_one_source"
+    t.check_constraint "(plan_id IS NULL) <> (product_id IS NULL)", name: "chk_bt_billing_entitlements_one_item"
   end
 
   create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -651,13 +656,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
-    t.uuid "plan_id", null: false
+    t.uuid "plan_id"
     t.string "kind", null: false
     t.jsonb "parameters", default: {}, null: false
     t.integer "position", default: 0, null: false
+    t.uuid "product_id"
     t.index ["id", "platform_id"], name: "idx_bt_billing_plan_grants_id_platform", unique: true
     t.index ["plan_id", "position"], name: "idx_bt_billing_plan_grants_plan"
     t.index ["platform_id"], name: "idx_bt_billing_plan_grants_platform"
+    t.index ["product_id"], name: "idx_bt_billing_plan_grants_product"
+    t.check_constraint "(plan_id IS NULL) <> (product_id IS NULL)", name: "chk_bt_billing_plan_grants_one_owner"
   end
 
   create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -704,6 +712,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
     t.index ["tax_category_id"], name: "idx_bt_billing_plans_tax_category"
   end
 
+  create_table "better_together_billing_prices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "product_id", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "archived_at"
+    t.string "processor_price_id"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_prices_id_platform", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_prices_platform"
+    t.index ["product_id"], name: "idx_bt_billing_prices_product"
+  end
+
   create_table "better_together_billing_processor_settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -725,6 +749,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
     t.index ["platform_id", "seller_type", "seller_id", "processor"], name: "idx_bt_billing_proc_settings_seller_method", unique: true, where: "(seller_id IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_proc_settings_platform"
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_proc_settings_seller"
+  end
+
+  create_table "better_together_billing_products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "seller_type"
+    t.uuid "seller_id"
+    t.string "identifier", null: false
+    t.string "type", default: "BetterTogether::Billing::Product", null: false
+    t.boolean "active", default: true, null: false
+    t.boolean "listed", default: false, null: false
+    t.boolean "restricted_to_members", default: false, null: false
+    t.boolean "restricted_to_subscribers", default: false, null: false
+    t.uuid "tax_category_id"
+    t.string "lifetime", default: "until_used", null: false
+    t.integer "term_length"
+    t.string "term_unit"
+    t.string "processor"
+    t.string "processor_product_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["id", "platform_id"], name: "idx_bt_billing_products_id_platform", unique: true
+    t.index ["platform_id", "identifier"], name: "idx_bt_billing_products_platform_identifier", unique: true, where: "(seller_id IS NULL)"
+    t.index ["platform_id", "seller_type", "seller_id", "identifier"], name: "idx_bt_billing_products_seller_identifier", unique: true, where: "(seller_id IS NOT NULL)"
+    t.index ["platform_id"], name: "idx_bt_billing_products_platform"
+    t.index ["tax_category_id"], name: "idx_bt_billing_products_tax_category"
   end
 
   create_table "better_together_billing_promotion_redemptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3790,6 +3841,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
   add_foreign_key "better_together_billing_entitlement_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_entitlements", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_order_platform"
   add_foreign_key "better_together_billing_entitlements", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_plan_platform"
+  add_foreign_key "better_together_billing_entitlements", "better_together_billing_products", column: "product_id"
   add_foreign_key "better_together_billing_entitlements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_entitlements", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_subscription_platform"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
@@ -3822,11 +3874,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_24_220000) do
   add_foreign_key "better_together_billing_plan_add_ons", "better_together_billing_plans", column: "add_on_id"
   add_foreign_key "better_together_billing_plan_add_ons", "better_together_billing_plans", column: "plan_id"
   add_foreign_key "better_together_billing_plan_grants", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_plan_grants_plan_platform"
+  add_foreign_key "better_together_billing_plan_grants", "better_together_billing_products", column: "product_id"
   add_foreign_key "better_together_billing_plan_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_plans", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_plans_tax_category_platform"
   add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_prices", "better_together_billing_products", column: "product_id"
+  add_foreign_key "better_together_billing_prices", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_processor_settings", "better_together_people", column: "acknowledged_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_processor_settings", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_products", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_billing_credit_lots", column: ["credit_lot_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_promo_redemptions_lot_platform"
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_billing_promotions", column: ["promotion_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_promo_redemptions_promotion_platform"
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_people", column: "person_id", on_delete: :nullify

@@ -20,6 +20,14 @@ classDiagram
       +participant_summary : text
       +solidarity_description : string
     }
+    class BetterTogether_Billing_Price["Billing::Price"] {
+      +label : string
+    }
+    class BetterTogether_Billing_Product["Billing::Product"] {
+      +description : text
+      +name : string
+      +summary : text
+    }
     class BetterTogether_Billing_Promotion["Billing::Promotion"] {
       +name : string
     }

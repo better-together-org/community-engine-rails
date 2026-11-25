@@ -11,23 +11,33 @@ module BetterTogether
 
       self.table_name = 'better_together_billing_plan_grants'
 
-      belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', inverse_of: :plan_grants, optional: false
+      # What it is part of: a plan or a product, exactly one.
+      belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', inverse_of: :plan_grants, optional: true
+      belongs_to :product, class_name: 'BetterTogether::Billing::Product', inverse_of: :grants, optional: true
 
-      attr_readonly :plan_id
+      attr_readonly :plan_id, :product_id
 
       before_validation :normalize
       validates :kind, inclusion: { in: ->(_) { Entitlements::Registry.kinds } }
       validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :parameters_valid
+      validate :exactly_one_owner
       validate :plan_is_not_an_add_on
       validate :not_already_on_the_plan
 
       # The handler for this grant, ready to apply.
       def handler = Entitlements::Registry.handler_for(self)
 
+      # The plan or product this is part of.
+      def owner = plan || product
+
       private
 
-      def billing_parent = plan
+      def billing_parent = owner
+
+      def exactly_one_owner
+        errors.add(:base, :one_owner) unless plan_id.present? ^ product_id.present?
+      end
 
       def normalize
         self.parameters = parameters.to_h.stringify_keys.transform_values { |value| value.is_a?(String) ? value.strip : value }
@@ -35,10 +45,10 @@ module BetterTogether
 
       # One grant per thing (the same role, feature or quota once): to change an amount, edit it.
       def not_already_on_the_plan # rubocop:disable Metrics/AbcSize
-        return unless plan && Entitlements::Registry.kinds.include?(kind) && parameters_errors.empty?
+        return unless owner && Entitlements::Registry.kinds.include?(kind) && parameters_errors.empty?
 
         key = handler.key
-        taken = plan.plan_grants.where.not(id: id).any? { |other| other.kind == kind && other.handler.key == key }
+        taken = owner.included_grants.where.not(id: id).any? { |other| other.kind == kind && other.handler.key == key }
         errors.add(:parameters, :already_on_the_plan) if taken
       end
 

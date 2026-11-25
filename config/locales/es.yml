@@ -7525,6 +7525,9 @@ es:
       not_an_offline_method: "%{method} no es un método de pago instalado fuera de
         un procesador"
       not_configured: no está configurado para esta plataforma
+      not_for_until_used: solo se aplica a un plazo fijo
+      one_item: debe ser de un plan o de un producto, no de ambos
+      one_owner: debe pertenecer a un plan o a un producto, no a ambos
       not_found: no se ha encontrado
       not_found_at_processor: no se encontró en el procesador de pagos
       not_installed: no es un procesador de pagos instalado
@@ -7539,6 +7542,7 @@ es:
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
       price_inactive: está archivado en el procesador de pagos
+      price_is_immutable: un precio nunca cambia; cree uno nuevo y archive este
       public_mail_domain: es un proveedor de correo público; confirma para confiar
         en todas sus direcciones
       recipient_missing: necesita un correo electrónico o un número de teléfono

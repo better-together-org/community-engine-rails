@@ -537,6 +537,20 @@ classDiagram
       table: better_together_billing_plan_add_ons
       concerns: Billing::ParentBound, Billing::PlatformBound
     }
+    class BetterTogether__Billing__Price["Billing::Price"] {
+      <<Model>>
+      table: better_together_billing_prices
+      translates: label
+      concerns: Billing::PlatformBound, Billing::Pricing, Billing::Purchasable, Translatable
+      weak refs: owner: string_translations
+    }
+    class BetterTogether__Billing__Product["Billing::Product"] {
+      <<Model>>
+      table: better_together_billing_products
+      translates: description, name, summary
+      concerns: Billing::Listing, Billing::PlatformBound, Billing::SellerScoped, Translatable
+      weak refs: target: seller, owner: string_translations, owner: text_translations
+    }
     class BetterTogether__Billing__PurchaseRequirement["Billing::PurchaseRequirement"] {
       <<Model>>
       table: better_together_billing_purchase_requirements
@@ -1018,6 +1032,10 @@ classDiagram
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Platform : platform
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__PlanAddOn --> BetterTogether__Billing__Plan : add_on
+  BetterTogether__Billing__Price --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Price --> BetterTogether__Billing__Product : product
+  BetterTogether__Billing__Product --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Product --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__PurchaseRequirement --> BetterTogether__Platform : platform
   BetterTogether__Billing__RefundRequest --> BetterTogether__Platform : platform
   BetterTogether__Billing__RefundRequest --> BetterTogether__Billing__Order : order

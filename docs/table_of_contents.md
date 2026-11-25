@@ -96,6 +96,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Account Polish](billing/account_polish.md) - Order filters, changing a subscription's payment method, a billing address editor and billing email preferences
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Billing Purchase Requirements](billing/purchase_requirements.md) - Rules that a purchase needs a prerequisite, how they are enforced and what happens when one ends
+- [Billing Products and Prices](billing/products_and_prices.md) - One-off products, their immutable prices, and how a paid order gives what a product includes
 - [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
 - [Billing Entitlements and Quota Allowances](billing/entitlements_and_allowances.md) - What a plan gives (roles, feature access, quota allowances), one derivation from Pay's status, what is taken away at a lapse and what never is
 - [Billing Subscriptions and Renewals](billing/subscriptions_and_renewals.md) - Pay::Subscription as the one record, local renewals, periods that never drift, grace and lapse, and the payer and steward actions

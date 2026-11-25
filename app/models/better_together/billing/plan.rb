@@ -139,6 +139,9 @@ module BetterTogether
 
       # ---- catalog presentation ----------------------------------------------------
 
+      # What it includes, for entitlements (a product answers the same).
+      def included_grants = plan_grants
+
       def eligible_for?(billable_owner)
         return false unless billable_owner.present?
 

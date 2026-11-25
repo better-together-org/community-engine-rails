@@ -13,7 +13,8 @@ erDiagram
   BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_LOTS : "account / credit_account_id"
   EXT_PERSON o|--o{ BILLING_CREDIT_LOTS : "granted_by / granted_by_id"
   EXT_PLATFORM ||--o{ BILLING_ENTITLEMENTS : "platform / platform_id"
-  BILLING_PLANS ||--o{ BILLING_ENTITLEMENTS : "plan / plan_id"
+  BILLING_PLANS o|--o{ BILLING_ENTITLEMENTS : "plan / plan_id"
+  EXT_BILLING_PRODUCT o|--o{ BILLING_ENTITLEMENTS : "product / product_id"
   EXT_PAY_SUBSCRIPTION o|--o{ BILLING_ENTITLEMENTS : "pay_subscription / pay_subscription_id"
   BILLING_ORDERS o|--o{ BILLING_ENTITLEMENTS : "order / order_id"
   EXT_PLATFORM ||--o{ BILLING_ENTITLEMENT_GRANTS : "platform / platform_id"
@@ -44,7 +45,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_BILLING_TAX_CATEGORY o|--o{ BILLING_PLANS : "tax_category / tax_category_id"
   EXT_PLATFORM ||--o{ BILLING_PLAN_GRANTS : "platform / platform_id"
-  BILLING_PLANS ||--o{ BILLING_PLAN_GRANTS : "plan / plan_id"
+  BILLING_PLANS o|--o{ BILLING_PLAN_GRANTS : "plan / plan_id"
+  EXT_BILLING_PRODUCT o|--o{ BILLING_PLAN_GRANTS : "product / product_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_PROCESSOR_SETTINGS : "acknowledged_by / acknowledged_by_id"
   EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
@@ -115,11 +117,11 @@ erDiagram
     pay_subscription_id uuid
     plan_id uuid
     platform_id uuid
+    product_id uuid
     beneficiary_type string
     status string
+    quantity integer
     ends_at datetime
-    grace_ends_at datetime
-    starts_at datetime
   }
 
   BILLING_ENTITLEMENT_GRANTS {
@@ -237,6 +239,7 @@ erDiagram
   BILLING_PLAN_GRANTS {
     plan_id uuid
     platform_id uuid
+    product_id uuid
     kind string
     position integer
     parameters jsonb
@@ -322,6 +325,10 @@ erDiagram
   }
 
   EXT_PERSON {
+    string export_ref
+  }
+
+  EXT_BILLING_PRODUCT {
     string export_ref
   }
 

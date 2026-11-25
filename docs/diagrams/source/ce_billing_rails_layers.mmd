@@ -277,6 +277,7 @@ classDiagram
   BetterTogether__Billing__CreditLot --> BetterTogether__Person : granted_by
   BetterTogether__Billing__Entitlement --> BetterTogether__Platform : platform
   BetterTogether__Billing__Entitlement --> BetterTogether__Billing__Plan : plan
+  BetterTogether__Billing__Entitlement --> BetterTogether__Billing__Product : product
   BetterTogether__Billing__Entitlement --> Pay__Subscription : pay_subscription
   BetterTogether__Billing__Entitlement --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__EntitlementGrant --> BetterTogether__Platform : platform
@@ -308,6 +309,7 @@ classDiagram
   BetterTogether__Billing__Plan --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__PlanGrant --> BetterTogether__Platform : platform
   BetterTogether__Billing__PlanGrant --> BetterTogether__Billing__Plan : plan
+  BetterTogether__Billing__PlanGrant --> BetterTogether__Billing__Product : product
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Platform : platform
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Person : acknowledged_by
   BetterTogether__Billing__Promotion --> BetterTogether__Platform : platform
