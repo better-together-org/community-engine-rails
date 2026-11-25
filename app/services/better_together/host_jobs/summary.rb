@@ -45,7 +45,7 @@ module BetterTogether
 
       def snapshot
         stats = Sidekiq::Stats.new
-        queues = queue_rows(stats)
+        queues = queue_rows
         work = work_rows
         build(stats, queues, work)
       rescue *REDIS_ERRORS => e
@@ -69,9 +69,10 @@ module BetterTogether
           scheduled: stats.scheduled_size.to_i }
       end
 
-      def queue_rows(stats)
-        stats.queue_summaries.map { |queue| QueueRow.new(name: queue.name, size: queue.size.to_i, latency: queue.latency.to_f) }
-             .sort_by { |row| [-row.size, row.name] }
+      # Stats#queue_summaries is Sidekiq 8 only; Queue.all works on 7.3 (Rails 7.2 lane) and 8.
+      def queue_rows
+        Sidekiq::Queue.all.map { |queue| QueueRow.new(name: queue.name, size: queue.size.to_i, latency: queue.latency.to_f) }
+                      .sort_by { |row| [-row.size, row.name] }
       end
 
       def work_rows

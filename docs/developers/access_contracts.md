@@ -1,6 +1,12 @@
 # How to add or change an access contract entry
 
-The access contract records what access each persona should have to each record, so a policy change cannot silently widen or narrow access. It currently covers communities and people. Generated reference pages live in [docs/reference/access_contracts](../reference/access_contracts/README.md).
+The access contract records what access each persona should have to each record, so a policy change cannot silently widen or narrow access. It currently covers communities and people and is being extended to every subsystem. Generated reference pages live in [docs/reference/access_contracts](../reference/access_contracts/README.md).
+
+## When an update is required
+
+Every change that alters an access assumption or its implementation for a subsystem surface updates the contract in the same PR: policies and scopes, role and permission seeds, controller authorization, API, MCP, job and notifier access to a subsystem's records, and any new private, community-scoped, personal or user-created model or state. The PR template has a matching `Access contract` section. A subsystem without a contract gets one when its access is first touched; the planned order is membership requests and invitations, Joatu, comments and posts, events, safety reports, messages, uploads, then API and MCP surfaces.
+
+The `access_contract_guard` CI job (`bin/ci-access-contract-guard`) enforces this on pull requests. It fails when a diff touches `app/policies`, the access control builder, `app/resources`, `app/tools`, or adds or removes `authorize`, `policy_scope` or `skip_authorization` lines in a controller, unless the same diff also touches `config/access_contracts` or `spec/access_contract`, or the PR body has a line `access contract: unchanged because <reason of at least 10 characters>`.
 
 ## The three parts
 
