@@ -7526,8 +7526,6 @@ es:
         un procesador"
       not_configured: no está configurado para esta plataforma
       not_for_until_used: solo se aplica a un plazo fijo
-      one_item: debe ser de un plan o de un producto, no de ambos
-      one_owner: debe pertenecer a un plan o a un producto, no a ambos
       not_found: no se ha encontrado
       not_found_at_processor: no se encontró en el procesador de pagos
       not_installed: no es un procesador de pagos instalado
@@ -7538,6 +7536,8 @@ es:
       not_the_buyer: solo puede hacerla el comprador del pedido
       nothing_to_give_back: No hay nada en este pedido que se pueda devolver aquí.
       odd: debe ser impar
+      one_item: debe ser de un plan o de un producto, no de ambos
+      one_owner: debe pertenecer a un plan o a un producto, no a ambos
       one_time_single: debe ser 1 para un precio único
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco

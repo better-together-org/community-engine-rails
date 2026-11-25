@@ -7637,8 +7637,6 @@ fr:
         dehors d'un processeur"
       not_configured: n'est pas configuré pour cette plateforme
       not_for_until_used: ne s'applique qu'à une durée fixe
-      one_item: doit concerner un forfait ou un produit, pas les deux
-      one_owner: doit appartenir à un forfait ou à un produit, pas aux deux
       not_found: n’a pas été trouvé(e)
       not_found_at_processor: est introuvable chez le processeur de paiement
       not_installed: n'est pas un processeur de paiement installé
@@ -7650,6 +7648,8 @@ fr:
       not_the_buyer: ne peut être faite que par l'acheteur de la commande
       nothing_to_give_back: Rien sur cette commande ne peut être remboursé ici.
       odd: doit être impair
+      one_item: doit concerner un forfait ou un produit, pas les deux
+      one_owner: doit appartenir à un forfait ou à un produit, pas aux deux
       one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
       present: doit être vide

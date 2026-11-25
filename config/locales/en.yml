@@ -7401,8 +7401,6 @@ en:
         a processor"
       not_configured: is not set up for this platform
       not_for_until_used: only applies to a fixed term
-      one_item: must be for a plan or a product, not both
-      one_owner: must belong to a plan or a product, not both
       not_found: not found
       not_found_at_processor: was not found at the payment processor
       not_installed: is not an installed payment processor
@@ -7414,6 +7412,8 @@ en:
       nothing_to_give_back: There is nothing on this order that can be given back
         here.
       odd: must be odd
+      one_item: must be for a plan or a product, not both
+      one_owner: must belong to a plan or a product, not both
       one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}
       present: must be blank
