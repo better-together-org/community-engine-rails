@@ -26,7 +26,7 @@ module BetterTogether # :nodoc:
 
     private
 
-    # rubocop:disable-next Metrics/MethodLength
+    # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
     def register_drivers
       return if @registered
 
@@ -37,6 +37,7 @@ module BetterTogether # :nodoc:
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--window-size=1440,1600')
+        options.add_argument(capybara_host_resolver_rule)
 
         Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
       end
@@ -48,6 +49,7 @@ module BetterTogether # :nodoc:
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--window-size=430,1400')
+        options.add_argument(capybara_host_resolver_rule)
 
         Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
       end
