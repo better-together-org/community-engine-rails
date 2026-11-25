@@ -7426,6 +7426,7 @@ en:
       required_for_elevated_role: needs explicit confirmation before an email domain
         can grant a role above basic member
       taken: has already been taken
+      tax_category_other_platform: belongs to another platform
       too_large: is too large
       too_long:
         one: is too long (maximum is %{count} character)

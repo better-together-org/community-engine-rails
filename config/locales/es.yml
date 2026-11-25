@@ -7550,6 +7550,7 @@ es:
       required_for_elevated_role: requiere confirmación explícita antes de que un
         dominio de correo pueda otorgar un rol superior al de miembro básico
       taken: ya está en uso
+      tax_category_other_platform: pertenece a otra plataforma
       too_large: es demasiado grande
       too_long:
         one: es demasiado largo (%{count} carácter máximo)

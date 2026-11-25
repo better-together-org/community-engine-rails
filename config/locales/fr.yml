@@ -7663,6 +7663,7 @@ fr:
       required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
         de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
+      tax_category_other_platform: appartient à une autre plateforme
       too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)

@@ -30,6 +30,16 @@ RSpec.describe BetterTogether::Billing::Product do
     expect(product).not_to be_valid
   end
 
+  it 'refuses a tax category that belongs to another platform' do
+    other = create(:better_together_platform, host: false, locality: 'local')
+    foreign = create(:better_together_billing_tax_category, platform: other)
+    product = build(:better_together_billing_product, tax_category: foreign)
+
+    expect(product).not_to be_valid
+    expect(product.errors.added?(:tax_category, :tax_category_other_platform)).to be(true)
+    expect(build(:better_together_billing_product, tax_category: create(:better_together_billing_tax_category))).to be_valid
+  end
+
   describe 'lifetime' do
     it 'defaults to until used, with no end date' do
       product = create(:better_together_billing_product)

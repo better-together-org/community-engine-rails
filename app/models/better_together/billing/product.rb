@@ -45,6 +45,7 @@ module BetterTogether
       validates :term_length, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 120 }, if: :fixed_term?
       validates :term_unit, inclusion: { in: TERM_UNITS }, if: :fixed_term?
       validate :term_only_when_fixed
+      validate :tax_category_on_same_platform
 
       TRANSLATED_FIELDS = %i[name description summary].freeze
 
@@ -72,6 +73,11 @@ module BetterTogether
       def current_price = prices.active.order(created_at: :desc).first
 
       private
+
+      # A tax category from another platform would be copied onto an order line, whose key ties it to this platform.
+      def tax_category_on_same_platform
+        errors.add(:tax_category, :tax_category_other_platform) if tax_category && tax_category.platform_id != platform_id
+      end
 
       def term_only_when_fixed
         return if fixed_term?
