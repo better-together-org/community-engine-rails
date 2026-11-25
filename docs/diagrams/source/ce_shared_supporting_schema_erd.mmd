@@ -6,6 +6,13 @@ erDiagram
   EXT_PERSON ||--o{ AGENT_GRANTS : "operator / operator_id"
   EXT_COMMUNITY o|--o{ AGENT_GRANTS : "community / community_id"
   EXT_PERSON o|--o{ AGENT_GRANTS : "granted_by / granted_by_id"
+  EXT_PLATFORM o|--o{ BREAK_GLASS_EVENTS : "platform / platform_id"
+  BREAK_GLASS_GRANTS ||--o{ BREAK_GLASS_EVENTS : "break_glass_grant / break_glass_grant_id"
+  EXT_PERSON o|--o{ BREAK_GLASS_EVENTS : "actor / actor_id"
+  EXT_PLATFORM o|--o{ BREAK_GLASS_GRANTS : "platform / platform_id"
+  EXT_PERSON ||--o{ BREAK_GLASS_GRANTS : "grantee / grantee_id"
+  EXT_PERSON ||--o{ BREAK_GLASS_GRANTS : "requested_by / requested_by_id"
+  EXT_PERSON o|--o{ BREAK_GLASS_GRANTS : "approved_by / approved_by_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXT_PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   EXT_PLATFORM o|--o{ CONTACT_DETAILS : "platform / platform_id"
@@ -127,6 +134,27 @@ erDiagram
     scopes string
     expires_at datetime
     revoked_at datetime
+  }
+
+  BREAK_GLASS_EVENTS {
+    actor_id uuid
+    break_glass_grant_id uuid
+    platform_id uuid
+    event_type string
+    detail jsonb
+  }
+
+  BREAK_GLASS_GRANTS {
+    approved_by_id uuid
+    grantee_id uuid
+    platform_id uuid
+    requested_by_id uuid
+    subject_id uuid
+    reason_code string
+    status string
+    subject_type string
+    reason text
+    emergency boolean
   }
 
   NOTICED_EVENTS {

@@ -1,0 +1,31 @@
+erDiagram
+  BETTER_TOGETHER_BREAK_GLASS_GRANTS {
+    uuid id PK
+    string status "requested or revoked"
+    text reason
+    string reason_code "required for emergency"
+    boolean emergency
+    datetime available_at "request time plus 24h delay"
+    datetime expires_at "at most 7 days after available_at"
+    datetime revoked_at
+    string subject_type "allow-listed"
+    uuid subject_id
+    uuid grantee_id FK
+    uuid requested_by_id FK
+    uuid approved_by_id FK "optional deputy"
+    uuid platform_id FK
+  }
+  BETTER_TOGETHER_BREAK_GLASS_EVENTS {
+    uuid id PK
+    string event_type "requested, revoked or accessed"
+    jsonb detail
+    uuid break_glass_grant_id FK
+    uuid actor_id FK
+    uuid platform_id FK
+  }
+  BETTER_TOGETHER_PEOPLE ||--o{ BETTER_TOGETHER_BREAK_GLASS_GRANTS : "grantee"
+  BETTER_TOGETHER_PEOPLE ||--o{ BETTER_TOGETHER_BREAK_GLASS_GRANTS : "requested_by"
+  BETTER_TOGETHER_PEOPLE ||--o{ BETTER_TOGETHER_BREAK_GLASS_GRANTS : "approved_by"
+  BETTER_TOGETHER_COMMUNITIES ||--o{ BETTER_TOGETHER_BREAK_GLASS_GRANTS : "subject (first allowed type)"
+  BETTER_TOGETHER_BREAK_GLASS_GRANTS ||--o{ BETTER_TOGETHER_BREAK_GLASS_EVENTS : "audited by"
+  BETTER_TOGETHER_PEOPLE ||--o{ BETTER_TOGETHER_BREAK_GLASS_EVENTS : "actor"

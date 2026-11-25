@@ -1,0 +1,6 @@
+fr:
+  activerecord:
+    models:
+      better_together/break_glass_event:
+        one: Break glass event
+        other: Break glass events

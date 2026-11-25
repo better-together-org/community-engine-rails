@@ -1,0 +1,6 @@
+uk:
+  activerecord:
+    models:
+      better_together/break_glass_grant:
+        one: Break glass grant
+        other: Break glass grants

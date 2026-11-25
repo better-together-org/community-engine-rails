@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-23T19:18:05Z`.
+Generated from live Rails reflections at `2026-11-25T02:07:13Z`.
 
 ## Identity, access, and memberships
 
@@ -627,6 +627,8 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | --- | --- | --- | --- | --- | --- |
 | Activity | `better_together_activities` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`recipient_id` (uuid FK)<br>`trackable_id` (uuid FK)<br>`key` (string)<br>`owner_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?) | `PlatformScoped` | `platform` -> `Platform` (platform_network) |
 | AgentGrant | `better_together_agent_grants` | `community_id` (uuid FK)<br>`granted_by_id` (uuid FK)<br>`operator_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`robot_id` (uuid FK)<br>`scopes` (string) | PresenceValidator: robot, platform, operator | `BetterTogetherId`<br>`Seedable` | `robot` -> `Robot` (platform_network)<br>`platform` -> `Platform` (platform_network)<br>`operator` -> `Person` (identity_access)<br>`community` -> `Community` (platform_network)<br>`granted_by` -> `Person` (identity_access) |
+| BreakGlassEvent | `better_together_break_glass_events` | `actor_id` (uuid FK)<br>`break_glass_grant_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`event_type` (string)<br>`detail` (jsonb) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>InclusionValidator: event_type (in=["requested", "revoked", "accessed"]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`actor` -> `Person` (identity_access) |
+| BreakGlassGrant | `better_together_break_glass_grants` | `approved_by_id` (uuid FK)<br>`grantee_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`requested_by_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`reason_code` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>InclusionValidator: status (in=["requested", "revoked"])<br>InclusionValidator: subject_type (in=["BetterTogether::Community"])<br>PresenceValidator: reason<br>PresenceValidator: reason_code (if=:emergency?)<br>PresenceValidator: available_at, expires_at | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`grantee` -> `Person` (identity_access)<br>`requested_by` -> `Person` (identity_access)<br>`approved_by` -> `Person` (identity_access) |
 | CommentAddedNotifier | `noticed_events` | `record_id` (uuid FK)<br>`record_type` (string)<br>`type` (string)<br>`notifications_count` (integer)<br>`params` (jsonb)<br>STI variants: `CommunityInvitationNotifier`, `EventInvitationNotifier`, `EventReminderNotifier`, `EventUpdateNotifier`, `FederationVisibilityStatusNotifier`, `InvitationNotifierBase`, `MembershipCreatedNotifier`, `MembershipRemovedNotifier` +13 | PresenceValidator: record | — | — |
 | CommentAddedNotifier::Notification | `noticed_notifications` | `event_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`recipient_id` (uuid FK)<br>`recipient_type` (string)<br>`type` (string)<br>`read_at` (datetime)<br>STI variants: `CommunityInvitationNotifier::Notification`, `EventInvitationNotifier::Notification`, `EventReminderNotifier::Notification`, `EventUpdateNotifier::Notification`, `FederationVisibilityStatusNotifier::Notification`, `InvitationNotifierBase::Notification`, `MembershipCreatedNotifier::Notification`, `MembershipRemovedNotifier::Notification` +13 | — | — | `platform` -> `Platform` (platform_network) |
 | CommentConfig | `better_together_comment_configs` | `commentable_id` (uuid FK)<br>`commentable_type` (string)<br>`permission` (string)<br>`visibility` (string) | InclusionValidator: commentable_type (in=dynamic) | `BetterTogetherId`<br>`Seedable` | — |
@@ -854,6 +856,8 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 
 - `Activity`: `trackable` (belongs_to), `owner` (belongs_to), `recipient` (belongs_to)
 - `AgentGrant`: `seeds` (has_many)
+- `BreakGlassEvent`: `seeds` (has_many)
+- `BreakGlassGrant`: `subject` (belongs_to), `seeds` (has_many)
 - `CommentAddedNotifier`: `record` (belongs_to)
 - `CommentAddedNotifier::Notification`: `recipient` (belongs_to)
 - `CommentConfig`: `commentable` (belongs_to), `seeds` (has_many)

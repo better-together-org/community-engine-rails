@@ -454,6 +454,18 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__BreakGlassEvent["BreakGlassEvent"] {
+      <<Model>>
+      table: better_together_break_glass_events
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__BreakGlassGrant["BreakGlassGrant"] {
+      <<Model>>
+      table: better_together_break_glass_grants
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: subject, owner: seeds
+    }
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
       table: noticed_events
@@ -867,6 +879,13 @@ classDiagram
   BetterTogether__AgentGrant --> BetterTogether__Person : operator
   BetterTogether__AgentGrant --> BetterTogether__Community : community
   BetterTogether__AgentGrant --> BetterTogether__Person : granted_by
+  BetterTogether__BreakGlassEvent --> BetterTogether__Platform : platform
+  BetterTogether__BreakGlassEvent --> BetterTogether__BreakGlassGrant : break_glass_grant
+  BetterTogether__BreakGlassEvent --> BetterTogether__Person : actor
+  BetterTogether__BreakGlassGrant --> BetterTogether__Platform : platform
+  BetterTogether__BreakGlassGrant --> BetterTogether__Person : grantee
+  BetterTogether__BreakGlassGrant --> BetterTogether__Person : requested_by
+  BetterTogether__BreakGlassGrant --> BetterTogether__Person : approved_by
   BetterTogether__CommentAddedNotifier__Notification --> Noticed__Event : event
   BetterTogether__CommentAddedNotifier__Notification --> BetterTogether__Platform : platform
   BetterTogether__ContactDetail --> BetterTogether__Platform : platform
