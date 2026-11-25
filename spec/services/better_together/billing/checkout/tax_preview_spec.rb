@@ -29,6 +29,13 @@ RSpec.describe BetterTogether::Billing::Checkout::TaxPreview do
     expect(preview.summary.tax_rows.map { |r| [r.label, r.amount_cents] }).to eq([['HST', 375]])
   end
 
+  it 'scales the first item, and the tax on it, by the quantity chosen', :aggregate_failures do
+    quantity = described_class.new(platform: host_platform, plan:, address:, quantity: 3)
+
+    expect(quantity).to have_attributes(quantities: [3], tax_cents: 1125, total_cents: 8625)
+    expect(quantity.summary.lines.first).to have_attributes(quantity: 3, amount_cents: 7500)
+  end
+
   it 'leaves the total alone when prices include tax' do
     registration.update!(prices_include_tax: true)
 

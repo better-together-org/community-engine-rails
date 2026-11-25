@@ -1,0 +1,76 @@
+<% content_for :page_title do %>
+  <%= @product.name %> | <%= t('better_together.billing.products.index_title') %>
+<% end %>
+
+<div id="<%= dom_id(@product, :show_page) %>" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_products_path(locale: I18n.locale),
+                                        edit_path: policy(@product).edit? ? edit_billing_product_path(@product, locale: I18n.locale) : nil %>
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-6">
+      <div id="<%= dom_id(@product, :summary_card) %>" class="card">
+        <div class="card-header">
+          <strong><%= @product.name %></strong>
+          <span class="badge <%= @product.active? ? 'bg-success' : 'bg-secondary' %> ms-2 billing-product-status-badge">
+            <%= t("better_together.billing.plans.status_#{@product.active? ? 'active' : 'inactive'}") %>
+          </span>
+        </div>
+        <div class="card-body">
+          <dl id="<%= dom_id(@product, :summary_details) %>" class="row mb-0">
+            <dt class="col-sm-5"><%= t('better_together.billing.products.field_identifier') %></dt>
+            <dd id="<%= dom_id(@product, :identifier) %>" class="col-sm-7"><code><%= @product.identifier %></code></dd>
+            <dt class="col-sm-5"><%= t('better_together.billing.products.field_summary') %></dt>
+            <dd id="<%= dom_id(@product, :summary) %>" class="col-sm-7"><%= @product.summary.presence || '—' %></dd>
+            <dt class="col-sm-5"><%= t('better_together.billing.products.field_description') %></dt>
+            <dd id="<%= dom_id(@product, :description) %>" class="col-sm-7"><%= @product.description.presence || '—' %></dd>
+            <dt class="col-sm-5"><%= t('better_together.billing.products.field_lifetime') %></dt>
+            <dd id="<%= dom_id(@product, :lifetime) %>" class="col-sm-7"><%= billing_product_lifetime(@product) %></dd>
+            <dt class="col-sm-5"><%= t('better_together.billing.products.field_tax_category') %></dt>
+            <dd id="<%= dom_id(@product, :tax_category) %>" class="col-sm-7"><%= @product.tax_category&.name || t('better_together.billing.products.tax_standard') %></dd>
+            <dt class="col-sm-5"><%= t('better_together.billing.products.field_listed') %></dt>
+            <dd id="<%= dom_id(@product, :listed) %>" class="col-sm-7"><%= t("better_together.billing.products.#{@product.listed? ? 'yes' : 'no'}") %></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <section id="<%= dom_id(@product, :prices) %>" class="card" aria-labelledby="<%= dom_id(@product, :prices_title) %>">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 id="<%= dom_id(@product, :prices_title) %>" class="h5 mb-0"><%= t('better_together.billing.prices.title') %></h2>
+          <% if policy(BetterTogether::Billing::Price.new(product: @product)).new? %>
+            <%= link_to t('better_together.billing.prices.new_price'), new_billing_product_price_path(@product, locale: I18n.locale),
+                        class: 'btn btn-outline-primary btn-sm', id: 'new-billing-price-btn' %>
+          <% end %>
+        </div>
+        <div class="card-body">
+          <p class="text-body-secondary small"><%= t('better_together.billing.prices.intro') %></p>
+          <% if @product.prices.any? %>
+            <ul id="<%= dom_id(@product, :prices_list) %>" class="list-group">
+              <% @product.prices.each do |price| %>
+                <li id="<%= dom_id(price) %>" class="list-group-item d-flex justify-content-between align-items-center">
+                  <span>
+                    <strong><%= billing_amount(price.amount_cents, price.currency) %></strong>
+                    <% if price.label.present? %><span class="text-body-secondary"> · <%= price.label %></span><% end %>
+                    <span class="badge <%= price.archived? ? 'bg-secondary' : 'bg-success' %> ms-2 billing-price-status-badge">
+                      <%= t("better_together.billing.prices.status_#{price.archived? ? 'archived' : 'on_sale'}") %>
+                    </span>
+                  </span>
+                  <% unless price.archived? || !policy(price).archive? %>
+                    <%= button_to t('better_together.billing.prices.archive'), archive_billing_product_price_path(@product, price, locale: I18n.locale),
+                                  method: :patch, class: 'btn btn-outline-danger btn-sm', id: dom_id(price, :archive_btn),
+                                  form: { data: { turbo_confirm: t('better_together.billing.prices.archive_confirm') } } %>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p id="<%= dom_id(@product, :prices_empty) %>" class="text-body-secondary mb-0"><%= t('better_together.billing.prices.none') %></p>
+          <% end %>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <%= render 'better_together/billing/plans/grants', plan: @product %>
+</div>

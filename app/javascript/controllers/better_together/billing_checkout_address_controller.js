@@ -6,13 +6,14 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-  static values = { frameId: String, url: String, planId: String };
+  static values = { frameId: String, url: String, itemParam: { type: String, default: 'plan_id' }, itemId: String, quantity: { type: Number, default: 1 } };
 
   refresh(event) {
     const frame = document.getElementById(this.frameIdValue);
     if (!frame) return;
 
-    const params = new URLSearchParams({ plan_id: this.planIdValue, billing_address_id: event.target.value });
+    const params = new URLSearchParams({ [this.itemParamValue]: this.itemIdValue, billing_address_id: event.target.value });
+    if (this.quantityValue > 1) params.set('quantity', this.quantityValue);
     const method = document.querySelector('input[name="payment_method"]:checked');
     if (method) params.set('payment_method', method.value);
     // The add-ons on this order (ticked boxes, or the hidden copies once the order is being reviewed), each once.

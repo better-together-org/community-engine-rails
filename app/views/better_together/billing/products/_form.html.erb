@@ -1,0 +1,72 @@
+<% persisted = product.persisted? %>
+<%= form_with(model: product, url: persisted ? billing_product_path(product) : billing_products_path, id: 'billing-product-form',
+              class: 'needs-validation') do |form| %>
+  <% if product.errors.any? %>
+    <%= render 'better_together/billing/error_summary', record: product, id: 'billing-product-errors', prefix: 'billing_product_' %>
+  <% end %>
+
+  <div id="billing-product-core-fields" class="row g-3 mb-4">
+    <div class="col-md-6">
+      <%= form.label :identifier, t('better_together.billing.products.field_identifier'), class: 'form-label' %>
+      <%= form.text_field :identifier, class: 'form-control', required: true, readonly: persisted,
+                                       placeholder: t('better_together.billing.products.identifier_placeholder') %>
+      <div class="form-text"><%= t('better_together.billing.products.field_identifier_hint') %></div>
+    </div>
+    <div class="col-md-6" id="billing-product-name-fields">
+      <%= render 'better_together/shared/translated_string_field', model: product, form:, attribute: :name %>
+    </div>
+  </div>
+
+  <div id="billing-product-summary-fields" class="mb-3">
+    <%= render 'better_together/shared/translated_text_field', model: product, form:, attribute: :summary %>
+  </div>
+  <div id="billing-product-description-fields" class="mb-4">
+    <%= render 'better_together/shared/translated_text_field', model: product, form:, attribute: :description %>
+  </div>
+
+  <fieldset id="billing-product-lifetime" class="border rounded p-3 mb-4">
+    <legend class="h6 w-auto px-2"><%= t('better_together.billing.products.lifetime_legend') %></legend>
+    <div class="form-text mb-2"><%= t('better_together.billing.products.lifetime_hint') %></div>
+    <% BetterTogether::Billing::Product::LIFETIMES.each do |lifetime| %>
+      <div class="form-check">
+        <%= form.radio_button :lifetime, lifetime, class: 'form-check-input', id: "billing-product-lifetime-#{lifetime.dasherize}" %>
+        <%= form.label "lifetime_#{lifetime}", t("better_together.billing.products.lifetime_#{lifetime}"), class: 'form-check-label',
+                                                                                                          for: "billing-product-lifetime-#{lifetime.dasherize}" %>
+      </div>
+    <% end %>
+    <div class="row g-3 mt-1">
+      <div class="col-sm-4">
+        <%= form.label :term_length, t('better_together.billing.products.field_term_length'), class: 'form-label' %>
+        <%= form.number_field :term_length, class: 'form-control', min: 1, max: 120, id: 'billing-product-term-length' %>
+      </div>
+      <div class="col-sm-4">
+        <%= form.label :term_unit, t('better_together.billing.products.field_term_unit'), class: 'form-label' %>
+        <%= form.select :term_unit, BetterTogether::Billing::Product::TERM_UNITS.map { |unit| [t("better_together.billing.products.unit_#{unit}"), unit] },
+                        { include_blank: true }, class: 'form-select', id: 'billing-product-term-unit' %>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="mb-4" id="billing-product-tax-category">
+    <%= form.label :tax_category_id, t('better_together.billing.products.field_tax_category'), class: 'form-label' %>
+    <%= form.collection_select :tax_category_id, billing_owner.billing_tax_categories.order(:identifier), :id, :name,
+                               { include_blank: t('better_together.billing.products.tax_standard') }, class: 'form-select' %>
+    <div class="form-text"><%= t('better_together.billing.products.field_tax_category_hint') %></div>
+  </div>
+
+  <fieldset class="mb-4" id="billing-product-listing">
+    <legend class="h6"><%= t('better_together.billing.products.listing_legend') %></legend>
+    <% %i[active listed restricted_to_members restricted_to_subscribers].each do |field| %>
+      <div class="form-check">
+        <%= form.check_box field, class: 'form-check-input', id: "billing_product_#{field}" %>
+        <%= form.label field, t("better_together.billing.products.field_#{field}"), class: 'form-check-label' %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <div class="d-flex gap-2" id="billing-product-form-actions">
+    <%= form.submit t("better_together.billing.products.#{persisted ? 'update' : 'create'}_submit"), id: 'billing-product-submit', class: 'btn btn-primary' %>
+    <%= link_to t('globals.cancel'), persisted ? billing_product_path(product, locale: I18n.locale) : billing_products_path(locale: I18n.locale),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

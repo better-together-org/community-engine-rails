@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T02:26:17Z",
+  "generated_at": "2026-11-25T04:47:07Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -31345,6 +31345,7 @@
             "label"
           ],
           "concerns": [
+            "BetterTogether::Billing::MajorAmount",
             "BetterTogether::Billing::PlatformBound",
             "BetterTogether::Billing::Pricing",
             "BetterTogether::Billing::Purchasable",
@@ -40604,6 +40605,61 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::PricesController",
+          "label": "Billing::PricesController",
+          "source_path": "app/controllers/better_together/billing/prices_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Price"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProductGrantsController",
+          "label": "Billing::ProductGrantsController",
+          "source_path": "app/controllers/better_together/billing/product_grants_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProductsController",
+          "label": "Billing::ProductsController",
+          "source_path": "app/controllers/better_together/billing/products_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Product"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::RefundRequestsController",
           "label": "Billing::RefundRequestsController",
           "source_path": "app/controllers/better_together/billing/refund_requests_controller.rb",
@@ -41936,6 +41992,15 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::MajorAmount",
+          "label": "Billing::MajorAmount",
+          "capability": "Majoramount",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Price"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OwnerScoped",
           "label": "Billing::OwnerScoped",
           "capability": "Ownerscoped",
@@ -41944,6 +42009,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -42050,6 +42118,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -42123,6 +42194,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -42363,6 +42437,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -42453,6 +42530,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -42543,6 +42623,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -42656,6 +42739,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
@@ -43149,6 +43235,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
+            "Billing::ProductsController",
+            "Billing::ProductGrantsController",
+            "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",

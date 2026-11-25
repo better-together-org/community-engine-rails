@@ -983,6 +983,7 @@ es:
           month: "%{price} al mes"
           once: "%{price}, una vez"
           year: "%{price} al año"
+        products_heading: También disponible
         subscribe: Suscribirse
         title: Planes
       checkout:
@@ -1034,6 +1035,10 @@ es:
           pagar esa cantidad ahora. La forma elegida arriba paga el resto.
         place_order: Hacer el pedido
         placed: Su pedido se ha realizado.
+        quantity: Cuántos
+        quantity_line:
+          one: "%{count} unidad"
+          other: "%{count} unidades"
         renew_with: Renovar con
         renew_with_default: La forma con la que pago la mayor parte
         renew_with_hint: Cada factura de renovación se pagará así. Puede añadir otros
@@ -1785,6 +1790,10 @@ es:
         place_community: la comunidad %{name}
         place_platform: La plataforma
         place_unknown: una comunidad que ya no existe
+        product_intro: Quienes compran este producto obtienen esto cuando se paga
+          el pedido. Si se reembolsa, o termina un plazo fijo, se retira lo que el
+          producto dio; nada de lo que crearon se borra.
+        product_title: Qué incluye este producto
         refused: No se pudo añadir. Revisa las opciones; un plan no puede dar un rol
           que permita administrar.
         remove: Quitar
@@ -1947,6 +1956,27 @@ es:
         toggle_deactivate: Desactivar
         update_submit: Actualizar plan
         updated: Plan de facturacion actualizado exitosamente.
+      prices:
+        archive: Retirar de la venta
+        archive_confirm: "¿Retirar este precio de la venta? Los pedidos ya hechos
+          lo conservan."
+        archived: Se retiró el precio de la venta.
+        create_submit: Añadir precio
+        created: Se añadió el precio.
+        field_amount: Importe
+        field_currency: Moneda
+        field_label: Etiqueta
+        field_label_hint: Opcional. Se muestra junto al importe cuando un producto
+          tiene varios precios.
+        immutable_note: Un precio nunca cambia una vez añadido. Para cobrar otro importe,
+          añada un precio nuevo y retire el anterior de la venta.
+        intro: El precio que paga quien compra es el más reciente a la venta.
+        new_price: Añadir un precio
+        new_title: Añadir un precio
+        none: Aún no hay precios. Añada uno para poner a la venta este producto.
+        status_archived: Fuera de venta
+        status_on_sale: A la venta
+        title: Precios
       processor_settings:
         acknowledge_label: Entiendo y acepto estos límites.
         acknowledged_on: Aceptó estos límites el %{date}.
@@ -2018,6 +2048,60 @@ es:
         status_managed_off: No disponible
         status_managed_on: Activado
         status_not_set_up: Sin configurar
+      products:
+        create_submit: Crear producto
+        created: Se creó el producto.
+        edit_title: Editar producto
+        'false': 'No'
+        field_active: A la venta
+        field_description: Descripción
+        field_identifier: Identificador
+        field_identifier_hint: Un nombre corto que nunca cambia, con minúsculas, números
+          y guiones bajos.
+        field_lifetime: Cuánto dura
+        field_listed: Se muestra en el catálogo
+        field_name: Nombre
+        field_price: Precio
+        field_restricted_to_members: Solo para miembros
+        field_restricted_to_subscribers: Solo para suscriptores
+        field_summary: Resumen
+        field_tax_category: Categoría de impuestos
+        field_tax_category_hint: Déjela como estándar salvo que este tipo de producto
+          tribute de otra forma.
+        field_term_length: Durante cuánto tiempo
+        field_term_unit: Unidad
+        identifier_placeholder: ampliacion_almacenamiento
+        index_title: Productos
+        intro: Lo que vende una sola vez, como una ampliación de almacenamiento. Cada
+          producto tiene precios y dice qué recibe quien lo compra.
+        lifetime_fixed_term: Durante un tiempo fijo tras el pago
+        lifetime_fixed_term_summary: Durante %{count} %{unit}
+        lifetime_hint: Hasta usarse dura mientras el comprador lo conserve. Por un
+          tiempo fijo termina solo, y un reembolso lo termina de inmediato.
+        lifetime_legend: Cuánto dura lo que da
+        lifetime_until_used: Hasta usarse
+        listing_legend: Dónde se ofrece
+        new_product: Nuevo producto
+        new_title: Nuevo producto
+        no_price: Aún sin precio
+        none: Aún no hay productos.
+        table_caption: Productos que vende esta plataforma
+        tax_standard: Estándar
+        'true': Sí
+        unit_day:
+          one: día
+          other: días
+        unit_month:
+          one: mes
+          other: meses
+        unit_week:
+          one: semana
+          other: semanas
+        unit_year:
+          one: año
+          other: años
+        update_submit: Guardar producto
+        updated: Se guardó el producto.
       promotions:
         activate: Activar
         always_open: Siempre

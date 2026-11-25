@@ -8,6 +8,7 @@ module BetterTogether
     class Price < ApplicationRecord
       include PlatformBound
       include Purchasable
+      include MajorAmount
       include Pricing
       include Translatable
 
@@ -25,7 +26,14 @@ module BetterTogether
 
       before_validation :take_platform_from_product, on: :create
 
+      # What a steward may set when adding a price: the amount (in major units) and currency, and its label in each language.
+      def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
+        [:amount, :currency, :label, *I18n.available_locales.map { |locale| :"label_#{locale}" }]
+      end
+
       scope :active, -> { where(active: true, archived_at: nil) }
+      # Prices of what the platform itself sells (a seller belongs to the product).
+      scope :sold_by_platform, -> { where(product_id: Product.sold_by_platform.select(:id)) }
 
       # Takes the price out of sale. History is kept.
       def archive!
@@ -51,6 +59,14 @@ module BetterTogether
       def fulfilled_by_order? = product.fulfilled_by_order?
 
       def held_by?(person) = product.respond_to?(:held_by?) && product.held_by?(person)
+
+      # What checkout reads, so a price is bought like a plan: one-off, never an extra on a plan, paid by any way the platform
+      # settles itself (an online processor for products arrives with the processor contract).
+      def name = purchasable_description
+      def billing_interval = 'one_time'
+      def recurring? = false
+      def add_on? = false
+      def payment_methods = Billing.processor_names.map(&:to_s).select { |method| Billing.local_method?(method) }
 
       private
 

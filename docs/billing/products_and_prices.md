@@ -35,6 +35,17 @@ Storage (a cumulative, reversible quota) behaves as a top-up should: the limit r
 
 `better_together_billing_products` and `better_together_billing_prices`. Grants gain a `product_id` (a grant is for a plan or a product, exactly one); entitlements gain `product_id` and `quantity` (for a plan or a product, exactly one), and the one-entitlement-per-order rule is now one per order and item. See [the schema ERD](../diagrams/exports/png/ce_full_schema_erd.png).
 
+## Screens
+
+Stewards manage products at `/billing/products`: a list, a form (name, summary, description, how long it lasts, tax category, where it is listed and who may buy it), and a product page that holds its prices and what it includes. A price is added, never edited; adding a new one takes the old one off sale if the steward chooses, and the newest price on sale is what buyers pay. What a product includes is edited with the same grants form as a plan, and a change brings current buyers up to date.
+
+Buyers find listed products on the public catalog and on a product page. Checkout is the same one a plan uses, started with `price_id` instead of `plan_id`, with a quantity from 1 to 99 that scales the first line and its tax. Payment is by the offline methods (cash, cheque, e-transfer, store credit) for now.
+
+Seeds: the billing demo packet plants a "[Demo] Storage top-up" product with a price and a storage grant (types `billing_product`, `billing_price`, `billing_product_grant`).
+
+![Product page](../screenshots/desktop/billing_product_show.png)
+![Checkout with a quantity](../screenshots/desktop/billing_checkout_quantity.png)
+
 ## Not yet built
 
-Steward screens, the catalog and checkout for products, seeds, and the processor mirror (`sync_plan` for products, PS-7). Converting existing one-time plans and add-ons is PS-6.
+The processor mirror (`sync_plan` for products, PS-7). Converting existing one-time plans and add-ons is PS-6.

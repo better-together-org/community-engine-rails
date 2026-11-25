@@ -1,0 +1,15 @@
+---
+title: Checkout with a quantity
+audience:
+- platform_organizer
+journey_step: As a buyer I choose how many and see the total.
+callouts:
+- :id: quantity
+  :title: How many; the total follows
+  :description: How many; the total follows
+- :id: summary
+  :title: The order
+  :description: The order
+accessibility_notes: Every field has a label; each section is labelled by its heading.
+slug: billing_checkout_quantity
+device: mobile

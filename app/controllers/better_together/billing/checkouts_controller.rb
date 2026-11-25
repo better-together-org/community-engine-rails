@@ -12,6 +12,9 @@ module BetterTogether
       include OwnerScoped
       include CheckoutTaxPreview
 
+      # The most of one price a buyer may order at once.
+      MAX_QUANTITY = 99
+
       before_action :set_plan
       before_action :set_add_ons
       before_action :set_choices
@@ -65,11 +68,32 @@ module BetterTogether
 
       def platform_plans = billing_owner.billing_plans.sold_by_platform
 
-      # The plan being bought: a primary plan, or an add-on the buyer may buy on its own because they hold a plan it extends.
+      # What is being bought: a plan (a primary plan, or an add-on the buyer may buy on its own because they hold a plan it extends)
+      # or one price of a product. Either way it is `@plan`, the main line of the order.
       def set_plan
-        @plan = platform_plans.active.find(params[:plan_id])
-        render_not_found unless @plan.add_on? ? policy(@plan).buy_alone? : policy(@plan).purchase?
+        @plan = find_item
+        return render_not_found unless purchasable_by_buyer?
+
+        @quantity = @plan.is_a?(Price) ? params[:quantity].to_i.clamp(1, MAX_QUANTITY) : 1
       end
+
+      def find_item
+        params[:price_id].present? ? platform_prices.active.find(params[:price_id]) : platform_plans.active.find(params[:plan_id])
+      end
+
+      def purchasable_by_buyer?
+        return plan_purchasable? unless @plan.is_a?(Price)
+
+        @plan.purchasable? && policy(@plan).purchase?
+      end
+
+      def plan_purchasable? = @plan.add_on? ? policy(@plan).buy_alone? : policy(@plan).purchase?
+
+      def platform_prices = billing_owner.billing_prices.sold_by_platform
+
+      # The query parameter that names the main item, for the forms to carry.
+      def item_param = @plan.is_a?(Price) ? :price_id : :plan_id
+      helper_method :item_param
 
       # The extras offered on this plan's order, and the ones the buyer ticked.
       def set_add_ons
@@ -79,9 +103,11 @@ module BetterTogether
         # Ticked earlier but no longer offered: the buyer is told rather than left with a quietly changed order.
         @dropped_add_ons = chosen - @add_ons.map(&:id)
         @purchasables = [@plan, *@add_ons]
-        @order_cents = @purchasables.sum(&:amount_cents)
+        @order_cents = order_cents
         @free_order = @purchasables.all?(&:free?)
       end
+
+      def order_cents = (@plan.amount_cents * @quantity) + @add_ons.sum(&:amount_cents)
 
       # Only add-ons this buyer may buy, in the plan's currency.
       def offered_add_ons
@@ -180,7 +206,9 @@ module BetterTogether
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
         order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose,
-                                   line_items: @purchasables.map { |purchasable| { purchasable: } },
+                                   line_items: @purchasables.each_with_index.map do |purchasable, index|
+                                     { purchasable:, quantity: index.zero? ? @quantity : 1 }
+                                   end,
                                    renewal_payment_method: @renew_with, billing_address: @address, **how_to_pay)
         redirect_after_place(order)
       rescue Orders::Place::Refused, Checkout::AgreementGate::NotReady => e

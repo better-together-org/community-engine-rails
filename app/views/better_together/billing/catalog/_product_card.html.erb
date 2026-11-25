@@ -1,0 +1,11 @@
+<%# locals: (product:) -%>
+<%# One product as a card: name, the price it is sold at now, a summary and the way into checkout. %>
+<% price = product.current_price %>
+<article id="<%= dom_id(product, :catalog) %>" class="card h-100 billing-catalog-product">
+  <div class="card-body d-flex flex-column">
+    <h3 class="h5 card-title"><%= link_to product.name, billing_catalog_product_path(product, locale: I18n.locale), id: dom_id(product, :catalog_link) %></h3>
+    <p id="<%= dom_id(product, :catalog_price) %>" class="h4 mb-3"><%= price.free? ? t('better_together.billing.checkout.free') : billing_amount(price.amount_cents, price.currency) %></p>
+    <% if product.summary.present? %><p class="text-body-secondary"><%= product.summary %></p><% end %>
+    <div class="mt-auto"><%= render 'better_together/billing/catalog/product_buy_button', product:, price: %></div>
+  </div>
+</article>

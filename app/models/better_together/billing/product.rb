@@ -54,6 +54,9 @@ module BetterTogether
          :active, :listed, :restricted_to_members, :restricted_to_subscribers, :lifetime, :term_length, :term_unit, :tax_category_id]
       end
 
+      # The identifier is chosen once, when the product is made.
+      def self.permitted_attributes_for_create = [:identifier, *permitted_attributes]
+
       def fixed_term? = lifetime == 'fixed_term'
       def until_used? = lifetime == 'until_used'
 

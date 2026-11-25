@@ -1,0 +1,83 @@
+{
+  "name": "billing_product_show",
+  "device": "mobile",
+  "url": "/en/billing/products/3a764510-cbbf-413f-b071-a2c89099fa6b",
+  "title": "Storage top-up | Products | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_products",
+  "flow": "billing_product_show",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_products_spec.rb",
+  "callouts": [
+    {
+      "selector": "#prices_billing_product_3a764510-cbbf-413f-b071-a2c89099fa6b",
+      "title": "Prices",
+      "bullets": [
+        "Prices: add one, or take one off sale"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 548.0,
+        "width": 461.0,
+        "height": 160.0,
+        "right": 473.0,
+        "bottom": 708.0,
+        "center_x": 242.5,
+        "center_y": 628.0
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 548.0,
+        "width": 461.0,
+        "height": 160.0,
+        "right": 473.0,
+        "bottom": 708.0,
+        "center_x": 242.5,
+        "center_y": 628.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 728.0,
+        "width": 270.0,
+        "height": 132,
+        "score": 549.0
+      }
+    },
+    {
+      "selector": "#grants_billing_product_3a764510-cbbf-413f-b071-a2c89099fa6b",
+      "title": "What a buyer gets",
+      "bullets": [
+        "What a buyer gets"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 732.0,
+        "width": 461.0,
+        "height": 525.0,
+        "right": 473.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 994.5
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 732.0,
+        "width": 461.0,
+        "height": 525.0,
+        "right": 473.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 994.5
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 106,
+        "score": 0
+      }
+    }
+  ]
+}

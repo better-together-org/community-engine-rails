@@ -12,6 +12,11 @@ module BetterTogether
       def edit? = false
       def update? = false
       def destroy? = false
+
+      # Buying one price: it is on sale and its product may be bought by this person.
+      def purchase?
+        record.purchasable? && ProductPolicy.new(user, record.product).purchase?
+      end
     end
   end
 end

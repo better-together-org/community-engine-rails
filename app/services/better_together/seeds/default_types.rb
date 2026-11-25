@@ -167,6 +167,7 @@ module BetterTogether
           reference :plan, to: :billing_plan
           position :position
         end
+        register_billing_products
         Registry.register(:billing_plan_add_on) do
           model 'BetterTogether::Billing::PlanAddOn'
           natural_key by_refs: %i[plan add_on]
@@ -175,8 +176,32 @@ module BetterTogether
         end
       end
 
+      # What a platform sells once: a product, the prices it is sold at (never changed once made, so keyed by amount) and what
+      # it includes.
+      def self.register_billing_products
+        Registry.register(:billing_product) do
+          model 'BetterTogether::Billing::Product'
+          attributes :active, :listed, :restricted_to_members, :restricted_to_subscribers, :lifetime, :term_length, :term_unit
+          translated :name, :description, :summary
+        end
+        Registry.register(:billing_price) do
+          model 'BetterTogether::Billing::Price'
+          natural_key :amount_cents, within: :product
+          attributes :amount_cents, :currency, :active
+          translated :label
+          reference :product, to: :billing_product
+        end
+        Registry.register(:billing_product_grant) do
+          model 'BetterTogether::Billing::PlanGrant'
+          natural_key :kind, within: :product
+          attributes :kind, :parameters
+          reference :product, to: :billing_product
+          position :position
+        end
+      end
+
       private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
-                           :register_redirects, :register_rbac, :register_billing
+                           :register_redirects, :register_rbac, :register_billing, :register_billing_products
     end
   end
 end

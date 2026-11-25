@@ -1,0 +1,83 @@
+{
+  "name": "billing_checkout_quantity",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?price_id=7fb4eded-91eb-4432-8c80-7c17c7aba5c3&quantity=3",
+  "title": "Get Storage top-up | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_products",
+  "flow": "billing_checkout_quantity",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_products_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-quantity-form",
+      "title": "How many; the total follows",
+      "bullets": [
+        "How many; the total follows"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 338.390625,
+        "width": 476.0,
+        "height": 78.0,
+        "right": 488.0,
+        "bottom": 416.390625,
+        "center_x": 250.0,
+        "center_y": 377.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 338.390625,
+        "width": 476.0,
+        "height": 78.0,
+        "right": 488.0,
+        "bottom": 416.390625,
+        "center_x": 250.0,
+        "center_y": 377.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 436.39,
+        "width": 270.0,
+        "height": 164,
+        "score": 840.609375
+      }
+    },
+    {
+      "selector": "#billing-checkout-summary",
+      "title": "The order",
+      "bullets": [
+        "The order"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 181.390625,
+        "width": 476.0,
+        "height": 141.0,
+        "right": 488.0,
+        "bottom": 322.390625,
+        "center_x": 250.0,
+        "center_y": 251.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 181.390625,
+        "width": 476.0,
+        "height": 141.0,
+        "right": 488.0,
+        "bottom": 322.390625,
+        "center_x": 250.0,
+        "center_y": 251.890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 115.0,
+        "y": 55.39,
+        "width": 270.0,
+        "height": 106,
+        "score": 181.390625
+      }
+    }
+  ]
+}

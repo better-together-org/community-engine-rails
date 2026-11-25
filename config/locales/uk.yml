@@ -968,6 +968,7 @@ uk:
           month: "%{price} на місяць"
           once: "%{price}, одноразово"
           year: "%{price} на рік"
+        products_heading: Також у продажу
         subscribe: Підписатися
         title: Плани
       checkout:
@@ -1021,6 +1022,12 @@ uk:
           сплатити нею цю частину зараз. Спосіб, обраний вище, сплатить решту.
         place_order: Оформити замовлення
         placed: Ваше замовлення оформлено.
+        quantity: Скільки
+        quantity_line:
+          few: "%{count} одиниці"
+          many: "%{count} одиниць"
+          one: "%{count} одиниця"
+          other: "%{count} одиниці"
         renew_with: Поновлювати за допомогою
         renew_with_default: Спосіб, яким я сплачую найбільшу частку
         renew_with_hint: Кожен рахунок на поновлення сплачуватиметься так. До будь-якого
@@ -1766,6 +1773,10 @@ uk:
         place_community: спільнота %{name}
         place_platform: Платформа
         place_unknown: спільнота, якої більше немає
+        product_intro: Ті, хто купує цей продукт, отримують це, коли замовлення оплачено.
+          Якщо кошти повернуто або закінчився встановлений строк, те, що дав продукт,
+          забирається; нічого створеного ними не видаляється.
+        product_title: Що входить до цього продукту
         refused: Не вдалося додати. Перевірте вибір; план не може надавати роль, що
           дозволяє керувати.
         remove: Прибрати
@@ -1924,6 +1935,26 @@ uk:
         toggle_deactivate: Deaktuvuvaty
         update_submit: Onovyty plan
         updated: Plan bilingu uspishno onovleno.
+      prices:
+        archive: Зняти з продажу
+        archive_confirm: Зняти цю ціну з продажу? Уже зроблені замовлення її зберігають.
+        archived: Ціну знято з продажу.
+        create_submit: Додати ціну
+        created: Ціну додано.
+        field_amount: Сума
+        field_currency: Валюта
+        field_label: Підпис
+        field_label_hint: Необов'язково. Показується біля суми, коли в товару кілька
+          цін.
+        immutable_note: Ціна ніколи не змінюється після додавання. Щоб брати іншу
+          суму, додайте нову ціну й зніміть стару з продажу.
+        intro: Покупець платить найновішу ціну з тих, що в продажу.
+        new_price: Додати ціну
+        new_title: Додати ціну
+        none: Цін ще немає. Додайте одну, щоб почати продаж цього товару.
+        status_archived: Не продається
+        status_on_sale: У продажу
+        title: Ціни
       processor_settings:
         acknowledge_label: Я розумію та приймаю ці обмеження.
         acknowledged_on: Ви прийняли ці обмеження %{date}.
@@ -1995,6 +2026,68 @@ uk:
         status_managed_off: Недоступно
         status_managed_on: Увімкнено
         status_not_set_up: Не налаштовано
+      products:
+        create_submit: Створити товар
+        created: Товар створено.
+        edit_title: Редагувати товар
+        'false': Ні
+        field_active: У продажу
+        field_description: Опис
+        field_identifier: Ідентифікатор
+        field_identifier_hint: 'Коротка назва, яка ніколи не змінюється: малі літери,
+          цифри та підкреслення.'
+        field_lifetime: Як довго діє
+        field_listed: Показувати в каталозі
+        field_name: Назва
+        field_price: Ціна
+        field_restricted_to_members: Лише для учасників
+        field_restricted_to_subscribers: Лише для передплатників
+        field_summary: Коротко
+        field_tax_category: Категорія податку
+        field_tax_category_hint: Залиште стандартну, якщо цей вид товару не оподатковується
+          інакше.
+        field_term_length: Як довго
+        field_term_unit: Одиниця
+        identifier_placeholder: dodatkove_skhovyshche
+        index_title: Товари
+        intro: Те, що ви продаєте один раз, наприклад додаткове сховище. Кожен товар
+          має ціни й пояснює, що отримує покупець.
+        lifetime_fixed_term: Протягом певного часу після оплати
+        lifetime_fixed_term_summary: Протягом %{count} %{unit}
+        lifetime_hint: До використання діє, доки покупець його має. Протягом певного
+          часу закінчується саме, а повернення коштів завершує його одразу.
+        lifetime_legend: Як довго діє те, що воно дає
+        lifetime_until_used: До використання
+        listing_legend: Де його пропонують
+        new_product: Новий товар
+        new_title: Новий товар
+        no_price: Ціни ще немає
+        none: Товарів ще немає.
+        table_caption: Товари, які продає ця платформа
+        tax_standard: Стандартна
+        'true': Так
+        unit_day:
+          few: дні
+          many: днів
+          one: день
+          other: днів
+        unit_month:
+          few: місяці
+          many: місяців
+          one: місяць
+          other: місяців
+        unit_week:
+          few: тижні
+          many: тижнів
+          one: тиждень
+          other: тижнів
+        unit_year:
+          few: роки
+          many: років
+          one: рік
+          other: років
+        update_submit: Зберегти товар
+        updated: Товар збережено.
       promotions:
         activate: Увімкнути
         always_open: Завжди

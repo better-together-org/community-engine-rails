@@ -1,15 +1,15 @@
 <section id="<%= dom_id(plan, :grants) %>" class="card mt-4" aria-labelledby="<%= dom_id(plan, :grants_title) %>">
-  <div class="card-header"><h2 id="<%= dom_id(plan, :grants_title) %>" class="h5 mb-0"><%= t('better_together.billing.plan_grants.title') %></h2></div>
+  <div class="card-header"><h2 id="<%= dom_id(plan, :grants_title) %>" class="h5 mb-0"><%= t("better_together.billing.plan_grants.#{plan.is_a?(BetterTogether::Billing::Product) ? 'product_title' : 'title'}") %></h2></div>
   <div class="card-body">
-    <p class="text-body-secondary"><%= t('better_together.billing.plan_grants.intro') %></p>
+    <p class="text-body-secondary"><%= t("better_together.billing.plan_grants.#{plan.is_a?(BetterTogether::Billing::Product) ? 'product_intro' : 'intro'}") %></p>
 
-    <% if plan.plan_grants.any? %>
+    <% if plan.included_grants.any? %>
       <ul id="<%= dom_id(plan, :grants_list) %>" class="list-group mb-4">
-        <% plan.plan_grants.each do |grant| %>
+        <% plan.included_grants.each do |grant| %>
           <li id="<%= dom_id(grant) %>" class="list-group-item d-flex justify-content-between align-items-center">
             <span><%= billing_plan_grant_summary(grant) %></span>
             <% if grant.kind == 'quota_allowance' && BetterTogether::Quotas::Type.find(grant.parameters['quota_type']).unit == :bytes %>
-              <%= form_with url: billing_plan_plan_grant_path(plan, grant, locale: I18n.locale), method: :patch, id: dom_id(grant, :edit_form),
+              <%= form_with url: billing_grant_path(plan, grant, locale: I18n.locale), method: :patch, id: dom_id(grant, :edit_form),
                             class: 'd-flex gap-2 ms-auto me-2', data: { turbo_confirm: billing_plan_grant_confirm(plan, :edit_confirm) } do %>
                 <%= select_tag :amount, options_for_select(billing_storage_step_options(grant.parameters['amount']), grant.parameters['amount'].to_i),
                                id: dom_id(grant, :amount), class: 'form-select form-select-sm w-auto',
@@ -17,7 +17,7 @@
                 <%= submit_tag t('globals.save'), class: 'btn btn-outline-primary btn-sm', id: dom_id(grant, :save_btn), name: nil %>
               <% end %>
             <% end %>
-            <%= button_to t('better_together.billing.plan_grants.remove'), billing_plan_plan_grant_path(plan, grant, locale: I18n.locale), method: :delete,
+            <%= button_to t('better_together.billing.plan_grants.remove'), billing_grant_path(plan, grant, locale: I18n.locale), method: :delete,
                           class: 'btn btn-outline-danger btn-sm', id: dom_id(grant, :remove_btn),
                           form: { data: { turbo_confirm: billing_plan_grant_confirm(plan, :remove_confirm) } } %>
           </li>
@@ -29,7 +29,7 @@
 
     <div class="row g-4">
       <div class="col-lg-4">
-        <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-role-form',
+        <%= form_with url: billing_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-role-form',
                       data: { turbo_confirm: billing_plan_grant_confirm(plan, :add_confirm) } do %>
           <%= hidden_field_tag :kind, 'membership_role' %>
           <h3 class="h6"><%= t('better_together.billing.plan_grants.add_role') %></h3>
@@ -47,7 +47,7 @@
         <% end %>
       </div>
       <div class="col-lg-4">
-        <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-feature-form',
+        <%= form_with url: billing_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-feature-form',
                       data: { turbo_confirm: billing_plan_grant_confirm(plan, :add_confirm) } do %>
           <%= hidden_field_tag :kind, 'feature_access' %>
           <h3 class="h6"><%= t('better_together.billing.plan_grants.add_feature') %></h3>
@@ -64,7 +64,7 @@
         <% size_types, count_types = quota_types %>
         <% if size_types.any? %>
           <%# Storage is chosen from the same sizes as the platform quota defaults, and kept in bytes. %>
-          <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-storage-form', class: 'mb-4',
+          <%= form_with url: billing_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-storage-form', class: 'mb-4',
                         data: { turbo_confirm: billing_plan_grant_confirm(plan, :add_confirm) } do %>
             <%= hidden_field_tag :kind, 'quota_allowance' %>
             <h3 class="h6"><%= t('better_together.billing.plan_grants.add_storage') %></h3>
@@ -79,7 +79,7 @@
           <% end %>
         <% end %>
         <% if count_types.any? %>
-          <%= form_with url: billing_plan_plan_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-quota-form',
+          <%= form_with url: billing_grants_path(plan, locale: I18n.locale), method: :post, id: 'billing-grant-quota-form',
                         data: { turbo_confirm: billing_plan_grant_confirm(plan, :add_confirm) } do %>
             <%= hidden_field_tag :kind, 'quota_allowance' %>
             <h3 class="h6"><%= t('better_together.billing.plan_grants.add_quota') %></h3>

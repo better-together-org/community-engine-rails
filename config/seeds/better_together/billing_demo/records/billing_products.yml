@@ -1,0 +1,7 @@
+version: '2.0'
+type: billing_product
+records:
+- key: demo-storage-top-up
+  attributes: { active: true, listed: true, lifetime: fixed_term, term_length: 12, term_unit: month }
+  translations:
+    en: { name: "[Demo] Storage top-up", summary: "5 GB more storage for a year.", description: "Bought once, in any number, and lasts twelve months." }

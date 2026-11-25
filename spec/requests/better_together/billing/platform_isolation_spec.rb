@@ -22,7 +22,7 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
   # The record each id-bearing route is asked for, from the seeds of one platform.
   let(:record_for) do
     { 'better_together/billing/plans' => :plan, 'better_together/billing/catalog' => :plan,
-      'better_together/billing/orders' => :order, 'better_together/billing/sales' => :order,
+      'better_together/billing/products' => :product, 'better_together/billing/orders' => :order, 'better_together/billing/sales' => :order,
       'better_together/billing/credit_accounts' => :account, 'better_together/billing/subscriptions' => :term,
       'better_together/billing/subscribers' => :term, 'better_together/billing/events' => :event,
       'better_together/billing/sale_refund_requests' => :refund_request }
@@ -41,6 +41,7 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
   def seed(platform, tag) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     person = steward.person
     plan = create(:better_together_billing_plan, platform:, name: "Plan #{tag}", listed: true)
+    product = create(:better_together_billing_product, platform:, name: "Product #{tag}", listed: true)
     order = create(:better_together_billing_order, :awaiting_payment, platform:, buyer: person, total_cents: 4500)
     payment = create(:better_together_billing_payment, order:, platform_id: platform.id, processor: 'cash', status: 'pending')
     offline = order.offline_payments.create!(platform_id: platform.id, payment:, processor: 'cash')
@@ -55,7 +56,7 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
     refund_request = BetterTogether::Billing::RefundRequest.new(order:, platform_id: platform.id, requester: person, currency: order.currency,
                                                                 reason: 'other', amount_cents: 1000, details: "Refund #{tag}")
     refund_request.save!(validate: false)
-    { plan:, order:, offline:, promotion:, event:, refund_request:, term: seed_term(platform, plan),
+    { plan:, product:, order:, offline:, promotion:, event:, refund_request:, term: seed_term(platform, plan),
       account: credit.find_account(platform:, holder:, currency: 'USD'),
       requirement: create(:better_together_billing_agreement_requirement, platform:),
       report: BetterTogether::Metrics::BillingReport.create!(platform:, creator: person, filters: { 'owner' => 'all', 'interval' => 'month' }) }

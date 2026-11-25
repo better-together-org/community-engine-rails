@@ -1,0 +1,48 @@
+{
+  "name": "billing_price_form",
+  "device": "desktop",
+  "url": "/en/billing/products/6c44cb35-1bbd-4d32-b5ef-13f78c493853/prices/new",
+  "title": "Add a price | Storage top-up | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_products",
+  "flow": "billing_price_form",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_products_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-price-immutable-note",
+      "title": "A price never changes once it is added",
+      "bullets": [
+        "A price never changes once it is added"
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 232.0,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 256.0,
+        "center_x": 720.0,
+        "center_y": 244.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 232.0,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 256.0,
+        "center_x": 720.0,
+        "center_y": 244.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 276.0,
+        "width": 380,
+        "height": 164,
+        "score": 1201.0
+      }
+    }
+  ]
+}

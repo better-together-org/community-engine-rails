@@ -8,7 +8,18 @@
 
   <% if @plans.any? %>
     <%= render 'better_together/billing/catalog/plans', plans: @plans %>
-  <% else %>
+  <% end %>
+
+  <% if @products.any? %>
+    <h2 id="billing-catalog-products-heading" class="h4 mt-5 mb-3"><%= t('better_together.billing.catalog.products_heading') %></h2>
+    <div id="billing-catalog-products" class="row g-4">
+      <% @products.each do |product| %>
+        <div class="col-md-6 col-lg-4"><%= render 'better_together/billing/catalog/product_card', product: %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @plans.none? && @products.none? %>
     <p id="billing-catalog-empty" class="text-body-secondary"><%= t('better_together.billing.catalog.none') %></p>
   <% end %>
 </div>

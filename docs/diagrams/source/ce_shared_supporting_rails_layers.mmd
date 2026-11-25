@@ -219,6 +219,20 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::PersonLookup, Billing::TabFrameLayout, ConsentCookieSync +5
     }
+    class BetterTogether__Billing__PricesController["Billing::PricesController"] {
+      <<Controller>>
+      models: Billing::Price
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__ProductGrantsController["Billing::ProductGrantsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__ProductsController["Billing::ProductsController"] {
+      <<Controller>>
+      models: Billing::Product
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
     class BetterTogether__Billing__RefundRequestsController["Billing::RefundRequestsController"] {
       <<Controller>>
       models: Billing::RefundRequest
@@ -541,7 +555,7 @@ classDiagram
       <<Model>>
       table: better_together_billing_prices
       translates: label
-      concerns: Billing::PlatformBound, Billing::Pricing, Billing::Purchasable, Translatable
+      concerns: Billing::MajorAmount, Billing::PlatformBound, Billing::Pricing, Billing::Purchasable +1
       weak refs: owner: string_translations
     }
     class BetterTogether__Billing__Product["Billing::Product"] {
@@ -944,6 +958,11 @@ classDiagram
   BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderPaymentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__PricesController ..> BetterTogether__Billing__Price : manages
+  BetterTogether__Billing__PricesController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__ProductGrantsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__ProductsController ..> BetterTogether__Billing__Product : manages
+  BetterTogether__Billing__ProductsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__RefundRequestsController ..> BetterTogether__Billing__RefundRequest : manages
   BetterTogether__Billing__RefundRequestsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__SaleRefundRequestsController --|> BetterTogether__ApplicationController
