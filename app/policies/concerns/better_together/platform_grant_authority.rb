@@ -16,12 +16,12 @@ module BetterTogether
 
     private
 
-    def grant_authority_for?(target)
+    def grant_authority_for?(target, scope: GRANT_SCOPE)
       return false unless agent.present? && target.present?
       return false if target.remote?
 
       edges = governing_edges(target)
-      return operator_steward_through?(edges) if edges.any?
+      return operator_steward_through?(edges, scope) if edges.any?
       return manages_platform?(target) if self_governing?(target)
 
       manages_platform?(grant_host_platform)
@@ -31,11 +31,11 @@ module BetterTogether
       PlatformAssociation.authority.for_managed(target).in_force.select(&:effective?)
     end
 
-    def operator_steward_through?(edges)
+    def operator_steward_through?(edges, scope)
       edges.any? do |edge|
         operator = edge.operator_platform
         operator.present? && !operator.remote? &&
-          edge.effective_scopes.include?(GRANT_SCOPE) && manages_platform?(operator)
+          edge.effective_scopes.include?(scope) && manages_platform?(operator)
       end
     end
 

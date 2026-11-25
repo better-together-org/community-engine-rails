@@ -7,6 +7,9 @@ module BetterTogether
   class PlatformDomainPolicy < ApplicationPolicy
     include PlatformGrantAuthority
 
+    # Association scope an operator needs to administer a managed platform's domains.
+    OPERATOR_SCOPE = 'manage_settings'
+
     def index?
       platform_manager_for_target_platform?
     end
@@ -33,7 +36,7 @@ module BetterTogether
 
     # The governing operator may activate domains and use any hostname; a steward may only request.
     def operator?
-      grant_authority_for?(target_platform)
+      grant_authority_for?(target_platform, scope: OPERATOR_SCOPE)
     end
 
     private
@@ -46,7 +49,8 @@ module BetterTogether
       return false unless agent.present? && target_platform.present?
 
       agent.permitted_to?('manage_platform', target_platform) ||
-        agent.permitted_to?('manage_platform_settings', target_platform)
+        agent.permitted_to?('manage_platform_settings', target_platform) ||
+        operator?
     end
   end
 end
