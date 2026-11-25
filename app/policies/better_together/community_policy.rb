@@ -11,7 +11,6 @@ module BetterTogether
     def show?
       public_or_member_scoped_community?(record) ||
         member_of_community? ||
-        creator_of_community? ||
         manages_community? ||
         invitation? ||
         valid_invitation_token?
@@ -65,7 +64,6 @@ module BetterTogether
       return false unless user.present?
 
       member_of_community? ||
-        creator_of_community? ||
         permitted_to?('manage_community_members', record) ||
         manages_community?
     end
@@ -128,11 +126,6 @@ module BetterTogether
       BetterTogether::PersonCommunityMembership.current.exists?(member: agent, joinable: record)
     end
 
-    # Check if the user is the creator of this specific community
-    def creator_of_community?
-      creator_of?(record)
-    end
-
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         platform_scoped.order(updated_at: :desc).where(permitted_query)
@@ -156,8 +149,6 @@ module BetterTogether
                 .where(BetterTogether::PersonCommunityMembership.current_condition)
                 .project(:joinable_id)
             )
-          ).or(
-            communities_table[:creator_id].eq(agent.id)
           )
         end
 

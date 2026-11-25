@@ -4,21 +4,21 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::HostJobs::Summary do
   let(:now) { Time.zone.parse('2026-11-17 12:00:00') }
-  let(:queue_summaries) do
+  let(:queues) do
     [
-      Sidekiq::Stats::QueueSummary.new(name: 'default', size: 3, latency: 12.5, paused: false),
-      Sidekiq::Stats::QueueSummary.new(name: 'mailers', size: 7, latency: 90.0, paused: false)
+      instance_double(Sidekiq::Queue, name: 'default', size: 3, latency: 12.5),
+      instance_double(Sidekiq::Queue, name: 'mailers', size: 7, latency: 90.0)
     ]
   end
   let(:stats) do
-    instance_double(Sidekiq::Stats, failed: 42, retry_size: 5, dead_size: 2, scheduled_size: 4,
-                                    queue_summaries:)
+    instance_double(Sidekiq::Stats, failed: 42, retry_size: 5, dead_size: 2, scheduled_size: 4)
   end
   let(:run_ats) { [now - 2.minutes, now - 15.minutes, now - 45.minutes] }
   let(:process_count) { 2 }
 
   before do
     allow(Sidekiq::Stats).to receive(:new).and_return(stats)
+    allow(Sidekiq::Queue).to receive(:all).and_return(queues)
     work_set = run_ats.map { |run_at| ['proc', 'tid', instance_double(Sidekiq::Work, run_at:)] }
     allow(Sidekiq::WorkSet).to receive(:new).and_return(work_set)
     allow(Sidekiq::ProcessSet).to receive(:new).with(false).and_return(instance_double(Sidekiq::ProcessSet, size: process_count))

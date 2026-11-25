@@ -8,7 +8,7 @@ flowchart TD
   r0 -- yes --> r0o(["allow"])
   class r0o out_allow
   r0 -- no --> r1
-  r1{"membership: Is the actor an active member, the creator, or holder of an invitation or valid token?"}
+  r1{"membership: Is the actor an active member, or holder of an invitation or valid token?"}
   r1 -- yes --> r1o(["allow"])
   class r1o out_allow
   r1 -- no --> r2

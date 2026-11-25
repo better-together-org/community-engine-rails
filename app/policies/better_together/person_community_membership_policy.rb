@@ -83,13 +83,8 @@ module BetterTogether
       community = record.try(:joinable)
       return false unless community
 
-      creator_of_community?(community) ||
-        permitted_to?('manage_community_members', community) ||
+      permitted_to?('manage_community_members', community) ||
         permitted_to?('manage_community_roles', community)
-    end
-
-    def creator_of_community?(community)
-      community.respond_to?(:creator_id) && agent.present? && community.creator_id == agent.id
     end
 
     def self_service_membership_create?

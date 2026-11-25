@@ -112,8 +112,13 @@ RSpec.describe BetterTogether::CommunityPolicy do
       let(:user) { create(:better_together_user) }
       let(:community) { create(:better_together_community, creator: user.person) }
 
-      it 'allows viewing members' do
+      it 'allows viewing members through the Organizer membership' do
         expect(policy.view_members?).to be true
+      end
+
+      it 'denies viewing members once the membership is gone' do
+        community.person_community_memberships.where(member: user.person).destroy_all
+        expect(policy.view_members?).to be false
       end
     end
 
@@ -261,8 +266,13 @@ RSpec.describe BetterTogether::CommunityPolicy do
       let(:user) { create(:better_together_user) }
       let(:community) { create(:better_together_community, privacy: 'private', creator: user.person) }
 
-      it 'allows viewing' do
+      it 'allows viewing through the Organizer membership' do
         expect(policy.show?).to be true
+      end
+
+      it 'denies viewing once the membership is gone' do
+        community.person_community_memberships.where(member: user.person).destroy_all
+        expect(policy.show?).to be false
       end
     end
 
