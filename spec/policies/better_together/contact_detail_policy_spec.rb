@@ -95,12 +95,6 @@ RSpec.describe BetterTogether::ContactDetailPolicy, type: :policy do
     let(:community) { create(:better_together_community, creator: owner.person, privacy: 'private') }
     let(:detail) { community.contact_detail }
 
-    before do
-      role = BetterTogether::Role.find_default('community_organizer', platform: host)
-      BetterTogether::PersonCommunityMembership.create!(joinable: community, member: owner.person, role:,
-                                                        status: 'active')
-    end
-
     %i[create? update? destroy?].each do |action|
       it "allows whoever may update the community for #{action}" do
         expect(described_class.new(owner, detail).public_send(action)).to be true

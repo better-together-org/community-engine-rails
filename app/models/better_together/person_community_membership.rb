@@ -18,6 +18,8 @@ module BetterTogether
     enum :status, STATUS_LEVELS, default: 'pending'
 
     include MembershipLifecycle
+    # Set for system-created memberships (creator grants, backfills) where a notice would be noise.
+    attr_accessor :skip_notifications
 
     after_create_commit :notify_member_of_creation_if_active
     after_commit :expire_member_permission_cache
@@ -39,6 +41,8 @@ module BetterTogether
     private
 
     def notify_member_of_creation_if_active
+      return if skip_notifications
+
       MembershipNotificationService.new(self).notify_creation_if_active
     end
 
@@ -74,6 +78,8 @@ module BetterTogether
     # rubocop:enable Metrics/PerceivedComplexity
 
     def notify_member_of_removal
+      return if skip_notifications || destroyed_by_association
+
       MembershipNotificationService.new(self).notify_removal(@member_data_for_notification)
     end
 

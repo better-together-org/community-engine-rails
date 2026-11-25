@@ -7,7 +7,8 @@ module AccessContractProbe
   # records, and says which persona and state pairs can occur together.
   module Resources
     def self.build(world)
-      [CommunityProbe, MembershipProbe, InvitationProbe, PersonProbe, BlockProbe, ContactDetailProbe]
+      [CommunityProbe, MembershipProbe, InvitationProbe, PersonProbe, BlockProbe, ContactDetailProbe, JoatuOfferProbe,
+       JoatuRequestProbe]
         .to_h do |klass|
         probe = klass.new(world)
         [probe.key, probe]
@@ -254,6 +255,54 @@ module AccessContractProbe
 
         persona != 'record_owner'
       end
+    end
+
+    # Joatu records in each privacy state, all created by one owner who has blocked the blocked_user persona.
+    # Community personas are plain platform members here: Joatu is platform scoped, not community scoped.
+    class JoatuBase < Base
+      def owner_for(_state) = @owner
+
+      def record_for(target, state)
+        return self.class::MODEL.constantize.new(creator: @owner.person, platform: world.host) if target == :new
+
+        @records.fetch(state)
+      end
+
+      private
+
+      def build_fixtures
+        @owner = world.new_user
+        BetterTogether::PersonBlock.create!(blocker: @owner.person, blocked: world.user_for('blocked_user').person,
+                                            platform: world.host)
+        @records = %w[public community private].to_h do |privacy|
+          record = create(self.class::FACTORY, creator: @owner.person, privacy: 'private', platform: world.host)
+          [privacy, make_privacy(record, privacy)]
+        end
+      end
+    end
+
+    class JoatuOfferProbe < JoatuBase
+      KEY = 'joatu_offer'
+      POLICY = 'BetterTogether::Joatu::OfferPolicy'
+      MODEL = 'BetterTogether::Joatu::Offer'
+      FACTORY = :better_together_joatu_offer
+      ACTIONS = {
+        'index' => %i[index? class], 'show' => %i[show? subject], 'create' => %i[create? new],
+        'update' => %i[update? subject], 'destroy' => %i[destroy? subject],
+        'respond_with_request' => %i[respond_with_request? subject], 'scope' => :scope
+      }.freeze
+    end
+
+    class JoatuRequestProbe < JoatuBase
+      KEY = 'joatu_request'
+      POLICY = 'BetterTogether::Joatu::RequestPolicy'
+      MODEL = 'BetterTogether::Joatu::Request'
+      FACTORY = :better_together_joatu_request
+      ACTIONS = {
+        'index' => %i[index? class], 'show' => %i[show? subject], 'create' => %i[create? new],
+        'update' => %i[update? subject], 'destroy' => %i[destroy? subject],
+        'respond_with_offer' => %i[respond_with_offer? subject], 'scope' => :scope
+      }.freeze
     end
 
     # The contact detail of a public person and of a private person.
