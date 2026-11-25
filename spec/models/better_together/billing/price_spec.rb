@@ -62,4 +62,40 @@ RSpec.describe BetterTogether::Billing::Price do
 
     expect([price.fulfilled_by_order?, price.renews?, price.extra?, price.plan_line?]).to eq([true, false, false, false])
   end
+
+  describe 'recurring prices' do
+    it 'is one time unless it says otherwise, with no interval' do
+      price = create(:better_together_billing_price, product:)
+
+      expect(price).to have_attributes(kind: 'one_time', interval: nil, interval_count: 1, billing_interval: 'one_time')
+      expect(price).not_to be_recurring
+    end
+
+    it 'recurs every interval_count intervals and reports its interval' do
+      price = create(:better_together_billing_price, product:, kind: 'recurring', interval: 'month', interval_count: 3)
+
+      expect(price).to be_recurring
+      expect(price.billing_interval).to eq('month')
+    end
+
+    it 'refuses a recurring price with no interval, an unknown interval, or a one-time price with one' do
+      expect(build(:better_together_billing_price, product:, kind: 'recurring')).not_to be_valid
+      expect(build(:better_together_billing_price, product:, kind: 'recurring', interval: 'fortnight')).not_to be_valid
+      expect(build(:better_together_billing_price, product:, interval: 'month')).not_to be_valid
+    end
+
+    it 'cannot change its kind or interval once made' do
+      price = create(:better_together_billing_price, product:, kind: 'recurring', interval: 'month')
+
+      expect(price.update(interval: 'year')).to be(false)
+      expect(price.update(kind: 'one_time', interval: nil)).to be(false)
+    end
+
+    it 'keeps a lookup key unique on its platform, and any number may have none' do
+      create(:better_together_billing_price, product:, lookup_key: 'storage-5gb')
+
+      expect(build(:better_together_billing_price, product:, lookup_key: 'storage-5gb')).not_to be_valid
+      expect(build(:better_together_billing_price, product:, lookup_key: nil)).to be_valid
+    end
+  end
 end

@@ -723,7 +723,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_25_020000) do
     t.boolean "active", default: true, null: false
     t.datetime "archived_at"
     t.string "processor_price_id"
+    t.string "kind", default: "one_time", null: false
+    t.string "interval"
+    t.integer "interval_count", default: 1, null: false
+    t.string "lookup_key"
     t.index ["id", "platform_id"], name: "idx_bt_billing_prices_id_platform", unique: true
+    t.index ["platform_id", "lookup_key"], name: "idx_bt_billing_prices_lookup_key", unique: true, where: "(lookup_key IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_prices_platform"
     t.index ["product_id"], name: "idx_bt_billing_prices_product"
   end

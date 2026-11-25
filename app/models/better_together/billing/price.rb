@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Billing
-    # What one product costs: an amount in one currency. This is the purchasable a line item points at, taking its name and
+    # What one product costs: an amount in one currency, once or recurring. This is the purchasable a line item points at, taking its name and
     # tax category from its product. A price never changes once made: a different amount is a new price, and the old one is
     # archived (as a payment processor requires), so what an order recorded always matches a price that existed.
     class Price < ApplicationRecord
@@ -19,10 +19,18 @@ module BetterTogether
 
       belongs_to :product, class_name: 'BetterTogether::Billing::Product', inverse_of: :prices
 
+      KINDS = %w[one_time recurring].freeze
+      INTERVALS = %w[month year].freeze
+
       attr_readonly :product_id
 
+      validates :kind, inclusion: { in: KINDS }
+      validates :interval, inclusion: { in: INTERVALS }, if: :recurring?
+      validates :interval, absence: true, unless: :recurring?
+      validates :interval_count, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 12 }
+      validates :lookup_key, uniqueness: { scope: :platform_id }, allow_nil: true
       validate :same_platform_as_product
-      validate :amount_and_currency_unchanged, on: :update
+      validate :terms_unchanged, on: :update
 
       before_validation :take_platform_from_product, on: :create
 
@@ -63,8 +71,8 @@ module BetterTogether
       # What checkout reads, so a price is bought like a plan: one-off, never an extra on a plan, paid by any way the platform
       # settles itself (an online processor for products arrives with the processor contract).
       def name = purchasable_description
-      def billing_interval = 'one_time'
-      def recurring? = false
+      def billing_interval = recurring? ? interval : 'one_time'
+      def recurring? = kind == 'recurring'
       def add_on? = false
       def payment_methods = Billing.processor_names.map(&:to_s).select { |method| Billing.local_method?(method) }
 
@@ -74,8 +82,10 @@ module BetterTogether
         self.platform_id ||= product&.platform_id
       end
 
-      def amount_and_currency_unchanged
-        errors.add(:base, :price_is_immutable) if amount_cents_changed? || currency_changed?
+      def terms_unchanged
+        return unless amount_cents_changed? || currency_changed? || kind_changed? || interval_changed? || interval_count_changed?
+
+        errors.add(:base, :price_is_immutable)
       end
 
       def same_platform_as_product

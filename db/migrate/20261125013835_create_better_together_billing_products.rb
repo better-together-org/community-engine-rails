@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# A one-off item a platform sells (a storage top-up, a one-time add-on, later tickets and other goods), and its prices.
+# A thing a platform sells (a plan, a storage top-up, an extra, later tickets and other goods), and its prices. A price is one
+# amount in one currency, either once or recurring every `interval_count` `interval`s.
 # The product is the thing sold; a price is what a line item points at. `type` names a subclass from an allow-list, and
 # `lifetime` says whether what a purchase gives ends when it is used up or after a term. Guarded so a re-run is a no-op.
 class CreateBetterTogetherBillingProducts < ActiveRecord::Migration[7.2]
@@ -61,8 +62,14 @@ class CreateBetterTogetherBillingProducts < ActiveRecord::Migration[7.2]
       t.boolean :active, null: false, default: true
       t.datetime :archived_at
       t.string :processor_price_id
+      t.string :kind, null: false, default: 'one_time'
+      t.string :interval
+      t.integer :interval_count, null: false, default: 1
+      t.string :lookup_key
     end
 
     add_index :better_together_billing_prices, %i[id platform_id], unique: true, name: 'idx_bt_billing_prices_id_platform'
+    add_index :better_together_billing_prices, %i[platform_id lookup_key], unique: true, where: 'lookup_key IS NOT NULL',
+                                                                           name: 'idx_bt_billing_prices_lookup_key'
   end
 end
