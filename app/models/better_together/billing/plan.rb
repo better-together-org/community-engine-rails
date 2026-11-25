@@ -75,6 +75,7 @@ module BetterTogether
       validate :eligible_owner_types_are_billable
       validate :pricing_tier_within_known_values
       validate :add_on_is_a_plain_extra
+      validate :tax_category_on_same_platform
 
       before_validation :clear_targets_unless_add_on
 
@@ -221,6 +222,11 @@ module BetterTogether
       # Whether any order line already points at this plan; a change of kind would rewrite what those buyers bought.
       def referenced_by_order_lines?
         BetterTogether::Billing::LineItem.exists?(purchasable: self)
+      end
+
+      # A tax category from another platform would be copied onto an order line, whose key ties it to this platform.
+      def tax_category_on_same_platform
+        errors.add(:tax_category, :tax_category_other_platform) if tax_category && tax_category.platform_id != platform_id
       end
 
       def pricing_tier_within_known_values
