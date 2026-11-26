@@ -8,7 +8,8 @@ RSpec.describe BetterTogether::Billing::Checkout::TaxPreview do
   include_context 'with orders fixtures'
 
   let(:plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform), currency: 'USD',
+                                           amount_cents: 2500)
   end
   let(:address) { create_billing_address_for(create(:better_together_person)) }
   let!(:registration) { create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA') }

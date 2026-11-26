@@ -2,21 +2,20 @@
 
 require 'rails_helper'
 
-# Extras on a plan's order: add-ons are one-time, grant-free, paid by local methods, and never bought alone.
+# Extras on a plan's order: a product's price that needs a plan, paid by local methods.
 RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
   include BetterTogether::BillingAddressHelpers
 
   include_context 'with orders fixtures'
   include_context 'with builtin billing processors'
   include_context 'with billing switched on'
+  include_context 'with billing extras'
 
   let(:locale) { :en }
   let(:member) { find_or_create_test_user("addon-member-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#') }
-  let(:plan_attrs) do
-    { processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time', currency: 'USD' }
-  end
+  let(:plan_attrs) { { processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'month', currency: 'USD' } }
   let(:plan) { create(:better_together_billing_plan, :unlinked, **plan_attrs, amount_cents: 2500) }
-  let(:add_on) { create(:better_together_billing_plan, :unlinked, **plan_attrs, amount_cents: 700, add_on: true) }
+  let(:add_on) { create_extra(amount_cents: 700, needs: :any_plan) }
 
   before do
     host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
@@ -42,7 +41,7 @@ RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
 
   it 'tells the buyer when a ticked add-on is no longer offered' do
     gone = add_on
-    gone.update!(active: false)
+    gone.archive!
 
     get new_path(add_on_ids: [gone.id])
 
@@ -86,19 +85,10 @@ RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
     end
   end
 
-  it 'does not let an add-on be bought on its own' do
-    get new_path(plan_id: add_on.id)
+  it 'does not let an extra be bought on its own by someone who holds no plan' do
+    get better_together.new_billing_checkout_path(locale:, price_id: add_on.id)
 
     expect(response).to have_http_status(:not_found)
-  end
-
-  it 'leaves an add-on out of the public catalog and offers' do
-    policy = BetterTogether::Billing::PlanPolicy.new(member, add_on)
-    Current.platform = host_platform
-
-    expect([policy.catalog_show?, policy.offer?]).to eq([false, false])
-  ensure
-    Current.platform = nil
   end
 
   it 'places one order with a line for the plan and one for the add-on' do
@@ -116,19 +106,10 @@ RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
     expect(order.line_items.map(&:purchasable)).to contain_exactly(plan, add_on)
   end
 
-  it 'hides an add-on the buyer is not in the audience for' do
-    add_on.update!(restricted_to_members: true)
+  it 'hides an extra the buyer is not in the audience for' do
+    add_on.product.update!(restricted_to_members: true)
     get new_path
 
     expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(add_on, :add_on))
-  end
-
-  describe 'Plan rules' do
-    it 'refuses a recurring add-on' do
-      recurring = build(:better_together_billing_plan, platform: host_platform, add_on: true, billing_interval: 'month')
-
-      expect(recurring).not_to be_valid
-      expect(recurring.errors.details.values.flatten.pluck(:error)).to include(:add_on_cannot_renew)
-    end
   end
 end

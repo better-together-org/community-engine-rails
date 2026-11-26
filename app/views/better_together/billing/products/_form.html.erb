@@ -64,6 +64,23 @@
     <% end %>
   </fieldset>
 
+  <% plan_choices = billing_owner.billing_plans.sold_by_platform.primary.order(:identifier) %>
+  <fieldset class="mb-4" id="billing-product-requirements">
+    <legend class="h6"><%= t('better_together.billing.products.requirements_legend') %></legend>
+    <div class="form-text mb-2" id="billing-product-requirements-hint"><%= t('better_together.billing.products.requirements_hint') %></div>
+    <div class="form-check">
+      <%= form.check_box :needs_any_plan, class: 'form-check-input', id: 'billing_product_needs_any_plan' %>
+      <%= form.label :needs_any_plan, t('better_together.billing.products.field_needs_any_plan'), class: 'form-check-label' %>
+    </div>
+    <% plan_choices.each do |plan| %>
+      <div class="form-check">
+        <%= check_box_tag 'billing_product[needed_plan_ids][]', plan.id, product.needed_plan_ids.include?(plan.id), class: 'form-check-input',
+                                                                                                            id: dom_id(plan, :needed_by_product) %>
+        <%= label_tag dom_id(plan, :needed_by_product), plan.name, class: 'form-check-label' %>
+      </div>
+    <% end %>
+  </fieldset>
+
   <div class="d-flex gap-2" id="billing-product-form-actions">
     <%= form.submit t("better_together.billing.products.#{persisted ? 'update' : 'create'}_submit"), id: 'billing-product-submit', class: 'btn btn-primary' %>
     <%= link_to t('globals.cancel'), persisted ? billing_product_path(product, locale: I18n.locale) : billing_products_path(locale: I18n.locale),

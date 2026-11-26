@@ -8,8 +8,8 @@ RSpec.describe BetterTogether::Billing::Plans::Audience do
   let(:free) do
     { processor: nil, processor_price_id: nil, processor_product_id: nil, amount_cents: 0, currency: 'USD', accepted_payment_methods: [] }
   end
-  let(:member_plan) { create(:better_together_billing_plan, :one_time, **free) }
-  let(:perk_plan) { create(:better_together_billing_plan, :one_time, **free) }
+  let(:member_plan) { create(:better_together_billing_plan, **free) }
+  let(:perk_plan) { create(:better_together_billing_plan, **free) }
 
   def audience(person) = described_class.call(platform: host_platform, person:)
 

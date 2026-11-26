@@ -26,7 +26,7 @@ module BetterTogether
         def initialize(dependent:, person:, in_order: [])
           @dependent = dependent
           @person = person
-          @in_order = Array(in_order)
+          @in_order = Array(in_order).flat_map { |item| item.is_a?(Price) ? [item, item.product] : [item] }
         end
 
         def call

@@ -12,8 +12,8 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
 
   let(:locale) { I18n.default_locale }
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                           currency: 'USD', amount_cents: 2500)
   end
 
   def one_time_agreement = BetterTogether::Agreement.billing_record('one_time_purchase_agreement', platform: host_platform)
@@ -29,14 +29,14 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
   end
 
   it 'exposes the method choice' do
-    get "/#{locale}/billing/checkout/new", params: { plan_id: cash_plan.id }
+    get "/#{locale}/billing/checkout/new", params: { price_id: cash_plan.id }
 
     expect_ids('billing-checkout-page', 'billing-checkout-summary', 'billing-checkout-method-form', 'billing-checkout-methods',
                'billing-checkout-method-cash', 'billing-checkout-continue-btn')
   end
 
   it 'exposes the review and accept step' do
-    get "/#{locale}/billing/checkout/new", params: { plan_id: cash_plan.id, payment_method: 'cash' }
+    get "/#{locale}/billing/checkout/new", params: { price_id: cash_plan.id, payment_method: 'cash' }
 
     expect_ids('billing-checkout-form', 'billing-agreement-review', 'billing-agreement-accept-one_time_purchase_agreement',
                'billing-agreement-accept-offline_payment_terms', 'billing-agreement-view-one_time_purchase_agreement',
@@ -45,10 +45,10 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
   end
 
   it 'exposes the agreements and place-order button for a free plan, with no method choice' do
-    free_plan = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: [], billing_interval: 'one_time',
-                                                                 currency: 'USD', amount_cents: 0)
+    free_plan = create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                                       currency: 'USD', amount_cents: 0)
 
-    get "/#{locale}/billing/checkout/new", params: { plan_id: free_plan.id }
+    get "/#{locale}/billing/checkout/new", params: { price_id: free_plan.id }
 
     expect_ids('billing-checkout-page', 'billing-checkout-summary', 'billing-checkout-form', 'billing-agreement-review',
                'billing-checkout-place-btn')
@@ -58,7 +58,7 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
   it 'exposes the reason a method is unavailable' do
     host_platform.billing_processor_settings.find_by(processor: 'cash').update!(purposes: %w[ticket])
 
-    get "/#{locale}/billing/checkout/new", params: { plan_id: cash_plan.id }
+    get "/#{locale}/billing/checkout/new", params: { price_id: cash_plan.id }
 
     expect_ids('billing-checkout-method-cash-reason', 'billing-checkout-no-methods')
   end
@@ -66,13 +66,13 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
   it 'exposes the not-ready message instead of the form when the agreements are drafts' do
     BetterTogether::Billing::PurchaseAgreementSeeds.call(host_platform).each_value { |agreement| agreement.update!(lifecycle_state: 'draft') }
 
-    get "/#{locale}/billing/checkout/new", params: { plan_id: cash_plan.id, payment_method: 'cash' }
+    get "/#{locale}/billing/checkout/new", params: { price_id: cash_plan.id, payment_method: 'cash' }
 
     expect_ids('billing-checkout-not-ready')
   end
 
   it 'exposes the error message when the order is refused' do
-    post "/#{locale}/billing/checkout", params: { plan_id: cash_plan.id, payment_method: 'cash', accepted_agreement_ids: [] }
+    post "/#{locale}/billing/checkout", params: { price_id: cash_plan.id, payment_method: 'cash', accepted_agreement_ids: [] }
 
     expect_ids('billing-checkout-error')
   end

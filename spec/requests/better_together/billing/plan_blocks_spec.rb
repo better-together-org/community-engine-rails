@@ -68,12 +68,31 @@ RSpec.describe 'Plan blocks on a page', :no_auth do # rubocop:disable RSpec/Desc
 
     it 'shows no more plans than the limit' do
       sub_plan.update!(listed: true)
-      create(:better_together_billing_plan, :one_time, listed: true, platform: host_platform, processor: nil, processor_price_id: nil,
-                                                       processor_product_id: nil, amount_cents: 0, accepted_payment_methods: [])
+      create(:better_together_billing_plan, listed: true, platform: host_platform, processor: nil, processor_price_id: nil,
+                                            processor_product_id: nil, amount_cents: 0, accepted_payment_methods: [])
       block.update!(item_limit: 1)
 
       expect(show_page.call.scan('billing-catalog-plan').size).to be <= 2
       expect(show_page.call.scan(%(class="card h-100 billing-catalog-plan")).size).to eq(1)
+    end
+  end
+
+  describe 'the plan button block set to one price of a product' do
+    let(:product) { create(:better_together_billing_product, platform: host_platform, name: 'Storage', active: true) }
+    let(:prices) { [700, 1900].map { |cents| create(:better_together_billing_price, product:, amount_cents: cents, currency: 'CAD') } }
+    let(:chosen) { prices.find { |price| price != product.current_price } }
+    let(:block) { create(:content_plan_button_block, plan_id: '', price_id: chosen.id, display_as: 'card', platform: host_platform) }
+
+    before do
+      prices
+      add_block.call(block)
+    end
+
+    it 'shows the price the block names, not the one the product is currently sold at' do
+      shown = Nokogiri::HTML(show_page.call).at_css("##{dom_id.call(product, :catalog_price)}").text
+
+      expect(shown).to include(format('%.2f', chosen.amount_cents / 100.0))
+      expect(shown).not_to include(format('%.2f', product.current_price.amount_cents / 100.0))
     end
   end
 

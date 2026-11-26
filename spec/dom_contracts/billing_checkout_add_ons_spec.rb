@@ -7,11 +7,12 @@ RSpec.describe 'Billing checkout add-ons DOM contract', type: :request do # rubo
   include_context 'with orders fixtures'
   include_context 'with builtin billing processors'
   include_context 'with billing switched on'
+  include_context 'with billing extras'
 
   let(:member) { find_or_create_test_user("addon-dom-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#') }
   let(:attrs) { { processor: nil, accepted_payment_methods: %w[cash], currency: 'USD' } }
-  let(:plan) { create(:better_together_billing_plan, :unlinked, :one_time, **attrs, amount_cents: 2500) }
-  let(:add_on) { create(:better_together_billing_plan, :unlinked, :one_time, **attrs, amount_cents: 700, add_on: true) }
+  let(:plan) { create(:better_together_billing_plan, :unlinked, **attrs, amount_cents: 2500) }
+  let(:add_on) { create_extra(amount_cents: 700, needs: :any_plan) }
   let(:dom_id) { ->(*args) { ActionView::RecordIdentifier.dom_id(*args) } }
 
   before do

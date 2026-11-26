@@ -6,14 +6,13 @@ require 'rails_helper'
 RSpec.describe 'Billing locked add-ons', :as_user, :js, type: :feature do # rubocop:disable RSpec/DescribeClass
   include_context 'with subscription fixtures'
   include_context 'with billing switched on'
-
-  let(:attrs) { { platform: host_platform, processor: nil, accepted_payment_methods: %w[cash], currency: 'USD' } }
+  include_context 'with billing extras'
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
-    create(:better_together_billing_plan, :unlinked, :one_time, **attrs, add_on: true, amount_cents: 700, name: 'Conference lunch')
+    create_extra(amount_cents: 700, name: 'Conference lunch', needs: :any_plan)
   end
 
   after { Current.platform = nil }

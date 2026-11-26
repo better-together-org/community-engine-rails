@@ -1,6 +1,6 @@
 # Billing Entitlements and Quota Allowances
 
-What being subscribed (or having bought a one-time plan) **gives**: a role, access to a gated feature, or more of a quota. It follows the payment exactly: it comes with it, stays through the grace, goes at the lapse, and returns when the person pays again. **Content is never deleted.**
+What being subscribed (or having bought a product) **gives**: a role, access to a gated feature, or more of a quota. It follows the payment exactly: it comes with it, stays through the grace, goes at the lapse, and returns when the person pays again. **Content is never deleted.**
 
 ## Model
 
@@ -42,7 +42,7 @@ Pay's own `on_grace_period?` means a cancelled subscription still paid through i
 |---|---|
 | Any change to a Pay subscription's `status`, `current_period_end`, `ends_at`, `trial_ends_at` or pause | An `after_commit` on `Pay::Subscription` (added through the Pay extension initializer) queues `SyncEntitlementJob`. It is the same hook whether Community Engine's own jobs moved the subscription or Pay synced a webhook |
 | A subscription's terms are made (`Subscriptions::Start`, `Adopt`) | The same job, once the terms exist |
-| A one-time plan's order is paid or refunded (any line whose purchasable answers `fulfilled_by_order?`; an add-on only order queues nothing) | `SyncOrderEntitlementJob`, queued from `Orders::Settle` after the change commits. Refund (or a bounced cheque) revokes; a **partial refund changes nothing** |
+| A product's order is paid or refunded (any line whose purchasable answers `fulfilled_by_order?`) | `SyncOrderEntitlementJob`, queued from `Orders::Settle` after the change commits. Refund (or a bounced cheque) revokes; a **partial refund changes nothing** |
 | A plan's grants are edited | `SyncPlanEntitlementsJob` brings every entitlement for the plan up to date, and gives a plan that gained its first grant to those who already pay |
 
 Every sync is idempotent and queued after the change commits, so a failure can be retried and **can never undo a payment**. A grant that fails is reported (`BetterTogether.report_error`), the others still apply, and the job is told to retry.

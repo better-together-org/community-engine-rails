@@ -110,11 +110,8 @@ RSpec.describe BetterTogether::Billing::Plan do
       [0, -1, 37].each { |count| expect(new_plan(interval_count: count)).not_to be_valid }
     end
 
-    it 'is one for a one-time price' do
-      plan = new_plan(billing_interval: 'one_time', interval_count: 2)
-
-      expect(plan).not_to be_valid
-      expect(plan.errors.details[:interval_count]).to include(a_hash_including(error: :one_time_single))
+    it 'refuses a one-time interval, which is a product now' do
+      expect(new_plan(billing_interval: 'one_time')).not_to be_valid
     end
 
     it 'is fixed once the processor has the price, like the amount and the interval' do

@@ -29,10 +29,6 @@ FactoryBot.define do
       }
     end
 
-    trait :one_time do
-      billing_interval { 'one_time' }
-    end
-
     # Created in Community Engine and waiting for the first push to the processor.
     trait :unlinked do
       processor_price_id { nil }

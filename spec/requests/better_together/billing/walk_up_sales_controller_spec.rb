@@ -10,8 +10,8 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
   let(:path) { better_together.billing_walk_up_sale_path(locale:) }
   let(:new_path) { better_together.new_billing_walk_up_sale_path(locale:) }
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     amount_cents: 4500, currency: 'USD')
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                           currency: 'USD', amount_cents: 4500)
   end
   let(:params) do
     { plan_id: cash_plan.id, payment_method: 'cash', buyer_id: buyer.id, buyer_email: 'notices@example.test', agreements_accepted: '1' }
@@ -284,8 +284,8 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
     end
 
     it 'sells a free plan with no way of paying, paid at once, even when no method is switched on' do
-      free = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: [], billing_interval: 'one_time',
-                                                              amount_cents: 0, currency: 'USD')
+      free = create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                                    currency: 'USD', amount_cents: 0)
       host_platform.billing_processor_settings.update_all(enabled: false) # rubocop:disable Rails/SkipsModelValidations
 
       get new_path

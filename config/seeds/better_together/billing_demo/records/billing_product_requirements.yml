@@ -1,0 +1,7 @@
+version: '2.0'
+type: billing_product_plan_requirement
+records:
+- key: demo-extra-storage-needs-supporter-monthly
+  refs: { dependent: "billing_product:demo-extra-storage", prerequisite: "billing_plan:demo-supporter-monthly" }
+- key: demo-extra-storage-needs-supporter-annual
+  refs: { dependent: "billing_product:demo-extra-storage", prerequisite: "billing_plan:demo-supporter-annual" }

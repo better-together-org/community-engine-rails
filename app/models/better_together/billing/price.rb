@@ -43,6 +43,9 @@ module BetterTogether
       # Prices of what the platform itself sells (a seller belongs to the product).
       scope :sold_by_platform, -> { where(product_id: Product.sold_by_platform.select(:id)) }
 
+      # Prices of products sold only with something else, newest first within a product.
+      scope :extras, -> { where(product_id: Product.extras.select(:id)) }
+
       # Takes the price out of sale. History is kept.
       def archive!
         update!(active: false, archived_at: Time.current)
@@ -70,15 +73,20 @@ module BetterTogether
       def plan_line? = recurring?
       def fulfilled_by_order? = !recurring? && product.fulfilled_by_order?
 
-      def held_by?(person) = product.respond_to?(:held_by?) && product.held_by?(person)
+      def held_by?(person) = product.held_by?(person)
+
+      # An extra when its product is sold only with something else; on a plan order it rides along like an add-on did.
+      def extra? = product.extra?
 
       # What checkout reads, so a price is bought like a plan: one-off, never an extra on a plan, paid by any way the platform
       # settles itself (an online processor for products arrives with the processor contract).
       def name = purchasable_description
+
+      # What checkout shows beneath a price: the product's summary, else its description.
+      def display_participant_summary = product.summary.presence || product.description
       def billing_interval = recurring? ? interval : 'one_time'
       def recurring? = kind == 'recurring'
-      def add_on? = false
-      def payment_methods = Billing.processor_names.map(&:to_s).select { |method| Billing.local_method?(method) }
+      def payment_methods = free? ? [] : Billing.processor_names.map(&:to_s).select { |method| Billing.local_method?(method) }
 
       private
 

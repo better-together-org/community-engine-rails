@@ -14,8 +14,8 @@ RSpec.describe 'Billing agreement reader DOM', type: :request do # rubocop:disab
   let(:locale) { :en }
   let(:member) { find_or_create_test_user("reader-dom-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#') }
   let(:plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform), currency: 'USD',
+                                           amount_cents: 2500)
   end
   let(:page) { Nokogiri::HTML(response.body) }
 
@@ -24,7 +24,7 @@ RSpec.describe 'Billing agreement reader DOM', type: :request do # rubocop:disab
                                                      settings: { 'instructions' => 'At the hall' })
     purchase_agreements_for(host_platform)
     sign_in member
-    get better_together.new_billing_checkout_path(locale:, plan_id: plan.id, payment_method: 'cash')
+    get better_together.new_billing_checkout_path(locale:, price_id: plan.id, payment_method: 'cash')
   end
 
   it 'makes the scrollable text a focusable, named region' do

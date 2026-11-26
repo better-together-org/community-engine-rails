@@ -58,7 +58,7 @@ RSpec.describe BetterTogether::Billing::Subscriptions::Start do
   end
 
   it 'only starts a subscription for a recurring plan sold by the platform and paid by Community Engine' do
-    once = create(:better_together_billing_plan, :one_time, processor: nil, processor_price_id: nil, accepted_payment_methods: %w[cash])
+    once = create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform))
     one_off = travel_to(start_time) do
       order = place_order(purpose: 'one_time', payment_method: 'cash', line_items: [{ purchasable: once }])
       pay_manually(order)

@@ -16,6 +16,8 @@ module BetterTogether
       include PlatformBound
       include SellerScoped
       include Listing
+      include AgreementTarget
+      include ProductRequirements
       include Translatable
 
       self.table_name = 'better_together_billing_products'
@@ -51,7 +53,8 @@ module BetterTogether
 
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
         [*TRANSLATED_FIELDS.flat_map { |field| [field, *I18n.available_locales.map { |locale| :"#{field}_#{locale}" }] },
-         :active, :listed, :restricted_to_members, :restricted_to_subscribers, :lifetime, :term_length, :term_unit, :tax_category_id]
+         :active, :listed, :restricted_to_members, :restricted_to_subscribers, :lifetime, :term_length, :term_unit, :tax_category_id,
+         *ProductRequirements::PARAMS]
       end
 
       # The identifier is chosen once, when the product is made.
@@ -72,10 +75,30 @@ module BetterTogether
 
       def included_grants = grants
 
+      scope :extras, -> { where(id: PurchaseRequirement.where(dependent_type: name).select(:dependent_id)) }
+
+      # Sold only to someone who meets a purchase requirement (a top-up that needs a plan): an extra, never the main purchase.
+      def extra? = PurchaseRequirement.for_dependent(self).exists?
+
+      HELD_ORDERS = %w[paid partially_refunded].freeze
+
+      # Whether `person` has it now: a live entitlement, or a paid order that stands (a fixed term that has run out holds nothing).
+      def held_by?(person)
+        return false if person.blank?
+
+        Entitlements::ForPerson.call(platform:, person:).live.exists?(product_id: id) || bought_by?(person)
+      end
+
       # The price a buyer is offered now: the newest active one.
       def current_price = prices.active.order(created_at: :desc).first
 
       private
+
+      def bought_by?(person)
+        orders = Order.where(platform_id:, buyer_id: person.id, status: HELD_ORDERS)
+        orders = orders.where(paid_at: (Time.current - term_length.public_send(term_unit))..) if fixed_term?
+        LineItem.where(order_id: orders.select(:id), purchasable_type: Price.name, purchasable_id: prices.select(:id)).exists?
+      end
 
       # A tax category from another platform would be copied onto an order line, whose key ties it to this platform.
       def tax_category_on_same_platform

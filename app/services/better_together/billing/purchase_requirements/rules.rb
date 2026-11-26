@@ -3,10 +3,7 @@
 module BetterTogether
   module Billing
     module PurchaseRequirements
-      # The rules that apply to a dependent purchasable: the ones stored for it, and, until PS-6 converts add-ons,
-      # the ones its add-on links imply. An add-on that extends named plans needs one of them (held or in the order);
-      # an add-on with no links extends every primary plan, which is the kind `plan`. Nothing is written: the implied
-      # rules are built in memory so existing add-ons behave exactly as before.
+      # The rules that apply to a dependent purchasable: the ones stored for it, or for its product when it is a price.
       class Rules
         def self.for(dependent) = new(dependent).call
 
@@ -15,26 +12,15 @@ module BetterTogether
         end
 
         def call
-          stored = PurchaseRequirement.for_dependent(dependent).to_a
-          stored.presence || implied
+          PurchaseRequirement.for_dependent(owner).to_a
         end
 
         private
 
+        # A price is bound by the rules of its product, so a new price needs none of its own.
+        def owner = dependent.is_a?(Price) ? dependent.product : dependent
+
         attr_reader :dependent
-
-        def implied
-          return [] unless dependent.respond_to?(:add_on?) && dependent.add_on?
-
-          links = dependent.target_links.includes(:plan).to_a
-          return [build(prerequisite_kind: 'plan')] if links.empty?
-
-          links.map { |link| build(prerequisite: link.plan) }
-        end
-
-        def build(**target)
-          PurchaseRequirement.new(platform_id: dependent.platform_id, dependent:, met_by: 'either', **target)
-        end
       end
     end
   end

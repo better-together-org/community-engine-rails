@@ -106,10 +106,12 @@ module BetterTogether
         def follow_up_requirements
           revoking = PurchaseRequirement.where(on_prerequisite_end: 'revoke', platform_id: order.platform_id)
           return unless revoking.exists?(prerequisite_kind: PurchaseRequirement::KINDS.keys) ||
-                        order.line_items.any? { |line_item| revoking.exists?(prerequisite: line_item.purchasable) }
+                        order.line_items.any? { |line_item| revoking.exists?(prerequisite: [line_item.purchasable, *product_of(line_item)]) }
 
           ActiveRecord.after_all_transactions_commit { RevokeDependentsJob.perform_later(order) }
         end
+
+        def product_of(line_item) = line_item.purchasable.is_a?(Price) ? [line_item.purchasable.product] : []
 
         # A paid subscription order starts a subscription, or renews one. It runs after the payment is
         # committed, as a job that can be retried, so a failure there can never undo a recorded payment.

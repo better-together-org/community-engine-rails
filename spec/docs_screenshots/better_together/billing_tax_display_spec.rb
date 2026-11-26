@@ -25,12 +25,13 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
     create(:better_together_billing_tax_category, platform: host_platform, identifier: 'zero_rated', name: 'Zero rated', taxable: false)
   end
   let(:book) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'CAD', amount_cents: 1500,
-                                                     name: 'Printed guide', tax_category: zero_rated)
+    create(:better_together_billing_price,
+           product: create(:better_together_billing_product, platform: host_platform, name: 'Printed guide', tax_category: zero_rated),
+           currency: 'CAD', amount_cents: 1500)
   end
   let(:membership) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'CAD', amount_cents: 12_000,
-                                                     name: 'Annual plan', accepted_payment_methods: %w[cash])
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Annual plan'),
+                                           currency: 'CAD', amount_cents: 12_000)
   end
   let(:manager) { BetterTogether::User.find_by!(email: 'manager@example.test').person }
 
@@ -133,7 +134,7 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
   def capture_checkout(prefix, region)
     create_billing_address_for(manager, region:, settlement_name: region)
     capture("billing_tax_#{prefix}_checkout", '#billing-summary-checkout', 'Tax before paying',
-            'The same rows, for the chosen billing address.', "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{membership.id}")
+            'The same rows, for the chosen billing address.', "/#{I18n.default_locale}/billing/checkout/new?price_id=#{membership.id}")
   end
 
   # Phone widths, with long names and long numbers: it wraps, nothing is clipped, the page does not scroll sideways.
@@ -144,7 +145,7 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
       capybara_login_as_platform_manager
       order_selectors = ['#billing-summary-order', "#billing-summary-offline-#{order.offline_payments.first.id}"]
       surfaces = { "/#{I18n.default_locale}/billing/orders/#{order.id}" => order_selectors,
-                   "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{membership.id}" => ['#billing-summary-checkout'] }
+                   "/#{I18n.default_locale}/billing/checkout/new?price_id=#{membership.id}" => ['#billing-summary-checkout'] }
       widths.each do |width|
         surfaces.each do |path, selectors|
           visit path
@@ -161,9 +162,9 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
   end
 
   it 'fits a phone at 320 and 390 wide, with long names, for Quebec and British Columbia' do
-    long = create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'CAD', amount_cents: 99_900,
-                                                            name: 'Community-membership-with-extended-support-and-training-2027-2028-edition',
-                                                            accepted_payment_methods: %w[cash])
+    long_name = 'Community-membership-with-extended-support-and-training-2027-2028-edition'
+    long = create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: long_name),
+                                                  currency: 'CAD', amount_cents: 99_900)
     registrations_for('QC', 'QST', 0.09975, '1234567890TQ0001')
     order = place_order(buyer: manager, payment_method: 'cash', tax_address: { country_iso: 'CA', region_code: 'QC' },
                         line_items: [{ purchasable: long }, { purchasable: book }])

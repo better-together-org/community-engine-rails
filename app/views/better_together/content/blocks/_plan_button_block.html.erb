@@ -2,8 +2,20 @@
 <%# Not fragment cached: whether the plan is offered depends on who is looking. %>
 <% plan = plan_button_block.plan %>
 <% offered = plan.present? && policy(plan).offer? %>
+<% price = plan_button_block.price %>
+<% price_offered = price.present? && policy(price).purchase? %>
 <%= render layout: 'better_together/content/blocks/block', locals: { block: plan_button_block } do %>
-  <% if offered %>
+  <% if price_offered %>
+    <div class="plan-button-block py-3">
+      <% if plan_button_block.display_as == 'button' %>
+        <%= render 'better_together/billing/catalog/product_buy_button', product: price.product, price: %>
+      <% else %>
+        <div class="row"><div class="col-md-6 col-lg-4">
+          <%= render 'better_together/billing/catalog/product_card', product: price.product, price: %>
+        </div></div>
+      <% end %>
+    </div>
+  <% elsif offered %>
     <div class="plan-button-block py-3">
       <% prefix = "block_#{plan_button_block.id}" %>
       <% if plan_button_block.display_as == 'button' %>
@@ -14,7 +26,7 @@
         </div></div>
       <% end %>
     </div>
-  <% elsif plan_button_block.plan_id.blank? && content_actions_visible_for?(plan_button_block) %>
+  <% elsif plan_button_block.plan_id.blank? && plan_button_block.price_id.blank? && content_actions_visible_for?(plan_button_block) %>
     <p class="text-body-secondary"><%= t('better_together.content.blocks.plan_button_block.empty') %></p>
   <% end %>
 <% end %>

@@ -87,15 +87,16 @@ RSpec.describe 'Billing buyer account', :js, :no_auth, :skip_host_setup, retry: 
 
   describe 'a buyer with no saved billing address' do
     let!(:cash_plan) do
-      create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                       name: 'Garden plot', currency: 'CAD', amount_cents: 2500, listed: true)
+      create(:better_together_billing_price,
+             product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot', listed: true),
+             currency: 'CAD', amount_cents: 2500)
     end
 
     before do
       purchase_agreements_for(host_platform)
       create_billing_address_for(create(:better_together_person))
       capybara_login_as_user
-      visit "/#{locale}/billing/checkout/new?plan_id=#{cash_plan.id}&payment_method=cash"
+      visit "/#{locale}/billing/checkout/new?price_id=#{cash_plan.id}&payment_method=cash"
     end
 
     it 'types a new address, picks the country and province from the lists, and sees tax for that place', :aggregate_failures do

@@ -25,14 +25,17 @@ module BetterTogether
 
       # Add-ons this person may buy on their own because they hold a plan the add-on extends.
       def extras_for_held_plans
-        billing_owner.billing_plans.sold_by_platform.active.add_on.order(:amount_cents, :identifier).limit(20)
-                     .select { |add_on| policy(add_on).buy_alone? }.first(6)
+        extra_prices.select { |extra| policy(extra).buy_alone? }.first(6)
       end
 
       # Add-ons for sale to this person that need something they do not hold yet, with why.
       def locked_extras
-        billing_owner.billing_plans.sold_by_platform.active.add_on.order(:amount_cents, :identifier).limit(20)
-                     .filter_map { |add_on| (reason = policy(add_on).locked_reason) && [add_on, reason] }.first(6)
+        extra_prices.filter_map { |extra| (reason = policy(extra).locked_reason) && [extra, reason] }.first(6)
+      end
+
+      def extra_prices
+        billing_owner.billing_prices.sold_by_platform.active.extras.includes(:product).order(:amount_cents, :created_at).limit(20)
+                     .select(&:purchasable?)
       end
 
       # What has been given back on each of these orders (money that failed to move is not counted).

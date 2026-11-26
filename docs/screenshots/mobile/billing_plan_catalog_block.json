@@ -10,38 +10,38 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_plan_blocks_spec.rb",
   "callouts": [
     {
-      "selector": "#plans_content_plan_catalog_block_c1077210-a143-4c95-8099-02927223a9df",
+      "selector": "#plans_content_plan_catalog_block_512e3c9b-dbe9-48c6-ba05-e9bcabc750a3",
       "title": "Plans on a page",
       "bullets": [
         "The same cards as the catalog, for the plans this visitor may buy."
       ],
       "target": {
         "x": 12.0,
-        "y": 186.234375,
+        "y": 270.234375,
         "width": 476.0,
         "height": 420.5625,
         "right": 488.0,
-        "bottom": 606.796875,
+        "bottom": 690.796875,
         "center_x": 250.0,
-        "center_y": 396.515625
+        "center_y": 480.515625
       },
       "avoid": {
         "x": 12.0,
-        "y": 186.234375,
+        "y": 270.234375,
         "width": 476.0,
         "height": 420.5625,
         "right": 488.0,
-        "bottom": 606.796875,
+        "bottom": 690.796875,
         "center_x": 250.0,
-        "center_y": 396.515625
+        "center_y": 480.515625
       },
       "placement": {
         "side": "below",
         "x": 115.0,
-        "y": 626.8,
+        "y": 710.8,
         "width": 270.0,
         "height": 184,
-        "score": 650.203125
+        "score": 566.203125
       }
     }
   ]

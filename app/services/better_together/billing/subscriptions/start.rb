@@ -33,7 +33,7 @@ module BetterTogether
         # is not exactly one primary plan.
         def self.single_plan(order)
           purchasables = order.line_items.to_a.map(&:purchasable)
-          return unless purchasables.all?(&:plan_line?)
+          return unless purchasables.all? { |purchasable| purchasable.plan_line? || purchasable.extra? }
 
           primary = purchasables.reject(&:extra?)
           primary.first if primary.one?

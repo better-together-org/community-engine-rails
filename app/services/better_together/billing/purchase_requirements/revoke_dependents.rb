@@ -33,8 +33,12 @@ module BetterTogether
 
         # Prerequisites this order gave that the buyer no longer holds some other way.
         def ended_prerequisites
-          order.line_items.map(&:purchasable).uniq.reject { |prerequisite| prerequisite.held_by?(order.buyer) }
+          order.line_items.flat_map { |line| prerequisites_of(line.purchasable) }.uniq
+               .reject { |prerequisite| prerequisite.held_by?(order.buyer) }
         end
+
+        # A price stands for its product too, since a rule names the product.
+        def prerequisites_of(purchasable) = purchasable.is_a?(Price) ? [purchasable, purchasable.product] : [purchasable]
 
         def rules_ending_with(prerequisite)
           PurchaseRequirement.where(prerequisite:, on_prerequisite_end: 'revoke', platform_id: order.platform_id)
@@ -61,11 +65,15 @@ module BetterTogether
 
         def dependent_lines(rule)
           LineItem.joins(:order)
-                  .where(purchasable_type: rule.dependent_type, purchasable_id: rule.dependent_id)
+                  .where(purchasable_type: line_type(rule), purchasable_id: line_ids(rule))
                   .where(better_together_billing_orders: { platform_id: order.platform_id, buyer_id: order.buyer_id,
                                                            status: HELD_ORDERS })
                   .where.not(order_id: order.id)
         end
+
+        # A rule on a product reaches the lines of any of its prices.
+        def line_type(rule) = rule.dependent.is_a?(Product) ? Price.name : rule.dependent_type
+        def line_ids(rule) = rule.dependent.is_a?(Product) ? rule.dependent.prices.select(:id) : rule.dependent_id
       end
     end
   end

@@ -22,18 +22,18 @@ RSpec.describe 'Billing demo seed packet' do # rubocop:disable RSpec/DescribeCla
     second = plant(apply: true)
 
     expect(first[:errors]).to be_empty
-    expect(BetterTogether::Billing::Plan.where(platform:).count).to eq(5)
-    expect(second).to include(created: 0, updated: 0, unchanged: 12)
+    expect(BetterTogether::Billing::Plan.where(platform:).count).to eq(4)
+    expect(second).to include(created: 0, updated: 0, unchanged: 13)
   end
 
-  it 'keeps the add-on a one-time extra and the paid plans carrying a storage allowance', :aggregate_failures do
+  it 'plants the extra storage as a product that needs a supporter plan, and the paid plans carrying a storage allowance', :aggregate_failures do
     plant(apply: true)
-    add_on = BetterTogether::Billing::Plan.find_by!(platform:, identifier: 'demo-extra-storage')
+    extra = BetterTogether::Billing::Product.find_by!(platform:, identifier: 'demo-extra-storage')
     monthly = BetterTogether::Billing::Plan.find_by!(platform:, identifier: 'demo-supporter-monthly')
 
-    expect(add_on).to have_attributes(add_on: true, billing_interval: 'one_time')
+    expect(extra.prices.sole).to have_attributes(amount_cents: 300, currency: 'CAD')
+    expect(BetterTogether::Billing::PurchaseRequirement.for_dependent(extra).map(&:prerequisite)).to include(monthly)
     expect(monthly.plan_grants.map(&:kind)).to eq(['quota_allowance'])
-    expect(monthly.target_links.count + monthly.add_on_links.count).to eq(1)
   end
 
   it 'plants the storage top-up as a fixed-term product with a price and a storage grant', :aggregate_failures do

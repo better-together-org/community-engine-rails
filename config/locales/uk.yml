@@ -2039,6 +2039,7 @@ uk:
         field_lifetime: Як довго діє
         field_listed: Показувати в каталозі
         field_name: Назва
+        field_needs_any_plan: Будь-який план
         field_price: Ціна
         field_restricted_to_members: Лише для учасників
         field_restricted_to_subscribers: Лише для передплатників
@@ -2063,6 +2064,9 @@ uk:
         new_title: Новий товар
         no_price: Ціни ще немає
         none: Товарів ще немає.
+        requirements_hint: 'Залиште все непозначеним, щоб продавати окремо. Покупцеві
+          потрібен один із позначених планів: уже наявний або в тому самому замовленні.'
+        requirements_legend: Продається з планом
         table_caption: Товари, які продає ця платформа
         tax_standard: Стандартна
         'true': Так
@@ -2927,6 +2931,7 @@ uk:
             card: Картка з ціною
           empty: Виберіть план, який пропонуватиме цей блок.
           plan_hint: Виберіть один з активних планів цієї платформи.
+          price_hint: Або виберіть ціну продукту; вона замінює план.
         plan_catalog_block:
           create_label: Створити новий блок %{type} для сторінки
           empty: Наразі немає доступних планів.

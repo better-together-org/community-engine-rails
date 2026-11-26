@@ -73,7 +73,7 @@
             <% @add_ons.each do |add_on| %>
               <li id="<%= dom_id(add_on, :hub_add_on) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
                 <span><%= add_on.name %> <span class="small text-body-secondary"><%= billing_amount(add_on.amount_cents, add_on.currency) %></span></span>
-                <%= link_to t('better_together.billing.hub.add_on_buy'), new_billing_checkout_path(plan_id: add_on.id, locale: I18n.locale),
+                <%= link_to t('better_together.billing.hub.add_on_buy'), new_billing_checkout_path(price_id: add_on.id, locale: I18n.locale),
                             id: dom_id(add_on, :hub_add_on_buy), class: 'btn btn-sm btn-outline-primary' %>
               </li>
             <% end %>

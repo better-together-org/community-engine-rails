@@ -20,8 +20,8 @@ RSpec.describe 'Documentation screenshots for the agreement reader', # rubocop:d
   include_context 'with billing switched on'
 
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     name: 'Garden plot', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot'),
+                                           currency: 'USD', amount_cents: 2500)
   end
   let(:identifier) { 'one_time_purchase_agreement' }
 
@@ -45,7 +45,7 @@ RSpec.describe 'Documentation screenshots for the agreement reader', # rubocop:d
 
   def open_reader_with_keyboard # rubocop:disable Metrics/AbcSize
     capybara_login_as_user
-    visit "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{cash_plan.id}&payment_method=cash"
+    visit "/#{I18n.default_locale}/billing/checkout/new?price_id=#{cash_plan.id}&payment_method=cash"
     page.execute_script("document.getElementById('billing-agreement-view-#{identifier}').focus()")
     page.send_keys(:enter)
     expect(page).to have_css('#agreementModal.show #agreement_modal_frame', text: BetterTogether::Agreement.find_by!(identifier:).title,

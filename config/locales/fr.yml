@@ -2105,6 +2105,7 @@ fr:
         field_lifetime: Durée
         field_listed: Affiché dans le catalogue
         field_name: Nom
+        field_needs_any_plan: Tout forfait
         field_price: Prix
         field_restricted_to_members: Réservé aux membres
         field_restricted_to_subscribers: Réservé aux abonnés
@@ -2129,6 +2130,9 @@ fr:
         new_title: Nouveau produit
         no_price: Pas encore de prix
         none: Aucun produit pour l'instant.
+        requirements_hint: Laissez tout décoché pour le vendre seul. L'acheteur doit
+          avoir l'un des forfaits cochés, déjà ou dans la même commande.
+        requirements_legend: Vendu avec un forfait
         table_caption: Produits vendus par cette plateforme
         tax_standard: Standard
         'true': Oui
@@ -3005,6 +3009,7 @@ fr:
             card: Carte avec prix
           empty: Choisissez un forfait à proposer dans ce bloc.
           plan_hint: Choisissez l'un des forfaits actifs de cette plateforme.
+          price_hint: Ou choisissez le prix d'un produit; il remplace le forfait.
         plan_catalog_block:
           create_label: Créer un nouveau bloc %{type} pour la page
           empty: Aucun forfait n'est offert pour le moment.

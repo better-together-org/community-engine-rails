@@ -47,8 +47,8 @@ module BetterTogether
       PLAN_PRICING_TIERS = %w[standard solidarity_small solidarity_medium solidarity_premium].freeze
 
       # Not synced to the processor, so a steward can change it whether or not the plan is linked.
-      # Local settings that may change after a price is linked: where the plan is shown, who may buy it, and whether it is an add-on.
-      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers add_on].freeze
+      # Local settings that may change after a price is linked: where the plan is shown and who may buy it.
+      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers].freeze
 
       METADATA_KEYS = [:hosted_access_level, :support_tier, :community_capacity_tier, :pricing_tier,
                        { eligible_billable_owner_types: [] }].freeze
@@ -63,36 +63,20 @@ module BetterTogether
                                                                    dependent: :restrict_with_error
       has_many :entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
 
-      # For a primary plan: the add-ons set to extend it. For an add-on: the plans it extends (none means every primary plan).
-      has_many :add_on_links, class_name: 'BetterTogether::Billing::PlanAddOn', foreign_key: :plan_id, inverse_of: :plan,
-                              dependent: :destroy
-      has_many :target_links, class_name: 'BetterTogether::Billing::PlanAddOn', foreign_key: :add_on_id, inverse_of: :add_on,
-                              dependent: :destroy
-      has_many :target_plans, through: :target_links, source: :plan
-
       validates :identifier, :name, presence: true
       validates :identifier, uniqueness: { scope: %i[platform_id seller_type seller_id] }
       validate :eligible_owner_types_are_billable
       validate :pricing_tier_within_known_values
-      validate :add_on_is_a_plain_extra
       validate :tax_category_on_same_platform
 
-      before_validation :clear_targets_unless_add_on
-
-      # An add-on is only sold on another plan's order; the plans people buy by themselves are the primary ones.
-      scope :add_on, -> { where(add_on: true) }
-      scope :primary, -> { where(add_on: false) }
-      # The add-ons offered with `plan`: those set to extend it, and those that extend every plan (no links).
-      scope :add_ons_for, lambda { |plan|
-        add_on.where(id: PlanAddOn.where(plan_id: plan.id).select(:add_on_id))
-              .or(add_on.where.not(id: PlanAddOn.select(:add_on_id)))
-      }
+      # Every plan is a primary one now: what is sold once, an add-on included, is a product.
+      scope :primary, -> { all }
 
       # Permitted attributes for update, as a baseline. Which of them a given plan will
       # accept also depends on what is locked; see #permitted_update_attributes.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
         [*with_locales(DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS), *RENEWAL_FIELDS, *LISTING_FIELDS,
-         { target_plan_ids: [] }, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+         { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       # Each translated field as one attribute per supported language (name_en, name_fr, ...); the others as they are.
@@ -115,7 +99,7 @@ module BetterTogether
         fields = DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS + (linked? ? [] : PRE_LINK_FIELDS + %i[amount])
         [*self.class.with_locales(fields.reject do |field|
           locked_field?(field)
-        end), *RENEWAL_FIELDS, *LISTING_FIELDS, { target_plan_ids: [] }, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+        end), *RENEWAL_FIELDS, *LISTING_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       # Purchasable: a plan is what a line item is for.
@@ -124,16 +108,14 @@ module BetterTogether
       def purchasable_tax_category = tax_category
       def purchasable? = active?
 
-      # What the order engine asks of a purchasable (see Purchasable): a plan that renews is a subscription, an add-on is an
-      # extra, and a one-time plan with something to give is fulfilled through its own order.
-      def renews? = recurring?
-      def extra? = add_on?
+      # What the order engine asks of a purchasable (see Purchasable): a plan is a subscription that renews, and what it
+      # includes is given through the subscription, never through an order of its own.
+      def renews? = true
       def plan_line? = true
-      def fulfilled_by_order? = !recurring? && !add_on?
 
-      # A primary plan is held when it gives a live entitlement, is subscribed to, or was bought once and the order stands.
+      # A plan is held when it gives a live entitlement or is subscribed to.
       def held_by?(person)
-        return false if add_on? || person.blank? || platform.blank?
+        return false if person.blank? || platform.blank?
 
         Plans::Holdings.call(platform:, person:).include?(id)
       end
@@ -201,29 +183,6 @@ module BetterTogether
         errors.add(:base, :unknown_owner_types, types: unknown.join(', ')) if unknown.any?
       end
 
-      # An add-on is a plain one-off extra: it does not renew and includes nothing of its own (what a plan gives is a plan's).
-      # Only an add-on extends other plans; ticking targets and then un-ticking add-on leaves none behind.
-      def clear_targets_unless_add_on
-        self.target_plan_ids = [] if !add_on? && target_links.any?
-      end
-
-      def add_on_is_a_plain_extra
-        return unless add_on?
-
-        errors.add(:add_on, :add_on_cannot_renew) if recurring?
-        add_on_persisted_errors if persisted?
-      end
-
-      def add_on_persisted_errors
-        errors.add(:add_on, :add_on_has_grants) if plan_grants.exists?
-        errors.add(:add_on, :add_on_locked_by_orders) if add_on_changed? && referenced_by_order_lines?
-      end
-
-      # Whether any order line already points at this plan; a change of kind would rewrite what those buyers bought.
-      def referenced_by_order_lines?
-        BetterTogether::Billing::LineItem.exists?(purchasable: self)
-      end
-
       # A tax category from another platform would be copied onto an order line, whose key ties it to this platform.
       def tax_category_on_same_platform
         errors.add(:tax_category, :tax_category_other_platform) if tax_category && tax_category.platform_id != platform_id
@@ -237,11 +196,7 @@ module BetterTogether
       end
 
       def default_participant_summary
-        if recurring?
-          I18n.t('better_together.billing.plan_defaults.recurring_participant_summary')
-        else
-          I18n.t('better_together.billing.plan_defaults.one_time_participant_summary')
-        end
+        I18n.t('better_together.billing.plan_defaults.recurring_participant_summary')
       end
 
       def default_beneficiary_label

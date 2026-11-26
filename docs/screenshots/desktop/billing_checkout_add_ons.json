@@ -1,7 +1,7 @@
 {
   "name": "billing_checkout_add_ons",
   "device": "desktop",
-  "url": "/en/billing/checkout/new?plan_id=6bf75c30-c6b7-48a4-a743-8bb00a4ac3b9&add_on_ids[]=850d4a33-0267-456b-98a1-cf2935d1d12d",
+  "url": "/en/billing/checkout/new?plan_id=3725aee4-f8e9-4b3d-a603-367a86543bc0&add_on_ids[]=a186f574-bc64-42da-98a8-afa8f98c0cf7",
   "title": "Get Annual membership | Test Host Community",
   "locale": "en",
   "role": "user",

@@ -22,7 +22,6 @@ module BetterTogether
       validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :parameters_valid
       validate :exactly_one_owner
-      validate :plan_is_not_an_add_on
       validate :not_already_on_the_plan
 
       # The handler for this grant, ready to apply.
@@ -54,10 +53,6 @@ module BetterTogether
 
       def parameters_errors
         Entitlements::Registry.handler_class(kind).parameter_errors(parameters, platform:)
-      end
-
-      def plan_is_not_an_add_on
-        errors.add(:plan, :add_on_cannot_have_grants) if plan&.add_on?
       end
 
       def parameters_valid

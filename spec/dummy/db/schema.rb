@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_25_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_162059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -640,17 +640,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_25_020000) do
     t.index ["status"], name: "idx_bt_billing_payments_status"
   end
 
-  create_table "better_together_billing_plan_add_ons", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "platform_id", null: false
-    t.uuid "plan_id", null: false
-    t.uuid "add_on_id", null: false
-    t.index ["add_on_id", "plan_id"], name: "idx_bt_billing_plan_add_ons_pair", unique: true
-    t.index ["plan_id"], name: "idx_bt_billing_plan_add_ons_plan"
-  end
-
   create_table "better_together_billing_plan_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -698,7 +687,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_25_020000) do
     t.string "latest_processor_event_id"
     t.jsonb "metadata", default: {}, null: false
     t.uuid "tax_category_id"
-    t.boolean "add_on", default: false, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
     t.index ["id", "platform_id"], name: "idx_bt_billing_plans_id_platform", unique: true
     t.index ["listed"], name: "idx_bt_billing_plans_listed"
@@ -3876,8 +3864,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_25_020000) do
   add_foreign_key "better_together_billing_payments", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_payments_order_platform"
   add_foreign_key "better_together_billing_payments", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_payments", "pay_charges", column: ["pay_charge_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_payments_pay_charge_platform"
-  add_foreign_key "better_together_billing_plan_add_ons", "better_together_billing_plans", column: "add_on_id"
-  add_foreign_key "better_together_billing_plan_add_ons", "better_together_billing_plans", column: "plan_id"
   add_foreign_key "better_together_billing_plan_grants", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_plan_grants_plan_platform"
   add_foreign_key "better_together_billing_plan_grants", "better_together_billing_products", column: "product_id"
   add_foreign_key "better_together_billing_plan_grants", "better_together_platforms", column: "platform_id"

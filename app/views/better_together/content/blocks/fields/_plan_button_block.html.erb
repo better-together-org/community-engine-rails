@@ -2,6 +2,8 @@
 <%- temp_id = temp_id_for(block, temp_id:) %>
 <%
   plans = BetterTogether::Billing::Plan.active.where(platform_id: (block.platform_id || Current.platform&.id), seller_id: nil).order(:identifier)
+  platform_id = block.platform_id || Current.platform&.id
+  prices = BetterTogether::Billing::Price.active.where(platform_id:).includes(:product).select(&:purchasable?).sort_by { |price| price.name.to_s }
 %>
 <div class="plan-button-block-fields">
   <div class="mb-3">
@@ -12,6 +14,16 @@
                    'aria-describedby': "#{temp_id}-plan-hint",
                    data: { controller: 'better_together--slim-select' } %>
     <div id="<%= temp_id %>-plan-hint" class="form-text"><%= t('better_together.content.blocks.plan_button_block.plan_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[price_id]", BetterTogether::Content::Block.human_attribute_name('price_id', default: 'Product price'), class: 'form-label' %>
+    <%= select_tag "#{scope}[price_id]",
+                   options_for_select([['', '']] + prices.map { |price| ["#{price.name} (#{billing_amount(price.amount_cents, price.currency)})", price.id] }, block.price_id),
+                   class: 'form-select', include_blank: false,
+                   'aria-describedby': "#{temp_id}-price-hint",
+                   data: { controller: 'better_together--slim-select' } %>
+    <div id="<%= temp_id %>-price-hint" class="form-text"><%= t('better_together.content.blocks.plan_button_block.price_hint') %></div>
   </div>
 
   <div class="mb-3">
