@@ -4111,90 +4111,110 @@
 <!-- better_together_billing_prices -->
 <g id="better_together_billing_prices" class="node">
 <title>better_together_billing_prices</title>
-<ellipse fill="none" stroke="black" stroke-width="0" cx="37138.7" cy="-47553.1" rx="403.1" ry="511.89"/>
-<polygon fill="#1d71b8" stroke="transparent" points="36855.7,-47853.1 36855.7,-47913.1 37421.7,-47913.1 37421.7,-47853.1 36855.7,-47853.1"/>
+<ellipse fill="none" stroke="black" stroke-width="0" cx="37138.7" cy="-47553.1" rx="403.1" ry="681.8"/>
+<polygon fill="#1d71b8" stroke="transparent" points="36855.7,-47973.1 36855.7,-48033.1 37421.7,-48033.1 37421.7,-47973.1 36855.7,-47973.1"/>
+<polygon fill="none" stroke="#29235c" points="36855.7,-47973.1 36855.7,-48033.1 37421.7,-48033.1 37421.7,-47973.1 36855.7,-47973.1"/>
+<text text-anchor="start" x="36866.63" y="-47994.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#ffffff"> &#160;&#160;&#160;&#160;&#160;&#160;better_together_billing_prices &#160;&#160;&#160;&#160;&#160;&#160;</text>
+<polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47913.1 36855.7,-47973.1 37421.7,-47973.1 37421.7,-47913.1 36855.7,-47913.1"/>
+<polygon fill="none" stroke="#29235c" points="36855.7,-47913.1 36855.7,-47973.1 37421.7,-47973.1 37421.7,-47913.1 36855.7,-47913.1"/>
+<text text-anchor="start" x="36866.7" y="-47934.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">id</text>
+<text text-anchor="start" x="36891.59" y="-47934.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37350.24" y="-47934.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47853.1 36855.7,-47913.1 37421.7,-47913.1 37421.7,-47853.1 36855.7,-47853.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47853.1 36855.7,-47913.1 37421.7,-47913.1 37421.7,-47853.1 36855.7,-47853.1"/>
-<text text-anchor="start" x="36866.63" y="-47874.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#ffffff"> &#160;&#160;&#160;&#160;&#160;&#160;better_together_billing_prices &#160;&#160;&#160;&#160;&#160;&#160;</text>
+<text text-anchor="start" x="36866.7" y="-47873.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">lock_version &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37273.81" y="-47874.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="37371.61" y="-47874.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="37380.5" y="-47874.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47793.1 36855.7,-47853.1 37421.7,-47853.1 37421.7,-47793.1 36855.7,-47793.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47793.1 36855.7,-47853.1 37421.7,-47853.1 37421.7,-47793.1 36855.7,-47793.1"/>
-<text text-anchor="start" x="36866.7" y="-47814.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">id</text>
-<text text-anchor="start" x="36891.59" y="-47814.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37350.24" y="-47814.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="36866.7" y="-47813.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">created_at &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37224.05" y="-47814.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="37371.61" y="-47814.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="37380.5" y="-47814.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47733.1 36855.7,-47793.1 37421.7,-47793.1 37421.7,-47733.1 36855.7,-47733.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47733.1 36855.7,-47793.1 37421.7,-47793.1 37421.7,-47733.1 36855.7,-47733.1"/>
-<text text-anchor="start" x="36866.7" y="-47753.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">lock_version &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37273.81" y="-47754.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="36866.7" y="-47753.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">updated_at &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37224.05" y="-47754.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
 <text text-anchor="start" x="37371.61" y="-47754.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="37380.5" y="-47754.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47673.1 36855.7,-47733.1 37421.7,-47733.1 37421.7,-47673.1 36855.7,-47673.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47673.1 36855.7,-47733.1 37421.7,-47733.1 37421.7,-47673.1 36855.7,-47673.1"/>
-<text text-anchor="start" x="36866.7" y="-47693.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">created_at &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37224.05" y="-47694.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="36866.7" y="-47693.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">platform_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37311.14" y="-47694.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
 <text text-anchor="start" x="37371.61" y="-47694.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="37380.5" y="-47694.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47613.1 36855.7,-47673.1 37421.7,-47673.1 37421.7,-47613.1 36855.7,-47613.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47613.1 36855.7,-47673.1 37421.7,-47673.1 37421.7,-47613.1 36855.7,-47613.1"/>
-<text text-anchor="start" x="36866.7" y="-47633.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">updated_at &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37224.05" y="-47634.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="36866.7" y="-47633.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">product_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37311.14" y="-47634.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
 <text text-anchor="start" x="37371.61" y="-47634.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="37380.5" y="-47634.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47553.1 36855.7,-47613.1 37421.7,-47613.1 37421.7,-47553.1 36855.7,-47553.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47553.1 36855.7,-47613.1 37421.7,-47613.1 37421.7,-47553.1 36855.7,-47553.1"/>
-<text text-anchor="start" x="36866.7" y="-47573.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">platform_id &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37311.14" y="-47574.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="36866.7" y="-47573.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">amount_cents &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37273.81" y="-47574.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
 <text text-anchor="start" x="37371.61" y="-47574.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="37380.5" y="-47574.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47493.1 36855.7,-47553.1 37421.7,-47553.1 37421.7,-47493.1 36855.7,-47493.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47493.1 36855.7,-47553.1 37421.7,-47553.1 37421.7,-47493.1 36855.7,-47493.1"/>
-<text text-anchor="start" x="36866.7" y="-47513.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">product_id &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37311.14" y="-47514.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="36866.7" y="-47513.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">currency &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37264.94" y="-47514.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
 <text text-anchor="start" x="37371.61" y="-47514.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="37380.5" y="-47514.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47433.1 36855.7,-47493.1 37421.7,-47493.1 37421.7,-47433.1 36855.7,-47433.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47433.1 36855.7,-47493.1 37421.7,-47493.1 37421.7,-47433.1 36855.7,-47433.1"/>
-<text text-anchor="start" x="36866.7" y="-47453.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">amount_cents &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37273.81" y="-47454.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="36866.7" y="-47453.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">active &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37257.78" y="-47454.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">boolean</text>
 <text text-anchor="start" x="37371.61" y="-47454.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="37380.5" y="-47454.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47373.1 36855.7,-47433.1 37421.7,-47433.1 37421.7,-47373.1 36855.7,-47373.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47373.1 36855.7,-47433.1 37421.7,-47433.1 37421.7,-47373.1 36855.7,-47373.1"/>
-<text text-anchor="start" x="36866.7" y="-47393.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">currency &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37264.94" y="-47394.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
-<text text-anchor="start" x="37371.61" y="-47394.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
-<text text-anchor="start" x="37380.5" y="-47394.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
+<text text-anchor="start" x="36866.7" y="-47393.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">archived_at &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37263.14" y="-47394.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47313.1 36855.7,-47373.1 37421.7,-47373.1 37421.7,-47313.1 36855.7,-47313.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47313.1 36855.7,-47373.1 37421.7,-47373.1 37421.7,-47313.1 36855.7,-47313.1"/>
-<text text-anchor="start" x="36866.7" y="-47333.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">active &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37257.78" y="-47334.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">boolean</text>
-<text text-anchor="start" x="37371.61" y="-47334.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
-<text text-anchor="start" x="37380.5" y="-47334.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
+<text text-anchor="start" x="36866.7" y="-47333.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">processor_price_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37304.03" y="-47334.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47253.1 36855.7,-47313.1 37421.7,-47313.1 37421.7,-47253.1 36855.7,-47253.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47253.1 36855.7,-47313.1 37421.7,-47313.1 37421.7,-47253.1 36855.7,-47253.1"/>
-<text text-anchor="start" x="36866.7" y="-47273.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">archived_at &#160;&#160;&#160;</text>
-<text text-anchor="start" x="37263.14" y="-47274.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="36866.7" y="-47273.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">kind &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37264.94" y="-47274.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
+<text text-anchor="start" x="37371.61" y="-47274.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="37380.5" y="-47274.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47193.1 36855.7,-47253.1 37421.7,-47253.1 37421.7,-47193.1 36855.7,-47193.1"/>
 <polygon fill="none" stroke="#29235c" points="36855.7,-47193.1 36855.7,-47253.1 37421.7,-47253.1 37421.7,-47193.1 36855.7,-47193.1"/>
-<text text-anchor="start" x="36866.7" y="-47213.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">processor_price_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="36866.7" y="-47213.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">interval &#160;&#160;&#160;</text>
 <text text-anchor="start" x="37304.03" y="-47214.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
-<polygon fill="none" stroke="#29235c" stroke-width="2" points="36854.7,-47192.1 36854.7,-47914.1 37422.7,-47914.1 37422.7,-47192.1 36854.7,-47192.1"/>
+<polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47133.1 36855.7,-47193.1 37421.7,-47193.1 37421.7,-47133.1 36855.7,-47133.1"/>
+<polygon fill="none" stroke="#29235c" points="36855.7,-47133.1 36855.7,-47193.1 37421.7,-47193.1 37421.7,-47133.1 36855.7,-47133.1"/>
+<text text-anchor="start" x="36866.7" y="-47153.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">interval_count &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37273.81" y="-47154.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="37371.61" y="-47154.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="37380.5" y="-47154.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
+<polygon fill="#e7e2dd" stroke="transparent" points="36855.7,-47073.1 36855.7,-47133.1 37421.7,-47133.1 37421.7,-47073.1 36855.7,-47073.1"/>
+<polygon fill="none" stroke="#29235c" points="36855.7,-47073.1 36855.7,-47133.1 37421.7,-47133.1 37421.7,-47073.1 36855.7,-47073.1"/>
+<text text-anchor="start" x="36866.7" y="-47093.3" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">lookup_key &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37304.03" y="-47094.3" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
+<polygon fill="none" stroke="#29235c" stroke-width="2" points="36854.7,-47072.1 36854.7,-48034.1 37422.7,-48034.1 37422.7,-47072.1 36854.7,-47072.1"/>
 </g>
 <!-- better_together_billing_prices&#45;&gt;better_together_billing_products -->
 <!-- better_together_billing_prices&#45;&gt;better_together_billing_products -->
 <g id="edge120" class="edge">
 <title>better_together_billing_prices:e&#45;&gt;better_together_billing_products:w</title>
-<path fill="none" stroke="#29235c" stroke-width="3" d="M37421.7,-47523.1C37421.7,-47523.1 28692.27,-45324.2 27586.27,-45118.17 26313.4,-44881.06 24712.5,-44740.22 24571.24,-44728.05"/>
-<polygon fill="#29235c" stroke="#29235c" stroke-width="3" points="24571.44,-44724.55 24561.18,-44727.19 24570.84,-44731.53 24571.44,-44724.55"/>
+<path fill="none" stroke="#29235c" stroke-width="3" d="M37421.7,-47643.1C37421.7,-47643.1 29802.23,-45544.15 27586.27,-45118.17 26314.78,-44873.76 24712.63,-44739.57 24571.25,-44728"/>
+<polygon fill="#29235c" stroke="#29235c" stroke-width="3" points="24571.43,-44724.51 24561.18,-44727.19 24570.86,-44731.48 24571.43,-44724.51"/>
 <text text-anchor="middle" x="24552.28" y="-44736.79" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">1</text>
-<text text-anchor="middle" x="37415.48" y="-47532.7" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
+<text text-anchor="middle" x="37415.48" y="-47652.7" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
 </g>
 <!-- better_together_billing_prices&#45;&gt;better_together_platforms -->
 <!-- better_together_billing_prices&#45;&gt;better_together_platforms -->
 <g id="edge118" class="edge">
 <title>better_together_billing_prices:e&#45;&gt;better_together_platforms:w</title>
-<path fill="none" stroke="#29235c" stroke-width="3" d="M37421.7,-47583.1C37421.7,-47583.1 33734.9,-45563.75 31038.55,-43576.58 29721.15,-42605.68 29617.12,-42091.22 28321.52,-41091.42 26177.52,-39436.93 25463.94,-39276.41 23193.4,-37800.37 21927.14,-36977.2 20368.07,-35940.89 20239.36,-35855.3"/>
+<path fill="none" stroke="#29235c" stroke-width="3" d="M37421.7,-47703.1C37421.7,-47703.1 33744.5,-45598.88 31038.55,-43576.58 29727.67,-42596.89 29617.12,-42091.22 28321.52,-41091.42 26177.52,-39436.93 25463.94,-39276.41 23193.4,-37800.37 21927.14,-36977.2 20368.07,-35940.89 20239.36,-35855.3"/>
 <polygon fill="#29235c" stroke="#29235c" stroke-width="3" points="20241.09,-35852.25 20230.83,-35849.63 20237.22,-35858.08 20241.09,-35852.25"/>
 <text text-anchor="middle" x="20239.72" y="-35820.83" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">1</text>
-<text text-anchor="middle" x="37415.48" y="-47592.7" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
+<text text-anchor="middle" x="37415.48" y="-47712.7" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
 </g>
 <!-- better_together_billing_processor_settings -->
 <g id="better_together_billing_processor_settings" class="node">
