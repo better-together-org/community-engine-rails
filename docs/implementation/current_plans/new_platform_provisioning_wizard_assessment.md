@@ -9,7 +9,7 @@ Goal: one provisioning wizard, modelled on the existing setup wizards, with a st
 - **Roles pack is always on.** Customization happens after launch; the pack is add-only so later plants never overwrite steward edits.
 - **The seed choice is not locked.** More packs can be planted after the platform is provisioned, through the seed catalog mechanism, which needs rework (see 2.5).
 - **Demo packs are development only**, initialized from the CLI. They are never selectable in the wizard or the catalog UI, on any platform.
-- **Wizard completion:** an end user completes the provisioning wizard once per platform. An operator steward can complete it many times, each run creating another platform (see 2.6).
+- **Operator-steward only, for now.** The provisioning wizard in this work is for operator stewards, who may complete it many times, each run creating a platform. End users are excluded. Self-serve for end users will be a separate, bespoke wizard that also sets up billing and may require a subscription first (see 2.6). This work plans for it but does not build it.
 - **Global packs (such as geography) are operator-only.** Hosted platforms read the host platform's reference rows directly; there are no per-platform copies. A steward who needs a place that is missing requests it from the operator. The auto-created settlement communities stay host-owned for now.
 - **Host-app packs register explicitly** in an initializer, like seed record types do today. No folder scanning.
 
@@ -75,12 +75,12 @@ Differences that matter:
 - **Draft cleanup.** A scheduled job removes draft platforms whose wizard never completed after a set time, and the draft is created at the identity step rather than at the first click.
 - **Authorization**: a platform steward can later run the wizard for a platform they are creating on the operator's behalf. Today the check is `PlatformPolicy#create?` for the whole run, because nobody holds a membership on the draft yet. Keep that check, and add the access-control contract entry for the wizard when it changes.
 
-### 2.4 Two kinds of person in the wizard
+### 2.4 Operator-run now, operator handover next
 
-The user's note: the steward now, perhaps later the person who will become the new platform's steward. Two modes, same steps:
+- **Operator-run** (now): the operator steward fills every step, including the future steward's account.
+- **Operator handover** (next, still operator-run): the operator runs the identity, domain and seed steps and the launch gate, then invites the future steward to set their own password on the new platform's own domain. This needs the initial-steward invitation from the larger plan and a draft addressable by a token. Design the draft record and steps so it can be added without reshaping them.
 
-- **Operator-run** (now): the host steward fills every step.
-- **Handover** (later): the operator runs steps 2 to 4 and 7's launch gate, and sends the steward an invitation that opens at the steward-account step on the new platform's own domain. The steward then picks seeds on step 4 (or reviews the operator's choice) and sets their own password. This needs the initial-steward invitation from the larger plan and a draft that is addressable by a token rather than by the operator's session. Not in the first iteration; design the draft record and steps so it can be added without reshaping them.
+Self-serve by end users is a different wizard (2.6).
 
 ### 2.5a Global packs and per-platform records that point at them
 
@@ -103,12 +103,16 @@ The existing `SeedCatalogController` is geography-only and not per platform. It 
 - Authorization: platform stewards plant for their own platform, the operator for any platform it governs. The new surface needs an access contract entry.
 - The geography catalog becomes a registered global pack (see 2.5a), operator-only.
 
-### 2.6 Who may complete the wizard, and how often
+### 2.6 Who may use the wizard
 
-- Each run has its own wizard record with `max_completions: 1`, so a single run completes once. That already matches "once per platform".
-- **Operator stewards** may start any number of runs. Each completed run creates one more platform.
-- **End users** (the later self-serve and handover mode) may complete one run, so one platform per person through this path. The gate sits at starting a run, not on the wizard record: a person with a completed run cannot start another unless they hold operator authority. Open detail: whether "once" counts per person or per organization, and what an end user does to get a second platform (ask the operator).
-- The authorization check at start is `PlatformPolicy#create?` today. It needs a second rule for end users with a completed-run count, plus an access contract entry.
+- **Now: operator stewards only.** Each run has its own wizard record with `max_completions: 1`, so a run completes once, and an operator may start any number of runs, each creating one platform. Starting a run stays behind `PlatformPolicy#create?`, which end users do not pass. Nothing in this work opens the wizard to them.
+- **Later: a separate end-user wizard**, not this one with a looser gate. It is bespoke because the person becomes the steward of the platform they create, and the flow carries things the operator wizard does not: choosing a plan, subscribing or paying before anything is provisioned, accepting agreements, and likely a slimmer seed choice with operator-defined defaults. The platform is created only after the entitlement exists, and it is created under the operator's governance (association) with the end user as steward.
+- **What this work does to keep that door open:**
+  - Seed selection, review and launch are built on the catalog, installers and a provisioning entry that take a pack selection and a steward, not on operator-only code. The end-user wizard reuses them.
+  - The wizard builder and step definitions as data (2.3) allow a second wizard identifier with its own YAML and extra steps (plan, billing, agreements) without reshaping the first.
+  - The steward account step keeps account creation separate from seeding, so a different person can be the steward than the one running the wizard.
+  - The provisioning entry records who requested the platform and under which entitlement, as a nullable reference, so a billing link can be added later without migrating existing platforms.
+- **Open for that later work:** which plan gates which packs, whether the multi-platform feature grant (HPS-3 authority rules) is checked before the form is shown, and the failure path if payment succeeds but provisioning fails.
 
 ## 3. Provisioning a separate app later
 
@@ -131,10 +135,9 @@ Each phase is a small reviewable change with specs, screenshots for any view, an
 5. **Seed selection step and review plan**: the new step, the dry-run review, plant on launch, wizard run record, move seeding out of the steward step. Screenshots and DOM contracts.
 6. **Service parity**: `TenantPlatformProvisioningService` and the rake task accept a pack selection and use the same installers (so there is one seeding path), keep the idempotent behavior, stop taking the steward password as an argument.
 7. **Seed catalog rework** (2.5): per-platform catalog page on the shared catalog and installers, geography as a registered pack.
-8. **Handover mode**: invitation-driven steward steps on the new platform's domain.
+8. **Operator handover**: the operator runs the wizard and invites the future steward to set their own password on the new platform's domain. Still operator-run, not self-serve.
 9. **Dedicated app target**: provisioning job records, dispatcher port, approval display, infrastructure steps.
 
 Open details left:
 
-- End-user "once" rule: per person or per organization, and the path to a second platform (2.6).
 - Whether the roles pack's always-on rule also applies to the rake task and service when they accept a selection (assumed yes).
