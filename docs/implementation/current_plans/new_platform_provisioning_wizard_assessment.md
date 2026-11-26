@@ -10,6 +10,7 @@ Goal: one provisioning wizard, modelled on the existing setup wizards, with a st
 - **The seed choice is not locked.** More packs can be planted after the platform is provisioned, through the seed catalog mechanism, which needs rework (see 2.5).
 - **Demo packs are development only**, initialized from the CLI. They are never selectable in the wizard or the catalog UI, on any platform.
 - **Wizard completion:** an end user completes the provisioning wizard once per platform. An operator steward can complete it many times, each run creating another platform (see 2.6).
+- **Global packs (such as geography) are operator-only.** Hosted platforms read the host platform's reference rows directly; there are no per-platform copies. A steward who needs a place that is missing requests it from the operator. The auto-created settlement communities stay host-owned for now.
 - **Host-app packs register explicitly** in an initializer, like seed record types do today. No folder scanning.
 
 ## 1. What exists today
@@ -49,7 +50,7 @@ Everything the new step needs is "which packs can this platform install, what do
 | Navigation and static pages | recommended, default on | Today one packet. Splitting it lets a steward pick areas independently: header, footer, host admin menu, better-together menu, with items and pages inside each area. Needs the packet split, with dependencies between the pieces (items need their area, linked pages need the pages). |
 | Agreements and legal pages | recommended | New packet from `AgreementBuilder`. |
 | Categories | optional | New packet from `CategoryBuilder`. |
-| Geography reference data | optional | Not per platform today; keep it out until it is. |
+| Geography reference data | optional, global scope | Operator-only, planted once on the host (2.5a). Not part of the wizard's choices. |
 | Demo and joatu content | demo, CLI only | Developer rake task only, never in the wizard or catalog UI. Needs builders that take a platform. |
 
 The steward sees marketing name and description, and for navigation a preview of what will be created (the plan counts: create, update, skipped).
@@ -81,6 +82,18 @@ The user's note: the steward now, perhaps later the person who will become the n
 - **Operator-run** (now): the host steward fills every step.
 - **Handover** (later): the operator runs steps 2 to 4 and 7's launch gate, and sends the steward an invitation that opens at the steward-account step on the new platform's own domain. The steward then picks seeds on step 4 (or reviews the operator's choice) and sets their own password. This needs the initial-steward invitation from the larger plan and a draft that is addressable by a token rather than by the operator's session. Not in the first iteration; design the draft record and steps so it can be added without reshaping them.
 
+### 2.5a Global packs and per-platform records that point at them
+
+Some packs plant reference data that belongs to no platform. Geography is the first: `Country`, `Settlement` and the other geography types inherit `ApplicationRecord` and have no `platform_id`. Platform-owned records (communities, events, maps and pins) point at them, for example a community linked to a settlement through `LocatableLocation`.
+
+- **Pack scope**: the `seed_pack` metadata gets `scope: global | platform` (default `platform`). A global pack plants once, on the host platform, and every platform reads the same rows.
+- **Where they show**: global packs are listed only on the operator platform's catalog page. They never appear in the wizard's seed selection. A hosted steward sees a read-only line, provided by the operator, with what is present.
+- **Fail closed**: planting a global pack against any platform other than the host fails with a clear error and plants nothing. This check sits in the installer, not only in the UI, and has an access contract entry.
+- **Editing**: only the operator edits reference rows. A steward who needs a missing place requests it from the operator; there is no platform-owned place model.
+- **Leak check**: the place is shared but "what is located here" is not. `Community.located_in(place)` and any similar listing must filter to the viewing platform, with a two-platform isolation spec (same class of leak HPS-1 and HPS-2 closed).
+- **Auto-created settlement communities**: `Settlement` includes `PrimaryCommunity`, so each settlement has a community. These stay host-owned for now. Removing them is item E of the multi-tenancy notes and is not part of this work.
+- **Dedicated apps later**: a separate app has its own database, so its provisioning plants the same global packs there from the same versioned source.
+
 ### 2.5 Seed catalog rework: planting more packs after launch
 
 The existing `SeedCatalogController` is geography-only and not per platform. It becomes the way to add packs to a provisioned platform, using the same `SeedPackCatalog` and installers as the wizard so there is one mechanism:
@@ -88,7 +101,7 @@ The existing `SeedCatalogController` is geography-only and not per platform. It 
 - Per platform: the platform admin page lists registered packs that apply, which are already planted (from `SeedPlanting` provenance), and which are available, with dependencies resolved.
 - Each plant shows the dry-run plan first (counts of create, update, skipped) and then applies. Packets are add-only, so edited records are skipped and reported, never overwritten.
 - Authorization: platform stewards plant for their own platform, the operator for any platform it governs. The new surface needs an access contract entry.
-- The geography catalog becomes a registered pack instead of a special case, and its global (non-platform) data stays operator-only until it is per platform.
+- The geography catalog becomes a registered global pack (see 2.5a), operator-only.
 
 ### 2.6 Who may complete the wizard, and how often
 
