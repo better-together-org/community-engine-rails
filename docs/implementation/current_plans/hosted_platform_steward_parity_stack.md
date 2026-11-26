@@ -24,7 +24,7 @@ Closing these lets an operator configure hosted platforms by hand today, while t
 | HPS-0 | This note and the squash-ready description | this PR |
 | HPS-1 | Host dashboard scoped to the platform being viewed and authorized against it; `Platform has_many :pages` | planned next |
 | HPS-2 | RBAC index navigation counts scoped to the platform being viewed | in review |
-| HPS-3 | Feature access grants and quota grants limited to host authority | planned |
+| HPS-3 | Feature access and quota grants follow the governing operator, not the platform itself | in review |
 | HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | planned |
 | HPS-5 | Platform-owned navigation area seeded at provisioning | planned |
 | HPS-6 | Manual hosted-platform provisioning runbook and the steward smoke-test checklist | planned |
@@ -47,7 +47,7 @@ feat(platform): hosted platform steward parity (HPS-0 to HPS-6)
 - Host dashboard authorizes against the current platform and scopes its counts and records to it (HPS-1)
 - Platform has_many pages (HPS-1)
 - Roles and permissions index counts are scoped to the platform being viewed (HPS-2)
-- Feature access and quota grants are limited to host authority (HPS-3)
+- Feature access and quota grants are administered by the governing operator: the host steward for the host and for hosted platforms with no operator, the local operator steward (billing scope) where an association is in force, and nobody on this instance where a remote operator governs (HPS-3)
 - Hostnames must sit in an allowed zone or be operator-created, reserved names are blocked, steward-created hostnames start inactive (HPS-4)
 - Hosted platforms get their own navigation area at provisioning (HPS-5)
 - Runbook for manual hosted-platform provisioning and the steward smoke test (HPS-6)
