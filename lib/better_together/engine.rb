@@ -16,6 +16,7 @@ require 'better_together/migration_helpers'
 require 'better_together/generator_templates'
 require 'better_together/profiling'
 require 'better_together/friendly_id_slug_platform'
+require 'better_together/platform_context_job_carrier'
 require 'better_together/safe_outbound_host'
 require 'better_together/signed_verifier_rotation'
 require 'better_together/tenancy_audit'
@@ -136,6 +137,11 @@ module BetterTogether
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
+    end
+
+    # Jobs and deliver_later mail run on the platform that queued them (see PlatformContextJobCarrier).
+    initializer 'better_together.platform_context_jobs' do
+      ActiveSupport.on_load(:active_job) { include BetterTogether::PlatformContextJobCarrier }
     end
 
     # Insert PlatformContextMiddleware early in the stack so Current.platform
