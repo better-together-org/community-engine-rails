@@ -1,4 +1,13 @@
 
+# Fixed network so projects and worktrees reuse one range instead of each drawing
+# a new one from Docker's limited address pools.
+networks:
+  default:
+    name: "${BTS_DOCKER_NETWORK_NAME:-community-engine-dev}"
+    ipam:
+      config:
+        - subnet: "${BTS_DOCKER_SUBNET:-10.45.30.0/24}"
+
 volumes:
   community-engine-bundler-gems:
     name: community-engine-rails_community-engine-bundler-gems
