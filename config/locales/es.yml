@@ -1203,6 +1203,52 @@ es:
           processed: Hecho
           replayed: Reintentado
         table_caption: Eventos de pago y su estado
+      grants:
+        add: Añadir
+        add_confirm: "¿Añadir esto al plan?"
+        add_feature: Acceso a una función
+        add_quota: Más de una cuota
+        add_role: Un rol
+        add_storage: Más almacenamiento
+        added: Añadido al plan.
+        amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
+        audience: Las personas que ya tienen este plan (%{count}) se actualizan en
+          unos minutos.
+        audience_none: Nadie tiene este plan todavía, así que nadie se ve afectado.
+        edit_confirm: "¿Cambiar esta cantidad?"
+        field_amount: Cantidad adicional
+        field_community: Comunidad (si es una comunidad)
+        field_feature: Función
+        field_level: Nivel de acceso
+        field_quota: Cuota
+        field_role: Rol
+        field_storage: Almacenamiento
+        field_where: Dónde
+        intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
+          solo se retira lo que dio el plan; los roles y accesos que ya tenían se
+          quedan y nada de lo que crearon se elimina.
+        none: Este plan todavía no incluye nada.
+        place_a_community: Una comunidad
+        place_community: la comunidad %{name}
+        place_platform: La plataforma
+        place_unknown: una comunidad que ya no existe
+        product_intro: Quienes compran este producto obtienen esto cuando se paga
+          el pedido. Si se reembolsa, o termina un plazo fijo, se retira lo que el
+          producto dio; nada de lo que crearon se borra.
+        product_title: Qué incluye este producto
+        refused: No se pudo añadir. Revisa las opciones; un plan no puede dar un rol
+          que permita administrar.
+        remove: Quitar
+        remove_confirm: "¿Quitar esto del plan? Quienes lo tienen lo pierden, salvo
+          que ya lo tuvieran antes."
+        removed: Quitado del plan.
+        role_hint: Solo se ofrecen roles que no pueden administrar.
+        summary_feature: Acceso a %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} más de %{quota}"
+        summary_quota_size: "%{amount} más de %{quota}"
+        summary_role: El rol %{role} en %{where}
+        title: Qué incluye este plan
+        updated: Se cambió la cantidad.
       hosted_billing:
         accept_button: Aceptar para esta plataforma
         accepted: Acuerdo aceptado para esta plataforma.
@@ -1761,52 +1807,6 @@ es:
         one_time_participant_summary: Contribucion unica al alojamiento
         personal_beneficiary_label: Acceso personal
         recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
-      plan_grants:
-        add: Añadir
-        add_confirm: "¿Añadir esto al plan?"
-        add_feature: Acceso a una función
-        add_quota: Más de una cuota
-        add_role: Un rol
-        add_storage: Más almacenamiento
-        added: Añadido al plan.
-        amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
-        audience: Las personas que ya tienen este plan (%{count}) se actualizan en
-          unos minutos.
-        audience_none: Nadie tiene este plan todavía, así que nadie se ve afectado.
-        edit_confirm: "¿Cambiar esta cantidad?"
-        field_amount: Cantidad adicional
-        field_community: Comunidad (si es una comunidad)
-        field_feature: Función
-        field_level: Nivel de acceso
-        field_quota: Cuota
-        field_role: Rol
-        field_storage: Almacenamiento
-        field_where: Dónde
-        intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
-          solo se retira lo que dio el plan; los roles y accesos que ya tenían se
-          quedan y nada de lo que crearon se elimina.
-        none: Este plan todavía no incluye nada.
-        place_a_community: Una comunidad
-        place_community: la comunidad %{name}
-        place_platform: La plataforma
-        place_unknown: una comunidad que ya no existe
-        product_intro: Quienes compran este producto obtienen esto cuando se paga
-          el pedido. Si se reembolsa, o termina un plazo fijo, se retira lo que el
-          producto dio; nada de lo que crearon se borra.
-        product_title: Qué incluye este producto
-        refused: No se pudo añadir. Revisa las opciones; un plan no puede dar un rol
-          que permita administrar.
-        remove: Quitar
-        remove_confirm: "¿Quitar esto del plan? Quienes lo tienen lo pierden, salvo
-          que ya lo tuvieran antes."
-        removed: Quitado del plan.
-        role_hint: Solo se ofrecen roles que no pueden administrar.
-        summary_feature: Acceso a %{feature} (%{level})
-        summary_quota: "%{amount} %{unit} más de %{quota}"
-        summary_quota_size: "%{amount} más de %{quota}"
-        summary_role: El rol %{role} en %{where}
-        title: Qué incluye este plan
-        updated: Se cambió la cantidad.
       plans:
         actions_heading: Acciones
         audience_hint: 'Deje ambas casillas sin marcar para todo el mundo. Marque
@@ -1967,6 +1967,8 @@ es:
         new_price: Añadir un precio
         new_title: Añadir un precio
         none: Aún no hay precios. Añada uno para poner a la venta este producto.
+        plan_intro: 'Un plan se vende mediante sus precios recurrentes. Un precio
+          nunca cambia: use Cambiar precio para reemplazarlo.'
         status_archived: Fuera de venta
         status_on_sale: A la venta
         title: Precios

@@ -3,14 +3,14 @@
 require 'rails_helper'
 
 # A steward chooses what a plan includes.
-RSpec.describe BetterTogether::Billing::PlanGrantsController do
+RSpec.describe BetterTogether::Billing::GrantsController do
   include_context 'with entitlement fixtures'
   include_context 'with billing switched on'
 
   let(:locale) { :en }
 
-  def grants_path(plan = sub_plan) = better_together.billing_plan_plan_grants_path(plan, locale:)
-  def grant_path(grant, plan = sub_plan) = better_together.billing_plan_plan_grant_path(plan, grant, locale:)
+  def grants_path(plan = sub_plan) = better_together.billing_product_grants_path(plan, locale:)
+  def grant_path(grant, plan = sub_plan) = better_together.billing_product_grant_path(plan, grant, locale:)
   def plan_path(plan = sub_plan) = better_together.billing_plan_path(plan, locale:)
 
   it 'sends a visitor to sign in' do
@@ -98,7 +98,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
        { kind: 'root_access', anything: 'goes' }].each do |bad|
         post grants_path, params: bad
 
-        expect(flash[:alert]).to eq(I18n.t('better_together.billing.plan_grants.refused'))
+        expect(flash[:alert]).to eq(I18n.t('better_together.billing.grants.refused'))
       end
       expect(sub_plan.grants.reload).to be_empty
     end

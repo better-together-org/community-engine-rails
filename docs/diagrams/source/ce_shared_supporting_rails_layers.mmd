@@ -186,6 +186,11 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
     }
+    class BetterTogether__Billing__GrantsController["Billing::GrantsController"] {
+      <<Controller>>
+      models: Billing::Grant
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
     class BetterTogether__Billing__HostedBillingsController["Billing::HostedBillingsController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
@@ -222,10 +227,6 @@ classDiagram
     class BetterTogether__Billing__PricesController["Billing::PricesController"] {
       <<Controller>>
       models: Billing::Price
-      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
-    }
-    class BetterTogether__Billing__ProductGrantsController["Billing::ProductGrantsController"] {
-      <<Controller>>
       concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
     }
     class BetterTogether__Billing__ProductsController["Billing::ProductsController"] {
@@ -949,6 +950,8 @@ classDiagram
   BetterTogether__Billing__BillingAddressesController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__CatalogController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__EventsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__GrantsController ..> BetterTogether__Billing__Grant : manages
+  BetterTogether__Billing__GrantsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostedBillingsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostedPlatformsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HostingPlansController --|> BetterTogether__ApplicationController
@@ -960,7 +963,6 @@ classDiagram
   BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PricesController ..> BetterTogether__Billing__Price : manages
   BetterTogether__Billing__PricesController --|> BetterTogether__ApplicationController
-  BetterTogether__Billing__ProductGrantsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__ProductsController ..> BetterTogether__Billing__Product : manages
   BetterTogether__Billing__ProductsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__RefundRequestsController ..> BetterTogether__Billing__RefundRequest : manages

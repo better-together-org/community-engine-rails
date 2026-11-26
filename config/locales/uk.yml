@@ -1195,6 +1195,51 @@ uk:
           processed: Оброблена
           replayed: Повторена
         table_caption: Події платежів та їхній стан
+      grants:
+        add: Додати
+        add_confirm: Додати це до плану?
+        add_feature: Доступ до функції
+        add_quota: Більше квоти
+        add_role: Роль
+        add_storage: Більше сховища
+        added: Додано до плану.
+        amount_hint: У власній одиниці квоти, наприклад токени ШІ.
+        audience: Ті, хто вже має цей план (%{count}), буде оновлено за кілька хвилин.
+        audience_none: Цього плану ще ніхто не має, тож нікого це не стосується.
+        edit_confirm: Змінити цю кількість?
+        field_amount: Додаткова кількість
+        field_community: Спільнота (якщо спільнота)
+        field_feature: Функція
+        field_level: Рівень доступу
+        field_quota: Квота
+        field_role: Роль
+        field_storage: Сховище
+        field_where: Де
+        intro: Ті, хто оплачує цей план, отримують це, поки він оплачений. Коли він
+          спливає, прибирається лише те, що дав сам план; ролі та доступ, які вже
+          були, залишаються, а створене не видаляється.
+        none: Цей план ще нічого не включає.
+        place_a_community: Спільнота
+        place_community: спільнота %{name}
+        place_platform: Платформа
+        place_unknown: спільнота, якої більше немає
+        product_intro: Ті, хто купує цей продукт, отримують це, коли замовлення оплачено.
+          Якщо кошти повернуто або закінчився встановлений строк, те, що дав продукт,
+          забирається; нічого створеного ними не видаляється.
+        product_title: Що входить до цього продукту
+        refused: Не вдалося додати. Перевірте вибір; план не може надавати роль, що
+          дозволяє керувати.
+        remove: Прибрати
+        remove_confirm: Прибрати це з плану? Ті, хто це має, втратять, якщо цього
+          не було в них раніше.
+        removed: Прибрано з плану.
+        role_hint: Пропонуються лише ролі без прав керування.
+        summary_feature: Доступ до %{feature} (%{level})
+        summary_quota: На %{amount} %{unit} більше для %{quota}
+        summary_quota_size: На %{amount} більше для %{quota}
+        summary_role: Роль %{role} у %{where}
+        title: Що входить до цього плану
+        updated: Кількість змінено.
       hosted_billing:
         accept_button: Прийняти для цієї платформи
         accepted: Угоду прийнято для цієї платформи.
@@ -1745,51 +1790,6 @@ uk:
         one_time_participant_summary: Razovyi vnesok na hosted-dostup
         personal_beneficiary_label: Osobystyi dostup
         recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
-      plan_grants:
-        add: Додати
-        add_confirm: Додати це до плану?
-        add_feature: Доступ до функції
-        add_quota: Більше квоти
-        add_role: Роль
-        add_storage: Більше сховища
-        added: Додано до плану.
-        amount_hint: У власній одиниці квоти, наприклад токени ШІ.
-        audience: Ті, хто вже має цей план (%{count}), буде оновлено за кілька хвилин.
-        audience_none: Цього плану ще ніхто не має, тож нікого це не стосується.
-        edit_confirm: Змінити цю кількість?
-        field_amount: Додаткова кількість
-        field_community: Спільнота (якщо спільнота)
-        field_feature: Функція
-        field_level: Рівень доступу
-        field_quota: Квота
-        field_role: Роль
-        field_storage: Сховище
-        field_where: Де
-        intro: Ті, хто оплачує цей план, отримують це, поки він оплачений. Коли він
-          спливає, прибирається лише те, що дав сам план; ролі та доступ, які вже
-          були, залишаються, а створене не видаляється.
-        none: Цей план ще нічого не включає.
-        place_a_community: Спільнота
-        place_community: спільнота %{name}
-        place_platform: Платформа
-        place_unknown: спільнота, якої більше немає
-        product_intro: Ті, хто купує цей продукт, отримують це, коли замовлення оплачено.
-          Якщо кошти повернуто або закінчився встановлений строк, те, що дав продукт,
-          забирається; нічого створеного ними не видаляється.
-        product_title: Що входить до цього продукту
-        refused: Не вдалося додати. Перевірте вибір; план не може надавати роль, що
-          дозволяє керувати.
-        remove: Прибрати
-        remove_confirm: Прибрати це з плану? Ті, хто це має, втратять, якщо цього
-          не було в них раніше.
-        removed: Прибрано з плану.
-        role_hint: Пропонуються лише ролі без прав керування.
-        summary_feature: Доступ до %{feature} (%{level})
-        summary_quota: На %{amount} %{unit} більше для %{quota}
-        summary_quota_size: На %{amount} більше для %{quota}
-        summary_role: Роль %{role} у %{where}
-        title: Що входить до цього плану
-        updated: Кількість змінено.
       plans:
         actions_heading: Дії
         audience_hint: 'Залиште обидва поля без позначки для всіх. Позначте одне або
@@ -1945,6 +1945,8 @@ uk:
         new_price: Додати ціну
         new_title: Додати ціну
         none: Цін ще немає. Додайте одну, щоб почати продаж цього товару.
+        plan_intro: 'План продається за регулярними цінами. Ціна ніколи не змінюється:
+          скористайтеся «Змінити ціну», щоб замінити її.'
         status_archived: Не продається
         status_on_sale: У продажу
         title: Ціни

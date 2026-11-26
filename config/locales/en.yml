@@ -1211,6 +1211,52 @@ en:
           processed: Done
           replayed: Retried
         table_caption: Payment events and their state
+      grants:
+        add: Add
+        add_confirm: Add this to the plan?
+        add_feature: Access to a feature
+        add_quota: More of a quota
+        add_role: A role
+        add_storage: Extra storage
+        added: Added to the plan.
+        amount_hint: In the quota’s own unit, such as tokens for AI.
+        audience: People who already have this plan (%{count}) are updated within
+          a few minutes.
+        audience_none: Nobody has this plan yet, so nobody is affected.
+        edit_confirm: Change this amount?
+        field_amount: Extra amount
+        field_community: Community (if a community)
+        field_feature: Feature
+        field_level: Access level
+        field_quota: Quota
+        field_role: Role
+        field_storage: Storage
+        field_where: Where
+        intro: People who pay for this plan get these while it is paid. When it lapses,
+          only what the plan itself gave is taken away; roles and access someone already
+          had stay, and nothing they made is deleted.
+        none: This plan includes nothing yet.
+        place_a_community: A community
+        place_community: the community %{name}
+        place_platform: The platform
+        place_unknown: a community that no longer exists
+        product_intro: Buyers of this product get these when their order is paid.
+          If it is refunded, or a set term ends, what the product gave is taken away;
+          nothing they made is deleted.
+        product_title: What this product includes
+        refused: That could not be added. Check the choices; a role that can manage
+          things cannot be given by a plan.
+        remove: Remove
+        remove_confirm: Remove this from the plan? People who have it lose it unless
+          they already had it before.
+        removed: Removed from the plan.
+        role_hint: Only roles that cannot manage things are offered.
+        summary_feature: Access to %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} more of %{quota}"
+        summary_quota_size: "%{amount} more %{quota}"
+        summary_role: The role %{role} in %{where}
+        title: What this plan includes
+        updated: The amount was changed.
       hosted_billing:
         accept_button: Accept for this platform
         accepted: Agreement accepted for this platform.
@@ -1766,52 +1812,6 @@ en:
         one_time_participant_summary: One-time hosted contribution
         personal_beneficiary_label: Personal access
         recurring_participant_summary: Ongoing hosted access and stewardship support
-      plan_grants:
-        add: Add
-        add_confirm: Add this to the plan?
-        add_feature: Access to a feature
-        add_quota: More of a quota
-        add_role: A role
-        add_storage: Extra storage
-        added: Added to the plan.
-        amount_hint: In the quota’s own unit, such as tokens for AI.
-        audience: People who already have this plan (%{count}) are updated within
-          a few minutes.
-        audience_none: Nobody has this plan yet, so nobody is affected.
-        edit_confirm: Change this amount?
-        field_amount: Extra amount
-        field_community: Community (if a community)
-        field_feature: Feature
-        field_level: Access level
-        field_quota: Quota
-        field_role: Role
-        field_storage: Storage
-        field_where: Where
-        intro: People who pay for this plan get these while it is paid. When it lapses,
-          only what the plan itself gave is taken away; roles and access someone already
-          had stay, and nothing they made is deleted.
-        none: This plan includes nothing yet.
-        place_a_community: A community
-        place_community: the community %{name}
-        place_platform: The platform
-        place_unknown: a community that no longer exists
-        product_intro: Buyers of this product get these when their order is paid.
-          If it is refunded, or a set term ends, what the product gave is taken away;
-          nothing they made is deleted.
-        product_title: What this product includes
-        refused: That could not be added. Check the choices; a role that can manage
-          things cannot be given by a plan.
-        remove: Remove
-        remove_confirm: Remove this from the plan? People who have it lose it unless
-          they already had it before.
-        removed: Removed from the plan.
-        role_hint: Only roles that cannot manage things are offered.
-        summary_feature: Access to %{feature} (%{level})
-        summary_quota: "%{amount} %{unit} more of %{quota}"
-        summary_quota_size: "%{amount} more %{quota}"
-        summary_role: The role %{role} in %{where}
-        title: What this plan includes
-        updated: The amount was changed.
       plans:
         actions_heading: Actions
         audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
@@ -1966,6 +1966,8 @@ en:
         new_price: Add a price
         new_title: Add a price
         none: No prices yet. Add one to put this product on sale.
+        plan_intro: 'A plan is sold through its recurring prices. A price never changes:
+          use Change price to replace it.'
         status_archived: Off sale
         status_on_sale: On sale
         title: Prices
