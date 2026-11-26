@@ -831,9 +831,14 @@ Table "better_together_billing_prices" {
   "active" boolean [not null, default: true]
   "archived_at" timestamp
   "processor_price_id" varchar
+  "kind" varchar [not null, default: 'one_time']
+  "interval" varchar
+  "interval_count" integer [not null, default: 1]
+  "lookup_key" varchar
 
   indexes {
     ("id", "platform_id") [unique, name: "idx_bt_billing_prices_id_platform"]
+    ("platform_id", "lookup_key") [unique, name: "idx_bt_billing_prices_lookup_key"]
     "platform_id" [name: "idx_bt_billing_prices_platform"]
     "product_id" [name: "idx_bt_billing_prices_product"]
   }
