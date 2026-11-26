@@ -11,32 +11,32 @@ module BetterTogether
 
       self.table_name = 'better_together_billing_plan_grants'
 
-      # What it is part of: a plan or a product, exactly one.
-      belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', inverse_of: :plan_grants, optional: true
-      belongs_to :product, class_name: 'BetterTogether::Billing::Product', inverse_of: :grants, optional: true
+      # What it is part of: a product, which may be a plan.
+      belongs_to :product, class_name: 'BetterTogether::Billing::Product', inverse_of: :grants, optional: false
 
-      attr_readonly :plan_id, :product_id
+      attr_readonly :product_id
 
       before_validation :normalize
       validates :kind, inclusion: { in: ->(_) { Entitlements::Registry.kinds } }
       validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :parameters_valid
-      validate :exactly_one_owner
       validate :not_already_on_the_plan
 
       # The handler for this grant, ready to apply.
       def handler = Entitlements::Registry.handler_for(self)
 
-      # The plan or product this is part of.
-      def owner = plan || product
+      # The product (a plan is one) this is part of.
+      def owner = product
+
+      def plan = (product if product.is_a?(Plan))
+
+      def plan=(record)
+        self.product = record
+      end
 
       private
 
       def billing_parent = owner
-
-      def exactly_one_owner
-        errors.add(:base, :one_owner) unless plan_id.present? ^ product_id.present?
-      end
 
       def normalize
         self.parameters = parameters.to_h.stringify_keys.transform_values { |value| value.is_a?(String) ? value.strip : value }

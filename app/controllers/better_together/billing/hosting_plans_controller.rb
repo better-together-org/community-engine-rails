@@ -29,7 +29,7 @@ module BetterTogether
       def hosting_entitlements
         return billing_owner.billing_entitlements.none unless @host
 
-        @host.billing_entitlements.where(beneficiary: owners).includes(:plan, :product, :beneficiary, grants: []).order(created_at: :desc)
+        @host.billing_entitlements.where(beneficiary: owners).includes(:product, :beneficiary, grants: []).order(created_at: :desc)
       end
 
       def hosting_terms

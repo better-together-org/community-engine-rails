@@ -214,16 +214,16 @@ erDiagram
   }
 
   BILLING_PRODUCTS {
+    latest_processor_event_id string
     processor_product_id string
     platform_id uuid
     seller_id uuid
     tax_category_id uuid
+    accepted_payment_methods string
     identifier string
     lifetime string
     processor string
     seller_type string
-    sync_error string
-    sync_status string
   }
 
   BILLING_PURCHASE_REQUIREMENTS {

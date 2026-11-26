@@ -103,7 +103,7 @@ RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
          params: { plan_id: plan.id, payment_method: 'cash', add_on_ids: [add_on.id], **billing_address_params(address) }.merge(ticks)
 
     order = BetterTogether::Billing::Order.order(:created_at).last
-    expect(order.line_items.map(&:purchasable)).to contain_exactly(plan, add_on)
+    expect(order.line_items.map(&:purchasable)).to contain_exactly(plan.current_price, add_on)
   end
 
   it 'hides an extra the buyer is not in the audience for' do

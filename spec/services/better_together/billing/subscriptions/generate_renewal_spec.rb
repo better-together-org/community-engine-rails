@@ -43,7 +43,7 @@ RSpec.describe BetterTogether::Billing::Subscriptions::GenerateRenewal do
 
   it 'invoices the price the subscriber was sold at, not the plan\'s price today' do
     term
-    sub_plan.update_columns(amount_cents: 5000) # rubocop:disable Rails/SkipsModelValidations
+    reprice(sub_plan, 5000)
 
     expect(generate_renewal(term, at: inside_lead).order.total_cents).to eq(3000)
   end

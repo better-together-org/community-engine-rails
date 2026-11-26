@@ -23,18 +23,20 @@ module BetterTogether
       INTERVALS = %w[month year].freeze
 
       attr_readonly :product_id
+      # Set when the product is pushing itself anyway (a plan saving its own price), so it is not pushed twice.
+      attr_accessor :skip_product_sync
 
       validates :kind, inclusion: { in: KINDS }
       validates :interval, inclusion: { in: INTERVALS }, if: :recurring?
       validates :interval, absence: true, unless: :recurring?
-      validates :interval_count, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 12 }
+      validates :interval_count, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 36 }
       validates :lookup_key, uniqueness: { scope: :platform_id }, allow_nil: true
       validate :same_platform_as_product
       validate :terms_unchanged, on: :update
 
       before_validation :take_platform_from_product, on: :create
       # A price added to a product the processor holds is pushed with it.
-      after_commit(on: :create) { product.queue_processor_sync }
+      after_commit(on: :create) { product.queue_processor_sync unless skip_product_sync }
 
       # What a steward may set when adding a price: the amount (in major units) and currency, and its label in each language.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
@@ -56,6 +58,8 @@ module BetterTogether
       def archived? = archived_at.present?
 
       # Purchasable: the product's name, with the price's label when it has one.
+      delegate :seller_id, :seller_type, to: :product
+
       def purchasable_description = [product.name, label.presence].compact.join(' - ')
 
       def purchasable_description_in(locale)

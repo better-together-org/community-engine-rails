@@ -19,7 +19,7 @@ module BetterTogether
       alias needs_any_plan? needs_any_plan
 
       def needed_plan_ids
-        @needed_plan_ids || purchase_requirements.select { |rule| rule.prerequisite_type == Plan.name }.map(&:prerequisite_id)
+        @needed_plan_ids || purchase_requirements.select { |rule| rule.prerequisite_type == Plan.polymorphic_name }.map(&:prerequisite_id)
       end
 
       def needs_any_plan=(value)
@@ -55,7 +55,7 @@ module BetterTogether
         have = purchase_requirements.reload
         purchase_requirements.create!(platform_id:, prerequisite_kind: 'plan', met_by: 'either') if needs_any_plan && have.none?(&:kind?)
         (wanted_ids - have.map(&:prerequisite_id)).each do |plan_id|
-          purchase_requirements.create!(platform_id:, prerequisite_type: Plan.name, prerequisite_id: plan_id, met_by: 'either')
+          purchase_requirements.create!(platform_id:, prerequisite_type: Plan.polymorphic_name, prerequisite_id: plan_id, met_by: 'either')
         end
       end
     end

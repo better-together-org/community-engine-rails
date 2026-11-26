@@ -79,7 +79,7 @@ RSpec.describe 'Extras bought on their own' do # rubocop:disable RSpec/DescribeC
 
     order = BetterTogether::Billing::Order.order(:created_at).last
     expect(order.line_items.map(&:purchasable)).to eq([extra])
-    expect(host_platform.billing_entitlements.where(order_id: order.id, plan_id: plan.id)).to be_empty
+    expect(host_platform.billing_entitlements.where(order_id: order.id, product_id: plan.id)).to be_empty
   end
 
   it 'lists the extra on the billing hub for a holder' do

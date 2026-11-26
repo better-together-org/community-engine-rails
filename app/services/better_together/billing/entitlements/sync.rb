@@ -116,7 +116,7 @@ module BetterTogether
         end
 
         # The column that says what the entitlement is for.
-        def item_key = item.is_a?(Product) ? { product_id: item.id } : { plan_id: item.id }
+        def item_key = { product_id: item.id }
 
         def source_attributes = subscription? ? { pay_subscription: source } : { order: source }
 

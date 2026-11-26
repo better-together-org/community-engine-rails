@@ -16,10 +16,10 @@ RSpec.describe BetterTogether::Billing::Checkout::Lines do
   end
 
   it 'is a subscription when a plan recurs, naming the plan price the processor holds' do
-    result = lines_for(plan)
+    result = lines_for(plan.current_price)
 
     expect(result.mode).to eq(:subscription)
-    expect(result.lines.sole).to have_attributes(processor_price_id: plan.processor_price_id, price_data: nil, recurring?: true)
+    expect(result.lines.sole).to have_attributes(processor_price_id: plan.current_price.processor_price_id, price_data: nil, recurring?: true)
   end
 
   it 'is a payment when every line is one-time, and sends a product price inline when the processor does not hold it' do
@@ -46,8 +46,8 @@ RSpec.describe BetterTogether::Billing::Checkout::Lines do
   end
 
   it 'refuses a plan that is not linked to the processor' do
-    order = place_order(payment_method: 'fake', line_items: [{ purchasable: plan }])
-    plan.update_columns(processor_price_id: nil) # rubocop:disable Rails/SkipsModelValidations
+    order = place_order(payment_method: 'fake', line_items: [{ purchasable: plan.current_price }])
+    plan.current_price.update_columns(processor_price_id: nil) # rubocop:disable Rails/SkipsModelValidations
 
     expect { described_class.call(order:, processor: 'fake') }.to raise_error(described_class::Unmirrored)
   end

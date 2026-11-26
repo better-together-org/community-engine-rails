@@ -3,9 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::Periods do
-  def plan(interval: 'month', count: 1) = build_stubbed(:better_together_billing_plan, billing_interval: interval, interval_count: count)
+  def plan(interval: 'month', count: 1)
+    return build_stubbed(:better_together_billing_price) if interval == 'one_time'
 
-  def starts(anchor, sequence, **) = described_class.starts_at(anchor:, plan: plan, sequence:, **)
+    build_stubbed(:better_together_billing_price, kind: 'recurring', interval:, interval_count: count)
+  end
+
+  def starts(anchor, sequence, **) = described_class.starts_at(anchor:, price: plan, sequence:, **)
 
   it 'counts every period from the anchor, so a month-end start never drifts' do
     anchor = Time.utc(2027, 1, 31, 15)
@@ -22,14 +26,14 @@ RSpec.describe BetterTogether::Billing::Periods do
   it 'ends a period where the next begins' do
     anchor = Time.utc(2027, 1, 31, 15)
 
-    expect(described_class.ends_at(anchor:, plan:, sequence: 0)).to eq(starts(anchor, 1))
+    expect(described_class.ends_at(anchor:, price: plan, sequence: 0)).to eq(starts(anchor, 1))
   end
 
   it 'counts a yearly plan in years, and a plan of several intervals in that many months' do
     anchor = Time.utc(2027, 2, 28, 12)
 
-    expect(described_class.starts_at(anchor:, plan: plan(interval: 'year'), sequence: 1)).to eq(Time.utc(2028, 2, 28, 12))
-    expect(described_class.starts_at(anchor:, plan: plan(count: 3), sequence: 2)).to eq(Time.utc(2027, 8, 28, 12))
+    expect(described_class.starts_at(anchor:, price: plan(interval: 'year'), sequence: 1)).to eq(Time.utc(2028, 2, 28, 12))
+    expect(described_class.starts_at(anchor:, price: plan(count: 3), sequence: 2)).to eq(Time.utc(2027, 8, 28, 12))
     expect(described_class.months(plan(interval: 'year', count: 2))).to eq(24)
   end
 
@@ -50,6 +54,6 @@ RSpec.describe BetterTogether::Billing::Periods do
   end
 
   it 'has no periods for a plan that is paid once' do
-    expect { described_class.starts_at(anchor: Time.current, plan: plan(interval: 'one_time'), sequence: 1) }.to raise_error(ArgumentError)
+    expect { described_class.starts_at(anchor: Time.current, price: plan(interval: 'one_time'), sequence: 1) }.to raise_error(ArgumentError)
   end
 end

@@ -13,7 +13,7 @@ RSpec.describe BetterTogether::Billing::Subscriptions::Start do # rubocop:disabl
   let(:order) { place_order(purpose: 'subscription', line_items: [{ purchasable: plan }, { purchasable: add_on }]) }
 
   it 'finds the primary plan among the lines' do
-    expect(described_class.plan_line(order).purchasable).to eq(plan)
+    expect(described_class.plan_line(order).purchasable).to eq(plan.current_price)
   end
 
   it 'prices the term from the plan line alone' do

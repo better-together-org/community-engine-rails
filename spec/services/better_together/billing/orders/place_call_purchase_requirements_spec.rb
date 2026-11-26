@@ -13,7 +13,8 @@ RSpec.describe BetterTogether::Billing::Orders::Place, '#call' do
   let(:extra) { create_extra(amount_cents: 700, needs: :any_plan) }
 
   def place(*purchasables, **)
-    place_order(purpose: purchasables.any?(&:plan_line?) && purchasables.any?(&:renews?) ? 'subscription' : 'one_time',
+    purchasables = purchasables.map { |item| item.is_a?(BetterTogether::Billing::Product) ? item.current_price : item }
+    place_order(purpose: purchasables.any? { |item| item.plan_line? && item.renews? } ? 'subscription' : 'one_time',
                 payment_method: 'cash', line_items: purchasables.map { |purchasable| { purchasable: } }, **)
   end
 

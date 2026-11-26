@@ -24,7 +24,7 @@ module BetterTogether
       self.table_name = 'better_together_billing_products'
 
       # Subclasses a product may be, by class name. Never resolved from a parameter.
-      SUBTYPES = %w[BetterTogether::Billing::Product].freeze
+      SUBTYPES = %w[BetterTogether::Billing::Product BetterTogether::Billing::Plan].freeze
       LIFETIMES = %w[until_used fixed_term].freeze
       TERM_UNITS = %w[day week month year].freeze
 

@@ -6,10 +6,7 @@
 # a database with no such plans, or one that was never given the old columns. See docs/billing/purchasable_split_plan.md.
 class ConvertOneTimePlansToProducts < ActiveRecord::Migration[7.2]
   def up
-    return unless table_exists?(:better_together_billing_products) && table_exists?(:better_together_billing_purchase_requirements)
-    return unless column_exists?(:better_together_billing_plans, :add_on)
-
-    BetterTogether::Billing::Products::ConvertPlans.call
+    # The conversion ran as a service that left with the plans table (see MergePlansIntoProducts), and nothing was sold with it.
   end
 
   def down

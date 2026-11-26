@@ -15,7 +15,7 @@ module BetterTogether
 
       MODES = %w[additional replaces_default].freeze
       # How narrow a target is: nothing (the platform default), a seller, a product.
-      SPECIFICITY = { 'BetterTogether::Billing::Plan' => 2 }.freeze
+      SPECIFICITY = { 'BetterTogether::Billing::Product' => 2 }.freeze
 
       belongs_to :agreement, class_name: 'BetterTogether::Agreement', optional: false
       belongs_to :target, polymorphic: true, optional: true

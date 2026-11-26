@@ -74,24 +74,25 @@ module BetterTogether
         @plan = find_item
         return render_not_found unless purchasable_by_buyer?
 
-        @quantity = @plan.is_a?(Price) ? params[:quantity].to_i.clamp(1, MAX_QUANTITY) : 1
+        @quantity = @plan.recurring? ? 1 : params[:quantity].to_i.clamp(1, MAX_QUANTITY)
       end
 
       def find_item
-        params[:price_id].present? ? platform_prices.active.find(params[:price_id]) : platform_plans.active.find(params[:plan_id])
+        return platform_prices.active.find(params[:price_id]) if params[:price_id].present?
+
+        # A plan is bought through the price it is sold at today.
+        platform_plans.active.find(params[:plan_id]).current_price or raise ActiveRecord::RecordNotFound
       end
 
       # A price must be on sale; an extra (a top-up that needs a plan) is bought alone only by someone who holds what it needs.
       def purchasable_by_buyer?
-        return policy(@plan).purchase? unless @plan.is_a?(Price)
-
         @plan.purchasable? && (@plan.extra? ? policy(@plan).buy_alone? : policy(@plan).purchase?)
       end
 
       def platform_prices = billing_owner.billing_prices.sold_by_platform
 
       # The query parameter that names the main item, for the forms to carry.
-      def item_param = @plan.is_a?(Price) ? :price_id : :plan_id
+      def item_param = :price_id
       helper_method :item_param
 
       # The extras offered on this plan's order, and the ones the buyer ticked.

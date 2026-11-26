@@ -60,7 +60,7 @@ RSpec.describe BetterTogether::Billing::OfflinePayments::Transition do
       order.update!(expires_at: 1.minute.ago)
       BetterTogether::Billing::Orders::Expire.call(order)
       clear_notices
-      allow_any_instance_of(BetterTogether::Billing::Plan).to receive(:reserve!).and_raise(StandardError, 'sold out') # rubocop:disable RSpec/AnyInstance
+      allow_any_instance_of(BetterTogether::Billing::Price).to receive(:reserve!).and_raise(StandardError, 'sold out') # rubocop:disable RSpec/AnyInstance
 
       deliver_now { expect { described_class.receive(offline, by: steward) }.to raise_error(described_class::PlaceGone) }
 

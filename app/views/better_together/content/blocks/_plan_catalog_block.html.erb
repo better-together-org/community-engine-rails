@@ -2,7 +2,7 @@
 <%# Not fragment cached: what it shows depends on who is looking (the plan's audience), so a shared cache would leak limited plans. %>
 <%
   plans = BetterTogether::Billing::PlanPolicy::CatalogScope.new(current_user, BetterTogether::Billing::Plan).resolve
-          .order(:amount_cents, :identifier).limit(plan_catalog_block.item_limit)
+          .by_price.limit(plan_catalog_block.item_limit)
 %>
 <%= render layout: 'better_together/content/blocks/block', locals: { block: plan_catalog_block } do %>
   <section class="plan-catalog-block py-3" aria-labelledby="<%= dom_id(plan_catalog_block, :heading) %>">

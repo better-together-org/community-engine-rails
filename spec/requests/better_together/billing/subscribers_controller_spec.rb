@@ -135,7 +135,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
       get show_path
       expect(response.body).not_to include('subscriber-price-btn')
 
-      sub_plan.update_columns(amount_cents: 4000) # rubocop:disable Rails/SkipsModelValidations
+      reprice(sub_plan, 4000)
       get show_path
       expect(response.body).to match(%r{data-turbo-confirm="[^"]+"[^>]*>(?:(?!</form>).)*id="subscriber-price-btn"}m)
     end
@@ -147,7 +147,7 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
     end
 
     it 'moves one to the current price' do
-      sub_plan.update_columns(amount_cents: 4000) # rubocop:disable Rails/SkipsModelValidations
+      reprice(sub_plan, 4000)
 
       patch action_path(:move_to_current_price)
 
@@ -159,7 +159,8 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
       customer = buyer.add_payment_processor(:local, platform: other).api_record
       foreign_sub = customer.subscribe(name: 'x', plan: 'x', current_period_start: Time.current, current_period_end: 1.month.from_now)
       foreign_plan = create(:better_together_billing_plan, platform: other)
-      foreign = other.billing_subscription_terms.create!(pay_subscription: foreign_sub, plan: foreign_plan, payment_method: 'cash',
+      foreign = other.billing_subscription_terms.create!(pay_subscription: foreign_sub, plan: foreign_plan,
+                                                         price: foreign_plan.current_price, payment_method: 'cash',
                                                          unit_amount_cents: 1, currency: 'USD', anchor_at: Time.current)
 
       get show_path(foreign)

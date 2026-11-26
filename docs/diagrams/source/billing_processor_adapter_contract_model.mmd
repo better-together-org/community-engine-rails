@@ -59,7 +59,7 @@ classDiagram
     +sync_idempotency_key()
     +apply_sync_result!(result)
   }
-  class SyncPlanJob
+  class SyncProductJob
   class ProcessorOptionsController
   class FieldRule {
     <<enumeration>>
@@ -75,6 +75,6 @@ classDiagram
   ProcessorAdapter ..> FieldRule : field_rules declares
   Configuration ..> ProcessorContext : builds, per platform
   Plan ..> ProcessorAdapter : asks field_rules
-  SyncPlanJob ..> Plan : stores the result
-  SyncPlanJob ..> ProcessorAdapter : sync_plan
+  SyncProductJob ..> Plan : stores the result
+  SyncProductJob ..> ProcessorAdapter : sync_plan
   ProcessorOptionsController ..> ProcessorAdapter : lookup

@@ -20,20 +20,18 @@ module BetterTogether
       STATUSES = %w[active grace lapsed revoked].freeze
       LIVE = %w[active grace].freeze
 
-      # What gave it: a plan or a product, exactly one. `quantity` is how many were bought (a product only).
-      belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', optional: true
-      belongs_to :product, class_name: 'BetterTogether::Billing::Product', optional: true
+      # What gave it: a product, which may be a plan. `quantity` is how many were bought (not for a plan).
+      belongs_to :product, class_name: 'BetterTogether::Billing::Product', optional: false
       belongs_to :beneficiary, polymorphic: true, optional: false
       belongs_to :pay_subscription, class_name: 'Pay::Subscription', optional: true
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', optional: true
       has_many :grants, class_name: 'BetterTogether::Billing::EntitlementGrant', inverse_of: :entitlement, dependent: :restrict_with_error
 
-      attr_readonly :plan_id, :product_id, :quantity, :beneficiary_type, :beneficiary_id, :pay_subscription_id, :order_id
+      attr_readonly :product_id, :quantity, :beneficiary_type, :beneficiary_id, :pay_subscription_id, :order_id
 
       validates :status, inclusion: { in: STATUSES }
       validates :starts_at, presence: true
       validates :quantity, numericality: { only_integer: true, greater_than: 0 }
-      validate :exactly_one_item
       validate :exactly_one_source
       validate :beneficiary_allowed
       validate :same_platform
@@ -46,18 +44,21 @@ module BetterTogether
 
       def live? = LIVE.include?(status)
 
-      # The plan or product that gave it, and its name for the holder to read.
-      def item = plan || product
+      # The plan, when a plan gave it.
+      def plan = (product if product.is_a?(Plan))
+
+      def plan=(record)
+        self.product = record
+      end
+
+      # The product that gave it, and its name for the holder to read.
+      def item = product
       def item_name = item&.name
 
       # Who pays: the subscriber's payer, or the buyer of the order. They are the ones told about it.
       def payer = pay_subscription ? pay_subscription.customer.owner : order&.buyer
 
       private
-
-      def exactly_one_item
-        errors.add(:base, :one_item) unless plan_id.present? ^ product_id.present?
-      end
 
       def exactly_one_source
         errors.add(:base, :one_source) unless pay_subscription_id.present? ^ order_id.present?
@@ -68,7 +69,7 @@ module BetterTogether
       end
 
       def same_platform
-        { plan:, product:, order:, pay_subscription: }.each do |name, record|
+        { product:, order:, pay_subscription: }.each do |name, record|
           errors.add(name, :platform_owner_mismatch) if record && record.platform_id != platform_id
         end
       end

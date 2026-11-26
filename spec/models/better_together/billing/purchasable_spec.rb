@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::Purchasable do
   it 'registers a model by name when it opts in' do
-    expect(described_class.model_names).to include('BetterTogether::Billing::Plan')
+    expect(described_class.model_names).to include('BetterTogether::Billing::Price')
     expect(described_class.model_names).not_to include('BetterTogether::Person')
   end
 
@@ -27,11 +27,13 @@ RSpec.describe BetterTogether::Billing::Purchasable do
   describe 'a plan' do
     include_context 'with orders fixtures'
 
-    it 'describes itself for a line item, and is for sale only while active' do
-      expect(plan).to have_attributes(purchasable_description: plan.name, purchasable_amount_cents: 4500, purchasable_currency: 'USD')
-      expect(plan).to be_purchasable
+    it 'is bought through its price, which describes itself and is for sale only while the plan is active' do
+      price = plan.current_price
+
+      expect(price).to have_attributes(purchasable_description: plan.name, purchasable_amount_cents: 4500, purchasable_currency: 'USD')
+      expect(price).to be_purchasable
       plan.update!(active: false)
-      expect(plan).not_to be_purchasable
+      expect(price.reload).not_to be_purchasable
     end
   end
 end

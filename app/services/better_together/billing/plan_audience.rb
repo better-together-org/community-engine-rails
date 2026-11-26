@@ -31,8 +31,8 @@ module BetterTogether
 
       attr_reader :plan
 
-      def purchasable_type = plan.is_a?(Plan) ? Plan.name : Price.name
-      def purchasable_id = plan.is_a?(Plan) ? plan.id : plan.prices.select(:id)
+      def purchasable_type = Price.name
+      def purchasable_id = plan.prices.select(:id)
     end
   end
 end

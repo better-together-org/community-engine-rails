@@ -16,7 +16,7 @@ module BetterTogether
 
       def index
         authorize BetterTogether::Billing::Plan, :catalog?
-        @plans = catalog_plans.order(:amount_cents, :identifier)
+        @plans = catalog_plans.by_price
         @products = catalog_products.includes(:prices).order(:identifier).select(&:current_price)
       end
 
