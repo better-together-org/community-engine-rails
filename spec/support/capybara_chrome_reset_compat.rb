@@ -2,15 +2,17 @@
 
 # Capybara 3.40's Chrome reset! ends with Storage.clearDataForOrigin(origin: '*'). Chrome 158 rejects
 # '*' ("invalid argument: * is not a valid URL"), so every browser example after the first one
-# fails in reset. Clear the page's own origin before the reset navigates away, and skip the
-# wildcard call when Chrome refuses it. Remove once Capybara ships a fix.
+# fails in reset. Remember the page's origin, let the reset navigate away, then clear that origin
+# (clearing first would sign the live page out while its late XHRs are still in flight), and skip
+# the wildcard call when Chrome refuses it. Remove once Capybara ships a fix.
 require 'capybara/selenium/driver'
 require 'capybara/selenium/driver_specializations/chrome_driver'
 
 module CapybaraChromeResetCompat
   def reset!
-    clear_current_origin_storage
+    origin = current_origin
     super
+    clear_origin_storage(origin)
   end
 
   def execute_cdp(cmd, params = {})
@@ -23,14 +25,21 @@ module CapybaraChromeResetCompat
 
   private
 
-  def clear_current_origin_storage
+  def current_origin
     return unless @browser
 
     url = current_url
     return if url.nil? || url.start_with?('about:')
 
     uri = URI.parse(url)
-    origin = "#{uri.scheme}://#{uri.host}#{":#{uri.port}" unless uri.port == uri.default_port}"
+    "#{uri.scheme}://#{uri.host}#{":#{uri.port}" unless uri.port == uri.default_port}"
+  rescue StandardError
+    nil
+  end
+
+  def clear_origin_storage(origin)
+    return unless origin
+
     execute_cdp('Storage.clearDataForOrigin', origin: origin, storageTypes: storage_types_to_clear)
   rescue StandardError
     nil
