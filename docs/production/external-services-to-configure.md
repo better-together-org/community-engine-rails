@@ -166,7 +166,7 @@ DATABASE_URL=postgres://user:password@db:5432/community_engine_production
 ## Hostnames & Rails Keys
 
 Hostnames:
-- `ALLOWED_HOSTS`: Comma-separated hostnames allowed by Rails.
+- `APP_HOSTS`: Comma-separated hostnames allowed by Rails (`ALLOWED_HOSTS` is read as an alias). Active platform domains are allowed in addition, without listing them, once this list is not empty.
 - `APP_HOST`: Public host used for URL generation.
 - `BASE_URL`: Base URL without scheme if used by external scripts.
 
@@ -176,7 +176,7 @@ Rails secrets:
 
 Example:
 ```bash
-ALLOWED_HOSTS=yourdomain.com
+APP_HOSTS=yourdomain.com
 APP_HOST=yourdomain.com
 BASE_URL=yourdomain.com
 
@@ -194,4 +194,4 @@ SECRET_KEY_BASE=<generated-secret>
 - Search: none by default; `SEARCH_BACKEND` selects the backend (Elasticsearch settings come from `better_together-elasticsearch`)
 - Redis: `REDIS_URL` (+ `RACK_ATTACK_REDIS_URL` optional)
 - PostgreSQL: `DATABASE_URL`
-- Host/Secrets: `ALLOWED_HOSTS`, `APP_HOST`, `SECRET_KEY_BASE`
+- Host/Secrets: `APP_HOSTS`, `APP_HOST`, `SECRET_KEY_BASE`
