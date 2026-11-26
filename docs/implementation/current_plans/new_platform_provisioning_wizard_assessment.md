@@ -11,6 +11,7 @@ Goal: one provisioning wizard, modelled on the existing setup wizards, with a st
 - **Demo packs are development only**, initialized from the CLI. They are never selectable in the wizard or the catalog UI, on any platform.
 - **Operator-steward only, for now.** The provisioning wizard in this work is for operator stewards, who may complete it many times, each run creating a platform. End users are excluded. Self-serve for end users will be a separate, bespoke wizard that also sets up billing and may require a subscription first (see 2.6). This work plans for it but does not build it.
 - **The first steward is invited, not created.** The wizard invites the first steward through the platform invitation mechanism and UI on the new platform. It also creates the managed platform association from the host operator platform to the new platform, so the operator platform and its stewards act as the new platform's initial stewards until the first invited steward accepts and registers (see 2.7).
+- **Bootstrap association scopes and handover:** the default is all six scopes (the operator needs `billing` to grant features and quota under the HPS-3 authority rules), editable on the review step. After the first steward registers, the operator's authority stays as provisioned until the steward narrows or revokes it; it does not drop automatically.
 - **Global packs (such as geography) are operator-only.** Hosted platforms read the host platform's reference rows directly; there are no per-platform copies. A steward who needs a place that is missing requests it from the operator. The auto-created settlement communities stay host-owned for now.
 - **Host-app packs register explicitly** in an initializer, like seed record types do today. No folder scanning.
 
@@ -162,5 +163,3 @@ Each phase is a small reviewable change with specs, screenshots for any view, an
 Open details left:
 
 - Whether the roles pack's always-on rule also applies to the rake task and service when they accept a selection (assumed yes).
-- Operator authority after the first steward registers: it stays as provisioned until the steward narrows or revokes it (as written in 2.7), or it drops to read and support until the steward accepts the full scopes.
-- Default scopes on the bootstrap association (all six, or only those needed to run a new platform).
