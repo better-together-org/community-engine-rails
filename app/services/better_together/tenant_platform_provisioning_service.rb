@@ -107,7 +107,9 @@ module BetterTogether
     def self.ensure_navigation!(platform)
       return if platform.host? || platform.navigation_areas.exists?
 
-      ::BetterTogether::NavigationBuilder.seed_data(platform:)
+      # Seeding is a system write: without this, the signed-in operator running the wizard is the acting
+      # agent and the publishing-agreement gate rejects the seeded public pages.
+      ::BetterTogether::PublicVisibilityGate.as_system { ::BetterTogether::NavigationBuilder.seed_data(platform:) }
     end
 
     def initialize(name:, host_url:, time_zone: 'UTC', host: false, admin: nil)

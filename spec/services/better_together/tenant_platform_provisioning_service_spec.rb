@@ -104,6 +104,18 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
       expect(result.platform.navigation_areas.flat_map(&:navigation_items)).to all(be_present)
     end
 
+    it 'seeds while a person who has not accepted the publishing agreement is the acting agent' do
+      draft = BetterTogether::HostedPlatform.create!(
+        name: 'Draft', host_url: "https://draft-#{SecureRandom.hex(4)}.pending.invalid",
+        privacy: 'private', time_zone: 'Etc/UTC'
+      )
+      operator = create(:better_together_person)
+
+      Current.set(agent: operator) { described_class.ensure_navigation!(draft) }
+
+      expect(draft.navigation_areas.pluck(:identifier)).to include(*identifiers)
+    end
+
     it 'leaves the host platform navigation untouched' do
       host = BetterTogether::Platform.find_by!(host: true)
       before_ids = host.navigation_areas.order(:id).pluck(:id)
