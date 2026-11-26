@@ -96,6 +96,7 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
     end
 
     it 'renders canonical link to primary domain when accessed via alias' do
+      platform.update!(redirect_secondary_domains: false)
       primary_domain
       alias_domain
 
