@@ -78,6 +78,12 @@ RSpec.describe BetterTogether::Billing::Price do
       expect(price.billing_interval).to eq('month')
     end
 
+    it 'starts a subscription and is read as a plan line, and is not given through its order' do
+      price = create(:better_together_billing_price, product:, kind: 'recurring', interval: 'month')
+
+      expect([price.renews?, price.plan_line?, price.fulfilled_by_order?, price.extra?]).to eq([true, true, false, false])
+    end
+
     it 'refuses a recurring price with no interval, an unknown interval, or a one-time price with one' do
       expect(build(:better_together_billing_price, product:, kind: 'recurring')).not_to be_valid
       expect(build(:better_together_billing_price, product:, kind: 'recurring', interval: 'fortnight')).not_to be_valid

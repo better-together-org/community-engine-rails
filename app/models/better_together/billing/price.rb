@@ -63,8 +63,12 @@ module BetterTogether
       def purchasable_tax_category = product.tax_category
       def purchasable? = active? && !archived? && product.active?
 
-      # What the order engine asks: a standard product is given through its own order; a subclass answers for itself.
-      def fulfilled_by_order? = product.fulfilled_by_order?
+      # What the order engine asks. A recurring price starts a subscription and is read as a plan order, and what it includes is given
+      # through that subscription, never as a one-off entitlement of the order. A one-time price on a standard product is given
+      # through its own order; a subclass answers for itself.
+      def renews? = recurring?
+      def plan_line? = recurring?
+      def fulfilled_by_order? = !recurring? && product.fulfilled_by_order?
 
       def held_by?(person) = product.respond_to?(:held_by?) && product.held_by?(person)
 
