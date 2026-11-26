@@ -10,7 +10,9 @@ RSpec.describe 'Platform domain routing' do
     host_platform.update!(
       host_url: 'https://primary.example.test',
       privacy: 'public',
-      requires_invitation: false
+      requires_invitation: false,
+      # These examples cover how an alias is served; the redirect itself is covered in secondary_domain_redirect_spec.
+      redirect_secondary_domains: false
     )
 
     create(:better_together_platform_domain,
