@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
     post grants_path, params: { kind: 'feature_access', feature_key: 'device_permissions', access_level: 'beta' }
 
     expect(response).to have_http_status(:found)
-    expect(sub_plan.plan_grants).to be_empty
+    expect(sub_plan.grants).to be_empty
   end
 
   it 'turns a member away' do
@@ -25,7 +25,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
 
     post grants_path, params: { kind: 'feature_access', feature_key: 'device_permissions', access_level: 'beta' }
 
-    expect(sub_plan.plan_grants.reload).to be_empty
+    expect(sub_plan.grants.reload).to be_empty
   end
 
   context 'when signed in as a steward' do
@@ -37,7 +37,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
 
       expect(response.body).to include(ActionView::RecordIdentifier.dom_id(sub_plan, :grants), 'billing-grant-role-form',
                                        'billing-grant-feature-form',
-                                       'billing-grant-storage-form', ActionView::RecordIdentifier.dom_id(sub_plan.plan_grants.first))
+                                       'billing-grant-storage-form', ActionView::RecordIdentifier.dom_id(sub_plan.grants.first))
     end
 
     it 'asks before every change to what a plan includes, saying how many people it reaches', :aggregate_failures do
@@ -60,7 +60,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
       grant = add_grant('quota_allowance', { 'quota_type' => 'media_storage', 'amount' => 1_000_000_000 })
 
       expect { post grants_path, params: { kind: 'quota_allowance', quota_type: 'media_storage', amount: '2000000000' } }
-        .not_to(change { sub_plan.plan_grants.count })
+        .not_to(change { sub_plan.grants.count })
       patch "#{grants_path}/#{grant.id}", params: { amount: '-1' }
       expect(grant.reload.parameters['amount'].to_i).to eq(1_000_000_000)
     end
@@ -71,10 +71,10 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
       end.to have_enqueued_job(BetterTogether::Billing::SyncPlanEntitlementsJob).with(sub_plan)
 
       expect(response).to redirect_to_billing_screen(plan_path)
-      expect(sub_plan.plan_grants.sole).to have_attributes(kind: 'membership_role',
-                                                           parameters: {
-                                                             'joinable' => 'platform', 'role' => supporter_role.identifier
-                                                           })
+      expect(sub_plan.grants.sole).to have_attributes(kind: 'membership_role',
+                                                      parameters: {
+                                                        'joinable' => 'platform', 'role' => supporter_role.identifier
+                                                      })
     end
 
     it 'offers storage as the same sizes the platform quota form does, in bytes', :aggregate_failures do
@@ -88,7 +88,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
       post grants_path, params: { kind: 'feature_access', feature_key: 'device_permissions', access_level: 'beta' }
       post grants_path, params: { kind: 'quota_allowance', quota_type: 'media_storage', amount: '1000' }
 
-      expect(sub_plan.plan_grants.reload.pluck(:kind)).to eq(%w[feature_access quota_allowance])
+      expect(sub_plan.grants.reload.pluck(:kind)).to eq(%w[feature_access quota_allowance])
     end
 
     it 'refuses a role that can manage things, an unknown feature, a bad amount and a kind that is not on the list' do
@@ -100,13 +100,13 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
 
         expect(flash[:alert]).to eq(I18n.t('better_together.billing.plan_grants.refused'))
       end
-      expect(sub_plan.plan_grants.reload).to be_empty
+      expect(sub_plan.grants.reload).to be_empty
     end
 
     it 'ignores parameters a kind does not declare' do
       post grants_path, params: { kind: 'feature_access', feature_key: 'device_permissions', access_level: 'beta', admin: 'true' }
 
-      expect(sub_plan.plan_grants.sole.parameters.keys).to contain_exactly('feature_key', 'access_level')
+      expect(sub_plan.grants.sole.parameters.keys).to contain_exactly('feature_key', 'access_level')
     end
 
     it 'removes one and queues the plan\'s people to be brought up to date' do
@@ -114,7 +114,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
 
       expect { delete grant_path(grant) }.to have_enqueued_job(BetterTogether::Billing::SyncPlanEntitlementsJob)
 
-      expect(sub_plan.plan_grants.reload).to be_empty
+      expect(sub_plan.grants.reload).to be_empty
     end
 
     it 'is a 404 for another platform\'s plan or a seller\'s plan' do
@@ -133,7 +133,7 @@ RSpec.describe BetterTogether::Billing::PlanGrantsController do
       delete grant_path(grant, sub_plan)
 
       expect(response).to have_http_status(:not_found)
-      expect(other_plan.plan_grants.reload).to be_present
+      expect(other_plan.grants.reload).to be_present
     end
   end
 end

@@ -121,7 +121,7 @@ RSpec.describe BetterTogether::Billing::Product do
     end
 
     it 'refuses a grant that belongs to no product' do
-      neither = BetterTogether::Billing::PlanGrant.new(platform_id: product.platform_id, kind: 'quota_allowance', parameters: quota)
+      neither = BetterTogether::Billing::Grant.new(platform_id: product.platform_id, kind: 'quota_allowance', parameters: quota)
 
       expect(neither).not_to be_valid
     end

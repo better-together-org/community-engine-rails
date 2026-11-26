@@ -33,7 +33,7 @@ RSpec.describe 'Billing demo seed packet' do # rubocop:disable RSpec/DescribeCla
 
     expect(extra.prices.sole).to have_attributes(amount_cents: 300, currency: 'CAD')
     expect(BetterTogether::Billing::PurchaseRequirement.for_dependent(extra).map(&:prerequisite)).to include(monthly)
-    expect(monthly.plan_grants.map(&:kind)).to eq(['quota_allowance'])
+    expect(monthly.grants.map(&:kind)).to eq(['quota_allowance'])
   end
 
   it 'plants the storage top-up as a fixed-term product with a price and a storage grant', :aggregate_failures do

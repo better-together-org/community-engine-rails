@@ -43,8 +43,6 @@ erDiagram
   EXT_PAY_CHARGE o|--o{ BILLING_PAYMENTS : "pay_charge / pay_charge_id"
   EXT_PLATFORM ||--o{ BILLING_PRODUCTS : "platform / platform_id"
   EXT_BILLING_TAX_CATEGORY o|--o{ BILLING_PRODUCTS : "tax_category / tax_category_id"
-  EXT_PLATFORM ||--o{ BILLING_PLAN_GRANTS : "platform / platform_id"
-  EXT_BILLING_PRODUCT ||--o{ BILLING_PLAN_GRANTS : "product / product_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_PROCESSOR_SETTINGS : "acknowledged_by / acknowledged_by_id"
   EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
@@ -233,14 +231,6 @@ erDiagram
     lifetime string
     processor string
     seller_type string
-  }
-
-  BILLING_PLAN_GRANTS {
-    platform_id uuid
-    product_id uuid
-    kind string
-    position integer
-    parameters jsonb
   }
 
   BILLING_PROCESSOR_SETTINGS {

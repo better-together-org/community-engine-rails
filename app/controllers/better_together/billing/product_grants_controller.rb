@@ -13,7 +13,7 @@ module BetterTogether
       def create
         grant = @product.grants.build(platform_id: billing_owner.id, kind: params[:kind].to_s, parameters: grant_parameters,
                                       position: @product.grants.size)
-        authorize grant, policy_class: PlanGrantPolicy
+        authorize grant, policy_class: GrantPolicy
         saved = grant.save
         SyncPlanEntitlementsJob.perform_later(@product) if saved
         back(saved ? { notice: t('better_together.billing.plan_grants.added') } : { alert: t('better_together.billing.plan_grants.refused') })
@@ -21,7 +21,7 @@ module BetterTogether
 
       def update # rubocop:disable Metrics/AbcSize
         grant = @product.grants.find(params[:id])
-        authorize grant, policy_class: PlanGrantPolicy
+        authorize grant, policy_class: GrantPolicy
         saved = grant.kind == 'quota_allowance' && grant.update(parameters: grant.parameters.merge('amount' => params[:amount].to_s.strip))
         SyncPlanEntitlementsJob.perform_later(@product) if saved
         back(saved ? { notice: t('better_together.billing.plan_grants.updated') } : { alert: t('better_together.billing.plan_grants.refused') })
@@ -29,7 +29,7 @@ module BetterTogether
 
       def destroy
         grant = @product.grants.find(params[:id])
-        authorize grant, policy_class: PlanGrantPolicy
+        authorize grant, policy_class: GrantPolicy
         grant.destroy!
         SyncPlanEntitlementsJob.perform_later(@product)
         back(notice: t('better_together.billing.plan_grants.removed'))

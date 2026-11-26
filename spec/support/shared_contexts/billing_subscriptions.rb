@@ -102,7 +102,7 @@ RSpec.shared_context 'with entitlement fixtures' do
   before { BetterTogether::Quotas::Allowances.register('billing_entitlements', BetterTogether::Billing::Entitlements::QuotaAllowances) }
 
   def add_grant(kind, parameters, plan: sub_plan)
-    plan.plan_grants.create!(platform_id: plan.platform_id, kind:, parameters:, position: plan.plan_grants.count)
+    plan.grants.create!(platform_id: plan.platform_id, kind:, parameters:, position: plan.grants.count)
   end
 
   def role_grant(role = supporter_role) = add_grant('membership_role', { 'joinable' => 'platform', 'role' => role.identifier })

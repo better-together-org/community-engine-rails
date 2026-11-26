@@ -1,5 +1,5 @@
 version: '2.0'
-type: billing_plan_grant
+type: billing_grant
 records:
 - key: demo-supporter-monthly-storage
   attributes: { kind: quota_allowance, parameters: { quota_type: media_storage, amount: 5368709120 } }

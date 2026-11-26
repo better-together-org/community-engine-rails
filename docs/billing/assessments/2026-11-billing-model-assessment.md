@@ -68,7 +68,7 @@ erDiagram
 
 ## What the later phases do
 
-2. One grant model: `PlanGrant` becomes `Grant`, and an entitlement recomputes from every live source, so a grant ends only when none remain.
+2. One grant model: `PlanGrant` became `Grant` (table `better_together_billing_grants`), and an entitlement recomputes from every live source, so a grant ends only when none remain.
 3. One processor contract: a single catalog sync, checkout by mode and lines, no version numbers, and the plan push removed.
 4. Names, screens and seeds: DOM ids, routes, locale keys, catalog views that show the prices of a product, docs, screenshots and the demo seed packet.
 

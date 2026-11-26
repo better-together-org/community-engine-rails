@@ -45,7 +45,7 @@ RSpec.describe 'Billing entitlements DOM contract', type: :request do # rubocop:
   end
 
   it 'exposes what a plan includes, with a form per kind' do
-    grant = sub_plan.plan_grants.first
+    grant = sub_plan.grants.first
     sign_in steward_user
 
     get "/#{locale}/billing/plans/#{sub_plan.id}"

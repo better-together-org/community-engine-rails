@@ -5,11 +5,11 @@ module BetterTogether
     # One thing a plan includes: a role in the platform or a community, access to a gated feature, or an amount of
     # a quota. `kind` comes from an allow-list (see Entitlements::Registry) and `parameters` says which, checked
     # by that kind's handler, so a plan can never name something the platform did not provide for.
-    class PlanGrant < ApplicationRecord
+    class Grant < ApplicationRecord
       include PlatformBound
       include ParentBound
 
-      self.table_name = 'better_together_billing_plan_grants'
+      self.table_name = 'better_together_billing_grants'
 
       # What it is part of: a product, which may be a plan.
       belongs_to :product, class_name: 'BetterTogether::Billing::Product', inverse_of: :grants, optional: false
