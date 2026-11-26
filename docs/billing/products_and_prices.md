@@ -48,7 +48,11 @@ Seeds: the billing demo packet plants a "[Demo] Storage top-up" product with a p
 
 ## Not yet built
 
-The processor mirror (`sync_plan` for products, PS-7).
+Nothing for the processor mirror; see below. A steward screen for choosing a product's processor is not built yet (set `processor` on the product).
+
+## Processor mirror (PS-7)
+
+A product with a `processor` is held by that processor like a plan: `SyncProductJob` calls `CatalogSync`, which gives an adapter at contract version 2 the whole product and its prices, and stores the processor product id and each price id (`ProductMirror`, columns `sync_status`, `sync_error`, `sync_attempted_at`, `synced_to_processor_at`). A product is offered through an online processor only when it names that processor, and a price the processor does not hold yet is sent inline. A product with no processor is sold by the offline methods only. See [processor-adapters.md](processor-adapters.md#contract-versions).
 
 ## Extras and the move from plans (PS-6)
 

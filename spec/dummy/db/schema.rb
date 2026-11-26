@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_25_162059) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_173107) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -764,6 +764,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_25_162059) do
     t.string "processor"
     t.string "processor_product_id"
     t.jsonb "metadata", default: {}, null: false
+    t.string "sync_status", default: "synced", null: false
+    t.string "sync_error"
+    t.datetime "sync_attempted_at"
+    t.datetime "synced_to_processor_at"
     t.index ["id", "platform_id"], name: "idx_bt_billing_products_id_platform", unique: true
     t.index ["platform_id", "identifier"], name: "idx_bt_billing_products_platform_identifier", unique: true, where: "(seller_id IS NULL)"
     t.index ["platform_id", "seller_type", "seller_id", "identifier"], name: "idx_bt_billing_products_seller_identifier", unique: true, where: "(seller_id IS NOT NULL)"

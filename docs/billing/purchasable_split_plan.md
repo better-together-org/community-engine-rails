@@ -175,8 +175,12 @@ Each phase is a separate PR, stacked on `feature/billing`, and each leaves the b
 7. **Processor contract.** Generalize `sync_plan` to sync a catalog item (product plus its prices, returning a result with a list of prices).
    Derive Checkout Session mode from the lines. Allow inline `price_data` for items with no processor mirror. Bump the contract version and keep a
    shim for adapters on the old version. Update `PriceInfo` and `processor-adapters.md`, and write the Stripe mapping table for the extension team.
+   **Built (PS-7):** contract version 2 (`sync_catalog_item`, `mode:` and `lines:`), `CatalogSync`, `SyncProductJob`, `ProductMirror`, `Checkout::Lines`;
+   version 1 adapters keep working. See [processor adapters](processor-adapters.md#contract-versions). A steward screen for a product's processor is left for later.
 8. **Cleanup.** Remove dead add-on code, update nav route names, DOM contracts, screenshots, docs (`plan_catalog.md`, stories doc, MVP definition)
    and the assessment.
+   **Built (PS-8):** the unused add-on locale keys are gone in en, es, fr and uk; MVP definition, stories doc, plan catalog and the assessment refresh say
+   products and extras. The code was already clear of `add_on` on Plan. Checkout and hub keep the `add_on` ids and `add_on_ids[]` for extras, so DOM contracts and screenshots are unchanged.
 
 ## Translatable attributes (decided before any model is written)
 

@@ -33,6 +33,8 @@ module BetterTogether
       validate :terms_unchanged, on: :update
 
       before_validation :take_platform_from_product, on: :create
+      # A price added to a product the processor holds is pushed with it.
+      after_commit(on: :create) { product.queue_processor_sync }
 
       # What a steward may set when adding a price: the amount (in major units) and currency, and its label in each language.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
@@ -79,16 +81,25 @@ module BetterTogether
       def extra? = product.extra?
 
       # What checkout reads, so a price is bought like a plan: one-off, never an extra on a plan, paid by any way the platform
-      # settles itself (an online processor for products arrives with the processor contract).
+      # settles itself, or by an online processor that takes checkout lines (contract version 2), where it is sent inline.
       def name = purchasable_description
 
       # What checkout shows beneath a price: the product's summary, else its description.
       def display_participant_summary = product.summary.presence || product.description
       def billing_interval = recurring? ? interval : 'one_time'
       def recurring? = kind == 'recurring'
-      def payment_methods = free? ? [] : Billing.processor_names.map(&:to_s).select { |method| Billing.local_method?(method) }
+
+      def payment_methods
+        return [] if free?
+
+        Billing.processor_names.map(&:to_s).select { |method| Billing.local_method?(method) || online_here?(method) }
+      end
 
       private
+
+      # An online processor is offered for a price only when its product names that processor (a steward's choice) and the adapter
+      # takes checkout lines. A price the processor does not hold yet is sent inline.
+      def online_here?(method) = product.processor.to_s == method && Billing.online_checkout_method?(method)
 
       def take_platform_from_product
         self.platform_id ||= product&.platform_id

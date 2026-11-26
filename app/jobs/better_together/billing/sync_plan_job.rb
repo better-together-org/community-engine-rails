@@ -30,21 +30,18 @@ module BetterTogether
         plan = BetterTogether::Billing::Plan.find_by(id: plan_id)
         return unless plan
 
-        context = plan.processor_context
-        adapter = plan.processor_adapter
-        raise NotConfiguredError, 'no billing configuration for this plan' unless context && adapter&.supports?(:plan_sync)
-
         # The processor is told the platform's own language, whoever enqueued the job.
-        I18n.with_locale(Billing.platform_locale(plan.platform)) { plan.apply_sync_result!(push(adapter, context, plan)) }
+        I18n.with_locale(Billing.platform_locale(plan.platform)) { plan.apply_sync_result!(push(plan)) }
       end
 
       private
 
-      def push(adapter, context, plan)
-        result = adapter.sync_plan(context:, plan:, idempotency_key: plan.sync_idempotency_key)
-        raise TypeError, "#{adapter.class}#sync_plan must return PlanSyncResult" unless result.is_a?(PlanSyncResult)
-
-        result
+      # Through CatalogSync, which speaks whichever contract version the adapter implements.
+      def push(plan)
+        result = CatalogSync.call(plan)
+        PlanSyncResult.new(product_id: result.product_id, price: result.price_for(plan.id) || result.prices.first)
+      rescue CatalogSync::NotConfigured => e
+        raise NotConfiguredError, e.message
       end
 
       def record_failure(error)

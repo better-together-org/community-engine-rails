@@ -18,6 +18,7 @@ module BetterTogether
       include Listing
       include AgreementTarget
       include ProductRequirements
+      include ProductMirror
       include Translatable
 
       self.table_name = 'better_together_billing_products'

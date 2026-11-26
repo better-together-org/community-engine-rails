@@ -28,6 +28,17 @@ module BetterTogether
         ProcessorAdapter.verify!(entry[:adapter].call, name: entry[:name])
       end
 
+      # An installed online processor that can take a product sold with no copy in its catalog: it takes checkout, and implements
+      # the contract that has core build the lines (version 2). A version 1 processor can still sell plans, not products.
+      def online_checkout_method?(name)
+        return false unless processor_names.map(&:to_s).include?(name.to_s)
+
+        adapter = processor_adapter(name)
+        adapter.present? && adapter.settlement_kind == :remote && adapter.supports?(:checkout) && adapter.catalog_aware?
+      rescue ProcessorAdapter::ContractError
+        false
+      end
+
       # An installed method Community Engine settles itself, with no vendor: manual (cash, a
       # cheque, an e-transfer) or internal (store credit). False for an unknown name or an
       # adapter that fails the contract.

@@ -6,13 +6,17 @@ module BetterTogether
     # Billing.register_processor. Core never calls a vendor SDK; it calls these
     # methods. Core owns idempotency keys and money state, the adapter executes.
     class ProcessorAdapter
-      CONTRACT_VERSION = 1
+      # Version 2 holds a product with several prices (`sync_catalog_item`), and has core build the checkout lines and mode
+      # (`mode:` and `lines:` on `create_checkout_session`). Version 1 adapters keep working: core calls `sync_plan` for a plan and
+      # the old `create_checkout_session` keywords, and sends a product's prices inline (see Checkout::Lines).
+      CONTRACT_VERSION = 2
+      SUPPORTED_CONTRACT_VERSIONS = [1, 2].freeze
       # `merchant_accounts` and `transfers` are reserved: the contract names them but core has no
       # caller until payouts exist. (There is no stored-value capability: store credit is a ledger
       # inside Community Engine, not something a processor does.)
       CAPABILITIES = %i[checkout portal plan_sync lookups merchant_accounts refunds transfers offline_settlement].freeze
 
-      # Methods an adapter must override for each capability it advertises, and the
+      # Methods an adapter must override for each capability it advertises (at contract version 1), and the
       # keywords each accepts. Money-moving calls always carry an idempotency_key.
       # Every call carries `context:` (a Billing::ProcessorContext): the platform
       # and processor account the call is for. Adapters must use it instead of
@@ -45,6 +49,21 @@ module BetterTogether
         offline_settlement: { instructions_for: %i[context setting order] }
       }.freeze
 
+      # What contract version 2 adds, per capability. An adapter at version 2 must implement these as well; see
+      # `capability_methods`.
+      V2_CAPABILITY_METHODS = {
+        checkout: { create_checkout_session: %i[context order payment success_url cancel_url idempotency_key metadata
+                                                tax_cents included_tax_cents prices_include_tax mode lines] },
+        plan_sync: { sync_catalog_item: %i[context item idempotency_key] }
+      }.freeze
+
+      # The methods and keywords an adapter at this contract version must implement, by capability.
+      def self.capability_methods(version = CONTRACT_VERSION)
+        return CAPABILITY_METHODS if version.to_i < 2
+
+        CAPABILITY_METHODS.merge(V2_CAPABILITY_METHODS) { |_capability, old, added| old.merge(added) }
+      end
+
       # What an adapter may do with a processor-backed field once the processor-side
       # object exists. Anything an adapter does not declare is treated as :create_only.
       FIELD_RULES = %i[create_only updatable].freeze
@@ -67,47 +86,14 @@ module BetterTogether
       # must be safe to display: no keys, no raw vendor text.
       class LookupError < StandardError; end
 
-      # Checks an adapter is usable: it inherits this contract, implements the
-      # supported contract version, and (when `name` is the name it was registered
-      # under) reports that same processor name, so events and plans stored under
-      # the registered name always resolve back to the adapter that handles them.
-      def self.verify!(adapter, name: nil)
-        raise ContractError, "#{adapter.class} must inherit #{self.name}" unless adapter.is_a?(self)
-        unless adapter.contract_version == CONTRACT_VERSION
-          raise ContractError, "#{adapter.class} implements contract #{adapter.contract_version}, core expects #{CONTRACT_VERSION}"
-        end
-        if name && adapter.processor_name.to_s != name.to_s
-          raise ContractError, "#{adapter.class} is registered as #{name} but reports processor_name #{adapter.processor_name}"
-        end
+      extend Verification
 
-        verify_settlement!(adapter)
+      # An adapter says which contract it implements by overriding this. One that does not is an adapter written before version 2
+      # existed, so it stays on version 1 instead of being promised catalog items and checkout lines it never implemented.
+      def contract_version = 1
 
-        adapter
-      end
-
-      def self.verify_settlement!(adapter)
-        kind = adapter.settlement_kind
-        raise ContractError, "#{adapter.class} has unknown settlement_kind #{kind.inspect}" unless SETTLEMENT_KINDS.include?(kind)
-
-        mode = adapter.recurring_mode
-        raise ContractError, "#{adapter.class} has unknown recurring_mode #{mode.inspect}" unless RECURRING_MODES.include?(mode)
-
-        if adapter.supports?(:offline_settlement) != (kind == :manual)
-          raise ContractError, "#{adapter.class}: the offline_settlement capability and settlement_kind :manual go together"
-        end
-
-        verify_countries!(adapter)
-      end
-
-      def self.verify_countries!(adapter)
-        countries = adapter.supported_countries
-        return if countries.nil? || (countries.is_a?(Array) && countries.all? { |code| code.to_s.match?(/\A[A-Z]{2}\z/) })
-
-        raise ContractError, "#{adapter.class}#supported_countries must be nil or a list of ISO 3166 alpha-2 codes"
-      end
-      private_class_method :verify_settlement!, :verify_countries!
-
-      def contract_version = CONTRACT_VERSION
+      # Whether this adapter takes core's checkout lines and mode, and holds a catalog item (contract version 2).
+      def catalog_aware? = contract_version >= 2
 
       # Short processor key, e.g. :stripe. Matches Pay's processor name.
       def processor_name = raise(NotImplementedError, "#{self.class}#processor_name")
@@ -212,6 +198,12 @@ module BetterTogether
       # `idempotency_key` must be passed to every processor write.
       def sync_plan(**) = unsupported!(:plan_sync)
 
+      # Contract version 2. Creates or updates the processor-side product and every price in the CatalogItem that has no
+      # `processor_price_id`, and returns a Billing::CatalogSyncResult with a PriceInfo (carrying the CatalogPrice's `ref`) for each
+      # price. Never writes a plan, product or price. A price on the processor is immutable: a changed amount is a new
+      # CatalogPrice core already made, so create it and leave the old one. `idempotency_key` goes on every processor write.
+      def sync_catalog_item(**) = unsupported!(:plan_sync)
+
       # A Billing::PriceInfo / Billing::ProductInfo for the processor-side object, or
       # nil when it does not exist in this account. Raise LookupError when the processor
       # cannot be asked.
@@ -225,6 +217,8 @@ module BetterTogether
       # this runs while a person waits.
       def lookup(**) = unsupported!(:lookups)
 
+      # At contract version 2 it is also given `mode:` (`:payment` or `:subscription`) and `lines:` (Billing::CheckoutLine, each a
+      # processor price id or inline InlinePrice) so it builds the session from core's view of the order instead of its own.
       def create_checkout_session(**) = unsupported!(:checkout)
       def sync_checkout_session(**) = unsupported!(:checkout)
       def release_payment(**) = unsupported!(:checkout)

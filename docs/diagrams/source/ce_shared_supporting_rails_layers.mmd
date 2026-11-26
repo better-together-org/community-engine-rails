@@ -557,7 +557,7 @@ classDiagram
       <<Model>>
       table: better_together_billing_products
       translates: description, name, summary
-      concerns: Billing::AgreementTarget, Billing::Listing, Billing::PlatformBound, Billing::ProductRequirements +2
+      concerns: Billing::AgreementTarget, Billing::Listing, Billing::PlatformBound, Billing::ProductMirror +3
       weak refs: target: seller, owner: purchase_requirements, owner: string_translations, owner: text_translations
     }
     class BetterTogether__Billing__PurchaseRequirement["Billing::PurchaseRequirement"] {

@@ -1845,10 +1845,6 @@ fr:
         updated: La quantité a été modifiée.
       plans:
         actions_heading: Actions
-        add_on_targets_hint: Utilisé seulement pour une option. Cochez les forfaits
-          avec lesquels elle est proposée et dont les titulaires peuvent l'acheter
-          seule plus tard. Ne cochez rien pour la proposer avec tous les forfaits.
-        add_on_targets_legend: Forfaits que cette option prolonge
         audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
           une ou les deux pour le limiter : toute personne de l’un des types cochés
           peut le voir et l’acheter.'
@@ -1868,9 +1864,6 @@ fr:
           de paiement. Chacun doit encore être activé pour le vendeur avant que les
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
-        field_add_on: Option seulement
-        field_add_on_hint: Vendue uniquement en supplément sur la commande d'un autre
-          forfait, jamais seule. Paiement unique, sans accès inclus.
         field_amount: Montant
         field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
           Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
@@ -7670,12 +7663,6 @@ fr:
       accepted: doit être accepté(e)
       account_mismatch: doit appartenir au même compte
       acknowledgement_required: doit être accepté avant que ce mode puisse être activé
-      add_on_cannot_have_grants: ne peut pas être donné à un complément
-      add_on_cannot_renew: un complément s'achète une fois, il ne se renouvelle pas
-      add_on_has_grants: un complément ne peut rien inclure en propre; mettez-le sur
-        un forfait
-      add_on_locked_by_orders: ne peut plus être modifié dès que des commandes incluent
-        ce forfait
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
       already_on_the_plan: figure déjà dans le forfait ; modifiez-le plutôt
@@ -7715,7 +7702,6 @@ fr:
       lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
       must_be_a_primary_plan: doit être un forfait qui n'est pas une option
-      must_be_an_add_on: doit être une option
       no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
         de paiement
       not_a_community_role: doit être un rôle de communauté

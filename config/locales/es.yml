@@ -1809,10 +1809,6 @@ es:
         updated: Se cambió la cantidad.
       plans:
         actions_heading: Acciones
-        add_on_targets_hint: Solo para un complemento. Marque los planes con los que
-          se ofrece y cuyos titulares pueden comprarlo por separado más adelante.
-          Sin marcar, se ofrece con todos los planes.
-        add_on_targets_legend: Planes que amplía este complemento
         audience_hint: 'Deje ambas casillas sin marcar para todo el mundo. Marque
           una o ambas para limitarlo: quien sea de alguno de los tipos marcados puede
           verlo y comprarlo.'
@@ -1832,9 +1828,6 @@ es:
           de pagos. Cada una debe activarse para el vendedor antes de que los compradores
           puedan usarla.
         field_active: Activo (visible para suscriptores)
-        field_add_on: Solo complemento
-        field_add_on_hint: Se vende solo como extra en el pedido de otro plan, nunca
-          por separado. Pago único, sin acceso incluido.
         field_amount: Importe
         field_amount_hint: Escriba el precio como lo escribiría normalmente, por ejemplo
           45,00. Las monedas sin centavos, como el JPY y el KRW, usan números enteros.
@@ -7561,12 +7554,6 @@ es:
       accepted: debe ser aceptado
       account_mismatch: debe pertenecer a la misma cuenta
       acknowledgement_required: debe aceptarse antes de activar este método
-      add_on_cannot_have_grants: no se puede dar a un complemento
-      add_on_cannot_renew: un complemento se compra una vez, no se renueva
-      add_on_has_grants: un complemento no puede incluir nada propio; póngalo en un
-        plan
-      add_on_locked_by_orders: no se puede cambiar una vez que hay pedidos con este
-        plan
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       already_on_the_plan: ya está en el plan; edítelo en su lugar
@@ -7604,7 +7591,6 @@ es:
       lookup_failed: no se pudo verificar con el procesador de pagos
       model_invalid: 'La validación falló: %{errors}'
       must_be_a_primary_plan: debe ser un plan que no sea un complemento
-      must_be_an_add_on: debe ser un complemento
       no_payment_method: necesita un procesador en línea o al menos otra forma de
         pago
       not_a_community_role: debe ser un rol de comunidad
