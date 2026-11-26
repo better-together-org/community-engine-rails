@@ -4129,90 +4129,110 @@
 <!-- better_together_billing_prices -->
 <g id="better_together_billing_prices" class="node">
 <title>better_together_billing_prices</title>
-<ellipse fill="none" stroke="black" stroke-width="0" cx="38135.65" cy="-48166.39" rx="403.1" ry="511.89"/>
-<polygon fill="#1d71b8" stroke="transparent" points="37852.65,-48466.39 37852.65,-48526.39 38418.65,-48526.39 38418.65,-48466.39 37852.65,-48466.39"/>
+<ellipse fill="none" stroke="black" stroke-width="0" cx="38135.65" cy="-48166.39" rx="403.1" ry="681.8"/>
+<polygon fill="#1d71b8" stroke="transparent" points="37852.65,-48586.39 37852.65,-48646.39 38418.65,-48646.39 38418.65,-48586.39 37852.65,-48586.39"/>
+<polygon fill="none" stroke="#29235c" points="37852.65,-48586.39 37852.65,-48646.39 38418.65,-48646.39 38418.65,-48586.39 37852.65,-48586.39"/>
+<text text-anchor="start" x="37863.58" y="-48607.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#ffffff"> &#160;&#160;&#160;&#160;&#160;&#160;better_together_billing_prices &#160;&#160;&#160;&#160;&#160;&#160;</text>
+<polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48526.39 37852.65,-48586.39 38418.65,-48586.39 38418.65,-48526.39 37852.65,-48526.39"/>
+<polygon fill="none" stroke="#29235c" points="37852.65,-48526.39 37852.65,-48586.39 38418.65,-48586.39 38418.65,-48526.39 37852.65,-48526.39"/>
+<text text-anchor="start" x="37863.65" y="-48547.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">id</text>
+<text text-anchor="start" x="37888.54" y="-48547.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38347.19" y="-48547.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48466.39 37852.65,-48526.39 38418.65,-48526.39 38418.65,-48466.39 37852.65,-48466.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48466.39 37852.65,-48526.39 38418.65,-48526.39 38418.65,-48466.39 37852.65,-48466.39"/>
-<text text-anchor="start" x="37863.58" y="-48487.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#ffffff"> &#160;&#160;&#160;&#160;&#160;&#160;better_together_billing_prices &#160;&#160;&#160;&#160;&#160;&#160;</text>
+<text text-anchor="start" x="37863.65" y="-48486.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">lock_version &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38270.76" y="-48487.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="38368.56" y="-48487.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="38377.46" y="-48487.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48406.39 37852.65,-48466.39 38418.65,-48466.39 38418.65,-48406.39 37852.65,-48406.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48406.39 37852.65,-48466.39 38418.65,-48466.39 38418.65,-48406.39 37852.65,-48406.39"/>
-<text text-anchor="start" x="37863.65" y="-48427.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">id</text>
-<text text-anchor="start" x="37888.54" y="-48427.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38347.19" y="-48427.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="37863.65" y="-48426.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">created_at &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38221" y="-48427.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="38368.56" y="-48427.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="38377.46" y="-48427.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48346.39 37852.65,-48406.39 38418.65,-48406.39 38418.65,-48346.39 37852.65,-48346.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48346.39 37852.65,-48406.39 38418.65,-48406.39 38418.65,-48346.39 37852.65,-48346.39"/>
-<text text-anchor="start" x="37863.65" y="-48366.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">lock_version &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38270.76" y="-48367.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="37863.65" y="-48366.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">updated_at &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38221" y="-48367.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
 <text text-anchor="start" x="38368.56" y="-48367.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="38377.46" y="-48367.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48286.39 37852.65,-48346.39 38418.65,-48346.39 38418.65,-48286.39 37852.65,-48286.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48286.39 37852.65,-48346.39 38418.65,-48346.39 38418.65,-48286.39 37852.65,-48286.39"/>
-<text text-anchor="start" x="37863.65" y="-48306.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">created_at &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38221" y="-48307.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="37863.65" y="-48306.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">platform_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38308.1" y="-48307.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
 <text text-anchor="start" x="38368.56" y="-48307.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="38377.46" y="-48307.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48226.39 37852.65,-48286.39 38418.65,-48286.39 38418.65,-48226.39 37852.65,-48226.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48226.39 37852.65,-48286.39 38418.65,-48286.39 38418.65,-48226.39 37852.65,-48226.39"/>
-<text text-anchor="start" x="37863.65" y="-48246.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">updated_at &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38221" y="-48247.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="37863.65" y="-48246.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">product_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38308.1" y="-48247.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
 <text text-anchor="start" x="38368.56" y="-48247.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="38377.46" y="-48247.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48166.39 37852.65,-48226.39 38418.65,-48226.39 38418.65,-48166.39 37852.65,-48166.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48166.39 37852.65,-48226.39 38418.65,-48226.39 38418.65,-48166.39 37852.65,-48166.39"/>
-<text text-anchor="start" x="37863.65" y="-48186.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">platform_id &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38308.1" y="-48187.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="37863.65" y="-48186.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">amount_cents &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38270.76" y="-48187.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
 <text text-anchor="start" x="38368.56" y="-48187.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="38377.46" y="-48187.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48106.39 37852.65,-48166.39 38418.65,-48166.39 38418.65,-48106.39 37852.65,-48106.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48106.39 37852.65,-48166.39 38418.65,-48166.39 38418.65,-48106.39 37852.65,-48106.39"/>
-<text text-anchor="start" x="37863.65" y="-48126.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">product_id &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38308.1" y="-48127.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="37863.65" y="-48126.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">currency &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38261.89" y="-48127.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
 <text text-anchor="start" x="38368.56" y="-48127.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="38377.46" y="-48127.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-48046.39 37852.65,-48106.39 38418.65,-48106.39 38418.65,-48046.39 37852.65,-48046.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-48046.39 37852.65,-48106.39 38418.65,-48106.39 38418.65,-48046.39 37852.65,-48046.39"/>
-<text text-anchor="start" x="37863.65" y="-48066.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">amount_cents &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38270.76" y="-48067.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="37863.65" y="-48066.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">active &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38254.73" y="-48067.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">boolean</text>
 <text text-anchor="start" x="38368.56" y="-48067.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="38377.46" y="-48067.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-47986.39 37852.65,-48046.39 38418.65,-48046.39 38418.65,-47986.39 37852.65,-47986.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-47986.39 37852.65,-48046.39 38418.65,-48046.39 38418.65,-47986.39 37852.65,-47986.39"/>
-<text text-anchor="start" x="37863.65" y="-48006.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">currency &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38261.89" y="-48007.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
-<text text-anchor="start" x="38368.56" y="-48007.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
-<text text-anchor="start" x="38377.46" y="-48007.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
+<text text-anchor="start" x="37863.65" y="-48006.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">archived_at &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38260.1" y="-48007.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-47926.39 37852.65,-47986.39 38418.65,-47986.39 38418.65,-47926.39 37852.65,-47926.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-47926.39 37852.65,-47986.39 38418.65,-47986.39 38418.65,-47926.39 37852.65,-47926.39"/>
-<text text-anchor="start" x="37863.65" y="-47946.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">active &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38254.73" y="-47947.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">boolean</text>
-<text text-anchor="start" x="38368.56" y="-47947.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
-<text text-anchor="start" x="38377.46" y="-47947.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
+<text text-anchor="start" x="37863.65" y="-47946.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">processor_price_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38300.98" y="-47947.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-47866.39 37852.65,-47926.39 38418.65,-47926.39 38418.65,-47866.39 37852.65,-47866.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-47866.39 37852.65,-47926.39 38418.65,-47926.39 38418.65,-47866.39 37852.65,-47866.39"/>
-<text text-anchor="start" x="37863.65" y="-47886.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">archived_at &#160;&#160;&#160;</text>
-<text text-anchor="start" x="38260.1" y="-47887.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">timestamp</text>
+<text text-anchor="start" x="37863.65" y="-47886.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">kind &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38261.89" y="-47887.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
+<text text-anchor="start" x="38368.56" y="-47887.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="38377.46" y="-47887.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-47806.39 37852.65,-47866.39 38418.65,-47866.39 38418.65,-47806.39 37852.65,-47806.39"/>
 <polygon fill="none" stroke="#29235c" points="37852.65,-47806.39 37852.65,-47866.39 38418.65,-47866.39 38418.65,-47806.39 37852.65,-47806.39"/>
-<text text-anchor="start" x="37863.65" y="-47826.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">processor_price_id &#160;&#160;&#160;</text>
+<text text-anchor="start" x="37863.65" y="-47826.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">interval &#160;&#160;&#160;</text>
 <text text-anchor="start" x="38300.98" y="-47827.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
-<polygon fill="none" stroke="#29235c" stroke-width="2" points="37851.65,-47805.39 37851.65,-48527.39 38419.65,-48527.39 38419.65,-47805.39 37851.65,-47805.39"/>
+<polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-47746.39 37852.65,-47806.39 38418.65,-47806.39 38418.65,-47746.39 37852.65,-47746.39"/>
+<polygon fill="none" stroke="#29235c" points="37852.65,-47746.39 37852.65,-47806.39 38418.65,-47806.39 38418.65,-47746.39 37852.65,-47746.39"/>
+<text text-anchor="start" x="37863.65" y="-47766.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">interval_count &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38270.76" y="-47767.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">integer</text>
+<text text-anchor="start" x="38368.56" y="-47767.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="38377.46" y="-47767.59" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
+<polygon fill="#e7e2dd" stroke="transparent" points="37852.65,-47686.39 37852.65,-47746.39 38418.65,-47746.39 38418.65,-47686.39 37852.65,-47686.39"/>
+<polygon fill="none" stroke="#29235c" points="37852.65,-47686.39 37852.65,-47746.39 38418.65,-47746.39 38418.65,-47686.39 37852.65,-47686.39"/>
+<text text-anchor="start" x="37863.65" y="-47706.59" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">lookup_key &#160;&#160;&#160;</text>
+<text text-anchor="start" x="38300.98" y="-47707.59" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar</text>
+<polygon fill="none" stroke="#29235c" stroke-width="2" points="37851.65,-47685.39 37851.65,-48647.39 38419.65,-48647.39 38419.65,-47685.39 37851.65,-47685.39"/>
 </g>
 <!-- better_together_billing_prices&#45;&gt;better_together_billing_products -->
 <!-- better_together_billing_prices&#45;&gt;better_together_billing_products -->
 <g id="edge120" class="edge">
 <title>better_together_billing_prices:e&#45;&gt;better_together_billing_products:w</title>
-<path fill="none" stroke="#29235c" stroke-width="3" d="M38418.65,-48136.39C38418.65,-48136.39 34378.12,-47613.4 31194.56,-46936.74 29529.26,-46582.79 29157.22,-46303.72 27487.14,-45973.08 26229.42,-45724.07 24644.6,-45575.49 24504.75,-45562.65"/>
+<path fill="none" stroke="#29235c" stroke-width="3" d="M38418.65,-48256.39C38418.65,-48256.39 34381.51,-47641.01 31194.56,-46936.74 29532.17,-46569.38 29157.22,-46303.72 27487.14,-45973.08 26229.42,-45724.07 24644.6,-45575.49 24504.75,-45562.65"/>
 <polygon fill="#29235c" stroke="#29235c" stroke-width="3" points="24505.07,-45559.16 24494.79,-45561.74 24504.43,-45566.13 24505.07,-45559.16"/>
 <text text-anchor="middle" x="24503.68" y="-45532.94" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">1</text>
-<text text-anchor="middle" x="38412.43" y="-48145.99" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
+<text text-anchor="middle" x="38412.43" y="-48265.99" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
 </g>
 <!-- better_together_billing_prices&#45;&gt;better_together_platforms -->
 <!-- better_together_billing_prices&#45;&gt;better_together_platforms -->
 <g id="edge118" class="edge">
 <title>better_together_billing_prices:e&#45;&gt;better_together_platforms:w</title>
-<path fill="none" stroke="#29235c" stroke-width="3" d="M38418.65,-48196.39C38418.65,-48196.39 34618.55,-45960.28 31626.54,-44093.1 29016.53,-42464.32 20101.59,-36668.93 19788.98,-36465.69"/>
-<polygon fill="#29235c" stroke="#29235c" stroke-width="3" points="19790.84,-36462.73 19780.55,-36460.21 19787.03,-36468.6 19790.84,-36462.73"/>
+<path fill="none" stroke="#29235c" stroke-width="3" d="M38418.65,-48316.39C38418.65,-48316.39 34630.05,-45994.36 31626.54,-44093.1 26445.63,-40813.53 20055.21,-36639.65 19789.15,-36465.83"/>
+<polygon fill="#29235c" stroke="#29235c" stroke-width="3" points="19790.84,-36462.75 19780.55,-36460.21 19787.01,-36468.61 19790.84,-36462.75"/>
 <text text-anchor="middle" x="19789.44" y="-36469.81" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">1</text>
-<text text-anchor="middle" x="38412.43" y="-48205.99" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
+<text text-anchor="middle" x="38412.43" y="-48325.99" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">*</text>
 </g>
 <!-- better_together_billing_processor_settings -->
 <g id="better_together_billing_processor_settings" class="node">
