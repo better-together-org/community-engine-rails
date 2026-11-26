@@ -49,13 +49,14 @@ module BetterTogether
       hostname.to_s.strip.downcase.sub(/\.$/, '')
     end
 
+    # The domain's address. The scheme and, when the platform's host_url is this same hostname, its
+    # nonstandard port (localhost:3000) carry over, so links keep pointing at the running app.
     def url
-      scheme = begin
-        URI.parse(platform.host_url.to_s).scheme.presence
-      rescue URI::InvalidURIError
-        nil
-      end || 'https'
-      "#{scheme}://#{hostname}"
+      base = host_url_uri
+      scheme = base&.scheme.presence || 'https'
+      port = base.port if base&.host.present? && self.class.normalize_hostname(base.host) == hostname &&
+                          base.port != base.default_port
+      "#{scheme}://#{hostname}#{":#{port}" if port}"
     end
 
     def normalize_hostname!
@@ -95,6 +96,12 @@ module BetterTogether
       Rails.cache.delete("bt:platform_domain:#{hostname}")
       Rails.cache.delete("bt:platform_domain:#{hostname_before_last_save}") if hostname_before_last_save.present?
       BetterTogether::Mcp::AllowedOrigins.reset_cache!
+    end
+
+    def host_url_uri
+      URI.parse(platform.host_url.to_s)
+    rescue URI::InvalidURIError
+      nil
     end
   end
 end

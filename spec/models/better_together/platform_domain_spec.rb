@@ -26,6 +26,26 @@ RSpec.describe BetterTogether::PlatformDomain do
 
       expect(platform_domain.url).to eq('https://alias.example.test')
     end
+
+    it 'keeps a nonstandard port when the platform host_url is on the same hostname' do
+      platform = create(:better_together_platform, host_url: 'http://localhost:3000')
+      platform_domain = platform.platform_domains.find_by(hostname: 'localhost')
+
+      expect(platform_domain.url).to eq('http://localhost:3000')
+    end
+
+    it 'does not carry the port over to a different hostname' do
+      platform = create(:better_together_platform, host_url: 'http://localhost:3000')
+      platform_domain = create(:better_together_platform_domain, platform:, hostname: 'alias.example.test')
+
+      expect(platform_domain.url).to eq('http://alias.example.test')
+    end
+
+    it 'omits the default port' do
+      platform = create(:better_together_platform, host_url: "https://std-#{SecureRandom.hex(4)}.example.test:443")
+
+      expect(platform.primary_platform_domain.url).not_to include(':443')
+    end
   end
 
   describe 'validations' do
