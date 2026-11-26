@@ -22,12 +22,12 @@ Closing these lets an operator configure hosted platforms by hand today, while t
 | Id | Change | Status |
 | --- | --- | --- |
 | HPS-0 | This note and the squash-ready description | this PR |
-| HPS-1 | Host dashboard scoped to the platform being viewed and authorized against it; `Platform has_many :pages` | planned next |
-| HPS-2 | RBAC index navigation counts scoped to the platform being viewed | in review |
-| HPS-3 | Feature access and quota grants follow the governing operator, not the platform itself | in review |
-| HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | in review |
-| HPS-5 | Platform-owned navigation seeded at provisioning, so a hosted platform no longer shows the host menu | in review |
-| HPS-6 | Manual hosted-platform provisioning runbook, steward smoke-test checklist, and the provisioning wizard assessment | in review |
+| HPS-1 | Host dashboard scoped to the platform being viewed and authorized against it; `Platform has_many :pages` | merged into this branch (#2363) |
+| HPS-2 | RBAC index navigation counts scoped to the platform being viewed | merged into this branch (#2364) |
+| HPS-3 | Feature access and quota grants follow the governing operator, not the platform itself | merged into this branch (#2365) |
+| HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | merged into this branch (#2366) |
+| HPS-5 | Platform-owned navigation seeded at provisioning, so a hosted platform no longer shows the host menu | merged into this branch (#2370) |
+| HPS-6 | Manual hosted-platform provisioning runbook, steward smoke-test checklist, and the provisioning wizard assessment | merged into this branch (#2371) |
 
 Follow-up inside this stack when its subsystem is touched: an access contract for platform administration (no contract covers the host dashboard or platform records yet).
 
@@ -50,7 +50,7 @@ feat(platform): hosted platform steward parity (HPS-0 to HPS-6)
 - Feature access and quota grants are administered by the governing operator: the host steward for the host and for hosted platforms with no operator, the local operator steward (billing scope) where an association is in force, and nobody on this instance where a remote operator governs (HPS-3)
 - Hostnames must sit in an allowed zone or be operator-created, reserved names are blocked, steward-created hostnames start inactive (HPS-4)
 - Hosted platforms get their own navigation area at provisioning (HPS-5)
-- Runbook for manual hosted-platform provisioning and the steward smoke test (HPS-6)
+- Runbook for manual hosted-platform provisioning, the steward smoke test, and an assessment with a phased plan for a seed-selecting provisioning wizard (HPS-6)
 ```
 
 ## Acceptance for the whole stack

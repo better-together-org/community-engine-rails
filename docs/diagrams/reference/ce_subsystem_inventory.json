@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T21:04:47Z",
+  "generated_at": "2026-11-26T02:39:16Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -2648,6 +2648,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MembershipLifecycleActions",
             "BetterTogether::MentionPrefetch",
             "BetterTogether::ThirdPartyTracking"
           ]
@@ -2750,6 +2751,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MembershipLifecycleActions",
             "BetterTogether::MentionPrefetch",
             "BetterTogether::ThirdPartyTracking"
           ]
@@ -3124,6 +3126,16 @@
           "included_by": [
             "PersonPlatformMembership",
             "PersonCommunityMembership"
+          ]
+        },
+        {
+          "name": "BetterTogether::MembershipLifecycleActions",
+          "label": "MembershipLifecycleActions",
+          "capability": "Membershiplifecycleactions",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PersonPlatformMembershipsController",
+            "PersonCommunityMembershipsController"
           ]
         },
         {

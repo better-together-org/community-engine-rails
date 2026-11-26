@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-24T21:04:47Z`.
+Generated from live Rails reflections at `2026-11-26T02:39:16Z`.
 
 ## Identity, access, and memberships
 
@@ -51,13 +51,13 @@ People, users, identifications, invitations, roles, memberships, and privacy/exp
 | PersonAccessGrantsController | `BetterTogether::ApplicationController` | `PersonAccessGrant` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | PersonBlocksController | `BetterTogether::ApplicationController` | `PersonBlock` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
 | PersonChecklistItemsController | `BetterTogether::ApplicationController` | `PersonChecklistItem` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
-| PersonCommunityMembershipsController | `BetterTogether::ApplicationController` | `PersonCommunityMembership` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonCommunityMembershipsController | `BetterTogether::ApplicationController` | `PersonCommunityMembership` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MembershipLifecycleActions`<br>`MentionPrefetch` |
 | PersonDataExportsController | `BetterTogether::ApplicationController` | `PersonDataExport` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | PersonDeletionRequestsController | `BetterTogether::ApplicationController` | `PersonDeletionRequest` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | PersonLinkedSeedsController | `BetterTogether::ApplicationController` | `PersonLinkedSeed` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | PersonLinksController | `BetterTogether::ApplicationController` | `PersonLink` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | PersonPlatformIntegrationsController | `BetterTogether::ApplicationController` | `PersonPlatformIntegration` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
-| PersonPlatformMembershipsController | `BetterTogether::ApplicationController` | `PersonPlatformMembership` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonPlatformMembershipsController | `BetterTogether::ApplicationController` | `PersonPlatformMembership` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MembershipLifecycleActions`<br>`MentionPrefetch` |
 | PersonSeedsController | `BetterTogether::ApplicationController` | — | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | ResourcePermissionsController | `BetterTogether::FriendlyResourceController` | `ResourcePermission` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | RolesController | `BetterTogether::FriendlyResourceController` | `Role` | `ConsentCookieSync`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
