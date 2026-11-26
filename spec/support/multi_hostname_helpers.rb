@@ -4,10 +4,11 @@
 #
 # One app instance and one port serve every hostname, as in production. Request specs choose the
 # hostname with `host!`, mailer and job specs choose the platform with `Current.platform`, and
-# browser specs map extra hostnames to the one Capybara server with the :multi_host driver.
+# browser specs reach extra hostnames under *.localhost on the one Capybara server.
 module MultiHostnameHelpers
-  # Hostnames under this suffix are mapped to the local Capybara server by the :multi_host driver.
-  HOSTNAME_SUFFIX = 'mds.test'
+  # Chrome resolves every *.localhost name to the loopback address, so these hostnames reach the one
+  # Capybara server with no resolver rule and no driver option.
+  HOSTNAME_SUFFIX = 'mds.localhost'
 
   # A platform with a primary domain for the hostname (https, no port), ready to be served.
   def create_platform_on_hostname(hostname, **attributes)
@@ -48,27 +49,6 @@ module MultiHostnameHelpers
   end
 end
 
-module MultiHostnameBrowser
-  # Chrome resolves every hostname under the suffix to the loopback address; the port stays in the
-  # URL, so there is one server and one port. Only registered drivers carry the rule.
-  def self.resolver_rule
-    "--host-resolver-rules=MAP *.#{MultiHostnameHelpers::HOSTNAME_SUFFIX} 127.0.0.1"
-  end
-
-  def self.register(name, headless:)
-    Capybara.register_driver(name) do |app|
-      options = Selenium::WebDriver::Chrome::Options.new
-      %w[--disable-gpu --no-sandbox --disable-dev-shm-usage --window-size=1400,1400].each { |arg| options.add_argument(arg) }
-      options.add_argument('--headless') if headless
-      options.add_argument("--user-data-dir=#{Dir.mktmpdir("chrome-multihost-#{Process.pid}-")}")
-      options.add_argument(resolver_rule)
-      Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
-    end
-  end
-end
-
-MultiHostnameBrowser.register(:selenium_chrome_headless_multi_host, headless: true)
-
 # The host platform's domain rows live in a table the :deletion cleanup of JS/feature/system examples
 # empties, so later examples would meet a host with no domain. Put back what was there.
 module HostDomainHealing
@@ -92,12 +72,7 @@ end
 RSpec.configure do |config|
   config.include MultiHostnameHelpers
 
-  config.before(:each, :multi_host) do
-    Capybara.current_driver = :selenium_chrome_headless_multi_host
-    Capybara.app_host = nil
-  end
   config.after(:each, :multi_host) do
-    Capybara.use_default_driver
     # Platforms are never cleaned by the :deletion strategy, so remove the ones this example made.
     BetterTogether::Platform.where(host: false).find_each do |platform|
       platform.destroy if platform.host_url.to_s.end_with?(".#{MultiHostnameHelpers::HOSTNAME_SUFFIX}")

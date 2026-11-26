@@ -4,17 +4,17 @@ require 'rails_helper'
 
 RSpec.describe 'Multi-hostname test support', :skip_host_setup do
   let!(:host_platform) { configure_host_platform }
-  let!(:club) { create_platform_on_hostname('club.mds.test') }
-  let!(:guild) { create_platform_on_hostname('guild.mds.test') }
+  let!(:club) { create_platform_on_hostname('club.mds.localhost') }
+  let!(:guild) { create_platform_on_hostname('guild.mds.localhost') }
 
   it 'serves each hostname as its own platform in a request spec' do
-    on_hostname('club.mds.test') do |platform|
+    on_hostname('club.mds.localhost') do |platform|
       expect(platform).to eq(club)
       get better_together.home_page_path(locale: I18n.default_locale)
       expect(response).to have_http_status(:ok)
     end
 
-    on_hostname('guild.mds.test') do |platform|
+    on_hostname('guild.mds.localhost') do |platform|
       expect(platform).to eq(guild)
       get better_together.home_page_path(locale: I18n.default_locale)
       expect(controller.helpers.host_platform).to eq(guild)
@@ -22,24 +22,20 @@ RSpec.describe 'Multi-hostname test support', :skip_host_setup do
   end
 
   it 'gives mailer and engine URL code the platform, with no port in its URL' do
-    on_hostname('club.mds.test') do
-      expect(BetterTogether.platform_base_url).to eq('http://club.mds.test')
+    on_hostname('club.mds.localhost') do
+      expect(BetterTogether.platform_base_url).to eq('http://club.mds.localhost')
       expect(BetterTogether.platform_base_url).not_to match(/:\d+\z/)
     end
   end
 
   it 'refuses a hostname with no active domain' do
-    expect { on_hostname('nobody.mds.test') { nil } }.to raise_error(ArgumentError, /nobody\.mds\.test/)
+    expect { on_hostname('nobody.mds.localhost') { nil } }.to raise_error(ArgumentError, /nobody\.mds\.localhost/)
   end
 
   it 'builds a browser URL on the one server port' do
     allow(Capybara.current_session).to receive(:server).and_return(instance_double(Capybara::Server, port: 4321))
 
-    expect(multi_host_url('club.mds.test', '/en')).to eq('http://club.mds.test:4321/en')
-  end
-
-  it 'only carries the host resolver rule on the multi-host driver' do
-    expect(MultiHostnameBrowser.resolver_rule).to eq('--host-resolver-rules=MAP *.mds.test 127.0.0.1')
+    expect(multi_host_url('club.mds.localhost', '/en')).to eq('http://club.mds.localhost:4321/en')
   end
 
   describe HostDomainHealing do
