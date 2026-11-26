@@ -51,6 +51,8 @@ module BetterTogether
 
     store_attributes :settings do
       requires_invitation Boolean, default: true
+      # Visitors on a secondary domain are sent to the primary domain (SecondaryDomainRedirectMiddleware).
+      redirect_secondary_domains Boolean, default: true
       allow_membership_requests Boolean, default: false
       # Master gate for the whole inbound-mail alias surface (community+/agent+/requests+).
       # Defaults true to preserve existing behavior for platforms already relying on it;

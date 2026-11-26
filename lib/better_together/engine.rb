@@ -181,6 +181,14 @@ module BetterTogether
       app.middleware.insert_after BetterTogether::PlatformContextMiddleware, BetterTogether::RedirectMiddleware
     end
 
+    # A platform's secondary domains redirect to its primary domain (see the middleware for the exemptions).
+    initializer 'better_together.secondary_domain_redirect_middleware',
+                after: 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/secondary_domain_redirect_middleware').to_s
+      app.middleware.insert_after BetterTogether::PlatformContextMiddleware,
+                                  BetterTogether::SecondaryDomainRedirectMiddleware
+    end
+
     # ActionDispatch::RemoteIp raises IpSpoofAttackError for malformed
     # X-Forwarded-For headers before Rack::Attack's scanner blocklists ever
     # run. Insert this guard immediately before RemoteIp so that traffic gets

@@ -87,6 +87,7 @@ RSpec.describe 'Platform provisioning with domains', :skip_host_setup do
     end
 
     it 'serves the SAME Tenant A page when requested via its custom domain' do
+      tenant_platform.update!(redirect_secondary_domains: false)
       host! 'app.customclientdomain.test'
       get better_together.render_page_path(path: 'shared-slug', locale: I18n.default_locale)
 
