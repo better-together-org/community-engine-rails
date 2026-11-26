@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::Billing::CatalogSync do
       described_class.call(plan)
 
       item = adapter.calls.find { |name, *| name == :sync_catalog_item }[2]
-      expect(item.prices.sole).to have_attributes(ref: plan.id, interval: plan.billing_interval)
+      expect(item.prices.sole).to have_attributes(ref: plan.current_price.id, interval: plan.billing_interval)
     end
 
     it 'refuses an answer that is not a CatalogSyncResult' do
@@ -51,7 +51,7 @@ RSpec.describe BetterTogether::Billing::CatalogSync do
 
       expect(adapter.calls.map(&:first)).to include(:sync_plan)
       expect(adapter.calls.map(&:first)).not_to include(:sync_catalog_item)
-      expect(result.price_for(plan.id)).to be_present
+      expect(result.price_for(plan.current_price.id)).to be_present
     end
 
     it 'cannot hold a product' do

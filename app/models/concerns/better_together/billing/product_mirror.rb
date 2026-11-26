@@ -23,7 +23,7 @@ module BetterTogether
         validates :sync_status, inclusion: { in: SYNC_STATUSES }
         validate :processor_installed_and_configured, if: -> { processor.present? && (new_record? || processor_changed?) }
 
-        before_create { self.sync_status = sync_supported? ? 'pending' : 'synced' }
+        before_create { self.sync_status = sync_supported? && manages_processor_product ? 'pending' : 'synced' }
         before_update :unlink_from_previous_processor, if: :processor_changed?
         after_commit :queue_processor_sync, on: %i[create update]
 

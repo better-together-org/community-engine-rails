@@ -42,10 +42,15 @@ module BetterTogether
       # Contract version 1: `sync_plan` for a plan.
       def push_plan
         guard_plan!
-        result = adapter.sync_plan(context:, plan: record, idempotency_key: key)
-        raise TypeError, "#{adapter.class}#sync_plan must return PlanSyncResult" unless result.is_a?(PlanSyncResult)
+        result = plan_sync_result
 
-        CatalogSyncResult.new(product_id: result.product_id, prices: [result.price.with(ref: record.id)])
+        CatalogSyncResult.new(product_id: result.product_id, prices: [result.price.with(ref: record.current_price.id)])
+      end
+
+      def plan_sync_result
+        adapter.sync_plan(context:, plan: record, idempotency_key: key).tap do |result|
+          raise TypeError, "#{adapter.class}#sync_plan must return PlanSyncResult" unless result.is_a?(PlanSyncResult)
+        end
       end
 
       def guard_plan!

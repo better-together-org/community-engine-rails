@@ -50,7 +50,7 @@ These are the places that must change. Counts are files under `app` and `lib` th
 - **Grants.** `plan_grants` belong to a plan only, and an add-on is forbidden from having any, so a quota top-up cannot say how much quota it gives.
 - **Add-on flag.** `add_on` appears in about 19 files (checkout controller and view, hub, plan form, plan policy, tax preview, seeds). It is a
   flag on Plan standing in for a type.
-- **Processor sync.** `SyncPlanJob`, `PlanSyncResult`, `ProcessorAdapter#sync_plan` and the `:plan_sync` capability are named and shaped for plans.
+- **Processor sync.** `SyncProductJob`, `PlanSyncResult`, `ProcessorAdapter#sync_plan` and the `:plan_sync` capability are named and shaped for plans.
 - **Seeds, forms, locales, DOM contracts, nav.** About 94 spec files reference the plan factory, and the seed type registry has `plan`,
   `plan grant` and add-on types.
 
@@ -170,7 +170,7 @@ Each phase is a separate PR, stacked on `feature/billing`, and each leaves the b
    entitlements. Then remove `one_time` and `add_on` from Plan, the `plan_add_ons` table and their validations. The branch is not in a release yet
    and prod apps have billing off, so only test instances hold such rows. Use new migrations (not edits to unreleased ones) so
    test.communityengine.app migrates cleanly, and decide at merge time whether to squash.
-   **Built (PS-6):** `Products::ConvertPlans` plus two migrations (convert, then drop `plan_add_ons` and `plans.add_on`); `one_time` is gone
+   **Built (PS-6):** `Products::ConvertPlans` (since removed, see the [model assessment](assessments/2026-11-billing-model-assessment.md)) plus two migrations (convert, then drop `plan_add_ons` and `plans.add_on`); `one_time` is gone
    from `BILLING_INTERVALS`. See [products and prices](products_and_prices.md).
 7. **Processor contract.** Generalize `sync_plan` to sync a catalog item (product plus its prices, returning a result with a list of prices).
    Derive Checkout Session mode from the lines. Allow inline `price_data` for items with no processor mirror. Bump the contract version and keep a

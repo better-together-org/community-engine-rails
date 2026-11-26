@@ -44,7 +44,7 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
 
 1. **Create in the processor.** The steward picks a new or existing product, a currency and
    interval (option lists fetched live from the processor), and types an amount. The plan is
-   saved as `pending` and `SyncPlanJob` creates the processor-side product and price.
+   saved as `pending` and `SyncProductJob` creates the processor-side product and price.
 2. **Link an existing price.** The steward picks a price (options fetched live, narrowed by
    product). Core calls `fetch_price` and **copies** the amount, currency, interval and
    product from the processor, whatever was typed, so the two cannot disagree. A price the
@@ -192,7 +192,7 @@ deliberately not unique.
 
 ## Operating notes
 
-- `SyncPlanJob` runs on the `billing` queue with the plan id only. Retries use growing waits
+- `SyncProductJob` runs on the `billing` queue with the plan id only. Retries use growing waits
   (up to 10 attempts); when they run out the plan is marked `failed` with a short code
   (`processor_unavailable`, `not_configured`, `processor_error`).
 - The job takes its context from the plan's platform, never from `Current.platform`.

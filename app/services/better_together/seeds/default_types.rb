@@ -162,9 +162,9 @@ module BetterTogether
         end
         Registry.register(:billing_plan_grant) do
           model 'BetterTogether::Billing::PlanGrant'
-          natural_key :kind, within: :plan
+          natural_key :kind, within: :product
           attributes :kind, :parameters
-          reference :plan, to: :billing_plan
+          reference :product, to: :billing_plan
           position :position
         end
         register_billing_products

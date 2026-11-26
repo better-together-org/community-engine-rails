@@ -2,18 +2,15 @@
 
 module BetterTogether
   module Billing
-    # How often something is billed and how a renewal is handled: the interval (`month` or `year`), how many of them make a
-    # period, the grace days a lapsed renewal keeps working and the lead days before a period ends that its invoice is made.
-    # Needs the columns `billing_interval`, `interval_count`, `grace_days` and `renewal_lead_days`.
+    # What a plan says about how a subscription to it runs: the days an unpaid period may stay unpaid before the subscription lapses
+    # (`grace_days`), and how long before a period ends its renewal invoice is issued (`renewal_lead_days`). How often it renews
+    # belongs to the price it is bought through (see Price#interval).
     module SubscriptionTerms
       extend ActiveSupport::Concern
 
-      BILLING_INTERVALS = %w[month year].freeze
+      BILLING_INTERVALS = Price::INTERVALS
       MAX_GRACE_DAYS = 90
       MAX_LEAD_DAYS = 60
-      # How a subscription is renewed by Community Engine (a method outside a processor): the days it keeps working
-      # after a period ends unpaid, and how many days before a period ends its invoice is made.
-      # Not held by any processor, so editable at any time; a change applies from the next renewal.
       RENEWAL_FIELDS = %i[grace_days renewal_lead_days].freeze
 
       included do
@@ -24,7 +21,7 @@ module BetterTogether
       end
 
       def recurring?
-        billing_interval.in?(%w[month year])
+        billing_interval.in?(BILLING_INTERVALS)
       end
 
       def launch_ready_for_hosted_billing?

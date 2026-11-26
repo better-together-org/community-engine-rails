@@ -55,8 +55,7 @@ module BetterTogether
       def targets
         @targets ||= ([seller] + purchasables.flat_map { |item| item.is_a?(Price) ? [item, item.product] : [item] }).compact
                      .map do |record|
-          [record.class.name,
-           record.id]
+          [record.class.polymorphic_name, record.id]
         end
       end
 

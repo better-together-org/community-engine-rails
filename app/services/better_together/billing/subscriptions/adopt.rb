@@ -34,17 +34,19 @@ module BetterTogether
 
         attr_reader :pay_subscription, :order
 
-        def plan = @plan ||= Start.single_plan(order)
+        def price = @price ||= Start.single_plan(order)
+
+        def plan = price&.product
 
         def check!
           raise Refused, 'that subscription is on another platform' if pay_subscription.platform_id != order.platform_id
-          raise Refused, 'that order is not for one recurring plan' unless plan&.recurring?
+          raise Refused, 'that order is not for one recurring plan' unless price&.recurring?
         end
 
         def build = order.platform.billing_subscription_terms.create!(term_attributes)
 
         def term_attributes
-          { pay_subscription:, plan:, beneficiary: order.on_behalf_of, payment_method: pay_subscription.customer.processor,
+          { pay_subscription:, plan:, price:, beneficiary: order.on_behalf_of, payment_method: pay_subscription.customer.processor,
             unit_amount_cents: Start.plan_line(order).unit_amount_cents, currency: order.currency, anchor_at: pay_subscription.created_at }
         end
       end

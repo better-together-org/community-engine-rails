@@ -54,7 +54,8 @@ RSpec.describe BetterTogether::Billing::LineItem do
   it 'keeps the price it was ordered at when the plan changes later' do
     saved = line(unit_amount_cents: 4500, description: 'Hosted').tap(&:save!)
 
-    plan.update_columns(amount_cents: 9900) # rubocop:disable Rails/SkipsModelValidations
+    plan.current_price.archive!
+    create(:better_together_billing_price, product: plan, kind: 'recurring', interval: 'month', amount_cents: 9900, currency: plan.currency)
     plan.update!(name: 'Renamed')
 
     expect(saved.reload).to have_attributes(unit_amount_cents: 4500, description: 'Hosted')

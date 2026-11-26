@@ -55,6 +55,6 @@ RSpec.describe BetterTogether::Billing::PurchaseRequirements::RevokeDependents d
   end
 
   it 'has a revoke_line that does nothing by default on a purchasable' do
-    expect(BetterTogether::Billing::Plan.new.revoke_line(nil)).to be_nil
+    expect(BetterTogether::Billing::Price.new.revoke_line(nil)).to be_nil
   end
 end

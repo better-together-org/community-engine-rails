@@ -16,7 +16,7 @@ Rules refuse a dependent or prerequisite that is not a registered purchasable, a
 
 ## Extras
 
-A product with at least one rule is an **extra**: its prices ride along on a plan's order and can be bought later by someone who holds a plan it needs. A steward sets the rules on the product form (`billing-product-requirements`): tick "needs any plan", or tick the plans it goes with. Nothing ticked means it sells on its own. PS-6 converted the old add-on plans and their `PlanAddOn` links into products with these rules (`Products::ConvertPlans`, run by a migration).
+A product with at least one rule is an **extra**: its prices ride along on a plan's order and can be bought later by someone who holds a plan it needs. A steward sets the rules on the product form (`billing-product-requirements`): tick "needs any plan", or tick the plans it goes with. Nothing ticked means it sells on its own. PS-6 converted the old add-on plans and their `PlanAddOn` links into products with these rules (`Products::the plan conversion (removed in the plan-as-product change)`, run by a migration).
 
 ## Where it is enforced
 

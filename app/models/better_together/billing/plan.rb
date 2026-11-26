@@ -2,45 +2,39 @@
 
 module BetterTogether
   module Billing
-    # Catalog entry for a billable plan: one price on one platform, sold by the platform or
-    # by one of its communities or people (`seller`). See docs/billing/plan_catalog.md.
+    # A plan is a product that people subscribe to: it renews through a recurring price, and what it includes is given through
+    # the subscription, never through an order of its own. It is sold by the platform or by one of its communities or people
+    # (`seller`), see docs/billing/plan_catalog.md. Plan is a subtype of Product (single table, the `type` column), so its name,
+    # listing, tax category, grants, agreements and the processor's product are the product's; this adds what only a
+    # subscription needs: renewal lead days, grace days, who it may be offered to, and the text shown to participants.
     #
-    # The price can be held by one ONLINE payment processor (`processor`, with the
-    # processor-side product and price below) and/or be payable by methods outside a
-    # vendor (`accepted_payment_methods`: cash, cheque, e-transfer, store credit). A plan
-    # needs at least one of the two.
-    #
-    # A plan comes into being one of two ways:
-    # * created here: the steward describes it and the sync job creates the processor-side
-    #   product and price (`sync_status` 'pending' until it does);
-    # * linked: the steward picks a price that already exists (`link_existing`), and the
-    #   price's amount, currency, interval and product are copied from the processor, so
-    #   what is shown can never differ from what is charged.
-    #
-    # Once the processor-side price exists, the fields the processor only accepts at
-    # creation are locked here (see #locked_field?).
-    class Plan < ApplicationRecord # rubocop:disable Metrics/ClassLength
-      include PlatformBound
-      include SellerScoped
-      include Purchasable
+    # Its price is its current recurring Price (see PlanPrice), which can be held by one ONLINE payment processor and/or be
+    # payable by methods outside a vendor (`accepted_payment_methods`: cash, cheque, e-transfer, store credit). A plan needs at
+    # least one of the two. How it comes to be held by a processor, created here or linked from one that exists, is PlanLinking.
+    class Plan < Product # rubocop:disable Metrics/ClassLength
       # Before the concerns below: the typed amount is applied first, then a linked price overrides it.
       include MajorAmount
       include Pricing
       include PaymentMethods
-      include ProcessorMirror
+      include PlanPrice
+      include PlanLinking
       include SubscriptionTerms
-      include Listing
-      include AgreementTarget
-      include Translatable
 
-      self.table_name = 'better_together_billing_plans'
-
-      # What people read about a plan, in each supported language. The metadata hash keeps only what is not language.
-      translates :name, :beneficiary_label, type: :string
-      translates :description, :participant_summary, type: :text
-      translates :solidarity_description, type: :string
+      # What people read about a plan beyond a product's own text, in each supported language.
+      translates :beneficiary_label, type: :string, association_name: :plan_string_translations
+      translates :participant_summary, type: :text, association_name: :plan_text_translations
+      translates :solidarity_description, type: :string, association_name: :plan_string_translations
       # One benefit per line.
-      translates :participant_benefits, type: :text
+      translates :participant_benefits, type: :text, association_name: :plan_text_translations
+
+      # Cheapest first by the plan's recurring price on sale, then by identifier.
+      scope :by_price, lambda {
+        prices = Price.arel_table
+        cheapest = prices.project(prices[:amount_cents].minimum)
+                         .where(prices[:product_id].eq(arel_table[:id]).and(prices[:kind].eq('recurring')).and(prices[:active].eq(true))
+                                .and(prices[:archived_at].eq(nil)))
+        order(Arel::Nodes::Grouping.new(cheapest).asc, arel_table[:identifier].asc)
+      }
 
       DEFAULT_ELIGIBLE_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
 
@@ -55,19 +49,8 @@ module BetterTogether
       # The translated text a steward writes, one value per supported language.
       TRANSLATED_FIELDS = %i[name description participant_summary beneficiary_label solidarity_description participant_benefits].freeze
 
-      # How the plan is taxed; none means standard.
-      belongs_to :tax_category, class_name: 'BetterTogether::Billing::TaxCategory', optional: true
-
-      # What the plan includes (roles, feature access, quota allowances); see Entitlements.
-      has_many :plan_grants, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::PlanGrant', inverse_of: :plan,
-                                                                   dependent: :restrict_with_error
-      has_many :entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
-
-      validates :identifier, :name, presence: true
-      validates :identifier, uniqueness: { scope: %i[platform_id seller_type seller_id] }
       validate :eligible_owner_types_are_billable
       validate :pricing_tier_within_known_values
-      validate :tax_category_on_same_platform
 
       # Every plan is a primary one now: what is sold once, an add-on included, is a product.
       scope :primary, -> { all }
@@ -102,14 +85,8 @@ module BetterTogether
         end), *RENEWAL_FIELDS, *LISTING_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
-      # Purchasable: a plan is what a line item is for.
-      def purchasable_description = name
-      def purchasable_description_in(locale) = name(locale:, fallback: false)
-      def purchasable_tax_category = tax_category
-      def purchasable? = active?
-
-      # What the order engine asks of a purchasable (see Purchasable): a plan is a subscription that renews, and what it
-      # includes is given through the subscription, never through an order of its own.
+      # A plan is bought through its price, never as itself, and is never given through an order.
+      def fulfilled_by_order? = false
       def renews? = true
       def plan_line? = true
 
@@ -122,8 +99,7 @@ module BetterTogether
 
       # ---- catalog presentation ----------------------------------------------------
 
-      # What it includes, for entitlements (a product answers the same).
-      def included_grants = plan_grants
+      def plan_grants = grants
 
       def eligible_for?(billable_owner)
         return false unless billable_owner.present?
@@ -181,11 +157,6 @@ module BetterTogether
         configured = Array(metadata['eligible_billable_owner_types']).compact_blank
         unknown = configured - self.class.assignable_owner_types
         errors.add(:base, :unknown_owner_types, types: unknown.join(', ')) if unknown.any?
-      end
-
-      # A tax category from another platform would be copied onto an order line, whose key ties it to this platform.
-      def tax_category_on_same_platform
-        errors.add(:tax_category, :tax_category_other_platform) if tax_category && tax_category.platform_id != platform_id
       end
 
       def pricing_tier_within_known_values

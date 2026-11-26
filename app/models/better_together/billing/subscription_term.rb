@@ -17,6 +17,8 @@ module BetterTogether
 
       belongs_to :pay_subscription, class_name: 'Pay::Subscription', optional: false
       belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', optional: false
+      # The recurring price it was sold at: the plan's, when it began or when it last changed plan. It sets the period length.
+      belongs_to :price, class_name: 'BetterTogether::Billing::Price', optional: false
       # The plan the subscriber chose to move to when the next period starts (see Subscriptions::ChangePlan).
       belongs_to :pending_plan, class_name: 'BetterTogether::Billing::Plan', optional: true
       belongs_to :pending_plan_order, class_name: 'BetterTogether::Billing::Order', optional: true
@@ -27,11 +29,12 @@ module BetterTogether
       attr_readonly :pay_subscription_id, :payment_method
 
       validates :payment_method, presence: true
-      validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
+      validates :currency, inclusion: { in: Pricing::SUPPORTED_CURRENCY_CODES }
       validates :unit_amount_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validates :anchor_sequence, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validates :pay_subscription_id, uniqueness: true
       validate :same_platform
+      validate :price_belongs_to_plan
       validate :plan_only_changes_through_the_service, on: :update
       validate :beneficiary_allowed
 
@@ -52,9 +55,9 @@ module BetterTogether
 
       def time_zone = platform.time_zone.presence || 'UTC'
 
-      def period_start(sequence) = Periods.starts_at(anchor: anchor_at, plan:, sequence:, time_zone:, anchor_sequence:)
+      def period_start(sequence) = Periods.starts_at(anchor: anchor_at, price:, sequence:, time_zone:, anchor_sequence:)
 
-      def period_end(sequence) = Periods.ends_at(anchor: anchor_at, plan:, sequence:, time_zone:, anchor_sequence:)
+      def period_end(sequence) = Periods.ends_at(anchor: anchor_at, price:, sequence:, time_zone:, anchor_sequence:)
 
       # Days a period may stay unpaid before the subscription lapses.
       def grace_days = plan.grace_days
@@ -64,6 +67,10 @@ module BetterTogether
       # The plan a subscription follows changes only through Subscriptions::ChangePlan, never by a stray update.
       def plan_only_changes_through_the_service
         errors.add(:plan_id, :readonly) if plan_id_changed? && !Thread.current[:billing_plan_change]
+      end
+
+      def price_belongs_to_plan
+        errors.add(:price, :platform_owner_mismatch) if price && plan && price.product_id != plan.id
       end
 
       def same_platform

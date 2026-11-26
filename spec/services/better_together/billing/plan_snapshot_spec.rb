@@ -73,7 +73,8 @@ RSpec.describe BetterTogether::Billing::PlanSnapshot do
   end
 
   it 'reports "unavailable", and caches nothing, when the processor cannot be reached' do
-    plan.update_columns(processor_price_id: 'price_boom') # rubocop:disable Rails/SkipsModelValidations
+    plan.current_price.update_columns(processor_price_id: 'price_boom') # rubocop:disable Rails/SkipsModelValidations
+    plan.reload
 
     expect(described_class.call(plan).error).to eq(:unavailable)
     expect(memory_cache.instance_variable_get(:@data)).to be_empty
@@ -94,7 +95,8 @@ RSpec.describe BetterTogether::Billing::PlanSnapshot do
   end
 
   it 'treats a price missing at the processor as no drift' do
-    plan.update_columns(processor_price_id: 'price_missing_1') # rubocop:disable Rails/SkipsModelValidations
+    plan.current_price.update_columns(processor_price_id: 'price_missing_1') # rubocop:disable Rails/SkipsModelValidations
+    plan.reload
 
     expect(described_class.call(plan)).to have_attributes(price: nil, drift: [])
   end

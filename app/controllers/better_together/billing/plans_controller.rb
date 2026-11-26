@@ -59,7 +59,7 @@ module BetterTogether
 
         if @plan.sync_supported?
           @plan.restart_sync!
-          BetterTogether::Billing::SyncPlanJob.perform_later(@plan.id)
+          BetterTogether::Billing::SyncProductJob.perform_later(@plan.id)
           redirect_to billing_plan_path(@plan), notice: t('better_together.billing.plans.sync_requested')
         else
           redirect_to billing_plan_path(@plan), alert: t('better_together.billing.plans.sync_unsupported')

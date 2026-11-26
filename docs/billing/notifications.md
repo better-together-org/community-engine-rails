@@ -73,7 +73,7 @@ For an order that records a buyer email (a sale in person), the buyer's notices 
 There is one way in, `Billing::Notifications.deliver(kind, subject:, dedupe_key:, actor:)`, and three places it is called from. None of them is a Pay model callback or Pay's webhook delegator.
 
 1. **The event pipeline.** After `EventProcessor` records a final outcome it tells the people the outcome concerns, using the neutral `outcome_kind` and `subject` the adapter reported ([processor-adapters.md](processor-adapters.md#what-an-outcome-says-happened)). A vendor's own event names never reach this code. The key is the event, so replaying an event does not notify again. Outcomes with no subject, or kinds core does not announce, are ignored.
-2. **Core services.** `Orders::Place`, `Settle`, `Cancel`, `Expire`, `Refunds::Record`, the payment method audit, `Event#dead_letter!` and `SyncPlanJob` call it themselves.
+2. **Core services.** `Orders::Place`, `Settle`, `Cancel`, `Expire`, `Refunds::Record`, the payment method audit, `Event#dead_letter!` and `SyncProductJob` call it themselves.
 3. **Scheduled jobs.** Reminders and digests arrive with the offline payment methods.
 
 It runs **after the surrounding transaction commits**, so nobody is told about something that was then rolled back, and a failure to notify is logged and reported and never fails the work that triggered it.

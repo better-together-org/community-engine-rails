@@ -11,7 +11,7 @@ module BetterTogether
 
       def index
         authorize BetterTogether::Billing::Entitlement, :own?
-        @entitlements = mine.includes(:plan, :product, :beneficiary, grants: []).order(created_at: :desc)
+        @entitlements = mine.includes(:product, :beneficiary, grants: []).order(created_at: :desc)
         @meters = meters_for(@entitlements)
       end
 

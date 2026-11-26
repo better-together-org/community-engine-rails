@@ -15,7 +15,8 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
     expect(order.number).to match(/\ABT-/)
     expect(order.placed_at).to be_present
     expect(order.expires_at).to be_within(1.minute).of(72.hours.from_now)
-    expect(order.line_items.first).to have_attributes(purchasable: plan, description: plan.name, quantity: 1, unit_amount_cents: 4500)
+    expect(order.line_items.first).to have_attributes(purchasable: plan.current_price, description: plan.name, quantity: 1,
+                                                      unit_amount_cents: 4500)
   end
 
   it 'holds the order for as long as it is told to' do
@@ -32,17 +33,19 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
   end
 
   it 'holds each purchasable it sells' do
-    allow(plan).to receive(:reserve!)
+    price = plan.current_price
+    allow(price).to receive(:reserve!)
 
-    place_order(line_items: [{ purchasable: plan, quantity: 3 }])
+    place_order(line_items: [{ purchasable: price, quantity: 3 }])
 
-    expect(plan).to have_received(:reserve!).with(quantity: 3)
+    expect(price).to have_received(:reserve!).with(quantity: 3)
   end
 
   it 'rolls everything back, leaving nothing behind, when a purchasable refuses to be held' do
-    allow(plan).to receive(:reserve!).and_raise(StandardError, 'sold out')
+    price = plan.current_price
+    allow(price).to receive(:reserve!).and_raise(StandardError, 'sold out')
 
-    expect { place_order }.to raise_error(described_class::Refused, 'sold out')
+    expect { place_order(line_items: [{ purchasable: price }]) }.to raise_error(described_class::Refused, 'sold out')
     expect(host_platform.billing_orders.reload).to be_empty
   end
 

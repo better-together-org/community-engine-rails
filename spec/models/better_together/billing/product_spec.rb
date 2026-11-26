@@ -120,13 +120,10 @@ RSpec.describe BetterTogether::Billing::Product do
       expect(product.grants.build(platform_id: product.platform_id, kind: 'quota_allowance', parameters: quota)).not_to be_valid
     end
 
-    it 'refuses a grant that belongs to both a plan and a product, or to neither' do
-      plan = create(:better_together_billing_plan)
-      both = BetterTogether::Billing::PlanGrant.new(platform_id: product.platform_id, kind: 'quota_allowance', parameters: quota, plan:,
-                                                    product:)
+    it 'refuses a grant that belongs to no product' do
       neither = BetterTogether::Billing::PlanGrant.new(platform_id: product.platform_id, kind: 'quota_allowance', parameters: quota)
 
-      expect([both.valid?, neither.valid?]).to eq([false, false])
+      expect(neither).not_to be_valid
     end
   end
 end

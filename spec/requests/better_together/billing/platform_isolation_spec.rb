@@ -65,8 +65,8 @@ RSpec.describe 'Billing platform isolation' do # rubocop:disable RSpec/DescribeC
   def seed_term(platform, plan)
     customer = steward.person.add_payment_processor(:local, platform:).api_record
     subscription = customer.subscribe(name: 'x', plan: 'x', current_period_start: Time.current, current_period_end: 1.month.from_now)
-    platform.billing_subscription_terms.create!(pay_subscription: subscription, plan:, payment_method: 'cash', unit_amount_cents: 1,
-                                                currency: 'USD', anchor_at: Time.current)
+    platform.billing_subscription_terms.create!(pay_subscription: subscription, plan:, price: plan.current_price,
+                                                payment_method: 'cash', unit_amount_cents: 1, currency: 'USD', anchor_at: Time.current)
   end
 
   def billing_get_routes

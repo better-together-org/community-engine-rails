@@ -177,10 +177,10 @@ classDiagram
     }
     class BetterTogether__Billing__Plan["Billing::Plan"] {
       <<Model>>
-      table: better_together_billing_plans
-      translates: beneficiary_label, description, name, participant_benefits +2
-      concerns: Billing::AgreementTarget, Billing::Listing, Billing::MajorAmount, Billing::PaymentMethods +7
-      weak refs: target: seller, owner: string_translations, owner: text_translations
+      table: better_together_billing_products
+      translates: beneficiary_label, description, name, participant_benefits +3
+      concerns: Billing::AgreementTarget, Billing::Listing, Billing::MajorAmount, Billing::PaymentMethods +9
+      weak refs: target: seller, owner: purchase_requirements, owner: string_translations, owner: text_translations +2
     }
     class BetterTogether__Billing__PlanGrant["Billing::PlanGrant"] {
       <<Model>>
@@ -276,7 +276,6 @@ classDiagram
   BetterTogether__Billing__CreditLot --> BetterTogether__Billing__CreditAccount : account
   BetterTogether__Billing__CreditLot --> BetterTogether__Person : granted_by
   BetterTogether__Billing__Entitlement --> BetterTogether__Platform : platform
-  BetterTogether__Billing__Entitlement --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__Entitlement --> BetterTogether__Billing__Product : product
   BetterTogether__Billing__Entitlement --> Pay__Subscription : pay_subscription
   BetterTogether__Billing__Entitlement --> BetterTogether__Billing__Order : order
@@ -308,7 +307,6 @@ classDiagram
   BetterTogether__Billing__Plan --> BetterTogether__Platform : platform
   BetterTogether__Billing__Plan --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__PlanGrant --> BetterTogether__Platform : platform
-  BetterTogether__Billing__PlanGrant --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__PlanGrant --> BetterTogether__Billing__Product : product
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Platform : platform
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Person : acknowledged_by
@@ -327,5 +325,6 @@ classDiagram
   BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Platform : platform
   BetterTogether__Billing__SubscriptionTerm --> Pay__Subscription : pay_subscription
   BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Billing__Plan : plan
+  BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Billing__Price : price
   BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Billing__Plan : pending_plan
   BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Billing__Order : pending_plan_order

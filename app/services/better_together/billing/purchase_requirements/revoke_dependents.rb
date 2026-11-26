@@ -54,7 +54,8 @@ module BetterTogether
 
         def gave_kind?(class_name)
           order.line_items.any? do |line_item|
-            line_item.purchasable.instance_of?(class_name.constantize) && !line_item.purchasable.extra?
+            product = line_item.purchasable.try(:product) || line_item.purchasable
+            product.instance_of?(class_name.constantize) && !line_item.purchasable.extra?
           end
         end
 

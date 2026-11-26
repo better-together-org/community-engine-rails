@@ -34,29 +34,23 @@ module BetterTogether
 
         def line_for(line_item)
           purchasable = line_item.purchasable
-          case purchasable
-          when Plan then plan_line(line_item, purchasable)
-          when Price then price_line(line_item, purchasable)
-          else raise Unmirrored, "#{purchasable.class} cannot be sent to a processor"
-          end
-        end
+          raise Unmirrored, "#{purchasable.class} cannot be sent to a processor" unless purchasable.is_a?(Price)
 
-        # A plan is sold from the processor's own catalog: it has to be linked.
-        def plan_line(line_item, plan)
-          raise Unmirrored, "plan #{plan.id} is not linked to #{processor}" unless plan.processor == processor && plan.linked?
-
-          CheckoutLine.new(ref: line_item.id, quantity: line_item.quantity, processor_price_id: plan.processor_price_id,
-                           recurring: plan.renews?)
+          price_line(line_item, purchasable)
         end
 
         def price_line(line_item, price)
-          mirrored = price.processor_price_id.present? && price.product.processor == processor
-          return CheckoutLine.new(ref: line_item.id, quantity: line_item.quantity, processor_price_id: price.processor_price_id) if mirrored
+          return mirrored_line(line_item, price) if price.processor_price_id.present? && price.product.processor == processor
+          raise Unmirrored, "price #{price.id} is not linked to #{processor}" if price.recurring?
 
           CheckoutLine.new(ref: line_item.id, quantity: line_item.quantity, price_data: inline_price(line_item, price))
         end
 
-        # The amount is what the order recorded, so it matches what core charged even if the price was archived since.
+        def mirrored_line(line_item, price)
+          CheckoutLine.new(ref: line_item.id, quantity: line_item.quantity, processor_price_id: price.processor_price_id,
+                           recurring: price.recurring?)
+        end
+
         def inline_price(line_item, price)
           InlinePrice.new(amount_cents: line_item.unit_amount_cents, currency: line_item.currency, interval: 'one_time', interval_count: 1,
                           name: price.purchasable_description, description: price.display_participant_summary.presence)

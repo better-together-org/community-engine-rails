@@ -3,9 +3,9 @@ type: billing_plan_grant
 records:
 - key: demo-supporter-monthly-storage
   attributes: { kind: quota_allowance, parameters: { quota_type: media_storage, amount: 5368709120 } }
-  refs: { plan: "billing_plan:demo-supporter-monthly" }
+  refs: { product: "billing_plan:demo-supporter-monthly" }
   position: 0
 - key: demo-supporter-annual-storage
   attributes: { kind: quota_allowance, parameters: { quota_type: media_storage, amount: 5368709120 } }
-  refs: { plan: "billing_plan:demo-supporter-annual" }
+  refs: { product: "billing_plan:demo-supporter-annual" }
   position: 0

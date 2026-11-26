@@ -27,7 +27,7 @@ module BetterTogether
 
         attr_reader :platform, :person
 
-        def entitled_plan_ids = Entitlements::ForPerson.call(platform:, person:).live.pluck(:plan_id)
+        def entitled_plan_ids = Entitlements::ForPerson.call(platform:, person:).live.pluck(:product_id)
 
         def subscribed_plan_ids
           platform.billing_subscription_terms.joins(pay_subscription: :customer)

@@ -33,13 +33,14 @@ This assessment is generated from the current live class set and the concern cap
 | `Billing::PayCustomerOwner` | Paycustomerowner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::PaymentMethods` | Paymentmethods | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::PersonLookup` | Personlookup | `Billing::WalkUpSalesController`, `Billing::CreditGrantsController`, `Billing::CreditAccountsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PlanLinking` | Planlinking | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PlanPrice` | Planprice | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::PlatformBound` | Platformbound | `Billing::SubscriptionTerm`, `Billing::SubscriptionPeriod`, `Billing::Refund`, `Billing::PromotionRedemption`, `Billing::Promotion`, `Billing::PlanGrant` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::Pricing` | Pricing | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Billing::ProcessorMirror` | Processormirror | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Billing::ProductMirror` | Productmirror | `Billing::Product` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Billing::ProductRequirements` | Productrequirements | `Billing::Product` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Billing::Purchasable` | Purchasable | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Billing::SellerScoped` | Sellerscoped | `Billing::Order`, `Billing::Plan`, `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ProductMirror` | Productmirror | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ProductRequirements` | Productrequirements | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Purchasable` | Purchasable | `Billing::Price` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SellerScoped` | Sellerscoped | `Billing::Order`, `Billing::ProcessorSetting`, `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::SettingAudit` | Settingaudit | `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::Subjectable` | Subjectable | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Billing::SubscriptionTerms` | Subscriptionterms | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
