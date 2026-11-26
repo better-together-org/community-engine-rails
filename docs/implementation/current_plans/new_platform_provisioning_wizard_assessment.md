@@ -4,6 +4,14 @@ Status: assessment and proposal. No code in this change. Written for the HPS sta
 
 Goal: one provisioning wizard, modelled on the existing setup wizards, with a step where the steward (and later the person who will steward the new platform) chooses which seeds and seed packs to plant, such as navigation areas, navigation items, roles and other available packs. First for platforms inside the shared database, later for provisioning a separate app.
 
+## Decisions (maintainer, 2026-11-25)
+
+- **Roles pack is always on.** Customization happens after launch; the pack is add-only so later plants never overwrite steward edits.
+- **The seed choice is not locked.** More packs can be planted after the platform is provisioned, through the seed catalog mechanism, which needs rework (see 2.5).
+- **Demo packs are development only**, initialized from the CLI. They are never selectable in the wizard or the catalog UI, on any platform.
+- **Wizard completion:** an end user completes the provisioning wizard once per platform. An operator steward can complete it many times, each run creating another platform (see 2.6).
+- **Host-app packs register explicitly** in an initializer, like seed record types do today. No folder scanning.
+
 ## 1. What exists today
 
 | Surface | What it does | Gaps for the goal |
@@ -27,21 +35,22 @@ The existing wizard machinery is enough to build on: `Wizard`, `WizardStepDefini
 
 Everything the new step needs is "which packs can this platform install, what do they depend on, which are on by default". The `seed_pack` metadata already says that. Needed:
 
-1. **`SeedPackCatalog`**: reads every packet's `seed_pack` block from the engine and any host app folders, validates it against `envelope.schema.json`, and answers: the packs that apply to `platform` (via `applies_to`), their tier (`core` always on, `recommended` default on, `optional` and `demo` default off), `default_selected`, dependencies, and a human name and description.
-2. **`PackInstaller` and `InstallerRegistry`** (named in the protocol doc): one interface, `plan(platform)` and `install(platform)`, with two kinds of installer behind it. A packet installer calls `Seeds::Plant` (dry run for plan). A builder installer wraps an existing builder until its packet exists (`replaces_builder` records which). A pack with a builder that takes no platform is not selectable until the builder takes one.
-3. **Selection resolver**: given the chosen pack identifiers, adds the dependencies, rejects unknown and non-applicable packs, rejects a selection that leaves a `core` pack out, and returns plant order (access control, navigation and pages, agreements and categories, then optional and demo content), matching the order in the multi-tenancy notes.
-4. **New packets** for what is still builder-only: agreements, categories, and per-pack navigation granularity.
+1. **`SeedPackCatalog`**: reads every packet's `seed_pack` block from the engine and any host app folders, validates it against `envelope.schema.json`, and answers: the packs that apply to `platform` (via `applies_to`), their tier (`core` always on, `recommended` default on, `optional` default off; `demo` packs are excluded from every UI listing), `default_selected`, dependencies, and a human name and description.
+2. **Pack registration**: the engine registers its own packs by default. A host app registers its packs in an initializer (the same pattern as `Seeds::Registry.register` for record types), naming the pack and its packet directory. The catalog reads only registered packs and still honors the `PacketSources` allow-list, so nothing becomes installable by being present on disk.
+3. **`PackInstaller` and `InstallerRegistry`** (named in the protocol doc): one interface, `plan(platform)` and `install(platform)`, with two kinds of installer behind it. A packet installer calls `Seeds::Plant` (dry run for plan). A builder installer wraps an existing builder until its packet exists (`replaces_builder` records which). A pack with a builder that takes no platform is not selectable until the builder takes one.
+4. **Selection resolver**: given the chosen pack identifiers, adds the dependencies, rejects unknown and non-applicable packs, always includes the roles pack and rejects a selection that leaves any `core` pack out, and returns plant order (access control, navigation and pages, agreements and categories, then optional and demo content), matching the order in the multi-tenancy notes.
+5. **New packets** for what is still builder-only: agreements, categories, and per-pack navigation granularity.
 
 ### 2.2 Packs worth offering (initial list)
 
 | Pack | Tier | Notes |
 |---|---|---|
-| Roles and permissions (`better-together-rbac`) | core, always on | Required before anything else; every platform owns its copy. |
+| Roles and permissions (`better-together-rbac`) | core, always on | Required before anything else; every platform owns its copy. Add-only, so steward edits survive a re-plant. |
 | Navigation and static pages | recommended, default on | Today one packet. Splitting it lets a steward pick areas independently: header, footer, host admin menu, better-together menu, with items and pages inside each area. Needs the packet split, with dependencies between the pieces (items need their area, linked pages need the pages). |
 | Agreements and legal pages | recommended | New packet from `AgreementBuilder`. |
 | Categories | optional | New packet from `CategoryBuilder`. |
 | Geography reference data | optional | Not per platform today; keep it out until it is. |
-| Demo and joatu content | demo, default off | After the builders take a platform. |
+| Demo and joatu content | demo, CLI only | Developer rake task only, never in the wizard or catalog UI. Needs builders that take a platform. |
 
 The steward sees marketing name and description, and for navigation a preview of what will be created (the plan counts: create, update, skipped).
 
@@ -72,6 +81,22 @@ The user's note: the steward now, perhaps later the person who will become the n
 - **Operator-run** (now): the host steward fills every step.
 - **Handover** (later): the operator runs steps 2 to 4 and 7's launch gate, and sends the steward an invitation that opens at the steward-account step on the new platform's own domain. The steward then picks seeds on step 4 (or reviews the operator's choice) and sets their own password. This needs the initial-steward invitation from the larger plan and a draft that is addressable by a token rather than by the operator's session. Not in the first iteration; design the draft record and steps so it can be added without reshaping them.
 
+### 2.5 Seed catalog rework: planting more packs after launch
+
+The existing `SeedCatalogController` is geography-only and not per platform. It becomes the way to add packs to a provisioned platform, using the same `SeedPackCatalog` and installers as the wizard so there is one mechanism:
+
+- Per platform: the platform admin page lists registered packs that apply, which are already planted (from `SeedPlanting` provenance), and which are available, with dependencies resolved.
+- Each plant shows the dry-run plan first (counts of create, update, skipped) and then applies. Packets are add-only, so edited records are skipped and reported, never overwritten.
+- Authorization: platform stewards plant for their own platform, the operator for any platform it governs. The new surface needs an access contract entry.
+- The geography catalog becomes a registered pack instead of a special case, and its global (non-platform) data stays operator-only until it is per platform.
+
+### 2.6 Who may complete the wizard, and how often
+
+- Each run has its own wizard record with `max_completions: 1`, so a single run completes once. That already matches "once per platform".
+- **Operator stewards** may start any number of runs. Each completed run creates one more platform.
+- **End users** (the later self-serve and handover mode) may complete one run, so one platform per person through this path. The gate sits at starting a run, not on the wizard record: a person with a completed run cannot start another unless they hold operator authority. Open detail: whether "once" counts per person or per organization, and what an end user does to get a second platform (ask the operator).
+- The authorization check at start is `PlatformPolicy#create?` today. It needs a second rule for end users with a completed-run count, plus an access contract entry.
+
 ## 3. Provisioning a separate app later
 
 The shared-database wizard provisions rows. Provisioning an app also provisions infrastructure (database, storage, secrets, domain, certificate, routing, deploy). The same wizard fits if each infrastructure concern is a step type with a dispatch and a status, not an inline action.
@@ -87,17 +112,16 @@ The shared-database wizard provisions rows. Provisioning an app also provisions 
 Each phase is a small reviewable change with specs, screenshots for any view, and an access-contract update where authorization changes.
 
 1. **Catalog**: `SeedPackCatalog`, schema validation, `applies_to` and tier handling, specs on the two existing packets. No UI.
-2. **Installers**: `PackInstaller`, `InstallerRegistry`, the packet installer and a builder installer wrapper, dependency resolver, plan (dry run) and install, `SeedPlanting` per pack.
+2. **Installers and registration**: pack registration for host apps, `PackInstaller`, `InstallerRegistry`, the packet installer and a builder installer wrapper, dependency resolver, plan (dry run) and install, `SeedPlanting` per pack.
 3. **Platform-aware builders and packets**: `AgreementBuilder`, `CategoryBuilder` take a platform; navigation split into selectable packs; agreements and categories packets.
 4. **Wizard data and generic controller**: step definitions in YAML, one generic step controller, draft cleanup job, domain rules shown on the domain step.
 5. **Seed selection step and review plan**: the new step, the dry-run review, plant on launch, wizard run record, move seeding out of the steward step. Screenshots and DOM contracts.
 6. **Service parity**: `TenantPlatformProvisioningService` and the rake task accept a pack selection and use the same installers (so there is one seeding path), keep the idempotent behavior, stop taking the steward password as an argument.
-7. **Handover mode**: invitation-driven steward steps on the new platform's domain.
-8. **Dedicated app target**: provisioning job records, dispatcher port, approval display, infrastructure steps.
+7. **Seed catalog rework** (2.5): per-platform catalog page on the shared catalog and installers, geography as a registered pack.
+8. **Handover mode**: invitation-driven steward steps on the new platform's domain.
+9. **Dedicated app target**: provisioning job records, dispatcher port, approval display, infrastructure steps.
 
-Open questions for the maintainer:
+Open details left:
 
-- Is `core` always-on right for access control (roles), or should a platform be allowed to start with none and install roles later?
-- Should the steward choice be locked after launch, or can packs be added later from the same catalog on the platform's own admin page (the add-only packet mode makes that safe)?
-- Where do host-app packs live (a folder the engine scans, or registration in an initializer like the seed type registry)?
-- Who may select demo packs on a production platform, if anyone?
+- End-user "once" rule: per person or per organization, and the path to a second platform (2.6).
+- Whether the roles pack's always-on rule also applies to the rake task and service when they accept a selection (assumed yes).
