@@ -88,7 +88,9 @@ module BetterTogether
 
       extend Verification
 
-      def contract_version = CONTRACT_VERSION
+      # An adapter says which contract it implements by overriding this. One that does not is an adapter written before version 2
+      # existed, so it stays on version 1 instead of being promised catalog items and checkout lines it never implemented.
+      def contract_version = 1
 
       # Whether this adapter takes core's checkout lines and mode, and holds a catalog item (contract version 2).
       def catalog_aware? = contract_version >= 2

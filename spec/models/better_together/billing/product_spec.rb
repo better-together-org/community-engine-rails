@@ -40,6 +40,29 @@ RSpec.describe BetterTogether::Billing::Product do
     expect(build(:better_together_billing_product, tax_category: create(:better_together_billing_tax_category))).to be_valid
   end
 
+  describe 'moving to another processor' do
+    include_context 'with clean billing processors'
+
+    let(:first) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync], processor: :first) }
+    let(:second) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync], processor: :second) }
+    let(:product) { create(:better_together_billing_product, platform: host_platform, processor: 'first', processor_product_id: 'prod_old') }
+    let(:price) { create(:better_together_billing_price, product:, processor_price_id: 'price_old') }
+
+    before do
+      BetterTogether::Billing.register_processor(:first, -> { first })
+      BetterTogether::Billing.register_processor(:second, -> { second })
+      allow(BetterTogether::Billing::Configuration).to receive(:context_for).and_return(instance_double(BetterTogether::Billing::ProcessorContext))
+    end
+
+    it 'forgets the ids the old processor issued and has the new one create its own copy' do
+      price
+      expect { product.update!(processor: 'second') }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob).with(product.id)
+
+      expect(product.reload.processor_product_id).to be_nil
+      expect(price.reload.processor_price_id).to be_nil
+    end
+  end
+
   describe 'lifetime' do
     it 'defaults to until used, with no end date' do
       product = create(:better_together_billing_product)

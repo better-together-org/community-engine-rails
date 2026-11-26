@@ -24,6 +24,7 @@ module BetterTogether
         validate :processor_installed_and_configured, if: -> { processor.present? && (new_record? || processor_changed?) }
 
         before_create { self.sync_status = sync_supported? ? 'pending' : 'synced' }
+        before_update :unlink_from_previous_processor, if: :processor_changed?
         after_commit :queue_processor_sync, on: %i[create update]
 
         SYNC_STATUSES.each { |status| define_method(:"sync_#{status}?") { sync_status == status } }
@@ -79,7 +80,18 @@ module BetterTogether
 
       private
 
+      # Ids belong to the processor that issued them, so moving to another forgets them (and the prices' ids) and has the new one
+      # create its own copy. Writes the price columns directly: they are mirror state, not something a steward edits.
+      def unlink_from_previous_processor
+        self.processor_product_id = nil
+        self.sync_status = 'pending'
+        prices.update_all(processor_price_id: nil) # rubocop:disable Rails/SkipsModelValidations
+        prices.reset
+      end
+
       def synced_change?
+        return true if saved_changes.key?('processor')
+
         saved_changes.keys.any? { |key| SYNCED_ATTRIBUTES.any? { |attribute| key == attribute || key.start_with?("#{attribute}_") } }
       end
 

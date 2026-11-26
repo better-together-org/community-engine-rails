@@ -20,6 +20,13 @@ module BetterTogether
         expect { described_class.verify!(stale) }.to raise_error(described_class::ContractError, /contract/)
       end
 
+      it 'keeps an adapter that does not declare a contract on version 1' do
+        undeclared = Class.new(described_class) { def processor_name = :undeclared }.new
+
+        expect(undeclared.contract_version).to eq(1)
+        expect(undeclared).not_to be_catalog_aware
+      end
+
       it 'accepts an adapter registered under the name it reports' do
         expect(described_class.verify!(adapter, name: :fake)).to eq(adapter)
         expect(described_class.verify!(adapter, name: 'fake')).to eq(adapter)
