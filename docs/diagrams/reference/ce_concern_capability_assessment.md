@@ -101,6 +101,8 @@ This assessment is generated from the current live class set and the concern cap
 | `Labelable` | Labelable | `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Member` | Adds person/community/platform membership associations and convenience helpers. | `Person` | Membership-derived access must stay community-scoped rather than falling back to global signed-in checks. |
 | `Membership` | Membership | `PersonPlatformMembership`, `PersonCommunityMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `MembershipLifecycle` | Membershiplifecycle | `PersonPlatformMembership`, `PersonCommunityMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `MembershipLifecycleActions` | Membershiplifecycleactions | `PersonPlatformMembershipsController`, `PersonCommunityMembershipsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `MentionPrefetch` | Mentionprefetch | `PersonSeedsController`, `PersonPlatformMembershipsController`, `PersonPlatformIntegrationsController`, `PersonLinksController`, `PersonLinkedSeedsController`, `PersonDeletionRequestsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::DatetimeFilterable` | Datetimefilterable | `Metrics::ReportsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::PlatformContext` | Platformcontext | `UploadsController` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -115,6 +117,8 @@ This assessment is generated from the current live class set and the concern cap
 | `Permissible` | Adds role/resource-permission linkage for policy checks and platform governance. | `Platform`, `Community` | Permission bundling can create god-mode reads unless capabilities are split carefully. |
 | `PinnableTimestamps` | Pinnabletimestamps | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlaceScopedIndex` | Placescopedindex | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformAssociationLifecycle` | Platformassociationlifecycle | `PlatformAssociation` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformAssociationRules` | Platformassociationrules | `PlatformAssociation` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionFederationPolicy` | Platformconnectionfederationpolicy | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionOauthCredentials` | Platformconnectionoauthcredentials | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionSyncTracking` | Platformconnectionsynctracking | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |

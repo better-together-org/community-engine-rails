@@ -112,8 +112,13 @@ RSpec.describe BetterTogether::CommunityPolicy do
       let(:user) { create(:better_together_user) }
       let(:community) { create(:better_together_community, creator: user.person) }
 
-      it 'allows viewing members' do
+      it 'allows viewing members through the Organizer membership' do
         expect(policy.view_members?).to be true
+      end
+
+      it 'denies viewing members once the membership is gone' do
+        community.person_community_memberships.where(member: user.person).destroy_all
+        expect(policy.view_members?).to be false
       end
     end
 
@@ -140,8 +145,8 @@ RSpec.describe BetterTogether::CommunityPolicy do
         end
       end
 
-      it 'allows viewing members' do
-        expect(policy.view_members?).to be true
+      it 'does not allow viewing members, even of a public community (CD-1)' do
+        expect(policy.view_members?).to be false
       end
     end
 
@@ -201,6 +206,25 @@ RSpec.describe BetterTogether::CommunityPolicy do
       end
     end
 
+    context 'when community is private and the membership ended by date while still marked active' do
+      let(:community) { create(:better_together_community, privacy: 'private') }
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community, member: user.person, role: member_role,
+          status: 'active', starts_at: 2.days.ago, ends_at: 1.day.ago
+        )
+      end
+
+      it 'does not allow viewing and leaves the community out of the scope', :aggregate_failures do
+        expect(policy.show?).to be false
+        resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+        expect(resolved).not_to include(community)
+      end
+    end
+
     context 'when community is private and user only has a pending membership' do
       let(:community) { create(:better_together_community, privacy: 'private') }
       let(:user) { create(:better_together_user) }
@@ -242,8 +266,13 @@ RSpec.describe BetterTogether::CommunityPolicy do
       let(:user) { create(:better_together_user) }
       let(:community) { create(:better_together_community, privacy: 'private', creator: user.person) }
 
-      it 'allows viewing' do
+      it 'allows viewing through the Organizer membership' do
         expect(policy.show?).to be true
+      end
+
+      it 'denies viewing once the membership is gone' do
+        community.person_community_memberships.where(member: user.person).destroy_all
+        expect(policy.show?).to be false
       end
     end
 
@@ -354,9 +383,9 @@ RSpec.describe BetterTogether::CommunityPolicy do
   end
 
   describe 'cross-tenant isolation' do
-    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_a) { create(:better_together_platform, :public) }
     let(:platform_b) { create(:better_together_platform) }
-    let(:platform_a_community) { create(:better_together_community, platform: platform_a) }
+    let(:platform_a_community) { create(:better_together_community, platform: platform_a, privacy: 'public') }
     let(:platform_b_community) { create(:better_together_community, platform: platform_b) }
 
     it "denies a steward of platform A from updating platform B's community" do

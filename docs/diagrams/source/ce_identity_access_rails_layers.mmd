@@ -36,7 +36,7 @@ classDiagram
     class BetterTogether__PersonCommunityMembershipsController["PersonCommunityMembershipsController"] {
       <<Controller>>
       models: PersonCommunityMembership
-      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__PersonDataExportsController["PersonDataExportsController"] {
       <<Controller>>
@@ -66,7 +66,7 @@ classDiagram
     class BetterTogether__PersonPlatformMembershipsController["PersonPlatformMembershipsController"] {
       <<Controller>>
       models: PersonPlatformMembership
-      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__PersonSeedsController["PersonSeedsController"] {
       <<Controller>>
@@ -154,8 +154,8 @@ classDiagram
     class BetterTogether__PersonCommunityMembership["PersonCommunityMembership"] {
       <<Model>>
       table: better_together_person_community_memberships
-      concerns: BetterTogetherId, Membership, PlatformScoped, Seedable
-      weak refs: owner: seeds
+      concerns: BetterTogetherId, Membership, MembershipLifecycle, PlatformScoped +1
+      weak refs: owner: seeds, owner: membership_events
     }
     class BetterTogether__PersonDataExport["PersonDataExport"] {
       <<Model>>
@@ -190,8 +190,8 @@ classDiagram
     class BetterTogether__PersonPlatformMembership["PersonPlatformMembership"] {
       <<Model>>
       table: better_together_person_platform_memberships
-      concerns: BetterTogetherId, Membership, Seedable
-      weak refs: owner: seeds
+      concerns: BetterTogetherId, Membership, MembershipLifecycle, Seedable
+      weak refs: owner: seeds, owner: membership_events
     }
     class BetterTogether__PersonPurgeAudit["PersonPurgeAudit"] {
       <<Model>>

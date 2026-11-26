@@ -191,7 +191,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   end
 
   describe 'PATCH /api/v1/communities/:id' do
-    let(:community) { create(:better_together_community, creator: platform_manager_user.person) }
+    let(:community) { create(:better_together_community, privacy: 'public', creator: platform_manager_user.person) }
     let(:resource_id) { community.id }
     let(:url) { "/api/v1/communities/#{community.id}" }
     let(:update_params) do

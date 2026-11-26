@@ -13,7 +13,7 @@
                    end %>
 <% index_url = local_assigns[:index_url] %>
 
-<div class="col mb-4">
+<div class="col mb-4"<%= " id=\"host-dashboard-#{model_name.param_key.to_s.tr('_', '-')}-card\"".html_safe if model_name %>>
   <div class="card hover-effect shadow-sm h-100">
     <div class="card-header d-flex justify-content-between align-items-center">
       <% if index_allowed %>

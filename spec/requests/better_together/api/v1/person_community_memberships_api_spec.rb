@@ -135,7 +135,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
     let(:url) { "/api/v1/people/#{target_person.id}/relationships/communities" }
 
     context 'when authenticated' do
-      before { get url, headers: manager_headers }
+      before { get url, headers: regular_headers }
 
       it 'returns success status' do
         expect(response).to have_http_status(:ok)
@@ -168,6 +168,26 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
         ids = Array(json['data']).map { |d| d['id'] }
         expect(ids).to include(target_person.id)
       end
+    end
+  end
+
+  describe BetterTogether::Api::V1::PersonCommunityMembershipResource do
+    let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
+    let(:platform) { configure_host_platform }
+    let(:community) { create(:better_together_community, platform:) }
+    let(:other_community) { create(:better_together_community, platform:) }
+    let(:role) { BetterTogether::Role.find_by(identifier: 'community_member') || create(:better_together_role) }
+
+    it 'scopes records to the nested community without filtering on a nonexistent joinable_type column' do
+      inside = create(:better_together_person_community_membership, joinable: community, role:)
+      outside = create(:better_together_person_community_membership, joinable: other_community, role:)
+      Current.platform = platform
+      context = { current_user: user, current_person: user.person, community_id: community.id.to_s }
+
+      records = described_class.records(context:)
+
+      expect(records.to_a).to include(inside)
+      expect(records.to_a).not_to include(outside)
     end
   end
 end

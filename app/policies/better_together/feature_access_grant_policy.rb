@@ -5,6 +5,8 @@ module BetterTogether
   # This surface intentionally follows the existing /host management contract,
   # where host platform managers can administer platform-level operations.
   class FeatureAccessGrantPolicy < ApplicationPolicy
+    include PlatformGrantAuthority
+
     def index?
       platform_manager_for_target_platform?
     end
@@ -36,10 +38,7 @@ module BetterTogether
     end
 
     def platform_manager_for_target_platform?
-      return false unless agent.present? && target_platform.present?
-
-      agent.permitted_to?('manage_platform', target_platform) ||
-        agent.permitted_to?('manage_platform_settings', target_platform)
+      grant_authority_for?(target_platform)
     end
   end
 end

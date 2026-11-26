@@ -605,11 +605,30 @@ uk:
           attributes:
             theme:
               invalid_value: "%{key} має недопустиме значення"
+        better_together/platform_association:
+          attributes:
+            delegated_from:
+              no_upstream_edge: потребує наявного зв’язку керування цього оператора
+                над платформою, що делегує
+              too_deep: перевищує максимальну глибину ланцюга керування
+            granted_scopes:
+              exceeds_parent: не може надати більше, ніж має батьківський зв’язок
+            managed_platform_id:
+              cycle: створило б цикл керування
+          immutable_endpoints: не можна змінити оператора, керовану платформу чи батьківський
+            зв’язок
+          too_deep: перевищує максимальну глибину ланцюга керування
         better_together/platform_domain:
           attributes:
             active:
               must_be_true_for_primary: повинно бути правдою для основного домену
               must_be_true_for_share_domain: повинно бути правдою для домену поширення
+              operator_only: може увімкнути лише оператор платформи
+            hostname:
+              operator_only: може змінити лише оператор платформи після активації
+              outside_allowed_zone: 'має бути однією назвою в одному з цих доменів:
+                %{zones}'
+              reserved: є зарезервованою назвою
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
         better_together/redirect:
@@ -697,6 +716,11 @@ uk:
       better_together/person_platform_integration: Інтеграція OAuth
       better_together/person_platform_membership: Членство особи в платформі
       better_together/platform: Платформа
+      better_together/platform_association:
+        few: Асоціації платформ
+        many: Асоціацій платформ
+        one: Асоціація платформ
+        other: Асоціації платформ
       better_together/platform_connection: З'єднання платформ
       better_together/platform_domain: Домен платформи
       better_together/platform_invitation: Запрошення платформи
@@ -4249,6 +4273,53 @@ uk:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: Завершити членство
+          leave: Вийти
+          reinstate: Відновити
+          suspend: Призупинити
+        confirm_end: Завершити це членство? Воно залишиться в історії, і його можна
+          відновити.
+        confirm_end_last: Завершити це членство? Воно залишиться в історії, і його
+          можна відновити. Це єдине чинне членство цієї особи тут. Обліковий запис
+          залишиться, але буде втрачено весь доступ, що залежить від ролі, і буде
+          видно лише публічний вміст.
+        confirm_leave: Вийти? Ви зможете знову подати запит.
+        confirm_reinstate: Відновити це членство? Учасник знову отримає доступ.
+        confirm_remove: Видалити цього учасника? Це видалить членство та його історію.
+          Скористайтеся «Завершити членство», щоб зберегти історію.
+        confirm_suspend: Призупинити це членство? Учасник втратить доступ, доки ви
+          його не відновите.
+        confirm_suspend_last: Призупинити це членство? Учасник втратить доступ, доки
+          ви його не відновите. Це єдине чинне членство цієї особи тут. Обліковий
+          запис залишиться, але буде втрачено весь доступ, що залежить від ролі, і
+          буде видно лише публічний вміст.
+        edit: Редагувати членство
+        flash:
+          ended: Членство завершено.
+          left: Ви вийшли.
+          reinstated: Членство відновлено.
+          suspended: Членство призупинено.
+        remove: Видалити членство
+        remove_member: Видалити %{name}
+        since: Від
+        source:
+          backfill: Наявний учасник
+          direct: Додано напряму
+          entitlement: План або право
+          invitation: Запрошення
+          registration: Приєднався під час реєстрації
+          request: Запит на членство
+          trusted_domain: Довірений домен пошти
+          wizard: Майстер налаштування
+        status:
+          current: Чинне
+          ended: Завершене
+          pending: Очікує
+          suspended: Призупинене
+        until: До
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.
@@ -5038,6 +5109,10 @@ uk:
         platform_manager_error: Менеджерів платформи не можна блокувати.
         self_block_error: Ви не можете заблокувати себе.
         unblocked: Людину успішно розблоковано.
+    person_community_memberships:
+      errors:
+        last_organizer: Ви єдиний організатор цієї спільноти. Призначте іншого організатора,
+          перш ніж піти.
     person_linked_seeds:
       index:
         description: Приватний вміст, яким поділилися з вами через дозволи федерації.
@@ -5267,6 +5342,8 @@ uk:
         subtitle: Домен для %{platform_name}
         title: Редагувати %{hostname}
       form:
+        activation_note: Оператор активує нові домени після перевірки. До того цей
+          домен залишається неактивним.
         active_field_label: Активний
         custom_domain_hint_html: Власний домен потребує DNS-запису (CNAME або A),
           який вказує на граничний сервер цієї платформи, а також власного TLS-сертифіката.
@@ -8280,7 +8357,8 @@ uk:
   people:
     confirm_delete: Підтвердіть видалення
   person_platform_memberships:
-    confirm_delete: Ви впевнені, що хочете видалити цього учасника з платформи?
+    confirm_delete: Видалити цього учасника з платформи? Це видалить членство та його
+      історію. Скористайтеся «Завершити членство», щоб зберегти історію.
     edit:
       title: Редагувати членство на платформі
     form:

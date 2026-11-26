@@ -10,14 +10,21 @@ module BetterTogether
 
     STATUS_LEVELS = {
       pending: 'pending',
-      active: 'active'
+      active: 'active',
+      suspended: 'suspended',
+      ended: 'ended'
     }.freeze
 
     enum :status, STATUS_LEVELS, default: 'pending'
 
+    include MembershipLifecycle
+
     # Set by code that makes or removes a membership on a person's behalf without telling them (a paid role given
     # or taken away by a plan; see Billing::Entitlements::Handlers::MembershipRole). Not stored.
     attr_accessor :suppress_notifications
+
+    # Set for system-created memberships (creator grants, backfills) where a notice would be noise.
+    attr_accessor :skip_notifications
 
     after_create_commit :notify_member_of_creation_if_active
     after_commit :expire_member_permission_cache
@@ -30,7 +37,7 @@ module BetterTogether
     after_destroy_commit :schedule_notification_cleanup
 
     scope :pending, -> { where(status: 'pending') }
-    scope :active, -> { where(status: 'active') }
+    scope :active, -> { current }
 
     def activate!
       update!(status: 'active')
@@ -39,6 +46,8 @@ module BetterTogether
     private
 
     def notify_member_of_creation_if_active
+      return if skip_notifications
+
       MembershipNotificationService.new(self).notify_creation_if_active
     end
 
@@ -74,6 +83,8 @@ module BetterTogether
     # rubocop:enable Metrics/PerceivedComplexity
 
     def notify_member_of_removal
+      return if skip_notifications || destroyed_by_association
+
       MembershipNotificationService.new(self).notify_removal(@member_data_for_notification)
     end
 

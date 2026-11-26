@@ -86,6 +86,7 @@ module BetterTogether
             # transitional legacy seeds are still present.
             helpers.host_platform.person_platform_memberships.create!(
               member: user.person,
+              status: 'active',
               role: ::BetterTogether::Role.find_default('platform_steward', platform: helpers.host_platform) ||
                     ::BetterTogether::Role.find_default('platform_manager', platform: helpers.host_platform)
             )
@@ -93,6 +94,7 @@ module BetterTogether
             # TODO: This should be moved into a separate method somewhere
             helpers.host_community.person_community_memberships.create!(
               member: user.person,
+              status: 'active',
               role: ::BetterTogether::Role.find_default('community_governance_council', platform: helpers.host_platform)
             )
             helpers.host_community.creator = user.person

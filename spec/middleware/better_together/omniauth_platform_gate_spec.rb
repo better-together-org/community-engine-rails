@@ -12,7 +12,7 @@ RSpec.describe BetterTogether::OmniauthPlatformGate, :no_auth, :omniauth, :skip_
 
   before do
     host_platform.update!(requires_invitation: false)
-    other_platform.update!(requires_invitation: false)
+    other_platform.update!(requires_invitation: false, redirect_secondary_domains: false)
     ensure_host_platform_domain(host_platform)
     stub_provider_env('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET')
     OmniAuth.config.test_mode = true

@@ -16,7 +16,7 @@
       <%= link_to t('better_together.joatu.nav.agreements', default: 'Agreements'), joatu_agreements_path,
                   class: "nav-link #{controller_name == 'agreements' ? 'active' : ''}" %>
     </li>
-    <% if current_user&.permitted_to?('manage_platform') %>
+    <% if current_person&.platform_manager? %>
       <li class="nav-item ms-auto">
         <%= link_to t('better_together.joatu.nav.manage_categories', default: 'Manage Categories'),
                     joatu_categories_path,

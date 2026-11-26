@@ -1,0 +1,95 @@
+# The fixed persona and record-state vocabulary shared by every access contract file.
+# Add a persona here once; contract files may only refer to the keys below.
+personas:
+  anonymous:
+    label: Anonymous
+    status: active
+    description: A visitor who is not signed in.
+  signed_in_non_member:
+    label: Signed-in non-member
+    status: active
+    description: A signed-in person with the platform member role and no membership in the community under test.
+  community_member:
+    label: Community member
+    status: active
+    description: An active member of the community under test holding the community_member role.
+  community_contributor:
+    label: Community contributor
+    status: active
+    description: An active member of the community under test holding the community_contributor role.
+  community_organizer:
+    label: Community organizer
+    status: active
+    description: An active member of the community under test holding the community_organizer role.
+  platform_manager:
+    label: Platform manager
+    status: active
+    description: A standing holder of the platform_manager role on the host platform.
+  platform_steward:
+    label: Platform steward
+    status: active
+    description: A standing holder of the platform_steward role on the host platform (same seeded permissions as platform_manager today).
+  safety_reviewer:
+    label: Safety reviewer
+    status: pending
+    description: A time-limited, logged reviewer of safety disclosures. No such role exists yet; cells are not probed.
+  remote_operator:
+    label: Remote operator
+    status: pending
+    description: An operator of a remote or federated platform acting through a credential. Not modelled yet; cells are not probed.
+  support_grantee:
+    label: Support grantee
+    status: pending
+    description: A person who holds an explicit, expiring break-glass grant for one record. Not modelled yet; cells are not probed.
+  record_owner:
+    label: Record owner
+    status: active
+    description: The creator or subject of the record itself (the community creator, the person themself, the blocker).
+  blocked_user:
+    label: Blocked user
+    status: active
+    description: A person who has been blocked by the record's owner.
+
+# `na` marks a persona and state pair that cannot exist (a record owner viewing someone else's record).
+states:
+  public:
+    label: Public
+    description: Privacy is public.
+  community:
+    label: Community
+    description: Privacy is community (visible to members of the community). Added to the original vocabulary because the app has three privacy levels.
+  private:
+    label: Private
+    description: Privacy is private.
+  unclaimed:
+    label: Unclaimed
+    description: A person with no confirmed linked user (see Person#claimed?), for example an elected official's profile. The probe fixture is a public profile, so staff who may update person records are its owners.
+  claimed:
+    label: Claimed
+    description: A person with a confirmed linked user (see Person#claimed?). The probe fixture is a public profile; only the person edits it, never a standing role.
+  hidden:
+    label: Hidden
+    description: Soft-hidden or suspended by moderation. No pilot resource has this state yet.
+  draft:
+    label: Draft
+    description: Unpublished. No pilot resource has this state yet.
+  own:
+    label: Own
+    description: The record belongs to the actor (their own membership, block or invitation).
+  someone_elses:
+    label: Someone else's
+    description: The record belongs to another person.
+  new:
+    label: New record
+    description: Used for create actions, where no persisted record exists yet.
+  any:
+    label: Any record
+    description: Used for class-level checks (index) that do not depend on a record.
+
+outcomes:
+  allow: The actor may do this.
+  deny: The actor may not do this.
+  conditional: Depends on a named condition. The probe fixture decides which side is exercised (the cell's fixture key).
+  undecided: The owner has not decided. The app's behaviour is pinned and the cell is listed in the open decisions table.
+  na: The persona and state cannot occur together.
+  pending: The persona does not exist yet. Not probed.

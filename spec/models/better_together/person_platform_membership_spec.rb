@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::PersonPlatformMembership do
     it 'defines status enum with correct values and defaults' do
       expect(person_platform_membership)
         .to define_enum_for(:status)
-        .with_values(pending: 'pending', active: 'active')
+        .with_values(pending: 'pending', active: 'active', suspended: 'suspended', ended: 'ended')
         .backed_by_column_of_type(:string)
         .with_default('pending')
     end

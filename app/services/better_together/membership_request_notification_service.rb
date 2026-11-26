@@ -3,8 +3,8 @@
 module BetterTogether
   # Handles reviewer and requester notifications for membership requests.
   class MembershipRequestNotificationService # rubocop:todo Metrics/ClassLength
-    COMMUNITY_REVIEWER_ROLES = %w[community_manager community_administrator].freeze
-    PLATFORM_REVIEWER_ROLES = %w[platform_manager platform_administrator].freeze
+    COMMUNITY_REVIEWER_ROLES = %w[community_organizer community_coordinator community_governance_council].freeze
+    PLATFORM_REVIEWER_ROLES = %w[platform_steward platform_manager].freeze
     DIGEST_WINDOW = 15.minutes
     DIGEST_THRESHOLD = 3
     DIGEST_EMAIL_COOLDOWN = 30.minutes

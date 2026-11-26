@@ -42,6 +42,12 @@ module BetterTogether
     member joinable_type: 'community', member_type: 'person', dependent: :destroy
 
     has_many :billing_default_addresses, class_name: 'BetterTogether::Billing::DefaultAddress', dependent: :destroy
+    # Membership history is about the person, so it goes with them; events they only acted on keep their row.
+    has_many :membership_events, foreign_key: :member_id, class_name: 'BetterTogether::MembershipEvent',
+                                 inverse_of: :member, dependent: :delete_all
+    has_many :acted_membership_events, foreign_key: :actor_id, class_name: 'BetterTogether::MembershipEvent',
+                                       inverse_of: :actor, dependent: :nullify
+
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations,
@@ -221,6 +227,14 @@ module BetterTogether
             source: :agent,
             source_type: 'BetterTogether::User'
 
+    # True only when a user account with a confirmed email is linked. An unclaimed person (for example an
+    # elected official's profile) has no one who can edit it as themself; staff with update rights do.
+    def claimed?
+      user.present? && user.confirmed_at.present?
+    end
+
+    def unclaimed? = !claimed?
+
     member member_type: 'person',
            joinable_type: 'community'
 
@@ -374,7 +388,7 @@ module BetterTogether
     end
 
     def valid_event_host_ids
-      [id] + member_communities.pluck(:id)
+      [id] + person_community_memberships.current.pluck(:joinable_id)
     end
 
     def github_integrations

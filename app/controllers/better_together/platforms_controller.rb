@@ -210,6 +210,7 @@ module BetterTogether
     def scalar_settings_attributes # rubocop:disable Metrics/MethodLength
       %i[
         requires_invitation
+        redirect_secondary_domains
         allow_membership_requests
         allow_user_themes
         contributors_display_visibility

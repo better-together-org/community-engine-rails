@@ -1,0 +1,14 @@
+---
+title: Platform Domains - Index with a pending request
+audience:
+- platform_steward
+- operator_steward
+journey_step: After I request a domain it appears in the list as Inactive while my
+  operator reviews it.
+callouts:
+- :id: pending_domain
+  :title: Pending
+  :description: Inactive domains are kept but do not route traffic.
+accessibility_notes: Status is text, not colour alone.
+slug: platform_domains_index_pending_request
+device: desktop

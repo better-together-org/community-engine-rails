@@ -159,9 +159,30 @@ module BetterTogether
 
     def set_resource_variables(klass, prefix: nil)
       variable_name = klass.model_name.name.demodulize.underscore
+      scope = dashboard_scope(klass)
       instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
-                            klass.order(created_at: :desc).limit(3))
-      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
+                            scope.order(created_at: :desc).limit(3))
+      instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", scope.count)
+    end
+
+    # The platform whose dashboard is being viewed: the platform resolved from the request host,
+    # which is the host platform on the host's own domain and a hosted platform on its own domain.
+    def dashboard_platform
+      @dashboard_platform ||= Current.platform || Current.host_platform || host_platform
+    end
+
+    def hosted_dashboard?
+      dashboard_platform.present? && !dashboard_platform.host?
+    end
+
+    # Hosted platforms only ever see their own records. Models with no platform column are
+    # instance-wide, so they are hidden (empty) rather than leaked.
+    def dashboard_scope(klass)
+      return klass.all unless hosted_dashboard?
+      return klass.where(id: dashboard_platform.id) if klass <= Platform
+      return klass.where(platform_id: dashboard_platform.id) if klass.column_names.include?('platform_id')
+
+      klass.none
     end
 
     def set_organizational_community_variables
@@ -171,7 +192,8 @@ module BetterTogether
     end
 
     def organizational_communities_scope
-      Community.where.not(id: ::BetterTogether::Person.where.not(community_id: nil).select(:community_id))
+      dashboard_scope(Community)
+        .where.not(id: ::BetterTogether::Person.where.not(community_id: nil).select(:community_id))
     end
 
     def set_organizational_geography_map_variables
@@ -183,7 +205,7 @@ module BetterTogether
     def organizational_geography_maps_scope
       personal_community_ids = ::BetterTogether::Person.where.not(community_id: nil).select(:community_id)
 
-      ::BetterTogether::Geography::Map.where.not(
+      dashboard_scope(::BetterTogether::Geography::Map).where.not(
         mappable_type: 'BetterTogether::Community', mappable_id: personal_community_ids
       )
     end
@@ -212,7 +234,7 @@ module BetterTogether
     end
 
     def sorted_review_communities
-      Community.with_translations.to_a.sort_by { |community| community.name.to_s.downcase }
+      dashboard_scope(Community).with_translations.to_a.sort_by { |community| community.name.to_s.downcase }
     end
 
     def open_membership_requests_for(communities)
@@ -238,7 +260,7 @@ module BetterTogether
       @show_platform_connection_review_section = platform_connection_review_visible?
       reset_platform_connection_review_state
       return unless @show_platform_connection_review_section
-      return unless host_platform
+      return unless dashboard_platform
 
       connections = platform_connection_review_connections
       assign_platform_connection_review_counts(connections)
@@ -248,8 +270,8 @@ module BetterTogether
     def platform_connection_review_card(connection)
       {
         connection:,
-        counterparty: connection.peer_for(host_platform),
-        direction: connection.source_platform_id == host_platform.id ? 'outgoing' : 'incoming'
+        counterparty: connection.peer_for(dashboard_platform),
+        direction: connection.source_platform_id == dashboard_platform.id ? 'outgoing' : 'incoming'
       }
     end
 
@@ -285,7 +307,7 @@ module BetterTogether
     end
 
     def safety_review_visible?
-      host_platform.present? && policy(::BetterTogether::Safety::Case).index?
+      dashboard_platform.present? && policy(::BetterTogether::Safety::Case).index?
     end
 
     def reset_safety_review_state
@@ -304,7 +326,7 @@ module BetterTogether
     def platform_connection_review_connections
       BetterTogether::PlatformConnection
         .includes(:source_platform, :target_platform)
-        .for_platform(host_platform)
+        .for_platform(dashboard_platform)
         .order(updated_at: :desc)
         .to_a
     end

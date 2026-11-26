@@ -1,0 +1,11 @@
+---
+journey_step: As the steward of a managed platform, I sign in on my own domain and
+  land on a dashboard that describes only my platform.
+callouts:
+- :id: platform_resources
+  :title: Only this platform
+  :description: The dashboard authorizes against the platform being viewed and scopes
+    every count to it.
+accessibility_notes: Sections have stable ids and visible headings.
+slug: host_dashboard_managed_steward_overview
+device: mobile

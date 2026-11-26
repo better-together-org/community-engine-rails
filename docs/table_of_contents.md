@@ -48,6 +48,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
 - [README](developers/README.md) - Developer documentation overview
+- [How to add or change an access contract entry](developers/access_contracts.md) - Declarative access contract, probe snapshot and generated matrices
 
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
@@ -162,6 +163,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 
 ##### **Current Plans** - [`implementation/current_plans/`](implementation/current_plans/)
 - [Community Social System Acceptance Criteria](implementation/current_plans/community_social_system_acceptance_criteria.md)
+- [Hosted Platform Steward Parity Stack (HPS)](implementation/current_plans/hosted_platform_steward_parity_stack.md)
 - [Community Social System Implementation Plan](implementation/current_plans/community_social_system_implementation_plan.md)
 - [Sitemap Generator Fixes Implementation Plan](implementation/current_plans/sitemap_generator_fixes_implementation_plan.md)
 

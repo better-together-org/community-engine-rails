@@ -189,7 +189,7 @@ module BetterTogether
     end
 
     def url
-      "#{::BetterTogether.base_url_with_locale}/#{slug}"
+      "#{::BetterTogether.base_url_with_locale(platform: platform || ::Current.platform)}/#{slug}"
     end
 
     def mirrored?

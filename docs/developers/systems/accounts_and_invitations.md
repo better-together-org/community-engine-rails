@@ -27,6 +27,7 @@ This guide explains user account flows (Devise), platform invitations, required 
   - A `Person` is created via nested params/build helper.
   - Memberships are created:
     - Adds the person to the host community with role `community_member` (or role from an invitation, see below).
+    - Adds the person to the platform their account belongs to with the platform's own `platform_member` role (the baseline membership, `BaselinePlatformMembership`). It is `pending` until the email address is confirmed, which activates it.
 
 ## Invitations Flow
 
@@ -52,7 +53,7 @@ This guide explains user account flows (Devise), platform invitations, required 
 ## Passwords and Sessions (Devise)
 
 - Sign-in/out: handled by Devise sessions controller.
-- Confirmations: Devise confirmable module sends confirmation email on registration.
+- Confirmations: Devise confirmable module sends confirmation email on registration. Confirming proves the address only: it activates the baseline `platform_member` row and community memberships that need no approval. Memberships waiting on a steward (elevated platform roles, community join requests) stay pending.
 - Password reset: Devise passwords controller handles reset requests and emails.
 
 ## Relationship: Users and People
@@ -66,9 +67,42 @@ This guide explains user account flows (Devise), platform invitations, required 
 ## Post-registration Side Effects
 
 - Community membership: new `Person` is added to the host community (role from invitation or default `community_member`).
-- Platform membership: added only if the invitation specified a platform role.
+- Platform membership: every account gets the baseline `platform_member` row on its own platform, at sign-up and on OAuth sign-in. A platform invitation that names a role adds that role as a separate row; roles stack. The baseline is free, read-only and never billed; paid or elevated roles are separate rows. Accounts created before this existed were given the row by `BackfillBaselinePlatformMemberships`.
 - Agreements: `AgreementParticipant` rows created.
 
 ## Diagram
 
 See the Mermaid diagram in `accounts_flow.mmd` for the end-to-end flows.
+
+## Membership lifecycle (MBR-3)
+
+Platform and community memberships share `BetterTogether::MembershipLifecycle`.
+
+- Statuses: `pending`, `active`, `suspended`, `ended`. A membership is current only when active and inside `starts_at`..`ends_at`; `.active` and `current?` honour the dates.
+- `end!(reason:)`, `suspend!(reason:)` and `reinstate!` keep the row as history. Ending stamps `ends_at`; the unique key (joinable, member, role) ignores ended rows so the role can be granted again.
+- `source` records where a membership came from (direct, registration, invitation, request, trusted_domain, entitlement, wizard, backfill).
+- Every create, activation, suspension, reinstatement, end, role change and removal writes an append-only `BetterTogether::MembershipEvent` with the actor and reason. A person purge deletes that person's events with them.
+- `end!` and `suspend!` refuse to remove the last current steward (or governance council member). Plain `destroy` is unchanged; the management UI (MBR-4) will use `end!`.
+- Quiet changes: these methods send no notification. Existing role-change and removal notifications still fire on `update`/`destroy`.
+
+![Membership lifecycle](../../diagrams/exports/png/membership_lifecycle_state.png)
+
+Source: [membership_lifecycle_state.mmd](../../diagrams/source/membership_lifecycle_state.mmd)
+
+## Managing memberships in the UI (MBR-4)
+
+Platform and community member cards now show each membership's status (current, pending, suspended, ended), where it came from (`source`) and its since/until dates, using the shared `better_together/memberships/_lifecycle` partial.
+
+| Action | Route | Who | Effect |
+|---|---|---|---|
+| End membership | `PATCH .../:id/end_membership` | stewards and community managers, not on themselves | status `ended`, `ends_at` now, optional reason; row kept |
+| Suspend | `PATCH .../:id/suspend` | same | status `suspended`; row kept |
+| Reinstate | `PATCH .../:id/reinstate` | same | status `active`, end date cleared |
+| Leave | `DELETE /communities/:id/person_community_memberships/:id/leave` | the member | ends their own community membership with reason `left` |
+
+- The last current steward cannot be ended or suspended; the flash shows the model's error.
+- There is no platform self-leave: every account holds the baseline platform membership.
+- Ended and suspended rows appear on the community page only for people who manage members; everyone else sees current members.
+- `destroy` still hard-deletes and is unchanged.
+
+Screenshots: `docs/screenshots/{desktop,mobile}/membership_lifecycle_current.png` and `membership_lifecycle_suspended.png`.

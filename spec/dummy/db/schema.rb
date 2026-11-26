@@ -1966,6 +1966,31 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_26_050000) do
     t.index ["platform_id"], name: "index_better_together_jwt_denylists_on_platform_id"
   end
 
+  create_table "better_together_membership_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "membership_type", null: false
+    t.uuid "membership_id", null: false
+    t.string "joinable_type", null: false
+    t.uuid "joinable_id", null: false
+    t.uuid "member_id", null: false
+    t.uuid "actor_id"
+    t.uuid "platform_id"
+    t.string "event_type", null: false
+    t.string "from_status"
+    t.string "to_status"
+    t.uuid "from_role_id"
+    t.uuid "to_role_id"
+    t.string "reason"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["actor_id"], name: "index_bt_membership_events_on_actor"
+    t.index ["joinable_type", "joinable_id", "created_at"], name: "index_bt_membership_events_on_joinable"
+    t.index ["member_id"], name: "index_bt_membership_events_on_member"
+    t.index ["membership_type", "membership_id", "created_at"], name: "index_bt_membership_events_on_membership"
+    t.index ["platform_id"], name: "index_bt_membership_events_on_platform"
+  end
+
   create_table "better_together_message_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2406,7 +2431,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_26_050000) do
     t.uuid "role_id", null: false
     t.string "status", default: "pending", null: false
     t.uuid "platform_id"
-    t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_community_membership_member_role", unique: true
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.string "ended_reason"
+    t.string "source", default: "direct", null: false
+    t.index ["ends_at"], name: "index_better_together_person_community_memberships_on_ends_at"
+    t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_community_membership_member_role", unique: true, where: "((status)::text <> 'ended'::text)"
     t.index ["joinable_id"], name: "person_community_membership_by_joinable"
     t.index ["member_id"], name: "person_community_membership_by_member"
     t.index ["platform_id"], name: "idx_on_platform_id_5fd57e5d06"
@@ -2540,7 +2570,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_26_050000) do
     t.uuid "joinable_id", null: false
     t.uuid "role_id", null: false
     t.string "status", default: "pending", null: false
-    t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_platform_membership_member_role", unique: true
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.string "ended_reason"
+    t.string "source", default: "direct", null: false
+    t.index ["ends_at"], name: "index_better_together_person_platform_memberships_on_ends_at"
+    t.index ["joinable_id", "member_id", "role_id"], name: "unique_person_platform_membership_member_role", unique: true, where: "((status)::text <> 'ended'::text)"
     t.index ["joinable_id"], name: "person_platform_membership_by_joinable"
     t.index ["member_id"], name: "person_platform_membership_by_member"
     t.index ["role_id"], name: "person_platform_membership_by_role"
@@ -2608,6 +2643,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_26_050000) do
     t.index ["platform_id"], name: "index_better_together_places_on_platform_id"
     t.index ["privacy"], name: "by_better_together_places_privacy"
     t.index ["space_id"], name: "index_better_together_places_on_space_id"
+  end
+
+  create_table "better_together_platform_associations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "operator_platform_id", null: false
+    t.uuid "managed_platform_id", null: false
+    t.uuid "delegated_from_id"
+    t.uuid "requested_by_id"
+    t.uuid "accepted_by_id"
+    t.uuid "status_changed_by_id"
+    t.string "status", default: "requested", null: false
+    t.string "relation", default: "manages", null: false
+    t.string "transport", default: "direct", null: false
+    t.jsonb "granted_scopes", default: [], null: false
+    t.datetime "expires_at"
+    t.datetime "accepted_at"
+    t.datetime "status_changed_at"
+    t.index ["accepted_by_id"], name: "idx_bt_plat_assoc_accepted_by"
+    t.index ["delegated_from_id"], name: "idx_bt_plat_assoc_parent"
+    t.index ["managed_platform_id"], name: "idx_bt_plat_assoc_managed"
+    t.index ["operator_platform_id", "managed_platform_id", "relation"], name: "idx_bt_plat_assoc_edge", unique: true
+    t.index ["operator_platform_id"], name: "idx_bt_plat_assoc_operator"
+    t.index ["requested_by_id"], name: "idx_bt_plat_assoc_requested_by"
+    t.index ["status"], name: "idx_bt_plat_assoc_status"
+    t.index ["status_changed_by_id"], name: "idx_bt_plat_assoc_changed_by"
   end
 
   create_table "better_together_platform_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3982,6 +4044,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_26_050000) do
   add_foreign_key "better_together_joatu_response_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_joatu_response_links", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_jwt_denylists", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_membership_events", "better_together_people", column: "actor_id"
+  add_foreign_key "better_together_membership_events", "better_together_people", column: "member_id"
+  add_foreign_key "better_together_membership_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_message_requests", "better_together_people", column: "recipient_id", on_delete: :cascade
   add_foreign_key "better_together_message_requests", "better_together_people", column: "sender_id", on_delete: :cascade
   add_foreign_key "better_together_message_requests", "better_together_platforms", column: "platform_id", on_delete: :cascade
@@ -4073,6 +4138,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_26_050000) do
   add_foreign_key "better_together_places", "better_together_geography_spaces", column: "space_id"
   add_foreign_key "better_together_places", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_places", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_associations", "better_together_people", column: "accepted_by_id"
+  add_foreign_key "better_together_platform_associations", "better_together_people", column: "requested_by_id"
+  add_foreign_key "better_together_platform_associations", "better_together_people", column: "status_changed_by_id"
+  add_foreign_key "better_together_platform_associations", "better_together_platform_associations", column: "delegated_from_id"
+  add_foreign_key "better_together_platform_associations", "better_together_platforms", column: "managed_platform_id"
+  add_foreign_key "better_together_platform_associations", "better_together_platforms", column: "operator_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "source_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "target_platform_id"
   add_foreign_key "better_together_platform_deletion_requests", "better_together_people", column: "requested_by_id"

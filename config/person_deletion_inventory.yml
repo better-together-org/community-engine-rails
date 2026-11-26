@@ -157,6 +157,30 @@ entries:
     action: retain
     reverse_association: reviewed_platform_deletion_requests
 
+  - key: BetterTogether::PlatformAssociation#requested_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformAssociation
+    association: requested_by
+    foreign_key: requested_by_id
+    action: anonymize
+
+  - key: BetterTogether::PlatformAssociation#accepted_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformAssociation
+    association: accepted_by
+    foreign_key: accepted_by_id
+    action: anonymize
+
+  - key: BetterTogether::PlatformAssociation#status_changed_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformAssociation
+    association: status_changed_by
+    foreign_key: status_changed_by_id
+    action: anonymize
+
   - key: BetterTogether::PersonPurgeAudit#person
     kind: model_reference
     owner: person
@@ -219,6 +243,22 @@ entries:
     foreign_key: person_id
     action: destroy
     reverse_association: person_platform_integrations
+
+  - key: BetterTogether::MembershipEvent#member
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MembershipEvent
+    association: member
+    foreign_key: member_id
+    action: destroy
+
+  - key: BetterTogether::MembershipEvent#actor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MembershipEvent
+    association: actor
+    foreign_key: actor_id
+    action: anonymize
 
   - key: BetterTogether::PersonCommunityMembership#member
     kind: model_reference

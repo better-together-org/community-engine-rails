@@ -53,6 +53,8 @@ module BetterTogether
 
     store_attributes :settings do
       requires_invitation Boolean, default: true
+      # Visitors on a secondary domain are sent to the primary domain (SecondaryDomainRedirectMiddleware).
+      redirect_secondary_domains Boolean, default: true
       allow_membership_requests Boolean, default: false
       # Master gate for the whole inbound-mail alias surface (community+/agent+/requests+).
       # Defaults true to preserve existing behavior for platforms already relying on it;
@@ -145,11 +147,17 @@ module BetterTogether
     has_many :platform_snippet_audits, class_name: '::BetterTogether::PlatformSnippetAudit', dependent: :delete_all
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
     has_many :redirects, class_name: '::BetterTogether::Redirect', dependent: :destroy
+    has_many :pages, class_name: '::BetterTogether::Page', inverse_of: :platform
+    has_many :navigation_areas, class_name: '::BetterTogether::NavigationArea', inverse_of: :platform
     has_many :platform_identity_providers, class_name: '::BetterTogether::PlatformIdentityProvider',
                                            dependent: :destroy
     has_many :platform_trusted_domains, class_name: '::BetterTogether::PlatformTrustedDomain',
                                         dependent: :destroy, inverse_of: :platform
     has_many :trusted_domain_events, class_name: '::BetterTogether::TrustedDomainEvent', dependent: :delete_all
+    has_many :operating_platform_associations, class_name: '::BetterTogether::PlatformAssociation',
+                                               foreign_key: :operator_platform_id, dependent: :destroy, inverse_of: :operator_platform
+    has_many :managed_platform_associations, class_name: '::BetterTogether::PlatformAssociation',
+                                             foreign_key: :managed_platform_id, dependent: :destroy, inverse_of: :managed_platform
     has_many :outgoing_platform_connections,
              class_name: '::BetterTogether::PlatformConnection',
              foreign_key: :source_platform_id,
@@ -235,6 +243,19 @@ module BetterTogether
 
     def resolved_host_url
       primary_platform_domain&.url || host_url
+    end
+
+    # Rails url_options (host, protocol, port) for this platform's own address, for building
+    # absolute URLs outside a request (rake tasks, jobs, console) without the global APP_HOST.
+    def url_options
+      uri = URI.parse(resolved_host_url.to_s)
+      return {} if uri.host.blank?
+
+      options = { host: uri.host, protocol: uri.scheme }.compact
+      options[:port] = uri.port unless uri.port.nil? || [80, 443].include?(uri.port)
+      options
+    rescue URI::InvalidURIError
+      {}
     end
 
     # Route URL for the platform resource within the current host app.
@@ -363,8 +384,8 @@ module BetterTogether
 
     # People holding an active steward role on this platform.
     def steward_person_ids
-      person_platform_memberships.joins(:role)
-                                 .where(status: 'active', better_together_roles: { identifier: 'platform_steward' })
+      person_platform_memberships.current.joins(:role)
+                                 .where(better_together_roles: { identifier: 'platform_steward' })
                                  .distinct.pluck(:member_id)
     end
 

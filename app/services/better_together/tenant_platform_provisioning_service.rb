@@ -54,6 +54,7 @@ module BetterTogether
         user.save!
         assign_platform_role!(platform, user.person)
         assign_community_role!(platform, user.person)
+        ensure_navigation!(platform)
 
         primary_community = platform.primary_community
         if primary_community && primary_community.creator.nil?
@@ -67,10 +68,9 @@ module BetterTogether
       role = platform_steward_role(platform)
       return unless role
 
-      platform.person_platform_memberships.find_or_create_by!(
-        member: person,
-        role:
-      )
+      membership = platform.person_platform_memberships.find_or_create_by!(member: person, role:) { |record| record.status = 'active' }
+      membership.activate! if membership.pending?
+      membership
     end
 
     def self.assign_community_role!(platform, person)
@@ -78,10 +78,9 @@ module BetterTogether
       role = community_governance_role(platform)
       return unless community && role
 
-      community.person_community_memberships.find_or_create_by!(
-        member: person,
-        role:
-      )
+      membership = community.person_community_memberships.find_or_create_by!(member: person, role:) { |record| record.status = 'active' }
+      membership.activate! if membership.pending?
+      membership
     end
 
     def self.platform_steward_role(platform)
@@ -100,6 +99,17 @@ module BetterTogether
       return if ::BetterTogether::Role.for_platform(platform).exists?
 
       ::BetterTogether::AccessControlBuilder.seed_data(platform:)
+    end
+
+    # A hosted platform owns its navigation from the start. Without its own areas it would fall back to the
+    # host platform's menu (NavigationItemsHelper#navigation_area_for). Seeded once, from the same builder
+    # the host uses, so the steward's header, footer and admin menu are theirs to edit.
+    def self.ensure_navigation!(platform)
+      return if platform.host? || platform.navigation_areas.exists?
+
+      # Seeding is a system write: without this, the signed-in operator running the wizard is the acting
+      # agent and the publishing-agreement gate rejects the seeded public pages.
+      ::BetterTogether::PublicVisibilityGate.as_system { ::BetterTogether::NavigationBuilder.seed_data(platform:) }
     end
 
     def initialize(name:, host_url:, time_zone: 'UTC', host: false, admin: nil)
@@ -161,6 +171,7 @@ module BetterTogether
 
       platform.save!
       self.class.ensure_default_roles!(platform)
+      self.class.ensure_navigation!(platform)
       platform
     end
 

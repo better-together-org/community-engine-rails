@@ -21,10 +21,10 @@ RSpec.describe 'Documentation screenshots for membership review remediation',
       create(:better_together_role, :platform_manager)
   end
   let(:community_manager_role) do
-    BetterTogether::Role.find_by(identifier: 'community_manager',
+    BetterTogether::Role.find_by(identifier: 'community_organizer',
                                  resource_type: 'BetterTogether::Community') ||
       create(:better_together_role,
-             identifier: 'community_manager',
+             identifier: 'community_organizer',
              name: 'Community Manager',
              resource_type: 'BetterTogether::Community')
   end

@@ -37,7 +37,7 @@ module BetterTogether
 
           # Scope by community_id if nested under communities
           if context[:community_id].present?
-            scope = scope.where(joinable_id: context[:community_id], joinable_type: 'BetterTogether::Community')
+            scope = scope.where(joinable_id: context[:community_id])
           end
 
           # Scope by person_id if nested under people

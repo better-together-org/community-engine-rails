@@ -1,0 +1,40 @@
+# Data classifications. `standing_role_may_read` is the privacy-forward rule:
+# a platform manager or steward holds a standing role, so it never opens
+# member_private, personal or safety_sensitive data without a break-glass grant.
+classifications:
+  public:
+    label: Public
+    description: Content published for anyone, including signed-out visitors.
+    standing_role_may_read: true
+  member_private:
+    label: Member private
+    description: Content shared inside a community or kept private to it (community records, memberships, invitations).
+    standing_role_may_read: false
+  platform_shared:
+    label: Platform shared
+    description: Posts shared with every signed-in member of the platform at public or community level. A private post is visible to its creator only; that state is tracked as a deviation until managers stop reading it.
+    standing_role_may_read: true
+  personal:
+    label: Personal
+    description: Data about one person (profile, contact details, blocks).
+    standing_role_may_read: false
+  safety_sensitive:
+    label: Safety sensitive
+    description: Reports, disclosures and safety case data. Reviewed only through a logged safety review path.
+    standing_role_may_read: false
+  system:
+    label: System
+    description: Platform configuration and structure.
+    standing_role_may_read: true
+  financial:
+    label: Financial
+    description: Billing, payment and tax data.
+    standing_role_may_read: false
+
+# The privacy-forward rule, in the vocabulary the contract uses.
+principles:
+  operate: Standing roles may operate the platform (settings, structure, member status, hide and suspend).
+  safety_review: Safety review is a separate, logged path. It is not a standing role.
+  disclose: No standing role discloses private content or personal data. Disclosure needs an explicit, expiring break-glass grant.
+  stewards: Stewards see public content and structure.
+  organizers: Community organizers moderate their own private spaces.

@@ -169,6 +169,14 @@ Required elements and their patterns:
 or other structural pseudo-selectors. Always target a stable `id` or semantic `class`. If the target
 element lacks one, add it to the view first.
 
+## Access Contract Updates Are Required (CRITICAL)
+
+- **Every change that alters an access-control assumption or its implementation for a subsystem surface updates that subsystem's access contract in the same PR.** Triggers: a Pundit policy or `Scope#resolve`, a role, resource permission or seed packet, a controller `authorize`/`policy_scope`/`skip_authorization`, an API resource, MCP tool, job or notifier that reads or writes the subsystem's records, a new private, community-scoped, personal or user-created model or record state.
+- Procedure: edit `config/access_contracts/<subsystem>.yml` first, update the probe in `spec/support/access_contract/resources.rb`, regenerate the snapshot, docs and decision-tree diagrams (`docs/developers/access_contracts.md`), and keep `spec/access_contract` green. Never hand-edit the snapshot or generated pages.
+- A subsystem with no contract yet gets one in the same change that touches its access. Red drift means the contract or the policy is wrong; ask the maintainer which, do not silence it.
+- The privacy rule governs every cell: operate, safety review and disclose are separate; no standing role reads private content or personal data; break-glass is a separate audited grant.
+- Fill the `Access contract` section of the PR template, or write `access contract: unchanged because <reason>`. See `skills/ce-access-contract` in management-tool for the full workflow.
+
 ## Screenshots And Diagrams Are Required (CRITICAL)
 
 - **Every new or modified view** (ERB/HAML, partial, CSS, or JS that changes rendering) ships screenshots in the same PR: a `spec/docs_screenshots/better_together/<feature>_spec.rb` capturing desktop and mobile, annotated and plain, plus stable DOM ids and a `spec/dom_contracts` spec. Capture with `bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec <spec>'`.

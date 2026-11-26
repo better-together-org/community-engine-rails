@@ -7,6 +7,22 @@ Capybara.server = :puma, { Silent: true }
 Capybara.server_host = '127.0.0.1'
 Capybara.always_include_port = true
 
+# Production routes by hostname (PlatformDomain) behind DNS, so tests must be able to browse real domain names.
+# Chrome maps every name under these suffixes to the local app server, standing in for DNS; Rails host
+# authorization (spec/dummy/config/environments/test.rb) allows the same suffixes. Platform factories already
+# use *.test hostnames. Override with CAPYBARA_HOST_SUFFIXES="test,example.test".
+CAPYBARA_HOST_SUFFIXES = ENV.fetch('CAPYBARA_HOST_SUFFIXES', 'test,localhost').split(',').map(&:strip).freeze
+
+# The rule contains spaces and asterisks. CI's Chrome launcher splits it into stray URL arguments
+# ("invalid argument: * is not a valid URL" on every browser example), so it is applied only where a spec
+# browses managed hostnames (docs screenshots) or when CAPYBARA_HOST_SUFFIXES is set explicitly.
+def capybara_host_resolver_rule
+  return unless ENV['RUN_DOCS_SCREENSHOTS'] == '1' || ENV.key?('CAPYBARA_HOST_SUFFIXES')
+
+  rules = CAPYBARA_HOST_SUFFIXES.map { |suffix| "MAP *.#{suffix} #{Capybara.server_host}" }
+  "--host-resolver-rules=#{rules.join(',')}"
+end
+
 Capybara.register_driver :selenium_chrome_headless do |app|
   # Generate a unique temporary directory for each session to avoid conflicts in parallel execution
   # Include process ID and timestamp for better uniqueness across parallel workers
@@ -23,6 +39,7 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   options.add_argument('--disable-dev-shm-usage')
   options.add_argument('--window-size=1400,1400')
   options.add_argument('--disable-features=BlockThirdPartyCookies')
+  options.add_argument(capybara_host_resolver_rule) if capybara_host_resolver_rule
   options.add_argument("--user-data-dir=#{user_data_dir}")
   options.add_argument("--remote-debugging-port=#{remote_debugging_port}")
 
@@ -49,6 +66,7 @@ Capybara.register_driver :selenium_chrome do |app|
   options.add_argument('--disable-dev-shm-usage')
   options.add_argument('--window-size=1400,1400')
   options.add_argument('--disable-features=BlockThirdPartyCookies')
+  options.add_argument(capybara_host_resolver_rule) if capybara_host_resolver_rule
   options.add_argument("--user-data-dir=#{user_data_dir}")
   options.add_argument("--remote-debugging-port=#{remote_debugging_port}")
 

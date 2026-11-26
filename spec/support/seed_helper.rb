@@ -55,8 +55,8 @@ module SeedHelper # :nodoc:
       )
 
       BetterTogether::Role.create!(
-        identifier: 'community_manager',
-        name: 'Community Manager',
+        identifier: 'community_organizer',
+        name: 'Community Organizer',
         resource_type: 'BetterTogether::Community',
         lock_version: 0
       )

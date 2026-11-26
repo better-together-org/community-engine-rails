@@ -30,6 +30,7 @@ module BetterTogether
     def create
       @platform_domain = @platform.platform_domains.build(platform_domain_params)
       authorize @platform_domain
+      @platform_domain.steward_requested = !policy(@platform_domain).operator?
 
       if @platform_domain.save
         redirect_to platform_platform_domains_path(@platform),
@@ -43,6 +44,7 @@ module BetterTogether
     # PATCH/PUT /host/platforms/:platform_id/platform_domains/:id
     def update
       authorize @platform_domain
+      @platform_domain.steward_requested = !policy(@platform_domain).operator?
 
       if @platform_domain.update(platform_domain_params)
         redirect_to platform_platform_domains_path(@platform),
@@ -83,7 +85,9 @@ module BetterTogether
     end
 
     def platform_domain_params
-      params.require(:platform_domain).permit(:hostname, :primary_flag, :share_domain, :active)
+      permitted = %i[hostname primary_flag share_domain]
+      permitted << :active if policy(@platform_domain || PlatformDomain.new(platform: @platform)).operator?
+      params.require(:platform_domain).permit(*permitted)
     end
   end
 end

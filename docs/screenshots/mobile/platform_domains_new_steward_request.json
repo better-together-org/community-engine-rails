@@ -1,0 +1,83 @@
+{
+  "name": "platform_domains_new_steward_request",
+  "device": "mobile",
+  "url": "/en/host/platforms/platform-30a7ccf38b18b89a62f9/platform_domains/new",
+  "title": "New Domain | Fadel, Carter and Rippin 5f0f72",
+  "locale": "en",
+  "role": "managed_platform_steward",
+  "feature_set": "platform_domains",
+  "flow": "platform_domains_new_steward",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_domains_steward_request_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-domain-activation-note",
+      "title": "Operator activates",
+      "bullets": [
+        "There is no Active checkbox for stewards. The operator turns the domain on after checking it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 599.390625,
+        "width": 476.0,
+        "height": 42.0,
+        "right": 488.0,
+        "bottom": 641.390625,
+        "center_x": 250.0,
+        "center_y": 620.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 599.390625,
+        "width": 476.0,
+        "height": 42.0,
+        "right": 488.0,
+        "bottom": 641.390625,
+        "center_x": 250.0,
+        "center_y": 620.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 661.39,
+        "width": 270.0,
+        "height": 236,
+        "score": 615.609375
+      }
+    },
+    {
+      "selector": "#platform-domain-submit-btn",
+      "title": "Request domain",
+      "bullets": [
+        "Saves the domain as inactive."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 657.390625,
+        "width": 218.90625,
+        "height": 38.0,
+        "right": 230.90625,
+        "bottom": 695.390625,
+        "center_x": 121.453125,
+        "center_y": 676.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 657.390625,
+        "width": 218.90625,
+        "height": 38.0,
+        "right": 230.90625,
+        "bottom": 695.390625,
+        "center_x": 121.453125,
+        "center_y": 676.390625
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 132,
+        "score": 0
+      }
+    }
+  ]
+}

@@ -39,7 +39,7 @@ module BetterTogether
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create Better Together Nav Area
-            better_together_pages = ::BetterTogether::Page.create!(
+            better_together_pages = seed_platform.pages.create!(
               [
                 {
                   title_en: 'What is Better Together?',
@@ -265,9 +265,9 @@ module BetterTogether
             # instead of re-creating it, and only create the ones that are missing —
             # this also correctly handles a partial state (some footer pages already
             # seeded, others not yet).
-            existing_footer_pages = ::BetterTogether::Page.i18n.where(slug: FOOTER_PAGE_SLUGS).index_by(&:slug)
+            existing_footer_pages = seed_platform.pages.i18n.where(slug: FOOTER_PAGE_SLUGS).index_by(&:slug)
             footer_pages = footer_page_attrs.map do |attrs|
-              existing_footer_pages[attrs[:slug_en]] || ::BetterTogether::Page.create!(attrs)
+              existing_footer_pages[attrs[:slug_en]] || seed_platform.pages.create!(attrs)
             end
 
             # Create contributor agreement pages separately for nested navigation
@@ -334,7 +334,7 @@ module BetterTogether
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create platform header pages
-            header_pages = ::BetterTogether::Page.create(
+            header_pages = seed_platform.pages.create(
               [
                 {
                   title_en: 'About',
@@ -849,6 +849,13 @@ module BetterTogether
         puts "Navigation area '#{slug}' reset complete!"
       end
 
+      # The platform the seed run is building navigation and pages for. Records are created through it so
+      # each carries its platform from the start; a record with no platform is checked for identifier
+      # clashes against every platform's records.
+      def seed_platform
+        Current.platform
+      end
+
       def with_seed_platform_context(platform: nil)
         previous_platform = Current.platform
         Current.platform = platform || ensure_host_platform_for_seeds
@@ -894,7 +901,7 @@ module BetterTogether
       def create_unassociated_pages # rubocop:todo Metrics/MethodLength
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Pages not associated with a navigation area
-          ::BetterTogether::Page.create!(
+          seed_platform.pages.create!(
             [
               {
                 title_en: 'Home',

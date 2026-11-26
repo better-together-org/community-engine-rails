@@ -627,11 +627,30 @@ en:
           attributes:
             theme:
               invalid_value: "%{key} has a value that is not allowed"
+        better_together/platform_association:
+          attributes:
+            delegated_from:
+              no_upstream_edge: requires an existing association edge from this operator
+                over the delegating platform
+              too_deep: exceeds the maximum association chain depth
+            granted_scopes:
+              exceeds_parent: cannot grant more than the parent edge holds
+            managed_platform_id:
+              cycle: would create a association cycle
+          immutable_endpoints: cannot change the operator, managed platform or parent
+            edge
+          too_deep: exceeds the maximum association chain depth
         better_together/platform_domain:
           attributes:
             active:
               must_be_true_for_primary: must be true for a primary domain
               must_be_true_for_share_domain: must be true for a share domain
+              operator_only: can only be turned on by the platform operator
+            hostname:
+              operator_only: can only be changed by the platform operator once active
+              outside_allowed_zone: 'must be a single name under one of these domains:
+                %{zones}'
+              reserved: is a reserved name
             primary:
               already_taken_for_platform: has already been taken for this platform
         better_together/redirect:
@@ -719,6 +738,9 @@ en:
       better_together/person_platform_integration: OAuth Integration
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
+      better_together/platform_association:
+        one: Platform association
+        other: Platform associations
       better_together/platform_connection: Platform Connection
       better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
@@ -4202,6 +4224,52 @@ en:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: End membership
+          leave: Leave
+          reinstate: Reinstate
+          suspend: Suspend
+        confirm_end: End this membership? It stays in the history and can be reinstated.
+        confirm_end_last: End this membership? It stays in the history and can be
+          reinstated. This is the member's only current membership here. They will
+          keep their account but lose all access that depends on a role, and see only
+          public content.
+        confirm_leave: Leave? You can ask to join again later.
+        confirm_reinstate: Reinstate this membership? The member regains access.
+        confirm_remove: Remove this member? This deletes the membership and its history.
+          Use End membership to keep the history.
+        confirm_suspend: Suspend this membership? The member loses access until you
+          reinstate it.
+        confirm_suspend_last: Suspend this membership? The member loses access until
+          you reinstate it. This is the member's only current membership here. They
+          will keep their account but lose all access that depends on a role, and
+          see only public content.
+        edit: Edit membership
+        flash:
+          ended: Membership ended.
+          left: You left.
+          reinstated: Membership reinstated.
+          suspended: Membership suspended.
+        remove: Remove membership
+        remove_member: Remove %{name}
+        since: Since
+        source:
+          backfill: Existing member
+          direct: Added directly
+          entitlement: Plan or entitlement
+          invitation: Invitation
+          registration: Joined at registration
+          request: Membership request
+          trusted_domain: Trusted email domain
+          wizard: Setup wizard
+        status:
+          current: Current
+          ended: Ended
+          pending: Pending
+          suspended: Suspended
+        until: Until
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.
@@ -4987,6 +5055,10 @@ en:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_community_memberships:
+      errors:
+        last_organizer: You are the only organizer of this community. Make someone
+          else an organizer before you leave.
     person_linked_seeds:
       index:
         description: Private content shared with you through federation access grants.
@@ -5206,6 +5278,8 @@ en:
         subtitle: Domain for %{platform_name}
         title: Edit %{hostname}
       form:
+        activation_note: An operator activates new domains after checking them. Until
+          then this domain stays inactive.
         active_field_label: Active
         custom_domain_hint_html: A custom domain needs a DNS record (CNAME or A) pointed
           at this platform's edge server, and its own TLS certificate. See the multi-platform
@@ -8138,7 +8212,8 @@ en:
   people:
     confirm_delete: Confirm delete
   person_platform_memberships:
-    confirm_delete: Are you sure you want to remove this member from the platform?
+    confirm_delete: Remove this member from the platform? This deletes the membership
+      and its history. Use End membership to keep the history.
     edit:
       title: Edit Platform Membership
     form:

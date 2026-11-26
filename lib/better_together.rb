@@ -43,8 +43,22 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # When true, requests for hostnames with no active PlatformDomain get a 404
   # instead of falling back to the host platform. See PlatformContextMiddleware.
   # Single-platform installs (one local platform) are never affected.
+  mattr_accessor :authorize_hosts_from_domains
+  self.authorize_hosts_from_domains = true
+
   mattr_accessor :fail_closed_unknown_hosts
   self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
+  # Extra zones (besides the host platform's primary domain) in which a platform steward may request a
+  # subdomain, for example ['communityengine.app']. Operators are not limited by it.
+  mattr_accessor :platform_domain_zones
+  self.platform_domain_zones = []
+  # First labels a steward may never request under an allowed zone. Hosts append their own live names.
+  mattr_accessor :reserved_domain_labels
+  self.reserved_domain_labels = %w[
+    www admin api app apps auth login sso oauth mail email smtp imap pop mx ns ns1 ns2 dns ftp sftp ssh git
+    static assets cdn media files status help support docs blog shop store billing pay payments dashboard
+    staging stage test dev demo internal localhost root host hosts platform platforms operator mgmt manage
+  ].freeze
   mattr_accessor :head_tag_providers
   mattr_accessor :third_party_tracking_exclusions
   # Settlement weather. Hosts may turn it off; when on, it still needs an enabled source with
@@ -191,16 +205,22 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       "#{base_path}#{locale}"
     end
 
-    def base_url_with_locale(locale: I18n.locale)
-      "#{base_url}/#{locale}"
+    # The URL root for a platform: its primary domain (or stored host_url), and only when there is
+    # no platform the configured global base_url. Outside a request, pass the platform explicitly.
+    def platform_base_url(platform = ::Current.platform)
+      platform&.resolved_host_url.presence || base_url
+    end
+
+    def base_url_with_locale(locale: I18n.locale, platform: ::Current.platform)
+      "#{platform_base_url(platform)}/#{locale}"
     end
 
     def route_scope_path
       @@route_scope_path || 'bt'
     end
 
-    def new_user_password_url
-      base_url + new_user_password_path
+    def new_user_password_url(platform: ::Current.platform)
+      platform_base_url(platform) + new_user_password_path
     end
 
     def new_user_password_path
@@ -219,8 +239,8 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       ::BetterTogether::Engine.routes.url_helpers.user_confirmation_path(locale: I18n.locale)
     end
 
-    def user_confirmation_url
-      base_url + user_confirmation_path
+    def user_confirmation_url(platform: ::Current.platform)
+      platform_base_url(platform) + user_confirmation_path
     end
 
     def register_head_tag_provider(key, callable = nil, &block)

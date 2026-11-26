@@ -57,7 +57,7 @@ module BetterTogether
         # Equivalent to HTML destroy action
         # Requires authentication and either:
         # - 'manage_platform' permission, or
-        # - 'destroy_community' permission for specific community
+        # - 'delete_community' permission for the specific community
         # Cannot delete protected or host communities
         def destroy
           # Authorization via Pundit policy

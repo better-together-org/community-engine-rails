@@ -614,12 +614,32 @@ es:
           attributes:
             theme:
               invalid_value: "%{key} tiene un valor no permitido"
+        better_together/platform_association:
+          attributes:
+            delegated_from:
+              no_upstream_edge: requiere una relación de gestión existente de este
+                operador sobre la plataforma que delega
+              too_deep: supera la profundidad máxima de la cadena de gestión
+            granted_scopes:
+              exceeds_parent: no puede otorgar más de lo que posee la relación principal
+            managed_platform_id:
+              cycle: crearía un ciclo de gestión
+          immutable_endpoints: no puede cambiar el operador, la plataforma gestionada
+            ni la relación principal
+          too_deep: supera la profundidad máxima de la cadena de gestión
         better_together/platform_domain:
           attributes:
             active:
               must_be_true_for_primary: debe ser verdadero para un dominio primario
               must_be_true_for_share_domain: debe ser verdadero para un dominio de
                 compartición
+              operator_only: solo puede activarlo el operador de la plataforma
+            hostname:
+              operator_only: solo puede cambiarlo el operador de la plataforma una
+                vez activo
+              outside_allowed_zone: 'debe ser un solo nombre dentro de uno de estos
+                dominios: %{zones}'
+              reserved: es un nombre reservado
             primary:
               already_taken_for_platform: ya ha sido utilizado para esta plataforma
         better_together/redirect:
@@ -707,6 +727,9 @@ es:
       better_together/person_platform_integration: Integración OAuth
       better_together/person_platform_membership: Membresía de plataforma
       better_together/platform: Plataforma
+      better_together/platform_association:
+        one: Asociación de plataforma
+        other: Asociaciones de plataforma
       better_together/platform_connection: Conexión de plataforma
       better_together/platform_domain: Dominio de plataforma
       better_together/platform_invitation: Invitación a plataforma
@@ -4245,6 +4268,53 @@ es:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    memberships:
+      lifecycle:
+        actions:
+          end: Finalizar membresía
+          leave: Salir
+          reinstate: Restablecer
+          suspend: Suspender
+        confirm_end: "¿Finalizar esta membresía? Queda en el historial y se puede
+          restablecer."
+        confirm_end_last: "¿Finalizar esta membresía? Queda en el historial y se puede
+          restablecer. Esta es la única membresía vigente de esta persona aquí. Conservará
+          su cuenta, pero perderá todo acceso que dependa de un rol y solo verá contenido
+          público."
+        confirm_leave: "¿Salir? Podrás solicitar unirte de nuevo."
+        confirm_reinstate: "¿Restablecer esta membresía? El miembro recupera el acceso."
+        confirm_remove: "¿Quitar a este miembro? Esto elimina la membresía y su historial.
+          Usa «Finalizar membresía» para conservar el historial."
+        confirm_suspend: "¿Suspender esta membresía? El miembro pierde el acceso hasta
+          que la restablezcas."
+        confirm_suspend_last: "¿Suspender esta membresía? El miembro pierde el acceso
+          hasta que la restablezcas. Esta es la única membresía vigente de esta persona
+          aquí. Conservará su cuenta, pero perderá todo acceso que dependa de un rol
+          y solo verá contenido público."
+        edit: Editar membresía
+        flash:
+          ended: Membresía finalizada.
+          left: Saliste.
+          reinstated: Membresía restablecida.
+          suspended: Membresía suspendida.
+        remove: Quitar membresía
+        remove_member: Quitar a %{name}
+        since: Desde
+        source:
+          backfill: Miembro existente
+          direct: Añadido directamente
+          entitlement: Plan o derecho
+          invitation: Invitación
+          registration: Se unió al registrarse
+          request: Solicitud de membresía
+          trusted_domain: Dominio de correo de confianza
+          wizard: Asistente de configuración
+        status:
+          current: Vigente
+          ended: Finalizada
+          pending: Pendiente
+          suspended: Suspendida
+        until: Hasta
     message_requests:
       accepted: Message request accepted. A new conversation has been started.
       declined: Message request declined.
@@ -5036,6 +5106,10 @@ es:
         platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
         self_block_error: No puedes bloquearte a ti mismo.
         unblocked: La persona fue desbloqueada correctamente.
+    person_community_memberships:
+      errors:
+        last_organizer: Eres la única persona organizadora de esta comunidad. Designa
+          a otra persona como organizadora antes de salir.
     person_linked_seeds:
       index:
         description: Contenido privado compartido contigo a través de permisos de
@@ -5269,6 +5343,8 @@ es:
         subtitle: Dominio de %{platform_name}
         title: Editar %{hostname}
       form:
+        activation_note: Un operador activa los dominios nuevos después de revisarlos.
+          Hasta entonces este dominio queda inactivo.
         active_field_label: Activo
         custom_domain_hint_html: Un dominio personalizado necesita un registro DNS
           (CNAME o A) que apunte al servidor de borde de esta plataforma, y su propio
@@ -8282,7 +8358,8 @@ es:
   people:
     confirm_delete: Confirmar eliminación
   person_platform_memberships:
-    confirm_delete: "¿Estás seguro de que quieres eliminar este miembro de la plataforma?"
+    confirm_delete: "¿Quitar a este miembro de la plataforma? Esto elimina la membresía
+      y su historial. Usa «Finalizar membresía» para conservar el historial."
     edit:
       title: Editar membresía de plataforma
     form:

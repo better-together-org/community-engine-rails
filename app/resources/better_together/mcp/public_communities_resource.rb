@@ -46,7 +46,7 @@ module BetterTogether
           name: community.name,
           description: community.description,
           slug: community.slug,
-          member_count: community.person_community_memberships.size,
+          member_count: community.person_community_memberships.count(&:current?),
           created_at: community.created_at.iso8601
         }
       end

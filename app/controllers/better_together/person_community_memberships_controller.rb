@@ -2,8 +2,10 @@
 
 module BetterTogether
   class PersonCommunityMembershipsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include MembershipLifecycleActions
+
     before_action :set_community
-    before_action :set_person_community_membership, only: [:destroy]
+    before_action :set_person_community_membership, only: %i[destroy end_membership suspend reinstate leave]
     after_action :verify_authorized
 
     # POST /communities/:community_id/person_community_memberships
@@ -44,6 +46,8 @@ module BetterTogether
     end
 
     def destroy # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      return refuse_last_organizer if policy(@person_community_membership).destroy_denial_reason == :last_organizer
+
       authorize @person_community_membership
 
       if @person_community_membership.destroy
@@ -73,6 +77,17 @@ module BetterTogether
     end
 
     private
+
+    # The policy was consulted above; the member gets the reason instead of the generic denial.
+    def refuse_last_organizer
+      skip_authorization
+      redirect_to @community, alert: t('better_together.person_community_memberships.errors.last_organizer'),
+                              status: :see_other
+    end
+
+    def lifecycle_membership = @person_community_membership
+
+    def lifecycle_redirect_path = @community
 
     def set_community
       @community = ::BetterTogether::Community.find(params[:community_id])

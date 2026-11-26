@@ -14,13 +14,13 @@ flowchart TB
     BetterTogether__PersonAccessGrant_polymorphic_summary["PersonAccessGrant\nowner: seeds"]
     BetterTogether__PersonBlock_polymorphic_summary["PersonBlock\nowner: seeds"]
     BetterTogether__PersonChecklistItem_polymorphic_summary["PersonChecklistItem\nowner: seeds"]
-    BetterTogether__PersonCommunityMembership_polymorphic_summary["PersonCommunityMembership\nowner: seeds"]
+    BetterTogether__PersonCommunityMembership_polymorphic_summary["PersonCommunityMembership\nowner: seeds, owner: membership_events"]
     BetterTogether__PersonDataExport_polymorphic_summary["PersonDataExport\nowner: seeds, owner: export_file_attachment"]
     BetterTogether__PersonDeletionRequest_polymorphic_summary["PersonDeletionRequest\nowner: seeds"]
     BetterTogether__PersonLink_polymorphic_summary["PersonLink\nowner: seeds"]
     BetterTogether__PersonLinkedSeed_polymorphic_summary["PersonLinkedSeed\nowner: seeds"]
     BetterTogether__PersonPlatformIntegration_polymorphic_summary["PersonPlatformIntegration\nowner: seeds, owner: noticed_events"]
-    BetterTogether__PersonPlatformMembership_polymorphic_summary["PersonPlatformMembership\nowner: seeds"]
+    BetterTogether__PersonPlatformMembership_polymorphic_summary["PersonPlatformMembership\nowner: seeds, owner: membership_events"]
     BetterTogether__PersonPurgeAudit_polymorphic_summary["PersonPurgeAudit\nowner: seeds"]
     BetterTogether__ResourcePermission_polymorphic_summary["ResourcePermission\nowner: seeds, owner: slugs, owner: string_translations"]
     BetterTogether__Role_polymorphic_summary["Role\nowner: seeds, owner: slugs, owner: string_translations, owner: text_translations"]
@@ -323,9 +323,11 @@ flowchart TB
     BetterTogether__Infrastructure__Floor_polymorphic_summary["Infrastructure::Floor\nowner: seeds, owner: contact_detail, owner: contacts, owner: slugs, owner: rich_text_translations +6"]
     BetterTogether__Infrastructure__Room_polymorphic_summary["Infrastructure::Room\nowner: seeds, owner: contact_detail, owner: contacts, owner: slugs, owner: rich_text_translations +6"]
     BetterTogether__JwtDenylist_polymorphic_summary["JwtDenylist\nowner: seeds"]
+    BetterTogether__MembershipEvent_polymorphic_summary["MembershipEvent\ntarget: membership, owner: seeds"]
     BetterTogether__MessageRequest_polymorphic_summary["MessageRequest\nowner: seeds"]
     BetterTogether__PersonMessagingGrant_polymorphic_summary["PersonMessagingGrant\nowner: seeds"]
     BetterTogether__PhoneNumber_polymorphic_summary["PhoneNumber\nowner: seeds"]
+    BetterTogether__PlatformAssociation_polymorphic_summary["PlatformAssociation\nowner: seeds"]
     BetterTogether__PlatformDeletionRequest_polymorphic_summary["PlatformDeletionRequest\nowner: seeds"]
     BetterTogether__PlatformIdentityProvider_polymorphic_summary["PlatformIdentityProvider\nowner: seeds"]
     BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary["PlatformIdentityProviderDomain\nowner: seeds"]
@@ -379,10 +381,12 @@ flowchart TB
     BetterTogether__Infrastructure__BuildingConnection_polymorphic_summary ~~~ BetterTogether__Infrastructure__Floor_polymorphic_summary
     BetterTogether__Infrastructure__Floor_polymorphic_summary ~~~ BetterTogether__Infrastructure__Room_polymorphic_summary
     BetterTogether__Infrastructure__Room_polymorphic_summary ~~~ BetterTogether__JwtDenylist_polymorphic_summary
-    BetterTogether__JwtDenylist_polymorphic_summary ~~~ BetterTogether__MessageRequest_polymorphic_summary
+    BetterTogether__JwtDenylist_polymorphic_summary ~~~ BetterTogether__MembershipEvent_polymorphic_summary
+    BetterTogether__MembershipEvent_polymorphic_summary ~~~ BetterTogether__MessageRequest_polymorphic_summary
     BetterTogether__MessageRequest_polymorphic_summary ~~~ BetterTogether__PersonMessagingGrant_polymorphic_summary
     BetterTogether__PersonMessagingGrant_polymorphic_summary ~~~ BetterTogether__PhoneNumber_polymorphic_summary
-    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__PlatformDeletionRequest_polymorphic_summary
+    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__PlatformAssociation_polymorphic_summary
+    BetterTogether__PlatformAssociation_polymorphic_summary ~~~ BetterTogether__PlatformDeletionRequest_polymorphic_summary
     BetterTogether__PlatformDeletionRequest_polymorphic_summary ~~~ BetterTogether__PlatformIdentityProvider_polymorphic_summary
     BetterTogether__PlatformIdentityProvider_polymorphic_summary ~~~ BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary
     BetterTogether__PlatformIdentityProviderDomain_polymorphic_summary ~~~ BetterTogether__PlatformSnippet_polymorphic_summary

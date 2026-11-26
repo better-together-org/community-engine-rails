@@ -161,10 +161,10 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
   describe 'GET /:locale/c/:slug (show) membership review access', :as_user do
     let(:community_manager_role) do
-      BetterTogether::Role.find_by(identifier: 'community_manager',
+      BetterTogether::Role.find_by(identifier: 'community_organizer',
                                    resource_type: 'BetterTogether::Community') ||
         create(:better_together_role,
-               identifier: 'community_manager',
+               identifier: 'community_organizer',
                name: 'Community Manager',
                resource_type: 'BetterTogether::Community')
     end
@@ -361,6 +361,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     let(:community) do
       create(:better_together_community,
              name: 'Edit Test',
+             privacy: 'public',
              creator: platform_manager.person)
     end
 
@@ -409,7 +410,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     let(:community) do
       create(:better_together_community,
              name: 'Original Name',
-             privacy: 'private',
+             privacy: 'public',
              creator: platform_manager.person)
     end
 

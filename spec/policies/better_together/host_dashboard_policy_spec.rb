@@ -30,6 +30,27 @@ RSpec.describe BetterTogether::HostDashboardPolicy, type: :policy do
       end
     end
 
+    context 'when user is steward of a hosted platform viewed on its own domain' do
+      let(:hosted_platform) { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
+
+      before do
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+        BetterTogether::PersonPlatformMembership.create!(
+          joinable: hosted_platform, member: user.person, role: role, status: 'active'
+        )
+      end
+
+      it 'allows access when the hosted platform is the current platform' do
+        Current.platform = hosted_platform
+        expect(policy.show?).to be true
+      end
+
+      it 'denies access to the host dashboard (host platform is current)' do
+        Current.platform = platform
+        expect(policy.show?).to be false
+      end
+    end
+
     context 'when user is analytics viewer' do
       before do
         # Seed the analytics viewer role first

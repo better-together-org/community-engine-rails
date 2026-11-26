@@ -6,7 +6,8 @@ module BetterTogether
     def show?
       return false unless user
 
-      platform = Current.host_platform
+      # The dashboard administers the platform being viewed (host or hosted), not always the host.
+      platform = Current.platform || Current.host_platform
       user.permitted_to?(:manage_platform_settings, platform) || user.permitted_to?(:manage_platform, platform)
     end
   end
