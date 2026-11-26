@@ -43,6 +43,9 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # When true, requests for hostnames with no active PlatformDomain get a 404
   # instead of falling back to the host platform. See PlatformContextMiddleware.
   # Single-platform installs (one local platform) are never affected.
+  mattr_accessor :authorize_hosts_from_domains
+  self.authorize_hosts_from_domains = true
+
   mattr_accessor :fail_closed_unknown_hosts
   self.fail_closed_unknown_hosts = !Rails.env.test? if defined?(Rails)
   mattr_accessor :head_tag_providers

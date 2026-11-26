@@ -16,6 +16,7 @@ require 'better_together/migration_helpers'
 require 'better_together/generator_templates'
 require 'better_together/profiling'
 require 'better_together/friendly_id_slug_platform'
+require 'better_together/host_authorization'
 require 'better_together/platform_context_job_carrier'
 require 'better_together/safe_outbound_host'
 require 'better_together/signed_verifier_rotation'
@@ -179,6 +180,13 @@ module BetterTogether
     initializer 'better_together.redirect_middleware', after: 'better_together.platform_context_middleware' do |app|
       require root.join('app/middleware/better_together/redirect_middleware').to_s
       app.middleware.insert_after BetterTogether::PlatformContextMiddleware, BetterTogether::RedirectMiddleware
+    end
+
+    # Active platform domains are allowed hosts wherever the host app already restricts config.hosts.
+    # Runs after the host app's own initializers (so its allow-list is final) and before the middleware
+    # stack is built. A host app opts out with `BetterTogether.authorize_hosts_from_domains = false`.
+    initializer 'better_together.host_authorization', before: :build_middleware_stack do |app|
+      BetterTogether::HostAuthorization.install!(app.config.hosts) if BetterTogether.authorize_hosts_from_domains
     end
 
     # A platform's secondary domains redirect to its primary domain (see the middleware for the exemptions).
