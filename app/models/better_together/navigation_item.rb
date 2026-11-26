@@ -91,6 +91,10 @@ module BetterTogether
     # different platforms even though Identifier's own scoping would allow it.
     slugged :title, slug_uniqueness: false
 
+    # An item belongs to its area's platform. Set before Identifier captures the platform for its
+    # uniqueness check, so a new item is compared with its own platform's items, not every platform's.
+    before_validation :inherit_platform_from_navigation_area, prepend: true
+
     validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
               format: { with: %r{\A((http|https)://.+|#.*|/+[\w/-]*)\z}, allow_blank: true,
@@ -315,6 +319,10 @@ module BetterTogether
     end
 
     private
+
+    def inherit_platform_from_navigation_area
+      self.platform_id ||= navigation_area&.platform_id
+    end
 
     def linkable_provides_title?
       linkable.present? && linkable.respond_to?(:title)

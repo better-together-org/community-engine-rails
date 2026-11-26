@@ -5,6 +5,39 @@ require 'rails_helper'
 RSpec.describe BetterTogether::NavigationItem do
   let(:navigation_area) { create(:navigation_area) }
 
+  context 'when it belongs to a platform other than the host' do
+    let(:other_platform) { create(:better_together_platform, type: 'BetterTogether::HostedPlatform') }
+    let(:host_area) { create(:navigation_area, platform: BetterTogether::Platform.find_by(host: true)) }
+    let(:other_area) { create(:navigation_area, platform: other_platform) }
+
+    it 'takes its navigation area platform' do
+      item = described_class.create!(navigation_area: other_area, title: 'Shared item', identifier: 'spec-shared-item', visible: true,
+                                     item_type: 'link', url: '/shared', position: 0)
+
+      expect(item.platform_id).to eq(other_platform.id)
+    end
+
+    it 'may reuse an identifier another platform already uses' do
+      described_class.create!(navigation_area: host_area, title: 'Shared item', identifier: 'spec-shared-item', visible: true,
+                              item_type: 'link', url: '/shared', position: 0)
+
+      item = described_class.new(navigation_area: other_area, title: 'Shared item', identifier: 'spec-shared-item', visible: true,
+                                 item_type: 'link', url: '/shared', position: 0)
+
+      expect(item).to be_valid
+    end
+
+    it 'rejects an identifier already used on its own platform' do
+      described_class.create!(navigation_area: other_area, title: 'Shared item', identifier: 'spec-shared-item', visible: true,
+                              item_type: 'link', url: '/shared', position: 0)
+
+      item = described_class.new(navigation_area: other_area, title: 'Shared item', identifier: 'spec-shared-item', visible: true,
+                                 item_type: 'link', url: '/shared', position: 0)
+
+      expect(item).not_to be_valid
+    end
+  end
+
   context 'title fallbacks' do
     it 'returns nav item translation when present' do
       nav = described_class.build(navigation_area:, title: 'Nav Title', slug: 'nav-title', visible: true)
