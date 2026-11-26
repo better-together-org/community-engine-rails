@@ -50,7 +50,7 @@ These are the places that must change. Counts are files under `app` and `lib` th
 - **Grants.** `plan_grants` belong to a plan only, and an add-on is forbidden from having any, so a quota top-up cannot say how much quota it gives.
 - **Add-on flag.** `add_on` appears in about 19 files (checkout controller and view, hub, plan form, plan policy, tax preview, seeds). It is a
   flag on Plan standing in for a type.
-- **Processor sync.** `SyncProductJob`, `PlanSyncResult`, `ProcessorAdapter#sync_plan` and the `:plan_sync` capability are named and shaped for plans.
+- **Processor sync.** `SyncProductJob`, `PlanSyncResult`, `ProcessorAdapter#sync_plan` and the plan sync capability were named and shaped for plans (now one catalog sync: see the model assessment).
 - **Seeds, forms, locales, DOM contracts, nav.** About 94 spec files reference the plan factory, and the seed type registry has `plan`,
   `plan grant` and add-on types.
 

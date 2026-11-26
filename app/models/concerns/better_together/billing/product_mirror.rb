@@ -39,7 +39,7 @@ module BetterTogether
       # True when the processor can hold this product here: it is configured for the platform and its adapter takes a catalog item.
       def sync_supported?
         adapter = processor_adapter
-        processor_context.present? && adapter&.supports?(:plan_sync) && adapter.catalog_aware?
+        processor_context.present? && adapter&.supports?(:catalog_sync)
       end
 
       # Prices that exist here but not yet on the processor.

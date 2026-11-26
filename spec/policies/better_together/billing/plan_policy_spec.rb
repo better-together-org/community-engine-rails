@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::Billing::PlanPolicy do
   let!(:host_platform) { configure_host_platform }
   let(:other_platform) { create(:better_together_platform) }
   let(:plan) do
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync]) })
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync]) })
     create(:better_together_billing_plan)
   end
   let(:steward) { find_or_create_test_user("plan-policy-steward-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#', :platform_manager) }

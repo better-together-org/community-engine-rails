@@ -10,7 +10,7 @@ RSpec.describe 'Billing screens loaded into host billing tabs', :as_platform_man
 
   let(:locale) { :en }
 
-  before { BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync lookups]) }) }
+  before { BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync lookups]) }) }
 
   it 'wraps the screen in the frame that asked for it, without the site layout', :aggregate_failures do
     get better_together.billing_plans_path(locale:), headers: { 'Turbo-Frame' => 'billing-tab-billing-plans' }

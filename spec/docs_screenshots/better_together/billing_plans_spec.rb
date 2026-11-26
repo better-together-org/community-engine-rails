@@ -17,7 +17,7 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
   include_context 'with billing switched on'
 
   let(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let!(:linked_plan) do
     create(:better_together_billing_plan, platform: host_platform, name: 'Hosted community', identifier: 'hosted-community',
                                           processor_price_id: 'price_pro_month', processor_product_id: 'prod_pro')

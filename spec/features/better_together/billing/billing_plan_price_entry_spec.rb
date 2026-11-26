@@ -11,7 +11,7 @@ RSpec.describe 'Billing plan price entry', :accessibility, :js, :skip_host_setup
   include_context 'with billing switched on'
 
   let(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let(:wcag) { %i[wcag2a wcag2aa wcag21a wcag21aa wcag22aa] }
   let!(:plan) do
     create(:better_together_billing_plan, :unlinked, platform: host_platform, name: 'Garden plot', identifier: 'garden-plot',

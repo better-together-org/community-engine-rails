@@ -11,21 +11,18 @@ module BetterTogether
       attr_reader :calls, :capabilities, :products, :prices
 
       # `settlement:` and `countries:` let specs stand in for a manual (offline) method.
-      # `contract:` 1 stands in for an adapter written before catalog items and checkout lines.
-      def initialize(capabilities: %i[checkout], processor: :fake, rules: nil, settlement: :remote, countries: nil, contract: CONTRACT_VERSION) # rubocop:disable Metrics/ParameterLists
+      def initialize(capabilities: %i[checkout], processor: :fake, rules: nil, settlement: :remote, countries: nil) # rubocop:disable Metrics/ParameterLists
         super()
         @capabilities = capabilities
         @processor = processor
         @rules = rules || default_rules
         @settlement = settlement
         @countries = countries
-        @contract = contract
         @calls = []
         @products = {}
         @prices = {}
       end
 
-      def contract_version = @contract
       def settlement_kind = @settlement
       def supported_countries = @countries
       def recurring_mode = @settlement == :manual ? :manual : super
@@ -58,21 +55,7 @@ module BetterTogether
 
       def sanitize_payload(payload) = payload.to_h.slice('id', 'type')
 
-      # Creates the product and price when the plan has none, otherwise reports what is
-      # there. Never touches the plan.
-      def sync_plan(context:, plan:, idempotency_key:) # rubocop:disable Metrics/AbcSize
-        @calls << [:sync_plan, context, plan.id, idempotency_key]
-        raise LookupError, 'processor unavailable' if plan.name.to_s.include?('boom')
-
-        product_id = plan.processor_product_id.presence || "prod_#{idempotency_key.hash.abs}"
-        price_id = plan.processor_price_id.presence || "price_#{idempotency_key.hash.abs}"
-        price = PriceInfo.new(price_id:, product_id:, amount_cents: plan.amount_cents, currency: plan.currency,
-                              interval: plan.billing_interval, interval_count: plan.interval_count, active: plan.active)
-        @prices[price_id] = price
-        PlanSyncResult.new(product_id:, price:)
-      end
-
-      # Contract version 2: the product, and a price for each CatalogPrice that has none. A price already there is reported as it is.
+      # The product, and a price for each CatalogPrice that has none. A price already there is reported as it is.
       def sync_catalog_item(context:, item:, idempotency_key:)
         @calls << [:sync_catalog_item, context, item, idempotency_key]
         raise LookupError, 'processor unavailable' if item.name.to_s.include?('boom')

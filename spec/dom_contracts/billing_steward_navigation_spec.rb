@@ -17,7 +17,7 @@ RSpec.describe 'Billing steward navigation DOM contract', :as_platform_manager, 
   end
 
   before do
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) })
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) })
     Current.platform = BetterTogether::Platform.find_by(host: true)
     BetterTogether::NavigationBuilder.build_host
     Current.platform = nil

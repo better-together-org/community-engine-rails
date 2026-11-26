@@ -5,14 +5,12 @@ module BetterTogether
     class ProcessorAdapter
       # Class-level checks that an adapter honours the contract (see ProcessorAdapter.verify!).
       module Verification
-        # Checks an adapter is usable: it inherits this contract, implements the
-        # supported contract version, and (when `name` is the name it was registered
+        # Checks an adapter is usable: it inherits this contract, and (when `name` is the name it was registered
         # under) reports that same processor name, so events and plans stored under
         # the registered name always resolve back to the adapter that handles them.
         def verify!(adapter, name: nil)
           raise ContractError, "#{adapter.class} must inherit #{ProcessorAdapter.name}" unless adapter.is_a?(ProcessorAdapter)
 
-          verify_contract_version!(adapter)
           if name && adapter.processor_name.to_s != name.to_s
             raise ContractError, "#{adapter.class} is registered as #{name} but reports processor_name #{adapter.processor_name}"
           end
@@ -23,13 +21,6 @@ module BetterTogether
         end
 
         private
-
-        def verify_contract_version!(adapter)
-          return if SUPPORTED_CONTRACT_VERSIONS.include?(adapter.contract_version)
-
-          raise ContractError,
-                "#{adapter.class} implements contract #{adapter.contract_version}, core supports #{SUPPORTED_CONTRACT_VERSIONS.join(' and ')}"
-        end
 
         def verify_settlement!(adapter)
           kind = adapter.settlement_kind

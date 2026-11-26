@@ -6,7 +6,7 @@ RSpec.shared_context 'with orders fixtures' do
   include_context 'with clean billing processors'
 
   let!(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync]) }
   let(:buyer) { create(:better_together_person) }
   let(:plan) { create(:better_together_billing_plan, amount_cents: 4500, currency: 'USD') }
 

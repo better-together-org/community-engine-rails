@@ -17,7 +17,7 @@ RSpec.describe 'Documentation screenshots for entering a plan price', # rubocop:
   include_context 'with billing switched on'
 
   let(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let!(:plan) do
     create(:better_together_billing_plan, :unlinked, platform: host_platform, name: 'Garden plot', identifier: 'garden-plot',
                                                      amount_cents: 12_345, currency: 'USD')

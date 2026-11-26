@@ -54,7 +54,7 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
 
 A plan with **no online processor** has nothing to push or link: it starts `synced`, needs no price id, and is paid by its accepted methods.
 
-A processor that cannot push plans (no `plan_sync` capability) still works: the price id is
+A processor that cannot push plans (no `catalog_sync` capability) still works: the price id is
 then required, because nothing will create it, and the plan starts `synced`.
 
 ![Plan sync flow](../diagrams/exports/png/billing_plan_processor_sync_flow.png)
@@ -67,8 +67,8 @@ flowchart TD
   M -->|Link existing price| L1[Choose a price<br/>fetch_price copies its values]
   L1 --> SYNCED[Plan saved: synced]
   SAVE --> AC[SyncPlanJob on the billing queue]
-  AC --> SP[adapter.sync_plan with the platform context<br/>and a core-owned idempotency key]
-  SP -->|PlanSyncResult| W[Core stores ids, synced]
+  AC --> SP[adapter.sync_catalog_item with the platform context<br/>and a core-owned idempotency key]
+  SP -->|CatalogSyncResult| W[Core stores ids, synced]
   SP -->|error, retries exhausted| F[failed, short code]
   F --> RB[Retry sync]
   RB --> AC
@@ -127,11 +127,11 @@ short reason and a **Retry sync** action.
 
 | Capability | Methods (all take `context:`) |
 |---|---|
-| `plan_sync` | `sync_plan(plan:, idempotency_key:)` returns a `PlanSyncResult`; `fetch_price(processor_price_id:)` returns a `PriceInfo` or `nil`; `fetch_product(processor_product_id:)` returns a `ProductInfo` or `nil` |
+| `catalog_sync` | `sync_catalog_item(item:, idempotency_key:)` returns a `CatalogSyncResult`; `fetch_price(processor_price_id:)` returns a `PriceInfo` or `nil`; `fetch_product(processor_product_id:)` returns a `ProductInfo` or `nil` |
 | `lookups` | `lookup(kind:, search:, scope:, limit:)` returns `LookupOption`s; `lookup_kinds` lists the kinds |
 | (always) | `field_rules(:plan)`; optionally `supported_currencies` / `supported_intervals` as fallbacks |
 
-Rules: `sync_plan` **never writes the plan**; core stores the result, which is also what stops
+Rules: `sync_catalog_item` **never writes the plan**; core stores the result, which is also what stops
 a processor-side change being pushed straight back. Pass `idempotency_key` to every processor
 write. Use short SDK timeouts and no retries in `lookup` (a person is waiting). Raise
 `ProcessorAdapter::LookupError` with a message safe to show when the processor cannot be
@@ -144,7 +144,7 @@ classDiagram
   class ProcessorAdapter {
     +field_rules(resource) Hash
     +lookup_kinds() Array
-    +sync_plan(context, plan, idempotency_key) PlanSyncResult
+    +sync_catalog_item(context, item, idempotency_key) CatalogSyncResult
     +fetch_price(context, processor_price_id) PriceInfo
     +fetch_product(context, processor_product_id) ProductInfo
     +lookup(context, kind, search, scope, limit) Array
@@ -154,7 +154,7 @@ classDiagram
     +processor
   }
   ProcessorAdapter ..> ProcessorContext : receives on every call
-  ProcessorAdapter ..> PlanSyncResult
+  ProcessorAdapter ..> CatalogSyncResult
   ProcessorAdapter ..> PriceInfo
   ProcessorAdapter ..> ProductInfo
   ProcessorAdapter ..> LookupOption

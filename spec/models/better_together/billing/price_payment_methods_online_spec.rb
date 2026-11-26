@@ -14,11 +14,4 @@ RSpec.describe BetterTogether::Billing::Price, '#payment_methods online' do
     product.update_columns(processor: 'fake') # rubocop:disable Rails/SkipsModelValidations
     expect(price.reload.payment_methods).to include('fake')
   end
-
-  it 'does not offer it when the adapter is at contract version 1' do
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout], contract: 1) })
-    product.update_columns(processor: 'fake') # rubocop:disable Rails/SkipsModelValidations
-
-    expect(price.payment_methods).not_to include('fake')
-  end
 end
