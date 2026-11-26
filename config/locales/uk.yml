@@ -1810,6 +1810,7 @@ uk:
           Кожен потрібно ще ввімкнути для продавця, перш ніж покупці зможуть ним скористатися.
         field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
         field_amount: Сума
+        field_amount_cents: Сума
         field_amount_hint: Введіть ціну так, як ви її записали б, наприклад 45,00.
           Валюти без копійок, як-от JPY і KRW, приймають цілі числа.
         field_beneficiary_label: Marka benefitsiariya

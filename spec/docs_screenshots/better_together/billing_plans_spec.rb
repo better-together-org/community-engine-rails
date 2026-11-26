@@ -20,7 +20,7 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
   let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let!(:linked_plan) do
     create(:better_together_billing_plan, platform: host_platform, name: 'Hosted community', identifier: 'hosted-community',
-                                          processor_price_id: 'price_pro_month', processor_product_id: 'prod_pro')
+                                          processor_price_id: 'price_pro_month', processor_product_id: 'prod_pro', amount_cents: 4500)
   end
   let!(:failed_plan) do
     create(:better_together_billing_plan, :unlinked, platform: host_platform, name: 'Supporter', identifier: 'supporter').tap do |plan|
@@ -151,6 +151,23 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
       visit_plans("/#{linked_plan.id}")
       expect(page).to have_css('#billing-plan-processor-snapshot', wait: 10)
       scroll_to(find('#billing-plan-locked-fields-note'), align: :center)
+    end
+  end
+
+  it 'captures the prices a plan is sold at' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_plans_show_prices',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_plans_show_prices'),
+      callouts: [{ id: 'prices', selector: "##{ActionView::RecordIdentifier.dom_id(linked_plan, :prices)}", title: 'Prices',
+                   avoid_container_selector: 'main',
+                   bullets: ['Every recurring price of the plan, in words. A price never changes: use Change price to replace it.'] }]
+    ) do
+      visit_plans("/#{linked_plan.id}")
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(linked_plan, :prices_list)}", wait: 10)
+      # The processor snapshot loads after the page and moves everything below it, so wait for it before framing.
+      expect(page).to have_text('Payment processor', wait: 10)
+      scroll_to(find("##{ActionView::RecordIdentifier.dom_id(linked_plan, :prices)}"), align: :center)
     end
   end
 

@@ -1865,6 +1865,7 @@ fr:
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
         field_amount: Montant
+        field_amount_cents: Montant
         field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
           Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
           entiers.

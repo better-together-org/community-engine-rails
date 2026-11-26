@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T05:22:25Z",
+  "generated_at": "2026-11-26T16:48:50Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7984,12 +7984,6 @@
           "source_subsystem": "billing"
         },
         {
-          "from": "BetterTogether::Billing::PlanGrant",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "billing"
-        },
-        {
           "from": "BetterTogether::Billing::Payment",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -8561,6 +8555,12 @@
         },
         {
           "from": "BetterTogether::Billing::HostedAccount",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::Grant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -28822,77 +28822,6 @@
           ]
         },
         {
-          "name": "BetterTogether::Billing::PlanGrant",
-          "label": "Billing::PlanGrant",
-          "source_path": "app/models/better_together/billing/plan_grant.rb",
-          "table_name": "better_together_billing_plan_grants",
-          "columns": [
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "product_id",
-              "uuid FK"
-            ],
-            [
-              "kind",
-              "string"
-            ],
-            [
-              "position",
-              "integer"
-            ],
-            [
-              "parameters",
-              "jsonb"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (message=:required)",
-            "PresenceValidator: product (message=:required)",
-            "InclusionValidator: kind (in=dynamic)",
-            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": false
-            },
-            {
-              "name": "product",
-              "foreign_key": "product_id",
-              "target": "BetterTogether::Billing::Product",
-              "optional": false
-            }
-          ],
-          "polymorphic": [],
-          "translated_attributes": [],
-          "concerns": [
-            "BetterTogether::Billing::ParentBound",
-            "BetterTogether::Billing::PlatformBound"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": false,
-              "target_subsystem": "platform_network"
-            },
-            {
-              "name": "product",
-              "foreign_key": "product_id",
-              "target": "BetterTogether::Billing::Product",
-              "optional": false,
-              "target_subsystem": "shared_supporting"
-            }
-          ]
-        },
-        {
           "name": "BetterTogether::Billing::ProcessorSetting",
           "label": "Billing::ProcessorSetting",
           "source_path": "app/models/better_together/billing/processor_setting.rb",
@@ -29683,25 +29612,6 @@
           ]
         },
         {
-          "name": "BetterTogether::Billing::PlanGrantsController",
-          "label": "Billing::PlanGrantsController",
-          "source_path": "app/controllers/better_together/billing/plan_grants_controller.rb",
-          "superclass": "BetterTogether::ApplicationController",
-          "inferred_models": [
-            "BetterTogether::Billing::PlanGrant"
-          ],
-          "concerns": [
-            "BetterTogether::Billing::OwnerScoped",
-            "BetterTogether::Billing::TabFrameLayout",
-            "BetterTogether::ConsentCookieSync",
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch",
-            "BetterTogether::ThirdPartyTracking"
-          ]
-        },
-        {
           "name": "BetterTogether::Billing::PlansController",
           "label": "Billing::PlansController",
           "source_path": "app/controllers/better_together/billing/plans_controller.rb",
@@ -29969,7 +29879,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -29991,7 +29900,6 @@
             "Billing::SubscriptionPeriod",
             "Billing::Refund",
             "Billing::PromotionRedemption",
-            "Billing::PlanGrant",
             "Billing::Payment",
             "Billing::OrderAgreementAcceptance",
             "Billing::OfflinePayment",
@@ -30050,7 +29958,6 @@
             "Billing::Refund",
             "Billing::PromotionRedemption",
             "Billing::Promotion",
-            "Billing::PlanGrant",
             "Billing::Payment",
             "Billing::OrderAgreementAcceptance",
             "Billing::Order",
@@ -30154,7 +30061,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30183,7 +30089,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30212,7 +30117,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30241,7 +30145,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30270,7 +30173,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30299,7 +30201,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30328,7 +30229,6 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
-            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
@@ -30525,18 +30425,6 @@
         },
         {
           "from": "BetterTogether::Billing::Plan",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Billing::PlanGrant",
-          "to": "BetterTogether::Billing::Product",
-          "label": "product (product_id)",
-          "target_subsystem": "shared_supporting"
-        },
-        {
-          "from": "BetterTogether::Billing::PlanGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -30935,6 +30823,70 @@
               "target": "BetterTogether::Address",
               "optional": false,
               "target_subsystem": "geography_and_places"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Grant",
+          "label": "Billing::Grant",
+          "source_path": "app/models/better_together/billing/grant.rb",
+          "table_name": "better_together_billing_grants",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "product_id",
+              "uuid FK"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "position",
+              "integer"
+            ],
+            [
+              "parameters",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: product (message=:required)",
+            "InclusionValidator: kind (in=dynamic)",
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "product",
+              "foreign_key": "product_id",
+              "target": "BetterTogether::Billing::Product",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
             }
           ]
         },
@@ -40441,6 +40393,25 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::GrantsController",
+          "label": "Billing::GrantsController",
+          "source_path": "app/controllers/better_together/billing/grants_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Grant"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::TabFrameLayout",
+            "BetterTogether::ConsentCookieSync",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::HostedBillingsController",
           "label": "Billing::HostedBillingsController",
           "source_path": "app/controllers/better_together/billing/hosted_billings_controller.rb",
@@ -40589,23 +40560,6 @@
           "inferred_models": [
             "BetterTogether::Billing::Price"
           ],
-          "concerns": [
-            "BetterTogether::Billing::OwnerScoped",
-            "BetterTogether::Billing::TabFrameLayout",
-            "BetterTogether::ConsentCookieSync",
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch",
-            "BetterTogether::ThirdPartyTracking"
-          ]
-        },
-        {
-          "name": "BetterTogether::Billing::ProductGrantsController",
-          "label": "Billing::ProductGrantsController",
-          "source_path": "app/controllers/better_together/billing/product_grants_controller.rb",
-          "superclass": "BetterTogether::ApplicationController",
-          "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::Billing::TabFrameLayout",
@@ -41996,7 +41950,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42006,6 +41959,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController"
@@ -42019,7 +41973,8 @@
           "included_by": [
             "Billing::TaxLine",
             "Billing::RefundRequest",
-            "Billing::OrderDocument"
+            "Billing::OrderDocument",
+            "Billing::Grant"
           ]
         },
         {
@@ -42046,6 +42001,7 @@
             "Billing::PurchaseRequirement",
             "Billing::OrderDocument",
             "Billing::HostedAccount",
+            "Billing::Grant",
             "Billing::DefaultAddress",
             "Billing::Price",
             "Billing::Product"
@@ -42121,7 +42077,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42131,6 +42086,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController"
@@ -42197,7 +42153,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42207,6 +42162,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController",
@@ -42440,7 +42396,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42450,6 +42405,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController",
@@ -42533,7 +42489,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42543,6 +42498,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController",
@@ -42626,7 +42582,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42636,6 +42591,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController",
@@ -42742,7 +42698,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -42752,6 +42707,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController",
@@ -43238,7 +43194,6 @@
             "Billing::SaleRefundRequestsController",
             "Billing::RefundRequestsController",
             "Billing::ProductsController",
-            "Billing::ProductGrantsController",
             "Billing::PricesController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
@@ -43248,6 +43203,7 @@
             "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
+            "Billing::GrantsController",
             "Billing::EventsController",
             "Billing::CatalogController",
             "Billing::BillingAddressesController",
@@ -43407,6 +43363,12 @@
         },
         {
           "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Grant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -44185,12 +44147,6 @@
           "from": "BetterTogether::Billing::Plan",
           "to": "BetterTogether::Billing::TaxCategory",
           "label": "tax_category (tax_category_id)",
-          "source_subsystem": "billing"
-        },
-        {
-          "from": "BetterTogether::Billing::PlanGrant",
-          "to": "BetterTogether::Billing::Product",
-          "label": "product (product_id)",
           "source_subsystem": "billing"
         },
         {

@@ -90,6 +90,11 @@ module BetterTogether
         Entitlements::ForPerson.call(platform:, person:).live.exists?(product_id: id) || bought_by?(person)
       end
 
+      # Plans are products too, but the catalog shows them as plans, so the generic product list leaves them out.
+      scope :apart_from_plans, lambda {
+        where(arel_table[:type].eq(nil).or(arel_table[:type].not_eq(BetterTogether::Billing::Plan.sti_name)))
+      }
+
       # The price a buyer is offered now: the newest active one.
       def current_price = prices.active.order(created_at: :desc).first
 

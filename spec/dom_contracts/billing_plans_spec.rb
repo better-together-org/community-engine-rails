@@ -64,6 +64,17 @@ RSpec.describe 'Billing plans DOM contract', :as_platform_manager, type: :reques
                dom_id.dom_id(plan, :sync_status_badge), dom_id.dom_id(plan, :actions), 'billing-plan-locked-fields-note',
                'billing-plan-change-price-btn', 'billing-plan-processor-snapshot')
     expect(response.body).to include('billing-plan-sync-status-badge')
+    expect(response.body).not_to include('translation_missing')
+  end
+
+  it 'exposes the card listing every price a plan is sold at, without product-only actions' do
+    get "/#{locale}/billing/plans/#{plan.id}"
+    dom_id = ActionView::RecordIdentifier
+
+    expect_ids(dom_id.dom_id(plan, :prices), dom_id.dom_id(plan, :prices_title), dom_id.dom_id(plan, :prices_list),
+               dom_id.dom_id(plan.current_price))
+    expect(response.body).not_to include('new-billing-price-btn')
+    expect(response.body).not_to include(dom_id.dom_id(plan.current_price, :archive_btn))
   end
 
   it 'exposes the retry action only for a plan whose push failed' do

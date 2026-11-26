@@ -1831,6 +1831,7 @@ en:
           Each still has to be turned on for the seller before buyers can use it.
         field_active: Active (visible to subscribers)
         field_amount: Amount
+        field_amount_cents: Amount
         field_amount_hint: Type the price as you would write it, for example 45.00.
           Currencies without cents, such as JPY and KRW, take whole numbers.
         field_beneficiary_label: Beneficiary label

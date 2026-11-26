@@ -38,6 +38,26 @@ RSpec.describe BetterTogether::Billing::CatalogController do
       expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog))
     end
 
+    it 'shows a plan once, as a plan, and not again among the products' do
+      get better_together.billing_catalog_path(locale:)
+
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog))
+      expect(response.body).not_to include(better_together.billing_catalog_product_path(monthly, locale:))
+
+      get better_together.billing_catalog_product_path(monthly, locale:)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'leaves out a plan whose only recurring price was taken off sale, and its page is not found' do
+      monthly.current_price.archive!
+
+      get better_together.billing_catalog_path(locale:)
+      expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog))
+
+      get better_together.billing_catalog_plan_path(monthly, locale:)
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'says so when nothing is listed' do
       BetterTogether::Billing::Plan.update_all(listed: false) # rubocop:disable Rails/SkipsModelValidations
 

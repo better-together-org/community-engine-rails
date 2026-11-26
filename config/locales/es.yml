@@ -1829,6 +1829,7 @@ es:
           puedan usarla.
         field_active: Activo (visible para suscriptores)
         field_amount: Importe
+        field_amount_cents: Importe
         field_amount_hint: Escriba el precio como lo escribiría normalmente, por ejemplo
           45,00. Las monedas sin centavos, como el JPY y el KRW, usan números enteros.
         field_beneficiary_label: Etiqueta de beneficiario

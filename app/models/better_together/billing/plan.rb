@@ -54,6 +54,8 @@ module BetterTogether
 
       # Every plan is a primary one now: what is sold once, an add-on included, is a product.
       scope :primary, -> { all }
+      # A plan with a price on sale now: one whose only recurring price was archived has nothing to buy.
+      scope :with_current_price, -> { where(id: Price.active.where(kind: 'recurring').select(:product_id)) }
 
       # Permitted attributes for update, as a baseline. Which of them a given plan will
       # accept also depends on what is locked; see #permitted_update_attributes.

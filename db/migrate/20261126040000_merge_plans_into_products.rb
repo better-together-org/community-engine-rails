@@ -5,7 +5,7 @@
 # order lines now name the price, subscription terms keep the plan and also name the price they were sold at, and entitlements and
 # grants are keyed by product alone. Plan extras stay columns on the products table (grace and renewal lead days, payment methods).
 # Guarded so a re-run, or a database that never had plans, is a no-op. See docs/billing/assessments/2026-11-billing-model-assessment.md.
-class MergePlansIntoProducts < ActiveRecord::Migration[7.2]
+class MergePlansIntoProducts < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   PLAN = 'BetterTogether::Billing::Plan'
   PRICE = 'BetterTogether::Billing::Price'
   PRODUCT = 'BetterTogether::Billing::Product'
@@ -44,11 +44,11 @@ class MergePlansIntoProducts < ActiveRecord::Migration[7.2]
          restricted_to_members, restricted_to_subscribers, tax_category_id, processor, processor_product_id, metadata, sync_status,
          sync_error, sync_attempted_at, synced_to_processor_at, grace_days, renewal_lead_days, manages_processor_product,
          accepted_payment_methods, latest_processor_event_id)
-      SELECT id, lock_version, created_at, updated_at, platform_id, seller_type, seller_id, identifier, '#{PLAN}', active, listed,
+      SELECT id, lock_version, created_at, updated_at, platform_id, seller_type, seller_id, #{plan_identifier}, '#{PLAN}', active, listed,
              restricted_to_members, restricted_to_subscribers, tax_category_id, processor, processor_product_id, metadata, sync_status,
              sync_error, sync_attempted_at, synced_to_processor_at, grace_days, renewal_lead_days, manages_processor_product,
              accepted_payment_methods, latest_processor_event_id
-      FROM better_together_billing_plans
+      FROM better_together_billing_plans plan
       ON CONFLICT (id) DO NOTHING
     SQL
     execute(<<~SQL.squish)
@@ -62,6 +62,18 @@ class MergePlansIntoProducts < ActiveRecord::Migration[7.2]
       ON CONFLICT (id) DO NOTHING
     SQL
     retype_references
+  end
+
+  # A plan and a product could share an identifier while they lived in separate tables; the products table makes it unique for a
+  # seller, so a plan whose identifier is already taken keeps it with a short id suffix instead of aborting the upgrade.
+  def plan_identifier
+    <<~SQL.squish
+      CASE WHEN EXISTS (SELECT 1 FROM better_together_billing_products product
+                        WHERE product.platform_id = plan.platform_id AND product.identifier = plan.identifier
+                          AND product.seller_type IS NOT DISTINCT FROM plan.seller_type
+                          AND product.seller_id IS NOT DISTINCT FROM plan.seller_id AND product.id <> plan.id)
+           THEN plan.identifier || '-plan-' || substr(plan.id::text, 1, 8) ELSE plan.identifier END
+    SQL
   end
 
   def retype_references

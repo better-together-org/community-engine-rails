@@ -32,7 +32,7 @@ module BetterTogether
 
           audience = BetterTogether::Billing::Plans::Audience.call(platform:, person: agent)
           priced = BetterTogether::Billing::Price.active.select(:product_id)
-          scope.for_platform(platform).sold_by_platform.listed.open_to(audience).where(id: priced)
+          scope.for_platform(platform).sold_by_platform.listed.open_to(audience).where(id: priced).apart_from_plans
         end
       end
     end
