@@ -233,7 +233,7 @@ Screenshots: `docs/screenshots/{desktop,mobile}/billing_plan_catalog_block.*` an
 
 An extra is a product with purchase requirements (see [products and prices](products_and_prices.md) and [purchase requirements](purchase_requirements.md)); it replaced the old add-on plan. It never appears as a plan to buy.
 
-Checkout shows the extras this buyer may buy, in the plan's currency, as a form of checkboxes (`billing-checkout-add-ons`). Ticking one and choosing **Update order** adds a line to the summary and to the subtotal, and the tax preview prices every line. The ticked ids ride along as `add_on_ids[]` through the payment method form and the final POST, and `Orders::Place` creates one line item per purchasable.
+Checkout shows the extras this buyer may buy, in the plan's currency, as a form of checkboxes (`billing-checkout-add-ons`). Ticking one and choosing **Update order** adds a line to the summary and to the subtotal, and the tax preview prices every line. The ticked price ids ride along as `add_on_ids[]` (the parameter and the `billing-checkout-add-ons` ids keep their old names so the DOM contracts stay stable) through the payment method form and the final POST, and `Orders::Place` creates one line item per purchasable.
 
 - The one plan drives the order's purpose, the subscription term (`Subscriptions::Start.plan_line`) and the plan entitlement. An extra's product gives its own entitlement.
 - Extras are paid by local methods only (cash, cheque, e-Transfer): a processor prices from its own price ids.

@@ -179,6 +179,8 @@ Each phase is a separate PR, stacked on `feature/billing`, and each leaves the b
    version 1 adapters keep working. See [processor adapters](processor-adapters.md#contract-versions). A steward screen for a product's processor is left for later.
 8. **Cleanup.** Remove dead add-on code, update nav route names, DOM contracts, screenshots, docs (`plan_catalog.md`, stories doc, MVP definition)
    and the assessment.
+   **Built (PS-8):** the unused add-on locale keys are gone in en, es, fr and uk; MVP definition, stories doc, plan catalog and the assessment refresh say
+   products and extras. The code was already clear of `add_on` on Plan. Checkout and hub keep the `add_on` ids and `add_on_ids[]` for extras, so DOM contracts and screenshots are unchanged.
 
 ## Translatable attributes (decided before any model is written)
 
