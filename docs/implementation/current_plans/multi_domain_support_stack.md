@@ -26,7 +26,7 @@ One Community Engine app can serve several platforms, and each platform can have
 | --- | --- | --- |
 | MDS-0 | This note and the squash-ready description | this PR |
 | MDS-1 | Jobs and mailers carry the platform: `Current.platform` is serialized into jobs and restored, mail links use the platform's primary domain | in review |
-| MDS-2 | Engine URL defaults resolve per platform instead of one global `APP_HOST` | planned |
+| MDS-2 | Engine URL defaults resolve per platform instead of one global `APP_HOST` | in review |
 | MDS-3 | Secondary-domain rule: redirect to the primary, mail links use the primary | planned |
 | MDS-4 | Host authorization from active `PlatformDomain` rows, one documented env name | planned |
 | MDS-5 | Multi-hostname test support: per-hostname helpers for request, mailer and job specs, browser specs map hostnames to the one server port at runtime, host domain rows healed after JS cleanup | planned |
