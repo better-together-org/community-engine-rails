@@ -25,7 +25,7 @@ Closing these lets an operator configure hosted platforms by hand today, while t
 | HPS-1 | Host dashboard scoped to the platform being viewed and authorized against it; `Platform has_many :pages` | planned next |
 | HPS-2 | RBAC index navigation counts scoped to the platform being viewed | in review |
 | HPS-3 | Feature access and quota grants follow the governing operator, not the platform itself | in review |
-| HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | planned |
+| HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | in review |
 | HPS-5 | Platform-owned navigation area seeded at provisioning | planned |
 | HPS-6 | Manual hosted-platform provisioning runbook and the steward smoke-test checklist | planned |
 

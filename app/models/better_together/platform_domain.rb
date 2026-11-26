@@ -38,11 +38,26 @@ module BetterTogether
     validate :primary_domain_must_be_active, if: :primary_flag?
     validate :share_domain_must_be_active,   if: :share_domain?
 
+    # Set by the controller when the actor is a platform steward and not the governing operator. A stewarded
+    # domain must sit one label under an allowed zone, avoid reserved names, and starts inactive until an
+    # operator activates it. Provisioning, seeds and operator-created domains leave this unset.
+    attr_accessor :steward_requested
+
+    before_validation :start_stewarded_domain_inactive, on: :create, if: :steward_requested
+    validate :stewarded_hostname_allowed, if: -> { steward_requested && (new_record? || hostname_changed?) }
+    validate :stewarded_change_allowed, on: :update, if: :steward_requested
+
     def self.resolve(hostname)
       normalized = normalize_hostname(hostname)
       Rails.cache.fetch("bt:platform_domain:#{normalized}", expires_in: 5.minutes) do
         active.find_by(hostname: normalized)
       end
+    end
+
+    # Zones a steward may request subdomains in: the host platform's own primary domain plus configured zones.
+    def self.allowed_zones
+      host_zone = BetterTogether::Platform.find_by(host: true)&.primary_platform_domain&.hostname
+      ([host_zone] + Array(BetterTogether.platform_domain_zones)).compact.map { |zone| normalize_hostname(zone) }.uniq
     end
 
     def self.normalize_hostname(hostname)
@@ -63,6 +78,32 @@ module BetterTogether
     end
 
     private
+
+    def start_stewarded_domain_inactive
+      self.active = false
+      self.primary_flag = false
+      self.share_domain = false
+    end
+
+    def stewarded_hostname_allowed
+      zones = self.class.allowed_zones
+      label = label_under_zone(zones)
+      if label.nil? || label.include?('.')
+        errors.add(:hostname, :outside_allowed_zone, zones: zones.join(', '))
+      elsif BetterTogether.reserved_domain_labels.include?(label)
+        errors.add(:hostname, :reserved)
+      end
+    end
+
+    def label_under_zone(zones)
+      zone = zones.find { |candidate| hostname.to_s.end_with?(".#{candidate}") }
+      hostname.to_s.delete_suffix(".#{zone}") if zone
+    end
+
+    def stewarded_change_allowed
+      errors.add(:hostname, :operator_only) if hostname_changed? && hostname_was.present? && active_was
+      errors.add(:active, :operator_only) if active_changed? && active?
+    end
 
     def set_default_share_domain
       return unless platform_id
