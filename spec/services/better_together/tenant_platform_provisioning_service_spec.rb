@@ -93,6 +93,52 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
     end
   end
 
+  describe 'platform-owned navigation' do
+    let(:identifiers) { %w[platform-header platform-footer platform-host better-together] }
+
+    it 'seeds the hosted platform its own navigation areas at provisioning' do
+      result = described_class.call(**base_params)
+
+      owned = result.platform.navigation_areas.pluck(:identifier)
+      expect(owned).to include(*identifiers)
+      expect(result.platform.navigation_areas.flat_map(&:navigation_items)).to all(be_present)
+    end
+
+    it 'leaves the host platform navigation untouched' do
+      host = BetterTogether::Platform.find_by!(host: true)
+      before_ids = host.navigation_areas.order(:id).pluck(:id)
+
+      described_class.call(**base_params)
+
+      expect(host.navigation_areas.order(:id).pluck(:id)).to eq(before_ids)
+    end
+
+    it 'does not seed again when the platform is provisioned a second time' do
+      first = described_class.call(**base_params)
+      count = first.platform.navigation_areas.count
+
+      described_class.call(**base_params)
+
+      expect(first.platform.navigation_areas.reload.count).to eq(count)
+    end
+
+    it 'gives two hosted platforms separate areas' do
+      one = described_class.call(**base_params).platform
+      two = described_class.call(**base_params, host_url: "https://other-#{SecureRandom.hex(6)}.example.com").platform
+
+      expect(one.navigation_areas.pluck(:id) & two.navigation_areas.pluck(:id)).to be_empty
+    end
+
+    it 'seeds navigation for a platform created earlier by the setup wizard' do
+      platform = create(:better_together_platform, type: 'BetterTogether::HostedPlatform')
+      user = build_steward_user(email: "wiz-#{SecureRandom.hex(4)}@example.com")
+
+      described_class.provision_steward_for_existing_platform!(platform:, user:)
+
+      expect(platform.navigation_areas.pluck(:identifier)).to include('platform-header')
+    end
+  end
+
   describe '.provision_steward_for_existing_platform!' do
     let(:platform_result) { described_class.call(**base_params) }
     let(:platform) { platform_result.platform }
