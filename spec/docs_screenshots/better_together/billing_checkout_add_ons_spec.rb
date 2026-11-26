@@ -16,6 +16,7 @@ RSpec.describe 'Documentation screenshots for checkout add-ons', # rubocop:disab
   include_context 'with orders fixtures'
   include_context 'with builtin billing processors'
   include_context 'with billing switched on'
+  include_context 'with billing extras'
 
   let(:attrs) { { processor: nil, accepted_payment_methods: %w[cash], currency: 'USD' } }
 
@@ -30,8 +31,8 @@ RSpec.describe 'Documentation screenshots for checkout add-ons', # rubocop:disab
   after { Current.platform = nil }
 
   it 'captures checkout with an add-on ticked' do
-    plan = create(:better_together_billing_plan, :unlinked, :one_time, **attrs, name: 'Annual membership', amount_cents: 2500)
-    add_on = create(:better_together_billing_plan, :unlinked, :one_time, **attrs, name: 'Conference lunch', amount_cents: 700, add_on: true)
+    plan = create(:better_together_billing_plan, :unlinked, **attrs, name: 'Annual membership', amount_cents: 2500)
+    add_on = create_extra(name: 'Conference lunch', amount_cents: 700, needs: :any_plan)
 
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_checkout_add_ons',

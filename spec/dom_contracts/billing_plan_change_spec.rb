@@ -27,7 +27,8 @@ RSpec.describe 'Billing plan change DOM contract', type: :request do # rubocop:d
   end
 
   it 'shows the waiting choice and a way to take it back' do
-    BetterTogether::Billing::Subscriptions::ChangePlan.request(term: term, plan: BetterTogether::Billing::Plan.find_by!(amount_cents: 5000))
+    bigger = BetterTogether::Billing::Plan.joins(:prices).find_by!(better_together_billing_prices: { amount_cents: 5000 })
+    BetterTogether::Billing::Subscriptions::ChangePlan.request(term:, plan: bigger)
 
     get "/#{locale}/billing/subscriptions/#{term.id}"
 

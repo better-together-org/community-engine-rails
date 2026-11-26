@@ -26,6 +26,11 @@ module BetterTogether
       validates :unit_amount_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :purchasable_id, presence: true
+
+      # A product (a plan is one) is bought through the price it is sold at today.
+      def purchasable=(record)
+        super(record.is_a?(Product) ? record.current_price : record)
+      end
       validate :purchasable_registered
 
       def total_cents = quantity.to_i * unit_amount_cents.to_i

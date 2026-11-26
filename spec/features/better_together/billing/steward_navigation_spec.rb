@@ -14,7 +14,7 @@ RSpec.describe 'Billing steward navigation', :accessibility, :js, :no_auth, :ski
   let(:entry) { '#host-nav-item a.dropdown-item[data-identifier="billing-subscribers"]' }
 
   before do
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) })
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) })
     Current.platform = host_platform
     BetterTogether::NavigationBuilder.build_host
     Rails.cache.clear

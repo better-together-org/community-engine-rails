@@ -9,6 +9,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_DEFAULT_ADDRESSES : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_DEFAULT_ADDRESSES : "person / person_id"
   EXT_ADDRESS ||--o{ BILLING_DEFAULT_ADDRESSES : "address / address_id"
+  EXT_PLATFORM ||--o{ BILLING_GRANTS : "platform / platform_id"
+  BILLING_PRODUCTS ||--o{ BILLING_GRANTS : "product / product_id"
   EXT_PLATFORM ||--o{ BILLING_HOSTED_ACCOUNTS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_HOSTED_ACCOUNTS : "suspended_by / suspended_by_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
@@ -16,9 +18,11 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_ORDER_DOCUMENTS : "platform / platform_id"
   EXT_BILLING_ORDER ||--o{ BILLING_ORDER_DOCUMENTS : "order / order_id"
   EXT_UPLOAD ||--o{ BILLING_ORDER_DOCUMENTS : "upload / upload_id"
-  EXT_PLATFORM ||--o{ BILLING_PLAN_ADD_ONS : "platform / platform_id"
-  EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "plan / plan_id"
-  EXT_BILLING_PLAN ||--o{ BILLING_PLAN_ADD_ONS : "add_on / add_on_id"
+  EXT_PLATFORM ||--o{ BILLING_PRICES : "platform / platform_id"
+  BILLING_PRODUCTS ||--o{ BILLING_PRICES : "product / product_id"
+  EXT_PLATFORM ||--o{ BILLING_PRODUCTS : "platform / platform_id"
+  BILLING_TAX_CATEGORIES o|--o{ BILLING_PRODUCTS : "tax_category / tax_category_id"
+  EXT_PLATFORM ||--o{ BILLING_PURCHASE_REQUIREMENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_REFUND_REQUESTS : "platform / platform_id"
   EXT_BILLING_ORDER ||--o{ BILLING_REFUND_REQUESTS : "order / order_id"
   EXT_PERSON ||--o{ BILLING_REFUND_REQUESTS : "requester / requester_id"
@@ -160,6 +164,14 @@ erDiagram
     kind string
   }
 
+  BILLING_GRANTS {
+    platform_id uuid
+    product_id uuid
+    kind string
+    position integer
+    parameters jsonb
+  }
+
   BILLING_HOSTED_ACCOUNTS {
     platform_id uuid
     suspended_by_id uuid
@@ -198,10 +210,42 @@ erDiagram
     superseded_at datetime
   }
 
-  BILLING_PLAN_ADD_ONS {
-    add_on_id uuid
-    plan_id uuid
+  BILLING_PRICES {
+    processor_price_id string
     platform_id uuid
+    product_id uuid
+    currency string
+    interval string
+    kind string
+    lookup_key string
+    active boolean
+    amount_cents integer
+    interval_count integer
+  }
+
+  BILLING_PRODUCTS {
+    latest_processor_event_id string
+    processor_product_id string
+    platform_id uuid
+    seller_id uuid
+    tax_category_id uuid
+    accepted_payment_methods string
+    identifier string
+    lifetime string
+    processor string
+    seller_type string
+  }
+
+  BILLING_PURCHASE_REQUIREMENTS {
+    dependent_id uuid
+    platform_id uuid
+    prerequisite_id uuid
+    dependent_type string
+    met_by string
+    on_prerequisite_end string
+    prerequisite_kind string
+    prerequisite_type string
+    required boolean
   }
 
   BILLING_REFUND_REQUESTS {
@@ -744,10 +788,6 @@ erDiagram
   }
 
   EXT_UPLOAD {
-    string export_ref
-  }
-
-  EXT_BILLING_PLAN {
     string export_ref
   }
 

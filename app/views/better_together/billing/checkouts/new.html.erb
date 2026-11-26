@@ -24,8 +24,8 @@
   <turbo-frame id="billing-checkout-tax-frame">
   <div id="billing-checkout-summary" class="card mb-4" role="status" aria-live="polite" aria-atomic="true">
     <div class="card-body d-flex justify-content-between">
-      <span><strong><%= @plan.name %></strong><span class="d-block text-body-secondary"><%= billing_interval_label(@plan.billing_interval) %></span></span>
-      <span class="fs-5"><%= @plan.free? ? t('better_together.billing.checkout.free') : billing_amount(@plan.amount_cents, @plan.currency) %></span>
+      <span><strong><%= @plan.name %></strong><span class="d-block text-body-secondary"><%= billing_interval_label(@plan.billing_interval) %><% if @quantity > 1 %> · <%= t('better_together.billing.checkout.quantity_line', count: @quantity) %><% end %></span></span>
+      <span class="fs-5"><%= @plan.free? ? t('better_together.billing.checkout.free') : billing_amount(@plan.amount_cents * @quantity, @plan.currency) %></span>
     </div>
     <% @add_ons.each do |add_on| %>
       <div class="card-body border-top d-flex justify-content-between py-2" id="<%= dom_id(add_on, :checkout_line) %>">
@@ -53,10 +53,28 @@
   </div>
   </turbo-frame>
 
+  <%# A price is bought in a number: choosing it reloads the page with the new total. %>
+  <% if @plan.is_a?(BetterTogether::Billing::Price) %>
+    <%= form_with(url: new_billing_checkout_path(locale: I18n.locale), method: :get, id: 'billing-checkout-quantity-form', class: 'mb-4') do %>
+      <%= hidden_field_tag item_param, @plan.id, id: nil %>
+      <% @add_ons.each do |add_on| %><%= hidden_field_tag 'add_on_ids[]', add_on.id, id: dom_id(add_on, :quantity_form_add_on) %><% end %>
+      <div class="row g-2 align-items-end">
+        <div class="col-auto">
+          <%= label_tag 'billing-checkout-quantity', t('better_together.billing.checkout.quantity'), class: 'form-label' %>
+          <%= number_field_tag :quantity, @quantity, id: 'billing-checkout-quantity', class: 'form-control', min: 1, max: BetterTogether::Billing::CheckoutsController::MAX_QUANTITY %>
+        </div>
+        <div class="col-auto">
+          <%= submit_tag t('better_together.billing.checkout.update_order'), class: 'btn btn-outline-secondary', id: 'billing-checkout-quantity-btn', name: nil %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
   <%# Optional extras for this order. Ticking one reloads the page with it added; the method is chosen after. %>
   <% if @available_add_ons.any? %>
     <%= form_with(url: new_billing_checkout_path(locale: I18n.locale), method: :get, id: 'billing-checkout-add-ons-form') do %>
-      <%= hidden_field_tag :plan_id, @plan.id %>
+      <%= hidden_field_tag item_param, @plan.id, id: nil %>
+      <%= hidden_field_tag :quantity, @quantity, id: nil if @plan.is_a?(BetterTogether::Billing::Price) %>
       <fieldset id="billing-checkout-add-ons" class="mb-4">
         <legend class="h5"><%= t('better_together.billing.checkout.add_ons_heading') %></legend>
         <p id="billing-checkout-add-ons-hint" class="small text-body-secondary"><%= t('better_together.billing.checkout.add_ons_hint') %></p>
@@ -85,7 +103,8 @@
   <%# Step 1: how to pay. A method that is not available is listed with the reason. A free plan has nothing to pay. %>
   <% unless @free_order %>
   <%= form_with(url: new_billing_checkout_path(locale: I18n.locale), method: :get, id: 'billing-checkout-method-form') do %>
-    <%= hidden_field_tag :plan_id, @plan.id %>
+    <%= hidden_field_tag item_param, @plan.id, id: nil %>
+      <%= hidden_field_tag :quantity, @quantity, id: nil if @plan.is_a?(BetterTogether::Billing::Price) %>
     <% @add_ons.each do |add_on| %><%= hidden_field_tag 'add_on_ids[]', add_on.id, id: dom_id(add_on, :method_form_add_on) %><% end %>
     <fieldset id="billing-checkout-methods" class="mb-4">
       <legend class="h5"><%= t('better_together.billing.checkout.how_to_pay') %></legend>
@@ -149,7 +168,8 @@
   <% if (@method || @free_order) && @gate %>
     <% if @gate.ready? %>
       <%= form_with(url: billing_checkout_path(locale: I18n.locale), method: :post, id: 'billing-checkout-form') do %>
-        <%= hidden_field_tag :plan_id, @plan.id %>
+        <%= hidden_field_tag item_param, @plan.id, id: nil %>
+      <%= hidden_field_tag :quantity, @quantity, id: nil if @plan.is_a?(BetterTogether::Billing::Price) %>
         <%= hidden_field_tag :checkout_token, params[:checkout_token].presence || SecureRandom.hex(16), id: 'billing-checkout-token' %>
         <%= hidden_field_tag :expected_total_cents, @order_cents, id: 'billing-checkout-expected-total' %>
         <% @add_ons.each do |add_on| %><%= hidden_field_tag 'add_on_ids[]', add_on.id, id: dom_id(add_on, :form_add_on) %><% end %>
@@ -159,7 +179,7 @@
         <% end %>
         <%= hidden_field_tag :renew_with, @renew_with, id: 'billing-checkout-renew-with-hidden' if @renew_with %>
         <% unless @free_order %>
-          <%= render 'billing_address', addresses: @addresses, selected_id: @selected_address_id, new_address: @new_address, plan_id: @plan.id %>
+          <%= render 'billing_address', addresses: @addresses, selected_id: @selected_address_id, new_address: @new_address, item_param: item_param, item_id: @plan.id, quantity: @quantity %>
         <% end %>
         <section id="billing-agreement-review" class="card mb-4" aria-labelledby="billing-agreement-review-title">
           <div class="card-header"><strong id="billing-agreement-review-title"><%= t('better_together.billing.checkout.review_title') %></strong></div>

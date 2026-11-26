@@ -44,7 +44,7 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
 
 1. **Create in the processor.** The steward picks a new or existing product, a currency and
    interval (option lists fetched live from the processor), and types an amount. The plan is
-   saved as `pending` and `SyncPlanJob` creates the processor-side product and price.
+   saved as `pending` and `SyncProductJob` creates the processor-side product and price.
 2. **Link an existing price.** The steward picks a price (options fetched live, narrowed by
    product). Core calls `fetch_price` and **copies** the amount, currency, interval and
    product from the processor, whatever was typed, so the two cannot disagree. A price the
@@ -54,7 +54,7 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
 
 A plan with **no online processor** has nothing to push or link: it starts `synced`, needs no price id, and is paid by its accepted methods.
 
-A processor that cannot push plans (no `plan_sync` capability) still works: the price id is
+A processor that cannot push plans (no `catalog_sync` capability) still works: the price id is
 then required, because nothing will create it, and the plan starts `synced`.
 
 ![Plan sync flow](../diagrams/exports/png/billing_plan_processor_sync_flow.png)
@@ -67,8 +67,8 @@ flowchart TD
   M -->|Link existing price| L1[Choose a price<br/>fetch_price copies its values]
   L1 --> SYNCED[Plan saved: synced]
   SAVE --> AC[SyncPlanJob on the billing queue]
-  AC --> SP[adapter.sync_plan with the platform context<br/>and a core-owned idempotency key]
-  SP -->|PlanSyncResult| W[Core stores ids, synced]
+  AC --> SP[adapter.sync_catalog_item with the platform context<br/>and a core-owned idempotency key]
+  SP -->|CatalogSyncResult| W[Core stores ids, synced]
   SP -->|error, retries exhausted| F[failed, short code]
   F --> RB[Retry sync]
   RB --> AC
@@ -127,11 +127,11 @@ short reason and a **Retry sync** action.
 
 | Capability | Methods (all take `context:`) |
 |---|---|
-| `plan_sync` | `sync_plan(plan:, idempotency_key:)` returns a `PlanSyncResult`; `fetch_price(processor_price_id:)` returns a `PriceInfo` or `nil`; `fetch_product(processor_product_id:)` returns a `ProductInfo` or `nil` |
+| `catalog_sync` | `sync_catalog_item(item:, idempotency_key:)` returns a `CatalogSyncResult`; `fetch_price(processor_price_id:)` returns a `PriceInfo` or `nil`; `fetch_product(processor_product_id:)` returns a `ProductInfo` or `nil` |
 | `lookups` | `lookup(kind:, search:, scope:, limit:)` returns `LookupOption`s; `lookup_kinds` lists the kinds |
 | (always) | `field_rules(:plan)`; optionally `supported_currencies` / `supported_intervals` as fallbacks |
 
-Rules: `sync_plan` **never writes the plan**; core stores the result, which is also what stops
+Rules: `sync_catalog_item` **never writes the plan**; core stores the result, which is also what stops
 a processor-side change being pushed straight back. Pass `idempotency_key` to every processor
 write. Use short SDK timeouts and no retries in `lookup` (a person is waiting). Raise
 `ProcessorAdapter::LookupError` with a message safe to show when the processor cannot be
@@ -144,7 +144,7 @@ classDiagram
   class ProcessorAdapter {
     +field_rules(resource) Hash
     +lookup_kinds() Array
-    +sync_plan(context, plan, idempotency_key) PlanSyncResult
+    +sync_catalog_item(context, item, idempotency_key) CatalogSyncResult
     +fetch_price(context, processor_price_id) PriceInfo
     +fetch_product(context, processor_product_id) ProductInfo
     +lookup(context, kind, search, scope, limit) Array
@@ -154,7 +154,7 @@ classDiagram
     +processor
   }
   ProcessorAdapter ..> ProcessorContext : receives on every call
-  ProcessorAdapter ..> PlanSyncResult
+  ProcessorAdapter ..> CatalogSyncResult
   ProcessorAdapter ..> PriceInfo
   ProcessorAdapter ..> ProductInfo
   ProcessorAdapter ..> LookupOption
@@ -192,7 +192,7 @@ deliberately not unique.
 
 ## Operating notes
 
-- `SyncPlanJob` runs on the `billing` queue with the plan id only. Retries use growing waits
+- `SyncProductJob` runs on the `billing` queue with the plan id only. Retries use growing waits
   (up to 10 attempts); when they run out the plan is marked `failed` with a short code
   (`processor_unavailable`, `not_configured`, `processor_error`).
 - The job takes its context from the plan's platform, never from `Current.platform`.
@@ -229,37 +229,21 @@ What a visitor sees is decided by the policy, the same as the catalog page. The 
 
 Screenshots: `docs/screenshots/{desktop,mobile}/billing_plan_catalog_block.*` and `billing_plan_button_block.*`.
 
-## Add-ons on a checkout
+## Extras on a checkout
 
-A plan marked **Add-on only** (steward form checkbox `billing_plan_add_on`) is a plain extra sold on another plan's order. It never appears in the catalog, on plan blocks, or as a plan to buy on its own (`PlanPolicy#catalog_show?` and `#offer?` refuse it, `CatalogScope` leaves it out, and checkout answers 404 for it as the plan).
+An extra is a product with purchase requirements (see [products and prices](products_and_prices.md) and [purchase requirements](purchase_requirements.md)); it replaced the old add-on plan. It never appears as a plan to buy.
 
-Rules, enforced by `Plan` and `PlanGrant` validations:
+Checkout shows the extras this buyer may buy, in the plan's currency, as a form of checkboxes (`billing-checkout-add-ons`). Ticking one and choosing **Update order** adds a line to the summary and to the subtotal, and the tax preview prices every line. The ticked price ids ride along as `add_on_ids[]` (the parameter and the `billing-checkout-add-ons` ids keep their old names so the DOM contracts stay stable) through the payment method form and the final POST, and `Orders::Place` creates one line item per purchasable.
 
-- one-time only (`add_on_cannot_renew`);
-- nothing included: a plan with grants cannot become an add-on (`add_on_has_grants`) and a grant cannot be added to one (`add_on_cannot_have_grants`).
-
-Checkout shows the add-ons this buyer may buy, in the plan's currency, as a form of checkboxes (`billing-checkout-add-ons`). Ticking one and choosing **Update order** adds a line to the summary and to the subtotal, and the tax preview prices every line. The ticked ids ride along as `add_on_ids[]` through the payment method form and the final POST, and `Orders::Place` creates one line item per purchasable.
-
-How the extras behave:
-
-- The one primary plan drives the order's purpose, the subscription term (`Subscriptions::Start.plan_line`) and the entitlement, so add-ons never change what the buyer is entitled to.
-- Add-ons are paid by local methods only (cash, cheque, e-Transfer): a processor prices from its own price ids, so an order with an extra offers only the methods the platform settles itself.
-- An order whose plan and add-ons are all free needs no payment method or billing address.
-
-### Which plans an add-on extends, and buying it later
-
-A steward ticks the plans an add-on extends on its form (`billing-plan-add-on-targets`); each tick is a `PlanAddOn` link. An add-on with no links extends every primary plan.
-
-- **At a plan's checkout** only the add-ons that extend that plan (or all plans) are offered (`Plan.add_ons_for`).
-- **On its own, later** (`PlanPolicy#buy_alone?`): checkout accepts an add-on as the plan when the buyer qualifies for its audience and *holds* a plan it extends. With no links, holding any primary plan of the platform is enough. A buyer who holds nothing gets 404.
-- **What "holds" means** (`Plans::Holdings`): a live entitlement, a live subscription the person pays for, or a one-time order that is paid or part refunded. Refunded or cancelled orders and lapsed subscriptions hold nothing. Add-ons themselves are never held.
-- **What the order does:** an add-on-only order is one-time, paid by a local method, and gives no entitlement and starts no subscription (`Subscriptions::Start.single_plan` is nil for it).
-- **Where buyers find it:** the billing hub lists "Extras for your plans" with an Add button into checkout.
-
-Not tied together: the add-on order does not record which plan order it extends, and refunding or lapsing the plan later does not touch the add-on order. Deferred: add-ons that carry their own entitlements or quotas (needs per-line entitlements), buying for a community (`on_behalf_of`), and guest checkout.
+- The one plan drives the order's purpose, the subscription term (`Subscriptions::Start.plan_line`) and the plan entitlement. An extra's product gives its own entitlement.
+- Extras are paid by local methods only (cash, cheque, e-Transfer): a processor prices from its own price ids.
+- An order whose plan and extras are all free needs no payment method or billing address.
+- **At a plan's checkout** only the extras whose rules that plan meets are offered.
+- **On its own, later** (`PricePolicy#buy_alone?`): checkout accepts the price (`price_id`) when the buyer qualifies for its audience and meets its rules. A buyer who does not gets 404.
+- **What "holds" means** (`Plans::Holdings`): a live entitlement, or a live subscription the person pays for.
+- **Where buyers find it:** the billing hub lists "Extras for your plans" with an Add button into checkout, and locked extras with the reason.
 
 ![Extras on the billing page](../screenshots/desktop/billing_hub_add_ons.png)
-![Add-on target plans on the plan form](../screenshots/desktop/billing_add_on_targets_form.png)
 
 ![Checkout with an add-on](../screenshots/desktop/billing_checkout_add_ons.png)
 ![Checkout with an add-on, mobile](../screenshots/mobile/billing_checkout_add_ons.png)

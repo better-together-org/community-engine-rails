@@ -10,6 +10,11 @@ module BetterTogether
     # which currency), and may hold something back while an order waits to be paid:
     # `reserve!` when an order is placed and `release!` when it is cancelled or expires. A
     # plan holds nothing; a ticket type will hold a place.
+    #
+    # The order engine asks a purchasable what it is and what to do, and never tests its class: whether it renews
+    # (`renews?`), is an extra on another purchase (`extra?`), is sold on a plan order (`plan_line?`), is given through
+    # its own order (`fulfilled_by_order?`), and whether a person holds it (`held_by?`). Each default is the plain
+    # one-off answer, so a new kind of purchasable overrides only what is different about it.
     module Purchasable
       extend ActiveSupport::Concern
 
@@ -35,6 +40,26 @@ module BetterTogether
 
       # Whether it can be bought right now.
       def purchasable? = true
+
+      # Whether buying it starts a subscription that renews. The purpose of the order follows from this.
+      def renews? = false
+
+      # Whether it is only an extra sold with, or later on top of, another purchase and never the main thing bought.
+      def extra? = false
+
+      # Whether it belongs on an order that is read as a plan order (a plan, or an add-on to one).
+      def plan_line? = false
+
+      # Whether paying for it gives what it includes through the order itself (not through a subscription), taken
+      # away again if the order is refunded or cancelled.
+      def fulfilled_by_order? = false
+
+      # Whether `person` holds it now: a live purchase of it that still stands. Nothing is held by default.
+      def held_by?(_person) = false
+
+      # Takes back what one paid line gave, when a prerequisite it depended on ended and the rule says revoke.
+      # Nothing by default: a purchasable that gives something (a ticket, a grant) overrides it.
+      def revoke_line(_line_item); end
 
       # Hold `quantity` for an order; raise to refuse. Nothing by default.
       def reserve!(quantity: 1); end

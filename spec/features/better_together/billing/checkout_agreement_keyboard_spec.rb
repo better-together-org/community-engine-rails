@@ -12,8 +12,8 @@ RSpec.describe 'Checkout agreement reader from the keyboard', :js, :no_auth, :sk
   include_context 'with billing switched on'
 
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     name: 'Garden plot', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot'),
+                                           currency: 'USD', amount_cents: 2500)
   end
   let(:identifier) { 'one_time_purchase_agreement' }
   let(:link) { "billing-agreement-view-#{identifier}" }
@@ -26,7 +26,7 @@ RSpec.describe 'Checkout agreement reader from the keyboard', :js, :no_auth, :sk
     purchase_agreements_for(host_platform)
     create_billing_address_for(find_or_create_test_user('user@example.test').person)
     capybara_login_as_user
-    visit "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{cash_plan.id}&payment_method=cash"
+    visit "/#{I18n.default_locale}/billing/checkout/new?price_id=#{cash_plan.id}&payment_method=cash"
   end
 
   after { Current.platform = nil }

@@ -23,7 +23,7 @@ RSpec.describe 'Documentation screenshots for the public plan catalog', # ruboco
 
     Current.platform = host_platform
     sub_plan.update!(listed: true, name: 'Supporting member', participant_summary: 'Support the work and vote at the AGM.')
-    create(:better_together_billing_plan, :one_time, listed: true, name: 'Friend', participant_summary: 'Free, with no payment.', **free_attrs)
+    create(:better_together_billing_plan, listed: true, name: 'Friend', participant_summary: 'Free, with no payment.', **free_attrs)
   end
 
   after { Current.platform = nil }

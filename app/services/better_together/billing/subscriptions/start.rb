@@ -24,7 +24,7 @@ module BetterTogether
         # Whether this order is the start of a subscription Community Engine will renew.
         def self.startable?(order)
           plan = single_plan(order)
-          plan.present? && plan.recurring? && order.seller_id.blank? && order.pay_subscription_id.blank? &&
+          plan.present? && plan.renews? && order.seller_id.blank? && order.pay_subscription_id.blank? &&
             order.purpose == 'subscription' && paid_locally?(order)
         end
 
@@ -33,9 +33,9 @@ module BetterTogether
         # is not exactly one primary plan.
         def self.single_plan(order)
           purchasables = order.line_items.to_a.map(&:purchasable)
-          return unless purchasables.all?(Plan)
+          return unless purchasables.all? { |purchasable| purchasable.plan_line? || purchasable.extra? }
 
-          primary = purchasables.reject(&:add_on?)
+          primary = purchasables.reject(&:extra?)
           primary.first if primary.one?
         end
 
@@ -83,7 +83,9 @@ module BetterTogether
           ActiveRecord.after_all_transactions_commit { SyncEntitlementJob.perform_later(term.pay_subscription_id) }
         end
 
-        def plan = @plan ||= self.class.single_plan(order)
+        # The price the subscription is bought through, and the plan it belongs to.
+        def price = @price ||= self.class.single_plan(order)
+        def plan = price.product
 
         def anchor = @anchor ||= PaidTime.for(order)
 
@@ -103,7 +105,7 @@ module BetterTogether
 
         def time_zone = order.platform.time_zone.presence || 'UTC'
 
-        def first_period_end = Periods.ends_at(anchor:, plan:, sequence: 0, time_zone:)
+        def first_period_end = Periods.ends_at(anchor:, price:, sequence: 0, time_zone:)
 
         def customer = order.buyer.add_payment_processor(:local, platform: order.platform).api_record
 
@@ -114,7 +116,7 @@ module BetterTogether
 
         def build_term(subscription)
           order.platform.billing_subscription_terms.create!(
-            pay_subscription: subscription, plan:, beneficiary: order.on_behalf_of, payment_method: renewal_method,
+            pay_subscription: subscription, plan:, price:, beneficiary: order.on_behalf_of, payment_method: renewal_method,
             unit_amount_cents: self.class.plan_line(order).unit_amount_cents, currency: order.currency, anchor_at: anchor
           )
         end

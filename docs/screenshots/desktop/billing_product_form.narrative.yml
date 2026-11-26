@@ -1,0 +1,12 @@
+---
+title: Product form
+audience:
+- platform_organizer
+journey_step: As a steward I say how long what a product gives lasts.
+callouts:
+- :id: lifetime
+  :title: Until used, or for a set time after it is paid
+  :description: Until used, or for a set time after it is paid
+accessibility_notes: Every field has a label; each section is labelled by its heading.
+slug: billing_product_form
+device: desktop

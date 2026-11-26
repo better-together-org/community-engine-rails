@@ -10,35 +10,35 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_plan_blocks_spec.rb",
   "callouts": [
     {
-      "selector": "#block_fd09051d-16f5-4970-8e97-b282a4c1c060_buy_billing_plan_d98e5415-95b8-459a-a113-500356478442",
+      "selector": "#block_29bac0d1-f2d3-42ce-a093-30013b22a9f3_buy_billing_plan_26c0764b-f70c-4547-adbe-f5b36404714e",
       "title": "Start checkout",
       "bullets": [
         "One plan, offered from any page."
       ],
       "target": {
         "x": 101.0,
-        "y": 339.796875,
+        "y": 345.796875,
         "width": 104.609375,
         "height": 38.0,
         "right": 205.609375,
-        "bottom": 377.796875,
+        "bottom": 383.796875,
         "center_x": 153.3046875,
-        "center_y": 358.796875
+        "center_y": 364.796875
       },
       "avoid": {
         "x": 101.0,
-        "y": 339.796875,
+        "y": 345.796875,
         "width": 104.609375,
         "height": 38.0,
         "right": 205.609375,
-        "bottom": 377.796875,
+        "bottom": 383.796875,
         "center_x": 153.3046875,
-        "center_y": 358.796875
+        "center_y": 364.796875
       },
       "placement": {
         "side": "right",
         "x": 225.61,
-        "y": 292.8,
+        "y": 298.8,
         "width": 380,
         "height": 132,
         "score": 1234.390625

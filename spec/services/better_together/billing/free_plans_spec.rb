@@ -3,14 +3,15 @@
 require 'rails_helper'
 
 # A plan that costs nothing: it needs no way to pay, an order for it is paid on placing, and what it includes is given
-# with no payment to wait for. One-time and recurring plans alike.
+# with no payment to wait for. A free product price and a free recurring plan alike.
 RSpec.describe 'Free plans' do # rubocop:disable RSpec/DescribeClass
   include_context 'with entitlement fixtures'
 
   let(:free_attrs) do
     { processor: nil, processor_price_id: nil, processor_product_id: nil, amount_cents: 0, currency: 'USD', accepted_payment_methods: [] }
   end
-  let(:free_once) { create(:better_together_billing_plan, :one_time, **free_attrs) }
+  let(:free_product) { create(:better_together_billing_product, platform: host_platform) }
+  let(:free_once) { create(:better_together_billing_price, product: free_product, amount_cents: 0, currency: 'USD') }
   let(:free_monthly) { create(:better_together_billing_plan, billing_interval: 'month', **free_attrs) }
   let(:place_free) do
     lambda { |plan, purpose|
@@ -19,13 +20,13 @@ RSpec.describe 'Free plans' do # rubocop:disable RSpec/DescribeClass
   end
 
   it 'is a valid plan with no processor and no way of paying' do
-    plan = build(:better_together_billing_plan, :one_time, **free_attrs, platform: host_platform)
+    plan = build(:better_together_billing_plan, **free_attrs, platform: host_platform)
 
     expect(plan).to be_valid
   end
 
   it 'still needs a way of paying when it costs something' do
-    plan = build(:better_together_billing_plan, :one_time, **free_attrs, amount_cents: 100, platform: host_platform)
+    plan = build(:better_together_billing_plan, **free_attrs, amount_cents: 100, platform: host_platform)
 
     expect(plan).not_to be_valid
   end
@@ -38,8 +39,9 @@ RSpec.describe 'Free plans' do # rubocop:disable RSpec/DescribeClass
     expect(order.offline_payments).to be_empty
   end
 
-  it 'gives a one-time plan its entitlement and membership grant when placed' do
-    add_grant('membership_role', { 'joinable' => 'platform', 'role' => supporter_role.identifier }, plan: free_once)
+  it 'gives a free product its entitlement and membership grant when placed' do
+    free_product.grants.create!(platform_id: host_platform.id, kind: 'membership_role', position: 0,
+                                parameters: { 'joinable' => 'platform', 'role' => supporter_role.identifier })
     order = place_free.call(free_once, 'one_time')
     follow_up
 

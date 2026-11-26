@@ -968,6 +968,7 @@ uk:
           month: "%{price} на місяць"
           once: "%{price}, одноразово"
           year: "%{price} на рік"
+        products_heading: Також у продажу
         subscribe: Підписатися
         title: Плани
       checkout:
@@ -1021,6 +1022,12 @@ uk:
           сплатити нею цю частину зараз. Спосіб, обраний вище, сплатить решту.
         place_order: Оформити замовлення
         placed: Ваше замовлення оформлено.
+        quantity: Скільки
+        quantity_line:
+          few: "%{count} одиниці"
+          many: "%{count} одиниць"
+          one: "%{count} одиниця"
+          other: "%{count} одиниці"
         renew_with: Поновлювати за допомогою
         renew_with_default: Спосіб, яким я сплачую найбільшу частку
         renew_with_hint: Кожен рахунок на поновлення сплачуватиметься так. До будь-якого
@@ -1188,6 +1195,51 @@ uk:
           processed: Оброблена
           replayed: Повторена
         table_caption: Події платежів та їхній стан
+      grants:
+        add: Додати
+        add_confirm: Додати це до плану?
+        add_feature: Доступ до функції
+        add_quota: Більше квоти
+        add_role: Роль
+        add_storage: Більше сховища
+        added: Додано до плану.
+        amount_hint: У власній одиниці квоти, наприклад токени ШІ.
+        audience: Ті, хто вже має цей план (%{count}), буде оновлено за кілька хвилин.
+        audience_none: Цього плану ще ніхто не має, тож нікого це не стосується.
+        edit_confirm: Змінити цю кількість?
+        field_amount: Додаткова кількість
+        field_community: Спільнота (якщо спільнота)
+        field_feature: Функція
+        field_level: Рівень доступу
+        field_quota: Квота
+        field_role: Роль
+        field_storage: Сховище
+        field_where: Де
+        intro: Ті, хто оплачує цей план, отримують це, поки він оплачений. Коли він
+          спливає, прибирається лише те, що дав сам план; ролі та доступ, які вже
+          були, залишаються, а створене не видаляється.
+        none: Цей план ще нічого не включає.
+        place_a_community: Спільнота
+        place_community: спільнота %{name}
+        place_platform: Платформа
+        place_unknown: спільнота, якої більше немає
+        product_intro: Ті, хто купує цей продукт, отримують це, коли замовлення оплачено.
+          Якщо кошти повернуто або закінчився встановлений строк, те, що дав продукт,
+          забирається; нічого створеного ними не видаляється.
+        product_title: Що входить до цього продукту
+        refused: Не вдалося додати. Перевірте вибір; план не може надавати роль, що
+          дозволяє керувати.
+        remove: Прибрати
+        remove_confirm: Прибрати це з плану? Ті, хто це має, втратять, якщо цього
+          не було в них раніше.
+        removed: Прибрано з плану.
+        role_hint: Пропонуються лише ролі без прав керування.
+        summary_feature: Доступ до %{feature} (%{level})
+        summary_quota: На %{amount} %{unit} більше для %{quota}
+        summary_quota_size: На %{amount} більше для %{quota}
+        summary_role: Роль %{role} у %{where}
+        title: Що входить до цього плану
+        updated: Кількість змінено.
       hosted_billing:
         accept_button: Прийняти для цієї платформи
         accepted: Угоду прийнято для цієї платформи.
@@ -1738,53 +1790,8 @@ uk:
         one_time_participant_summary: Razovyi vnesok na hosted-dostup
         personal_beneficiary_label: Osobystyi dostup
         recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
-      plan_grants:
-        add: Додати
-        add_confirm: Додати це до плану?
-        add_feature: Доступ до функції
-        add_quota: Більше квоти
-        add_role: Роль
-        add_storage: Більше сховища
-        added: Додано до плану.
-        amount_hint: У власній одиниці квоти, наприклад токени ШІ.
-        audience: Ті, хто вже має цей план (%{count}), буде оновлено за кілька хвилин.
-        audience_none: Цього плану ще ніхто не має, тож нікого це не стосується.
-        edit_confirm: Змінити цю кількість?
-        field_amount: Додаткова кількість
-        field_community: Спільнота (якщо спільнота)
-        field_feature: Функція
-        field_level: Рівень доступу
-        field_quota: Квота
-        field_role: Роль
-        field_storage: Сховище
-        field_where: Де
-        intro: Ті, хто оплачує цей план, отримують це, поки він оплачений. Коли він
-          спливає, прибирається лише те, що дав сам план; ролі та доступ, які вже
-          були, залишаються, а створене не видаляється.
-        none: Цей план ще нічого не включає.
-        place_a_community: Спільнота
-        place_community: спільнота %{name}
-        place_platform: Платформа
-        place_unknown: спільнота, якої більше немає
-        refused: Не вдалося додати. Перевірте вибір; план не може надавати роль, що
-          дозволяє керувати.
-        remove: Прибрати
-        remove_confirm: Прибрати це з плану? Ті, хто це має, втратять, якщо цього
-          не було в них раніше.
-        removed: Прибрано з плану.
-        role_hint: Пропонуються лише ролі без прав керування.
-        summary_feature: Доступ до %{feature} (%{level})
-        summary_quota: На %{amount} %{unit} більше для %{quota}
-        summary_quota_size: На %{amount} більше для %{quota}
-        summary_role: Роль %{role} у %{where}
-        title: Що входить до цього плану
-        updated: Кількість змінено.
       plans:
         actions_heading: Дії
-        add_on_targets_hint: Лише для додатка. Позначте плани, з якими він пропонується
-          і власники яких можуть купити його окремо пізніше. Без позначок він пропонується
-          з усіма планами.
-        add_on_targets_legend: Плани, які розширює цей додаток
         audience_hint: 'Залиште обидва поля без позначки для всіх. Позначте одне або
           обидва, щоб обмежити: кожен, хто належить до позначених типів, може бачити
           й купувати його.'
@@ -1802,10 +1809,8 @@ uk:
         field_accepted_payment_methods_hint: Способи оплати поза платіжним процесором.
           Кожен потрібно ще ввімкнути для продавця, перш ніж покупці зможуть ним скористатися.
         field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
-        field_add_on: Лише додаток
-        field_add_on_hint: Продається лише як додаток до замовлення іншого плану,
-          ніколи окремо. Одноразово, без включеного доступу.
         field_amount: Сума
+        field_amount_cents: Сума
         field_amount_hint: Введіть ціну так, як ви її записали б, наприклад 45,00.
           Валюти без копійок, як-от JPY і KRW, приймають цілі числа.
         field_beneficiary_label: Marka benefitsiariya
@@ -1924,6 +1929,28 @@ uk:
         toggle_deactivate: Deaktuvuvaty
         update_submit: Onovyty plan
         updated: Plan bilingu uspishno onovleno.
+      prices:
+        archive: Зняти з продажу
+        archive_confirm: Зняти цю ціну з продажу? Уже зроблені замовлення її зберігають.
+        archived: Ціну знято з продажу.
+        create_submit: Додати ціну
+        created: Ціну додано.
+        field_amount: Сума
+        field_currency: Валюта
+        field_label: Підпис
+        field_label_hint: Необов'язково. Показується біля суми, коли в товару кілька
+          цін.
+        immutable_note: Ціна ніколи не змінюється після додавання. Щоб брати іншу
+          суму, додайте нову ціну й зніміть стару з продажу.
+        intro: Покупець платить найновішу ціну з тих, що в продажу.
+        new_price: Додати ціну
+        new_title: Додати ціну
+        none: Цін ще немає. Додайте одну, щоб почати продаж цього товару.
+        plan_intro: 'План продається за регулярними цінами. Ціна ніколи не змінюється:
+          скористайтеся «Змінити ціну», щоб замінити її.'
+        status_archived: Не продається
+        status_on_sale: У продажу
+        title: Ціни
       processor_settings:
         acknowledge_label: Я розумію та приймаю ці обмеження.
         acknowledged_on: Ви прийняли ці обмеження %{date}.
@@ -1995,6 +2022,72 @@ uk:
         status_managed_off: Недоступно
         status_managed_on: Увімкнено
         status_not_set_up: Не налаштовано
+      products:
+        create_submit: Створити товар
+        created: Товар створено.
+        edit_title: Редагувати товар
+        'false': Ні
+        field_active: У продажу
+        field_description: Опис
+        field_identifier: Ідентифікатор
+        field_identifier_hint: 'Коротка назва, яка ніколи не змінюється: малі літери,
+          цифри та підкреслення.'
+        field_lifetime: Як довго діє
+        field_listed: Показувати в каталозі
+        field_name: Назва
+        field_needs_any_plan: Будь-який план
+        field_price: Ціна
+        field_restricted_to_members: Лише для учасників
+        field_restricted_to_subscribers: Лише для передплатників
+        field_summary: Коротко
+        field_tax_category: Категорія податку
+        field_tax_category_hint: Залиште стандартну, якщо цей вид товару не оподатковується
+          інакше.
+        field_term_length: Як довго
+        field_term_unit: Одиниця
+        identifier_placeholder: dodatkove_skhovyshche
+        index_title: Товари
+        intro: Те, що ви продаєте один раз, наприклад додаткове сховище. Кожен товар
+          має ціни й пояснює, що отримує покупець.
+        lifetime_fixed_term: Протягом певного часу після оплати
+        lifetime_fixed_term_summary: Протягом %{count} %{unit}
+        lifetime_hint: До використання діє, доки покупець його має. Протягом певного
+          часу закінчується саме, а повернення коштів завершує його одразу.
+        lifetime_legend: Як довго діє те, що воно дає
+        lifetime_until_used: До використання
+        listing_legend: Де його пропонують
+        new_product: Новий товар
+        new_title: Новий товар
+        no_price: Ціни ще немає
+        none: Товарів ще немає.
+        requirements_hint: 'Залиште все непозначеним, щоб продавати окремо. Покупцеві
+          потрібен один із позначених планів: уже наявний або в тому самому замовленні.'
+        requirements_legend: Продається з планом
+        table_caption: Товари, які продає ця платформа
+        tax_standard: Стандартна
+        'true': Так
+        unit_day:
+          few: дні
+          many: днів
+          one: день
+          other: днів
+        unit_month:
+          few: місяці
+          many: місяців
+          one: місяць
+          other: місяців
+        unit_week:
+          few: тижні
+          many: тижнів
+          one: тиждень
+          other: тижнів
+        unit_year:
+          few: роки
+          many: років
+          one: рік
+          other: років
+        update_submit: Зберегти товар
+        updated: Товар збережено.
       promotions:
         activate: Увімкнути
         always_open: Завжди
@@ -2037,6 +2130,13 @@ uk:
         status_used_up: Вичерпано
         switched: Акцію оновлено.
         usage_of: "%{used} з %{max}"
+      purchase_requirements:
+        kinds:
+          plan: тариф
+        locked_heading: Додатки, які можна розблокувати
+        locked_hint: Для цих додатків спершу потрібно щось інше.
+        needs: 'Спершу потрібно: %{names}'
+        or: або
       readiness:
         check_agreements: 'Угоди про покупку чинні для: %{purpose}.'
         check_configured: Виставлення рахунків увімкнено, дані вашої організації задано.
@@ -2827,6 +2927,7 @@ uk:
             card: Картка з ціною
           empty: Виберіть план, який пропонуватиме цей блок.
           plan_hint: Виберіть один з активних планів цієї платформи.
+          price_hint: Або виберіть ціну продукту; вона замінює план.
         plan_catalog_block:
           create_label: Створити новий блок %{type} для сторінки
           empty: Наразі немає доступних планів.
@@ -7439,10 +7540,6 @@ uk:
       accepted: має бути прийнято
       account_mismatch: має належати тому самому рахунку
       acknowledgement_required: потрібно прийняти, перш ніж увімкнути цей спосіб
-      add_on_cannot_have_grants: не можна надати додатку
-      add_on_cannot_renew: додаток купується один раз і не поновлюється
-      add_on_has_grants: додаток не може нічого включати сам; додайте це до плану
-      add_on_locked_by_orders: не можна змінити, коли замовлення вже містять цей план
       after_start: має бути пізніше за початок
       already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
       already_on_the_plan: уже є в плані; змініть його замість цього
@@ -7480,7 +7577,6 @@ uk:
       lookup_failed: не вдалося перевірити в платіжному процесорі
       model_invalid: 'Перевірка не вдалася: %{errors}'
       must_be_a_primary_plan: має бути планом, який не є додатком
-      must_be_an_add_on: має бути додатком
       no_payment_method: потребує онлайн-процесора або принаймні ще одного способу
         оплати
       not_a_community_role: має бути роллю спільноти
@@ -7490,6 +7586,7 @@ uk:
       not_an_integer: має бути цілим числом
       not_an_offline_method: "%{method} не є встановленим способом оплати поза процесором"
       not_configured: не налаштовано для цієї платформи
+      not_for_until_used: застосовується лише до фіксованого терміну
       not_found: не знайдено
       not_found_at_processor: не знайдено в платіжному процесорі
       not_installed: не є встановленим платіжним процесором
@@ -7502,10 +7599,13 @@ uk:
       not_the_buyer: може подати лише покупець замовлення
       nothing_to_give_back: У цьому замовленні немає нічого, що можна повернути тут.
       odd: має бути непарним
+      one_item: має стосуватися плану або продукту, а не обох
+      one_owner: має належати плану або продукту, а не обом
       one_time_single: має бути 1 для одноразової ціни
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
       price_inactive: архівовано в платіжному процесорі
+      price_is_immutable: ціна ніколи не змінюється; створіть нову й архівуйте цю
       public_mail_domain: є публічним поштовим сервісом; підтвердьте, щоб довіряти
         всім його адресам
       recipient_missing: потрібна адреса електронної пошти або номер телефону
@@ -7513,6 +7613,7 @@ uk:
       required_for_elevated_role: потребує явного підтвердження, перш ніж поштовий
         домен зможе надати роль вищу за базового учасника
       taken: вже зайнято
+      tax_category_other_platform: належить іншій платформі
       too_large: завелика
       too_long:
         few: занадто довгий (максимум %{count} символи)

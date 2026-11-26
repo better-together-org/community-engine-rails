@@ -9,6 +9,7 @@ module BetterTogether
 
       store_attributes :content_data do
         plan_id String, default: ''
+        price_id String, default: ''
         display_as String, default: 'card'
       end
 
@@ -16,7 +17,14 @@ module BetterTogether
       validate :plan_belongs_to_platform
 
       def self.extra_permitted_attributes
-        super + %i[plan_id display_as]
+        super + %i[plan_id price_id display_as]
+      end
+
+      # A block set up for a one-time plan before it became a product offers the product's price.
+      def price
+        return if price_id.blank?
+
+        BetterTogether::Billing::Price.active.where(platform_id:).find_by(id: price_id)
       end
 
       def plan

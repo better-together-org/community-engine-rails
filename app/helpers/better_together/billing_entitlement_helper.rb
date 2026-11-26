@@ -26,14 +26,27 @@ module BetterTogether
       BetterTogether::Community.where(platform_id: billing_owner.id).order(:identifier).limit(200)
     end
 
+    # How long what a product gives lasts, in words.
+    def billing_product_lifetime(product)
+      return t('better_together.billing.products.lifetime_until_used') unless product.fixed_term?
+
+      unit = t("better_together.billing.products.unit_#{product.term_unit}", count: product.term_length)
+      t('better_together.billing.products.lifetime_fixed_term_summary', count: product.term_length, unit:)
+    end
+
+    # Where a product's grants (a plan is a product) are added and changed.
+    def billing_grants_path(owner, **) = billing_product_grants_path(owner, **)
+
+    def billing_grant_path(owner, grant, **) = billing_product_grant_path(owner, grant, **)
+
     # One line saying what a plan grant gives, in words.
-    def billing_plan_grant_summary(grant)
+    def billing_grant_summary(grant)
       parameters = grant.parameters
       case grant.kind
-      when 'membership_role' then t('better_together.billing.plan_grants.summary_role', role: parameters['role'],
-                                                                                        where: billing_grant_place(parameters))
-      when 'feature_access' then t('better_together.billing.plan_grants.summary_feature', feature: BetterTogether::FeatureRegistry.name_for(parameters['feature_key']),
-                                                                                          level: parameters['access_level'])
+      when 'membership_role' then t('better_together.billing.grants.summary_role', role: parameters['role'],
+                                                                                   where: billing_grant_place(parameters))
+      when 'feature_access' then t('better_together.billing.grants.summary_feature', feature: BetterTogether::FeatureRegistry.name_for(parameters['feature_key']),
+                                                                                     level: parameters['access_level'])
       when 'quota_allowance' then billing_quota_summary(parameters)
       else grant.kind
       end
@@ -42,21 +55,21 @@ module BetterTogether
     def billing_quota_summary(parameters)
       type = BetterTogether::Quotas::Type.find(parameters['quota_type'])
       if type.unit == :bytes
-        t('better_together.billing.plan_grants.summary_quota_size', amount: quota_size_label(parameters['amount']),
-                                                                    quota: quota_type_label(type.key))
-      else
-        t('better_together.billing.plan_grants.summary_quota', amount: number_with_delimiter(parameters['amount']), unit: type.unit,
+        t('better_together.billing.grants.summary_quota_size', amount: quota_size_label(parameters['amount']),
                                                                quota: quota_type_label(type.key))
+      else
+        t('better_together.billing.grants.summary_quota', amount: number_with_delimiter(parameters['amount']), unit: type.unit,
+                                                          quota: quota_type_label(type.key))
       end
     rescue KeyError
       parameters['quota_type'].to_s
     end
 
     # What a steward is asked before changing what a plan includes: the change, and how many people it reaches.
-    def billing_plan_grant_confirm(plan, key)
+    def billing_grant_confirm(plan, key)
       count = BetterTogether::Billing::PlanAudience.new(plan).count
-      reach = count.zero? ? t('better_together.billing.plan_grants.audience_none') : t('better_together.billing.plan_grants.audience', count:)
-      "#{t("better_together.billing.plan_grants.#{key}")} #{reach}"
+      reach = count.zero? ? t('better_together.billing.grants.audience_none') : t('better_together.billing.grants.audience', count:)
+      "#{t("better_together.billing.grants.#{key}")} #{reach}"
     end
 
     # The sizes a storage grant can take, the same ones the platform quota defaults offer, plus the current
@@ -68,14 +81,14 @@ module BetterTogether
     end
 
     def billing_grant_place(parameters)
-      return t('better_together.billing.plan_grants.place_platform') unless parameters['joinable'] == 'community'
+      return t('better_together.billing.grants.place_platform') unless parameters['joinable'] == 'community'
 
       community = BetterTogether::Community.find_by(id: parameters['community_id'])
       if community
-        t('better_together.billing.plan_grants.place_community',
+        t('better_together.billing.grants.place_community',
           name: community.name)
       else
-        t('better_together.billing.plan_grants.place_unknown')
+        t('better_together.billing.grants.place_unknown')
       end
     end
 

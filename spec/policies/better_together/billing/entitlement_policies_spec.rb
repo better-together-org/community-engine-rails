@@ -36,7 +36,7 @@ RSpec.describe 'Entitlement and plan grant policies' do # rubocop:disable RSpec/
     end
   end
 
-  describe BetterTogether::Billing::PlanGrantPolicy do
+  describe BetterTogether::Billing::GrantPolicy do
     let(:grant) { role_grant }
 
     it 'lets a steward add to and remove from a platform plan' do
@@ -55,7 +55,7 @@ RSpec.describe 'Entitlement and plan grant policies' do # rubocop:disable RSpec/
       BetterTogether::Billing::Billable.model_names << 'BetterTogether::Community'
       seller_plan = create(:better_together_billing_plan, seller: community, processor: nil, processor_price_id: nil,
                                                           accepted_payment_methods: %w[cash])
-      policy = described_class.new(steward_user, seller_plan.plan_grants.build(platform_id: host_platform.id))
+      policy = described_class.new(steward_user, seller_plan.grants.build(platform_id: host_platform.id))
 
       expect([policy.create?, policy.destroy?]).to all(be(false))
     end

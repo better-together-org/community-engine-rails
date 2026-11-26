@@ -12,7 +12,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
   let(:password) { 'SecureTest123!@#' }
   let(:platform_manager) { find_or_create_test_user("billing-plans-manager-#{SecureRandom.hex(4)}@example.test", password, :platform_manager) }
   let(:regular_user) { find_or_create_test_user("billing-plans-regular-#{SecureRandom.hex(4)}@example.test", password) }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync lookups]) }
   let(:other_platform) { create(:better_together_platform) }
   let!(:billing_plan) do
     BetterTogether::Billing.register_processor(:fake, -> { adapter })
@@ -129,7 +129,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
       expect do
         post plans_path, params: { billing_plan: { identifier: 'cash-only', name: 'Cash only', processor: '', amount_cents: 2000,
                                                    currency: 'CAD', accepted_payment_methods: ['cash'] } }
-      end.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      end.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
 
       expect(BetterTogether::Billing::Plan.find_by(identifier: 'cash-only')).to have_attributes(processor: nil, sync_status: 'synced')
     end
@@ -241,7 +241,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
     it 'creates a plan for the processor to push, and redirects to it' do
       expect do
         post plans_path, params: valid_params
-      end.to change(BetterTogether::Billing::Plan, :count).by(1).and have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      end.to change(BetterTogether::Billing::Plan, :count).by(1).and have_enqueued_job(BetterTogether::Billing::SyncProductJob)
 
       plan = BetterTogether::Billing::Plan.order(:created_at).last
       expect(response).to redirect_to_billing_screen(plan_path(plan))
@@ -285,9 +285,9 @@ RSpec.describe BetterTogether::Billing::PlansController do
 
       expect do
         post plans_path, params: valid_params.deep_merge(billing_plan: { link_existing: '1', processor_price_id: 'price_yearly' })
-      end.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      end.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
 
-      expect(BetterTogether::Billing::Plan.find_by(processor_price_id: 'price_yearly'))
+      expect(BetterTogether::Billing::Plan.joins(:prices).find_by(better_together_billing_prices: { processor_price_id: 'price_yearly' }))
         .to have_attributes(amount_cents: 99_000, billing_interval: 'year', processor_product_id: 'prod_pro', sync_status: 'synced')
     end
 
@@ -445,7 +445,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
     it 'cannot restart a sync' do
       billing_plan.record_sync_failure!('processor_error')
 
-      expect { post better_together.sync_billing_plan_path(billing_plan, locale:) }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { post better_together.sync_billing_plan_path(billing_plan, locale:) }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
   end
 
@@ -457,7 +457,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
     it 'restarts a failed push' do
       billing_plan.record_sync_failure!('processor_unavailable')
 
-      expect { post sync_path }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob).with(billing_plan.id)
+      expect { post sync_path }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob).with(billing_plan.id)
 
       expect(billing_plan.reload).to have_attributes(sync_status: 'pending', sync_error: nil)
       expect(response).to redirect_to_billing_screen(plan_path(billing_plan))
@@ -467,13 +467,13 @@ RSpec.describe BetterTogether::Billing::PlansController do
       BetterTogether.clear_adapters!(BetterTogether::Billing::ADAPTER_GROUP)
       BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new })
 
-      expect { post sync_path }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { post sync_path }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
       expect(flash[:alert]).to be_present
     end
 
     it 'is a 404 for another platform\'s plan' do
       expect { post better_together.sync_billing_plan_path(foreign_plan, locale:) }
-        .not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+        .not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
       expect(response).to have_http_status(:not_found)
     end
   end

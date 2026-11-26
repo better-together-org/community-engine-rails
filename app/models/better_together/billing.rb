@@ -28,6 +28,17 @@ module BetterTogether
         ProcessorAdapter.verify!(entry[:adapter].call, name: entry[:name])
       end
 
+      # An installed online processor that takes checkout. Registration already refuses one whose checkout does not accept the
+      # `mode:` and `lines:` that core builds from the order.
+      def online_checkout_method?(name)
+        return false unless processor_names.map(&:to_s).include?(name.to_s)
+
+        adapter = processor_adapter(name)
+        adapter.present? && adapter.settlement_kind == :remote && adapter.supports?(:checkout)
+      rescue ProcessorAdapter::ContractError
+        false
+      end
+
       # An installed method Community Engine settles itself, with no vendor: manual (cash, a
       # cheque, an e-transfer) or internal (store credit). False for an unknown name or an
       # adapter that fails the contract.

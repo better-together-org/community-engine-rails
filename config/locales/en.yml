@@ -990,6 +990,7 @@ en:
           month: "%{price} a month"
           once: "%{price} once"
           year: "%{price} a year"
+        products_heading: Also on offer
         subscribe: Subscribe
         title: Plans
       checkout:
@@ -1041,6 +1042,10 @@ en:
           much with it now. The way chosen above pays the rest.
         place_order: Place order
         placed: Your order has been placed.
+        quantity: How many
+        quantity_line:
+          one: "%{count} item"
+          other: "%{count} items"
         renew_with: Renew with
         renew_with_default: The way I pay the largest share
         renew_with_hint: Each renewal invoice will be paid this way. You can add other
@@ -1206,6 +1211,52 @@ en:
           processed: Done
           replayed: Retried
         table_caption: Payment events and their state
+      grants:
+        add: Add
+        add_confirm: Add this to the plan?
+        add_feature: Access to a feature
+        add_quota: More of a quota
+        add_role: A role
+        add_storage: Extra storage
+        added: Added to the plan.
+        amount_hint: In the quota’s own unit, such as tokens for AI.
+        audience: People who already have this plan (%{count}) are updated within
+          a few minutes.
+        audience_none: Nobody has this plan yet, so nobody is affected.
+        edit_confirm: Change this amount?
+        field_amount: Extra amount
+        field_community: Community (if a community)
+        field_feature: Feature
+        field_level: Access level
+        field_quota: Quota
+        field_role: Role
+        field_storage: Storage
+        field_where: Where
+        intro: People who pay for this plan get these while it is paid. When it lapses,
+          only what the plan itself gave is taken away; roles and access someone already
+          had stay, and nothing they made is deleted.
+        none: This plan includes nothing yet.
+        place_a_community: A community
+        place_community: the community %{name}
+        place_platform: The platform
+        place_unknown: a community that no longer exists
+        product_intro: Buyers of this product get these when their order is paid.
+          If it is refunded, or a set term ends, what the product gave is taken away;
+          nothing they made is deleted.
+        product_title: What this product includes
+        refused: That could not be added. Check the choices; a role that can manage
+          things cannot be given by a plan.
+        remove: Remove
+        remove_confirm: Remove this from the plan? People who have it lose it unless
+          they already had it before.
+        removed: Removed from the plan.
+        role_hint: Only roles that cannot manage things are offered.
+        summary_feature: Access to %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} more of %{quota}"
+        summary_quota_size: "%{amount} more %{quota}"
+        summary_role: The role %{role} in %{where}
+        title: What this plan includes
+        updated: The amount was changed.
       hosted_billing:
         accept_button: Accept for this platform
         accepted: Agreement accepted for this platform.
@@ -1761,54 +1812,8 @@ en:
         one_time_participant_summary: One-time hosted contribution
         personal_beneficiary_label: Personal access
         recurring_participant_summary: Ongoing hosted access and stewardship support
-      plan_grants:
-        add: Add
-        add_confirm: Add this to the plan?
-        add_feature: Access to a feature
-        add_quota: More of a quota
-        add_role: A role
-        add_storage: Extra storage
-        added: Added to the plan.
-        amount_hint: In the quota’s own unit, such as tokens for AI.
-        audience: People who already have this plan (%{count}) are updated within
-          a few minutes.
-        audience_none: Nobody has this plan yet, so nobody is affected.
-        edit_confirm: Change this amount?
-        field_amount: Extra amount
-        field_community: Community (if a community)
-        field_feature: Feature
-        field_level: Access level
-        field_quota: Quota
-        field_role: Role
-        field_storage: Storage
-        field_where: Where
-        intro: People who pay for this plan get these while it is paid. When it lapses,
-          only what the plan itself gave is taken away; roles and access someone already
-          had stay, and nothing they made is deleted.
-        none: This plan includes nothing yet.
-        place_a_community: A community
-        place_community: the community %{name}
-        place_platform: The platform
-        place_unknown: a community that no longer exists
-        refused: That could not be added. Check the choices; a role that can manage
-          things cannot be given by a plan.
-        remove: Remove
-        remove_confirm: Remove this from the plan? People who have it lose it unless
-          they already had it before.
-        removed: Removed from the plan.
-        role_hint: Only roles that cannot manage things are offered.
-        summary_feature: Access to %{feature} (%{level})
-        summary_quota: "%{amount} %{unit} more of %{quota}"
-        summary_quota_size: "%{amount} more %{quota}"
-        summary_role: The role %{role} in %{where}
-        title: What this plan includes
-        updated: The amount was changed.
       plans:
         actions_heading: Actions
-        add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
-          with, and whose holders may buy it on its own later. Leave all unticked
-          to offer it with every plan.
-        add_on_targets_legend: Plans this add-on extends
         audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
           it: a person who is any of the ticked kinds can see and buy it.'
         audience_legend: Who may see and buy this plan
@@ -1825,10 +1830,8 @@ en:
         field_accepted_payment_methods_hint: Ways to pay outside a payment processor.
           Each still has to be turned on for the seller before buyers can use it.
         field_active: Active (visible to subscribers)
-        field_add_on: Add-on only
-        field_add_on_hint: Sold only as an extra on another plan's order, never on
-          its own. One-time, no included access.
         field_amount: Amount
+        field_amount_cents: Amount
         field_amount_hint: Type the price as you would write it, for example 45.00.
           Currencies without cents, such as JPY and KRW, take whole numbers.
         field_beneficiary_label: Beneficiary label
@@ -1947,6 +1950,28 @@ en:
         toggle_deactivate: Deactivate
         update_submit: Update plan
         updated: Billing plan updated successfully.
+      prices:
+        archive: Take off sale
+        archive_confirm: Take this price off sale? Orders already placed keep it.
+        archived: The price was taken off sale.
+        create_submit: Add price
+        created: The price was added.
+        field_amount: Amount
+        field_currency: Currency
+        field_label: Label
+        field_label_hint: Optional. Shown beside the amount when a product has several
+          prices.
+        immutable_note: A price never changes once it is added. To charge a different
+          amount, add a new price and take the old one off sale.
+        intro: The price a buyer pays is the newest one on sale.
+        new_price: Add a price
+        new_title: Add a price
+        none: No prices yet. Add one to put this product on sale.
+        plan_intro: 'A plan is sold through its recurring prices. A price never changes:
+          use Change price to replace it.'
+        status_archived: Off sale
+        status_on_sale: On sale
+        title: Prices
       processor_settings:
         acknowledge_label: I understand and accept these limits.
         acknowledged_on: You accepted these limits on %{date}.
@@ -2017,6 +2042,64 @@ en:
         status_managed_off: Not available
         status_managed_on: Enabled
         status_not_set_up: Not set up
+      products:
+        create_submit: Create product
+        created: The product was created.
+        edit_title: Edit product
+        'false': 'No'
+        field_active: On sale
+        field_description: Description
+        field_identifier: Identifier
+        field_identifier_hint: A short name that never changes, in lowercase letters,
+          numbers and underscores.
+        field_lifetime: How long it lasts
+        field_listed: Shown in the catalog
+        field_name: Name
+        field_needs_any_plan: Any plan
+        field_price: Price
+        field_restricted_to_members: Only for members
+        field_restricted_to_subscribers: Only for subscribers
+        field_summary: Summary
+        field_tax_category: Tax category
+        field_tax_category_hint: Leave as standard unless this kind of thing is taxed
+          differently.
+        field_term_length: For how long
+        field_term_unit: Unit
+        identifier_placeholder: storage_top_up
+        index_title: Products
+        intro: What you sell once, such as a storage top-up. Each product has prices
+          and says what a buyer gets.
+        lifetime_fixed_term: For a set time after it is paid
+        lifetime_fixed_term_summary: For %{count} %{unit}
+        lifetime_hint: Until used lasts as long as the buyer keeps it. For a set time
+          ends on its own, and a refund ends it at once.
+        lifetime_legend: How long what it gives lasts
+        lifetime_until_used: Until used
+        listing_legend: Where it is on offer
+        new_product: New product
+        new_title: New product
+        no_price: No price yet
+        none: No products yet.
+        requirements_hint: Leave all unticked to sell it on its own. A buyer needs
+          one of the ticked plans, either held already or in the same order.
+        requirements_legend: Sold with a plan
+        table_caption: Products this platform sells
+        tax_standard: Standard
+        'true': 'Yes'
+        unit_day:
+          one: day
+          other: days
+        unit_month:
+          one: month
+          other: months
+        unit_week:
+          one: week
+          other: weeks
+        unit_year:
+          one: year
+          other: years
+        update_submit: Save product
+        updated: The product was saved.
       promotions:
         activate: Switch on
         always_open: Always
@@ -2058,6 +2141,13 @@ en:
         status_used_up: Used up
         switched: Promotion updated.
         usage_of: "%{used} of %{max}"
+      purchase_requirements:
+        kinds:
+          plan: a plan
+        locked_heading: Extras you can unlock
+        locked_hint: These need something else first.
+        needs: Needs %{names} first
+        or: or
       readiness:
         check_agreements: Purchase agreements are in force for %{purpose}.
         check_configured: Billing is switched on and your organisation details are
@@ -2838,6 +2928,8 @@ en:
             card: Card with price
           empty: Choose a plan for this block to offer.
           plan_hint: Pick one of this platform's active plans.
+          price_hint: Or pick the price of a product instead; it takes the place of
+            the plan.
         plan_catalog_block:
           create_label: Create a new %{type} block for the page
           empty: No plans are on offer right now.
@@ -7341,11 +7433,6 @@ en:
       account_mismatch: must belong to the same account
       acknowledgement_required: must be accepted before this method can be turned
         on
-      add_on_cannot_have_grants: cannot be given to an add-on
-      add_on_cannot_renew: an add-on is bought once, not renewed
-      add_on_has_grants: an add-on cannot include anything of its own; put that on
-        a plan
-      add_on_locked_by_orders: cannot be changed once orders include this plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
       already_on_the_plan: is already on the plan; edit it instead
@@ -7383,7 +7470,6 @@ en:
       lookup_failed: could not be verified with the payment processor
       model_invalid: 'Validation failed: %{errors}'
       must_be_a_primary_plan: must be a plan that is not an add-on
-      must_be_an_add_on: must be an add-on
       no_payment_method: needs an online processor or at least one other way to pay
       not_a_community_role: must be a community role
       not_a_number: is not a number
@@ -7393,6 +7479,7 @@ en:
       not_an_offline_method: "%{method} is not an installed payment method outside
         a processor"
       not_configured: is not set up for this platform
+      not_for_until_used: only applies to a fixed term
       not_found: not found
       not_found_at_processor: was not found at the payment processor
       not_installed: is not an installed payment processor
@@ -7404,10 +7491,13 @@ en:
       nothing_to_give_back: There is nothing on this order that can be given back
         here.
       odd: must be odd
+      one_item: must be for a plan or a product, not both
+      one_owner: must belong to a plan or a product, not both
       one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}
       present: must be blank
       price_inactive: is archived at the payment processor
+      price_is_immutable: a price never changes; make a new one and archive this one
       public_mail_domain: is a public mail provider; confirm to trust every address
         on it
       recipient_missing: needs an email address or a phone number
@@ -7415,6 +7505,7 @@ en:
       required_for_elevated_role: needs explicit confirmation before an email domain
         can grant a role above basic member
       taken: has already been taken
+      tax_category_other_platform: belongs to another platform
       too_large: is too large
       too_long:
         one: is too long (maximum is %{count} character)

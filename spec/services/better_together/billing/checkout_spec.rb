@@ -151,8 +151,8 @@ RSpec.describe 'Checkout services' do # rubocop:disable RSpec/DescribeClass
 
     describe 'store credit' do
       let(:credit_plan) do
-        create(:better_together_billing_plan, accepted_payment_methods: %w[store_credit], currency: 'USD', amount_cents: 3000,
-                                              billing_interval: 'one_time')
+        create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                               currency: 'USD', amount_cents: 3000)
       end
       let(:credit_for_buyer) { described_class.call(platform: host_platform, plan: credit_plan, buyer:).index_by(&:name)['store_credit'] }
 
@@ -183,7 +183,7 @@ RSpec.describe 'Checkout services' do # rubocop:disable RSpec/DescribeClass
       end
 
       it 'is judged on the platform setting alone when no buyer is known' do
-        expect(described_class.call(platform: host_platform, plan: credit_plan).first).to be_available
+        expect(described_class.call(platform: host_platform, plan: credit_plan).index_by(&:name)['store_credit']).to be_available
       end
 
       it 'is not offered when a steward has not switched it on' do
@@ -200,7 +200,7 @@ RSpec.describe 'Checkout services' do # rubocop:disable RSpec/DescribeClass
 
     it 'calls a plan that renews a subscription, and any other a one-time purchase' do
       monthly = create(:better_together_billing_plan, billing_interval: 'month')
-      once = create(:better_together_billing_plan, billing_interval: 'one_time')
+      once = create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform))
 
       expect(described_class.new(platform: host_platform, plan: monthly).purpose).to eq('subscription')
       expect(described_class.new(platform: host_platform, plan: once).purpose).to eq('one_time')

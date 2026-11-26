@@ -52,7 +52,7 @@ module BetterTogether
           @signer = signer || buyer
           @payment_method = payment_method
           @purpose = purpose.to_s
-          @line_items = Array(line_items)
+          @line_items = Array(line_items).map { |line_item| bought_through_its_price(line_item) }
           @seller = seller
           @on_behalf_of = on_behalf_of
           @subject = subject
@@ -77,6 +77,15 @@ module BetterTogether
         end
 
         private
+
+        # A product is bought through its price: naming a plan or a product in a line buys the price it is sold at today.
+        def bought_through_its_price(line_item)
+          purchasable = line_item.fetch(:purchasable)
+          return line_item unless purchasable.is_a?(Product)
+
+          price = purchasable.current_price or raise Refused, 'that is not for sale'
+          line_item.merge(purchasable: price)
+        end
 
         attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :line_items, :seller, :on_behalf_of, :subject,
                     :seller_assisted, :renewal
@@ -126,6 +135,7 @@ module BetterTogether
           raise Refused, 'an order needs at least one line' if line_items.empty?
 
           check_purchasables!
+          check_requirements!
           check_payment_methods!
           check_authority!
         end
@@ -159,6 +169,18 @@ module BetterTogether
 
           Billing.local_method?(@renewal_payment_method) && PaymentChoice.new(platform:, seller:, name: @renewal_payment_method, purpose:,
                                                                               currency: order_currency).problem.nil?
+        end
+
+        # A purchasable with purchase requirements is sold only to someone who holds a prerequisite or has one in this order.
+        # A renewal and a steward's walk-up sale are exempt: the first continues what was already bought, the second is the
+        # steward's own call.
+        def check_requirements!
+          return if renewal || seller_assisted
+
+          purchasables.each do |purchasable|
+            result = PurchaseRequirements::Evaluate.call(dependent: purchasable, person: buyer, in_order: purchasables - [purchasable])
+            raise Refused, result.reason unless result.met?
+          end
         end
 
         def check_purchasables!

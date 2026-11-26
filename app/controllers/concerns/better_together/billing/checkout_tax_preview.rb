@@ -18,7 +18,9 @@ module BetterTogether
         @addresses.find { |address| address.id == @selected_address_id } || @addresses.first
       end
 
-      def tax_preview_for(address) = Checkout::TaxPreview.new(platform: billing_owner, plan: @plan, add_ons: @add_ons, address:)
+      def tax_preview_for(address)
+        Checkout::TaxPreview.new(platform: billing_owner, plan: @plan, add_ons: @add_ons, address:, quantity: @quantity)
+      end
 
       # Parts that cover the whole total, tax included, are not parts. Judged on the address the order will carry (the
       # one chosen or just saved), so tax on a newly entered address counts.

@@ -50,7 +50,7 @@ RSpec.describe BetterTogether::Billing::Orders::Summary do
 
   describe 'a plan about to be bought' do
     it 'reads the same as the order it becomes', :aggregate_failures do
-      preview = BetterTogether::Billing::Checkout::TaxPreview.new(platform: host_platform, plan:, address: nil)
+      preview = BetterTogether::Billing::Checkout::TaxPreview.new(platform: host_platform, plan: plan.current_price, address: nil)
       expect(preview.summary).to have_attributes(taxed?: false, total_cents: 4500)
     end
   end

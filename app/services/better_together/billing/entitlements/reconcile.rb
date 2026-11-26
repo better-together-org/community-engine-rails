@@ -15,7 +15,7 @@ module BetterTogether
 
         def call
           failures = []
-          desired = entitlement.plan.plan_grants.map(&:handler).select { |handler| handler.applies_to?(entitlement.beneficiary) }
+          desired = entitlement.item.included_grants.map(&:handler).select { |handler| handler.applies_to?(entitlement.beneficiary) }
           release_gone(desired.map(&:key), failures)
           desired.each { |handler| guarded(failures) { apply(handler) } }
           failures
@@ -35,7 +35,7 @@ module BetterTogether
           grant = entitlement.grants.find_by(grant_key: handler.key)
           return refresh(handler, grant) if grant&.applied?
 
-          applied = handler.apply(entitlement)
+          applied = scaled(handler.apply(entitlement))
           record(handler, grant, applied)
           sync_quota(handler)
         end
@@ -44,11 +44,18 @@ module BetterTogether
         def refresh(handler, grant)
           return unless handler.is_a?(Handlers::QuotaAllowance)
 
-          amount = handler.parameters['amount'].to_i
+          amount = handler.parameters['amount'].to_i * entitlement.quantity
           return if grant.amount == amount
 
           grant.update!(amount:, parameters: handler.parameters)
           sync_quota(handler)
+        end
+
+        # Three of a 10 GB top-up give 30 GB.
+        def scaled(applied)
+          return applied if entitlement.quantity == 1
+
+          applied.with(amount: applied.amount * entitlement.quantity)
         end
 
         def record(handler, grant, applied)

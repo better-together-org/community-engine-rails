@@ -983,6 +983,7 @@ es:
           month: "%{price} al mes"
           once: "%{price}, una vez"
           year: "%{price} al año"
+        products_heading: También disponible
         subscribe: Suscribirse
         title: Planes
       checkout:
@@ -1034,6 +1035,10 @@ es:
           pagar esa cantidad ahora. La forma elegida arriba paga el resto.
         place_order: Hacer el pedido
         placed: Su pedido se ha realizado.
+        quantity: Cuántos
+        quantity_line:
+          one: "%{count} unidad"
+          other: "%{count} unidades"
         renew_with: Renovar con
         renew_with_default: La forma con la que pago la mayor parte
         renew_with_hint: Cada factura de renovación se pagará así. Puede añadir otros
@@ -1198,6 +1203,52 @@ es:
           processed: Hecho
           replayed: Reintentado
         table_caption: Eventos de pago y su estado
+      grants:
+        add: Añadir
+        add_confirm: "¿Añadir esto al plan?"
+        add_feature: Acceso a una función
+        add_quota: Más de una cuota
+        add_role: Un rol
+        add_storage: Más almacenamiento
+        added: Añadido al plan.
+        amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
+        audience: Las personas que ya tienen este plan (%{count}) se actualizan en
+          unos minutos.
+        audience_none: Nadie tiene este plan todavía, así que nadie se ve afectado.
+        edit_confirm: "¿Cambiar esta cantidad?"
+        field_amount: Cantidad adicional
+        field_community: Comunidad (si es una comunidad)
+        field_feature: Función
+        field_level: Nivel de acceso
+        field_quota: Cuota
+        field_role: Rol
+        field_storage: Almacenamiento
+        field_where: Dónde
+        intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
+          solo se retira lo que dio el plan; los roles y accesos que ya tenían se
+          quedan y nada de lo que crearon se elimina.
+        none: Este plan todavía no incluye nada.
+        place_a_community: Una comunidad
+        place_community: la comunidad %{name}
+        place_platform: La plataforma
+        place_unknown: una comunidad que ya no existe
+        product_intro: Quienes compran este producto obtienen esto cuando se paga
+          el pedido. Si se reembolsa, o termina un plazo fijo, se retira lo que el
+          producto dio; nada de lo que crearon se borra.
+        product_title: Qué incluye este producto
+        refused: No se pudo añadir. Revisa las opciones; un plan no puede dar un rol
+          que permita administrar.
+        remove: Quitar
+        remove_confirm: "¿Quitar esto del plan? Quienes lo tienen lo pierden, salvo
+          que ya lo tuvieran antes."
+        removed: Quitado del plan.
+        role_hint: Solo se ofrecen roles que no pueden administrar.
+        summary_feature: Acceso a %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} más de %{quota}"
+        summary_quota_size: "%{amount} más de %{quota}"
+        summary_role: El rol %{role} en %{where}
+        title: Qué incluye este plan
+        updated: Se cambió la cantidad.
       hosted_billing:
         accept_button: Aceptar para esta plataforma
         accepted: Acuerdo aceptado para esta plataforma.
@@ -1756,54 +1807,8 @@ es:
         one_time_participant_summary: Contribucion unica al alojamiento
         personal_beneficiary_label: Acceso personal
         recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
-      plan_grants:
-        add: Añadir
-        add_confirm: "¿Añadir esto al plan?"
-        add_feature: Acceso a una función
-        add_quota: Más de una cuota
-        add_role: Un rol
-        add_storage: Más almacenamiento
-        added: Añadido al plan.
-        amount_hint: En la unidad propia de la cuota, por ejemplo tokens de IA.
-        audience: Las personas que ya tienen este plan (%{count}) se actualizan en
-          unos minutos.
-        audience_none: Nadie tiene este plan todavía, así que nadie se ve afectado.
-        edit_confirm: "¿Cambiar esta cantidad?"
-        field_amount: Cantidad adicional
-        field_community: Comunidad (si es una comunidad)
-        field_feature: Función
-        field_level: Nivel de acceso
-        field_quota: Cuota
-        field_role: Rol
-        field_storage: Almacenamiento
-        field_where: Dónde
-        intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
-          solo se retira lo que dio el plan; los roles y accesos que ya tenían se
-          quedan y nada de lo que crearon se elimina.
-        none: Este plan todavía no incluye nada.
-        place_a_community: Una comunidad
-        place_community: la comunidad %{name}
-        place_platform: La plataforma
-        place_unknown: una comunidad que ya no existe
-        refused: No se pudo añadir. Revisa las opciones; un plan no puede dar un rol
-          que permita administrar.
-        remove: Quitar
-        remove_confirm: "¿Quitar esto del plan? Quienes lo tienen lo pierden, salvo
-          que ya lo tuvieran antes."
-        removed: Quitado del plan.
-        role_hint: Solo se ofrecen roles que no pueden administrar.
-        summary_feature: Acceso a %{feature} (%{level})
-        summary_quota: "%{amount} %{unit} más de %{quota}"
-        summary_quota_size: "%{amount} más de %{quota}"
-        summary_role: El rol %{role} en %{where}
-        title: Qué incluye este plan
-        updated: Se cambió la cantidad.
       plans:
         actions_heading: Acciones
-        add_on_targets_hint: Solo para un complemento. Marque los planes con los que
-          se ofrece y cuyos titulares pueden comprarlo por separado más adelante.
-          Sin marcar, se ofrece con todos los planes.
-        add_on_targets_legend: Planes que amplía este complemento
         audience_hint: 'Deje ambas casillas sin marcar para todo el mundo. Marque
           una o ambas para limitarlo: quien sea de alguno de los tipos marcados puede
           verlo y comprarlo.'
@@ -1823,10 +1828,8 @@ es:
           de pagos. Cada una debe activarse para el vendedor antes de que los compradores
           puedan usarla.
         field_active: Activo (visible para suscriptores)
-        field_add_on: Solo complemento
-        field_add_on_hint: Se vende solo como extra en el pedido de otro plan, nunca
-          por separado. Pago único, sin acceso incluido.
         field_amount: Importe
+        field_amount_cents: Importe
         field_amount_hint: Escriba el precio como lo escribiría normalmente, por ejemplo
           45,00. Las monedas sin centavos, como el JPY y el KRW, usan números enteros.
         field_beneficiary_label: Etiqueta de beneficiario
@@ -1947,6 +1950,29 @@ es:
         toggle_deactivate: Desactivar
         update_submit: Actualizar plan
         updated: Plan de facturacion actualizado exitosamente.
+      prices:
+        archive: Retirar de la venta
+        archive_confirm: "¿Retirar este precio de la venta? Los pedidos ya hechos
+          lo conservan."
+        archived: Se retiró el precio de la venta.
+        create_submit: Añadir precio
+        created: Se añadió el precio.
+        field_amount: Importe
+        field_currency: Moneda
+        field_label: Etiqueta
+        field_label_hint: Opcional. Se muestra junto al importe cuando un producto
+          tiene varios precios.
+        immutable_note: Un precio nunca cambia una vez añadido. Para cobrar otro importe,
+          añada un precio nuevo y retire el anterior de la venta.
+        intro: El precio que paga quien compra es el más reciente a la venta.
+        new_price: Añadir un precio
+        new_title: Añadir un precio
+        none: Aún no hay precios. Añada uno para poner a la venta este producto.
+        plan_intro: 'Un plan se vende mediante sus precios recurrentes. Un precio
+          nunca cambia: use Cambiar precio para reemplazarlo.'
+        status_archived: Fuera de venta
+        status_on_sale: A la venta
+        title: Precios
       processor_settings:
         acknowledge_label: Entiendo y acepto estos límites.
         acknowledged_on: Aceptó estos límites el %{date}.
@@ -2018,6 +2044,65 @@ es:
         status_managed_off: No disponible
         status_managed_on: Activado
         status_not_set_up: Sin configurar
+      products:
+        create_submit: Crear producto
+        created: Se creó el producto.
+        edit_title: Editar producto
+        'false': 'No'
+        field_active: A la venta
+        field_description: Descripción
+        field_identifier: Identificador
+        field_identifier_hint: Un nombre corto que nunca cambia, con minúsculas, números
+          y guiones bajos.
+        field_lifetime: Cuánto dura
+        field_listed: Se muestra en el catálogo
+        field_name: Nombre
+        field_needs_any_plan: Cualquier plan
+        field_price: Precio
+        field_restricted_to_members: Solo para miembros
+        field_restricted_to_subscribers: Solo para suscriptores
+        field_summary: Resumen
+        field_tax_category: Categoría de impuestos
+        field_tax_category_hint: Déjela como estándar salvo que este tipo de producto
+          tribute de otra forma.
+        field_term_length: Durante cuánto tiempo
+        field_term_unit: Unidad
+        identifier_placeholder: ampliacion_almacenamiento
+        index_title: Productos
+        intro: Lo que vende una sola vez, como una ampliación de almacenamiento. Cada
+          producto tiene precios y dice qué recibe quien lo compra.
+        lifetime_fixed_term: Durante un tiempo fijo tras el pago
+        lifetime_fixed_term_summary: Durante %{count} %{unit}
+        lifetime_hint: Hasta usarse dura mientras el comprador lo conserve. Por un
+          tiempo fijo termina solo, y un reembolso lo termina de inmediato.
+        lifetime_legend: Cuánto dura lo que da
+        lifetime_until_used: Hasta usarse
+        listing_legend: Dónde se ofrece
+        new_product: Nuevo producto
+        new_title: Nuevo producto
+        no_price: Aún sin precio
+        none: Aún no hay productos.
+        requirements_hint: Deje todo sin marcar para venderlo por separado. El comprador
+          necesita uno de los planes marcados, ya sea que lo tenga o que esté en el
+          mismo pedido.
+        requirements_legend: Se vende con un plan
+        table_caption: Productos que vende esta plataforma
+        tax_standard: Estándar
+        'true': Sí
+        unit_day:
+          one: día
+          other: días
+        unit_month:
+          one: mes
+          other: meses
+        unit_week:
+          one: semana
+          other: semanas
+        unit_year:
+          one: año
+          other: años
+        update_submit: Guardar producto
+        updated: Se guardó el producto.
       promotions:
         activate: Activar
         always_open: Siempre
@@ -2060,6 +2145,13 @@ es:
         status_used_up: Agotada
         switched: Promoción actualizada.
         usage_of: "%{used} de %{max}"
+      purchase_requirements:
+        kinds:
+          plan: un plan
+        locked_heading: Extras que puedes desbloquear
+        locked_hint: Estos necesitan otra cosa primero.
+        needs: Primero necesita %{names}
+        or: o
       readiness:
         check_agreements: Los acuerdos de compra están en vigor para %{purpose}.
         check_configured: La facturación está activada y los datos de su organización
@@ -2849,6 +2941,7 @@ es:
             card: Tarjeta con precio
           empty: Elija un plan para ofrecer en este bloque.
           plan_hint: Elija uno de los planes activos de esta plataforma.
+          price_hint: O elija el precio de un producto; sustituye al plan.
         plan_catalog_block:
           create_label: Crear un nuevo bloque %{type} para la página
           empty: No hay planes disponibles por ahora.
@@ -7464,12 +7557,6 @@ es:
       accepted: debe ser aceptado
       account_mismatch: debe pertenecer a la misma cuenta
       acknowledgement_required: debe aceptarse antes de activar este método
-      add_on_cannot_have_grants: no se puede dar a un complemento
-      add_on_cannot_renew: un complemento se compra una vez, no se renueva
-      add_on_has_grants: un complemento no puede incluir nada propio; póngalo en un
-        plan
-      add_on_locked_by_orders: no se puede cambiar una vez que hay pedidos con este
-        plan
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       already_on_the_plan: ya está en el plan; edítelo en su lugar
@@ -7507,7 +7594,6 @@ es:
       lookup_failed: no se pudo verificar con el procesador de pagos
       model_invalid: 'La validación falló: %{errors}'
       must_be_a_primary_plan: debe ser un plan que no sea un complemento
-      must_be_an_add_on: debe ser un complemento
       no_payment_method: necesita un procesador en línea o al menos otra forma de
         pago
       not_a_community_role: debe ser un rol de comunidad
@@ -7518,6 +7604,7 @@ es:
       not_an_offline_method: "%{method} no es un método de pago instalado fuera de
         un procesador"
       not_configured: no está configurado para esta plataforma
+      not_for_until_used: solo se aplica a un plazo fijo
       not_found: no se ha encontrado
       not_found_at_processor: no se encontró en el procesador de pagos
       not_installed: no es un procesador de pagos instalado
@@ -7528,10 +7615,13 @@ es:
       not_the_buyer: solo puede hacerla el comprador del pedido
       nothing_to_give_back: No hay nada en este pedido que se pueda devolver aquí.
       odd: debe ser impar
+      one_item: debe ser de un plan o de un producto, no de ambos
+      one_owner: debe pertenecer a un plan o a un producto, no a ambos
       one_time_single: debe ser 1 para un precio único
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
       price_inactive: está archivado en el procesador de pagos
+      price_is_immutable: un precio nunca cambia; cree uno nuevo y archive este
       public_mail_domain: es un proveedor de correo público; confirma para confiar
         en todas sus direcciones
       recipient_missing: necesita un correo electrónico o un número de teléfono
@@ -7539,6 +7629,7 @@ es:
       required_for_elevated_role: requiere confirmación explícita antes de que un
         dominio de correo pueda otorgar un rol superior al de miembro básico
       taken: ya está en uso
+      tax_category_other_platform: pertenece a otra plataforma
       too_large: es demasiado grande
       too_long:
         one: es demasiado largo (%{count} carácter máximo)

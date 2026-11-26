@@ -1,0 +1,14 @@
+---
+title: Locked extras on the billing page
+audience:
+- end_user
+journey_step: As a visitor without a plan, I see which extras exist and what I need
+  before I can buy them.
+callouts:
+- :id: locked
+  :title: Locked extra
+  :description: The reason replaces the buy button.
+accessibility_notes: The section is labelled by its heading; the reason is plain text
+  beside the name.
+slug: billing_hub_locked_add_ons
+device: desktop

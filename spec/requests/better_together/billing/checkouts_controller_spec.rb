@@ -16,12 +16,12 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
   let(:buyer_address) { create_billing_address_for(buyer) }
   # Paid for once, by cash only: no online processor.
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform),
+                                           currency: 'USD', amount_cents: 2500)
   end
   let(:agreements) { BetterTogether::Billing::PurchaseAgreementSeeds.call(host_platform) }
 
-  def new_checkout_path(**params) = better_together.new_billing_checkout_path(locale:, plan_id: cash_plan.id, **params)
+  def new_checkout_path(**params) = better_together.new_billing_checkout_path(locale:, price_id: cash_plan.id, **params)
   def checkout_path = better_together.billing_checkout_path(locale:)
 
   def enable_cash
@@ -34,7 +34,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
   # Like post_checkout, with the address parameters replaced.
   def post_checkout_with(**address_params, &)
     ticks = BetterTogether::Agreement.all.to_h { |a| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(a), '1'] }
-    post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash', **address_params }.merge(ticks)
+    post checkout_path, params: { price_id: cash_plan.id, payment_method: 'cash', **address_params }.merge(ticks)
   end
 
   def post_checkout(method: 'cash', accepted: nil, plan: cash_plan)
@@ -43,7 +43,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
                                                                            payment_method: method).missing.map(&:id)
     # The boxes are the shared agreement mechanism's: one `<identifier>_agreement=1` parameter per ticked agreement.
     ticks = BetterTogether::Agreement.where(id: ids).to_h { |agreement| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(agreement), '1'] }
-    post checkout_path, params: { plan_id: plan.id, payment_method: method, **billing_address_params(buyer_address) }.merge(ticks)
+    post checkout_path, params: { price_id: plan.id, payment_method: method, **billing_address_params(buyer_address) }.merge(ticks)
   end
 
   it 'sends a visitor to sign in' do
@@ -160,7 +160,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
       end
 
       it 'is a 404 for a plan that is inactive, another platform\'s, or sold by someone else' do
-        cash_plan.update!(active: false)
+        cash_plan.archive!
         get new_checkout_path
         expect(response).to have_http_status(:not_found)
 
@@ -228,7 +228,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
       it 'refuses, placing nothing, without a billing address', :aggregate_failures do
         ticks = BetterTogether::Agreement.all.to_h { |a| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(a), '1'] }
 
-        expect { post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash' }.merge(ticks) }
+        expect { post checkout_path, params: { price_id: cash_plan.id, payment_method: 'cash' }.merge(ticks) }
           .not_to change(BetterTogether::Billing::Order, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -270,7 +270,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
         let(:tick_param) { ->(identifier) { BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(identifier) } }
 
         it 'keeps both boxes ticked, and unlocked, when the billing address is refused' do
-          post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1',
+          post checkout_path, params: { price_id: cash_plan.id, payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1',
                                         tick_param.call('offline_payment_terms') => '1' }
 
           expect(response).to have_http_status(:unprocessable_content)
@@ -283,7 +283,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
         end
 
         it 'ticks only the boxes the buyer ticked when another one was missed' do
-          post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1',
+          post checkout_path, params: { price_id: cash_plan.id, payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1',
                                         **billing_address_params(buyer_address) }
 
           expect(response).to have_http_status(:unprocessable_content)

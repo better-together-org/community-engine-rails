@@ -10,8 +10,8 @@ RSpec.describe BetterTogether::Billing::CatalogController do
   let(:locale) { :en }
   let(:free_attrs) { { processor: nil, processor_price_id: nil, processor_product_id: nil, amount_cents: 0, accepted_payment_methods: [] } }
   let!(:monthly) { sub_plan.tap { |plan| plan.update!(listed: true) } }
-  let!(:free) { create(:better_together_billing_plan, :one_time, listed: true, **free_attrs) }
-  let!(:hidden) { create(:better_together_billing_plan, :one_time, listed: false, **free_attrs) }
+  let!(:free) { create(:better_together_billing_plan, listed: true, **free_attrs) }
+  let!(:hidden) { create(:better_together_billing_plan, listed: false, **free_attrs) }
 
   def checkout_for(plan) = better_together.new_billing_checkout_path(plan_id: plan.id, locale:)
 
@@ -38,6 +38,26 @@ RSpec.describe BetterTogether::Billing::CatalogController do
       expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog))
     end
 
+    it 'shows a plan once, as a plan, and not again among the products' do
+      get better_together.billing_catalog_path(locale:)
+
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog))
+      expect(response.body).not_to include(better_together.billing_catalog_product_path(monthly, locale:))
+
+      get better_together.billing_catalog_product_path(monthly, locale:)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'leaves out a plan whose only recurring price was taken off sale, and its page is not found' do
+      monthly.current_price.archive!
+
+      get better_together.billing_catalog_path(locale:)
+      expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog))
+
+      get better_together.billing_catalog_plan_path(monthly, locale:)
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'says so when nothing is listed' do
       BetterTogether::Billing::Plan.update_all(listed: false) # rubocop:disable Rails/SkipsModelValidations
 
@@ -58,10 +78,10 @@ RSpec.describe BetterTogether::Billing::CatalogController do
   describe 'plans limited to an audience' do
     let(:perk_attrs) { { processor: nil, processor_price_id: nil, processor_product_id: nil } }
     let!(:members_only) do
-      create(:better_together_billing_plan, :one_time, listed: true, restricted_to_members: true, name: 'Member price', **perk_attrs)
+      create(:better_together_billing_plan, listed: true, restricted_to_members: true, name: 'Member price', **perk_attrs)
     end
     let!(:subscribers_only) do
-      create(:better_together_billing_plan, :one_time, listed: true, restricted_to_subscribers: true, name: 'Subscriber extras', **perk_attrs)
+      create(:better_together_billing_plan, listed: true, restricted_to_subscribers: true, name: 'Subscriber extras', **perk_attrs)
     end
     let(:card) { ->(plan) { ActionView::RecordIdentifier.dom_id(plan, :catalog) } }
 

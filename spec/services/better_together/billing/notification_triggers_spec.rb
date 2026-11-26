@@ -192,7 +192,7 @@ RSpec.describe 'Billing notification triggers' do # rubocop:disable RSpec/Descri
     it 'tells the stewards when a plan could not be sent to the processor, once per attempt' do
       failing = create(:better_together_billing_plan, :unlinked)
       Noticed::Notification.delete_all
-      job = BetterTogether::Billing::SyncPlanJob.new(failing.id)
+      job = BetterTogether::Billing::SyncProductJob.new(failing.id)
 
       deliver_now { job.send(:record_failure, RuntimeError.new('x')) }
 
@@ -204,7 +204,7 @@ RSpec.describe 'Billing notification triggers' do # rubocop:disable RSpec/Descri
       theirs = create(:better_together_billing_plan, :unlinked, seller: create(:better_together_community))
       Noticed::Notification.delete_all
 
-      deliver_now { BetterTogether::Billing::SyncPlanJob.new(theirs.id).send(:record_failure, RuntimeError.new('x')) }
+      deliver_now { BetterTogether::Billing::SyncProductJob.new(theirs.id).send(:record_failure, RuntimeError.new('x')) }
 
       expect(kinds_for(steward)).to be_empty
     end

@@ -13,13 +13,6 @@ module BetterTogether
         expect { described_class.verify!(Object.new) }.to raise_error(described_class::ContractError, /must inherit/)
       end
 
-      it 'rejects an adapter built for a different contract version' do
-        stale = FakeAdapter.new
-        allow(stale).to receive(:contract_version).and_return(described_class::CONTRACT_VERSION + 1)
-
-        expect { described_class.verify!(stale) }.to raise_error(described_class::ContractError, /contract/)
-      end
-
       it 'accepts an adapter registered under the name it reports' do
         expect(described_class.verify!(adapter, name: :fake)).to eq(adapter)
         expect(described_class.verify!(adapter, name: 'fake')).to eq(adapter)
@@ -30,16 +23,24 @@ module BetterTogether
           .to raise_error(described_class::ContractError, /registered as stripe but reports processor_name fake/)
       end
 
+      it 'refuses, at registration, an online adapter whose checkout does not take mode and lines' do
+        old = Class.new(BetterTogether::Billing::FakeAdapter) do
+          def create_checkout_session(context:, order:, payment:, success_url:, cancel_url:, idempotency_key:, metadata:); end # rubocop:disable Metrics/ParameterLists, Lint/UnusedMethodArgument
+        end.new(capabilities: %i[checkout])
+
+        expect { described_class.verify!(old) }.to raise_error(described_class::ContractError, /must accept mode: and lines:/)
+      end
+
       it 'documents a context for every capability method, so no call is made without a tenant' do
         keywords = described_class::CAPABILITY_METHODS.values.flat_map(&:values)
 
         expect(keywords).to all(include(:context))
       end
 
-      it 'lists plan_sync and lookups methods with the context keyword' do
+      it 'lists catalog_sync and lookups methods with the context keyword' do
         methods = described_class::CAPABILITY_METHODS
 
-        expect(methods[:plan_sync].keys).to contain_exactly(:sync_plan, :fetch_price, :fetch_product)
+        expect(methods[:catalog_sync].keys).to contain_exactly(:sync_catalog_item, :fetch_price, :fetch_product)
         expect(methods[:lookups].keys).to eq([:lookup])
         expect(described_class::CAPABILITIES).to include(:lookups)
       end
@@ -52,8 +53,8 @@ module BetterTogether
         expect(bare.supported_currencies).to be_nil
         expect { bare.lookup(context: nil, kind: :products, search: nil, scope: {}, limit: 1) }
           .to raise_error(described_class::UnsupportedCapabilityError, /lookups/)
-        expect { bare.sync_plan(context: nil, plan: nil, idempotency_key: 'k') }
-          .to raise_error(described_class::UnsupportedCapabilityError, /plan_sync/)
+        expect { bare.sync_catalog_item(context: nil, item: nil, idempotency_key: 'k') }
+          .to raise_error(described_class::UnsupportedCapabilityError, /catalog_sync/)
       end
 
       describe 'settlement' do

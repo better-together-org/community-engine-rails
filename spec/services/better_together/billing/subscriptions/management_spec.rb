@@ -142,7 +142,7 @@ RSpec.describe 'Managing subscriptions' do # rubocop:disable RSpec/DescribeClass
   describe BetterTogether::Billing::Subscriptions::MoveToCurrentPrice do
     it 'puts the subscriber on the plan\'s price today, for the next invoice' do
       term
-      sub_plan.update_columns(amount_cents: 5000) # rubocop:disable Rails/SkipsModelValidations
+      reprice(sub_plan, 5000)
 
       described_class.call(term: term.reload)
 

@@ -31,7 +31,7 @@ module BetterTogether
         def live = @live ||= Entitlements::ForPerson.call(platform:, person:).live
 
         def member?
-          live.where(plan_id: PlanGrant.where(kind: 'membership_role').select(:plan_id)).exists?
+          live.where(product_id: Grant.where(kind: 'membership_role').select(:product_id)).exists?
         end
 
         def subscriber? = live.where.not(pay_subscription_id: nil).exists?

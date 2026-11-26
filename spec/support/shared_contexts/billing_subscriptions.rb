@@ -21,6 +21,15 @@ RSpec.shared_context 'with subscription fixtures' do
     enable_offline('cash', purposes: %w[subscription one_time])
   end
 
+  # The plan is sold at a new amount from now on: a price never changes, so a new one replaces it.
+  def reprice(plan, amount_cents)
+    old = plan.current_price
+    old.archive!
+    create(:better_together_billing_price, product: plan, kind: 'recurring', interval: old.interval, interval_count: old.interval_count,
+                                           currency: old.currency, amount_cents:)
+    plan.reload
+  end
+
   def give_credit(cents, holder: buyer)
     credit::Grant.call(platform: host_platform, holder:, amount_cents: cents, currency: 'USD', origin: 'steward_grant', actor: steward,
                        idempotency_key: SecureRandom.uuid)
@@ -93,7 +102,7 @@ RSpec.shared_context 'with entitlement fixtures' do
   before { BetterTogether::Quotas::Allowances.register('billing_entitlements', BetterTogether::Billing::Entitlements::QuotaAllowances) }
 
   def add_grant(kind, parameters, plan: sub_plan)
-    plan.plan_grants.create!(platform_id: plan.platform_id, kind:, parameters:, position: plan.plan_grants.count)
+    plan.grants.create!(platform_id: plan.platform_id, kind:, parameters:, position: plan.grants.count)
   end
 
   def role_grant(role = supporter_role) = add_grant('membership_role', { 'joinable' => 'platform', 'role' => role.identifier })

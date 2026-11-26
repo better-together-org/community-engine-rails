@@ -21,7 +21,7 @@ RSpec.describe 'Documentation screenshots for the billing steward menu', # ruboc
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) })
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) })
     Current.platform = host_platform
     BetterTogether::NavigationBuilder.build_host
   end

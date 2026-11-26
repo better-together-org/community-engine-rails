@@ -116,7 +116,7 @@ included, more storage and features. Tier C: a separate app and database, the pl
 | 1.7 | As P3 tier B includes the custom domain and raised quotas without extra steps. | P | Quotas work; domain entitlement kind missing. |
 | 1.8 | As P3 I see my hosting plan, renewal date, usage, invoices and payment method. | B | `/billing/hosting_plan` for a hosted platform owner: plan, renewal, usage (D3). Not reachable on the host platform, by design. |
 | 1.9 | As P3 I upgrade or downgrade with proration and my features and quotas change with it. | B | Change plan from the next period, with a guard (D3). Change plan link is on the subscription page. |
-| 1.10 | As P3 I buy extra storage or AI tokens as add-ons. | B | Add-ons at checkout and bought later (D2, D2b). Add-ons cannot hold grants; they are plain extras today. |
+| 1.10 | As P3 I buy extra storage or AI tokens as add-ons. | B | Extras at checkout and bought later (D2, D2b). An extra is a product with purchase requirements, so it can hold grants (a storage top-up is a fixed-term product with a storage grant). Built in PS-5 to PS-6. |
 | 1.11 | As P3 I cancel and my platform stays readable through the paid period, then read only. | P | Cancel works; suspension missing. |
 | 1.12 | As P3 on tier C I request and receive a separate instance that is its own host. | M | Operator task (1.13), manual fulfilment first. |
 | 1.13 | As P11 I receive a provisioning task when tier C is paid, with order, plan and requested domain on it, and I assign, comment, set due dates and mark it done. | M | Needs a project and task system for BTS operators (G23). Billing creates the task; the task system is a general feature. |

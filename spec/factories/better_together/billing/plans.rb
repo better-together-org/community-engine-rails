@@ -19,6 +19,8 @@ FactoryBot.define do
     processor_price_id { "price_#{SecureRandom.hex(8)}" }
     processor_product_id { "prod_#{SecureRandom.hex(6)}" }
     sync_status { 'synced' }
+    # Already on the processor, so creating it pushes nothing.
+    manages_processor_product { false }
     participant_summary { 'Supports hosted participation and stewardship for this Better Together space.' }
     participant_benefits { "Hosted access\nOngoing stewardship support" }
     beneficiary_label { 'Hosted access' }
@@ -29,15 +31,12 @@ FactoryBot.define do
       }
     end
 
-    trait :one_time do
-      billing_interval { 'one_time' }
-    end
-
     # Created in Community Engine and waiting for the first push to the processor.
     trait :unlinked do
       processor_price_id { nil }
       processor_product_id { nil }
       sync_status { 'pending' }
+      manages_processor_product { true }
     end
 
     # Factories skip the processor and price checks that guard steward creation.

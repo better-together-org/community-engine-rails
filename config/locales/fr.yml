@@ -990,6 +990,7 @@ fr:
           month: "%{price} par mois"
           once: "%{price}, une fois"
           year: "%{price} par an"
+        products_heading: Aussi disponible
         subscribe: S’abonner
         title: Forfaits
       checkout:
@@ -1044,6 +1045,10 @@ fr:
           pour payer cette somme maintenant. Le mode choisi ci-dessus paie le reste.
         place_order: Passer la commande
         placed: Votre commande a été passée.
+        quantity: Combien
+        quantity_line:
+          one: "%{count} article"
+          other: "%{count} articles"
         renew_with: Renouveler avec
         renew_with_default: Le mode qui paie la plus grande part
         renew_with_hint: Chaque facture de renouvellement sera payée ainsi. Vous pouvez
@@ -1211,6 +1216,53 @@ fr:
           processed: Traité
           replayed: Relancé
         table_caption: Événements de paiement et leur état
+      grants:
+        add: Ajouter
+        add_confirm: Ajouter ceci au forfait ?
+        add_feature: Accès à une fonctionnalité
+        add_quota: Plus d’un quota
+        add_role: Un rôle
+        add_storage: Plus de stockage
+        added: Ajouté au forfait.
+        amount_hint: Dans l’unité propre au quota, par exemple des jetons d’IA.
+        audience: Les personnes qui ont déjà ce forfait (%{count}) sont mises à jour
+          en quelques minutes.
+        audience_none: Personne n’a encore ce forfait, donc personne n’est concerné.
+        edit_confirm: Modifier cette quantité ?
+        field_amount: Quantité supplémentaire
+        field_community: Communauté (si une communauté)
+        field_feature: Fonctionnalité
+        field_level: Niveau d’accès
+        field_quota: Quota
+        field_role: Rôle
+        field_storage: Stockage
+        field_where: Où
+        intro: Les personnes qui paient ce forfait les obtiennent tant qu’il est payé.
+          À l’expiration, seul ce que le forfait a donné est retiré ; les rôles et
+          accès déjà détenus restent, et rien de ce qui a été créé n’est supprimé.
+        none: Ce forfait ne comprend encore rien.
+        place_a_community: Une communauté
+        place_community: la communauté %{name}
+        place_platform: La plateforme
+        place_unknown: une communauté qui n’existe plus
+        product_intro: Les personnes qui achètent ce produit obtiennent ceci lorsque
+          la commande est payée. En cas de remboursement, ou à la fin d’une durée
+          fixe, ce que le produit a donné est retiré ; rien de ce qu’elles ont créé
+          n’est supprimé.
+        product_title: Ce que comprend ce produit
+        refused: Cela n’a pas pu être ajouté. Vérifiez les choix ; un rôle qui peut
+          gérer des éléments ne peut pas être donné par un forfait.
+        remove: Retirer
+        remove_confirm: Retirer ceci du forfait ? Les personnes qui l’ont le perdent,
+          sauf si elles l’avaient déjà avant.
+        removed: Retiré du forfait.
+        role_hint: Seuls les rôles qui ne peuvent pas gérer sont proposés.
+        summary_feature: Accès à %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} de plus pour %{quota}"
+        summary_quota_size: "%{amount} de plus pour %{quota}"
+        summary_role: Le rôle %{role} dans %{where}
+        title: Ce que comprend ce forfait
+        updated: La quantité a été modifiée.
       hosted_billing:
         accept_button: Accepter pour cette plateforme
         accepted: Accord accepté pour cette plateforme.
@@ -1791,54 +1843,8 @@ fr:
         one_time_participant_summary: Contribution unique a l'hebergement
         personal_beneficiary_label: Acces personnel
         recurring_participant_summary: Acces heberge continu et soutien de stewardship
-      plan_grants:
-        add: Ajouter
-        add_confirm: Ajouter ceci au forfait ?
-        add_feature: Accès à une fonctionnalité
-        add_quota: Plus d’un quota
-        add_role: Un rôle
-        add_storage: Plus de stockage
-        added: Ajouté au forfait.
-        amount_hint: Dans l’unité propre au quota, par exemple des jetons d’IA.
-        audience: Les personnes qui ont déjà ce forfait (%{count}) sont mises à jour
-          en quelques minutes.
-        audience_none: Personne n’a encore ce forfait, donc personne n’est concerné.
-        edit_confirm: Modifier cette quantité ?
-        field_amount: Quantité supplémentaire
-        field_community: Communauté (si une communauté)
-        field_feature: Fonctionnalité
-        field_level: Niveau d’accès
-        field_quota: Quota
-        field_role: Rôle
-        field_storage: Stockage
-        field_where: Où
-        intro: Les personnes qui paient ce forfait les obtiennent tant qu’il est payé.
-          À l’expiration, seul ce que le forfait a donné est retiré ; les rôles et
-          accès déjà détenus restent, et rien de ce qui a été créé n’est supprimé.
-        none: Ce forfait ne comprend encore rien.
-        place_a_community: Une communauté
-        place_community: la communauté %{name}
-        place_platform: La plateforme
-        place_unknown: une communauté qui n’existe plus
-        refused: Cela n’a pas pu être ajouté. Vérifiez les choix ; un rôle qui peut
-          gérer des éléments ne peut pas être donné par un forfait.
-        remove: Retirer
-        remove_confirm: Retirer ceci du forfait ? Les personnes qui l’ont le perdent,
-          sauf si elles l’avaient déjà avant.
-        removed: Retiré du forfait.
-        role_hint: Seuls les rôles qui ne peuvent pas gérer sont proposés.
-        summary_feature: Accès à %{feature} (%{level})
-        summary_quota: "%{amount} %{unit} de plus pour %{quota}"
-        summary_quota_size: "%{amount} de plus pour %{quota}"
-        summary_role: Le rôle %{role} dans %{where}
-        title: Ce que comprend ce forfait
-        updated: La quantité a été modifiée.
       plans:
         actions_heading: Actions
-        add_on_targets_hint: Utilisé seulement pour une option. Cochez les forfaits
-          avec lesquels elle est proposée et dont les titulaires peuvent l'acheter
-          seule plus tard. Ne cochez rien pour la proposer avec tous les forfaits.
-        add_on_targets_legend: Forfaits que cette option prolonge
         audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
           une ou les deux pour le limiter : toute personne de l’un des types cochés
           peut le voir et l’acheter.'
@@ -1858,10 +1864,8 @@ fr:
           de paiement. Chacun doit encore être activé pour le vendeur avant que les
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
-        field_add_on: Option seulement
-        field_add_on_hint: Vendue uniquement en supplément sur la commande d'un autre
-          forfait, jamais seule. Paiement unique, sans accès inclus.
         field_amount: Montant
+        field_amount_cents: Montant
         field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
           Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
           entiers.
@@ -1988,6 +1992,29 @@ fr:
         toggle_deactivate: Desactiver
         update_submit: Mettre a jour le plan
         updated: Plan de facturation mis a jour avec succes.
+      prices:
+        archive: Retirer de la vente
+        archive_confirm: Retirer ce prix de la vente ? Les commandes déjà passées
+          le conservent.
+        archived: Le prix a été retiré de la vente.
+        create_submit: Ajouter le prix
+        created: Le prix a été ajouté.
+        field_amount: Montant
+        field_currency: Devise
+        field_label: Libellé
+        field_label_hint: Facultatif. Affiché à côté du montant quand un produit a
+          plusieurs prix.
+        immutable_note: Un prix ne change jamais une fois ajouté. Pour facturer un
+          autre montant, ajoutez un nouveau prix et retirez l'ancien de la vente.
+        intro: Le prix payé par l'acheteur est le plus récent en vente.
+        new_price: Ajouter un prix
+        new_title: Ajouter un prix
+        none: Aucun prix pour l'instant. Ajoutez-en un pour mettre ce produit en vente.
+        plan_intro: 'Un forfait est vendu par ses prix récurrents. Un prix ne change
+          jamais : utilisez Changer le prix pour le remplacer.'
+        status_archived: Hors vente
+        status_on_sale: En vente
+        title: Prix
       processor_settings:
         acknowledge_label: Je comprends et j'accepte ces limites.
         acknowledged_on: Vous avez accepté ces limites le %{date}.
@@ -2061,6 +2088,64 @@ fr:
         status_managed_off: Non disponible
         status_managed_on: Activé
         status_not_set_up: Non configuré
+      products:
+        create_submit: Créer le produit
+        created: Le produit a été créé.
+        edit_title: Modifier le produit
+        'false': Non
+        field_active: En vente
+        field_description: Description
+        field_identifier: Identifiant
+        field_identifier_hint: Un nom court qui ne change jamais, en minuscules, chiffres
+          et tirets bas.
+        field_lifetime: Durée
+        field_listed: Affiché dans le catalogue
+        field_name: Nom
+        field_needs_any_plan: Tout forfait
+        field_price: Prix
+        field_restricted_to_members: Réservé aux membres
+        field_restricted_to_subscribers: Réservé aux abonnés
+        field_summary: Résumé
+        field_tax_category: Catégorie de taxe
+        field_tax_category_hint: Laissez la catégorie standard sauf si ce type de
+          produit est taxé autrement.
+        field_term_length: Pendant combien de temps
+        field_term_unit: Unité
+        identifier_placeholder: ajout_stockage
+        index_title: Produits
+        intro: Ce que vous vendez une seule fois, comme un ajout de stockage. Chaque
+          produit a des prix et indique ce que reçoit l'acheteur.
+        lifetime_fixed_term: Pour une durée fixe après le paiement
+        lifetime_fixed_term_summary: Pendant %{count} %{unit}
+        lifetime_hint: Jusqu'à utilisation dure tant que l'acheteur le garde. Pour
+          une durée fixe, cela se termine seul, et un remboursement y met fin aussitôt.
+        lifetime_legend: Durée de ce qu'il donne
+        lifetime_until_used: Jusqu'à utilisation
+        listing_legend: Où il est proposé
+        new_product: Nouveau produit
+        new_title: Nouveau produit
+        no_price: Pas encore de prix
+        none: Aucun produit pour l'instant.
+        requirements_hint: Laissez tout décoché pour le vendre seul. L'acheteur doit
+          avoir l'un des forfaits cochés, déjà ou dans la même commande.
+        requirements_legend: Vendu avec un forfait
+        table_caption: Produits vendus par cette plateforme
+        tax_standard: Standard
+        'true': Oui
+        unit_day:
+          one: jour
+          other: jours
+        unit_month:
+          one: mois
+          other: mois
+        unit_week:
+          one: semaine
+          other: semaines
+        unit_year:
+          one: an
+          other: ans
+        update_submit: Enregistrer le produit
+        updated: Le produit a été enregistré.
       promotions:
         activate: Activer
         always_open: Toujours
@@ -2105,6 +2190,13 @@ fr:
         status_used_up: Épuisé
         switched: Promotion mise à jour.
         usage_of: "%{used} sur %{max}"
+      purchase_requirements:
+        kinds:
+          plan: un forfait
+        locked_heading: Extras à débloquer
+        locked_hint: Ceux-ci nécessitent d'abord autre chose.
+        needs: Nécessite d'abord %{names}
+        or: ou
       readiness:
         check_agreements: Les ententes d’achat sont en vigueur pour %{purpose}.
         check_configured: La facturation est activée et les coordonnées de votre organisation
@@ -2913,6 +3005,7 @@ fr:
             card: Carte avec prix
           empty: Choisissez un forfait à proposer dans ce bloc.
           plan_hint: Choisissez l'un des forfaits actifs de cette plateforme.
+          price_hint: Ou choisissez le prix d'un produit; il remplace le forfait.
         plan_catalog_block:
           create_label: Créer un nouveau bloc %{type} pour la page
           empty: Aucun forfait n'est offert pour le moment.
@@ -7573,12 +7666,6 @@ fr:
       accepted: doit être accepté(e)
       account_mismatch: doit appartenir au même compte
       acknowledgement_required: doit être accepté avant que ce mode puisse être activé
-      add_on_cannot_have_grants: ne peut pas être donné à un complément
-      add_on_cannot_renew: un complément s'achète une fois, il ne se renouvelle pas
-      add_on_has_grants: un complément ne peut rien inclure en propre; mettez-le sur
-        un forfait
-      add_on_locked_by_orders: ne peut plus être modifié dès que des commandes incluent
-        ce forfait
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
       already_on_the_plan: figure déjà dans le forfait ; modifiez-le plutôt
@@ -7618,7 +7705,6 @@ fr:
       lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
       must_be_a_primary_plan: doit être un forfait qui n'est pas une option
-      must_be_an_add_on: doit être une option
       no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
         de paiement
       not_a_community_role: doit être un rôle de communauté
@@ -7629,6 +7715,7 @@ fr:
       not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
         dehors d'un processeur"
       not_configured: n'est pas configuré pour cette plateforme
+      not_for_until_used: ne s'applique qu'à une durée fixe
       not_found: n’a pas été trouvé(e)
       not_found_at_processor: est introuvable chez le processeur de paiement
       not_installed: n'est pas un processeur de paiement installé
@@ -7640,10 +7727,14 @@ fr:
       not_the_buyer: ne peut être faite que par l'acheteur de la commande
       nothing_to_give_back: Rien sur cette commande ne peut être remboursé ici.
       odd: doit être impair
+      one_item: doit concerner un forfait ou un produit, pas les deux
+      one_owner: doit appartenir à un forfait ou à un produit, pas aux deux
       one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
       present: doit être vide
       price_inactive: est archivé chez le processeur de paiement
+      price_is_immutable: un prix ne change jamais ; créez-en un nouveau et archivez
+        celui-ci
       public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
         confiance à toutes ses adresses
       recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
@@ -7651,6 +7742,7 @@ fr:
       required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
         de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
+      tax_category_other_platform: appartient à une autre plateforme
       too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)

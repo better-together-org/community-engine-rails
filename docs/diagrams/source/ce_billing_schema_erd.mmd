@@ -13,7 +13,7 @@ erDiagram
   BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_LOTS : "account / credit_account_id"
   EXT_PERSON o|--o{ BILLING_CREDIT_LOTS : "granted_by / granted_by_id"
   EXT_PLATFORM ||--o{ BILLING_ENTITLEMENTS : "platform / platform_id"
-  BILLING_PLANS ||--o{ BILLING_ENTITLEMENTS : "plan / plan_id"
+  EXT_BILLING_PRODUCT ||--o{ BILLING_ENTITLEMENTS : "product / product_id"
   EXT_PAY_SUBSCRIPTION o|--o{ BILLING_ENTITLEMENTS : "pay_subscription / pay_subscription_id"
   BILLING_ORDERS o|--o{ BILLING_ENTITLEMENTS : "order / order_id"
   EXT_PLATFORM ||--o{ BILLING_ENTITLEMENT_GRANTS : "platform / platform_id"
@@ -41,10 +41,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PAYMENTS : "platform / platform_id"
   BILLING_ORDERS ||--o{ BILLING_PAYMENTS : "order / order_id"
   EXT_PAY_CHARGE o|--o{ BILLING_PAYMENTS : "pay_charge / pay_charge_id"
-  EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
-  EXT_BILLING_TAX_CATEGORY o|--o{ BILLING_PLANS : "tax_category / tax_category_id"
-  EXT_PLATFORM ||--o{ BILLING_PLAN_GRANTS : "platform / platform_id"
-  BILLING_PLANS ||--o{ BILLING_PLAN_GRANTS : "plan / plan_id"
+  EXT_PLATFORM ||--o{ BILLING_PRODUCTS : "platform / platform_id"
+  EXT_BILLING_TAX_CATEGORY o|--o{ BILLING_PRODUCTS : "tax_category / tax_category_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_PROCESSOR_SETTINGS : "acknowledged_by / acknowledged_by_id"
   EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
@@ -61,8 +59,9 @@ erDiagram
   BILLING_ORDERS o|--o{ BILLING_SUBSCRIPTION_PERIODS : "order / order_id"
   EXT_PLATFORM ||--o{ BILLING_SUBSCRIPTION_TERMS : "platform / platform_id"
   EXT_PAY_SUBSCRIPTION ||--o{ BILLING_SUBSCRIPTION_TERMS : "pay_subscription / pay_subscription_id"
-  BILLING_PLANS ||--o{ BILLING_SUBSCRIPTION_TERMS : "plan / plan_id"
-  BILLING_PLANS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan / pending_plan_id"
+  BILLING_PRODUCTS ||--o{ BILLING_SUBSCRIPTION_TERMS : "plan / plan_id"
+  EXT_BILLING_PRICE ||--o{ BILLING_SUBSCRIPTION_TERMS : "price / price_id"
+  BILLING_PRODUCTS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan / pending_plan_id"
   BILLING_ORDERS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan_order / pending_plan_order_id"
 
   BILLING_AGREEMENT_REQUIREMENTS {
@@ -113,13 +112,13 @@ erDiagram
     beneficiary_id uuid
     order_id uuid
     pay_subscription_id uuid
-    plan_id uuid
     platform_id uuid
+    product_id uuid
     beneficiary_type string
     status string
+    quantity integer
     ends_at datetime
     grace_ends_at datetime
-    starts_at datetime
   }
 
   BILLING_ENTITLEMENT_GRANTS {
@@ -221,25 +220,17 @@ erDiagram
     status string
   }
 
-  BILLING_PLANS {
+  BILLING_PRODUCTS {
     latest_processor_event_id string
-    processor_price_id string
     processor_product_id string
     platform_id uuid
     seller_id uuid
     tax_category_id uuid
     accepted_payment_methods string
-    billing_interval string
-    currency string
     identifier string
-  }
-
-  BILLING_PLAN_GRANTS {
-    plan_id uuid
-    platform_id uuid
-    kind string
-    position integer
-    parameters jsonb
+    lifetime string
+    processor string
+    seller_type string
   }
 
   BILLING_PROCESSOR_SETTINGS {
@@ -307,10 +298,10 @@ erDiagram
     pending_plan_order_id uuid
     plan_id uuid
     platform_id uuid
+    price_id uuid
     beneficiary_type string
     currency string
     payment_method string
-    anchor_sequence integer
   }
 
   EXT_AGREEMENT {
@@ -322,6 +313,10 @@ erDiagram
   }
 
   EXT_PERSON {
+    string export_ref
+  }
+
+  EXT_BILLING_PRODUCT {
     string export_ref
   }
 
@@ -338,6 +333,10 @@ erDiagram
   }
 
   EXT_GEOGRAPHY_SETTLEMENT {
+    string export_ref
+  }
+
+  EXT_BILLING_PRICE {
     string export_ref
   }
 

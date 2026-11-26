@@ -39,13 +39,34 @@ end
 
 Implement `processor_name` (it must equal the name you register under; a mismatch raises `ContractError`), `sanitize_payload`, `capabilities`, `webhook_event_types`, and the methods for each capability you advertise. Every capability method receives `context:`, a `BetterTogether::Billing::ProcessorContext` naming the platform and processor account the call is for; use it instead of reading global environment variables, so one platform never acts through another's account. `ProcessorAdapter::CAPABILITY_METHODS` lists the methods and keywords per capability. The contract version is checked when the adapter is built; a mismatch raises `ContractError`. Run the shared examples in `spec/support/shared_examples/billing_processor_adapter.rb` against your adapter.
 
-**Capabilities.** `checkout`, `portal`, `plan_sync`, `lookups`, `refunds` and `offline_settlement` are used by core. `merchant_accounts` and `transfers` are **reserved**: the contract names them but core has no caller until payouts exist. There is no stored-value capability: store credit is a ledger inside Community Engine, and Pay only mirrors Stripe's customer balance read-only. A `checkout` adapter implements `create_checkout_session` (returns a `CheckoutSession`), `sync_checkout_session`, `release_payment` (expire the session or cancel the intent when core lets the order go), `reconcile_payment` (pull the processor's state; never trust a payload alone), `payment_action_url` and `receipt_url` (an https URL or nil); `refund` returns a `RefundResult` whose `reference` becomes the refund's `processor_reference`. Nothing is versioned or shimmed: the contract is simply this.
+**Capabilities.** `checkout`, `portal`, `catalog_sync`, `lookups`, `refunds` and `offline_settlement` are used by core. `merchant_accounts` and `transfers` are **reserved**: the contract names them but core has no caller until payouts exist. There is no stored-value capability: store credit is a ledger inside Community Engine, and Pay only mirrors Stripe's customer balance read-only. A `checkout` adapter implements `create_checkout_session` (returns a `CheckoutSession`), `sync_checkout_session`, `release_payment` (expire the session or cancel the intent when core lets the order go), `reconcile_payment` (pull the processor's state; never trust a payload alone), `payment_action_url` and `receipt_url` (an https URL or nil); `refund` returns a `RefundResult` whose `reference` becomes the refund's `processor_reference`. The contract is versioned: see "Contract versions" below.
 
 `process_event` should **pull state itself** (`Charge.sync`, `Pay.sync`) and return `retry` if Pay's mirror is not there yet, rather than trusting Pay's own handler to have run: a Pay handler returns silently when its customer is missing and Pay then deletes the delivery. Keep `Billing::Event.payload` to ids and the platform reference; Pay already holds the personal data.
 
 Core owns idempotency keys and money state. Money-moving calls always receive an `idempotency_key` that the adapter must pass through to the processor.
 
 **Wrap Pay for state and reads; call the processor's SDK for writes.** Pay is the right tool for the customer (`api_record`), for syncing charges and subscriptions (`Charge.sync`, `Subscription.sync`, `Pay.sync`) and for everything it mirrors. But Pay's write helpers (`Customer#checkout`, `#subscribe`, `Charge#refund!`, `Merchant#transfer`) pass only the connected account as a request option: they cannot carry a request-level idempotency key, and a key passed as a parameter would be rejected. So an adapter creates Checkout sessions, refunds and transfers with the SDK directly, with `{ idempotency_key:, stripe_account: }`, and then lets Pay sync the result. Never run `pay:install:migrations`: our Pay tables are ported by hand into the engine's migrations, and a spec fails if Pay ships a migration we have not ported.
+
+## The contract
+
+There is one contract and no version numbers. An adapter implements `sync_catalog_item(context:, item:, idempotency_key:)` for a `CatalogItem` (a plan, or a product with all its prices) and returns a `CatalogSyncResult`. Its `create_checkout_session` is given `mode:` (`:payment` or `:subscription`) and `lines:` (`CheckoutLine`), worked out by core in `Checkout::Lines`, and does not read the order to build its own. It holds a product and each price; a price it does not hold yet is sent inline.
+
+**Catalog items.** `CatalogItem` carries `ref`, `kind` (`plan` or `product`), text, `active`, `tax_code`, the processor product id once there is one, and a `CatalogPrice` for each price (`ref`, amount, currency, `interval` of `one_time` or a plan interval, `processor_price_id` when it exists). Create only the prices that have no processor id, never change one that exists (a price is immutable: a new amount is a new core Price), and return a `PriceInfo` for each carrying the `ref` it answers. Core stores the ids; the adapter never writes a plan, product or price. `SyncProductJob` pushes a product, on create, on a change to its name, description, active flag or tax category, and when a price is added.
+
+**Checkout lines.** Mode is `subscription` when any line recurs and `payment` when every line is one-time. A line is either a `processor_price_id` (a plan linked to the processor, or a price of a product held by it) or `price_data`, an `InlinePrice` (amount, currency, interval, name, description) for an item with no copy in the processor's catalog, which suits tickets and donations. The amount is what the order recorded, so a price archived since still charges what the buyer saw.
+
+### Stripe mapping
+
+| Core | Stripe |
+|---|---|
+| `CatalogItem` (plan or product) | `Product` (`name`, `description`, `active`, `tax_code` from the tax category) |
+| `CatalogPrice` | `Price` (`unit_amount`, `currency`, `recurring[interval]` and `recurring[interval_count]` when the interval is not `one_time`, `product`, `lookup_key`); archive with `active: false`, never edit |
+| `CatalogSyncResult.product_id` | `Product.id`, stored as `processor_product_id` |
+| `PriceInfo.price_id` and `ref` | `Price.id`, stored as `processor_price_id` on the Price or Plan named by `ref` |
+| `mode: :payment` / `:subscription` | Checkout Session `mode` `payment` / `subscription` |
+| `CheckoutLine` with `processor_price_id` | `line_items[].price` and `quantity` |
+| `CheckoutLine` with `price_data` | `line_items[].price_data` (`currency`, `unit_amount`, `product_data[name, description]`, and `recurring` when it recurs) |
+| `idempotency_key` | the request-level `Idempotency-Key` header on every write |
 
 ## Settlement kinds: remote, manual and internal
 

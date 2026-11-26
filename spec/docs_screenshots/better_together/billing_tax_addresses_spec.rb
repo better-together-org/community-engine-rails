@@ -19,8 +19,8 @@ RSpec.describe 'Documentation screenshots for tax registrations and the billing 
   include_context 'with billing switched on'
 
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     name: 'Garden plot', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot'),
+                                           currency: 'USD', amount_cents: 2500)
   end
 
   before do
@@ -56,7 +56,7 @@ RSpec.describe 'Documentation screenshots for tax registrations and the billing 
       callouts: [{ id: 'address', selector: '#billing-checkout-address', title: 'Billing address',
                    bullets: ['Pick one of your addresses, or add a new one. Tax is worked out for its place.'] }]
     ) do
-      visit_billing("checkout/new?plan_id=#{cash_plan.id}&payment_method=cash")
+      visit_billing("checkout/new?price_id=#{cash_plan.id}&payment_method=cash")
       scroll_to(find('#billing-checkout-address'), align: :top)
       expect(page).to have_css('#billing-checkout-address-select', visible: :all)
     end

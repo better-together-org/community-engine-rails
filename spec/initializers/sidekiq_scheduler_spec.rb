@@ -53,6 +53,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           ['15 14 * * *', 'BetterTogether::Billing::RemindOfflineConfirmationsJob'],
         'better_together:billing:expire_quota_reservations_hourly' =>
           ['35 * * * *', 'BetterTogether::Billing::ExpireQuotaReservationsJob'],
+        'better_together:billing:lapse_entitlements_hourly' =>
+          ['45 * * * *', 'BetterTogether::Billing::LapseEntitlementsJob'],
         'better_together:billing:expire_credit_lots_daily' =>
           ['50 4 * * *', 'BetterTogether::Billing::ExpireCreditLotsJob'],
         'better_together:billing:generate_renewals_daily' =>

@@ -56,7 +56,7 @@ module BetterTogether
           return 0 unless start && finish && finish > start
 
           left = ((finish - [now, start].max) / (finish - start)).clamp(0.0, 1.0)
-          ((plan.amount_cents - term.unit_amount_cents) * left).round
+          ((plan.current_price.amount_cents - term.unit_amount_cents) * left).round
         end
 
         # The plans this subscription could move to.
@@ -78,9 +78,10 @@ module BetterTogether
         # An entitlement's plan is fixed once made; a plan change is the one time it moves, so it is moved here.
         def self.switch(term, plan)
           Thread.current[:billing_plan_change] = true
-          term.update!(plan:, unit_amount_cents: plan.amount_cents, currency: plan.currency, pending_plan: nil, pending_plan_requested_at: nil,
-                       pending_plan_order: nil)
-          Entitlement.where(pay_subscription_id: term.pay_subscription_id).update_all(plan_id: plan.id) # rubocop:disable Rails/SkipsModelValidations
+          price = plan.current_price
+          term.update!(plan:, price:, unit_amount_cents: price.amount_cents, currency: price.currency, pending_plan: nil,
+                       pending_plan_requested_at: nil, pending_plan_order: nil)
+          Entitlement.where(pay_subscription_id: term.pay_subscription_id).update_all(product_id: plan.id) # rubocop:disable Rails/SkipsModelValidations
         ensure
           Thread.current[:billing_plan_change] = nil
         end
@@ -138,7 +139,7 @@ module BetterTogether
 
         def invoice_attributes(plan, cents)
           { **invoice_parties, purpose: 'subscription', renewal: true, payment_method: method_to_open,
-                               line_items: [{ purchasable: plan, quantity: 1, unit_amount_cents: cents }],
+                               line_items: [{ purchasable: plan.current_price, quantity: 1, unit_amount_cents: cents }],
                                tax_address: GenerateRenewal.new(term:).tax_address,
                                expires_at: [term.pay_subscription.current_period_end, 3.days.from_now].max }
         end

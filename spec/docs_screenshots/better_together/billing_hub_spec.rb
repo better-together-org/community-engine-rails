@@ -56,8 +56,8 @@ RSpec.describe 'Documentation screenshots for the buyer billing page', # rubocop
 
   it 'captures the order list, paged' do
     stub_const('BetterTogether::Billing::OrdersController::PER_PAGE', 2)
-    plan = create(:better_together_billing_plan, :one_time, processor: nil, processor_price_id: nil, processor_product_id: nil,
-                                                            amount_cents: 0, accepted_payment_methods: [])
+    plan = create(:better_together_billing_plan, processor: nil, processor_price_id: nil, processor_product_id: nil,
+                                                 amount_cents: 0, accepted_payment_methods: [])
     3.times { |i| travel_to((i + 1).hours.ago) { place_order(buyer: member_person, line_items: [{ purchasable: plan }]) } }
 
     BetterTogether::CapybaraScreenshotEngine.capture(

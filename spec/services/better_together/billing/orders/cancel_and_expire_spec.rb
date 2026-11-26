@@ -52,7 +52,7 @@ RSpec.describe 'Cancelling and expiring orders' do # rubocop:disable RSpec/Descr
       two = place_order(line_items: [{ purchasable: plan, quantity: 2 }])
       held = []
       two.line_items.each do |line|
-        held_plan = instance_double(BetterTogether::Billing::Plan)
+        held_plan = instance_double(BetterTogether::Billing::Price)
         allow(held_plan).to receive(:release!) { |quantity:| held << quantity }
         allow(line).to receive(:purchasable).and_return(held_plan)
       end

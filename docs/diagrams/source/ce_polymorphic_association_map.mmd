@@ -271,7 +271,7 @@ flowchart TB
     BetterTogether__Billing__LineItem_polymorphic_summary["Billing::LineItem\ntarget: purchasable, owner: string_translations"]
     BetterTogether__Billing__Order_polymorphic_summary["Billing::Order\ntarget: seller, target: on_behalf_of, target: subject"]
     BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary["Billing::OrderAgreementAcceptance\ntarget: on_behalf_of, owner: string_translations"]
-    BetterTogether__Billing__Plan_polymorphic_summary["Billing::Plan\ntarget: seller, owner: string_translations, owner: text_translations"]
+    BetterTogether__Billing__Plan_polymorphic_summary["Billing::Plan\ntarget: seller, owner: purchase_requirements, owner: string_translations, owner: text_translations, owner: plan_string_translations +1"]
     BetterTogether__Billing__ProcessorSetting_polymorphic_summary["Billing::ProcessorSetting\ntarget: seller"]
     BetterTogether__Billing__Promotion_polymorphic_summary["Billing::Promotion\nowner: string_translations"]
     BetterTogether__Billing__SubscriptionTerm_polymorphic_summary["Billing::SubscriptionTerm\ntarget: beneficiary"]
@@ -294,6 +294,9 @@ flowchart TB
     shared_supporting_polymorphic_anchor:::hidden
     BetterTogether__Activity_polymorphic_summary["Activity\ntarget: trackable, target: owner, target: recipient"]
     BetterTogether__AgentGrant_polymorphic_summary["AgentGrant\nowner: seeds"]
+    BetterTogether__Billing__Price_polymorphic_summary["Billing::Price\nowner: string_translations"]
+    BetterTogether__Billing__Product_polymorphic_summary["Billing::Product\ntarget: seller, owner: purchase_requirements, owner: string_translations, owner: text_translations"]
+    BetterTogether__Billing__PurchaseRequirement_polymorphic_summary["Billing::PurchaseRequirement\ntarget: dependent, target: prerequisite"]
     BetterTogether__Billing__TaxCategory_polymorphic_summary["Billing::TaxCategory\nowner: string_translations"]
     BetterTogether__Billing__TaxLine_polymorphic_summary["Billing::TaxLine\nowner: string_translations"]
     BetterTogether__Billing__TaxRate_polymorphic_summary["Billing::TaxRate\nowner: string_translations"]
@@ -347,7 +350,10 @@ flowchart TB
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
     shared_supporting_polymorphic_anchor ~~~ BetterTogether__Activity_polymorphic_summary
     BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__AgentGrant_polymorphic_summary
-    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__Billing__TaxCategory_polymorphic_summary
+    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__Billing__Price_polymorphic_summary
+    BetterTogether__Billing__Price_polymorphic_summary ~~~ BetterTogether__Billing__Product_polymorphic_summary
+    BetterTogether__Billing__Product_polymorphic_summary ~~~ BetterTogether__Billing__PurchaseRequirement_polymorphic_summary
+    BetterTogether__Billing__PurchaseRequirement_polymorphic_summary ~~~ BetterTogether__Billing__TaxCategory_polymorphic_summary
     BetterTogether__Billing__TaxCategory_polymorphic_summary ~~~ BetterTogether__Billing__TaxLine_polymorphic_summary
     BetterTogether__Billing__TaxLine_polymorphic_summary ~~~ BetterTogether__Billing__TaxRate_polymorphic_summary
     BetterTogether__Billing__TaxRate_polymorphic_summary ~~~ BetterTogether__Billing__TaxRegistration_polymorphic_summary

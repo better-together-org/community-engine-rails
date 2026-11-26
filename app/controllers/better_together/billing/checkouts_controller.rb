@@ -12,6 +12,9 @@ module BetterTogether
       include OwnerScoped
       include CheckoutTaxPreview
 
+      # The most of one price a buyer may order at once.
+      MAX_QUANTITY = 99
+
       before_action :set_plan
       before_action :set_add_ons
       before_action :set_choices
@@ -65,11 +68,32 @@ module BetterTogether
 
       def platform_plans = billing_owner.billing_plans.sold_by_platform
 
-      # The plan being bought: a primary plan, or an add-on the buyer may buy on its own because they hold a plan it extends.
+      # What is being bought: a plan (a primary plan, or an add-on the buyer may buy on its own because they hold a plan it extends)
+      # or one price of a product. Either way it is `@plan`, the main line of the order.
       def set_plan
-        @plan = platform_plans.active.find(params[:plan_id])
-        render_not_found unless @plan.add_on? ? policy(@plan).buy_alone? : policy(@plan).purchase?
+        @plan = find_item
+        return render_not_found unless purchasable_by_buyer?
+
+        @quantity = @plan.recurring? ? 1 : params[:quantity].to_i.clamp(1, MAX_QUANTITY)
       end
+
+      def find_item
+        return platform_prices.active.find(params[:price_id]) if params[:price_id].present?
+
+        # A plan is bought through the price it is sold at today.
+        platform_plans.active.find(params[:plan_id]).current_price or raise ActiveRecord::RecordNotFound
+      end
+
+      # A price must be on sale; an extra (a top-up that needs a plan) is bought alone only by someone who holds what it needs.
+      def purchasable_by_buyer?
+        @plan.purchasable? && (@plan.extra? ? policy(@plan).buy_alone? : policy(@plan).purchase?)
+      end
+
+      def platform_prices = billing_owner.billing_prices.sold_by_platform
+
+      # The query parameter that names the main item, for the forms to carry.
+      def item_param = :price_id
+      helper_method :item_param
 
       # The extras offered on this plan's order, and the ones the buyer ticked.
       def set_add_ons
@@ -79,16 +103,29 @@ module BetterTogether
         # Ticked earlier but no longer offered: the buyer is told rather than left with a quietly changed order.
         @dropped_add_ons = chosen - @add_ons.map(&:id)
         @purchasables = [@plan, *@add_ons]
-        @order_cents = @purchasables.sum(&:amount_cents)
+        @order_cents = order_cents
         @free_order = @purchasables.all?(&:free?)
       end
 
-      # Only add-ons this buyer may buy, in the plan's currency.
-      def offered_add_ons
-        return [] if @plan.add_on?
+      def order_cents = (@plan.amount_cents * @quantity) + @add_ons.sum(&:amount_cents)
 
-        platform_plans.active.add_ons_for(@plan).where(currency: @plan.currency).order(:amount_cents, :identifier)
-                      .select { |add_on| policy(add_on).purchase? }
+      # Only extras this buyer may buy with the item being bought, at the newest price of each product, in its currency.
+      def offered_add_ons
+        return [] if @plan.extra?
+
+        newest_extra_prices.select { |price| policy(price).purchase? && requirements_met?(price) }
+                           .sort_by { |price| [price.amount_cents, price.id] }
+      end
+
+      # The newest price on sale of each extra product, in the currency of what is being bought.
+      def newest_extra_prices
+        prices = platform_prices.active.extras.where(currency: @plan.currency).includes(:product).order(:created_at)
+        prices.select(&:purchasable?).group_by(&:product_id).values.map(&:last)
+      end
+
+      # Whether what is being bought (or already held) satisfies what the extra needs.
+      def requirements_met?(add_on)
+        BetterTogether::Billing::PurchaseRequirements::Evaluate.call(dependent: add_on, person: current_user.person, in_order: [@plan]).met?
       end
 
       def set_choices
@@ -175,7 +212,9 @@ module BetterTogether
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
         order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose,
-                                   line_items: @purchasables.map { |purchasable| { purchasable: } },
+                                   line_items: @purchasables.each_with_index.map do |purchasable, index|
+                                     { purchasable:, quantity: index.zero? ? @quantity : 1 }
+                                   end,
                                    renewal_payment_method: @renew_with, billing_address: @address, **how_to_pay)
         redirect_after_place(order)
       rescue Orders::Place::Refused, Checkout::AgreementGate::NotReady => e

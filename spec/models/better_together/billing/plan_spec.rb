@@ -10,7 +10,7 @@ RSpec.describe BetterTogether::Billing::Plan do
   let!(:host_platform) { configure_host_platform }
   let(:other_platform) { create(:better_together_platform) }
   let(:rules) { nil }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync lookups], rules:) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync lookups], rules:) }
 
   before { BetterTogether::Billing.register_processor(:fake, -> { adapter }) }
 
@@ -75,7 +75,7 @@ RSpec.describe BetterTogether::Billing::Plan do
     end
 
     it 'waits for its first push and enqueues it' do
-      expect { plan.save! }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.save! }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
 
       expect(plan.reload).to have_attributes(sync_status: 'pending', manages_processor_product: true, processor_price_id: nil)
     end
@@ -110,11 +110,8 @@ RSpec.describe BetterTogether::Billing::Plan do
       [0, -1, 37].each { |count| expect(new_plan(interval_count: count)).not_to be_valid }
     end
 
-    it 'is one for a one-time price' do
-      plan = new_plan(billing_interval: 'one_time', interval_count: 2)
-
-      expect(plan).not_to be_valid
-      expect(plan.errors.details[:interval_count]).to include(a_hash_including(error: :one_time_single))
+    it 'refuses a one-time interval, which is a product now' do
+      expect(new_plan(billing_interval: 'one_time')).not_to be_valid
     end
 
     it 'is fixed once the processor has the price, like the amount and the interval' do
@@ -132,6 +129,16 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect(plan).to be_valid
       expect(plan).to have_attributes(amount_cents: 99_000, currency: 'CAD', billing_interval: 'year', processor_product_id: 'prod_pro',
                                       manages_processor_product: false, sync_status: 'synced')
+    end
+
+    it 'keeps the processor amount even when a typed amount is submitted with the link' do
+      adapter.prices['price_typed'] = BetterTogether::Billing::PriceInfo.new(
+        price_id: 'price_typed', product_id: 'prod_pro', amount_cents: 99_000, currency: 'cad', interval: 'year'
+      )
+      plan = link_plan('price_typed', amount: '1.00')
+
+      expect(plan).to be_valid
+      expect(plan.amount_cents).to eq(99_000)
     end
 
     it 'copies how many intervals make a period, so a quarterly price is not shown as monthly' do
@@ -163,7 +170,7 @@ RSpec.describe BetterTogether::Billing::Plan do
     end
 
     it 'is already synced, so nothing is pushed' do
-      expect { link_plan('price_ok').save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { link_plan('price_ok').save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
 
     it 'rejects a price the processor does not know' do
@@ -225,7 +232,7 @@ RSpec.describe BetterTogether::Billing::Plan do
     it 'records the plan as synced and enqueues nothing' do
       plan = new_plan(processor_price_id: 'price_manual')
 
-      expect { plan.save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
       expect(plan.reload.sync_status).to eq('synced')
     end
   end
@@ -334,50 +341,49 @@ RSpec.describe BetterTogether::Billing::Plan do
     let!(:plan) { create(:better_together_billing_plan) }
 
     it 'enqueues a push when the name, description or active flag changes' do
-      expect { plan.update!(name: 'Renamed') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob).with(plan.id)
-      expect { plan.update!(description: 'More words') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
-      expect { plan.update!(active: false) }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.update!(name: 'Renamed') }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob).with(plan.id)
+      expect { plan.update!(description: 'More words') }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
+      expect { plan.update!(active: false) }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
 
     it 'also pushes when only a translation changes' do
-      expect { plan.update!(name_fr: 'Renommé') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.update!(name_fr: 'Renommé') }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
 
     it 'does not push when only local metadata changes' do
       expect { plan.update!(metadata: plan.metadata.merge('support_tier' => 'Premium')) }
-        .not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+        .not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
 
     it 'does not push a change that came from the processor' do
       plan.skip_processor_sync = true
 
-      expect { plan.update!(name: 'From processor') }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.update!(name: 'From processor') }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
 
     it 'keeps pushing later edits after a processor-originated save' do
       plan.skip_processor_sync = true
       plan.update!(name: 'From processor')
 
-      expect { described_class.find(plan.id).update!(name: 'Admin edit') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { described_class.find(plan.id).update!(name: 'Admin edit') }.to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
 
     it 'never pushes for a processor that cannot sync plans' do
       adapter.instance_variable_set(:@capabilities, %i[checkout])
 
-      expect { plan.update!(name: 'Renamed') }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.update!(name: 'Renamed') }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
     end
   end
 
   describe 'storing what the processor did' do
     let!(:plan) { create(:better_together_billing_plan, :unlinked) }
     let(:result) do
-      BetterTogether::Billing::PlanSyncResult.new(
-        product_id: 'prod_new', price: BetterTogether::Billing::PriceInfo.new(price_id: 'price_new', product_id: 'prod_new')
-      )
+      info = BetterTogether::Billing::PriceInfo.new(price_id: 'price_new', product_id: 'prod_new', ref: plan.current_price.id)
+      BetterTogether::Billing::CatalogSyncResult.new(product_id: 'prod_new', prices: [info])
     end
 
     it 'records the ids and marks the plan synced, without triggering another push' do
-      expect { plan.apply_sync_result!(result) }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.apply_sync_result!(result) }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
 
       expect(plan.reload).to have_attributes(processor_product_id: 'prod_new', processor_price_id: 'price_new', sync_status: 'synced',
                                              sync_error: nil)
@@ -401,12 +407,12 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect(plan.reload).to have_attributes(sync_status: 'pending', sync_error: nil)
     end
 
-    it 'derives a different idempotency key for creating and for updating' do
-      expect(plan.sync_idempotency_key).to eq("bt-plan-create-#{plan.id}")
+    it 'derives a different idempotency key once the prices have been pushed' do
+      creating = plan.sync_idempotency_key
 
       plan.apply_sync_result!(result)
 
-      expect(plan.reload.sync_idempotency_key).to eq("bt-plan-update-#{plan.id}-#{plan.lock_version}")
+      expect(plan.reload.sync_idempotency_key).not_to eq(creating)
     end
   end
 
@@ -493,7 +499,7 @@ RSpec.describe BetterTogether::Billing::Plan do
     it 'is already synced and never pushed, since there is no processor-side price' do
       plan = new_plan(processor: nil, accepted_payment_methods: %w[cash])
 
-      expect { plan.save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect { plan.save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncProductJob)
       expect(plan.reload).to have_attributes(sync_status: 'synced', processor_price_id: nil)
       expect(plan).not_to be_sync_supported
     end
@@ -620,5 +626,13 @@ RSpec.describe BetterTogether::Billing::Plan do
     it 'lists the seller types a plan may have' do
       expect(described_class.assignable_seller_types).to include('BetterTogether::Community', 'BetterTogether::Person')
     end
+  end
+
+  it 'refuses a tax category that belongs to another platform' do
+    other = create(:better_together_platform, host: false, locality: 'local')
+    plan = build(:better_together_billing_plan, tax_category: create(:better_together_billing_tax_category, platform: other))
+
+    expect(plan).not_to be_valid
+    expect(plan.errors.added?(:tax_category, :tax_category_other_platform)).to be(true)
   end
 end

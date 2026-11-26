@@ -10,25 +10,25 @@ RSpec.describe 'Plan grants, entitlements and their grants' do # rubocop:disable
                                parameters: {} }.merge(attrs))
   end
 
-  describe BetterTogether::Billing::PlanGrant do
+  describe BetterTogether::Billing::Grant do
     it 'belongs to a plan and a platform, in order' do
       grant = role_grant
 
       expect(grant).to have_attributes(plan: sub_plan, platform_id: host_platform.id, position: 0)
-      expect(sub_plan.plan_grants).to eq([grant])
+      expect(sub_plan.grants).to eq([grant])
       expect(feature_grant.position).to eq(1)
     end
 
     it 'only allows the kinds on the allow-list' do
-      grant = sub_plan.plan_grants.build(platform_id: host_platform.id, kind: 'root_access', parameters: {})
+      grant = sub_plan.grants.build(platform_id: host_platform.id, kind: 'root_access', parameters: {})
 
       expect(grant).not_to be_valid
       expect(BetterTogether::Billing::Entitlements::Registry.kinds).to eq(%w[membership_role feature_access quota_allowance])
     end
 
     it 'checks its parameters with the kind\'s handler and says what is wrong' do
-      grant = sub_plan.plan_grants.build(platform_id: host_platform.id, kind: 'membership_role',
-                                         parameters: { 'joinable' => 'platform', 'role' => manager_role.identifier })
+      grant = sub_plan.grants.build(platform_id: host_platform.id, kind: 'membership_role',
+                                    parameters: { 'joinable' => 'platform', 'role' => manager_role.identifier })
 
       expect(grant).not_to be_valid
       expect(grant.errors.details[:parameters].pluck(:error)).to eq([:role_privileged])

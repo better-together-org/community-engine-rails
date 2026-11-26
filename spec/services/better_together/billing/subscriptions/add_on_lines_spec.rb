@@ -2,17 +2,18 @@
 
 require 'rails_helper'
 
-# An order for a primary plan plus add-ons: the plan drives the subscription, the extras only add to the total.
+# An order for a plan plus extras: the plan drives the subscription, the extras only add to the total.
 RSpec.describe BetterTogether::Billing::Subscriptions::Start do # rubocop:disable RSpec/SpecFilePathFormat
   include_context 'with orders fixtures'
+  include_context 'with billing extras'
 
   let(:attrs) { { platform: host_platform, processor: nil, accepted_payment_methods: %w[cash], currency: 'USD' } }
   let(:plan) { create(:better_together_billing_plan, :unlinked, **attrs, billing_interval: 'month', amount_cents: 2000) }
-  let(:add_on) { create(:better_together_billing_plan, :unlinked, :one_time, **attrs, amount_cents: 500, add_on: true) }
+  let(:add_on) { create_extra(amount_cents: 500, needs: :any_plan) }
   let(:order) { place_order(purpose: 'subscription', line_items: [{ purchasable: plan }, { purchasable: add_on }]) }
 
   it 'finds the primary plan among the lines' do
-    expect(described_class.plan_line(order).purchasable).to eq(plan)
+    expect(described_class.plan_line(order).purchasable).to eq(plan.current_price)
   end
 
   it 'prices the term from the plan line alone' do

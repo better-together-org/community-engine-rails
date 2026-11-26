@@ -20,8 +20,8 @@ RSpec.describe 'Documentation screenshots for the checkout agreements', # ruboco
   include_context 'with billing switched on'
 
   let(:cash_plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
-                                                     name: 'Garden plot', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform, name: 'Garden plot'),
+                                           currency: 'USD', amount_cents: 2500)
   end
   let(:identifiers) { %w[one_time_purchase_agreement offline_payment_terms] }
 
@@ -59,7 +59,7 @@ RSpec.describe 'Documentation screenshots for the checkout agreements', # ruboco
   # Both agreements read and ticked, then the form refused for a blank new address: the page comes back with the ticks kept.
   def come_back_after_an_error # rubocop:disable Metrics/AbcSize
     capybara_login_as_user
-    visit "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{cash_plan.id}&payment_method=cash"
+    visit "/#{I18n.default_locale}/billing/checkout/new?price_id=#{cash_plan.id}&payment_method=cash"
     identifiers.each { |identifier| read_and_tick(identifier) }
     page.execute_script("document.getElementById('billing-checkout-address-select').value = 'new'")
     click_button 'billing-checkout-place-btn'

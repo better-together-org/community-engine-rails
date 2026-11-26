@@ -41,6 +41,14 @@ concern :billing_plans do # rubocop:disable Metrics/BlockLength
         get :snapshot
       end
     end
+    # What a platform sells once (a storage top-up, a one-off add-on): products, their prices (made and archived, never edited)
+    # and what each product includes.
+    resources :products, except: :destroy do
+      resources :prices, only: %i[new create] do
+        patch :archive, on: :member
+      end
+      resources :grants, only: %i[create update destroy]
+    end
     resources :processor_options, only: :index
     resources :processor_settings, only: %i[index edit update]
     resources :orders, only: %i[index show] do
@@ -149,6 +157,7 @@ concern :billing_hub do
     # The public catalog sits under /billing/catalog so it cannot meet the /plans page route.
     get 'catalog', to: 'catalog#index', as: :catalog
     get 'catalog/:id', to: 'catalog#show', as: :catalog_plan
+    get 'catalog/products/:id', to: 'catalog#product', as: :catalog_product
     # The buyer's own billing addresses, the ones tax is worked out from.
     resources :billing_addresses, only: %i[index create] do
       member { patch :default }
@@ -179,9 +188,6 @@ concern :billing_entitlements do
   namespace :billing do
     resources :entitlements, only: :index
     resources :allowances, only: %i[index update]
-    resources :plans, only: [] do
-      resources :plan_grants, only: %i[create update destroy]
-    end
   end
 end
 

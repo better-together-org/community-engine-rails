@@ -10,11 +10,11 @@ flowchart TD
   L2 --> L3{Found and active?}
   L3 -->|No| ERR[Rejected on the price field:<br/>not found, archived, or processor unreachable]
   L3 -->|Yes| SYNCED[Plan saved: sync_status synced<br/>nothing to push]
-  SAVE --> AC[after_commit: SyncPlanJob<br/>billing queue, plan id only]
+  SAVE --> AC[after_commit: SyncProductJob<br/>billing queue, plan id only]
   AC --> CTX[Core builds the platform's ProcessorContext<br/>and the idempotency key]
-  CTX --> SP[adapter.sync_plan context, plan, idempotency_key]
+  CTX --> SP[adapter.sync_catalog_item context, item, idempotency_key]
   SP --> R{Result}
-  R -->|PlanSyncResult| W[Core stores product id, price id,<br/>sync_status synced via update_columns]
+  R -->|CatalogSyncResult| W[Core stores product id, price id,<br/>sync_status synced via update_columns]
   W --> NOLOOP[No callbacks run, so the change is not pushed back]
   R -->|error| RT[ActiveJob retries with growing waits]
   RT --> SP

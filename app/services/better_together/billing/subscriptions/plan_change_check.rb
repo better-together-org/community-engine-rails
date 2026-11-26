@@ -27,11 +27,16 @@ module BetterTogether
           term.local? && term.pay_subscription.status == 'active' && term.pay_subscription.ends_at.blank?
         end
 
-        def offered?(plan) = plan.platform_id == term.platform_id && plan.seller_id.blank? && plan.active? && !plan.free?
+        def offered?(plan)
+          plan.platform_id == term.platform_id && plan.seller_id.blank? && plan.active? &&
+            plan.current_price.present? && !plan.current_price.free?
+        end
 
         def same_schedule?(plan)
-          current = term.plan
-          plan.billing_interval == current.billing_interval && plan.interval_count == current.interval_count && plan.currency == term.currency
+          price = plan.current_price
+          current = term.price
+          price.present? && price.interval == current.interval && price.interval_count == current.interval_count &&
+            price.currency == term.currency
         end
 
         # What the holder uses is more than the limit would be on the new plan.
@@ -47,7 +52,7 @@ module BetterTogether
         end
 
         def allowances(plan)
-          grants = plan.plan_grants.where(kind: 'quota_allowance')
+          grants = plan.grants.where(kind: 'quota_allowance')
           grants.to_h { |grant| [grant.parameters['quota_type'].to_s, Integer(grant.parameters['amount'], exception: false).to_i] }
         end
       end

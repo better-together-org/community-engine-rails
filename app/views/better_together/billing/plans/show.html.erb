@@ -95,7 +95,9 @@
     </div>
 
     <div class="col-lg-6">
-      <div id="<%= dom_id(@plan, :metadata_card) %>" class="card">
+      <%= render 'better_together/billing/products/prices', product: @plan, manage: false %>
+
+      <div id="<%= dom_id(@plan, :metadata_card) %>" class="card mt-3">
         <div class="card-header">
           <strong><%= t('better_together.billing.plans.metadata_section_title') %></strong>
         </div>

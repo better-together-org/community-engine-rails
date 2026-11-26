@@ -34,7 +34,8 @@ module BetterTogether
 
         def self.for_preview(preview)
           items = preview.purchasables.each_with_index.map do |purchasable, index|
-            Item.new(description: purchasable.purchasable_description, quantity: 1, amount_cents: purchasable.amount_cents,
+            count = preview.quantities[index]
+            Item.new(description: purchasable.purchasable_description, quantity: count, amount_cents: purchasable.amount_cents * count,
                      tax_lines: preview.tax_lines_for(index))
           end
           new(currency: preview.plan.currency, items:, total_cents: preview.total_cents)

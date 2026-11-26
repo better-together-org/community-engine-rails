@@ -53,7 +53,10 @@ module BetterTogether
       end
 
       def targets
-        @targets ||= ([seller] + purchasables).compact.map { |record| [record.class.name, record.id] }
+        @targets ||= ([seller] + purchasables.flat_map { |item| item.is_a?(Price) ? [item, item.product] : [item] }).compact
+                     .map do |record|
+          [record.class.polymorphic_name, record.id]
+        end
       end
 
       # A narrower requirement that replaces the defaults takes the base terms out. Terms that

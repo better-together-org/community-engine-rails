@@ -8,7 +8,8 @@ RSpec.describe BetterTogether::Billing::Checkout::TaxPreview do
   include_context 'with orders fixtures'
 
   let(:plan) do
-    create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'USD', amount_cents: 2500)
+    create(:better_together_billing_price, product: create(:better_together_billing_product, platform: host_platform), currency: 'USD',
+                                           amount_cents: 2500)
   end
   let(:address) { create_billing_address_for(create(:better_together_person)) }
   let!(:registration) { create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA') }
@@ -27,6 +28,13 @@ RSpec.describe BetterTogether::Billing::Checkout::TaxPreview do
   it 'shows the tax a new order would carry, and the total with it' do
     expect(preview).to have_attributes(known?: true, taxed?: true, tax_cents: 375, added_cents: 375, total_cents: 2875)
     expect(preview.summary.tax_rows.map { |r| [r.label, r.amount_cents] }).to eq([['HST', 375]])
+  end
+
+  it 'scales the first item, and the tax on it, by the quantity chosen', :aggregate_failures do
+    quantity = described_class.new(platform: host_platform, plan:, address:, quantity: 3)
+
+    expect(quantity).to have_attributes(quantities: [3], tax_cents: 1125, total_cents: 8625)
+    expect(quantity.summary.lines.first).to have_attributes(quantity: 3, amount_cents: 7500)
   end
 
   it 'leaves the total alone when prices include tax' do
