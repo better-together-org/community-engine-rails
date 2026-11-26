@@ -77,6 +77,25 @@ RSpec.describe 'Plan blocks on a page', :no_auth do # rubocop:disable RSpec/Desc
     end
   end
 
+  describe 'the plan button block set to one price of a product' do
+    let(:product) { create(:better_together_billing_product, platform: host_platform, name: 'Storage', active: true) }
+    let(:prices) { [700, 1900].map { |cents| create(:better_together_billing_price, product:, amount_cents: cents, currency: 'CAD') } }
+    let(:chosen) { prices.find { |price| price != product.current_price } }
+    let(:block) { create(:content_plan_button_block, plan_id: '', price_id: chosen.id, display_as: 'card', platform: host_platform) }
+
+    before do
+      prices
+      add_block.call(block)
+    end
+
+    it 'shows the price the block names, not the one the product is currently sold at' do
+      shown = Nokogiri::HTML(show_page.call).at_css("##{dom_id.call(product, :catalog_price)}").text
+
+      expect(shown).to include(format('%.2f', chosen.amount_cents / 100.0))
+      expect(shown).not_to include(format('%.2f', product.current_price.amount_cents / 100.0))
+    end
+  end
+
   describe 'the plan button block' do
     let(:block) { create(:content_plan_button_block, plan_id: sub_plan.id, display_as: 'card') }
 
