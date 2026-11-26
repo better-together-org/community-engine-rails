@@ -18,7 +18,7 @@ RSpec.describe BetterTogether::NavigationItem, '#visible_to?' do
   end
 
   before do
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync]) })
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync]) })
   end
 
   it 'is a valid route name for an item' do

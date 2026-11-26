@@ -10,7 +10,7 @@ RSpec.describe 'Billing plans DOM contract', :as_platform_manager, type: :reques
   include_context 'with billing switched on'
 
   let(:locale) { I18n.default_locale }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let!(:plan) do
     BetterTogether::Billing.register_processor(:fake, -> { adapter })
     create(:better_together_billing_plan)

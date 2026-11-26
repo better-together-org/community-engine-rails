@@ -12,7 +12,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
   let(:password) { 'SecureTest123!@#' }
   let(:platform_manager) { find_or_create_test_user("billing-plans-manager-#{SecureRandom.hex(4)}@example.test", password, :platform_manager) }
   let(:regular_user) { find_or_create_test_user("billing-plans-regular-#{SecureRandom.hex(4)}@example.test", password) }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync lookups]) }
   let(:other_platform) { create(:better_together_platform) }
   let!(:billing_plan) do
     BetterTogether::Billing.register_processor(:fake, -> { adapter })

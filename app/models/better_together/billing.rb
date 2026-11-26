@@ -34,7 +34,7 @@ module BetterTogether
         return false unless processor_names.map(&:to_s).include?(name.to_s)
 
         adapter = processor_adapter(name)
-        adapter.present? && adapter.settlement_kind == :remote && adapter.supports?(:checkout) && adapter.catalog_aware?
+        adapter.present? && adapter.settlement_kind == :remote && adapter.supports?(:checkout)
       rescue ProcessorAdapter::ContractError
         false
       end

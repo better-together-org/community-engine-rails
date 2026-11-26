@@ -43,8 +43,8 @@ RSpec.describe BetterTogether::Billing::Product do
   describe 'moving to another processor' do
     include_context 'with clean billing processors'
 
-    let(:first) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync], processor: :first) }
-    let(:second) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync], processor: :second) }
+    let(:first) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync], processor: :first) }
+    let(:second) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync], processor: :second) }
     let(:product) { create(:better_together_billing_product, platform: host_platform, processor: 'first', processor_product_id: 'prod_old') }
     let(:price) { create(:better_together_billing_price, product:, processor_price_id: 'price_old') }
 

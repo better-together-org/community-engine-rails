@@ -10,7 +10,7 @@ RSpec.describe BetterTogether::Billing::Plan do
   let!(:host_platform) { configure_host_platform }
   let(:other_platform) { create(:better_together_platform) }
   let(:rules) { nil }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync lookups], rules:) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync lookups], rules:) }
 
   before { BetterTogether::Billing.register_processor(:fake, -> { adapter }) }
 

@@ -10,7 +10,7 @@ RSpec.describe BetterTogether::Billing::ProcessorOptionsController do
   let(:password) { 'SecureTest123!@#' }
   let(:steward) { find_or_create_test_user("lookup-steward-#{SecureRandom.hex(4)}@example.test", password, :platform_manager) }
   let(:member) { find_or_create_test_user("lookup-member-#{SecureRandom.hex(4)}@example.test", password) }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let(:memory_cache) { ActiveSupport::Cache::MemoryStore.new }
 
   before do
@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Billing::ProcessorOptionsController do
 
     it 'falls back to core\'s own lists when the processor has no lookups' do
       BetterTogether.clear_adapters!(BetterTogether::Billing::ADAPTER_GROUP)
-      BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync]) })
+      BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync]) })
 
       lookup(kind: 'intervals', search: 'mon')
 

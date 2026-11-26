@@ -11,7 +11,7 @@ RSpec.describe 'Billing plan price entry' do # rubocop:disable RSpec/DescribeCla
   let(:locale) { :en }
   let(:password) { 'SecureTest123!@#' }
   let(:manager) { find_or_create_test_user("plan-price-manager-#{SecureRandom.hex(4)}@example.test", password, :platform_manager) }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[checkout catalog_sync lookups]) }
 
   before do
     BetterTogether::Billing.register_processor(:fake, -> { adapter })

@@ -28,7 +28,7 @@ RSpec.shared_examples 'a billing processor adapter' do
   # anonymous `**` does not count: it accepts anything without ever reading it,
   # which is how the base class stubs are written.
   it 'overrides and accepts the documented keywords, including context:, for each advertised capability' do
-    BetterTogether::Billing::ProcessorAdapter.capability_methods(adapter.contract_version).slice(*adapter.capabilities).each_value do |methods|
+    BetterTogether::Billing::ProcessorAdapter::CAPABILITY_METHODS.slice(*adapter.capabilities).each_value do |methods|
       methods.each do |name, keywords|
         method = adapter.method(name)
         params = method.parameters

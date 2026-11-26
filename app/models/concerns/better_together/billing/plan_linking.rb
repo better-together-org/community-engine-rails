@@ -44,7 +44,7 @@ module BetterTogether
 
       # A plan is pushed by any adapter that holds plans, whichever contract it speaks (see CatalogSync).
       def sync_supported?
-        processor_context.present? && processor_adapter&.supports?(:plan_sync) ? true : false
+        processor_context.present? && processor_adapter&.supports?(:catalog_sync) ? true : false
       end
 
       # What the adapter says about each field: :updatable, :create_only, or absent for locked once linked.

@@ -8,7 +8,7 @@ RSpec.describe BetterTogether::Billing::SyncProductJob do
   include_context 'with clean billing processors'
 
   let!(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let(:product) { create(:better_together_billing_product, platform: host_platform, name: 'Top-up') }
   let!(:price) { create(:better_together_billing_price, product:, amount_cents: 500, currency: 'USD') }
 

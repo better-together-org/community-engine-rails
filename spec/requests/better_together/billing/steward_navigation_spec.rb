@@ -16,7 +16,7 @@ RSpec.describe 'Billing steward navigation' do # rubocop:disable RSpec/DescribeC
   end
 
   before do
-    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) })
+    BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) })
     Current.platform = host_platform
     BetterTogether::NavigationBuilder.build_host
     Current.platform = nil

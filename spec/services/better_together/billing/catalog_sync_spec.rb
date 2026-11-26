@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::Billing::CatalogSync do
   include_context 'with clean billing processors'
 
   let!(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
   let(:product) { create(:better_together_billing_product, platform: host_platform, name: 'Top-up', processor: 'fake') }
   let(:small) { create(:better_together_billing_price, product:, amount_cents: 500, currency: 'USD') }
   let(:large) { create(:better_together_billing_price, product:, amount_cents: 1500, currency: 'USD') }
@@ -40,22 +40,6 @@ RSpec.describe BetterTogether::Billing::CatalogSync do
       allow(adapter).to receive(:sync_catalog_item).and_return(:nope)
 
       expect { described_class.call(product) }.to raise_error(TypeError, /CatalogSyncResult/)
-    end
-  end
-
-  describe 'an adapter at contract version 1' do
-    let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups], contract: 1) }
-
-    it 'syncs a plan through sync_plan and wraps its price' do
-      result = described_class.call(plan)
-
-      expect(adapter.calls.map(&:first)).to include(:sync_plan)
-      expect(adapter.calls.map(&:first)).not_to include(:sync_catalog_item)
-      expect(result.price_for(plan.current_price.id)).to be_present
-    end
-
-    it 'cannot hold a product' do
-      expect { described_class.call(product) }.to raise_error(described_class::Unsupported, /cannot hold a product/)
     end
   end
 

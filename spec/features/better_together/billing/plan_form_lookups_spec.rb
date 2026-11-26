@@ -12,7 +12,7 @@ RSpec.describe 'Billing plan form lookups', :accessibility, :js, :skip_host_setu
   include_context 'with clean billing processors'
   include_context 'with billing switched on'
 
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync lookups]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync lookups]) }
 
   before do
     configure_host_platform

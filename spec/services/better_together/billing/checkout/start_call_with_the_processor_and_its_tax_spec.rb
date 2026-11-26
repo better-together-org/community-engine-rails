@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::Billing::Checkout::Start, '#call with the process
 
   it 'still starts a checkout with an adapter that does not name the tax keywords' do
     old_style = Class.new(adapter.class) do
-      def create_checkout_session(context:, order:, payment:, success_url:, cancel_url:, idempotency_key:, metadata:) # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists
+      def create_checkout_session(context:, order:, payment:, success_url:, cancel_url:, idempotency_key:, metadata:, mode:, lines:) # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists
         BetterTogether::Billing::CheckoutSession.new(url: 'https://fake.test/old', reference: "cs_#{idempotency_key}")
       end
     end.new

@@ -79,11 +79,8 @@ module BetterTogether
 
         def adapter_takes_tax? = adapter_takes?(:tax_cents)
 
-        # Contract version 2: core says what the lines are and whether the session is a payment or a subscription. An adapter at
-        # version 1 builds its own from the order.
+        # Core says what the lines are and whether the session is a payment or a subscription; the adapter does not read the order.
         def line_input
-          return {} unless adapter.catalog_aware? && adapter_takes?(:lines)
-
           lines = Lines.call(order:, processor: payment.processor)
           { mode: lines.mode, lines: lines.lines }
         end

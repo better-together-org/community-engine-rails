@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::Billing::PlanSnapshot do
   include_context 'with clean billing processors'
 
   let!(:host_platform) { configure_host_platform }
-  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[plan_sync]) }
+  let(:adapter) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[catalog_sync]) }
   let(:memory_cache) { ActiveSupport::Cache::MemoryStore.new }
   let(:plan) do
     create(:better_together_billing_plan, processor_price_id: 'price_snap', amount_cents: 4500, currency: 'USD', billing_interval: 'month')
