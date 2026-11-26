@@ -28,8 +28,8 @@ module BetterTogether
         ProcessorAdapter.verify!(entry[:adapter].call, name: entry[:name])
       end
 
-      # An installed online processor that can take a product sold with no copy in its catalog: it takes checkout, and implements
-      # the contract that has core build the lines (version 2). A version 1 processor can still sell plans, not products.
+      # An installed online processor that takes checkout. Registration already refuses one whose checkout does not accept the
+      # `mode:` and `lines:` that core builds from the order.
       def online_checkout_method?(name)
         return false unless processor_names.map(&:to_s).include?(name.to_s)
 

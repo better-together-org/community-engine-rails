@@ -23,6 +23,14 @@ module BetterTogether
           .to raise_error(described_class::ContractError, /registered as stripe but reports processor_name fake/)
       end
 
+      it 'refuses, at registration, an online adapter whose checkout does not take mode and lines' do
+        old = Class.new(BetterTogether::Billing::FakeAdapter) do
+          def create_checkout_session(context:, order:, payment:, success_url:, cancel_url:, idempotency_key:, metadata:); end # rubocop:disable Metrics/ParameterLists, Lint/UnusedMethodArgument
+        end.new(capabilities: %i[checkout])
+
+        expect { described_class.verify!(old) }.to raise_error(described_class::ContractError, /must accept mode: and lines:/)
+      end
+
       it 'documents a context for every capability method, so no call is made without a tenant' do
         keywords = described_class::CAPABILITY_METHODS.values.flat_map(&:values)
 

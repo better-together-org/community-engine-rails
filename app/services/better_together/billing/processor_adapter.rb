@@ -184,7 +184,7 @@ module BetterTogether
       # this runs while a person waits.
       def lookup(**) = unsupported!(:lookups)
 
-      # At contract version 2 it is also given `mode:` (`:payment` or `:subscription`) and `lines:` (Billing::CheckoutLine, each a
+      # It is also given `mode:` (`:payment` or `:subscription`) and `lines:` (Billing::CheckoutLine, each a
       # processor price id or inline InlinePrice) so it builds the session from core's view of the order instead of its own.
       def create_checkout_session(**) = unsupported!(:checkout)
       def sync_checkout_session(**) = unsupported!(:checkout)

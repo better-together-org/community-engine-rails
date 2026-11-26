@@ -16,11 +16,26 @@ module BetterTogether
           end
 
           verify_settlement!(adapter)
+          verify_checkout_keywords!(adapter)
 
           adapter
         end
 
         private
+
+        # There is one contract: checkout is given `mode:` and `lines:`. An adapter written for an older signature fails here, at
+        # registration, instead of with an ArgumentError in the middle of a buyer's checkout.
+        def verify_checkout_keywords!(adapter)
+          return unless adapter.supports?(:checkout)
+
+          params = adapter.method(:create_checkout_session).parameters.to_h { |kind, name| [name, kind] }
+          return if params.value?(:keyrest)
+
+          missing = %i[mode lines].reject { |key| %i[key keyreq].include?(params[key]) }
+          return if missing.empty?
+
+          raise ContractError, "#{adapter.class}#create_checkout_session must accept #{missing.map { |key| "#{key}:" }.join(' and ')}"
+        end
 
         def verify_settlement!(adapter)
           kind = adapter.settlement_kind

@@ -4,6 +4,8 @@
 # becomes a product row and one recurring price row with the same id, which lets everything that pointed at the plan keep its id:
 # order lines now name the price, subscription terms keep the plan and also name the price they were sold at, and entitlements and
 # grants are keyed by product alone. Plan extras stay columns on the products table (grace and renewal lead days, payment methods).
+# A plan that was sold once (an add-on, or a one-time plan from before plans were only recurring) becomes a plain product with
+# a one-time price; what an add-on extended is not carried over.
 # Guarded so a re-run, or a database that never had plans, is a no-op. See docs/billing/assessments/2026-11-billing-model-assessment.md.
 class MergePlansIntoProducts < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   PLAN = 'BetterTogether::Billing::Plan'
@@ -44,7 +46,7 @@ class MergePlansIntoProducts < ActiveRecord::Migration[7.2] # rubocop:disable Me
          restricted_to_members, restricted_to_subscribers, tax_category_id, processor, processor_product_id, metadata, sync_status,
          sync_error, sync_attempted_at, synced_to_processor_at, grace_days, renewal_lead_days, manages_processor_product,
          accepted_payment_methods, latest_processor_event_id)
-      SELECT id, lock_version, created_at, updated_at, platform_id, seller_type, seller_id, #{plan_identifier}, '#{PLAN}', active, listed,
+      SELECT id, lock_version, created_at, updated_at, platform_id, seller_type, seller_id, #{plan_identifier}, CASE WHEN plan.billing_interval IN ('month', 'year') THEN '#{PLAN}' ELSE '#{PRODUCT}' END, active, listed,
              restricted_to_members, restricted_to_subscribers, tax_category_id, processor, processor_product_id, metadata, sync_status,
              sync_error, sync_attempted_at, synced_to_processor_at, grace_days, renewal_lead_days, manages_processor_product,
              accepted_payment_methods, latest_processor_event_id
@@ -56,9 +58,10 @@ class MergePlansIntoProducts < ActiveRecord::Migration[7.2] # rubocop:disable Me
         (id, lock_version, created_at, updated_at, platform_id, product_id, amount_cents, currency, active, processor_price_id,
          kind, interval, interval_count)
       SELECT id, 0, created_at, updated_at, platform_id, id, amount_cents, currency, active, processor_price_id,
-             'recurring', billing_interval, interval_count
+             CASE WHEN billing_interval IN ('month', 'year') THEN 'recurring' ELSE 'one_time' END,
+             CASE WHEN billing_interval IN ('month', 'year') THEN billing_interval END,
+             CASE WHEN billing_interval IN ('month', 'year') THEN interval_count ELSE 1 END
       FROM better_together_billing_plans
-      WHERE billing_interval IN ('month', 'year')
       ON CONFLICT (id) DO NOTHING
     SQL
     retype_references
