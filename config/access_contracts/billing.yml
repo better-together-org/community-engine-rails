@@ -1,0 +1,6100 @@
+subsystem: billing
+title: Billing
+summary: Plans, products, prices, orders, subscriptions, refunds and the platform billing screens.
+policy_pattern: ^billing/|^metrics/billing_
+deferred_policies:
+  Billing::Owner: Abstract base that holds the tenant question; every policy below inherits it.
+controllers:
+- better_together/billing/agreement_requirements
+- better_together/billing/allowances
+- better_together/billing/billing_addresses
+- better_together/billing/catalog
+- better_together/billing/checkouts
+- better_together/billing/credit_accounts
+- better_together/billing/credit_grants
+- better_together/billing/credits
+- better_together/billing/entitlements
+- better_together/billing/events
+- better_together/billing/grants
+- better_together/billing/hosted_billings
+- better_together/billing/hosted_platforms
+- better_together/billing/hosting_plans
+- better_together/billing/hubs
+- better_together/billing/notification_preferences
+- better_together/billing/offline_payments
+- better_together/billing/order_claims
+- better_together/billing/order_documents
+- better_together/billing/order_payments
+- better_together/billing/orders
+- better_together/billing/people
+- better_together/billing/plans
+- better_together/billing/prices
+- better_together/billing/processor_options
+- better_together/billing/processor_settings
+- better_together/billing/products
+- better_together/billing/promotion_redemptions
+- better_together/billing/promotions
+- better_together/billing/refund_requests
+- better_together/billing/sale_refund_requests
+- better_together/billing/sale_refunds
+- better_together/billing/sales
+- better_together/billing/subscribers
+- better_together/billing/subscriptions
+- better_together/billing/tax_registrations
+- better_together/billing/walk_up_sales
+- better_together/metrics/billing_reports
+controller_allowlist: {}
+decisions:
+  BL-1:
+    kind: known_deviation
+    title: Platform operators read buyers financial records
+    app_does: Managers and stewards of a platform can read the orders, refund requests, credit accounts, offline payments, subscriptions, entitlements, billing events and billing reports of what that platform
+      sells.
+    privacy_rule: No standing role reads personal or financial records; support needs a separate audited grant.
+    source: Found by this contract. Running a store means seeing sales, so the operate path stays until an audited grant exists.
+resources:
+  billing_agreement_requirement:
+    model: BetterTogether::Billing::AgreementRequirement
+    policy: BetterTogether::Billing::AgreementRequirementPolicy
+    classification: system
+    title: Billing agreement requirement
+    states:
+    - any
+    - new
+    - own_platform
+    - other_platform
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      edit:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      activate_agreement:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the agreement requirement of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_processor_setting:
+    model: BetterTogether::Billing::ProcessorSetting
+    policy: BetterTogether::Billing::ProcessorSettingPolicy
+    classification: system
+    title: Billing processor setting
+    states:
+    - any
+    - own_platform
+    - other_platform
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the processor setting of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      edit:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the processor setting of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the processor setting of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the processor setting of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the processor setting of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_tax_registration:
+    model: BetterTogether::Billing::TaxRegistration
+    policy: BetterTogether::Billing::TaxRegistrationPolicy
+    classification: system
+    title: Billing tax registration
+    states:
+    - any
+    - new
+    - own_platform
+    - other_platform
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the tax registration of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      new:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the tax registration of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the tax registration of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      edit:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the tax registration of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the tax registration of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the tax registration of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_promotion:
+    model: BetterTogether::Billing::Promotion
+    policy: BetterTogether::Billing::PromotionPolicy
+    classification: system
+    title: Billing promotion
+    states:
+    - any
+    - new
+    - own_platform
+    - other_platform
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the promotion of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      new:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the promotion of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the promotion of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      activate:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the promotion of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      deactivate:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the promotion of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_grant:
+    model: BetterTogether::Billing::Grant
+    policy: BetterTogether::Billing::GrantPolicy
+    classification: system
+    title: Billing grant
+    states:
+    - new
+    - own_platform
+    - other_platform
+    - any
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the grant of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the grant of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the grant of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_offline_payment:
+    model: BetterTogether::Billing::OfflinePayment
+    policy: BetterTogether::Billing::OfflinePaymentPolicy
+    classification: financial
+    title: Billing offline payment
+    states:
+    - any
+    - own_platform
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the offline payment of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      receive:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the offline payment of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      reject:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the offline payment of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      clear:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the offline payment of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      bounce:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the offline payment of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_person_lookup:
+    model: BetterTogether::Person
+    policy: BetterTogether::Billing::PersonLookupPolicy
+    classification: personal
+    title: Billing person lookup
+    states:
+    - any
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the person lookup of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_event:
+    model: BetterTogether::Billing::Event
+    policy: BetterTogether::Billing::EventPolicy
+    classification: financial
+    title: Billing event
+    states:
+    - any
+    - own_platform
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the event of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      replay:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the event of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_credit_account:
+    model: BetterTogether::Billing::CreditAccount
+    policy: BetterTogether::Billing::CreditAccountPolicy
+    classification: financial
+    title: Billing credit account
+    states:
+    - any
+    - own_platform
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: signed_in
+      question: Is the actor signed in and eligible?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      own:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: signed_in
+          reason: Any signed-in person who qualifies may use the credit account.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the credit account of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      grant:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the credit account of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_entitlement:
+    model: BetterTogether::Billing::Entitlement
+    policy: BetterTogether::Billing::EntitlementPolicy
+    classification: financial
+    title: Billing entitlement
+    states:
+    - any
+    - own_platform
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: signed_in
+      question: Is the actor signed in and eligible?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      own:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: signed_in
+          reason: Any signed-in person who qualifies may use the entitlement.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      allowances:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the entitlement of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      set_enforcement:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the entitlement of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_report:
+    model: BetterTogether::Metrics::BillingReport
+    policy: BetterTogether::Metrics::BillingReportPolicy
+    classification: financial
+    title: Billing report
+    states:
+    - any
+    - own_platform
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the report of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the report of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the report of their own platform.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      download:
+        states:
+        - own_platform
+        - other_platform
+        rows:
+        - states:
+          - own_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - own_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - own_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_plan:
+    model: BetterTogether::Billing::Plan
+    policy: BetterTogether::Billing::PlanPolicy
+    classification: platform_shared
+    title: Billing plan
+    states:
+    - any
+    - public
+    - hidden
+    - draft
+    - members_only
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers:
+    - better_together/billing/plans
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: open_to_all
+      question: Is the item listed and open to everyone?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      new:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      edit:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      sync:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      snapshot:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      lookup:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      catalog:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed plan items are open to anyone.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      catalog_show:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed plan items are open to anyone.
+        - states:
+          - public
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hidden
+          - draft
+          - members_only
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - hidden
+          - draft
+          - members_only
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      offer:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed plan items are open to anyone.
+        - states:
+          - public
+          - hidden
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - draft
+          - members_only
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - draft
+          - members_only
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      purchase:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed plan items are open to anyone.
+        - states:
+          - public
+          - hidden
+          - draft
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - members_only
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - members_only
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the plan of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_product:
+    model: BetterTogether::Billing::Product
+    policy: BetterTogether::Billing::ProductPolicy
+    classification: platform_shared
+    title: Billing product
+    states:
+    - any
+    - public
+    - hidden
+    - draft
+    - members_only
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers:
+    - better_together/billing/products
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: open_to_all
+      question: Is the item listed and open to everyone?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the product of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the product of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      new:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the product of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the product of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      edit:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the product of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the product of their own platform.
+        - states:
+          - public
+          - hidden
+          - draft
+          - members_only
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      catalog:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed product items are open to anyone.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      catalog_show:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed product items are open to anyone.
+        - states:
+          - public
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hidden
+          - draft
+          - members_only
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - hidden
+          - draft
+          - members_only
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      purchase:
+        states:
+        - public
+        - hidden
+        - draft
+        - members_only
+        - other_platform
+        rows:
+        - states:
+          - public
+          - hidden
+          - draft
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed product items are open to anyone.
+        - states:
+          - public
+          - hidden
+          - draft
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - members_only
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: 'Not offered to this person: unlisted, retired or limited to qualifying members.'
+          rule: default_deny
+        - states:
+          - members_only
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_price:
+    model: BetterTogether::Billing::Price
+    policy: BetterTogether::Billing::PricePolicy
+    classification: platform_shared
+    title: Billing price
+    states:
+    - any
+    - public
+    - archived
+    - other_platform
+    - new
+    permissions:
+    - manage_platform
+    controllers:
+    - better_together/billing/prices
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: open_to_all
+      question: Is the item listed and open to everyone?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the price of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - states:
+          - public
+          - archived
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - public
+          - archived
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the price of their own platform.
+        - states:
+          - public
+          - archived
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      new:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the price of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the price of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      archive:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - states:
+          - public
+          - archived
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - public
+          - archived
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the price of their own platform.
+        - states:
+          - public
+          - archived
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Records of another platform are out of reach; tenant isolation.
+          rule: default_deny
+        - states:
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      edit:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      purchase:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - states:
+          - public
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: open_to_all
+          reason: Listed price items are open to anyone.
+        - states:
+          - public
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - archived
+          - other_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - archived
+          - other_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      buy_alone:
+        states:
+        - public
+        - archived
+        - other_platform
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_order:
+    model: BetterTogether::Billing::Order
+    policy: BetterTogether::Billing::OrderPolicy
+    classification: financial
+    title: Billing order
+    states:
+    - any
+    - own
+    - someone_elses
+    - new
+    permissions:
+    - manage_platform
+    controllers:
+    - better_together/billing/orders
+    rules:
+    - id: own_record
+      question: Does the actor own the record (buyer, payer or requester)?
+      on_yes: allow
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: signed_in
+      question: Is the actor signed in and eligible?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: signed_in
+          reason: Any signed-in person who qualifies may use the order.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own order.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      checkout:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: signed_in
+          reason: Any signed-in person who qualifies may use the order.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      new:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      claim:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own order.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      add_payment:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own order.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      pay:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own order.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      checkout_return:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own order.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      sales:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the order of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      sale:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the order of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      refund:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the order of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      return_payments:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the order of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      cancel:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the order of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      walk_up:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the order of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own order.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_refund_request:
+    model: BetterTogether::Billing::RefundRequest
+    policy: BetterTogether::Billing::RefundRequestPolicy
+    classification: financial
+    title: Billing refund request
+    states:
+    - own
+    - someone_elses
+    - any
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: own_record
+      question: Does the actor own the record (buyer, payer or requester)?
+      on_yes: allow
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      new:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      cancel:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own refund request.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the refund request of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      decide:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the refund request of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      scope:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          rule: default_deny
+          deviation:
+            actual: allow
+            actual_rule: platform_operate
+            decision: BL-1
+          reason: No standing role reads buyers' financial records or platform money figures.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_subscription_term:
+    model: BetterTogether::Billing::SubscriptionTerm
+    policy: BetterTogether::Billing::SubscriptionTermPolicy
+    classification: financial
+    title: Billing subscription term
+    states:
+    - any
+    - own
+    - someone_elses
+    - new
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: own_record
+      question: Does the actor own the record (buyer, payer or requester)?
+      on_yes: allow
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: signed_in
+      question: Is the actor signed in and eligible?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      own:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: signed_in
+          reason: Any signed-in person who qualifies may use the subscription term.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      show:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own subscription term.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      cancel:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own subscription term.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      resume:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own subscription term.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      accept_agreements:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own subscription term.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      change_plan:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own subscription term.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      change_method:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: allow
+          rule: own_record
+          reason: The buyer reaches their own subscription term.
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      index:
+        states:
+        - any
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      subscriber:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      waive:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      extend_grace:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      steward_cancel:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      steward_resume:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      move_to_current_price:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the subscription term of their own platform.
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      create:
+        states:
+        - new
+        rows:
+        - personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      update:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      destroy:
+        states:
+        - own
+        - someone_elses
+        rows:
+        - states:
+          - own
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          - blocked_user
+          outcome: na
+        - states:
+          - own
+          personas:
+          - record_owner
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Belongs to another person.
+          rule: default_deny
+        - states:
+          - someone_elses
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+  billing_hosted:
+    model: BetterTogether::Billing::HostedAccount
+    policy: BetterTogether::Billing::HostedBillingPolicy
+    classification: system
+    title: Billing hosted
+    states:
+    - host_platform
+    - hosted_platform
+    permissions:
+    - manage_platform
+    controllers: []
+    rules:
+    - id: platform_operate
+      question: Is the actor a platform manager or steward of the platform that owns the record?
+      on_yes: allow
+    - id: default_deny
+      question: Nothing above matched
+      on_yes: deny
+    actions:
+      show:
+        states:
+        - host_platform
+        - hosted_platform
+        rows:
+        - states:
+          - host_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - host_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hosted_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - hosted_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the hosted of their own platform.
+        - states:
+          - hosted_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      accept:
+        states:
+        - host_platform
+        - hosted_platform
+        rows:
+        - states:
+          - host_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - host_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hosted_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - hosted_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the hosted of their own platform.
+        - states:
+          - hosted_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      plan:
+        states:
+        - host_platform
+        - hosted_platform
+        rows:
+        - states:
+          - host_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - host_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hosted_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - hosted_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the hosted of their own platform.
+        - states:
+          - hosted_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      index:
+        states:
+        - host_platform
+        - hosted_platform
+        rows:
+        - states:
+          - host_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - host_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the hosted of their own platform.
+        - states:
+          - host_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hosted_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - hosted_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      suspend:
+        states:
+        - host_platform
+        - hosted_platform
+        rows:
+        - states:
+          - host_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - host_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the hosted of their own platform.
+        - states:
+          - host_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hosted_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - hosted_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+      resume:
+        states:
+        - host_platform
+        - hosted_platform
+        rows:
+        - states:
+          - host_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - host_platform
+          personas:
+          - platform_manager
+          - platform_steward
+          outcome: allow
+          rule: platform_operate
+          reason: Managers and stewards operate the hosted of their own platform.
+        - states:
+          - host_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na
+        - states:
+          - hosted_platform
+          personas:
+          - anonymous
+          - signed_in_non_member
+          - community_member
+          - community_contributor
+          - community_organizer
+          - platform_manager
+          - platform_steward
+          outcome: deny
+          reason: Needs platform billing authority, an account or ownership this person does not hold.
+          rule: default_deny
+        - states:
+          - hosted_platform
+          personas:
+          - record_owner
+          - blocked_user
+          outcome: na

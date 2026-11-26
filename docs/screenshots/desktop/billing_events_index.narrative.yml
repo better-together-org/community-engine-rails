@@ -1,0 +1,22 @@
+---
+title: Payment events
+audience:
+- platform_organizer
+journey_step: As a host platform operator, I see which payment processor events did
+  not go through.
+callouts:
+- :id: alerts
+  :title: Alerts
+  :description: Events given up on, events that keep failing, and problems older than
+    six hours.
+- :id: table
+  :title: Events
+  :description: Each row is one message from the payment processor.
+- :id: filter
+  :title: Filter
+  :description: Show failed, dead-lettered, waiting or retried events with the pills
+    above the table.
+accessibility_notes: The table has a caption and column headers; state is text as
+  well as colour; the filter marks the current choice.
+slug: billing_events_index
+device: desktop

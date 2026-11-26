@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-  static targets = ['modal', 'frame', 'acceptButton', 'cancelButton']
+  static targets = ['modal', 'frame', 'acceptButton', 'cancelButton', 'body', 'title']
   static values = {
     closeLabel: String,
     cancelLabel: String,
@@ -13,12 +13,23 @@ export default class extends Controller {
 
   connect () {
     this.onModalHidden = this.onModalHidden.bind(this)
+    this.onModalShown = this.onModalShown.bind(this)
     this.modalElement.addEventListener('hidden.bs.modal', this.onModalHidden)
+    this.modalElement.addEventListener('shown.bs.modal', this.onModalShown)
     this.resetState()
   }
 
   disconnect () {
     this.modalElement.removeEventListener('hidden.bs.modal', this.onModalHidden)
+    this.modalElement.removeEventListener('shown.bs.modal', this.onModalShown)
+  }
+
+  // A link with role="button" is only activated by Enter natively; Space must open it too.
+  openFromKey (event) {
+    if (event.key !== ' ' && event.key !== 'Spacebar') return
+    if (!event.target.matches || !event.target.matches('.agreement-modal-link')) return
+
+    this.open(event)
   }
 
   open (event) {
@@ -27,6 +38,8 @@ export default class extends Controller {
 
     event.preventDefault()
 
+    this.opener = link
+    this.titleTarget.textContent = link.dataset.agreementTitle || this.defaultTitle
     this.currentAgreementIdentifier = link.dataset.agreementIdentifier || ''
     this.currentMode = link.dataset.agreementMode || 'checkbox_unlock'
     this.currentAcceptUrl = link.dataset.agreementAcceptUrl || ''
@@ -84,6 +97,11 @@ export default class extends Controller {
     }
   }
 
+  // Move focus to the text so the keyboard can scroll it.
+  onModalShown () {
+    this.bodyTarget.focus({ preventScroll: true })
+  }
+
   get modalElement () {
     return this.modalTarget
   }
@@ -108,6 +126,12 @@ export default class extends Controller {
   }
 
   onModalHidden () {
+    const opener = this.opener
+    this.opener = null
+    this.titleTarget.textContent = this.defaultTitle
+    // Bootstrap only restores focus for data-bs triggers; this dialog is opened from script.
+    if (opener && opener.isConnected) opener.focus()
+
     const frame = this.frameTarget
     frame.removeAttribute('src')
     frame.removeAttribute('data-agreement-identifier')
@@ -125,6 +149,7 @@ export default class extends Controller {
   }
 
   resetState () {
+    if (this.defaultTitle === undefined) this.defaultTitle = this.titleTarget.textContent
     this.currentAgreementIdentifier = null
     this.currentMode = 'checkbox_unlock'
     this.currentAcceptUrl = null

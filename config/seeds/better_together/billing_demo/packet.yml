@@ -1,0 +1,35 @@
+better_together:
+  version: '2.0'
+  seed:
+    type: BetterTogether::Seed
+    identifier: better-together-billing-demo
+    created_by: Community Engine
+    created_at: '2026-11-24T00:00:00Z'
+    description: A small demo catalog for trying billing end to end - a free plan, monthly and annual paid plans
+      with included storage, a cheque-only plan, a storage top-up product and an extra-storage product that goes with the supporter plans. Every name starts with [Demo].
+    origin:
+      platforms: []
+      contributors: []
+      license: LGPL-3.0-or-later
+  seed_pack:
+    schema_version: '1.0'
+    pack_type: demo
+    install_tier: optional
+    marketing_name: Billing demo catalog
+    selectable_in_setup_wizard: false
+    dependencies: []
+  packet:
+    id: better-together-billing-demo
+    version: 1.0.0
+    mode: add_only
+    default_locale: en
+    locales:
+    - en
+    unsupported_locale_policy: skip
+    records:
+    - records/billing_plans.yml
+    - records/billing_grants.yml
+    - records/billing_products.yml
+    - records/billing_prices.yml
+    - records/billing_product_grants.yml
+    - records/billing_product_requirements.yml

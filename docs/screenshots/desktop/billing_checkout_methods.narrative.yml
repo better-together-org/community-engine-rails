@@ -1,0 +1,13 @@
+---
+title: 'Checkout: how to pay'
+audience:
+- member
+journey_step: As a member, I choose how I want to pay.
+callouts:
+- :id: methods
+  :title: Choose a method
+  :description: Only ways the seller has switched on can be chosen.
+accessibility_notes: Options are radio buttons with labels; unavailable ones are disabled
+  and explained in text.
+slug: billing_checkout_methods
+device: desktop

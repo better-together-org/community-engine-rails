@@ -1,0 +1,18 @@
+<% content_for :page_title do %>
+  <%= @product.name %>
+<% end %>
+
+<div id="billing-catalog-product-page" class="container my-4">
+  <p><%= link_to t('better_together.billing.catalog.back'), billing_catalog_path(locale: I18n.locale), id: 'billing-catalog-back' %></p>
+  <article id="<%= dom_id(@product, :catalog) %>">
+    <h1 class="mb-2"><%= @product.name %></h1>
+    <p id="<%= dom_id(@product, :catalog_price) %>" class="h3 mb-3">
+      <%= @price.free? ? t('better_together.billing.checkout.free') : billing_amount(@price.amount_cents, @price.currency) %>
+      <% if @price.label.present? %><span class="h6 text-body-secondary"> · <%= @price.label %></span><% end %>
+    </p>
+    <% if @product.summary.present? %><p id="<%= dom_id(@product, :catalog_summary) %>" class="lead"><%= @product.summary %></p><% end %>
+    <% if @product.description.present? %><p id="<%= dom_id(@product, :catalog_description) %>"><%= @product.description %></p><% end %>
+    <p id="<%= dom_id(@product, :catalog_lifetime) %>" class="text-body-secondary"><%= billing_product_lifetime(@product) %></p>
+    <%= render 'better_together/billing/catalog/product_buy_button', product: @product, price: @price %>
+  </article>
+</div>

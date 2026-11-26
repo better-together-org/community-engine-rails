@@ -1,0 +1,47 @@
+{
+  "name": "billing_plans_show_prices",
+  "device": "mobile",
+  "url": "/en/billing/plans/8883e2ab-3cfd-4f78-be81-bafd6f09e626",
+  "title": "Hosted community | Billing Plans | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_show_prices",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#prices_billing_plan_8883e2ab-3cfd-4f78-be81-bafd6f09e626",
+      "title": "Prices",
+      "bullets": [
+        "Every recurring price of the plan, in words. A price never changes: use Change price to replace it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 545.0,
+        "width": 461.0,
+        "height": 167.0,
+        "right": 473.0,
+        "bottom": 712.0,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 236
+      }
+    }
+  ]
+}

@@ -174,6 +174,80 @@ classDiagram
       <<Controller>>
       concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
+    class BetterTogether__Billing__BillingAddressesController["Billing::BillingAddressesController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__CatalogController["Billing::CatalogController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__EventsController["Billing::EventsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__GrantsController["Billing::GrantsController"] {
+      <<Controller>>
+      models: Billing::Grant
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__HostedBillingsController["Billing::HostedBillingsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__HostedPlatformsController["Billing::HostedPlatformsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__HostingPlansController["Billing::HostingPlansController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__HubsController["Billing::HubsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__NotificationPreferencesController["Billing::NotificationPreferencesController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__OrderDocumentsController["Billing::OrderDocumentsController"] {
+      <<Controller>>
+      models: Billing::OrderDocument
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__OrderPaymentsController["Billing::OrderPaymentsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__PeopleController["Billing::PeopleController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::PersonLookup, Billing::TabFrameLayout, ConsentCookieSync +5
+    }
+    class BetterTogether__Billing__PricesController["Billing::PricesController"] {
+      <<Controller>>
+      models: Billing::Price
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__ProductsController["Billing::ProductsController"] {
+      <<Controller>>
+      models: Billing::Product
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__RefundRequestsController["Billing::RefundRequestsController"] {
+      <<Controller>>
+      models: Billing::RefundRequest
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__SaleRefundRequestsController["Billing::SaleRefundRequestsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
+    class BetterTogether__Billing__TaxRegistrationsController["Billing::TaxRegistrationsController"] {
+      <<Controller>>
+      models: Billing::TaxRegistration
+      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
+    }
     class BetterTogether__BotDefense__ChallengesController["BotDefense::ChallengesController"] {
       <<Controller>>
       concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
@@ -291,6 +365,10 @@ classDiagram
       <<Controller>>
       models: MessageRequest
       concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
+    }
+    class BetterTogether__Metrics__BillingReportsController["Metrics::BillingReportsController"] {
+      <<Controller>>
+      concerns: Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +4
     }
     class BetterTogether__Metrics__LinkCheckerReportsController["Metrics::LinkCheckerReportsController"] {
       <<Controller>>
@@ -454,16 +532,95 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__Billing__DefaultAddress["Billing::DefaultAddress"] {
+      <<Model>>
+      table: better_together_billing_default_addresses
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__Grant["Billing::Grant"] {
+      <<Model>>
+      table: better_together_billing_grants
+      concerns: Billing::ParentBound, Billing::PlatformBound
+    }
+    class BetterTogether__Billing__HostedAccount["Billing::HostedAccount"] {
+      <<Model>>
+      table: better_together_billing_hosted_accounts
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__OrderDocument["Billing::OrderDocument"] {
+      <<Model>>
+      table: better_together_billing_order_documents
+      concerns: Billing::ParentBound, Billing::PlatformBound
+    }
+    class BetterTogether__Billing__Price["Billing::Price"] {
+      <<Model>>
+      table: better_together_billing_prices
+      translates: label
+      concerns: Billing::MajorAmount, Billing::PlatformBound, Billing::Pricing, Billing::Purchasable +1
+      weak refs: owner: string_translations
+    }
+    class BetterTogether__Billing__Product["Billing::Product"] {
+      <<Model>>
+      table: better_together_billing_products
+      translates: description, name, summary
+      concerns: Billing::AgreementTarget, Billing::Listing, Billing::PlatformBound, Billing::ProductMirror +3
+      weak refs: target: seller, owner: purchase_requirements, owner: string_translations, owner: text_translations
+    }
+    class BetterTogether__Billing__PurchaseRequirement["Billing::PurchaseRequirement"] {
+      <<Model>>
+      table: better_together_billing_purchase_requirements
+      concerns: Billing::PlatformBound
+      weak refs: target: dependent, target: prerequisite
+    }
+    class BetterTogether__Billing__RefundRequest["Billing::RefundRequest"] {
+      <<Model>>
+      table: better_together_billing_refund_requests
+      concerns: Billing::EncryptedAttributes, Billing::ParentBound, Billing::PlatformBound, Billing::Subjectable
+    }
+    class BetterTogether__Billing__TaxCategory["Billing::TaxCategory"] {
+      <<Model>>
+      table: better_together_billing_tax_categories
+      translates: name
+      concerns: Billing::PlatformBound, Translatable
+      weak refs: owner: string_translations
+    }
+    class BetterTogether__Billing__TaxLine["Billing::TaxLine"] {
+      <<Model>>
+      table: better_together_billing_tax_lines
+      translates: label
+      concerns: Billing::EncryptedAttributes, Billing::LocalizedSnapshot, Billing::ParentBound, Billing::PlatformBound +1
+      weak refs: owner: string_translations
+    }
+    class BetterTogether__Billing__TaxRate["Billing::TaxRate"] {
+      <<Model>>
+      table: better_together_billing_tax_rates
+      translates: label
+      concerns: Billing::PlatformBound, Translatable
+      weak refs: owner: string_translations
+    }
+    class BetterTogether__Billing__TaxRegistration["Billing::TaxRegistration"] {
+      <<Model>>
+      table: better_together_billing_tax_registrations
+      concerns: Billing::EncryptedAttributes, Billing::PlatformBound, Billing::SellerScoped
+      weak refs: target: seller
+    }
+    class BetterTogether__Billing__TaxZone["Billing::TaxZone"] {
+      <<Model>>
+      table: better_together_billing_tax_zones
+      translates: name
+      concerns: Billing::PlatformBound, Translatable
+      weak refs: owner: string_translations
+    }
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
       table: noticed_events
-      variants: CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier, FederationVisibilityStatusNotifier +16
+      variants: Billing::Notifier, CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier +17
       weak refs: target: record
     }
     class BetterTogether__CommentAddedNotifier__Notification["CommentAddedNotifier::Notification\n(shared table family)"] {
       <<Model>>
       table: noticed_notifications
-      variants: CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification, FederationVisibilityStatusNotifier::Notification +16
+      variants: Billing::Notifier::Notification, CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification +17
       weak refs: target: recipient
     }
     class BetterTogether__CommentConfig["CommentConfig"] {
@@ -531,7 +688,7 @@ classDiagram
       table: better_together_platforms
       variants: HostedPlatform, OauthPlatform, OperatorPlatform
       translates: description, name, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +23
+      concerns: BetterTogetherId, Billing::Billable, Billing::Subjectable, Creatable +26
       weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +12
     }
     class BetterTogether__FederationContentGrant["FederationContentGrant"] {
@@ -802,6 +959,29 @@ classDiagram
   BetterTogether__Api__V1__ShortLinksController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__UploadsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__WebhookEndpointsController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Billing__BillingAddressesController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__CatalogController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__EventsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__GrantsController ..> BetterTogether__Billing__Grant : manages
+  BetterTogether__Billing__GrantsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HostedBillingsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HostedPlatformsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HostingPlansController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HubsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__NotificationPreferencesController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__OrderDocumentsController ..> BetterTogether__Billing__OrderDocument : manages
+  BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__OrderPaymentsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__PricesController ..> BetterTogether__Billing__Price : manages
+  BetterTogether__Billing__PricesController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__ProductsController ..> BetterTogether__Billing__Product : manages
+  BetterTogether__Billing__ProductsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__RefundRequestsController ..> BetterTogether__Billing__RefundRequest : manages
+  BetterTogether__Billing__RefundRequestsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__SaleRefundRequestsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__TaxRegistrationsController ..> BetterTogether__Billing__TaxRegistration : manages
+  BetterTogether__Billing__TaxRegistrationsController --|> BetterTogether__ApplicationController
   BetterTogether__BotDefense__ChallengesController --|> BetterTogether__ApplicationController
   BetterTogether__CommentsController --|> BetterTogether__ApplicationController
   BetterTogether__Content__PageBlocksController --|> BetterTogether__ApplicationController
@@ -831,6 +1011,7 @@ classDiagram
   BetterTogether__LocationsController --|> BetterTogether__ApplicationController
   BetterTogether__MessageRequestsController ..> BetterTogether__MessageRequest : manages
   BetterTogether__MessageRequestsController --|> BetterTogether__ApplicationController
+  BetterTogether__Metrics__BillingReportsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkCheckerReportsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkClickReportsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkClicksController --|> BetterTogether__ApplicationController
@@ -873,6 +1054,40 @@ classDiagram
   BetterTogether__AgentGrant --> BetterTogether__Person : operator
   BetterTogether__AgentGrant --> BetterTogether__Community : community
   BetterTogether__AgentGrant --> BetterTogether__Person : granted_by
+  BetterTogether__Billing__DefaultAddress --> BetterTogether__Platform : platform
+  BetterTogether__Billing__DefaultAddress --> BetterTogether__Person : person
+  BetterTogether__Billing__DefaultAddress --> BetterTogether__Address : address
+  BetterTogether__Billing__Grant --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Grant --> BetterTogether__Billing__Product : product
+  BetterTogether__Billing__HostedAccount --> BetterTogether__Platform : platform
+  BetterTogether__Billing__HostedAccount --> BetterTogether__Person : suspended_by
+  BetterTogether__Billing__OrderDocument --> BetterTogether__Platform : platform
+  BetterTogether__Billing__OrderDocument --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__OrderDocument --> BetterTogether__Upload : upload
+  BetterTogether__Billing__Price --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Price --> BetterTogether__Billing__Product : product
+  BetterTogether__Billing__Product --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Product --> BetterTogether__Billing__TaxCategory : tax_category
+  BetterTogether__Billing__PurchaseRequirement --> BetterTogether__Platform : platform
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Platform : platform
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Person : requester
+  BetterTogether__Billing__RefundRequest --> BetterTogether__Person : decided_by
+  BetterTogether__Billing__TaxCategory --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxLine --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxLine --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__TaxLine --> BetterTogether__Billing__LineItem : line_item
+  BetterTogether__Billing__TaxLine --> BetterTogether__Billing__TaxRate : tax_rate
+  BetterTogether__Billing__TaxRate --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxRate --> BetterTogether__Billing__TaxZone : tax_zone
+  BetterTogether__Billing__TaxRate --> BetterTogether__Billing__TaxCategory : tax_category
+  BetterTogether__Billing__TaxRegistration --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxRegistration --> BetterTogether__Geography__Country : country
+  BetterTogether__Billing__TaxRegistration --> BetterTogether__Geography__State : state
+  BetterTogether__Billing__TaxZone --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxZone --> BetterTogether__Geography__Country : country
+  BetterTogether__Billing__TaxZone --> BetterTogether__Geography__State : state
+  BetterTogether__Billing__TaxZone --> BetterTogether__Geography__Settlement : settlement
   BetterTogether__CommentAddedNotifier__Notification --> Noticed__Event : event
   BetterTogether__CommentAddedNotifier__Notification --> BetterTogether__Platform : platform
   BetterTogether__ContactDetail --> BetterTogether__Platform : platform

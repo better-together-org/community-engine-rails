@@ -1,0 +1,48 @@
+{
+  "name": "billing_checkout_free_plan",
+  "device": "desktop",
+  "url": "/en/billing/checkout/new?plan_id=cdf71edd-0e08-48cb-bcc0-7ca01b776843",
+  "title": "Get Community membership | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_checkout_free_plan",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-place-btn",
+      "title": "Get it free",
+      "bullets": [
+        "Nothing to pay, tax or address."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 595.1875,
+        "width": 106.953125,
+        "height": 38.0,
+        "right": 178.953125,
+        "bottom": 633.1875,
+        "center_x": 125.4765625,
+        "center_y": 614.1875
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 595.1875,
+        "width": 106.953125,
+        "height": 38.0,
+        "right": 178.953125,
+        "bottom": 633.1875,
+        "center_x": 125.4765625,
+        "center_y": 614.1875
+      },
+      "placement": {
+        "side": "right",
+        "x": 198.95,
+        "y": 548.19,
+        "width": 380,
+        "height": 132,
+        "score": 1261.046875
+      }
+    }
+  ]
+}

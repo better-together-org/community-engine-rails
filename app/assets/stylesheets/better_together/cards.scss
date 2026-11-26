@@ -89,3 +89,9 @@
     text-align: start;
   }
 }
+
+// The default link blue is 4.2:1 on the grey card header and footer; this keeps 4.5:1.
+#billing-hub-page .card-header a,
+#billing-hub-page .card-footer a {
+  color: #0a58ca;
+}

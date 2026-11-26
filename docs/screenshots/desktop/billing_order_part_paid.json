@@ -1,0 +1,48 @@
+{
+  "name": "billing_order_part_paid",
+  "device": "desktop",
+  "url": "/en/billing/orders/73c96d61-1ec3-4f34-bc06-38f061da80df",
+  "title": "Order BT-EIPIFBGL | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_partial_payments",
+  "flow": "billing_order_part_paid",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_partial_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-order-add-payment-btn",
+      "title": "Add a payment",
+      "bullets": [
+        "Pay the rest, or part of it, by any way of paying that is open, store credit included."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 1166.1875,
+        "width": 133.34375,
+        "height": 38.0,
+        "right": 214.84375,
+        "bottom": 1204.1875,
+        "center_x": 148.171875,
+        "center_y": 1185.1875
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 1166.1875,
+        "width": 133.34375,
+        "height": 38.0,
+        "right": 214.84375,
+        "bottom": 1204.1875,
+        "center_x": 148.171875,
+        "center_y": 1185.1875
+      },
+      "placement": {
+        "side": "right",
+        "x": 234.84,
+        "y": 1093.19,
+        "width": 380,
+        "height": 184,
+        "score": 1225.15625
+      }
+    }
+  ]
+}

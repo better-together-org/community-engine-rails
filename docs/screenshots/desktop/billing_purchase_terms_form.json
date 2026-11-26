@@ -1,0 +1,48 @@
+{
+  "name": "billing_purchase_terms_form",
+  "device": "desktop",
+  "url": "/en/billing/agreement_requirements",
+  "title": "Purchase terms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_purchase_terms_form",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-agreement-requirement-form",
+      "title": "Add a requirement",
+      "bullets": [
+        "Each field is labelled, so a screen reader announces what it sets."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 1005.0,
+        "width": 1296.0,
+        "height": 286.0,
+        "right": 1360.5,
+        "bottom": 1291.0,
+        "center_x": 712.5,
+        "center_y": 1148.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 1005.0,
+        "width": 1296.0,
+        "height": 286.0,
+        "right": 1360.5,
+        "bottom": 1291.0,
+        "center_x": 712.5,
+        "center_y": 1148.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 827.0,
+        "width": 380,
+        "height": 158,
+        "score": 1005.0
+      }
+    }
+  ]
+}

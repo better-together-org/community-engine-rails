@@ -87,8 +87,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/PerceivedComplexity
-    # rubocop:todo Metrics/MethodLength
-    # rubocop:todo-next Metrics/AbcSize
+    # rubocop:todo-next Metrics/MethodLength
     def set_platform_invitation # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       # Only proceed if there's an invitation token in the URL or already in the session.
       return unless params[:invitation_code].present? || session[:platform_invitation_token].present?
@@ -124,7 +123,6 @@ module BetterTogether
         session.delete(:platform_invitation_expires_at)
       end
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
     def current_invitation
@@ -247,7 +245,6 @@ module BetterTogether
       render 'errors/404', status: :not_found
     end
 
-    # rubocop:todo-next Metrics/MethodLength
     def user_not_authorized(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       action_name = exception.query.to_s.chomp('?')
       resource_name = if exception.record.is_a? Class
@@ -303,11 +300,9 @@ module BetterTogether
 
       respond_to do |format|
         format.turbo_stream do
-          # rubocop:todo-next Layout/LineLength
-          flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request
+          flash.now[:error] = exception.message # Set the exception message as an error flash message for the current request # rubocop:todo Layout/LineLength
           render turbo_stream: turbo_stream.replace('flash_messages',
-                                                    # rubocop:todo-next Layout/LineLength
-                                                    partial: 'layouts/better_together/flash_messages', locals: { flash: })
+                                                    partial: 'layouts/better_together/flash_messages', locals: { flash: }) # rubocop:todo Layout/LineLength
         end
         format.html do
           flash[:error] = exception.message

@@ -1,0 +1,83 @@
+{
+  "name": "billing_checkout_add_ons",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=3725aee4-f8e9-4b3d-a603-367a86543bc0&add_on_ids[]=a186f574-bc64-42da-98a8-afa8f98c0cf7",
+  "title": "Get Annual membership | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_checkout_add_ons",
+  "flow": "billing_checkout_add_ons",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_add_ons_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-add-ons",
+      "title": "Add to your order",
+      "bullets": [
+        "Extras sold with this plan. Tick one and update the order to see the new total."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 449.390625,
+        "width": 476.0,
+        "height": 161.0,
+        "right": 488.0,
+        "bottom": 610.390625,
+        "center_x": 250.0,
+        "center_y": 529.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 449.390625,
+        "width": 476.0,
+        "height": 161.0,
+        "right": 488.0,
+        "bottom": 610.390625,
+        "center_x": 250.0,
+        "center_y": 529.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 630.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 646.609375
+      }
+    },
+    {
+      "selector": "#billing-checkout-subtotal",
+      "title": "Subtotal",
+      "bullets": [
+        "The plan and every ticked extra, before tax."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 324.390625,
+        "width": 474.0,
+        "height": 41.0,
+        "right": 487.0,
+        "bottom": 365.390625,
+        "center_x": 250.0,
+        "center_y": 344.890625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 324.390625,
+        "width": 474.0,
+        "height": 41.0,
+        "right": 487.0,
+        "bottom": 365.390625,
+        "center_x": 250.0,
+        "center_y": 344.890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 115.0,
+        "y": 146.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 324.390625
+      }
+    }
+  ]
+}

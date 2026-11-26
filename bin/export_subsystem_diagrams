@@ -32,6 +32,12 @@ if [ -n "$SINCE_REF" ]; then
   CHANGED_PATHS_ARG="$CHANGED_PATHS_FILE"
 fi
 
+# CI builds this diagram from a database freshly loaded from schema.rb. The per-worktree development
+# database drifts from schema.rb (columns added or dropped on other branches), so use a scratch one.
+export CE_WORKTREE_DB_SUFFIX="${CE_WORKTREE_DB_SUFFIX:-}_diagrams"
+bin/dc-run-dummy bundle exec rails db:drop db:create db:schema:load >/dev/null
+trap 'bin/dc-run-dummy bundle exec rails db:drop >/dev/null 2>&1 || true' EXIT
+
 bin/dc-run-dummy bundle exec rails runner export_subsystem_diagrams.rb "$CHANGED_PATHS_ARG"
 [ -n "$CHANGED_PATHS_ARG" ] && rm -f "$CHANGED_PATHS_ARG"
 

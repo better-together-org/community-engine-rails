@@ -1,0 +1,12 @@
+---
+title: Products
+audience:
+- platform_organizer
+journey_step: As a steward I see what the platform sells once.
+callouts:
+- :id: table
+  :title: Each product with its current price and how long it lasts
+  :description: Each product with its current price and how long it lasts
+accessibility_notes: Every field has a label; each section is labelled by its heading.
+slug: billing_products_index
+device: mobile

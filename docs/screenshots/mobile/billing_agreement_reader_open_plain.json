@@ -1,0 +1,11 @@
+{
+  "name": "billing_agreement_reader_open_plain",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=a009c87d-67a7-422c-b08e-1ab88bf402b0&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_agreement_reader",
+  "flow": "billing_agreement_reader_open_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_agreement_reader_spec.rb"
+}

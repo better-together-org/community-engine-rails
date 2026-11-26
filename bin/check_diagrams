@@ -4,8 +4,12 @@
 # stale sources, exports or hashes are caught before CI sees them. Run it after your last
 # schema, model, association or .mmd change, then commit whatever it rewrote.
 #
-#   bin/check_diagrams
+#   bin/check_diagrams         regenerate, then fail if anything was rewritten (what CI does)
+#   bin/check_diagrams --fix   regenerate, stage the rewritten files and exit 0 (used by the pre-commit hook)
 set -euo pipefail
+
+FIX=0
+[ "${1:-}" = "--fix" ] && FIX=1
 
 cd "$(dirname "$0")/.."
 
@@ -21,7 +25,11 @@ bin/export_schema_diagrams
 bin/render_diagrams
 after=$(fingerprint)
 
-if [ "$before" != "$after" ]; then
+if [ "$before" != "$after" ] && [ "$FIX" = "1" ]; then
+  git add -A -- "${PATHS[@]}"
+  echo "Diagrams were stale; regenerated and staged:" >&2
+  git status --short -- "${PATHS[@]}" >&2
+elif [ "$before" != "$after" ]; then
   echo "Diagrams were stale. Regeneration rewrote files; review and commit them:" >&2
   git status --short -- "${PATHS[@]}" >&2
   exit 1

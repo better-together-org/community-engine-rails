@@ -9,6 +9,7 @@ applyTo: "**/*.rb,**/*.yml,**/*.erb"
 
 ## Mobility
 - Translate model attributes; list them via helper methods.
+- Always give `translates` an explicit `type: :string` or `type: :text` (or a `backend:`), and regenerate the diagram with `bin/export_localized_attributes` after any change. See `.claude/skills/localization-mandatory/SKILL.md`.
 - Store rich text translations (Action Text) where needed.
 - Never rely on locale fallbacks for required content—seed defaults.
 

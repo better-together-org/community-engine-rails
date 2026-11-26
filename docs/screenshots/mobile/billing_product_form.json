@@ -1,0 +1,48 @@
+{
+  "name": "billing_product_form",
+  "device": "mobile",
+  "url": "/en/billing/products/340d4fd0-1bd2-462b-89ea-5be1f873f8d7/edit",
+  "title": "Edit product — Storage top-up | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_products",
+  "flow": "billing_product_form",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_products_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-product-lifetime",
+      "title": "Until used, or for a set time after it is paid",
+      "bullets": [
+        "Until used, or for a set time after it is paid"
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 460.390625,
+        "width": 461.0,
+        "height": 337.1875,
+        "right": 473.0,
+        "bottom": 797.578125,
+        "center_x": 242.5,
+        "center_y": 628.984375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 460.390625,
+        "width": 461.0,
+        "height": 337.1875,
+        "right": 473.0,
+        "bottom": 797.578125,
+        "center_x": 242.5,
+        "center_y": 628.984375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 218.39,
+        "width": 270.0,
+        "height": 222,
+        "score": 460.390625
+      }
+    }
+  ]
+}

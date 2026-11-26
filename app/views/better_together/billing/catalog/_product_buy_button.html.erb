@@ -1,0 +1,5 @@
+<%# locals: (product:, price:) -%>
+<%# The way into checkout for one price. Sign-in is asked for there, not here. %>
+<%= link_to new_billing_checkout_path(price_id: price.id, locale: I18n.locale), id: dom_id(product, :buy), class: 'btn btn-primary' do %>
+  <%= t("better_together.billing.catalog.#{price.free? ? 'get_free' : 'buy'}") %><span class="visually-hidden"> <%= product.name %></span>
+<% end %>

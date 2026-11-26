@@ -24,6 +24,13 @@ module BetterTogether
         end
       end
 
+      # What is spoken for in a period: consumed plus the holds still in force. Read fresh from the ledger
+      # (not the cached balance row), so it is right under the quota's lock where it decides a refusal.
+      def committed(quota, period_key)
+        consumed = quota.quota_usages.where(period_key:).sum(:amount)
+        consumed + held_reserved(quota, period_key)
+      end
+
       # Recomputes only `reserved`, from the reservations still held and unexpired.
       # That set stays small (settled/expired rows drop out), so this is cheap.
       def refresh_reserved!(quota, period_key)

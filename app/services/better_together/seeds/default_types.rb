@@ -13,6 +13,7 @@ module BetterTogether
         register_contacts
         register_redirects
         register_rbac
+        register_billing
       end
 
       def self.register_content
@@ -149,8 +150,70 @@ module BetterTogether
         end
       end
 
+      # The catalog: plans, what each includes, and the products sold once. Money and processor state (prices at a
+      # vendor, payment methods and their acknowledgement, taxes, agreements) are not seeded here: each has its own
+      # gate and planter.
+      def self.register_billing
+        Registry.register(:billing_plan) do
+          model 'BetterTogether::Billing::Plan'
+          attributes :billing_interval, :interval_count, :amount_cents, :currency, :active, :listed,
+                     :restricted_to_members, :grace_days, :renewal_lead_days, :accepted_payment_methods
+          translated :name, :description
+        end
+        Registry.register(:billing_grant) do
+          model 'BetterTogether::Billing::Grant'
+          natural_key :kind, within: :product
+          attributes :kind, :parameters
+          reference :product, to: :billing_plan
+          position :position
+        end
+        register_billing_products
+      end
+
+      # What a platform sells once: a product, the prices it is sold at (never changed once made, so keyed by amount) and what
+      # it includes.
+      def self.register_billing_products
+        Registry.register(:billing_product) do
+          model 'BetterTogether::Billing::Product'
+          attributes :active, :listed, :restricted_to_members, :restricted_to_subscribers, :lifetime, :term_length, :term_unit
+          translated :name, :description, :summary
+        end
+        Registry.register(:billing_price) do
+          model 'BetterTogether::Billing::Price'
+          natural_key :amount_cents, within: :product
+          attributes :amount_cents, :currency, :active
+          translated :label
+          reference :product, to: :billing_product
+        end
+        Registry.register(:billing_product_grant) do
+          model 'BetterTogether::Billing::Grant'
+          natural_key :kind, within: :product
+          attributes :kind, :parameters
+          reference :product, to: :billing_product
+          position :position
+        end
+        register_billing_requirements
+      end
+
+      # What a product needs of a buyer: one rule for any plan, or one for each plan it goes with.
+      def self.register_billing_requirements
+        Registry.register(:billing_product_requirement) do
+          model 'BetterTogether::Billing::PurchaseRequirement'
+          natural_key :prerequisite_kind, within: :dependent
+          attributes :prerequisite_kind, :met_by, :on_prerequisite_end
+          reference :dependent, to: :billing_product
+        end
+        Registry.register(:billing_product_plan_requirement) do
+          model 'BetterTogether::Billing::PurchaseRequirement'
+          natural_key by_refs: %i[dependent prerequisite]
+          attributes :met_by, :on_prerequisite_end
+          reference :dependent, to: :billing_product
+          reference :prerequisite, to: :billing_plan
+        end
+      end
+
       private_class_method :register_content, :register_navigation, :register_files_and_events, :register_contacts,
-                           :register_redirects, :register_rbac
+                           :register_redirects, :register_rbac, :register_billing, :register_billing_products, :register_billing_requirements
     end
   end
 end

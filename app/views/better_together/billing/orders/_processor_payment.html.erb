@@ -1,0 +1,20 @@
+<%# Paying an order through a processor: the buyer is sent to the processor's own page and comes back here. %>
+<%# An order paid in parts can have more than one waiting; each gets its own card and button. %>
+<% order.payments.in_flight.order(:created_at).select(&:remote?).each_with_index do |processor_payment, index| %>
+  <div id="<%= index.zero? ? 'billing-order-pay-card' : dom_id(processor_payment, :pay_card) %>" class="card mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <strong><%= t('better_together.billing.orders.pay_heading', amount: billing_amount(processor_payment.amount_cents, processor_payment.currency)) %></strong>
+        <p id="<%= index.zero? ? 'billing-order-pay-hint' : dom_id(processor_payment, :pay_hint) %>" class="mb-0 text-body-secondary">
+          <%= t(processor_payment.processing? ? 'better_together.billing.orders.pay_processing' : 'better_together.billing.orders.pay_hint') %>
+        </p>
+      </div>
+      <% unless processor_payment.processing? %>
+        <%= button_to t('better_together.billing.orders.pay_button'), pay_billing_order_path(order, locale: I18n.locale),
+                      method: :post, params: { payment_id: processor_payment.id }, class: 'btn btn-primary',
+                      id: index.zero? ? 'billing-order-pay-btn' : dom_id(processor_payment, :pay_btn),
+                      form: { id: index.zero? ? 'billing-order-pay-form' : dom_id(processor_payment, :pay_form) } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

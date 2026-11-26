@@ -1,0 +1,12 @@
+---
+title: Plans a product needs
+audience:
+- platform_organizer
+journey_step: As a steward I choose which plans a product needs.
+callouts:
+- :id: targets
+  :title: Target plans
+  :description: None ticked means it sells on its own.
+accessibility_notes: A labelled fieldset of checkboxes with a hint.
+slug: billing_product_requirements_form
+device: desktop

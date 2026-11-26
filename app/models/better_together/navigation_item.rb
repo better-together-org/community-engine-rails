@@ -14,45 +14,70 @@ module BetterTogether
       permission
     ].freeze
 
-    class_attribute :route_names, default: {
-      agreements: 'agreements_url',
-      calls_for_interest: 'calls_for_interest_url',
-      calendars: 'calendars_url',
-      content_blocks: 'content_blocks_url',
-      communities: 'communities_url',
-      events: 'events_url',
-      federation_hub: 'federation_hub_url',
-      geography_continents: 'geography_continents_url',
-      geography_countries: 'geography_countries_url',
-      geography_maps: 'geography_maps_url',
-      geography_states: 'geography_states_url',
-      geography_regions: 'geography_regions_url',
-      geography_settlements: 'geography_settlements_url',
-      host_dashboard: 'host_dashboard_url',
-      host_dashboard_membership_review: 'host_dashboard_membership_review_url',
-      host_dashboard_platform_connection_review: 'host_dashboard_platform_connection_review_url',
-      host_dashboard_safety_review: 'host_dashboard_safety_review_url',
-      host_dashboard_weather: 'host_dashboard_weather_url',
-      host_jobs: 'host_jobs_url',
-      hub: 'hub_url',
-      joatu_hub: 'joatu_hub_url',
-      joatu_offers: 'joatu_offers_url',
-      joatu_requests: 'joatu_requests_url',
-      metrics_reports: 'metrics_reports_url',
-      navigation_areas: 'navigation_areas_url',
-      oauth_applications: 'oauth_applications_url',
-      pages: 'pages_url',
-      people: 'people_url',
-      posts: 'posts_url',
-      platforms: 'platforms_url',
-      platform_connections: 'platform_connections_url',
-      reports: 'reports_url',
-      resource_permissions: 'resource_permissions_url',
-      roles: 'roles_url',
-      safety_cases: 'safety_cases_url',
-      users: 'users_url',
-      webhook_endpoints: 'webhook_endpoints_url'
-    }
+    # The named routes a navigation item can point at, in the groups the picker shows.
+    # Every name resolves to its `<name>_url` route helper. Host apps add their own with
+    # NavigationItem.register_route_names; names added any other way are shown under :other.
+    ROUTE_NAME_GROUPS = {
+      public: %i[
+        hub agreements calendars calls_for_interest communities events federation_hub posts
+      ],
+      host_dashboard: %i[
+        host_dashboard host_dashboard_membership_review host_dashboard_platform_connection_review
+        host_dashboard_safety_review host_dashboard_weather host_jobs content_blocks metrics_reports
+        navigation_areas oauth_applications pages people platforms platform_connections
+        resource_permissions roles users webhook_endpoints
+      ],
+      safety: %i[reports safety_cases],
+      geography: %i[
+        geography_continents geography_countries geography_maps geography_regions geography_settlements
+        geography_states
+      ],
+      joatu: %i[joatu_hub joatu_offers joatu_requests],
+      billing_management: %i[
+        host_dashboard_billing billing_plans billing_processor_settings billing_sales billing_events billing_subscribers
+        billing_tax_registrations billing_agreement_requirements billing_promotions billing_credit_accounts
+        billing_allowances billing_offline_payments billing_hosted_platforms metrics_billing_reports
+      ],
+      billing_buyer: %i[
+        billing_hub billing_catalog billing_orders billing_subscriptions billing_entitlements
+        billing_refund_requests billing_billing_addresses billing_notification_preferences
+        billing_hosted_billing billing_hosting_plan
+      ]
+    }.freeze
+
+    # Group a name lands in when it was assigned without one (for example by a host app that
+    # still merges into `route_names` directly).
+    DEFAULT_ROUTE_NAME_GROUP = :other
+
+    class_attribute :route_names,
+                    default: ROUTE_NAME_GROUPS.values.flatten.index_with { |name| "#{name}_url" }
+    # name => group, for names registered with register_route_names. Built-ins use ROUTE_NAME_GROUPS.
+    class_attribute :registered_route_name_groups, default: {}
+
+    # Items whose target only exists when a subsystem is switched on for the platform.
+    # Without it a platform that has not set billing up would show a link to a page that
+    # answers 404.
+    BILLING_ENABLED_ROUTES = %w[
+      billing_plans_url billing_sales_url billing_subscribers_url billing_promotions_url
+      billing_credit_accounts_url billing_allowances_url billing_hub_url billing_catalog_url billing_orders_url
+      billing_subscriptions_url billing_entitlements_url billing_offline_payments_url billing_refund_requests_url
+      billing_billing_addresses_url billing_notification_preferences_url
+    ].freeze
+
+    ROUTE_AVAILABILITY = BILLING_ENABLED_ROUTES.index_with do
+      ->(platform) { BetterTogether::Billing.enabled?(platform) }
+    end.merge(
+      %w[billing_processor_settings_url billing_tax_registrations_url billing_agreement_requirements_url]
+        .index_with { ->(platform) { BetterTogether::Billing.configurable?(platform) } }
+    ).merge(
+      'billing_hosting_plan_url' => lambda { |platform|
+        BetterTogether::Billing::Configuration.requested? && !platform.host?
+      }
+    ).merge(
+      'billing_events_url' => ->(platform) { platform.host? && BetterTogether::Billing.configurable?(platform) },
+      'billing_hosted_billing_url' => ->(platform) { BetterTogether::Billing::HostedBilling.page_available?(platform, host: false) },
+      'billing_hosted_platforms_url' => ->(platform) { BetterTogether::Billing::HostedBilling.page_available?(platform, host: true) }
+    ).freeze
 
     belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, touch: true
@@ -80,6 +105,34 @@ module BetterTogether
 
     def self.route_name_urls
       route_names.values.map(&:to_s)
+    end
+
+    # Adds route names to the picker. `names` is a Hash of name => route helper (`'venues_url'`)
+    # or an Array of names whose helper is `<name>_url`. Safe to call from an initializer or an
+    # `included` block; it never removes a name another app has added.
+    def self.register_route_names(names, group: DEFAULT_ROUTE_NAME_GROUP)
+      names = names.index_with { |name| "#{name}_url" } unless names.respond_to?(:transform_keys)
+      names = names.transform_keys(&:to_sym)
+      self.route_names = route_names.merge(names)
+      self.registered_route_name_groups = registered_route_name_groups.merge(names.keys.index_with { group.to_sym })
+    end
+
+    # { group => { name => route helper } } for the picker. Built-in groups come first in their
+    # declared order, then host-app groups, then :other. Names are listed once, and a group with
+    # no names is left out.
+    def self.route_name_groups
+      grouped = route_names.group_by { |name, _| route_name_group_for(name) }.transform_values(&:to_h)
+      route_name_group_order(grouped.keys).index_with { |group| grouped[group] }.compact
+    end
+
+    def self.route_name_group_for(name)
+      ROUTE_NAME_GROUPS.find { |_, names| names.include?(name) }&.first ||
+        registered_route_name_groups.fetch(name, DEFAULT_ROUTE_NAME_GROUP)
+    end
+
+    def self.route_name_group_order(present)
+      host_groups = present - ROUTE_NAME_GROUPS.keys - [DEFAULT_ROUTE_NAME_GROUP]
+      ROUTE_NAME_GROUPS.keys + host_groups + [DEFAULT_ROUTE_NAME_GROUP]
     end
 
     translates :title, type: :string
@@ -246,6 +299,7 @@ module BetterTogether
     # @return [Boolean]
     def visible_to?(user, context = {})
       return false unless visible? # Check base visibility flag first
+      return false unless route_available?(context)
 
       # Public items are visible to everyone
       return true if effective_privacy_public?
@@ -344,6 +398,13 @@ module BetterTogether
       return unless permission_identifier.present?
 
       errors.add(:permission_identifier, 'cannot be used with public privacy')
+    end
+
+    def route_available?(context)
+      gate = ROUTE_AVAILABILITY[route_name]
+      return true unless gate
+
+      gate.call(context[:platform] || Current.platform || BetterTogether::Platform.find_by(host: true))
     end
 
     def permission_visible?(user, context)

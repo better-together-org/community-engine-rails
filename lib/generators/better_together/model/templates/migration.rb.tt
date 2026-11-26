@@ -4,7 +4,7 @@ class Create<%= table_name.camelize %> < ActiveRecord::Migration[<%= ActiveRecor
   def up
     return if table_exists?(:<%= table_name %>)
 
-    create_bt_table :<%= plural_file_name %><%= module_name == 'BetterTogether' ? '' : ', prefix: nil' %> do |t|
+    create_bt_table :<%= module_name == 'BetterTogether' ? table_suffix : table_name %><%= module_name == 'BetterTogether' ? '' : ', prefix: nil' %> do |t|
 <% column_attributes.each do |attribute| -%>
       t.<%= attribute.type %> :<%= attribute.name %><%= attribute.inject_options %>
 <% end -%>

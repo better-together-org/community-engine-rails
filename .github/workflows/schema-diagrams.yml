@@ -4,7 +4,8 @@ name: Schema Diagrams
 # regenerating every whole-schema diagram. Fix: run bin/export_schema_diagrams and commit the result.
 #
 #   full-schema:  db/community-engine-db.dbml and the full-schema ERD (svg; the png is rendered from it)
-#   subsystems:   the per-subsystem ERD Mermaid sources, generated from live Rails reflections
+#   subsystems:   the per-subsystem ERD Mermaid sources, generated from live Rails reflections, and the
+#                 localized (Mobility) attribute diagram, which also fails on any untyped `translates`
 #
 # diagrams.yml already checks that the Mermaid exports match their sources.
 
@@ -12,6 +13,11 @@ on:
   pull_request:
     paths:
       - "db/migrate/**"
+      - "app/models/**"
+      - "lib/**"
+      - "docs/diagrams/source/ce_localized_attributes.mmd"
+      - "scripts/localized_attribute_diagram.rb"
+      - "scripts/export_localized_attribute_diagram.rb"
       - "spec/dummy/db/schema.rb"
       - "db/community-engine-db.dbml"
       - "docs/diagrams/exports/svg/ce_full_schema_erd.svg"
@@ -123,3 +129,8 @@ jobs:
             git status --porcelain -- ${paths}
             exit 1
           fi
+
+      - name: Check the localized attribute diagram is current and every translates names a type
+        run: |
+          cd spec/dummy
+          bundle exec rails runner export_localized_attributes.rb --check

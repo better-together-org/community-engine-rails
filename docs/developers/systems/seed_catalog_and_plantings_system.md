@@ -8,7 +8,7 @@ Two related pieces handle seed data in 0.11.0: the **seed catalog**, which plant
 
 | Piece | File |
 |---|---|
-| `SeedCatalog::Registry` | `app/services/better_together/seed_catalog/registry.rb`: a frozen map of catalog key to catalog class (`geography`) |
+| `SeedCatalog::Registry` | `app/services/better_together/seed_catalog/registry.rb`: a frozen map of catalog key to catalog class (`geography`, `billing_tax`, `billing_agreements`) |
 | `SeedCatalog::GeographyCatalog` | `app/services/better_together/seed_catalog/geography_catalog.rb`: categories, planting state, prerequisites, planting |
 | `SeedCatalogController` | `app/controllers/better_together/seed_catalog_controller.rb`: `index`, `plant`, `plant_all` |
 | `SeedCatalogPolicy` | `app/policies/better_together/seed_catalog_policy.rb`: `show?` for people with `manage_platform_settings` or `manage_platform` on the host platform |

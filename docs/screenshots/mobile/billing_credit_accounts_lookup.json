@@ -1,0 +1,83 @@
+{
+  "name": "billing_credit_accounts_lookup",
+  "device": "mobile",
+  "url": "/en/billing/credit_accounts?person_id=34d7f353-6011-451b-ae0e-3cdffe87c5f0",
+  "title": "Store credit accounts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_store_credit",
+  "flow": "billing_credit_accounts_lookup",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_credit_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-credit-lookup-form",
+      "title": "Find a person",
+      "bullets": [
+        "Search by name or handle and pick the person. Only members of this platform are offered."
+      ],
+      "target": {
+        "x": 8.0,
+        "y": 315.390625,
+        "width": 469.0,
+        "height": 149.0,
+        "right": 477.0,
+        "bottom": 464.390625,
+        "center_x": 242.5,
+        "center_y": 389.890625
+      },
+      "avoid": {
+        "x": 8.0,
+        "y": 315.390625,
+        "width": 469.0,
+        "height": 149.0,
+        "right": 477.0,
+        "bottom": 464.390625,
+        "center_x": 242.5,
+        "center_y": 389.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 484.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 792.609375
+      }
+    },
+    {
+      "selector": "#billing-credit-grant-form",
+      "title": "Give credit",
+      "bullets": [
+        "Credit can expire after a number of days. You cannot give it to yourself."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 520.390625,
+        "width": 461.0,
+        "height": 417.0,
+        "right": 473.0,
+        "bottom": 937.390625,
+        "center_x": 242.5,
+        "center_y": 728.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 520.390625,
+        "width": 461.0,
+        "height": 417.0,
+        "right": 473.0,
+        "bottom": 937.390625,
+        "center_x": 242.5,
+        "center_y": 728.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 957.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 319.609375
+      }
+    }
+  ]
+}

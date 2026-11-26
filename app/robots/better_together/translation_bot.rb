@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class TranslationBot < ApplicationBot # rubocop:todo Style/Documentation
+  class TranslationBot < ApplicationBot # rubocop:todo Style/Documentation, Metrics/ClassLength
     DEFAULT_SYSTEM_PROMPT =
       'You are a translation assistant for CMS content. Translate text accurately for each ' \
       'type of content provided. Only return the translated text without any added explanation ' \
@@ -20,6 +20,10 @@ module BetterTogether
     def translate(content, target_locale:, source_locale:, attribute_name: nil, model_name: nil, initiator: nil)
       # rubocop:enable Lint/UnusedMethodArgument
       # rubocop:enable Metrics/ParameterLists
+      # In hard mode, a platform that has used its AI allowance gets no new translations (the work is not
+      # started, so no tokens are spent). The same value stands in as when the provider has nothing.
+      return 'Translation unavailable' if translation_quota_exhausted?(initiator)
+
       # Step 1: Replace Trix attachments with placeholders
       attachments = {}
       processed_content = content.gsub(%r{<figure[^>]+data-trix-attachment="([^"]+)"[^>]*>.*?</figure>}) do |match|
@@ -120,6 +124,16 @@ module BetterTogether
     # every call gets its own key however many run at once. With no initiator the
     # owner resolves to the Platform. Errors are caught non-fatally, a
     # quota-tracking bug must never break translation.
+    def translation_quota_exhausted?(initiator)
+      BetterTogether::Quotas.check!(type: 'ai_translation_tokens', owner: BetterTogether::Quotas::OwnerResolver.resolve(initiator), amount: 1)
+      false
+    rescue BetterTogether::Quotas::QuotaExceeded
+      true
+    rescue StandardError => e
+      BetterTogether::Quotas.record_failure(e, 'ai_translation_tokens check')
+      false # fail open: a bug in the check must not stop translation
+    end
+
     def settle_translation_tokens_quota(initiator, log_id, prompt_tokens, completion_tokens)
       BetterTogether::Quotas.settle!(
         type: 'ai_translation_tokens',
@@ -129,7 +143,7 @@ module BetterTogether
         actor: initiator
       )
     rescue StandardError => e
-      Rails.logger.warn("[Quotas] settle! failed non-fatally for ai_translation_tokens: #{e.class}: #{e.message}")
+      BetterTogether::Quotas.record_failure(e, 'ai_translation_tokens settle')
     end
 
     def estimate_cost(prompt_tokens, completion_tokens, model)

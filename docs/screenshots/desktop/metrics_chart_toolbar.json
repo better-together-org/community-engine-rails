@@ -1,0 +1,47 @@
+{
+  "name": "metrics_chart_toolbar",
+  "device": "desktop",
+  "url": "/en/host/metrics/reports",
+  "title": "Metrics Reports | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "metrics_reports",
+  "flow": "metrics_chart_toolbar",
+  "source_spec": "./spec/docs_screenshots/better_together/metrics_chart_toolbar_spec.rb",
+  "callouts": [
+    {
+      "selector": "#page-views-chart-export",
+      "title": "Export a chart",
+      "bullets": [
+        "Download this chart as PNG, JPG or CSV."
+      ],
+      "target": {
+        "x": 1194.875,
+        "y": 433.1875,
+        "width": 122.625,
+        "height": 38.0,
+        "right": 1317.5,
+        "bottom": 471.1875,
+        "center_x": 1256.1875,
+        "center_y": 452.1875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 104.0,
+        "width": 1425.0,
+        "height": 1353.0,
+        "right": 1425.0,
+        "bottom": 1457.0,
+        "center_x": 712.5,
+        "center_y": 780.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 132
+      }
+    }
+  ]
+}

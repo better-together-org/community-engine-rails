@@ -1,0 +1,14 @@
+---
+title: Hosted platforms
+audience:
+- platform_organizer
+journey_step: As the host steward, I see what each hosted platform has agreed to and
+  can suspend a platform's billing.
+callouts:
+- :id: table
+  :title: Status
+  :description: One row per hosted platform.
+accessibility_notes: The table has column headers and row headers; the suspend field
+  is labelled.
+slug: billing_hosted_platforms
+device: desktop

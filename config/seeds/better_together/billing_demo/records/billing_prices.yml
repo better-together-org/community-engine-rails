@@ -1,0 +1,9 @@
+version: '2.0'
+type: billing_price
+records:
+- key: demo-storage-top-up-500
+  attributes: { amount_cents: 500, currency: CAD, active: true }
+  refs: { product: "billing_product:demo-storage-top-up" }
+- key: demo-extra-storage-300
+  attributes: { amount_cents: 300, currency: CAD, active: true }
+  refs: { product: "billing_product:demo-extra-storage" }

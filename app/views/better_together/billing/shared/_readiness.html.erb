@@ -1,0 +1,53 @@
+<%# What is still to do before the platform can sell. Shown to stewards.
+    Locals: owner (default: the billing owner) and tab_ids (identifiers of the billing tabs on the page, so a
+    link opens its tab instead of leaving the page). %>
+<% owner = local_assigns[:owner] || billing_owner %>
+<% tab_ids = Array(local_assigns[:tab_ids]) %>
+<% readiness = BetterTogether::Billing::Readiness.call(owner) %>
+<%# What a step that is not done links to: the screen where it is done. %>
+<% fix_links = {
+     method_enabled: ['billing-processor-settings', better_together.billing_processor_settings_path(locale: I18n.locale)],
+     agreements: ['billing-agreement-requirements', better_together.billing_agreement_requirements_path(locale: I18n.locale)]
+   } %>
+<div id="billing-readiness-checklist" class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong><%= t('better_together.billing.readiness.title') %></strong>
+    <span class="badge <%= readiness.ready? ? 'bg-success' : 'bg-warning text-dark' %>" id="billing-readiness-status">
+      <%= t(readiness.ready? ? 'better_together.billing.readiness.ready' : 'better_together.billing.readiness.not_ready') %>
+    </span>
+  </div>
+  <ul class="list-group list-group-flush">
+    <% readiness.checks.each do |check| %>
+      <% item_id = ["billing-readiness", check.key, check.purpose].compact.join('-') %>
+      <li id="<%= item_id %>" class="list-group-item d-flex gap-2 align-items-start">
+        <span class="<%= check.ok ? 'text-success' : 'text-warning' %>" aria-hidden="true"><%= check.ok ? '✓' : '!' %></span>
+        <span>
+          <span class="visually-hidden"><%= t(check.ok ? 'better_together.billing.readiness.done' : 'better_together.billing.readiness.todo') %></span>
+          <% check_text = t("better_together.billing.readiness.check_#{check.key}", purpose: (t("better_together.billing.orders.purpose_#{check.purpose}") if check.purpose)) %>
+          <% tab_identifier, fix_path = fix_links[check.key] %>
+          <% if !check.ok && fix_path && !(controller_name == 'agreement_requirements' && check.key == :agreements) && !(controller_name == 'processor_settings' && check.key == :method_enabled) %>
+            <% if tab_ids.include?(tab_identifier) %>
+              <%= link_to check_text, "#billing-pane-#{tab_identifier}", id: "#{item_id}-link",
+                          data: { controller: 'better-together--tab-link', better_together__tab_link_tab_value: "billing-tab-#{tab_identifier}-tab",
+                                  action: 'click->better-together--tab-link#open' } %>
+            <% else %>
+              <%= link_to check_text, fix_path, id: "#{item_id}-link", data: { turbo_frame: '_self' } %>
+            <% end %>
+          <% else %>
+            <%= check_text %>
+          <% end %>
+          <% unless check.ok || check.detail.blank? %>
+            <span class="d-block small text-body-secondary">
+              <%= check.detail.map { |code| t("better_together.billing.readiness.detail_#{code}") }.to_sentence %>
+            </span>
+          <% end %>
+          <%# The host platform, with no agreement for this purchase, can plant the draft ones (the catalog plants on the host only). %>
+          <% if !check.ok && check.detail.to_a.include?(:no_agreement) && owner.host? && BetterTogether::SeedCatalogPolicy.new(current_user, nil).show? %>
+            <%= link_to t('better_together.billing.readiness.plant_agreements'), seed_catalog_seeds_path(locale: I18n.locale, anchor: 'seed-catalog-billing_agreements'),
+                        id: ['billing-readiness-plant-agreements', check.purpose].compact.join('-'), class: 'd-block small' %>
+          <% end %>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -1,0 +1,39 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.prices.new_title') %> | <%= @product.name %>
+<% end %>
+
+<div id="billing-price-new-page" class="container my-4">
+  <nav aria-label="<%= t('breadcrumbs.label') %>" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to t('better_together.billing.products.index_title'), billing_products_path(locale: I18n.locale) %></li>
+      <li class="breadcrumb-item"><%= link_to @product.name, billing_product_path(@product, locale: I18n.locale) %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= t('better_together.billing.prices.new_title') %></li>
+    </ol>
+  </nav>
+  <h1 class="mb-3"><%= t('better_together.billing.prices.new_title') %></h1>
+  <p class="text-body-secondary" id="billing-price-immutable-note"><%= t('better_together.billing.prices.immutable_note') %></p>
+
+  <%= form_with(model: @price, url: billing_product_prices_path(@product), id: 'billing-price-form') do |form| %>
+    <% if @price.errors.any? %>
+      <%= render 'better_together/billing/error_summary', record: @price, id: 'billing-price-errors', prefix: 'billing_price_' %>
+    <% end %>
+    <div class="row g-3 mb-4">
+      <div class="col-sm-4">
+        <%= form.label :amount, t('better_together.billing.prices.field_amount'), class: 'form-label' %>
+        <%= form.text_field :amount, value: @price.amount_field_value, class: 'form-control', inputmode: 'decimal', required: true, autocomplete: 'off' %>
+      </div>
+      <div class="col-sm-4">
+        <%= form.label :currency, t('better_together.billing.prices.field_currency'), class: 'form-label' %>
+        <%= form.select :currency, BetterTogether::Billing::Pricing::SUPPORTED_CURRENCY_CODES, {}, class: 'form-select' %>
+      </div>
+    </div>
+    <div class="mb-4" id="billing-price-label-fields">
+      <%= render 'better_together/shared/translated_string_field', model: @price, form:, attribute: :label %>
+      <div class="form-text"><%= t('better_together.billing.prices.field_label_hint') %></div>
+    </div>
+    <div class="d-flex gap-2">
+      <%= form.submit t('better_together.billing.prices.create_submit'), id: 'billing-price-submit', class: 'btn btn-primary' %>
+      <%= link_to t('globals.cancel'), billing_product_path(@product, locale: I18n.locale), class: 'btn btn-outline-secondary' %>
+    </div>
+  <% end %>
+</div>

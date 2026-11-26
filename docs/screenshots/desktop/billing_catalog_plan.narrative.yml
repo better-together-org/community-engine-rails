@@ -1,0 +1,12 @@
+---
+title: A plan
+audience:
+- end_user
+journey_step: As a visitor, I read about one plan and start checkout.
+callouts:
+- :id: buy
+  :title: Subscribe
+  :description: Leads to checkout for this plan.
+accessibility_notes: The back link and the button have plain text names.
+slug: billing_catalog_plan
+device: desktop

@@ -130,6 +130,12 @@ module BetterTogether
       super + %i[page_id agreement_kind required_for active_for_consent lifecycle_state requires_reacceptance change_summary]
     end
 
+    # The agreement with this identifier on one platform. Platform-blind lookups by identifier
+    # would pick whichever platform's copy comes first once several platforms have their own.
+    def self.billing_record(identifier, platform:)
+      for_platform(platform).find_by(identifier:)
+    end
+
     def self.registration_consent_records
       agreements = required_for_registration.ordered_for_consent.to_a
       return agreements if agreements.present?

@@ -9,6 +9,9 @@ require_relative '../support/access_contract/probe'
 # Regenerate the snapshot after an intentional policy change:
 #   bin/dc-run env ACCESS_SNAPSHOT=write bundle exec prspec spec/access_contract/probe_spec.rb
 RSpec.describe 'Access contract probe' do # rubocop:disable RSpec/DescribeClass
+  include_context 'with billing switched on'
+  include_context 'with clean billing processors'
+
   let(:contract) { BetterTogether::AccessContract::Contract.load }
   let(:snapshot_path) { BetterTogether::AccessContract.root.join(BetterTogether::AccessContract::SNAPSHOT_PATH) }
 

@@ -97,6 +97,9 @@ module BetterTogether # :nodoc:
       end
 
       describe '#build_daily_stats' do
+        # Pinned to midday so a run that crosses midnight cannot move a user into a neighbouring day.
+        before { travel_to(Time.zone.now.change(hour: 12)) }
+
         let!(:user_three_days_ago) { create(:user, created_at: 3.days.ago, confirmed_at: 3.days.ago) }
         let!(:user_two_days_ago) { create(:user, created_at: 2.days.ago, confirmed_at: nil) }
         let!(:user_one_day_ago) { create(:user, created_at: 1.day.ago, confirmed_at: 1.day.ago) }

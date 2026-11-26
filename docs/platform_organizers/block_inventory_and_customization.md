@@ -50,6 +50,8 @@ The current branch exposes the following block types through the API and managem
 - `CommunitiesBlock`
 - `EventsBlock`
 - `PeopleBlock`
+- `PlanButtonBlock` (one billing plan, as a card or a button)
+- `PlanCatalogBlock` (the platform's public plans as cards)
 - `PostsBlock`
 - `ChecklistBlock`
 - `NavigationAreaBlock`

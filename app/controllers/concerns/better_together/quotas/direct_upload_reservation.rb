@@ -2,42 +2,70 @@
 
 module BetterTogether
   module Quotas
-    # Reserves media_storage bytes when ActiveStorage issues a signed direct-upload
-    # URL -- generic across every direct-upload-origin attachment. Included
-    # alongside, not into, DirectUploadAuthorization to keep that concern's
-    # anti-abuse responsibility separate.
+    # Holds media_storage bytes for a direct upload BEFORE ActiveStorage issues the signed URL, so a platform in
+    # `hard` mode can refuse an upload that would pass the limit, and two uploads racing for the last bytes cannot
+    # both be allowed (the check and the hold happen under the quota's lock, see Quotas.reserve!). Generic across
+    # every direct-upload-origin attachment. Included alongside, not into, DirectUploadAuthorization to keep that
+    # concern's anti-abuse responsibility separate.
     #
-    # The reservation's subject is the blob the request created, so the attachment
-    # that later uses that blob settles it (AttachmentTracking); an upload that is
-    # never attached stops counting once its TTL passes. Shadow mode only reserves,
-    # so this runs after the blob exists; a later enforcement phase adds a
-    # Quotas.check! before_action ahead of the upload instead.
+    # The hold is made from the size the client declares, then tied to the blob the request created, so the
+    # attachment that later uses that blob settles it (AttachmentTracking). A request that creates no blob releases
+    # its hold, and an upload that is never attached stops counting once its TTL passes (ExpireQuotaReservationsJob).
+    # A failure in the quota code itself never stops an upload: it is recorded and the upload goes ahead.
     module DirectUploadReservation
       extend ActiveSupport::Concern
 
+      # A declared size above this is refused outright: one request cannot hold a whole quota
+      # (or, for a pre-auth upload, the platform's) by claiming an absurd size.
+      MAX_DECLARED_BYTES = 5 * (1024**3)
+
       included do
-        after_action :reserve_media_storage_quota
+        before_action :hold_media_storage_quota
+        after_action :link_media_storage_hold
       end
 
       private
 
-      def reserve_media_storage_quota
-        blob = direct_upload_blob
-        return unless blob && blob.byte_size.to_i.positive?
+      def hold_media_storage_quota
+        bytes = declared_upload_bytes
+        return unless bytes.positive?
+        return render_storage_limit_reached if bytes > MAX_DECLARED_BYTES
 
         actor = direct_upload_person
-
-        BetterTogether::Quotas.reserve!(
-          type: 'media_storage',
-          owner: BetterTogether::Quotas::OwnerResolver.resolve(actor),
-          amount: blob.byte_size,
-          idempotency_key: "media_storage:reserve:blob:#{blob.id}",
-          subject: blob,
-          actor:,
-          ttl: 10.minutes
+        @media_storage_hold = BetterTogether::Quotas.reserve!(
+          type: 'media_storage', owner: BetterTogether::Quotas::OwnerResolver.resolve(actor, type: 'media_storage'), amount: bytes,
+          idempotency_key: "media_storage:hold:#{SecureRandom.uuid}", actor:, ttl: 10.minutes
         )
+      rescue BetterTogether::Quotas::QuotaExceeded
+        render_storage_limit_reached
       rescue StandardError => e
-        Rails.logger.warn("[Quotas] reserve! failed non-fatally for media_storage: #{e.class}: #{e.message}")
+        BetterTogether::Quotas.record_failure(e, 'media_storage direct upload hold')
+      end
+
+      def render_storage_limit_reached
+        render json: { error: I18n.t('better_together.quotas.storage_limit_reached') }, status: :unprocessable_content
+      end
+
+      def link_media_storage_hold
+        return unless @media_storage_hold
+
+        blob = direct_upload_blob
+        if blob
+          @media_storage_hold.update!(subject: blob)
+        else
+          release_media_storage_hold
+        end
+      rescue StandardError => e
+        BetterTogether::Quotas.record_failure(e, 'media_storage direct upload link')
+      end
+
+      def release_media_storage_hold
+        @media_storage_hold.update!(status: 'released')
+        BetterTogether::QuotaBalance.refresh_reserved!(@media_storage_hold.quota, @media_storage_hold.period_key)
+      end
+
+      def declared_upload_bytes
+        params.dig(:blob, :byte_size).to_i
       end
 
       # Rails core DirectUploadsController#create keeps the blob in a local and only

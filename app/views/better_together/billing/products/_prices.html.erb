@@ -1,0 +1,34 @@
+<section id="<%= dom_id(product, :prices) %>" class="card" aria-labelledby="<%= dom_id(product, :prices_title) %>">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h2 id="<%= dom_id(product, :prices_title) %>" class="h5 mb-0"><%= t('better_together.billing.prices.title') %></h2>
+    <% if manage && policy(BetterTogether::Billing::Price.new(product: product)).new? %>
+      <%= link_to t('better_together.billing.prices.new_price'), new_billing_product_price_path(product, locale: I18n.locale),
+                  class: 'btn btn-outline-primary btn-sm', id: 'new-billing-price-btn' %>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <p class="text-body-secondary small"><%= t(manage ? 'better_together.billing.prices.intro' : 'better_together.billing.prices.plan_intro') %></p>
+    <% if product.prices.any? %>
+      <ul id="<%= dom_id(product, :prices_list) %>" class="list-group">
+        <% product.prices.each do |price| %>
+          <li id="<%= dom_id(price) %>" class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+              <strong><%= billing_price_terms(price) %></strong>
+              <% if price.label.present? %><span class="text-body-secondary"> · <%= price.label %></span><% end %>
+              <span class="badge <%= price.archived? ? 'bg-secondary' : 'bg-success' %> ms-2 billing-price-status-badge">
+                <%= t("better_together.billing.prices.status_#{price.archived? ? 'archived' : 'on_sale'}") %>
+              </span>
+            </span>
+            <% unless !manage || price.archived? || !policy(price).archive? %>
+              <%= button_to t('better_together.billing.prices.archive'), archive_billing_product_price_path(product, price, locale: I18n.locale),
+                            method: :patch, class: 'btn btn-outline-danger btn-sm', id: dom_id(price, :archive_btn),
+                            form: { data: { turbo_confirm: t('better_together.billing.prices.archive_confirm') } } %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p id="<%= dom_id(product, :prices_empty) %>" class="text-body-secondary mb-0"><%= t('better_together.billing.prices.none') %></p>
+    <% end %>
+  </div>
+</section>

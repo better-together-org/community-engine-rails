@@ -20,6 +20,31 @@ This assessment is generated from the current live class set and the concern cap
 | `Authorable` | Adds author/authorship associations and creator-aware authorship workflow. | `Page`, `Post` | Author visibility and blocked-author behavior must stay aligned with policy scopes. |
 | `Base64ImageInput` | Base64imageinput | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BetterTogetherId` | Bettertogetherid | `PersonPurgeAudit`, `PersonPlatformIntegration`, `PersonLinkedSeed`, `PersonLink`, `PersonAccessGrant`, `PersonPlatformMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::AgreementTarget` | Agreementtarget | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::BackTo` | Backto | `Billing::SubscriptionsController`, `Billing::SalesController`, `Billing::OrdersController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Billable` | Billable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::CheckoutTaxPreview` | Checkouttaxpreview | `Billing::CheckoutsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::EncryptedAttributes` | Encryptedattributes | `Billing::Order`, `Billing::OfflinePayment`, `Billing::ProcessorSetting`, `Billing::Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Listing` | Listing | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::LocalizedSnapshot` | Localizedsnapshot | `Billing::OrderAgreementAcceptance`, `Billing::LineItem` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::MajorAmount` | Majoramount | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::OwnerScoped` | Ownerscoped | `Billing::WalkUpSalesController`, `Billing::SubscriptionsController`, `Billing::SubscribersController`, `Billing::SalesController`, `Billing::SaleRefundsController`, `Billing::PromotionsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ParentBound` | Parentbound | `Billing::SubscriptionPeriod`, `Billing::Refund`, `Billing::PromotionRedemption`, `Billing::Payment`, `Billing::OrderAgreementAcceptance`, `Billing::OfflinePayment` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PayCustomerOwner` | Paycustomerowner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PaymentMethods` | Paymentmethods | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PersonLookup` | Personlookup | `Billing::WalkUpSalesController`, `Billing::CreditGrantsController`, `Billing::CreditAccountsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PlanLinking` | Planlinking | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PlanPrice` | Planprice | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PlatformBound` | Platformbound | `Billing::SubscriptionTerm`, `Billing::SubscriptionPeriod`, `Billing::Refund`, `Billing::PromotionRedemption`, `Billing::Promotion`, `Billing::Payment` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Pricing` | Pricing | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ProductMirror` | Productmirror | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ProductRequirements` | Productrequirements | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Purchasable` | Purchasable | `Billing::Price` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SellerScoped` | Sellerscoped | `Billing::Order`, `Billing::ProcessorSetting`, `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SettingAudit` | Settingaudit | `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Subjectable` | Subjectable | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SubscriptionTerms` | Subscriptionterms | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::TabFrameLayout` | Tabframelayout | `Billing::WalkUpSalesController`, `Billing::SubscriptionsController`, `Billing::SubscribersController`, `Billing::SalesController`, `Billing::SaleRefundsController`, `Billing::PromotionsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAttachments` | Blockattachments | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAwareInvitation` | Blockawareinvitation | `GuestAccess`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockFilterable` | Blockfilterable | `Comment`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -118,6 +143,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Protected` | Adds protected-record safeguards for records that should resist accidental mutation/deletion. | `ResourcePermission`, `Role` | Protected status can be mistaken for an authorization model when it is only a lifecycle safeguard. |
 | `Publishable` | Adds publication timing/state helpers for user-facing publishing flows. | `Page`, `Post` | Publish state can leak intent or draft timing if query scopes ignore privacy. |
 | `Quotas::Owner` | Owner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Quotas::PlatformEnforcement` | Platformenforcement | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `RecurringSchedulable` | Recurringschedulable | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `RemoveableAttachment` | Removeableattachment | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Reportable` | Reportable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |

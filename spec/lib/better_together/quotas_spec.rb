@@ -15,19 +15,45 @@ RSpec.describe BetterTogether::Quotas do
   end
 
   describe '.check!' do
-    it 'is always permissive in shadow mode regardless of amount' do
-      result = described_class.check!(type: 'media_storage', owner:, amount: 10**15)
-      expect(result).to be true
+    it 'never refuses in shadow mode, the default, regardless of amount, but says the limit would be passed' do
+      decision = described_class.check!(type: 'media_storage', owner:, amount: 10**15)
+
+      expect(decision).to have_attributes(allowed: true, exceeded: true, mode: 'shadow')
     end
 
-    it 'is permissive even against a quota row whose enforcement_mode is hard' do
-      described_class.settle!(
-        type: 'media_storage', owner:, amount: 1, idempotency_key: 'quotas_spec:seed'
-      )
-      BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
-                           .update!(enforcement_mode: 'hard')
+    it 'says a small amount is fine' do
+      decision = described_class.check!(type: 'media_storage', owner:, amount: 1)
 
-      expect(described_class.check!(type: 'media_storage', owner:, amount: 10**15)).to be true
+      expect(decision).to have_attributes(allowed: true, exceeded: false,
+                                          remaining: BetterTogether::Quotas::Defaults.for(type: :media_storage, owner:))
+    end
+
+    it 'refuses what would pass the limit in hard mode, and says how much is left' do
+      described_class.settle!(type: 'media_storage', owner:, amount: 1, idempotency_key: 'quotas_spec:seed')
+      BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage').update!(enforcement_mode: 'hard')
+
+      expect { described_class.check!(type: 'media_storage', owner:, amount: 10**15) }
+        .to raise_error(described_class::QuotaExceeded) { |error| expect(error.remaining).to eq(BetterTogether::Quotas::Defaults.for(type: :media_storage, owner:) - 1) }
+      expect(described_class.check!(type: 'media_storage', owner:, amount: 100)).to be_allowed
+    end
+
+    it 'warns but does not refuse in soft mode' do
+      described_class.sync_limit!(type: 'media_storage', owner:)
+      BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage').update!(enforcement_mode: 'soft')
+
+      expect(described_class.check!(type: 'media_storage', owner:,
+                                    amount: 10**15)).to have_attributes(allowed: true, exceeded: true,
+                                                                        mode: 'soft')
+    end
+
+    it 'does not refuse when enforcement is off, or when the quota is suspended' do
+      described_class.sync_limit!(type: 'media_storage', owner:)
+      quota = BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
+      quota.update!(enforcement_mode: 'off')
+      expect(described_class.check!(type: 'media_storage', owner:, amount: 10**15)).to be_allowed
+
+      quota.update!(enforcement_mode: 'hard', status: 'suspended')
+      expect(described_class.check!(type: 'media_storage', owner:, amount: 10**15)).to be_allowed
     end
   end
 

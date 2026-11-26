@@ -1,0 +1,48 @@
+{
+  "name": "billing_hub_locked_add_ons",
+  "device": "mobile",
+  "url": "/en/billing",
+  "title": "Billing and plans | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_purchase_requirements",
+  "flow": "billing_hub_locked_add_ons",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_locked_add_ons_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-hub-locked-add-ons",
+      "title": "Extras you can unlock",
+      "bullets": [
+        "An extra for sale that needs something first, with the reason beside it."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 496.390625,
+        "width": 485.0,
+        "height": 134.0,
+        "right": 485.0,
+        "bottom": 630.390625,
+        "center_x": 242.5,
+        "center_y": 563.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 496.390625,
+        "width": 485.0,
+        "height": 134.0,
+        "right": 485.0,
+        "bottom": 630.390625,
+        "center_x": 242.5,
+        "center_y": 563.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 650.39,
+        "width": 270.0,
+        "height": 216,
+        "score": 626.609375
+      }
+    }
+  ]
+}

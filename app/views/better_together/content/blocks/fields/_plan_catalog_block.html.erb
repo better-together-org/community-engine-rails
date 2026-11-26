@@ -1,0 +1,15 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="plan-catalog-block-fields">
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'heading' } %>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[item_limit]", BetterTogether::Content::Block.human_attribute_name('item_limit', default: 'Plans to show'), class: 'form-label' %>
+    <%= number_field_tag "#{scope}[item_limit]", block.item_limit, min: 1, max: 24, class: 'form-control',
+                         'aria-describedby': "#{temp_id}-item-limit-hint" %>
+    <div id="<%= temp_id %>-item-limit-hint" class="form-text">
+      <%= t('better_together.content.blocks.plan_catalog_block.item_limit_hint') %>
+    </div>
+  </div>
+</div>

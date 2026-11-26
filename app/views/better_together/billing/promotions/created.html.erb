@@ -1,0 +1,13 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.promotions.created_title') %>
+<% end %>
+
+<div id="billing-promotion-created-page" class="container my-4">
+  <h1 class="mb-3"><%= t('better_together.billing.promotions.created_title') %></h1>
+  <div class="alert alert-warning" role="alert" id="billing-promotion-code-warning">
+    <%= t('better_together.billing.promotions.created_warning') %>
+  </div>
+  <p class="mb-1"><%= @result.promotion.name %> — <%= billing_amount(@result.promotion.amount_cents, @result.promotion.currency) %></p>
+  <p class="display-6 font-monospace user-select-all" id="billing-promotion-code-display"><%= @result.code %></p>
+  <%= link_to t('better_together.billing.promotions.back_to_list'), billing_promotions_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-promotion-done-btn' %>
+</div>

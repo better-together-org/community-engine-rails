@@ -1,0 +1,83 @@
+{
+  "name": "billing_plans_index",
+  "device": "desktop",
+  "url": "/en/billing/plans",
+  "title": "Billing Plans | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plans-table",
+      "title": "Plans",
+      "bullets": [
+        "Each plan is one price at the payment processor."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 439.0,
+        "width": 1294.0,
+        "height": 178.0,
+        "right": 1367.0,
+        "bottom": 617.0,
+        "center_x": 720.0,
+        "center_y": 528.0
+      },
+      "avoid": {
+        "x": 73.0,
+        "y": 439.0,
+        "width": 1294.0,
+        "height": 178.0,
+        "right": 1367.0,
+        "bottom": 617.0,
+        "center_x": 720.0,
+        "center_y": 528.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 637.0,
+        "width": 380,
+        "height": 132,
+        "score": 840.0
+      }
+    },
+    {
+      "selector": "#new-billing-plan-btn",
+      "title": "New plan",
+      "bullets": [
+        "Create a plan here; no processor dashboard needed."
+      ],
+      "target": {
+        "x": 1267.46875,
+        "y": 137.0,
+        "width": 100.53125,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 175.0,
+        "center_x": 1317.734375,
+        "center_y": 156.0
+      },
+      "avoid": {
+        "x": 1267.46875,
+        "y": 137.0,
+        "width": 100.53125,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 175.0,
+        "center_x": 1317.734375,
+        "center_y": 156.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 195.0,
+        "width": 380,
+        "height": 132,
+        "score": 1282.0
+      }
+    }
+  ]
+}

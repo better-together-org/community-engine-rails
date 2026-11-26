@@ -1,0 +1,48 @@
+{
+  "name": "billing_product_requirements_form",
+  "device": "mobile",
+  "url": "/en/billing/products/cee2ef52-f1ab-439b-ada1-70fd718ef3c3/edit",
+  "title": "Edit product — Conference lunch | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_add_on_targets",
+  "flow": "billing_product_requirements_form",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_add_on_targets_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-product-requirements",
+      "title": "Plans this extra needs",
+      "bullets": [
+        "Ticked plans offer the extra, and their holders may buy it alone later."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 625.765625,
+        "width": 461.0,
+        "height": 155.1875,
+        "right": 473.0,
+        "bottom": 780.953125,
+        "center_x": 242.5,
+        "center_y": 703.359375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 625.765625,
+        "width": 461.0,
+        "height": 155.1875,
+        "right": 473.0,
+        "bottom": 780.953125,
+        "center_x": 242.5,
+        "center_y": 703.359375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 389.77,
+        "width": 270.0,
+        "height": 216,
+        "score": 625.765625
+      }
+    }
+  ]
+}

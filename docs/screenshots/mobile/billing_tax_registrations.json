@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_registrations",
+  "device": "mobile",
+  "url": "/en/billing/tax_registrations",
+  "title": "Tax registrations | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "flow": "billing_tax_registrations",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_addresses_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-tax-registrations-table",
+      "title": "Where you collect tax",
+      "bullets": [
+        "Status, whether prices include tax, and when each registration is in force."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 230.390625,
+        "width": 474.0,
+        "height": 130.0,
+        "right": 487.0,
+        "bottom": 360.390625,
+        "center_x": 250.0,
+        "center_y": 295.390625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 230.390625,
+        "width": 474.0,
+        "height": 130.0,
+        "right": 487.0,
+        "bottom": 360.390625,
+        "center_x": 250.0,
+        "center_y": 295.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 380.39,
+        "width": 270.0,
+        "height": 242,
+        "score": 896.609375
+      }
+    }
+  ]
+}

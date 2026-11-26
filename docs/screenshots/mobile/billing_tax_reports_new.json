@@ -1,0 +1,49 @@
+{
+  "name": "billing_tax_reports_new",
+  "device": "mobile",
+  "url": "/en/host/metrics/billing_reports",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax_reports",
+  "flow": "billing_tax_reports_new",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_reports_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-report-basis",
+      "title": "Report basis",
+      "bullets": [
+        "Paid counts payments when received.",
+        "Invoice counts orders when invoiced."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 477.390625,
+        "width": 485.0,
+        "height": 38.0,
+        "right": 485.0,
+        "bottom": 515.390625,
+        "center_x": 242.5,
+        "center_y": 496.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 235.390625,
+        "width": 485.0,
+        "height": 490.0,
+        "right": 485.0,
+        "bottom": 725.390625,
+        "center_x": 242.5,
+        "center_y": 480.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 745.39,
+        "width": 270.0,
+        "height": 236,
+        "score": 531.609375
+      }
+    }
+  ]
+}

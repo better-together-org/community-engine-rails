@@ -23,7 +23,7 @@ module BetterTogether
         { key: :regions, label: 'Regions', builder_method: :seed_regions,
           model: ::BetterTogether::Geography::Region, prerequisites: [] },
         { key: :settlements, label: 'Settlements', builder_method: :seed_settlements,
-          model: ::BetterTogether::Geography::Settlement, prerequisites: [:provinces] }
+          model: ::BetterTogether::Geography::Settlement, prerequisites: %i[countries provinces] }
       ].freeze
 
       class << self

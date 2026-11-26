@@ -1,0 +1,48 @@
+{
+  "name": "billing_addresses",
+  "device": "mobile",
+  "url": "/en/billing/billing_addresses",
+  "title": "Billing addresses | Test Host Community",
+  "locale": "en",
+  "role": "buyer",
+  "feature_set": "billing_account_polish",
+  "flow": "billing_addresses",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_account_polish_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-addresses-list",
+      "title": "Billing addresses",
+      "bullets": [
+        "Keep the addresses used on invoices and choose a default."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 292.390625,
+        "width": 461.0,
+        "height": 91.0,
+        "right": 473.0,
+        "bottom": 383.390625,
+        "center_x": 242.5,
+        "center_y": 337.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 292.390625,
+        "width": 461.0,
+        "height": 91.0,
+        "right": 473.0,
+        "bottom": 383.390625,
+        "center_x": 242.5,
+        "center_y": 337.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 403.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 873.609375
+      }
+    }
+  ]
+}

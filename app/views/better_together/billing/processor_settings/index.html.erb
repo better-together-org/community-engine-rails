@@ -1,0 +1,54 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.processor_settings.index_title') %>
+<% end %>
+
+<div id="billing-processor-settings-page" class="container my-4">
+  <div class="d-flex justify-content-between align-items-start">
+    <h1 class="mb-2"><%= t('better_together.billing.processor_settings.index_title') %></h1>
+  </div>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.processor_settings.index_intro') %></p>
+
+  <%= render 'better_together/billing/shared/readiness' %>
+
+  <div class="card">
+    <div class="table-responsive position-relative">
+      <table id="billing-processor-settings-table" class="table table-hover mb-0">
+        <caption class="visually-hidden position-absolute"><%= t('better_together.billing.tables.processor_settings') %></caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_method') %></th>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_kind') %></th>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_status') %></th>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_where') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @methods.each do |name, setting| %>
+            <% adapter = BetterTogether::Billing.processor_adapter(name) %>
+            <% direct = BetterTogether::Billing.local_method?(name) %>
+            <tr id="billing-processor-setting-<%= name %>">
+              <th scope="row"><%= billing_payment_method_label(name) %></th>
+              <td><%= t("better_together.billing.processor_settings.kind_#{direct ? 'direct' : 'service'}") %></td>
+              <td><%= billing_method_status_badge(name, setting, billing_owner) %></td>
+              <td><%= billing_method_availability(adapter) %></td>
+              <td class="text-end">
+                <% if direct %>
+                  <%= link_to t('globals.edit'),
+                              edit_billing_processor_setting_path(name, locale: I18n.locale),
+                              class: 'btn btn-outline-primary btn-sm',
+                              id: "billing-processor-edit-#{name}",
+                              'aria-label': t('better_together.billing.processor_settings.edit_method', method: billing_payment_method_label(name)) %>
+                <% else %>
+                  <span class="small text-body-secondary" id="billing-processor-managed-<%= name %>">
+                    <%= t('better_together.billing.processor_settings.managed_by_deployment') %>
+                  </span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

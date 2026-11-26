@@ -477,3 +477,501 @@ records:
     parent: navigation_item:contributor-agreements
     linkable: page:content_contributor_agreement
   position: 1
+- key: billing
+  attributes:
+    item_type: dropdown
+    visible: true
+    url: '#'
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: credit-card
+  translations:
+    en:
+      title: "Billing"
+    fr:
+      title: "Facturation"
+    es:
+      title: "Facturación"
+    uk:
+      title: "Оплата"
+  refs:
+    navigation_area: navigation_area:platform-host
+  position: 1
+- key: billing-dashboard
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_billing_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: gauge-high
+  translations:
+    en:
+      title: "Billing overview"
+    fr:
+      title: "Aperçu de la facturation"
+    es:
+      title: "Resumen de facturación"
+    uk:
+      title: "Огляд оплати"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 0
+- key: billing-plans
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_plans_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: layer-group
+  translations:
+    en:
+      title: "Billing Plans"
+    fr:
+      title: "Forfaits de facturation"
+    es:
+      title: "Planes de facturación"
+    uk:
+      title: "Плани оплати"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 1
+- key: billing-processor-settings
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_processor_settings_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: credit-card
+  translations:
+    en:
+      title: "Payment Methods"
+    fr:
+      title: "Modes de paiement"
+    es:
+      title: "Métodos de pago"
+    uk:
+      title: "Способи оплати"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 2
+- key: billing-offline-payments
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_offline_payments_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: money-bill-transfer
+  translations:
+    en:
+      title: "Offline payments"
+    fr:
+      title: "Paiements hors ligne"
+    es:
+      title: "Pagos fuera de línea"
+    uk:
+      title: "Офлайн-платежі"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 3
+- key: billing-sales
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_sales_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: receipt
+  translations:
+    en:
+      title: "Sales"
+    fr:
+      title: "Ventes"
+    es:
+      title: "Ventas"
+    uk:
+      title: "Продажі"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 4
+- key: billing-subscribers
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_subscribers_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: users
+  translations:
+    en:
+      title: "Subscribers"
+    fr:
+      title: "Abonnés"
+    es:
+      title: "Suscriptores"
+    uk:
+      title: "Підписники"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 5
+- key: billing-refund-requests
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_refund_requests_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: rotate-left
+  translations:
+    en:
+      title: "Refund requests"
+    fr:
+      title: "Demandes de remboursement"
+    es:
+      title: "Solicitudes de reembolso"
+    uk:
+      title: "Запити на повернення коштів"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 6
+- key: billing-promotions
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_promotions_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: tags
+  translations:
+    en:
+      title: "Promotion Codes"
+    fr:
+      title: "Codes promotionnels"
+    es:
+      title: "Códigos promocionales"
+    uk:
+      title: "Промокоди"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 7
+- key: billing-credit-accounts
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_credit_accounts_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: wallet
+  translations:
+    en:
+      title: "Store Credit"
+    fr:
+      title: "Crédit en magasin"
+    es:
+      title: "Crédito de tienda"
+    uk:
+      title: "Кредит магазину"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 8
+- key: billing-allowances
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_allowances_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: gauge
+  translations:
+    en:
+      title: "Allowances"
+    fr:
+      title: "Quotas"
+    es:
+      title: "Cuotas"
+    uk:
+      title: "Квоти"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 9
+- key: billing-tax-registrations
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_tax_registrations_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: landmark
+  translations:
+    en:
+      title: "Tax Registrations"
+    fr:
+      title: "Inscriptions fiscales"
+    es:
+      title: "Registros fiscales"
+    uk:
+      title: "Податкові реєстрації"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 10
+- key: billing-agreement-requirements
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_agreement_requirements_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: file-signature
+  translations:
+    en:
+      title: "Purchase Terms"
+    fr:
+      title: "Conditions d'achat"
+    es:
+      title: "Condiciones de compra"
+    uk:
+      title: "Умови купівлі"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 11
+- key: billing-reports
+  attributes:
+    item_type: link
+    visible: true
+    route_name: metrics_billing_reports_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: view_metrics_dashboard
+    icon: chart-line
+  translations:
+    en:
+      title: "Billing reports"
+    fr:
+      title: "Rapports de facturation"
+    es:
+      title: "Informes de facturación"
+    uk:
+      title: "Звіти про оплату"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 12
+- key: billing-events
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_events_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: bolt
+  translations:
+    en:
+      title: "Payment events"
+    fr:
+      title: "Événements de paiement"
+    es:
+      title: "Eventos de pago"
+    uk:
+      title: "Платіжні події"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 13
+- key: billing-hosted-platforms
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_hosted_platforms_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: server
+  translations:
+    en:
+      title: "Hosted Platforms"
+    fr:
+      title: "Plateformes hébergées"
+    es:
+      title: "Plataformas alojadas"
+    uk:
+      title: "Розміщені платформи"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 14
+- key: billing-hosted-billing
+  attributes:
+    item_type: link
+    visible: true
+    route_name: billing_hosted_billing_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: cloud
+  translations:
+    en:
+      title: "Hosted Billing"
+    fr:
+      title: "Facturation hébergée"
+    es:
+      title: "Facturación alojada"
+    uk:
+      title: "Розміщена оплата"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:billing
+  position: 15
+- key: host-dashboard-membership-review
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_membership_review_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: user-check
+  translations:
+    en:
+      title: "Membership Review"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 15
+- key: host-dashboard-platform-connection-review
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_platform_connection_review_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_network_connections
+    icon: network-wired
+  translations:
+    en:
+      title: "Federation Review"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 20
+- key: host-dashboard-safety-review
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_safety_review_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform_safety
+    icon: shield-heart
+  translations:
+    en:
+      title: "Safety Review"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 21
+- key: host-dashboard-weather
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_weather_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform_settings
+    icon: cloud-sun
+  translations:
+    en:
+      title: "Weather"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 22
+- key: host-dashboard-jobs
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_jobs_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform_jobs
+    icon: gears
+  translations:
+    en:
+      title: "Background Jobs"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 23
+- key: host-dashboard-billing
+  attributes:
+    item_type: link
+    visible: true
+    route_name: host_dashboard_billing_url
+    protected: true
+    privacy: private
+    visibility_strategy: permission
+    permission_identifier: manage_platform
+    icon: credit-card
+  translations:
+    en:
+      title: "Billing"
+    fr:
+      title: "Facturation"
+    es:
+      title: "Facturación"
+    uk:
+      title: "Оплата"
+  refs:
+    navigation_area: navigation_area:platform-host
+    parent: navigation_item:host-nav
+  position: 24

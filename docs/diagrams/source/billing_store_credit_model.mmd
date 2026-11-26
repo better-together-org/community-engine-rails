@@ -1,0 +1,38 @@
+%% Billing — store credit. A person holds credit with a platform in one currency. Each amount that came in is a
+%% lot with its own expiry; every change is an append-only entry; the account's balance is a cache of the lots.
+classDiagram
+  class Platform
+  class Person
+  class CreditAccount {
+    +currency
+    +balance_cents  cache, never below 0
+  }
+  class CreditLot {
+    +origin steward_grant|promotion|refund|adjustment
+    +amount_cents
+    +remaining_cents  0..amount
+    +expires_at
+    +purposes[]  empty means any
+    +promotional
+  }
+  class CreditEntry {
+    +kind grant|spend|spend_reversal|expire|adjust|forfeit
+    +amount_cents  signed, never 0
+    +balance_after_cents
+    +transaction_key
+    +source Payment|Refund
+    append-only
+  }
+  class Payment {
+    +processor store_credit
+  }
+  class Refund
+  Platform "1" --> "*" CreditAccount
+  Person "0..1" --> "*" CreditAccount : holder, nullified when deleted
+  CreditAccount "1" --> "*" CreditLot
+  CreditAccount "1" --> "*" CreditEntry
+  CreditLot "1" --> "*" CreditEntry
+  CreditEntry "0..1" --> "0..1" CreditEntry : reverses
+  CreditEntry ..> Payment : spend, source
+  CreditEntry ..> Refund : spend_reversal, source
+  Payment "1" --> "0..*" Refund

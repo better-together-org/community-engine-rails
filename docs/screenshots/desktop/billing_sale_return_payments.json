@@ -1,0 +1,48 @@
+{
+  "name": "billing_sale_return_payments",
+  "device": "desktop",
+  "url": "/en/billing/sales/02890aac-27b5-4dc4-b031-3c1fe5103a52",
+  "title": "Order BT-CL0RR5CT | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_partial_payments",
+  "flow": "billing_sale_return_payments",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_partial_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-sale-return-credit-btn",
+      "title": "Return payments",
+      "bullets": [
+        "Each paid part, and how it goes back: credit with one click, cash by the seller, a card at the processor."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 1166.0,
+        "width": 245.96875,
+        "height": 38.0,
+        "right": 327.46875,
+        "bottom": 1204.0,
+        "center_x": 204.484375,
+        "center_y": 1185.0
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 1166.0,
+        "width": 245.96875,
+        "height": 38.0,
+        "right": 327.46875,
+        "bottom": 1204.0,
+        "center_x": 204.484375,
+        "center_y": 1185.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 24,
+        "y": 962.0,
+        "width": 380,
+        "height": 184,
+        "score": 1166.0
+      }
+    }
+  ]
+}

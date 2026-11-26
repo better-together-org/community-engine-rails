@@ -25,6 +25,9 @@ better_together:
     default_locale: en
     locales:
     - en
+    - es
+    - fr
+    - uk
     unsupported_locale_policy: skip
     records:
     - records/navigation_areas.yml

@@ -1,0 +1,47 @@
+{
+  "name": "billing_tax_bc_order",
+  "device": "desktop",
+  "url": "/en/billing/orders/a185f5b7-6a6f-4611-82e2-d77130a2ff97",
+  "title": "Order BT-NZFE1PPB | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_bc_order",
+  "callouts": [
+    {
+      "selector": "#billing-summary-order",
+      "title": "Order summary",
+      "bullets": [
+        "A marker on each line, a row per tax, the total and the registration numbers."
+      ],
+      "target": {
+        "x": 65.5,
+        "y": 545.0,
+        "width": 1294.0,
+        "height": 366.0,
+        "right": 1359.5,
+        "bottom": 911.0,
+        "center_x": 712.5,
+        "center_y": 728.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 85.0,
+        "width": 1425.0,
+        "height": 1372.0,
+        "right": 1425.0,
+        "bottom": 1457.0,
+        "center_x": 712.5,
+        "center_y": 771.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 158
+      }
+    }
+  ]
+}

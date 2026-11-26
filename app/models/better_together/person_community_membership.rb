@@ -19,6 +19,10 @@ module BetterTogether
 
     include MembershipLifecycle
 
+    # Set by code that makes or removes a membership on a person's behalf without telling them (a paid role given
+    # or taken away by a plan; see Billing::Entitlements::Handlers::MembershipRole). Not stored.
+    attr_accessor :suppress_notifications
+
     # Set for system-created memberships (creator grants, backfills) where a notice would be noise.
     attr_accessor :skip_notifications
 

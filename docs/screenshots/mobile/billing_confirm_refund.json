@@ -1,0 +1,47 @@
+{
+  "name": "billing_confirm_refund",
+  "device": "mobile",
+  "url": "/en/billing/sales/0b534cac-ea50-46eb-ae33-9f3e58d429c5",
+  "title": "Order BT-P5IKRAIA | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_confirmations",
+  "flow": "billing_confirm_refund",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_confirmations_spec.rb",
+  "callouts": [
+    {
+      "selector": "#refund_billing_payment_8b8650ce-ba4b-429e-b7cf-3789e160b790",
+      "title": "Record refund asks first",
+      "bullets": [
+        "The question repeats the amount typed, or the full amount when it is left blank."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 604.390625,
+        "width": 461.0,
+        "height": 331.0,
+        "right": 473.0,
+        "bottom": 935.390625,
+        "center_x": 242.5,
+        "center_y": 769.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 242
+      }
+    }
+  ]
+}

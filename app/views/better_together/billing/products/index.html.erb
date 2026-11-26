@@ -1,0 +1,60 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.products.index_title') %>
+<% end %>
+
+<div id="billing-products-index-page" class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><%= t('better_together.billing.products.index_title') %></h1>
+    <% if policy(BetterTogether::Billing::Product.new).new? %>
+      <%= link_to t('better_together.billing.products.new_product'), new_billing_product_path(locale: I18n.locale),
+                  class: 'btn btn-primary', id: 'new-billing-product-btn' %>
+    <% end %>
+  </div>
+  <p class="text-body-secondary" id="billing-products-intro"><%= t('better_together.billing.products.intro') %></p>
+
+  <% if @products.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-products-table" class="table table-hover mb-0">
+          <caption class="visually-hidden position-absolute"><%= t('better_together.billing.products.table_caption') %></caption>
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.products.field_identifier') %></th>
+              <th scope="col"><%= t('better_together.billing.products.field_name') %></th>
+              <th scope="col"><%= t('better_together.billing.products.field_price') %></th>
+              <th scope="col"><%= t('better_together.billing.products.field_lifetime') %></th>
+              <th scope="col"><%= t('better_together.billing.products.field_active') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @products.each do |product| %>
+              <% price = product.current_price %>
+              <tr id="<%= dom_id(product) %>">
+                <td><code><%= product.identifier %></code></td>
+                <td><%= product.name %></td>
+                <td class="billing-product-price"><%= price ? billing_amount(price.amount_cents, price.currency) : t('better_together.billing.products.no_price') %></td>
+                <td><%= billing_product_lifetime(product) %></td>
+                <td>
+                  <span class="badge <%= product.active? ? 'bg-success' : 'bg-secondary' %> billing-product-status-badge">
+                    <%= t("better_together.billing.plans.status_#{product.active? ? 'active' : 'inactive'}") %>
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div id="<%= dom_id(product, :actions) %>" class="d-flex gap-2 justify-content-end billing-product-actions">
+                    <%= link_to t('globals.view'), billing_product_path(product, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                    <% if policy(product).edit? %>
+                      <%= link_to t('globals.edit'), edit_billing_product_path(product, locale: I18n.locale), class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-products-empty" class="text-body-secondary"><%= t('better_together.billing.products.none') %></p>
+  <% end %>
+</div>

@@ -1,0 +1,48 @@
+{
+  "name": "seed_catalog_billing_agreements_planted",
+  "device": "desktop",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog_billing_agreements",
+  "flow": "seed_catalog_billing_agreements",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_billing_agreements_spec.rb",
+  "callouts": [
+    {
+      "selector": ".billing_purchase_agreements-status-badge",
+      "title": "Planted",
+      "bullets": [
+        "They stay drafts until a steward activates them."
+      ],
+      "target": {
+        "x": 797.671875,
+        "y": 1014.8125,
+        "width": 67.609375,
+        "height": 20.375,
+        "right": 865.28125,
+        "bottom": 1035.1875,
+        "center_x": 831.4765625,
+        "center_y": 1025.0
+      },
+      "avoid": {
+        "x": 797.671875,
+        "y": 1014.8125,
+        "width": 67.609375,
+        "height": 20.375,
+        "right": 865.28125,
+        "bottom": 1035.1875,
+        "center_x": 831.4765625,
+        "center_y": 1025.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 641.48,
+        "y": 862.81,
+        "width": 380,
+        "height": 132,
+        "score": 1014.8125
+      }
+    }
+  ]
+}

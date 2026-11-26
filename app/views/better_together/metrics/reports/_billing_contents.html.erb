@@ -1,0 +1,106 @@
+<%
+  # The billing tab shows the last 30 days as a table per currency, the charts (which follow the date filters)
+  # and the saved reports. Figures come from Billing::TaxReport.
+  billing_options = billing_filter_options(metrics_platform)
+  billing_zone = ActiveSupport::TimeZone[metrics_platform.time_zone] || Time.zone
+  billing_summary_report = BetterTogether::Billing::TaxReport.new(
+    platform: metrics_platform, from: 30.days.ago.in_time_zone(billing_zone).beginning_of_day, to: Time.current.in_time_zone(billing_zone).end_of_day
+  ).call
+  chart_currency = billing_summary_report.currencies.first
+  billing_chart_data = BetterTogether::Billing::TaxReport::ChartData.new(billing_summary_report, chart_currency)
+%>
+<!-- Billing Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:billing][:accent] %>" id="billing" role="tabpanel" aria-labelledby="billing-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:billing][:accent] %>">
+    <i class="<%= metrics_tab_styles[:billing][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span><%= t('better_together.metrics.reports.tabs.billing') %></span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled" type="button" role="tab" aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active" id="billing-charts-tab" data-bs-toggle="tab"
+                data-bs-target="#billing-charts" data-better_together--tabs-target="tab" type="button" role="tab"
+                aria-controls="billing-charts" aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral" id="billing-reports-tab" data-bs-toggle="tab"
+                data-bs-target="#billing-reports" data-better_together--tabs-target="tab" type="button" role="tab"
+                aria-controls="billing-reports" aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral" id="billing-charts" role="tabpanel"
+           aria-labelledby="billing-charts-tab" data-controller="better_together--metrics-charts"
+           data-host-platform-name="<%= host_platform.name.parameterize %>">
+        <%= render 'billing_summary', report: billing_summary_report %>
+
+        <div id="chart-billing-revenue" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.billing_revenue') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'billingRevenueChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="billingRevenueChart"
+                  data-chart-data="<%= billing_chart_data.revenue.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.charts.billing_revenue') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.period') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.amount') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'billingRevenueChart',
+              data_url: billing_revenue_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates&.dig(:billing) || 1.year.ago,
+              initial_data_loaded: true %>
+
+          <%= render 'additional_filters',
+              chart_type: 'billingRevenueChart',
+              data_url: billing_revenue_data_metrics_reports_path(locale: I18n.locale),
+              show_locale: false, show_pageable_type: false, show_hour_of_day: false, show_day_of_week: false,
+              billing_options: billing_options, show_interval: true %>
+        </div>
+
+        <div id="chart-billing-tax-by-rate" class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.billing_tax_by_rate') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'billingTaxByRateChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="billingTaxByRateChart"
+                  data-chart-data="<%= billing_chart_data.tax_by_rate.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.charts.billing_tax_by_rate') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.tax') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.amount') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'billingTaxByRateChart',
+              data_url: billing_tax_by_rate_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates&.dig(:billing) || 1.year.ago,
+              initial_data_loaded: true %>
+
+          <%= render 'additional_filters',
+              chart_type: 'billingTaxByRateChart',
+              data_url: billing_tax_by_rate_data_metrics_reports_path(locale: I18n.locale),
+              show_locale: false, show_pageable_type: false, show_hour_of_day: false, show_day_of_week: false,
+              billing_options: billing_options %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral" id="billing-reports" role="tabpanel"
+           aria-labelledby="billing-reports-tab">
+        <turbo-frame id="billing_reports" src="<%= metrics_billing_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>
