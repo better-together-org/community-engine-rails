@@ -7,7 +7,7 @@ module BetterTogether
     # billing, so an analytics viewer who cannot see sales never can through a report either.
     class BillingReportPolicy < ApplicationPolicy
       def index? = can_view_metrics_dashboard?(platform) && manages_billing?
-      def show? = index?
+      def show? = index? && on_this_platform?
       def create? = can_create_metrics_reports?(platform) && manages_billing?
       def destroy? = create? && on_this_platform?
       def download? = can_download_metrics_reports?(platform) && manages_billing? && on_this_platform?

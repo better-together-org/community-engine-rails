@@ -1,5 +1,5985 @@
 {
   "resources": {
+    "billing_agreement_requirement": {
+      "activate_agreement": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "edit": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_credit_account": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "grant": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "own": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_entitlement": {
+      "allowances": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "deny"
+        },
+        "platform_steward": {
+          "any": "deny"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "own": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "set_enforcement": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_event": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "replay": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_grant": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "deny"
+        },
+        "platform_steward": {
+          "any": "deny"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_hosted": {
+      "accept": {
+        "anonymous": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "blocked_user": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "community_contributor": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_organizer": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "platform_manager": {
+          "host_platform": "deny",
+          "hosted_platform": "allow"
+        },
+        "platform_steward": {
+          "host_platform": "deny",
+          "hosted_platform": "allow"
+        },
+        "record_owner": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "signed_in_non_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "blocked_user": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "community_contributor": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_organizer": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "platform_manager": {
+          "host_platform": "allow",
+          "hosted_platform": "deny"
+        },
+        "platform_steward": {
+          "host_platform": "allow",
+          "hosted_platform": "deny"
+        },
+        "record_owner": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "signed_in_non_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        }
+      },
+      "plan": {
+        "anonymous": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "blocked_user": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "community_contributor": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_organizer": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "platform_manager": {
+          "host_platform": "deny",
+          "hosted_platform": "allow"
+        },
+        "platform_steward": {
+          "host_platform": "deny",
+          "hosted_platform": "allow"
+        },
+        "record_owner": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "signed_in_non_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        }
+      },
+      "resume": {
+        "anonymous": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "blocked_user": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "community_contributor": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_organizer": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "platform_manager": {
+          "host_platform": "allow",
+          "hosted_platform": "deny"
+        },
+        "platform_steward": {
+          "host_platform": "allow",
+          "hosted_platform": "deny"
+        },
+        "record_owner": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "signed_in_non_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "blocked_user": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "community_contributor": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_organizer": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "platform_manager": {
+          "host_platform": "deny",
+          "hosted_platform": "allow"
+        },
+        "platform_steward": {
+          "host_platform": "deny",
+          "hosted_platform": "allow"
+        },
+        "record_owner": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "signed_in_non_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        }
+      },
+      "suspend": {
+        "anonymous": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "blocked_user": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "community_contributor": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "community_organizer": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        },
+        "platform_manager": {
+          "host_platform": "allow",
+          "hosted_platform": "deny"
+        },
+        "platform_steward": {
+          "host_platform": "allow",
+          "hosted_platform": "deny"
+        },
+        "record_owner": {
+          "host_platform": "na",
+          "hosted_platform": "na"
+        },
+        "signed_in_non_member": {
+          "host_platform": "deny",
+          "hosted_platform": "deny"
+        }
+      }
+    },
+    "billing_offline_payment": {
+      "bounce": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "clear": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "receive": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "reject": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_order": {
+      "add_payment": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "cancel": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "checkout": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "checkout_return": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "claim": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "pay": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "refund": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "return_payments": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "sale": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "sales": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "walk_up": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      }
+    },
+    "billing_person_lookup": {
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      }
+    },
+    "billing_plan": {
+      "catalog": {
+        "anonymous": {
+          "any": "allow"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "catalog_show": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_steward": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "edit": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "lookup": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "offer": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        }
+      },
+      "purchase": {
+        "anonymous": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "snapshot": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "sync": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      }
+    },
+    "billing_price": {
+      "archive": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "archived": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "archived": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "buy_alone": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_steward": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_steward": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "edit": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_steward": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "purchase": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "archived": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "archived": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_steward": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "record_owner": {
+          "archived": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "archived": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      }
+    },
+    "billing_processor_setting": {
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "edit": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_product": {
+      "catalog": {
+        "anonymous": {
+          "any": "allow"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "catalog_show": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_steward": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "edit": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "purchase": {
+        "anonymous": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_member": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "community_organizer": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "allow"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "blocked_user": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "community_contributor": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "community_organizer": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        },
+        "platform_manager": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "platform_steward": {
+          "draft": "allow",
+          "hidden": "allow",
+          "members_only": "allow",
+          "other_platform": "deny",
+          "public": "allow"
+        },
+        "record_owner": {
+          "draft": "na",
+          "hidden": "na",
+          "members_only": "na",
+          "other_platform": "na",
+          "public": "na"
+        },
+        "signed_in_non_member": {
+          "draft": "deny",
+          "hidden": "deny",
+          "members_only": "deny",
+          "other_platform": "deny",
+          "public": "deny"
+        }
+      }
+    },
+    "billing_promotion": {
+      "activate": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "deactivate": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_refund_request": {
+      "cancel": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "decide": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      }
+    },
+    "billing_report": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "download": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
+    "billing_subscription_term": {
+      "accept_agreements": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "cancel": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "change_method": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "change_plan": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "deny"
+        },
+        "platform_steward": {
+          "new": "deny"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "extend_grace": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "move_to_current_price": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "own": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "allow"
+        },
+        "community_member": {
+          "any": "allow"
+        },
+        "community_organizer": {
+          "any": "allow"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "allow"
+        }
+      },
+      "resume": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "allow",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "steward_cancel": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "steward_resume": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "subscriber": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      },
+      "waive": {
+        "anonymous": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "blocked_user": {
+          "own": "na",
+          "someone_elses": "na"
+        },
+        "community_contributor": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "community_organizer": {
+          "own": "na",
+          "someone_elses": "deny"
+        },
+        "platform_manager": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "platform_steward": {
+          "own": "na",
+          "someone_elses": "allow"
+        },
+        "record_owner": {
+          "own": "deny",
+          "someone_elses": "na"
+        },
+        "signed_in_non_member": {
+          "own": "na",
+          "someone_elses": "deny"
+        }
+      }
+    },
+    "billing_tax_registration": {
+      "create": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "destroy": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "edit": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "index": {
+        "anonymous": {
+          "any": "deny"
+        },
+        "blocked_user": {
+          "any": "na"
+        },
+        "community_contributor": {
+          "any": "deny"
+        },
+        "community_member": {
+          "any": "deny"
+        },
+        "community_organizer": {
+          "any": "deny"
+        },
+        "platform_manager": {
+          "any": "allow"
+        },
+        "platform_steward": {
+          "any": "allow"
+        },
+        "record_owner": {
+          "any": "na"
+        },
+        "signed_in_non_member": {
+          "any": "deny"
+        }
+      },
+      "new": {
+        "anonymous": {
+          "new": "deny"
+        },
+        "blocked_user": {
+          "new": "na"
+        },
+        "community_contributor": {
+          "new": "deny"
+        },
+        "community_member": {
+          "new": "deny"
+        },
+        "community_organizer": {
+          "new": "deny"
+        },
+        "platform_manager": {
+          "new": "allow"
+        },
+        "platform_steward": {
+          "new": "allow"
+        },
+        "record_owner": {
+          "new": "na"
+        },
+        "signed_in_non_member": {
+          "new": "deny"
+        }
+      },
+      "scope": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "show": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      },
+      "update": {
+        "anonymous": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "blocked_user": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "community_contributor": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "community_organizer": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        },
+        "platform_manager": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "platform_steward": {
+          "other_platform": "deny",
+          "own_platform": "allow"
+        },
+        "record_owner": {
+          "other_platform": "na",
+          "own_platform": "na"
+        },
+        "signed_in_non_member": {
+          "other_platform": "deny",
+          "own_platform": "deny"
+        }
+      }
+    },
     "community": {
       "create": {
         "anonymous": {

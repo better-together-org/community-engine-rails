@@ -14,7 +14,7 @@ module AccessContractProbe
       'community_organizer' => 'community_organizer'
     }.freeze
 
-    attr_reader :host, :users
+    attr_reader :host, :users, :other_platform, :hosted_platform
 
     def initialize
       @host = BetterTogether::Platform.find_by!(host: true)
@@ -37,6 +37,23 @@ module AccessContractProbe
 
     def join_personas(community)
       COMMUNITY_ROLES.each { |persona, role| join(community, users.fetch(persona).person, role) }
+    end
+
+    # Billing is switched on for the host only: one enabled offline method. A second platform stands for
+    # tenant isolation, and a hosted platform where the manager and steward personas hold the same role.
+    def prepare_billing
+      return if @other_platform
+
+      BetterTogether::Billing.register_builtin_processors!
+      host.billing_processor_settings.find_or_create_by!(processor: 'cash') do |setting|
+        setting.assign_attributes(enabled: true, acknowledge: true, settings: { 'instructions' => 'At the hall' })
+      end
+      @other_platform = create(:better_together_platform)
+      @hosted_platform = create(:better_together_platform)
+      %w[platform_manager platform_steward].each do |persona|
+        role = BetterTogether::Role.find_default(persona, platform: host)
+        hosted_platform.person_platform_memberships.create!(member: users.fetch(persona).person, role:, status: 'active')
+      end
     end
 
     private

@@ -4,6 +4,7 @@
 
 require_relative 'world'
 require_relative 'resources'
+require_relative 'billing_resources'
 
 module AccessContractProbe
   # Calls every policy action and Scope#resolve for the pilot resources and returns a

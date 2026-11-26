@@ -8,7 +8,7 @@ module AccessContractProbe
   module Resources
     def self.build(world)
       [CommunityProbe, MembershipProbe, InvitationProbe, PersonProbe, BlockProbe, ContactDetailProbe, JoatuOfferProbe,
-       JoatuRequestProbe]
+       JoatuRequestProbe, *BILLING_PROBES]
         .to_h do |klass|
         probe = klass.new(world)
         [probe.key, probe]

@@ -1,0 +1,17 @@
+---
+title: Billing agreement requirement show decision tree (generated from the access contract)
+---
+flowchart TD
+  start(["show billing agreement requirement"])
+  start --> r0
+  r0{"platform_operate: Is the actor a platform manager or steward of the platform that owns the record?"}
+  r0 -- yes --> r0o(["allow"])
+  class r0o out_allow
+  r0 -- no --> r1
+  r1["default_deny: Nothing above matched"]
+  r1 --> r1o(["deny"])
+  class r1o out_deny
+  classDef out_allow fill:#cfe8cf,stroke:#2e6b2e,color:#111
+  classDef out_deny fill:#f3d0d0,stroke:#8a2a2a,color:#111
+  classDef out_conditional fill:#f6e7b4,stroke:#8a6d1a,color:#111
+  classDef unintended stroke:#b00020,stroke-width:3px,stroke-dasharray:6 3,fill:#fde8ea,color:#111

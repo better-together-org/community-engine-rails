@@ -14,7 +14,7 @@ module BetterTogether
     SNAPSHOT_PATH = 'spec/access_contract/snapshot.json'
     DOCS_DIR = 'docs/reference/access_contracts'
     DIAGRAM_SOURCE_DIR = 'docs/diagrams/source'
-    SUBSYSTEMS = %w[communities people joatu].freeze
+    SUBSYSTEMS = %w[communities people joatu billing].freeze
 
     def self.root
       BetterTogether::Engine.root

@@ -79,6 +79,24 @@ states:
   someone_elses:
     label: Someone else's
     description: The record belongs to another person.
+  own_platform:
+    label: Own platform
+    description: The record belongs to the platform being served (billing, where every record is owned by a platform).
+  other_platform:
+    label: Other platform
+    description: The record belongs to a different platform than the one being served. Tenant isolation; nothing crosses it.
+  host_platform:
+    label: Host platform
+    description: The request is served by the host platform (the platform that runs the app).
+  hosted_platform:
+    label: Hosted platform
+    description: The request is served by a hosted platform. The platform manager and steward personas hold the same role there.
+  members_only:
+    label: Members only
+    description: A catalog item that is listed and active but limited to members or subscribers. No persona holds the qualifying entitlement, so a qualifying buyer is not probed.
+  archived:
+    label: Archived
+    description: Retired from sale; kept so existing orders and subscriptions still read it.
   new:
     label: New record
     description: Used for create actions, where no persisted record exists yet.
