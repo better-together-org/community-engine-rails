@@ -52,7 +52,7 @@ module BetterTogether
         end
 
         def allowances(plan)
-          grants = plan.plan_grants.where(kind: 'quota_allowance')
+          grants = plan.grants.where(kind: 'quota_allowance')
           grants.to_h { |grant| [grant.parameters['quota_type'].to_s, Integer(grant.parameters['amount'], exception: false).to_i] }
         end
       end

@@ -6,7 +6,7 @@ What being subscribed (or having bought a product) **gives**: a role, access to 
 
 ```mermaid
 classDiagram
-  Plan "1" --> "*" PlanGrant
+  Plan "1" --> "*" Grant
   Plan "1" --> "*" Entitlement
   Entitlement "1" --> "*" EntitlementGrant
   Entitlement "0..1" --> "0..1" PaySubscription

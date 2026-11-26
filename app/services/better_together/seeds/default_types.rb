@@ -160,8 +160,8 @@ module BetterTogether
                      :restricted_to_members, :grace_days, :renewal_lead_days, :accepted_payment_methods
           translated :name, :description
         end
-        Registry.register(:billing_plan_grant) do
-          model 'BetterTogether::Billing::PlanGrant'
+        Registry.register(:billing_grant) do
+          model 'BetterTogether::Billing::Grant'
           natural_key :kind, within: :product
           attributes :kind, :parameters
           reference :product, to: :billing_plan
@@ -186,7 +186,7 @@ module BetterTogether
           reference :product, to: :billing_product
         end
         Registry.register(:billing_product_grant) do
-          model 'BetterTogether::Billing::PlanGrant'
+          model 'BetterTogether::Billing::Grant'
           natural_key :kind, within: :product
           attributes :kind, :parameters
           reference :product, to: :billing_product

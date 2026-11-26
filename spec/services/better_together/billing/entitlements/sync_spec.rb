@@ -146,7 +146,7 @@ RSpec.describe BetterTogether::Billing::Entitlements::Sync do
 
     it 'carries an edited storage amount to people who already pay', :aggregate_failures do
       term
-      sub_plan.plan_grants.find_by(kind: 'quota_allowance').update!(parameters: { 'quota_type' => 'media_storage', 'amount' => 9_000 })
+      sub_plan.grants.find_by(kind: 'quota_allowance').update!(parameters: { 'quota_type' => 'media_storage', 'amount' => 9_000 })
 
       BetterTogether::Billing::SyncPlanEntitlementsJob.perform_now(sub_plan)
 
@@ -156,7 +156,7 @@ RSpec.describe BetterTogether::Billing::Entitlements::Sync do
 
     it 'takes away a grant the plan lost, but only what the entitlement made' do
       term
-      sub_plan.plan_grants.find_by(kind: 'membership_role').destroy!
+      sub_plan.grants.find_by(kind: 'membership_role').destroy!
 
       BetterTogether::Billing::SyncPlanEntitlementsJob.perform_now(sub_plan)
 

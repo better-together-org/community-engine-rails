@@ -37,7 +37,7 @@ module BetterTogether
 
       # What a purchase includes (roles, feature access, quota allowances); see Entitlements. A quota amount is multiplied by
       # the quantity bought.
-      has_many :grants, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::PlanGrant',
+      has_many :grants, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::Grant',
                                                               inverse_of: :product, dependent: :restrict_with_error
       has_many :entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
 

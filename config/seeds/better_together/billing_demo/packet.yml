@@ -28,7 +28,7 @@ better_together:
     unsupported_locale_policy: skip
     records:
     - records/billing_plans.yml
-    - records/billing_plan_grants.yml
+    - records/billing_grants.yml
     - records/billing_products.yml
     - records/billing_prices.yml
     - records/billing_product_grants.yml

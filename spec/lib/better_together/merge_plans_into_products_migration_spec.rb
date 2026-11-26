@@ -14,6 +14,6 @@ RSpec.describe 'Merge plans into products migration' do # rubocop:disable RSpec/
   it 'points terms at a price and entitlements and grants at a product' do
     expect(connection.columns(:better_together_billing_subscription_terms).map(&:name)).to include('price_id')
     expect(connection.columns(:better_together_billing_entitlements).map(&:name)).to include('product_id')
-    expect(connection.columns(:better_together_billing_plan_grants).map(&:name)).to include('product_id')
+    expect(connection.columns(:better_together_billing_grants).map(&:name)).to include('product_id')
   end
 end

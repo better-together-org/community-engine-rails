@@ -99,8 +99,6 @@ module BetterTogether
 
       # ---- catalog presentation ----------------------------------------------------
 
-      def plan_grants = grants
-
       def eligible_for?(billable_owner)
         return false unless billable_owner.present?
 

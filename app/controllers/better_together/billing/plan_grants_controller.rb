@@ -18,8 +18,8 @@ module BetterTogether
       after_action :verify_authorized
 
       def create
-        grant = @plan.plan_grants.build(platform_id: billing_owner.id, kind: params[:kind].to_s, parameters: grant_parameters,
-                                        position: @plan.plan_grants.size)
+        grant = @plan.grants.build(platform_id: billing_owner.id, kind: params[:kind].to_s, parameters: grant_parameters,
+                                   position: @plan.grants.size)
         authorize grant
         saved = grant.save
         SyncPlanEntitlementsJob.perform_later(@plan) if saved
@@ -28,7 +28,7 @@ module BetterTogether
 
       # Only a quota allowance has something to change in place (its amount); the others are removed and added.
       def update # rubocop:disable Metrics/AbcSize
-        grant = @plan.plan_grants.find(params[:id])
+        grant = @plan.grants.find(params[:id])
         authorize grant
         saved = grant.kind == 'quota_allowance' && grant.update(parameters: grant.parameters.merge('amount' => params[:amount].to_s.strip))
         SyncPlanEntitlementsJob.perform_later(@plan) if saved
@@ -36,7 +36,7 @@ module BetterTogether
       end
 
       def destroy
-        grant = @plan.plan_grants.find(params[:id])
+        grant = @plan.grants.find(params[:id])
         authorize grant
         grant.destroy!
         SyncPlanEntitlementsJob.perform_later(@plan)
