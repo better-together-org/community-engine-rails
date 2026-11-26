@@ -631,6 +631,13 @@ fr:
             active:
               must_be_true_for_primary: doit être vrai pour un domaine principal
               must_be_true_for_share_domain: doit être vrai pour un domaine de partage
+              operator_only: ne peut être activé que par l'opérateur de la plateforme
+            hostname:
+              operator_only: ne peut être modifié que par l'opérateur de la plateforme
+                une fois actif
+              outside_allowed_zone: 'doit être un nom unique sous l''un de ces domaines
+                : %{zones}'
+              reserved: est un nom réservé
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
         better_together/redirect:
@@ -3631,6 +3638,8 @@ fr:
         subtitle: Domaine pour %{platform_name}
         title: Modifier %{hostname}
       form:
+        activation_note: Un opérateur active les nouveaux domaines après vérification.
+          D'ici là, ce domaine reste inactif.
         active_field_label: Actif
         custom_domain_hint_html: Un domaine personnalisé nécessite un enregistrement
           DNS (CNAME ou A) pointant vers le serveur de périphérie de cette plateforme,

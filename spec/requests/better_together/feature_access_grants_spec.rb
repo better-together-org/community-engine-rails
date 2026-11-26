@@ -188,8 +188,18 @@ RSpec.describe 'BetterTogether::FeatureAccessGrantsController', :as_platform_man
              host_url: "https://other-platform-#{SecureRandom.hex(4)}.example.test")
     end
 
-    it 'does not allow a host platform manager to administer grants for another platform route' do
+    it 'lets the host platform manager administer grants for a hosted platform with no other operator' do
       foreign_grant = create(:better_together_feature_access_grant, platform: other_platform)
+
+      get edit_platform_feature_access_grant_path(other_platform, foreign_grant, locale:)
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'does not let the host platform manager administer a platform governed by a remote operator' do
+      foreign_grant = create(:better_together_feature_access_grant, platform: other_platform)
+      create(:better_together_platform_association, :active, :remote_operator,
+             managed_platform: other_platform, granted_scopes: %w[read billing])
 
       get edit_platform_feature_access_grant_path(other_platform, foreign_grant, locale:)
 

@@ -1,0 +1,19 @@
+---
+title: Platform Domains - New (managed steward)
+audience:
+- platform_steward
+- operator_steward
+journey_step: As the steward of a managed platform, I ask for a subdomain. I cannot
+  switch it on myself, so the form tells me my operator will activate it.
+callouts:
+- :id: activation_note
+  :title: Operator activates
+  :description: Stewards only request. The Active checkbox is shown to the governing
+    operator.
+- :id: submit_btn
+  :title: Request domain
+  :description: Creates the domain inactive and not primary.
+accessibility_notes: The activation note is plain text in the form flow with a stable
+  id.
+slug: platform_domains_new_steward_request
+device: mobile
