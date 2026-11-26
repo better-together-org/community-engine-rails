@@ -29,7 +29,7 @@ One Community Engine app can serve several platforms, and each platform can have
 | MDS-2 | Engine URL defaults resolve per platform instead of one global `APP_HOST` | in review |
 | MDS-3 | Secondary-domain rule: redirect to the primary, mail links use the primary | in review |
 | MDS-4 | Host authorization from active `PlatformDomain` rows, one documented env name | in review |
-| MDS-5 | Multi-hostname test support: per-hostname helpers for request, mailer and job specs, browser specs map hostnames to the one server port at runtime, host domain rows healed after JS cleanup | planned |
+| MDS-5 | Multi-hostname test support: per-hostname helpers for request, mailer and job specs, browser specs map hostnames to the one server port at runtime, host domain rows healed after JS cleanup | in review |
 
 ## Out of scope
 
