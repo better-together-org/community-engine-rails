@@ -25,11 +25,11 @@ One Community Engine app can serve several platforms, and each platform can have
 | Id | Change | Status |
 | --- | --- | --- |
 | MDS-0 | This note and the squash-ready description | this PR |
-| MDS-1 | Jobs and mailers carry the platform: `Current.platform` is serialized into jobs and restored, mail links use the platform's primary domain | in review |
-| MDS-2 | Engine URL defaults resolve per platform instead of one global `APP_HOST` | in review |
-| MDS-3 | Secondary-domain rule: redirect to the primary, mail links use the primary | in review |
-| MDS-4 | Host authorization from active `PlatformDomain` rows, one documented env name | in review |
-| MDS-5 | Multi-hostname test support: per-hostname helpers for request, mailer and job specs, browser specs map hostnames to the one server port at runtime, host domain rows healed after JS cleanup | in review |
+| MDS-1 | Jobs and mailers carry the platform: `Current.platform` is serialized into jobs and restored, mail links use the platform's primary domain | merged into this branch |
+| MDS-2 | Engine URL defaults resolve per platform instead of one global `APP_HOST` | merged into this branch |
+| MDS-3 | Secondary-domain rule: redirect to the primary, mail links use the primary | merged into this branch |
+| MDS-4 | Host authorization from active `PlatformDomain` rows, one documented env name | merged into this branch |
+| MDS-5 | Multi-hostname test support: per-hostname helpers for request, mailer and job specs, browser specs map hostnames to the one server port at runtime, host domain rows healed after JS cleanup | merged into this branch |
 
 ## Out of scope
 
@@ -40,11 +40,28 @@ Wildcard zones, Cloudflare DNS and certificates, and HAProxy routing. They sit w
 ```
 feat(platform): multi-domain support across jobs, mail, URLs and tests (MDS-0 to MDS-5)
 
-- Jobs and mail carry the platform that queued them (MDS-1)
-- Engine URL defaults resolve per platform (MDS-2)
-- Secondary domains redirect to the primary and mail uses the primary (MDS-3)
-- Host authorization follows active PlatformDomain rows (MDS-4)
-- Specs exercise several hostnames outside the browser, and browser specs use one server port (MDS-5)
+One app serves several platforms and each platform can have several
+domains. Domain resolution already picked the platform from the hostname;
+this closes the places that still assumed one host.
+
+- Jobs and queued mail run on the platform that queued them, so links use
+  that platform's primary domain (MDS-1)
+- Engine URL helpers resolve per platform instead of one global base_url,
+  and Platform#url_options serves rake tasks and jobs (MDS-2)
+- Secondary domains answer a 301 to the primary domain; federation, API,
+  OAuth, MCP and asset paths are exempt; opt out per platform with
+  redirect_secondary_domains (MDS-3)
+- Host authorization accepts any active PlatformDomain when config.hosts is
+  an allow-list; APP_HOSTS is the one documented env name (MDS-4)
+- Specs exercise several hostnames outside the browser and in one browser
+  server; host domain rows are healed after JS cleanup (MDS-5)
+- PlatformDomain#url keeps a nonstandard host_url port such as localhost:3000
+- Browser specs work with Chrome 158, which rejects Capybara's wildcard
+  storage reset
+
+Behavior to check on deploy: a platform serving two live domains starts
+redirecting the secondary one, and an app with a restricted config.hosts
+starts accepting active platform domains.
 ```
 
 ## Acceptance for the whole stack
