@@ -6,7 +6,7 @@ Goal: one provisioning wizard, modelled on the existing setup wizards, with a st
 
 ## Decisions (maintainer, 2026-11-25)
 
-- **Roles pack is always on.** Customization happens after launch; the pack is add-only so later plants never overwrite steward edits.
+- **Roles pack is always on**, including when the rake task or the provisioning service takes a pack selection (they add it and reject a selection that omits it). Customization happens after launch; the pack is add-only so later plants never overwrite steward edits.
 - **The seed choice is not locked.** More packs can be planted after the platform is provisioned, through the seed catalog mechanism, which needs rework (see 2.5).
 - **Demo packs are development only**, initialized from the CLI. They are never selectable in the wizard or the catalog UI, on any platform.
 - **Operator-steward only, for now.** The provisioning wizard in this work is for operator stewards, who may complete it many times, each run creating a platform. End users are excluded. Self-serve for end users will be a separate, bespoke wizard that also sets up billing and may require a subscription first (see 2.6). This work plans for it but does not build it.
@@ -160,6 +160,4 @@ Each phase is a small reviewable change with specs, screenshots for any view, an
 8. **Provisional association and enforcement**: provisional marker, hook on invitation acceptance, policy enforcement of association scopes (shared with plan Phase 2), fleet flag for platforms awaiting a steward. Needed before phase 5 can launch with the invitation and association steps; it may be built earlier.
 9. **Dedicated app target**: provisioning job records, dispatcher port, approval display, infrastructure steps.
 
-Open details left:
-
-- Whether the roles pack's always-on rule also applies to the rake task and service when they accept a selection (assumed yes).
+No open details remain. Open questions for the later end-user wizard are listed in 2.6.
