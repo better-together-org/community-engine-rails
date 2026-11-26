@@ -191,16 +191,22 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       "#{base_path}#{locale}"
     end
 
-    def base_url_with_locale(locale: I18n.locale)
-      "#{base_url}/#{locale}"
+    # The URL root for a platform: its primary domain (or stored host_url), and only when there is
+    # no platform the configured global base_url. Outside a request, pass the platform explicitly.
+    def platform_base_url(platform = ::Current.platform)
+      platform&.resolved_host_url.presence || base_url
+    end
+
+    def base_url_with_locale(locale: I18n.locale, platform: ::Current.platform)
+      "#{platform_base_url(platform)}/#{locale}"
     end
 
     def route_scope_path
       @@route_scope_path || 'bt'
     end
 
-    def new_user_password_url
-      base_url + new_user_password_path
+    def new_user_password_url(platform: ::Current.platform)
+      platform_base_url(platform) + new_user_password_path
     end
 
     def new_user_password_path
@@ -219,8 +225,8 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       ::BetterTogether::Engine.routes.url_helpers.user_confirmation_path(locale: I18n.locale)
     end
 
-    def user_confirmation_url
-      base_url + user_confirmation_path
+    def user_confirmation_url(platform: ::Current.platform)
+      platform_base_url(platform) + user_confirmation_path
     end
 
     def register_head_tag_provider(key, callable = nil, &block)

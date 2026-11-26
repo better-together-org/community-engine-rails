@@ -12,7 +12,7 @@ module BetterTogether
       self.locale = @person.locale
       self.time_zone = @person.time_zone
 
-      raw_url = platform&.url || BetterTogether.base_url
+      raw_url = platform&.resolved_host_url.presence || BetterTogether.platform_base_url
       @integration_url = better_together.settings_url(
         locale: @person.locale,
         anchor: 'integrations',
