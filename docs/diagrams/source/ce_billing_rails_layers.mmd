@@ -48,10 +48,6 @@ classDiagram
       models: Billing::Order
       concerns: Billing::BackTo, Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync +5
     }
-    class BetterTogether__Billing__PlanGrantsController["Billing::PlanGrantsController"] {
-      <<Controller>>
-      concerns: Billing::OwnerScoped, Billing::TabFrameLayout, ConsentCookieSync, InvitationSessionManagement +4
-    }
     class BetterTogether__Billing__PlansController["Billing::PlansController"] {
       <<Controller>>
       models: Billing::Plan
@@ -241,7 +237,6 @@ classDiagram
   BetterTogether__Billing__OrderClaimsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrdersController ..> BetterTogether__Billing__Order : manages
   BetterTogether__Billing__OrdersController --|> BetterTogether__ApplicationController
-  BetterTogether__Billing__PlanGrantsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PlansController ..> BetterTogether__Billing__Plan : manages
   BetterTogether__Billing__PlansController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__ProcessorOptionsController --|> BetterTogether__ApplicationController

@@ -47,7 +47,7 @@ concern :billing_plans do # rubocop:disable Metrics/BlockLength
       resources :prices, only: %i[new create] do
         patch :archive, on: :member
       end
-      resources :grants, only: %i[create update destroy], controller: 'product_grants'
+      resources :grants, only: %i[create update destroy]
     end
     resources :processor_options, only: :index
     resources :processor_settings, only: %i[index edit update]
@@ -188,9 +188,6 @@ concern :billing_entitlements do
   namespace :billing do
     resources :entitlements, only: :index
     resources :allowances, only: %i[index update]
-    resources :plans, only: [] do
-      resources :plan_grants, only: %i[create update destroy]
-    end
   end
 end
 

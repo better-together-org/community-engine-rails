@@ -70,7 +70,7 @@ erDiagram
 
 2. One grant model: `PlanGrant` became `Grant` (table `better_together_billing_grants`), and an entitlement recomputes from every live source, so a grant ends only when none remain.
 3. One processor contract: a single catalog sync, checkout by mode and lines, no version numbers, and the plan push removed.
-4. Names, screens and seeds: DOM ids, routes, locale keys, catalog views that show the prices of a product, docs, screenshots and the demo seed packet.
+4. Names and screens: one `GrantsController` at `products/:product_id/grants` serves products and plans (a plan is a product), the nested `plan_grants` route and controller are gone, locale keys moved from `billing.plan_grants` to `billing.grants`, and a plan page lists all of its prices through the same partial a product page uses. The demo seed packet already loads through the unified models.
 
 ## Risks and checks
 

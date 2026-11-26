@@ -19,7 +19,7 @@ classDiagram
 
 | Table | Holds | Rules |
 |---|---|---|
-| `billing_plan_grants` | What a plan includes: `kind` (an allow-list: `membership_role`, `feature_access`, `quota_allowance`) and `parameters` | Parameters are validated by the kind's handler. Platform-sold plans only |
+| `better_together_billing_grants` | What a plan includes: `kind` (an allow-list: `membership_role`, `feature_access`, `quota_allowance`) and `parameters` | Parameters are validated by the kind's handler. Platform-sold plans only |
 | `billing_entitlements` | One per source (a Pay subscription **or** a paid order, never both: CHECK) and who it is for (a person, community or the platform). Status `active`, `grace`, `lapsed`, `revoked`; `ends_at`, `grace_ends_at` | One live (active or grace) entitlement per beneficiary and plan (partial unique index); one entitlement per source |
 | `billing_entitlement_grants` | What was **actually applied**: the kind and parameters copied from the plan, `grant_key` (unique per entitlement, so applying twice is one grant), what it made or found, **`owned`**, and for a quota the `quota_type` and `amount` | Composite platform keys. Editing a plan never loses track of what was applied |
 
