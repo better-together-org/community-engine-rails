@@ -10,7 +10,7 @@ A steward of a hosted platform should be able to manage their own platform the w
 
 - The host dashboard checks the real host platform, so a hosted steward is denied on their own landing page.
 - The dashboard counts and recent records are global, so opening it up without scoping would show other platforms' data.
-- Nobody holds the user and people management permissions in the seeded roles.
+- The roles and permissions index pages show counts across every platform.
 - Feature and quota grants can be given to themselves by a steward.
 - A steward can claim any unique hostname for their platform.
 - A hosted platform has no navigation of its own, so it inherits the host's menu.
@@ -23,13 +23,17 @@ Closing these lets an operator configure hosted platforms by hand today, while t
 | --- | --- | --- |
 | HPS-0 | This note and the squash-ready description | this PR |
 | HPS-1 | Host dashboard scoped to the platform being viewed and authorized against it; `Platform has_many :pages` | planned next |
-| HPS-2 | User and people management permissions for steward and manager roles, re-plant for existing platforms, roles index count scoped | planned |
+| HPS-2 | RBAC index navigation counts scoped to the platform being viewed | in review |
 | HPS-3 | Feature access grants and quota grants limited to host authority | planned |
 | HPS-4 | Domain guardrails: allowed zone or operator-created, reserved names blocked, steward-created hostnames start inactive | planned |
 | HPS-5 | Platform-owned navigation area seeded at provisioning | planned |
 | HPS-6 | Manual hosted-platform provisioning runbook and the steward smoke-test checklist | planned |
 
 Follow-up inside this stack when its subsystem is touched: an access contract for platform administration (no contract covers the host dashboard or platform records yet).
+
+## Decision: user and people permissions stay opt-in
+
+The first plan for this stack added `manage_platform_users`, `list_person` and `update_person` to the steward and manager roles. That was dropped. Those permissions are opt-in for every default role, including the host platform's steward, by the least-privilege decision in f86f1722f and the people access contract. A hosted steward already has exactly the same limits as the host steward, so this is not a parity gap. A platform that wants user or people administration grants it explicitly.
 
 ## Out of scope for this stack
 
@@ -42,7 +46,7 @@ feat(platform): hosted platform steward parity (HPS-0 to HPS-6)
 
 - Host dashboard authorizes against the current platform and scopes its counts and records to it (HPS-1)
 - Platform has_many pages (HPS-1)
-- Steward and manager roles gain user and people management permissions, re-planted on existing platforms (HPS-2)
+- Roles and permissions index counts are scoped to the platform being viewed (HPS-2)
 - Feature access and quota grants are limited to host authority (HPS-3)
 - Hostnames must sit in an allowed zone or be operator-created, reserved names are blocked, steward-created hostnames start inactive (HPS-4)
 - Hosted platforms get their own navigation area at provisioning (HPS-5)
