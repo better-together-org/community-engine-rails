@@ -10,6 +10,7 @@ Goal: one provisioning wizard, modelled on the existing setup wizards, with a st
 - **The seed choice is not locked.** More packs can be planted after the platform is provisioned, through the seed catalog mechanism, which needs rework (see 2.5).
 - **Demo packs are development only**, initialized from the CLI. They are never selectable in the wizard or the catalog UI, on any platform.
 - **Operator-steward only, for now.** The provisioning wizard in this work is for operator stewards, who may complete it many times, each run creating a platform. End users are excluded. Self-serve for end users will be a separate, bespoke wizard that also sets up billing and may require a subscription first (see 2.6). This work plans for it but does not build it.
+- **The first steward is invited, not created.** The wizard invites the first steward through the platform invitation mechanism and UI on the new platform. It also creates the managed platform association from the host operator platform to the new platform, so the operator platform and its stewards act as the new platform's initial stewards until the first invited steward accepts and registers (see 2.7).
 - **Global packs (such as geography) are operator-only.** Hosted platforms read the host platform's reference rows directly; there are no per-platform copies. A steward who needs a place that is missing requests it from the operator. The auto-created settlement communities stay host-owned for now.
 - **Host-app packs register explicitly** in an initializer, like seed record types do today. No folder scanning.
 
@@ -63,7 +64,7 @@ Keep one wizard identifier, `new_platform_setup`, and extend its step list. Prop
 2. Platform identity (unchanged).
 3. Domain (unchanged, and shows the zone and reserved-name rules).
 4. **Seed selection (new)**: a checkbox list built from `SeedPackCatalog`, with core packs shown as required and recommended packs ticked. Dependencies tick automatically and explain why. Saves the choice on the draft platform (a small wizard-run record, not columns on `Platform`).
-5. Steward account (the account only: no seeding as a side effect).
+5. **First steward invitation**: email, name and locale of the person who will steward the platform. Nothing is created until launch (see 2.7). Replaces the current steward-account step that creates a user with a password.
 6. Invite members (unchanged).
 7. **Review and launch**: shows the plan from a dry run of the chosen packs (counts per pack, anything that would be skipped or conflict). Launch plants, writes one `SeedPlanting` per pack, and completes the wizard.
 
@@ -75,12 +76,32 @@ Differences that matter:
 - **Draft cleanup.** A scheduled job removes draft platforms whose wizard never completed after a set time, and the draft is created at the identity step rather than at the first click.
 - **Authorization**: a platform steward can later run the wizard for a platform they are creating on the operator's behalf. Today the check is `PlatformPolicy#create?` for the whole run, because nobody holds a membership on the draft yet. Keep that check, and add the access-control contract entry for the wizard when it changes.
 
-### 2.4 Operator-run now, operator handover next
+### 2.4 Who fills in the wizard
 
-- **Operator-run** (now): the operator steward fills every step, including the future steward's account.
-- **Operator handover** (next, still operator-run): the operator runs the identity, domain and seed steps and the launch gate, then invites the future steward to set their own password on the new platform's own domain. This needs the initial-steward invitation from the larger plan and a draft addressable by a token. Design the draft record and steps so it can be added without reshaping them.
+The operator steward fills every step. The future steward never touches the wizard: they receive an invitation (2.7). Self-serve by end users is a different wizard (2.6).
 
-Self-serve by end users is a different wizard (2.6).
+### 2.7 First steward invitation and the operator association
+
+Today the wizard's steward step creates a user and a password for the new platform, and nothing records that the operator is managing it. Replace both with the two existing mechanisms.
+
+**At launch, in one transaction after seeding:**
+
+1. **Association.** Create a `PlatformAssociation` (`manages`) from the host operator platform to the new platform, with the scopes the operator chose on the review step. It starts in force, accepted by the operator steward running the wizard and marked provisional, because the new platform has no steward who could accept it. The audit event says so (`requested` then `accepted`, bootstrap).
+2. **Invitation.** Create a `PlatformInvitation` on the new platform for the first steward, with the `platform_steward` role and the council community role, inviter = the operator steward. It goes out through the existing queued invitation email, and the operator manages it afterwards (resend, replace, delete) from the platform's existing invitations page under `/host/platforms/:id`. Launch is gated on the primary domain being active, because the link uses the new platform's own registration URL and the mail must come from that platform.
+
+**While the invitation is pending**, the operator platform's stewards are the initial stewards: they act on the new platform through the association within its scopes, using the same per-platform surfaces as any steward (HPS parity). Two prerequisites:
+
+- The association must be enforced in policies. `PlatformAssociation.authorizes?` is a query only today and `PlatformGrantAuthority` uses it for grants alone. Without enforcement, operator access is whatever host authority already allows, not what the association says (plan Phase 2 item 3).
+- A provisional marker on the association (new column or state), so audit and the managed side can tell a bootstrap edge from one the managed steward accepted.
+
+**When the first steward accepts and registers**, the invitation's accept hook gives them the `platform_steward` membership and the provisional marker clears. From that moment the managed steward governs the association through its existing lifecycle (accept, narrow, suspend, resume, revoke), and the operator's authority is whatever that steward leaves in force.
+
+**Failure and edge cases**
+
+- Invitation never accepted: the operator stays initial steward, can resend or replace it. The invitation expires but the provisional authority does not, and the fleet list flags platforms still waiting for a steward.
+- Wrong person invited: the operator replaces the invitation before it is accepted; after acceptance it is a normal membership change.
+- Several operator stewards: any person with a current steward membership on the operator platform qualifies, as `authorizes?` already computes.
+- Association creation or invitation fails: the transaction rolls back, the wizard stays at review and can be relaunched.
 
 ### 2.5a Global packs and per-platform records that point at them
 
@@ -110,7 +131,7 @@ The existing `SeedCatalogController` is geography-only and not per platform. It 
 - **What this work does to keep that door open:**
   - Seed selection, review and launch are built on the catalog, installers and a provisioning entry that take a pack selection and a steward, not on operator-only code. The end-user wizard reuses them.
   - The wizard builder and step definitions as data (2.3) allow a second wizard identifier with its own YAML and extra steps (plan, billing, agreements) without reshaping the first.
-  - The steward account step keeps account creation separate from seeding, so a different person can be the steward than the one running the wizard.
+  - The first steward is always an invitation, so a different person from the one running the wizard is the steward, and the end-user wizard reuses the same invitation and association creation with the requester as the invited steward.
   - The provisioning entry records who requested the platform and under which entitlement, as a nullable reference, so a billing link can be added later without migrating existing platforms.
 - **Open for that later work:** which plan gates which packs, whether the multi-platform feature grant (HPS-3 authority rules) is checked before the form is shown, and the failure path if payment succeeds but provisioning fails.
 
@@ -135,9 +156,11 @@ Each phase is a small reviewable change with specs, screenshots for any view, an
 5. **Seed selection step and review plan**: the new step, the dry-run review, plant on launch, wizard run record, move seeding out of the steward step. Screenshots and DOM contracts.
 6. **Service parity**: `TenantPlatformProvisioningService` and the rake task accept a pack selection and use the same installers (so there is one seeding path), keep the idempotent behavior, stop taking the steward password as an argument.
 7. **Seed catalog rework** (2.5): per-platform catalog page on the shared catalog and installers, geography as a registered pack.
-8. **Operator handover**: the operator runs the wizard and invites the future steward to set their own password on the new platform's domain. Still operator-run, not self-serve.
+8. **Provisional association and enforcement**: provisional marker, hook on invitation acceptance, policy enforcement of association scopes (shared with plan Phase 2), fleet flag for platforms awaiting a steward. Needed before phase 5 can launch with the invitation and association steps; it may be built earlier.
 9. **Dedicated app target**: provisioning job records, dispatcher port, approval display, infrastructure steps.
 
 Open details left:
 
 - Whether the roles pack's always-on rule also applies to the rake task and service when they accept a selection (assumed yes).
+- Operator authority after the first steward registers: it stays as provisioned until the steward narrows or revokes it (as written in 2.7), or it drops to read and support until the steward accepts the full scopes.
+- Default scopes on the bootstrap association (all six, or only those needed to run a new platform).
