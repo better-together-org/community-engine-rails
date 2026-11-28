@@ -1,16 +1,16 @@
 # Billing Plan Change
 
-A payer can move a subscription that Community Engine renews to another of the platform's plans, and chooses **when** the change happens.
+A payer can move a subscription that Community Engine renews to another recurring price of the platform (another plan's, or the same plan's other interval), and chooses **when** the change happens.
 
 ## Behaviour
 
-- On the subscription page, "Change plan" lists the platform's other active, listed, paid plans on the same schedule (interval, interval count) and currency.
+- On the subscription page, "Change plan" lists every other active recurring paid price of the platform's listed plans in the same currency, with the plan the subscriber is on first (its other intervals are offered even if it is no longer listed). A move **now** also needs the same interval and count.
 - The payer picks **from my next period** or **now**.
 
 ### From the next period
 
-- `pending_plan` is saved on the subscription term. Nothing else changes: the current period, price and access stay as they are, and the choice can be taken back.
-- When the next period is made (`Subscriptions::GenerateRenewal`), `Subscriptions::ChangePlan.apply` makes the chosen plan the term's plan at its price, moves the entitlement to it and re-syncs what it includes. The next invoice is for the new plan. Purchase agreements the new plan needs are asked for the usual way (the period waits as `needs_agreement`).
+- `pending_price` (and its plan, `pending_plan`) is saved on the subscription term. Nothing else changes: the current period, price and access stay as they are, and the choice can be taken back.
+- When the next period is made (`Subscriptions::GenerateRenewal`), `Subscriptions::ChangePlan.apply` makes the chosen price the term's price, and its plan the term's plan, moves the entitlement to it and re-syncs what it includes. The next invoice is for the new plan. Purchase agreements the new plan needs are asked for the usual way (the period waits as `needs_agreement`).
 - No money moves when the request is made.
 
 ### Now, prorated
@@ -29,4 +29,4 @@ A move is refused while what the holder uses of a quota (storage, AI tokens) is 
 
 ## Not covered
 
-Moves between schedules (monthly to yearly), and subscriptions renewed by a payment vendor.
+A switch of interval now (prorated across different period lengths) is not offered; it takes effect from the next period, and the periods then count from the end of the current one. Subscriptions renewed by a payment vendor are not covered.
