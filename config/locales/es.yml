@@ -995,6 +995,7 @@ es:
       catalog:
         back: Todos los planes
         buy: Comprar
+        choose_price: Elige un precio
         details: Qué incluye
         free: Gratis
         get_free: Obtener gratis

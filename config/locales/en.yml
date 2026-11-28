@@ -1001,6 +1001,7 @@ en:
       catalog:
         back: All plans
         buy: Buy
+        choose_price: Choose a price
         details: What you get
         free: Free
         get_free: Get it free

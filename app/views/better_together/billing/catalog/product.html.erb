@@ -14,5 +14,6 @@
     <% if @product.description.present? %><p id="<%= dom_id(@product, :catalog_description) %>"><%= @product.description %></p><% end %>
     <p id="<%= dom_id(@product, :catalog_lifetime) %>" class="text-body-secondary"><%= billing_product_lifetime(@product) %></p>
     <%= render 'better_together/billing/catalog/product_buy_button', product: @product, price: @price %>
+    <%= render 'better_together/billing/catalog/price_options', product: @product, prices: @prices %>
   </article>
 </div>

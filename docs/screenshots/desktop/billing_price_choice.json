@@ -1,0 +1,48 @@
+{
+  "name": "billing_price_choice",
+  "device": "desktop",
+  "url": "/en/billing/catalog/9c12cff3-889f-4101-8365-7b2de831b12c",
+  "title": "Supporting member | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "billing_catalog",
+  "flow": "billing_price_choice",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_price_choice_spec.rb",
+  "callouts": [
+    {
+      "selector": "#catalog_prices_billing_plan_9c12cff3-889f-4101-8365-7b2de831b12c",
+      "title": "Choose a price",
+      "bullets": [
+        "Each price has its own button into checkout."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 505.59375,
+        "width": 1296.0,
+        "height": 102.0,
+        "right": 1368.0,
+        "bottom": 607.59375,
+        "center_x": 720.0,
+        "center_y": 556.59375
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 505.59375,
+        "width": 1296.0,
+        "height": 102.0,
+        "right": 1368.0,
+        "bottom": 607.59375,
+        "center_x": 720.0,
+        "center_y": 556.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 627.59,
+        "width": 380,
+        "height": 132,
+        "score": 849.40625
+      }
+    }
+  ]
+}

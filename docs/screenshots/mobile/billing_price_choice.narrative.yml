@@ -1,0 +1,12 @@
+---
+title: Choosing a price
+audience:
+- end_user
+journey_step: As a buyer, I pick the monthly or the yearly price of one plan.
+callouts:
+- :id: prices
+  :title: Prices
+  :description: One row per price with a Subscribe button.
+accessibility_notes: Each button repeats the plan name and price for screen readers.
+slug: billing_price_choice
+device: mobile

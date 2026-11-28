@@ -37,4 +37,14 @@ RSpec.describe 'Billing catalog DOM contract', type: :request do # rubocop:disab
 
     expect_ids('billing-catalog-plan-page', 'billing-catalog-back', dom_id(sub_plan, :catalog_price), dom_id(sub_plan, :buy))
   end
+
+  it 'exposes the price chooser and, per price, its row, amount and buy link' do
+    annual = create(:better_together_billing_price, product: sub_plan, platform: sub_plan.platform, kind: 'recurring', interval: 'year',
+                                                    amount_cents: 30_000, currency: 'USD')
+
+    get "/#{locale}/billing/catalog/#{sub_plan.id}"
+
+    expect_ids(dom_id(sub_plan, :catalog_prices), dom_id(annual, :catalog_option), dom_id(annual, :catalog_option_price),
+               dom_id(annual, :catalog_option_buy))
+  end
 end
