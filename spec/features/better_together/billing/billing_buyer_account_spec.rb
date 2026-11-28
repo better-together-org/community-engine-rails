@@ -155,6 +155,24 @@ RSpec.describe 'Billing buyer account', :js, :no_auth, :skip_host_setup, retry: 
       end
     end
 
+    context 'when the plan is also sold yearly' do
+      let!(:annual) do
+        create(:better_together_billing_price, product: term.plan, platform: term.platform, kind: 'recurring', interval: 'year',
+                                               amount_cents: 30_000, currency: 'USD')
+      end
+
+      before { visit "/#{locale}/billing/subscriptions/#{term.id}" }
+
+      it 'switches to the yearly price from the next period', :aggregate_failures do
+        expect(page).to be_axe_clean.within('main').according_to(*wcag).skipping('region')
+        select('a year', from: 'subscription-plan-change-select')
+        accept_prompt_and_click('#subscription-plan-change-btn')
+
+        expect(page).to have_css('#subscription-plan-change-pending', text: 'a year', wait: 10)
+        expect(term.reload.pending_price).to eq(annual)
+      end
+    end
+
     it 'asks for part of the money back on a paid order, and sees the request wait', :aggregate_failures do
       order = term.periods.first.order
       visit "/#{locale}/billing/orders/#{order.id}"

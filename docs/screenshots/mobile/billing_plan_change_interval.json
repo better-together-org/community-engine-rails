@@ -1,0 +1,48 @@
+{
+  "name": "billing_plan_change_interval",
+  "device": "mobile",
+  "url": "/en/billing/subscriptions/98dd203e-f15f-4f2a-b4fb-8f6062f84dd7",
+  "title": "Plan 46078a | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_plan_change",
+  "flow": "billing_plan_change_interval",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plan_change_spec.rb",
+  "callouts": [
+    {
+      "selector": "#subscription-plan-change-select",
+      "title": "Other prices",
+      "bullets": [
+        "The list includes this plan billed another way, such as yearly."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 967.390625,
+        "width": 427.0,
+        "height": 38.0,
+        "right": 456.0,
+        "bottom": 1005.390625,
+        "center_x": 242.5,
+        "center_y": 986.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 967.390625,
+        "width": 427.0,
+        "height": 38.0,
+        "right": 456.0,
+        "bottom": 1005.390625,
+        "center_x": 242.5,
+        "center_y": 986.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 763.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 967.390625
+      }
+    }
+  ]
+}

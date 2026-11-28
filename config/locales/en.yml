@@ -2409,6 +2409,7 @@ en:
         plan_change_now_hint: A dearer plan is invoiced for the difference and changes
           once that is paid. A cheaper plan changes at once and the difference comes
           back as store credit.
+        plan_change_option: "%{plan} (%{price})"
         plan_change_pending: You will move to %{plan} when your next period starts
           (after %{date}).
         plan_change_pending_invoice: Your move to %{plan} happens when its invoice
@@ -2421,6 +2422,7 @@ en:
           over_limit: You are using more than that plan allows. Free some space first,
             then try again.
           same_plan: You are already on that plan.
+          same_price: You are already on that price.
         plan_change_saved: Saved. Your plan changes when the next period starts.
         plan_change_submit: Change plan
         plan_change_title: Change plan

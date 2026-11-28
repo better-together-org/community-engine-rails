@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T21:09:19Z",
+  "generated_at": "2026-11-28T04:12:54Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -29436,6 +29436,10 @@
               "uuid FK"
             ],
             [
+              "pending_price_id",
+              "uuid FK"
+            ],
+            [
               "plan_id",
               "uuid FK"
             ],
@@ -29453,10 +29457,6 @@
             ],
             [
               "currency",
-              "string"
-            ],
-            [
-              "payment_method",
               "string"
             ]
           ],
@@ -29502,6 +29502,12 @@
               "optional": true
             },
             {
+              "name": "pending_price",
+              "foreign_key": "pending_price_id",
+              "target": "BetterTogether::Billing::Price",
+              "optional": true
+            },
+            {
               "name": "pending_plan_order",
               "foreign_key": "pending_plan_order_id",
               "target": "BetterTogether::Billing::Order",
@@ -29535,6 +29541,13 @@
               "foreign_key": "price_id",
               "target": "BetterTogether::Billing::Price",
               "optional": false,
+              "target_subsystem": "shared_supporting"
+            },
+            {
+              "name": "pending_price",
+              "foreign_key": "pending_price_id",
+              "target": "BetterTogether::Billing::Price",
+              "optional": true,
               "target_subsystem": "shared_supporting"
             }
           ]
@@ -30600,6 +30613,12 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::SubscriptionTerm",
+          "to": "BetterTogether::Billing::Price",
+          "label": "pending_price (pending_price_id)",
+          "target_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::Billing::SubscriptionTerm",
@@ -44596,6 +44615,12 @@
           "from": "BetterTogether::Billing::Plan",
           "to": "BetterTogether::Billing::TaxCategory",
           "label": "tax_category (tax_category_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::SubscriptionTerm",
+          "to": "BetterTogether::Billing::Price",
+          "label": "pending_price (pending_price_id)",
           "source_subsystem": "billing"
         },
         {

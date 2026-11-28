@@ -62,10 +62,10 @@
         <% if @term.pending_plan %>
           <p id="subscription-plan-change-pending">
             <% if @term.pending_plan_order %>
-              <%= t('better_together.billing.subscriptions.plan_change_pending_invoice', plan: @term.pending_plan.name) %>
+              <%= t('better_together.billing.subscriptions.plan_change_pending_invoice', plan: pending_plan_text(@term)) %>
               <%= link_to t('better_together.billing.subscriptions.plan_change_view_invoice'), billing_order_path(@term.pending_plan_order, locale: I18n.locale, back_to: billing_subscription_path(@term, locale: I18n.locale)), id: 'subscription-plan-change-invoice-link' %>
             <% else %>
-              <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: billing_time_text(subscription.current_period_end, date_only: true)) %>
+              <%= t('better_together.billing.subscriptions.plan_change_pending', plan: pending_plan_text(@term), date: billing_time_text(subscription.current_period_end, date_only: true)) %>
             <% end %>
           </p>
           <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil)),
@@ -77,7 +77,7 @@
                     data: { turbo_confirm: t('better_together.billing.subscriptions.plan_change_confirm') } do %>
             <div class="col-md-8">
               <%= label_tag 'subscription-plan-change-select', t('better_together.billing.subscriptions.plan_change_label'), class: 'form-label' %>
-              <%= select_tag :plan_id, options_for_select(@plan_options.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }),
+              <%= select_tag :price_id, options_for_select(@plan_options.map { |price| [t('better_together.billing.subscriptions.plan_change_option', plan: price.product.name, price: billing_price_terms(price)), price.id] }),
                              id: 'subscription-plan-change-select', class: 'form-select' %>
             </div>
             <fieldset class="col-12" id="subscription-plan-change-when">

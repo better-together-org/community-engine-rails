@@ -2418,6 +2418,7 @@ es:
         plan_change_now_hint: Un plan más caro se factura por la diferencia y cambia
           cuando se paga. Un plan más barato cambia de inmediato y la diferencia vuelve
           como crédito de tienda.
+        plan_change_option: "%{plan} (%{price})"
         plan_change_pending: Pasará a %{plan} cuando empiece su próximo periodo (después
           del %{date}).
         plan_change_pending_invoice: Su cambio a %{plan} se hará cuando se pague su
@@ -2430,6 +2431,7 @@ es:
           over_limit: Está usando más de lo que permite ese plan. Libere espacio primero
             y vuelva a intentarlo.
           same_plan: Ya tiene ese plan.
+          same_price: Ya tienes ese precio.
         plan_change_saved: Guardado. Su plan cambia cuando empiece el próximo periodo.
         plan_change_submit: Cambiar de plan
         plan_change_title: Cambiar de plan

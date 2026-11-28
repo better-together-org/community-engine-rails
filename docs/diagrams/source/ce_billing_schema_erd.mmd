@@ -62,6 +62,7 @@ erDiagram
   BILLING_PRODUCTS ||--o{ BILLING_SUBSCRIPTION_TERMS : "plan / plan_id"
   EXT_BILLING_PRICE ||--o{ BILLING_SUBSCRIPTION_TERMS : "price / price_id"
   BILLING_PRODUCTS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan / pending_plan_id"
+  EXT_BILLING_PRICE o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_price / pending_price_id"
   BILLING_ORDERS o|--o{ BILLING_SUBSCRIPTION_TERMS : "pending_plan_order / pending_plan_order_id"
 
   BILLING_AGREEMENT_REQUIREMENTS {
@@ -296,12 +297,12 @@ erDiagram
     pay_subscription_id uuid
     pending_plan_id uuid
     pending_plan_order_id uuid
+    pending_price_id uuid
     plan_id uuid
     platform_id uuid
     price_id uuid
     beneficiary_type string
     currency string
-    payment_method string
   }
 
   EXT_AGREEMENT {
