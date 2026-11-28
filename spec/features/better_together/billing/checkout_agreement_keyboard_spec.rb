@@ -21,8 +21,10 @@ RSpec.describe 'Checkout agreement reader from the keyboard', :js, :no_auth, :sk
 
   before do
     Current.platform = host_platform
-    host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
-                                                     settings: { 'instructions' => 'At the hall' })
+    # find_or_create: a retried example must not trip over the row a failed attempt left committed.
+    host_platform.billing_processor_settings.find_or_create_by!(processor: 'cash') do |setting|
+      setting.assign_attributes(enabled: true, acknowledge: true, settings: { 'instructions' => 'At the hall' })
+    end
     purchase_agreements_for(host_platform)
     create_billing_address_for(find_or_create_test_user('user@example.test').person)
     capybara_login_as_user

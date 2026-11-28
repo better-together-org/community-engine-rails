@@ -13,7 +13,43 @@ RSpec.describe BetterTogether::Billing::CatalogController do
   let!(:free) { create(:better_together_billing_plan, listed: true, **free_attrs) }
   let!(:hidden) { create(:better_together_billing_plan, listed: false, **free_attrs) }
 
+  def checkout_for_price(price) = better_together.new_billing_checkout_path(price_id: price.id, locale:)
   def checkout_for(plan) = better_together.new_billing_checkout_path(plan_id: plan.id, locale:)
+
+  describe 'choosing between prices' do
+    let!(:annual) do
+      create(:better_together_billing_price, product: monthly, platform: monthly.platform, kind: 'recurring', interval: 'year',
+                                             amount_cents: 30_000, currency: 'USD')
+    end
+
+    it 'lists every active recurring price of a plan, each with its own way into checkout' do
+      get better_together.billing_catalog_plan_path(monthly, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(monthly, :catalog_prices),
+                                       checkout_for_price(monthly.current_price), checkout_for_price(annual))
+    end
+
+    it 'leaves out a price taken off sale' do
+      annual.archive!
+
+      get better_together.billing_catalog_plan_path(monthly, locale:)
+
+      expect(response.body).not_to include(checkout_for_price(annual), ActionView::RecordIdentifier.dom_id(monthly, :catalog_prices))
+    end
+
+    it 'shows no chooser for a plan with one price' do
+      get better_together.billing_catalog_plan_path(free, locale:)
+
+      expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(free, :catalog_prices))
+    end
+
+    it 'takes the buyer to checkout for the price they chose' do
+      get checkout_for_price(annual)
+
+      expect(response).to have_http_status(:found).or have_http_status(:ok)
+    end
+  end
 
   describe 'GET /:locale/billing/catalog' do
     it 'shows listed plans to a visitor who is not signed in, each with a button to buy' do

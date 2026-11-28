@@ -22,5 +22,6 @@
       <% end %>
     <% end %>
     <%= render 'better_together/billing/catalog/buy_button', plan: @plan %>
+    <%= render 'better_together/billing/catalog/price_options', product: @plan, prices: @prices %>
   </article>
 </div>

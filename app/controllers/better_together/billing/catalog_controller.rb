@@ -27,6 +27,7 @@ module BetterTogether
 
         authorize @product, :catalog_show?
         @price = @product.current_price
+        @prices = @product.prices.active.to_a
       end
 
       def show
@@ -34,6 +35,7 @@ module BetterTogether
         return skip_authorization_and_not_found unless @plan
 
         authorize @plan, :catalog_show?
+        @prices = @plan.prices.active.select(&:recurring?)
       end
 
       private

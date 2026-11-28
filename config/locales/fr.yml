@@ -1003,6 +1003,7 @@ fr:
       catalog:
         back: Tous les forfaits
         buy: Acheter
+        choose_price: Choisissez un prix
         details: Ce que vous obtenez
         free: Gratuit
         get_free: Obtenir gratuitement
