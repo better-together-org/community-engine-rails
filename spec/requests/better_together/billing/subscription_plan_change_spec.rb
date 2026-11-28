@@ -22,10 +22,10 @@ RSpec.describe 'Billing subscription plan change', type: :request do # rubocop:d
     sign_in buyer_user
   end
 
-  it 'offers the other plans on the same schedule' do
+  it 'offers the prices of the other plans' do
     get better_together.billing_subscription_path(term, locale:)
 
-    expect(response.body).to include('subscription-plan-change-select', bigger.id)
+    expect(response.body).to include('subscription-plan-change-select', bigger.current_price.id)
   end
 
   it 'saves the choice and changes nothing until the next period' do
@@ -51,15 +51,58 @@ RSpec.describe 'Billing subscription plan change', type: :request do # rubocop:d
     expect(term.periods.last.order.total_cents).to be >= 5000
   end
 
-  it 'refuses a plan on another schedule' do
+  it 'refuses a move now to a price on another schedule' do
     yearly = create(:better_together_billing_plan, processor: nil, processor_price_id: nil, processor_product_id: nil, billing_interval: 'year',
-                                                   amount_cents: 30_000, currency: 'USD', accepted_payment_methods: %w[cash])
+                                                   amount_cents: 30_000, currency: 'USD', accepted_payment_methods: %w[cash], listed: true)
 
-    expect { service.request(term:, plan: yearly) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:different_schedule) }
+    expect { service.now(term:, plan: yearly) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:different_schedule) }
+  end
+
+  it 'refuses a price in another currency' do
+    euro = create(:better_together_billing_price, product: sub_plan, platform: sub_plan.platform, kind: 'recurring', interval: 'month',
+                                                  amount_cents: 3000, currency: 'EUR')
+
+    expect { service.request(term:, price: euro) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:different_schedule) }
+  end
+
+  context 'when the same plan is also sold yearly' do
+    let!(:annual) do
+      create(:better_together_billing_price, product: sub_plan, platform: sub_plan.platform, kind: 'recurring', interval: 'year',
+                                             amount_cents: 30_000, currency: 'USD')
+    end
+
+    it 'offers the other interval of the plan the subscriber is on' do
+      get better_together.billing_subscription_path(term, locale:)
+
+      expect(response.body).to include('subscription-plan-change-select', annual.id)
+    end
+
+    it 'saves the choice through the page and changes nothing until the next period' do
+      post change_path, params: { price_id: annual.id }
+
+      expect(term.reload).to have_attributes(pending_price: annual, unit_amount_cents: 3000)
+    end
+
+    it 'moves to the yearly price when the next period is made and counts years from there' do
+      service.request(term:, price: annual)
+
+      generate_renewal(term, at: start_time + 20.days)
+
+      expect(term.reload).to have_attributes(price: annual, unit_amount_cents: 30_000, pending_price: nil, anchor_sequence: 1)
+      expect(term.periods.last.ends_at).to be_within(2.days).of(term.periods.last.starts_at + 1.year)
+    end
+
+    it 'refuses the price it is already on' do
+      expect { service.request(term:, price: term.price) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:same_price) }
+    end
+
+    it 'refuses to move to the yearly price now' do
+      expect { service.now(term:, price: annual) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:different_schedule) }
+    end
   end
 
   it 'refuses the plan it is already on' do
-    expect { service.request(term:, plan: sub_plan) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:same_plan) }
+    expect { service.request(term:, plan: sub_plan) }.to raise_error(service::Refused) { |e| expect(e.code).to eq(:same_price) }
   end
 
   it 'turns another person away' do

@@ -41,8 +41,8 @@ module BetterTogether
       # Choose another plan from the next period.
       def change_plan
         authorize @term
-        plan = billing_owner.billing_plans.sold_by_platform.find(params[:plan_id])
-        params[:when] == 'now' ? change_now(plan) : change_next(plan)
+        price = chosen_price
+        params[:when] == 'now' ? change_now(price) : change_next(price)
       rescue Subscriptions::ChangePlan::Refused => e
         redirect_to show_path, alert: t("better_together.billing.subscriptions.plan_change_refused.#{e.code}")
       end
@@ -81,17 +81,25 @@ module BetterTogether
       def show_path = billing_subscription_path(@term, locale: I18n.locale, back_to: back_to_path(nil))
 
       # Moves now: a cheaper plan at once (with credit back), a dearer one once the invoice for the difference is paid.
-      def change_next(plan)
-        Subscriptions::ChangePlan.request(term: @term, plan:)
+      def change_next(price)
+        Subscriptions::ChangePlan.request(term: @term, price:)
         redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_saved')
       end
 
-      def change_now(plan)
-        outcome = Subscriptions::ChangePlan.now(term: @term, plan:)
+      def change_now(price)
+        outcome = Subscriptions::ChangePlan.now(term: @term, price:)
         amount = helpers.billing_amount(outcome.amount_cents, @term.currency)
         key = { invoiced: 'plan_change_invoiced', credited: 'plan_change_credited' }.fetch(outcome.mode, 'plan_change_done')
         target = outcome.mode == :invoiced ? billing_order_path(outcome.order, locale: I18n.locale, back_to: show_path) : show_path
         redirect_to target, notice: t("better_together.billing.subscriptions.#{key}", amount:)
+      end
+
+      # A price of this platform's plans; a bare plan_id (older links) means the plan's current price.
+      def chosen_price
+        plans = billing_owner.billing_plans.sold_by_platform
+        return Price.where(product_id: plans.select(:id)).find(params[:price_id]) if params[:price_id].present?
+
+        plans.find(params[:plan_id]).current_price || raise(ActiveRecord::RecordNotFound)
       end
 
       def own_terms

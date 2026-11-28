@@ -85,4 +85,31 @@ RSpec.describe 'Documentation screenshots for changing a plan', # rubocop:disabl
       scroll_to_change
     end
   end
+
+  it 'captures a yearly price offered next to the monthly one on the same plan' do
+    term = start_subscription
+    create(:better_together_billing_price, product: term.plan, platform: term.platform, kind: 'recurring', interval: 'year',
+                                           amount_cents: 30_000, currency: 'USD')
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_plan_change_interval',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_plan_change_interval'),
+      callouts: [{ id: 'choice', selector: '#subscription-plan-change-select', title: 'Other prices',
+                   bullets: ['The list includes this plan billed another way, such as yearly.'] }],
+      narrative: {
+        title: 'Switch between monthly and yearly',
+        audience: %w[end_user],
+        journey_step: 'As a subscriber, I move to the yearly price of my plan from the next period.',
+        callouts: [{ id: 'choice', title: 'Prices', description: 'Each option names the plan and how it is billed.' }],
+        accessibility_notes: 'The select has a visible label; the choice is text, not colour.'
+      }
+    ) do
+      capybara_sign_in_user(buyer_user.email, password)
+      visit "/#{I18n.default_locale}/billing/subscriptions/#{term.id}"
+      expect(page).to have_css('#subscription-plan-change-select')
+      select('a year', from: 'subscription-plan-change-select')
+      page.execute_script("document.querySelector('#subscription-plan-change-select').scrollIntoView({block: 'start'})")
+      page.execute_script('window.scrollBy(0, -260)')
+    end
+  end
 end

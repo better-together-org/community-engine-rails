@@ -1,0 +1,13 @@
+---
+title: Switch between monthly and yearly
+audience:
+- end_user
+journey_step: As a subscriber, I move to the yearly price of my plan from the next
+  period.
+callouts:
+- :id: choice
+  :title: Prices
+  :description: Each option names the plan and how it is billed.
+accessibility_notes: The select has a visible label; the choice is text, not colour.
+slug: billing_plan_change_interval
+device: mobile
