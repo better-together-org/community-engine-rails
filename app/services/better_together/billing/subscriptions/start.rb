@@ -28,15 +28,12 @@ module BetterTogether
             order.purpose == 'subscription' && paid_locally?(order)
         end
 
-        # The plan an order is for: its one line that is not an add-on. Add-ons (one-off extras) ride along on the order and
-        # neither start a subscription nor give an entitlement of their own. Nothing when the lines are not plans, or when there
-        # is not exactly one primary plan.
+        # The plan an order is for: its one recurring line. One-time lines (add-ons, or a product bought with the plan) ride
+        # along on the order: add-ons give no entitlement, and a product gives its own through the order. Nothing when no line
+        # recurs, or when more than one does.
         def self.single_plan(order)
-          purchasables = order.line_items.to_a.map(&:purchasable)
-          return unless purchasables.all? { |purchasable| purchasable.plan_line? || purchasable.extra? }
-
-          primary = purchasables.reject(&:extra?)
-          primary.first if primary.one?
+          recurring = order.line_items.to_a.map(&:purchasable).select(&:plan_line?)
+          recurring.first if recurring.one?
         end
 
         # The line for that plan, whose price is the subscription's.

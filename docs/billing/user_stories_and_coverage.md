@@ -107,7 +107,7 @@ included, more storage and features. Tier C: a separate app and database, the pl
 
 | # | Story | Cov | Today / needs |
 |---|---|---|---|
-| 1.1 | As P2 I compare tiers A, B and C on a public page (price, domain, storage, AI, features). | P | Public `/billing/catalog` with plan detail and a plan catalog content block (D1b, D1c). No side by side comparison. |
+| 1.1 | As P2 I compare tiers A, B and C on a public page (price, domain, storage, AI, features). | P | Public `/billing/catalog` with plan detail and a plan catalog content block (D1b, D1c). A plan or product sold at several prices lists each with its own button (MVP1-S1.1). No side by side comparison. |
 | 1.2 | As P2 I start checkout from a tier card without typing a URL. | B | Subscribe and Get it free buttons on each card go to checkout (D1b). Verified on the dev app. |
 | 1.3 | As P2 I sign in or sign up in the middle of checkout and keep my selection. | P | Checkout needs sign in; no return to plan. |
 | 1.4 | As P4 I check out as a member of a community and the new platform's community is my community. | M | Checkout lacks `on_behalf_of`; provisioning must link the existing community as primary (the service currently creates one). |
@@ -115,7 +115,7 @@ included, more storage and features. Tier C: a separate app and database, the pl
 | 1.6 | As P3 I add a custom domain as a paid add-on to tier A. | M | Add-on line item, `PlatformDomain` creation, DNS verification, TLS. |
 | 1.7 | As P3 tier B includes the custom domain and raised quotas without extra steps. | P | Quotas work; domain entitlement kind missing. |
 | 1.8 | As P3 I see my hosting plan, renewal date, usage, invoices and payment method. | B | `/billing/hosting_plan` for a hosted platform owner: plan, renewal, usage (D3). Not reachable on the host platform, by design. |
-| 1.9 | As P3 I upgrade or downgrade with proration and my features and quotas change with it. | B | Change plan from the next period, with a guard (D3). Change plan link is on the subscription page. |
+| 1.9 | As P3 I upgrade or downgrade with proration and my features and quotas change with it. | B | Change plan from the next period or now (prorated), with a guard (D3). Change plan link is on the subscription page. The list is by price, so the same plan's other interval is offered (MVP1-S1.2). |
 | 1.10 | As P3 I buy extra storage or AI tokens as add-ons. | B | Extras at checkout and bought later (D2, D2b). An extra is a product with purchase requirements, so it can hold grants (a storage top-up is a fixed-term product with a storage grant). Built in PS-5 to PS-6. |
 | 1.11 | As P3 I cancel and my platform stays readable through the paid period, then read only. | P | Cancel works; suspension missing. |
 | 1.12 | As P3 on tier C I request and receive a separate instance that is its own host. | M | Operator task (1.13), manual fulfilment first. |
@@ -136,7 +136,7 @@ included, more storage and features. Tier C: a separate app and database, the pl
 | 2.2 | As P5 I buy an annual membership that renews yearly. | P | Annual plans and CE renewals work for a platform's own plans; blocked on 2.1 only. |
 | 2.3 | As P5 I register for the conference and AGM and pay the fee. | M | Event fee, capacity, ticket types, registration tied to `Order`. |
 | 2.4 | As P5 I pay membership and registration in one order. | M | Multi-line checkout, plus a rule that one line carries the other's entitlement. |
-| 2.5 | As P5 the membership renews on its own anniversary even when bought with the registration. | P | A subscription started from a paid order exists (`Subscriptions::Start`); the bundled case needs a spec. |
+| 2.5 | As P5 the membership renews on its own anniversary even when bought with the registration. | B | One order may hold one recurring plan plus one-time products: the plan starts the subscription (a paid order with a standalone product used to start none, fixed in MVP1-S1.3), the product is granted once, renewals charge the plan only, and returning the product leaves the subscription. Pinned by `mixed_order_spec.rb`. |
 | 2.6 | As P5 the member price applies to registration while my membership is active. | M | Price rule by entitlement. |
 | 2.7 | As P9 I know who is a member in good standing on the AGM date. | P | Entitlement state exists; needs an as of date roster export. |
 | 2.8 | As P9 I can comp or discount a registration. | P | Promotions grant store credit only; no price discount or comp. |
@@ -175,7 +175,7 @@ included, more storage and features. Tier C: a separate app and database, the pl
 | 4.2 | As a buyer I see my order history with status, date, amount, tax and receipt download, and filter by status or year. | P | `/billing/orders` and documents exist; no filters, no cross order receipts, no menu link. |
 | 4.3 | As a buyer I see my active plans, who each one covers (me, my community, my platform), the next renewal and the amount. | P | Subscriptions and entitlements pages exist; beneficiary and renewal detail need checking. |
 | 4.4 | As a buyer I cancel at period end and resume before it ends. | B | CE renewed subscriptions. Processor renewed ones have no payer screen in core. |
-| 4.5 | As a buyer I upgrade, downgrade or switch interval. | B | Same as 1.9. |
+| 4.5 | As a buyer I upgrade, downgrade or switch interval. | B | Same as 1.9. A switch of interval takes effect from the next period and the periods count from the end of the current one; a move now needs the same schedule. |
 | 4.6 | As a buyer I change the payment method on an existing subscription. | B | "Pay renewals by" on the subscription page changes the method for later invoices; an invoice already made keeps its method. |
 | 4.7 | As a buyer I request a refund on an order or payment, give a reason and track its status. | B | `RefundRequest`, buyer form on the order page, status. See [refund requests](refund_requests.md). |
 | 4.8 | As a steward I review, approve, partly approve or decline refund requests, see the refund policy and reply to the buyer. | B | Queue at `/billing/refund_requests`, notifications, reuses `Refunds::Record`. The refund policy text is not shown yet. |
